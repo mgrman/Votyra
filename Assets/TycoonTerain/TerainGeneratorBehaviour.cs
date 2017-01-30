@@ -24,6 +24,7 @@ public class TerainGeneratorBehaviour : MonoBehaviour
     public MonoBehaviour Sampler = null;
 
 
+    private IGroupSelector _groupsSelector;
     private ITerainGenerator _terainGenerator;
     private IMeshUpdater _meshUpdater;
 
@@ -38,16 +39,19 @@ public class TerainGeneratorBehaviour : MonoBehaviour
         UpdateCachedServices();
         Profiler.EndSample();
 
-        Profiler.BeginSample("Creating options");
-        TerainGeneratorOptions options = new TerainGeneratorOptions(this);
+        Profiler.BeginSample("Creating visible groups");
+        var groupVisibilityOptions = new GroupVisibilityOptions(this);
+        var groupsToUpdate = _groupsSelector.GetGroupsToUpdate(groupVisibilityOptions);
         Profiler.EndSample();
         
         Profiler.BeginSample("Sampling mesh");
-        var results=_terainGenerator.Generate(options.TerainOptions);
+        TerainOptions terainOptions = new TerainOptions(this, groupsToUpdate);
+        var results=_terainGenerator.Generate(terainOptions);
         Profiler.EndSample();
 
         Profiler.BeginSample("Applying mesh");
-        _meshUpdater.UpdateMesh(options.MeshOptions, results);
+        MeshOptions meshOptions = new MeshOptions(this);
+        _meshUpdater.UpdateMesh(meshOptions, results);
         Profiler.EndSample();
     }
 
@@ -63,6 +67,7 @@ public class TerainGeneratorBehaviour : MonoBehaviour
         }
 
         ObjectUtils.UpdateType<TerainMeshUpdater, IMeshUpdater>(ref _meshUpdater);
+        ObjectUtils.UpdateType<GroupsByCameraVisibilitySelector, IGroupSelector>(ref _groupsSelector);
     }
 
     private void OnDisable()

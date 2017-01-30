@@ -68,7 +68,9 @@ public class AsyncTerainGenerator<T> : ITerainGenerator,IDisposable
 
                 if (computedTriangleMesh != null)
                 {
-                    //computedTriangleMesh = computedTriangleMesh.Select(o => o.Clone()).ToArray();
+                    //TODO zistit efekt ked sa mesh clonuje vs ked nie!
+                    computedTriangleMesh = computedTriangleMesh.Select(o => o.Clone()).ToArray();
+                    //computedTriangleMesh = computedTriangleMesh.ToArray();
                 }
 
                 lock (_threadAccessLock)

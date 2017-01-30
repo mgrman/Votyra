@@ -27,7 +27,7 @@ public class TerainOptions
 
     public readonly IList<Vector2i> GroupsToUpdate;
 
-    public TerainOptions(TerainGeneratorBehaviour terainGenerator)
+    public TerainOptions(TerainGeneratorBehaviour terainGenerator,IList<Vector2i> groupsToUpdate)
     {
         this.CellSize = terainGenerator.CellSize;
         this.CellInGroupCount = terainGenerator.CellInGroupCount;
@@ -38,7 +38,6 @@ public class TerainOptions
             throw new InvalidOperationException("Too many cells in group! Max is 60x60");
         }
         
-
         this.Image = terainGenerator.Image as IImage;
         this.ImageSampler = terainGenerator.Sampler as IImageSampler;
         this.TerainAlgorithm = terainGenerator.MeshGenerator as ITerainAlgorithm;
@@ -62,51 +61,13 @@ public class TerainOptions
         this.GroupSize = this.CellSize * this.CellInGroupCount;
         this.RangeZ = Image.RangeZ;
         this.GroupBounds = new Bounds((GroupSize / 2).ToVector3(RangeZ.Center), GroupSize.ToVector3(RangeZ.Size));
-  
-        this.GroupsToUpdate = VisibleGroups(terainGenerator.gameObject);
+
+        this.GroupsToUpdate = groupsToUpdate;
     }
 
-    private IList<Vector2i> VisibleGroups(GameObject parentContainer)
-    {
-        var cam = Camera.main;
-
-        var mat = cam.projectionMatrix * cam.worldToCameraMatrix* parentContainer.transform.localToWorldMatrix;
-
-        var planes = GeometryUtility.CalculateFrustumPlanes(mat);
-        
-        var bounds_center = GroupBounds.center;
-        var bounds_size = GroupBounds.size; 
-        var groupSize_x = GroupSize.x;
-        var groupSize_y = GroupSize.y;
-        var res = new List<Vector2i>();
-        
-
-        for (int group_x = -5; group_x < 5; group_x++)
-        {
-            for (int group_y = -5; group_y < 5; group_y++)
-            {
-                var bounds = new Bounds( new Vector3
-                    (
-                        bounds_center.x + group_x * groupSize_x,
-                        bounds_center.y + group_y * groupSize_y,
-                        bounds_center.z
-                    ),bounds_size);
-
-               // bounds = ParentContainer.transform.TransformBounds(bounds);
-
-
-                if (GeometryUtility.TestPlanesAABB(planes, bounds))
-                {
-                    res.Add( new Vector2i(group_x, group_y));
-                }
-            }
-        }
-        return res;
-    }
-    
     public bool IsChanged(TerainOptions old)
     {
-        return old == null || 
+        return old == null ||
             this.CellSize != old.CellSize ||
             this.CellInGroupCount != old.CellInGroupCount ||
             this.FlipTriangles != old.FlipTriangles ||
@@ -115,7 +76,8 @@ public class TerainOptions
             this.TerainAlgorithm != old.TerainAlgorithm ||
             this.ImageSampler != old.ImageSampler ||
             this.ComputeAsync != old.ComputeAsync ||
-            this.RangeZ != old.RangeZ;
+            this.RangeZ != old.RangeZ ||
+            !this.GroupsToUpdate.SequenceEqual(old.GroupsToUpdate);
     }
 
     public bool IsBoundsChanged(TerainOptions old)
