@@ -6,8 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-public interface ITerainGeneratorService : IDisposable
+public interface ITerainGenerator 
 {
-    IDictionary<Vector2i, ITriangleMesh> Sample(TerainGeneratorOptions options);
-
+    IEnumerable<ITriangleMesh> Generate(TerainOptions options);
 }

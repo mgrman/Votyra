@@ -57,8 +57,14 @@ public struct Range2 : IEquatable<Range2>
 
         return this.Equals((Range2)obj);
     }
+
     public override int GetHashCode()
     {
         return min.GetHashCode() + max.GetHashCode() * 7;
+    }
+
+    public override string ToString()
+    {
+        return string.Format("({0} , {1})", min, max);
     }
 }

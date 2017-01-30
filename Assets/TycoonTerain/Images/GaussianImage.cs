@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-class Gaussian : MonoBehaviour, IImage
+class GaussianImage : MonoBehaviour, IImage
 {
     public float σ = 1;
     public Vector3 scale = Vector3.one;

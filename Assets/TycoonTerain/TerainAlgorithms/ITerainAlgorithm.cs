@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public interface IMeshGenerator
+public interface ITerainAlgorithm
 {
     bool RequiresWalls { get; }
 

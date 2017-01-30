@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public class SimpleMeshGenerator:MonoBehaviour,IMeshGenerator
+public class SimpleTerainAlgorithm : MonoBehaviour,ITerainAlgorithm
 {
     public bool RequiresWalls { get { return false; } }
 

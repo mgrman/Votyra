@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-class Noise : MonoBehaviour, IImage
+class NoiseImage : MonoBehaviour, IImage
 {
     private Vector3 _old_offset = Vector3.zero;
     public Vector3 offset = Vector3.zero;

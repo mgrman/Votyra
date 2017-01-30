@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public class SimpleSampler:MonoBehaviour,ISampler
+public class SimpleImageSampler : MonoBehaviour,IImageSampler
 {
    public void Sample(MatrixWithOffset<float> result,IImage image,Rect bounds,float time)
     {

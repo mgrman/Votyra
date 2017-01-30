@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-public class TileSelectMeshGenerator : MonoBehaviour, IMeshGenerator
+public class TileSelectTerainAlgorithm : MonoBehaviour, ITerainAlgorithm
 {
     [Range(0.0F, 5.0f)]
     public float HeightDifferenceAbs = 1;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-class Slope : MonoBehaviour, IImage
+class SlopeImage : MonoBehaviour, IImage
 {
     public float Scale = 1;
     [Range(0, 360)]

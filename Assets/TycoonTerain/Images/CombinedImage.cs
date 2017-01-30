@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-class Combine : MonoBehaviour, IImage
+class CombinedImage : MonoBehaviour, IImage
 {
     public MonoBehaviour ImageA;
     public MonoBehaviour ImageB;

@@ -6,30 +6,31 @@ using System.Linq;
 using System.Threading;
 using UnityEngine;
 
-public class AsyncTerainGeneratorService : ITerainGeneratorService
+public class AsyncTerainGenerator<T> : ITerainGenerator,IDisposable
+    where T:TerainGenerator,new()
 {
-    private readonly TerainGeneratorService _service;
+    private readonly T _terainGenerator;
     private object _threadAccessLock = new object();
     private Thread _thread;
     private bool _stop;
 
     private DateTime _lastResult = DateTime.Now;
 
-    private TerainGeneratorOptions _optionsToCompute = null;
+    private TerainOptions _optionsToCompute = null;
     private bool _lastJobFinished = true;
-    private IDictionary<Vector2i, ITriangleMesh> _lastComputedTriangleMesh = null;
+    private IEnumerable<ITriangleMesh> _lastComputedTriangleMesh = null;
 
-    public AsyncTerainGeneratorService()
+    public AsyncTerainGenerator()
     {
-        _service = new TerainGeneratorService();
+        _terainGenerator = new T();
 
         _thread = new Thread(Compute);
         _thread.Start();
     }
 
-    public IDictionary<Vector2i, ITriangleMesh> Sample(TerainGeneratorOptions options)
+    public IEnumerable<ITriangleMesh> Generate(TerainOptions options)
     {
-        IDictionary<Vector2i, ITriangleMesh> computedTriangleMesh;
+        IEnumerable<ITriangleMesh> computedTriangleMesh;
         lock (_threadAccessLock)
         {
             if (this._lastJobFinished)
@@ -56,14 +57,14 @@ public class AsyncTerainGeneratorService : ITerainGeneratorService
         {
             if (_optionsToCompute != null)
             {
-                TerainGeneratorOptions optionsToCompute;
+                TerainOptions optionsToCompute;
                 lock (_threadAccessLock)
                 {
                     optionsToCompute = _optionsToCompute;
                     _optionsToCompute = null;
                 }
 
-                IDictionary<Vector2i, ITriangleMesh> computedTriangleMesh = _service.Sample(optionsToCompute);
+                var computedTriangleMesh = _terainGenerator.Generate(optionsToCompute);
 
                 if (computedTriangleMesh != null)
                 {

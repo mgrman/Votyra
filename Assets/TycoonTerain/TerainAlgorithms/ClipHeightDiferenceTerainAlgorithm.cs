@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public class ClipHeightDiferenceMeshGenerator : MonoBehaviour, IMeshGenerator
+public class ClipHeightDiferenceTerainAlgorithm : MonoBehaviour, ITerainAlgorithm
 {
     [Range(0.0F, 5.0f)]
     public float HeightDifferenceAbs = 1;
