@@ -75,12 +75,16 @@ public class FixedTriangleMesh : ITriangleMesh
         _uv[index * 3 + 1] = new Vector2(posB.x / size.x, posB.y / size.y);
         _uv[index * 3 + 2] = new Vector2(posC.x / size.x, posC.y / size.y);
         
-        //var side1 = posB - posA;
-        //var side2 = posC - posA;
-        //var normal = Vector3.Cross(side1, side2).normalized;
-        //_normals[index * 3 + 0] = normal;
-        //_normals[index * 3 + 1] = normal;
-        //_normals[index * 3 + 2] = normal;
+        var side1 = posB - posA;
+        var side2 = posC - posA;
+        var normal = Vector3.Cross(side1, side2).normalized;
+        _normals[index * 3 + 0] = normal;
+        _normals[index * 3 + 1] = normal;
+        _normals[index * 3 + 2] = normal;
+    }
+
+    public void FinilizeMesh()
+    {
     }
 
     public void UpdateMesh(Mesh mesh)
@@ -89,8 +93,7 @@ public class FixedTriangleMesh : ITriangleMesh
         {
             mesh.Clear();
             mesh.vertices = this._vertices;
-            mesh.normals = null;
-            //mesh.normals = this._normals;
+            mesh.normals = this._normals;
             mesh.uv = this._uv;
             mesh.triangles = this._indices;
 
@@ -98,11 +101,12 @@ public class FixedTriangleMesh : ITriangleMesh
         else
         {
             mesh.vertices = this._vertices;
-            //mesh.normals = this._normals;
+            mesh.normals = this._normals;
+            mesh.uv = this._uv;
         }
-        Profiler.BeginSample("RecalculateNormals");
-        mesh.RecalculateNormals();
-        Profiler.EndSample();
+        //Profiler.BeginSample("RecalculateNormals");
+        //mesh.RecalculateNormals();
+        //Profiler.EndSample();
 
         mesh.bounds = this.MeshBounds;
     }

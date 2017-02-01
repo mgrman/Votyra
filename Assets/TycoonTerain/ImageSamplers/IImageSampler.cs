@@ -6,6 +6,6 @@ using UnityEngine;
 
 public interface IImageSampler 
 {  
-    void Sample(MatrixWithOffset<float> result, IImage image, Rect bounds,float time);
+    void Sample(MatrixWithOffset<int> result, IImage2i image, Rect bounds,float time);
 }
 

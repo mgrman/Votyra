@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class SimpleImageSampler : MonoBehaviour,IImageSampler
 {
-   public void Sample(MatrixWithOffset<float> result,IImage image,Rect bounds,float time)
+   public void Sample(MatrixWithOffset<int> result,IImage2i image,Rect bounds,float time)
     {
         Vector2i pointCount = result.size;
 

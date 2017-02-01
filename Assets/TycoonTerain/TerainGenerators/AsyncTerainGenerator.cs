@@ -81,7 +81,7 @@ public class AsyncTerainGenerator<T> : ITerainGenerator,IDisposable
 
 
                 counter++;
-                if (counter % 100 == 0)
+                if (counter % 10 == 0)
                 {
                     double freq = 1.0 / (DateTime.Now - _lastResult).TotalSeconds;
                     Debug.Log(string.Format("Computation is at {0}fps", freq));

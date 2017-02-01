@@ -32,7 +32,7 @@ public struct Range2 : IEquatable<Range2>
 
     public Range2 UnionWith(Range2 range)
     {
-        return new Range2(Math.Min(this.min, range.min), Math.Min(this.max, range.max));
+        return new Range2(Mathf.Min(this.min, range.min), Mathf.Min(this.max, range.max));
     }
 
     public static bool operator ==(Range2 a, Range2 b)

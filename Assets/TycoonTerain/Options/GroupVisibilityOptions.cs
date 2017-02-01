@@ -11,37 +11,37 @@ public class GroupVisibilityOptions:IDisposable
 {
     
     public readonly GameObject ParentContainer;
-    public readonly Vector2 GroupSize;
     public readonly Camera Camera;
+    public readonly Matrix4x4 CameraTransform;
     public readonly Bounds GroupBounds;
     public readonly Range2 RangeZ;
 
 
-    private readonly Vector2 CellSize;
-    private readonly Vector2i CellInGroupCount;
-    private readonly IImage Image;
+    public readonly Vector2i CellInGroupCount;
+    private readonly IImage2 Image;
 
     public GroupVisibilityOptions(TerainGeneratorBehaviour terainGenerator)
     {
         this.Camera = Camera.main;
+        this.CameraTransform = this.Camera.cameraToWorldMatrix;
         this.ParentContainer = terainGenerator.gameObject;
-        this.Image = terainGenerator.Image as IImage;
+        this.Image = terainGenerator.Image as IImage2;
         this.RangeZ = Image.RangeZ;
-        this.CellSize = terainGenerator.CellSize;
         this.CellInGroupCount = terainGenerator.CellInGroupCount;
 
-        this.GroupSize = this.CellSize * this.CellInGroupCount;
-        this.GroupBounds = new Bounds((this.GroupSize / 2).ToVector3(this.RangeZ.Center), this.GroupSize.ToVector3(this.RangeZ.Size));
+        this.GroupBounds = new Bounds(new Vector3(CellInGroupCount.x / 2.0f, CellInGroupCount.y / 2.0f, RangeZ.Center), new Vector3(CellInGroupCount.x, CellInGroupCount.y, RangeZ.Size));
     }
-    
+
     public bool IsChanged(GroupVisibilityOptions old)
     {
         //TODO
         //not complete check!
         return old == null ||
             this.ParentContainer != old.ParentContainer ||
+            this.RangeZ!=old.RangeZ ||
             this.Camera != old.Camera ||
-            this.GroupSize != old.GroupSize;
+            this.CameraTransform != old.CameraTransform;
+
     }
     
     public bool IsValid

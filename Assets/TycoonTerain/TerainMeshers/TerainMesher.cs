@@ -73,11 +73,9 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
 
     //    return meshes;
     //}
-
-    Vector2i group;
-    Vector2 cellSize;
-    Vector2 groupSize;
-    Vector2 groupPosition;
+    
+    Vector2i cellInGroupCount;
+    Vector2i groupPosition;
     public int TriangleCount { get; private set; }
     Vector3 bounds_center;
     Vector3 bounds_size;
@@ -87,8 +85,7 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
 
     public void Initialize(TerainOptions terainOptions)
     {
-        this.cellSize = terainOptions.CellSize;
-        this.groupSize = terainOptions.GroupSize;
+        this.cellInGroupCount = terainOptions.CellInGroupCount;
         this.TriangleCount = terainOptions.CellInGroupCount.AreaSum * CELL_TO_TRIANGLE;
         this.bounds_center = terainOptions.GroupBounds.center;
         this.bounds_size = terainOptions.GroupBounds.size;
@@ -97,17 +94,16 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
 
     public void InitializeGroup(Vector2i group, ITriangleMesh mesh)
     {
-        this.group = group;
         this.mesh = mesh;
         var bounds = new Bounds(new Vector3
          (
-             bounds_center.x + group.x * groupSize.x,
-             bounds_center.y + group.y * groupSize.y,
+             bounds_center.x + group.x * cellInGroupCount.x,
+             bounds_center.y + group.y * cellInGroupCount.y,
              bounds_center.z
          ), bounds_size);
         mesh.Clear(bounds);
 
-        this.groupPosition = groupSize * group;
+        this.groupPosition = cellInGroupCount * group;
         this.quadIndex = 0;
     }
 
@@ -116,9 +112,9 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
     {
         if (cellInGroup.x >= 0 && cellInGroup.y >= 0)
         {
-            Vector2 position = groupPosition + cellSize * cellInGroup;
+            Vector2i position = groupPosition +  cellInGroup;
 
-            var cell_area = new Rect(position.x, position.y, cellSize.x, cellSize.y);
+            var cell_area = new Rect(position.x, position.y, 1, 1);
 
             mesh.AddQuad(quadIndex, cell_area, heightData, !heightData.KeepSides != flipTriangles);
             quadIndex++;
@@ -128,8 +124,8 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
             float minusXres_x1y0 = minusXres.x1y0;
             mesh.AddQuad(quadIndex,
                 new Vector3(position.x, position.y, heightData.x0y0),
-                new Vector3(position.x, position.y + cellSize.y, heightData.x0y1),
-                new Vector3(position.x, position.y + cellSize.y, minusXres_x1y1),
+                new Vector3(position.x, position.y + 1, heightData.x0y1),
+                new Vector3(position.x, position.y + 1, minusXres_x1y1),
                 new Vector3(position.x, position.y, minusXres_x1y0), false);
             quadIndex++;
 
@@ -137,10 +133,10 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
             float minusYres_x0y1 = minusYres.x0y1;
             float minusYres_x1y1 = minusYres.x1y1;
             mesh.AddQuad(quadIndex,
-                new Vector3(position.x + cellSize.x, position.y, heightData.x1y0),
+                new Vector3(position.x + 1, position.y, heightData.x1y0),
                 new Vector3(position.x, position.y, heightData.x0y0),
                 new Vector3(position.x, position.y, minusYres_x0y1),
-                new Vector3(position.x + cellSize.x, position.y, minusYres_x1y1), false);
+                new Vector3(position.x + 1, position.y, minusYres_x1y1), false);
             quadIndex++;
         }
     }

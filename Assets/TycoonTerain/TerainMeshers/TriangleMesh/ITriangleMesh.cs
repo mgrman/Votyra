@@ -20,5 +20,7 @@ public interface ITriangleMesh
 
     void Add(int index, Vector3 posA, Vector3 posB, Vector3 posC);
 
+    void FinilizeMesh();
+
     void UpdateMesh(Mesh mesh);
 }

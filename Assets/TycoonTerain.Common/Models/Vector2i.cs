@@ -48,6 +48,11 @@ public struct Vector2i : IEquatable<Vector2i>
         return new Vector2i(a.x - b, a.y - b);
     }
 
+    public static Vector2i operator +(Vector2i a, Vector2i b)
+    {
+        return new Vector2i(a.x + b.x, a.y + b.y);
+    }
+
     public static Vector2 operator *(Vector2 a, Vector2i b)
     {
         return new Vector2(a.x * b.x, a.y * b.y);

@@ -9,7 +9,7 @@ using UnityEngine.Profiling;
 
 public class TerainGenerator : ITerainGenerator
 {
-    private MatrixWithOffset<float> _samplesCache;
+    private MatrixWithOffset<int> _samplesCache;
     private MatrixWithOffset<HeightData> _resultsCache;
 
     private TerainOptions _old_options;
@@ -28,8 +28,6 @@ public class TerainGenerator : ITerainGenerator
 
         int cellInGroupCount_x = options.CellInGroupCount.x;
         int cellInGroupCount_y = options.CellInGroupCount.y;
-        float groupSize_x = options.GroupSize.x;
-        float groupSize_y = options.GroupSize.y;
         options.TerainMesher.Initialize(options);
 
         var meshes = Pool.Meshes2.GetObject(new Pool.MeshKey(options.GroupsToUpdate.Count, options.TerainMesher.TriangleCount));
@@ -46,7 +44,7 @@ public class TerainGenerator : ITerainGenerator
             var samples = GetCachedSamples(options);
             var results = GetCachedResults(options);
 
-            var group_area = new Rect(group.x * groupSize_x, group.y * groupSize_y, groupSize_x, groupSize_y);
+            var group_area = new Rect(group.x * cellInGroupCount_x, group.y * cellInGroupCount_y, cellInGroupCount_x, cellInGroupCount_y);
             if (Thread.CurrentThread == TerainGeneratorBehaviour.UnityThread)
             {
                 Profiler.BeginSample("ImageSampler.Sample()");
@@ -58,7 +56,8 @@ public class TerainGenerator : ITerainGenerator
             {
                 Profiler.EndSample();
             }
-            options.TerainMesher.InitializeGroup(group,meshes[groupIndex]);
+            var mesh = meshes[groupIndex];
+            options.TerainMesher.InitializeGroup(group,mesh);
 
             if (Thread.CurrentThread == TerainGeneratorBehaviour.UnityThread)
             {
@@ -75,10 +74,10 @@ public class TerainGenerator : ITerainGenerator
                         Profiler.BeginSample("TerainAlgorithm.Process()");
                     }
                     //compute cell using alg
-                    float x0y0 = samples[cellInGroup_x, cellInGroup_y];
-                    float x0y1 = samples[cellInGroup_x, cellInGroup_y + 1];
-                    float x1y0 = samples[cellInGroup_x + 1, cellInGroup_y];
-                    float x1y1 = samples[cellInGroup_x + 1, cellInGroup_y + 1];
+                    int x0y0 = samples[cellInGroup_x, cellInGroup_y];
+                    int x0y1 = samples[cellInGroup_x, cellInGroup_y + 1];
+                    int x1y0 = samples[cellInGroup_x + 1, cellInGroup_y];
+                    int x1y1 = samples[cellInGroup_x + 1, cellInGroup_y + 1];
                     HeightData data = new HeightData(x0y0, x0y1, x1y0, x1y1);
                     data = options.TerainAlgorithm.Process(data);
                     results[cellInGroup_x, cellInGroup_y] = data;
@@ -101,23 +100,24 @@ public class TerainGenerator : ITerainGenerator
                     }
                 }
             }
+            mesh.FinilizeMesh();
         }
         options.Dispose();
         return meshes;
     }
 
-    private MatrixWithOffset<float> GetCachedSamples(TerainOptions options)
+    private MatrixWithOffset<int> GetCachedSamples(TerainOptions options)
     {
         var pointCount = options.CellInGroupCount + 1;
 
-        MatrixWithOffset<float> samples;
+        MatrixWithOffset<int> samples;
         if (_samplesCache != null && _samplesCache.IsSameSize(pointCount, Vector2i.One))
         {
             samples = _samplesCache;
         }
         else
         {
-            samples = new MatrixWithOffset<float>(pointCount, Vector2i.One);
+            samples = new MatrixWithOffset<int>(pointCount, Vector2i.One);
             _samplesCache = samples;
             //Debug.Log("Creating new Samples[,]");
         }

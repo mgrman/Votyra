@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-class NoiseImage : MonoBehaviour, IImage
+class NoiseImage : MonoBehaviour, IImage2
 {
     private Vector3 _old_offset = Vector3.zero;
     public Vector3 offset = Vector3.zero;
@@ -45,16 +45,30 @@ class NoiseImage : MonoBehaviour, IImage
 
     public Range2 RangeZ { get { return new Range2(offset.z, offset.z + scale.z); } }
 
-    public bool IsChanged(float time)
+    public bool IsAnimated
     {
-        return _fieldsChanged || timeScale != 0;
+        get
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                return _fieldsChanged;
+            }
+#endif
+            return _fieldsChanged || timeScale != 0;
+        }
     }
 
     public float Sample(Vector2 point, float time)
     {
         float offsetTime;
         offsetTime = timeRounding > 0 ? (time * timeScale).Round(timeRounding) : time * timeScale;
-
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            offsetTime = 0;
+        }
+#endif
 
         return Mathf.PerlinNoise((point.x + offsetTime) / scale.x + offset.x, (point.y + offsetTime * 0.5f) / scale.y + offset.y) * scale.z + offset.z;
     }

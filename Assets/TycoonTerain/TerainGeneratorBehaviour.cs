@@ -10,7 +10,6 @@ using UnityEngine.Profiling;
 [ExecuteInEditMode]
 public class TerainGeneratorBehaviour : MonoBehaviour
 {
-    public Vector2 CellSize = new Vector2(10, 10);
     public UI_Vector2i CellInGroupCount = new UI_Vector2i(10, 10);
 
     public bool FlipTriangles = false;
@@ -60,7 +59,16 @@ public class TerainGeneratorBehaviour : MonoBehaviour
 
     private void UpdateCachedServices()
     {
-        if (this.ComputeOnAnotherThread)
+
+        bool computeOnAnotherThread = this.ComputeOnAnotherThread;
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            computeOnAnotherThread = false;
+        }
+#endif
+
+        if (computeOnAnotherThread)
         {
             ObjectUtils.UpdateType<AsyncTerainGenerator<TerainGenerator>,ITerainGenerator>(ref _terainGenerator);
         }

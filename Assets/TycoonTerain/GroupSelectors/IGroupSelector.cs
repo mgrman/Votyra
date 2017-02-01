@@ -2,5 +2,5 @@
 
 public interface IGroupSelector
 {
-    IEnumerable<Vector2i> GetGroupsToUpdate(GroupVisibilityOptions options);
+    IList<Vector2i> GetGroupsToUpdate(GroupVisibilityOptions options);
 }

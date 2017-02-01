@@ -6,17 +6,17 @@ using UnityEngine;
 
 public struct HeightData
 {
-    public readonly float x0y0;
-    public readonly float x0y1;
-    public readonly float x1y0;
-    public readonly float x1y1;
+    public readonly int x0y0;
+    public readonly int x0y1;
+    public readonly int x1y0;
+    public readonly int x1y1;
 
-    public HeightData(HeightData data, Func<float, float> transformation)
+    public HeightData(HeightData data, Func<int, int> transformation)
         : this(transformation(data.x0y0), transformation(data.x0y1), transformation(data.x1y0), transformation(data.x1y1))
     {
     }
 
-    public HeightData(float x0y0, float x0y1, float x1y0, float x1y1)
+    public HeightData(int x0y0, int x0y1, int x1y0, int x1y1)
     {
         this.x0y0 = x0y0;
         this.x0y1 = x0y1;
@@ -24,7 +24,7 @@ public struct HeightData
         this.x1y1 = x1y1;
     }
 
-    public float Max
+    public int Max
     {
         get
         {
@@ -32,7 +32,7 @@ public struct HeightData
         }
     }
 
-    public float Min
+    public int Min
     {
         get
         {
@@ -40,7 +40,7 @@ public struct HeightData
         }
     }
 
-    public float Avg
+    public int Avg
     {
         get
         {
@@ -56,7 +56,17 @@ public struct HeightData
         }
     }
 
-    public HeightData ClipZ(float min, float max)
+    public static HeightData operator +(HeightData a, int b)
+    {
+        return new HeightData(a.x0y0 + b, a.x0y1 + b, a.x1y0 + b, a.x1y1 + b);
+    }
+
+    public static HeightData operator -(HeightData a, int b)
+    {
+        return new HeightData(a.x0y0 - b, a.x0y1 - b, a.x1y0 - b, a.x1y1 - b);
+    }
+
+    public HeightData ClipZ(int min, int max)
     {
         return new HeightData(x0y0.Clip(min, max),
              x0y1.Clip(min, max),
@@ -64,36 +74,21 @@ public struct HeightData
              x1y1.Clip(min, max));
     }
 
-    public static HeightData Constant(float z)
+    public HeightData ClipMinZ(int min)
     {
-        return new HeightData(z,z,z,z);
+        return new HeightData(Math.Max(x0y0, min),
+             Math.Max(x0y1, min),
+             Math.Max(x1y0, min),
+             Math.Max(x1y1, min));
     }
 
-    public HeightData Normalize(float minZ,float maxZ)
+
+    public static HeightData Constant(int z)
     {
-        return new HeightData(x0y0.Normalize(minZ, maxZ),
-             x0y1.Normalize(minZ, maxZ),
-             x1y0.Normalize(minZ, maxZ),
-             x1y1.Normalize(minZ, maxZ));
+        return new HeightData(z, z, z, z);
     }
 
-    public HeightData Round(float multiple)
-    {
-        return new HeightData(x0y0.Round(multiple),
-             x0y1.Round(multiple),
-             x1y0.Round(multiple),
-             x1y1.Round(multiple));
-    }
-
-    public HeightData Denormalize(float minZ, float maxZ)
-    {
-        return new HeightData(this.x0y0.Denormalize(minZ, maxZ),
-            this.x0y1.Denormalize(minZ, maxZ),
-            this.x1y0.Denormalize(minZ, maxZ),
-            this.x1y1.Denormalize(minZ, maxZ));
-    }
-
-    public float DifWith(HeightData that)
+    public int DifWith(HeightData that)
     {
         return Mathf.Abs(this.x0y0 - that.x0y0) +
                Mathf.Abs(this.x0y1 - that.x0y1) +
@@ -101,7 +96,7 @@ public struct HeightData
                Mathf.Abs(this.x1y1 - that.x1y1);
     }
 
-    public static float Dif(HeightData a, HeightData b)
+    public static int Dif(HeightData a, HeightData b)
     {
         return Mathf.Abs(a.x0y0 - b.x0y0) +
                Mathf.Abs(a.x0y1 - b.x0y1) +
@@ -113,7 +108,7 @@ public struct HeightData
     {
         return new Vector3(cell.xMin, cell.yMin, x0y0);
     }
-    public Vector3 x0y0Position(float xMin,float yMin)
+    public Vector3 x0y0Position(int xMin, int yMin)
     {
         return new Vector3(xMin, yMin, x0y0);
     }
@@ -122,7 +117,7 @@ public struct HeightData
     {
         return new Vector3(cell.xMin, cell.yMax, x0y1);
     }
-    public Vector3 x0y1Position(float xMin, float yMax)
+    public Vector3 x0y1Position(int xMin, int yMax)
     {
         return new Vector3(xMin, yMax, x0y1);
     }
@@ -131,7 +126,7 @@ public struct HeightData
     {
         return new Vector3(cell.xMax, cell.yMin, x1y0);
     }
-    public Vector3 x1y0Position(float xMax, float yMin)
+    public Vector3 x1y0Position(int xMax, int yMin)
     {
         return new Vector3(xMax, yMin, x1y0);
     }
@@ -140,9 +135,27 @@ public struct HeightData
     {
         return new Vector3(cell.xMax, cell.yMax, x1y1);
     }
-    public Vector3 x1y1Position(float xMax, float yMax)
+    public Vector3 x1y1Position(int xMax, int yMax)
     {
         return new Vector3(xMax, yMax, x1y1);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is HeightData)
+        {
+            var that = (HeightData)obj;
+            return this.x0y0 == that.x0y0 && this.x0y1 == that.x0y1 && this.x1y0 == that.x1y0 && this.x1y1 == that.x1y1;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public override int GetHashCode()
+    {
+        return this.x0y0 + this.x0y1 * 7 + this.x1y0 * 17 + this.x1y1 * 31;
     }
 
     public override string ToString()
