@@ -8,5 +8,5 @@ using UnityEngine.Profiling;
 
 public interface ITerainGenerator 
 {
-    IEnumerable<ITriangleMesh> Generate(TerainOptions options);
+    IList<ITriangleMesh> Generate(TerainOptions options);
 }

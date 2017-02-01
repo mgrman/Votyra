@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 
 
-public class MeshOptions
+public class MeshOptions : IDisposable
 {
     
     public readonly Material Material;
@@ -36,5 +36,10 @@ public class MeshOptions
         {
             return  this.ParentContainer != null;
         }
+    }
+
+    public void Dispose()
+    {
+
     }
 }

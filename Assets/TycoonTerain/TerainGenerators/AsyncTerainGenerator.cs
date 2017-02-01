@@ -18,7 +18,7 @@ public class AsyncTerainGenerator<T> : ITerainGenerator,IDisposable
 
     private TerainOptions _optionsToCompute = null;
     private bool _lastJobFinished = true;
-    private IEnumerable<ITriangleMesh> _lastComputedTriangleMesh = null;
+    private IList<ITriangleMesh> _lastComputedTriangleMesh = null;
 
     public AsyncTerainGenerator()
     {
@@ -28,9 +28,9 @@ public class AsyncTerainGenerator<T> : ITerainGenerator,IDisposable
         _thread.Start();
     }
 
-    public IEnumerable<ITriangleMesh> Generate(TerainOptions options)
+    public IList<ITriangleMesh> Generate(TerainOptions options)
     {
-        IEnumerable<ITriangleMesh> computedTriangleMesh;
+        IList<ITriangleMesh> computedTriangleMesh;
         lock (_threadAccessLock)
         {
             if (this._lastJobFinished)
@@ -69,7 +69,7 @@ public class AsyncTerainGenerator<T> : ITerainGenerator,IDisposable
                 if (computedTriangleMesh != null)
                 {
                     //TODO zistit efekt ked sa mesh clonuje vs ked nie!
-                    computedTriangleMesh = computedTriangleMesh.Select(o => o.Clone()).ToArray();
+                    //computedTriangleMesh = computedTriangleMesh.Select(o => o.Clone()).ToArray();
                     //computedTriangleMesh = computedTriangleMesh.ToArray();
                 }
 

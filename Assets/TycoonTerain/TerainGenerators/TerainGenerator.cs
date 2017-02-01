@@ -9,22 +9,20 @@ using UnityEngine.Profiling;
 
 public class TerainGenerator : ITerainGenerator
 {
-    private IDictionary<Vector2i, ITriangleMesh> _triangleMeshesCache = new Dictionary<Vector2i, ITriangleMesh>();
-
     private MatrixWithOffset<float> _samplesCache;
     private MatrixWithOffset<HeightData> _resultsCache;
 
     private TerainOptions _old_options;
-    
-    public IEnumerable<ITriangleMesh> Generate(TerainOptions options)
+
+    public IList<ITriangleMesh> Generate(TerainOptions options)
     {
         if (!options.IsValid)
         {
-            yield break;
+            return null;
         }
         if (_old_options != null && !options.IsChanged(_old_options))
         {
-            yield break;
+            return null;
         }
         _old_options = options;
 
@@ -32,24 +30,50 @@ public class TerainGenerator : ITerainGenerator
         int cellInGroupCount_y = options.CellInGroupCount.y;
         float groupSize_x = options.GroupSize.x;
         float groupSize_y = options.GroupSize.y;
+        options.TerainMesher.Initialize(options);
+
+        var meshes = Pool.Meshes2.GetObject(new Pool.MeshKey(options.GroupsToUpdate.Count, options.TerainMesher.TriangleCount));
+
+        int groupIndex = -1;
         foreach (var group in options.GroupsToUpdate)
         {
+            groupIndex++;
+
+            if (Thread.CurrentThread == TerainGeneratorBehaviour.UnityThread)
+            {
+                Profiler.BeginSample("Other");
+            }
             var samples = GetCachedSamples(options);
             var results = GetCachedResults(options);
-            
-            var group_area = new Rect(group.x * groupSize_x, group.y * groupSize_y, groupSize_x, groupSize_y);
 
+            var group_area = new Rect(group.x * groupSize_x, group.y * groupSize_y, groupSize_x, groupSize_y);
+            if (Thread.CurrentThread == TerainGeneratorBehaviour.UnityThread)
+            {
+                Profiler.BeginSample("ImageSampler.Sample()");
+            }
             //take image and sample it
             options.ImageSampler.Sample(samples, options.Image, group_area, options.Time);
 
-            options.TerainMesher.Initialize(options, group);
+            if (Thread.CurrentThread == TerainGeneratorBehaviour.UnityThread)
+            {
+                Profiler.EndSample();
+            }
+            options.TerainMesher.InitializeGroup(group,meshes[groupIndex]);
 
+            if (Thread.CurrentThread == TerainGeneratorBehaviour.UnityThread)
+            {
+                Profiler.EndSample();
+            }
             for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
             {
                 for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
                 {
                     Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
 
+                    if (Thread.CurrentThread == TerainGeneratorBehaviour.UnityThread)
+                    {
+                        Profiler.BeginSample("TerainAlgorithm.Process()");
+                    }
                     //compute cell using alg
                     float x0y0 = samples[cellInGroup_x, cellInGroup_y];
                     float x0y1 = samples[cellInGroup_x, cellInGroup_y + 1];
@@ -59,12 +83,27 @@ public class TerainGenerator : ITerainGenerator
                     data = options.TerainAlgorithm.Process(data);
                     results[cellInGroup_x, cellInGroup_y] = data;
 
+                    if (Thread.CurrentThread == TerainGeneratorBehaviour.UnityThread)
+                    {
+                        Profiler.EndSample();
+                    }
+
+                    if (Thread.CurrentThread == TerainGeneratorBehaviour.UnityThread)
+                    {
+                        Profiler.BeginSample("TerainMesher.AddCell()");
+                    }
                     //process cell to mesh      
-                    options.TerainMesher.AddCell(data, results, cellInGroup);       
+                    options.TerainMesher.AddCell(data, results, cellInGroup);
+
+                    if (Thread.CurrentThread == TerainGeneratorBehaviour.UnityThread)
+                    {
+                        Profiler.EndSample();
+                    }
                 }
             }
-            yield return options.TerainMesher.Result;
         }
+        options.Dispose();
+        return meshes;
     }
 
     private MatrixWithOffset<float> GetCachedSamples(TerainOptions options)

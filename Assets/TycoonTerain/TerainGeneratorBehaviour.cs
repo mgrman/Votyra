@@ -28,8 +28,11 @@ public class TerainGeneratorBehaviour : MonoBehaviour
     private ITerainGenerator _terainGenerator;
     private IMeshUpdater _meshUpdater;
 
+    public static Thread UnityThread { get; private set; }
+
     void Start()
     {
+        UnityThread = Thread.CurrentThread;
         this.gameObject.DestroyAllChildren();
     }
 

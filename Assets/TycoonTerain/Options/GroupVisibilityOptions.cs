@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 
 
-public class GroupVisibilityOptions
+public class GroupVisibilityOptions:IDisposable
 {
     
     public readonly GameObject ParentContainer;
@@ -50,5 +50,10 @@ public class GroupVisibilityOptions
         {
             return  this.ParentContainer != null;
         }
+    }
+
+    public void Dispose()
+    {
+
     }
 }

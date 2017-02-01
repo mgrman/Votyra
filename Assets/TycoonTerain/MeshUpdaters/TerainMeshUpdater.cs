@@ -15,7 +15,7 @@ public class TerainMeshUpdater : IMeshUpdater
     {
     }
 
-    public void UpdateMesh(MeshOptions options, IEnumerable<ITriangleMesh> terainMeshes)
+    public void UpdateMesh(MeshOptions options, IList<ITriangleMesh> terainMeshes)
     {
 #if UNITY_EDITOR
 
@@ -47,6 +47,8 @@ public class TerainMeshUpdater : IMeshUpdater
                 meshIndex++;
             }
 
+            Pool.Meshes2.ReturnObject(terainMeshes,new Pool.MeshKey(terainMeshes.Count,terainMeshes.Count==0?0: terainMeshes[0].TriangleCount));
+
             int terainMeshCount = meshIndex;
             for (int toDeleteIndex= _meshFilters.Count-1; toDeleteIndex >= terainMeshCount; toDeleteIndex++)
             {
@@ -56,6 +58,8 @@ public class TerainMeshUpdater : IMeshUpdater
             
             Profiler.EndSample();
         }
+
+        options.Dispose();
     }
 
     private void CreateMeshObject(MeshOptions options)

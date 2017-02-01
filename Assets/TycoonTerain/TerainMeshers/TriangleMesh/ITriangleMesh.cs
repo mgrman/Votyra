@@ -7,6 +7,7 @@ using UnityEngine;
 
 public interface ITriangleMesh
 {
+    int TriangleCount { get; }
     Bounds MeshBounds { get; }
     IList<Vector3> Vertices { get; }
     IList<Vector3> Normals { get; }

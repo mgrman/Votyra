@@ -6,8 +6,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-
-public class TerainOptions
+public class TerainOptions : IDisposable
 {
     private const int MAX_CELL_COUNT = 60 * 60;
 
@@ -25,9 +24,9 @@ public class TerainOptions
     public readonly bool ComputeAsync;
     public readonly bool FlipTriangles;
 
-    public readonly IList<Vector2i> GroupsToUpdate;
+    public List<Vector2i> GroupsToUpdate;
 
-    public TerainOptions(TerainGeneratorBehaviour terainGenerator,IList<Vector2i> groupsToUpdate)
+    public TerainOptions(TerainGeneratorBehaviour terainGenerator,IEnumerable<Vector2i> groupsToUpdate)
     {
         this.CellSize = terainGenerator.CellSize;
         this.CellInGroupCount = terainGenerator.CellInGroupCount;
@@ -62,7 +61,9 @@ public class TerainOptions
         this.RangeZ = Image.RangeZ;
         this.GroupBounds = new Bounds((GroupSize / 2).ToVector3(RangeZ.Center), GroupSize.ToVector3(RangeZ.Size));
 
-        this.GroupsToUpdate = groupsToUpdate;
+        this.GroupsToUpdate =Pool.Vector2iListPool.GetObject();
+        this.GroupsToUpdate.Clear();
+        this.GroupsToUpdate.AddRange(groupsToUpdate);
     }
 
     public bool IsChanged(TerainOptions old)
@@ -98,5 +99,11 @@ public class TerainOptions
                 && this.ImageSampler != null
                 && this.TerainMesher != null;
         }
+    }
+
+    public void Dispose()
+    {
+        Pool.Vector2iListPool.ReturnObject(GroupsToUpdate);
+        GroupsToUpdate = null;
     }
 }

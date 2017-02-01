@@ -2,7 +2,8 @@
 
 public interface ITerainMesher
 {
-    void Initialize(TerainOptions terainOptions, Vector2i group);
+    void Initialize(TerainOptions terainOptions);
+    void InitializeGroup( Vector2i group, ITriangleMesh mesh);
+    int TriangleCount { get; }
     void AddCell(HeightData heightData, IMatrix<HeightData> data, Vector2i cellInGroup);
-    ITriangleMesh Result { get; }
 }

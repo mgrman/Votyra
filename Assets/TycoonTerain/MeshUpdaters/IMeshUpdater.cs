@@ -3,5 +3,5 @@ using System.Collections.Generic;
 
 public interface IMeshUpdater
 {
-    void UpdateMesh(MeshOptions options, IEnumerable<ITriangleMesh> terainMeshes);
+    void UpdateMesh(MeshOptions options, IList<ITriangleMesh> terainMeshes);
 }

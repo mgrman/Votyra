@@ -11,8 +11,6 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
 {
     private const int CELL_TO_TRIANGLE = 3 * 2;
 
-    private IDictionary<Vector2i, ITriangleMesh> _triangleMeshesCache = new Dictionary<Vector2i, ITriangleMesh>();
-
 
     //public IDictionary<Vector2i, ITriangleMesh> Mesh(TerainOptions terainOptions, MatrixWithOffset<HeightData> data)
     //{
@@ -80,37 +78,27 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
     Vector2 cellSize;
     Vector2 groupSize;
     Vector2 groupPosition;
-    int trianglesInMesh;
+    public int TriangleCount { get; private set; }
     Vector3 bounds_center;
     Vector3 bounds_size;
     int quadIndex;
     bool flipTriangles;
     ITriangleMesh mesh;
 
-    public void Initialize(TerainOptions terainOptions, Vector2i group)
+    public void Initialize(TerainOptions terainOptions)
     {
-        this.group = group;
         this.cellSize = terainOptions.CellSize;
         this.groupSize = terainOptions.GroupSize;
-        this.trianglesInMesh = terainOptions.CellInGroupCount.AreaSum * CELL_TO_TRIANGLE;
+        this.TriangleCount = terainOptions.CellInGroupCount.AreaSum * CELL_TO_TRIANGLE;
         this.bounds_center = terainOptions.GroupBounds.center;
         this.bounds_size = terainOptions.GroupBounds.size;
         this.flipTriangles = terainOptions.FlipTriangles;
-        this.mesh = GetMesh();
-
-        this.groupPosition = groupSize * group;
-        this.quadIndex = 0;
     }
 
-    private ITriangleMesh GetMesh()
+    public void InitializeGroup(Vector2i group, ITriangleMesh mesh)
     {
-        var meshes = _triangleMeshesCache;
-        ITriangleMesh mesh;
-        if (!meshes.TryGetValue(group, out mesh))
-        {
-            mesh = new FixedTriangleMesh(trianglesInMesh);
-            meshes[group] = mesh;
-        }
+        this.group = group;
+        this.mesh = mesh;
         var bounds = new Bounds(new Vector3
          (
              bounds_center.x + group.x * groupSize.x,
@@ -118,9 +106,11 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
              bounds_center.z
          ), bounds_size);
         mesh.Clear(bounds);
-        return mesh;
 
+        this.groupPosition = groupSize * group;
+        this.quadIndex = 0;
     }
+
 
     public void AddCell(HeightData heightData, IMatrix<HeightData> data, Vector2i cellInGroup)
     {
@@ -132,7 +122,7 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
 
             mesh.AddQuad(quadIndex, cell_area, heightData, !heightData.KeepSides != flipTriangles);
             quadIndex++;
-            
+
             var minusXres = data[cellInGroup.x - 1, cellInGroup.y];
             float minusXres_x1y1 = minusXres.x1y1;
             float minusXres_x1y0 = minusXres.x1y0;
@@ -142,7 +132,7 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
                 new Vector3(position.x, position.y + cellSize.y, minusXres_x1y1),
                 new Vector3(position.x, position.y, minusXres_x1y0), false);
             quadIndex++;
-            
+
             var minusYres = data[cellInGroup.x, cellInGroup.y - 1];
             float minusYres_x0y1 = minusYres.x0y1;
             float minusYres_x1y1 = minusYres.x1y1;
@@ -154,7 +144,5 @@ public class TerainMesher : MonoBehaviour, ITerainMesher
             quadIndex++;
         }
     }
-
-    public ITriangleMesh Result { get { return mesh; } }
 
 }
