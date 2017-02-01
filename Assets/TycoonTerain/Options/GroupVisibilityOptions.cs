@@ -20,14 +20,14 @@ public class GroupVisibilityOptions:IDisposable
     public readonly Vector2i CellInGroupCount;
     private readonly IImage2 Image;
 
-    public GroupVisibilityOptions(TerainGeneratorBehaviour terainGenerator)
+    public GroupVisibilityOptions(TerrainGeneratorBehaviour terrainGenerator)
     {
         this.Camera = Camera.main;
         this.CameraTransform = this.Camera.cameraToWorldMatrix;
-        this.ParentContainer = terainGenerator.gameObject;
-        this.Image = terainGenerator.Image as IImage2;
+        this.ParentContainer = terrainGenerator.gameObject;
+        this.Image = terrainGenerator.Image as IImage2;
         this.RangeZ = Image.RangeZ;
-        this.CellInGroupCount = terainGenerator.CellInGroupCount;
+        this.CellInGroupCount = terrainGenerator.CellInGroupCount;
 
         this.GroupBounds = new Bounds(new Vector3(CellInGroupCount.x / 2.0f, CellInGroupCount.y / 2.0f, RangeZ.Center), new Vector3(CellInGroupCount.x, CellInGroupCount.y, RangeZ.Size));
     }

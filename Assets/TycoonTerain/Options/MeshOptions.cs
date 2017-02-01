@@ -14,13 +14,13 @@ public class MeshOptions : IDisposable
     public readonly GameObject ParentContainer;
     public readonly bool DrawBounds;
     
-    public MeshOptions(TerainGeneratorBehaviour terainGenerator)
+    public MeshOptions(TerrainGeneratorBehaviour terrainGenerator)
     {
         
-        this.Material = terainGenerator.Material;
+        this.Material = terrainGenerator.Material;
 
-        this.ParentContainer = terainGenerator.gameObject;
-        this.DrawBounds = terainGenerator.DrawBounds;
+        this.ParentContainer = terrainGenerator.gameObject;
+        this.DrawBounds = terrainGenerator.DrawBounds;
     }
     
     public bool IsChanged(MeshOptions old)
