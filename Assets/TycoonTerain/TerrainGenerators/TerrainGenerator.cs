@@ -10,7 +10,7 @@ using UnityEngine.Profiling;
 public class TerrainGenerator : ITerrainGenerator
 {
     private MatrixWithOffset<int> _samplesCache;
-    private MatrixWithOffset<HeightData> _resultsCache;
+    private MatrixWithOffset<ResultHeightData> _resultsCache;
 
     private TerrainOptions _old_options;
 
@@ -25,19 +25,28 @@ public class TerrainGenerator : ITerrainGenerator
             return null;
         }
         _old_options = options;
+        bool isUnityThread = Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread;
 
+        if (isUnityThread)
+        {
+            Profiler.BeginSample("init");
+        }
         int cellInGroupCount_x = options.CellInGroupCount.x;
         int cellInGroupCount_y = options.CellInGroupCount.y;
         options.TerrainMesher.Initialize(options);
 
         var meshes = Pool.Meshes2.GetObject(new Pool.MeshKey(options.GroupsToUpdate.Count, options.TerrainMesher.TriangleCount));
 
+        if (isUnityThread)
+        {
+            Profiler.EndSample();
+        }
         int groupIndex = -1;
         foreach (var group in options.GroupsToUpdate)
         {
             groupIndex++;
 
-            if (Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread)
+            if (isUnityThread)
             {
                 Profiler.BeginSample("Other");
             }
@@ -45,21 +54,21 @@ public class TerrainGenerator : ITerrainGenerator
             var results = GetCachedResults(options);
 
             var group_area = new Rect(group.x * cellInGroupCount_x, group.y * cellInGroupCount_y, cellInGroupCount_x, cellInGroupCount_y);
-            if (Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread)
+            if (isUnityThread)
             {
                 Profiler.BeginSample("ImageSampler.Sample()");
             }
             //take image and sample it
             options.ImageSampler.Sample(samples, options.Image, group_area, options.Time);
 
-            if (Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread)
+            if (isUnityThread)
             {
                 Profiler.EndSample();
             }
             var mesh = meshes[groupIndex];
-            options.TerrainMesher.InitializeGroup(group,mesh);
+            options.TerrainMesher.InitializeGroup(group,mesh, results);
 
-            if (Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread)
+            if (isUnityThread)
             {
                 Profiler.EndSample();
             }
@@ -69,7 +78,7 @@ public class TerrainGenerator : ITerrainGenerator
                 {
                     Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
 
-                    if (Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread)
+                    if (isUnityThread)
                     {
                         Profiler.BeginSample("TerrainAlgorithm.Process()");
                     }
@@ -78,23 +87,21 @@ public class TerrainGenerator : ITerrainGenerator
                     int x0y1 = samples[cellInGroup_x, cellInGroup_y + 1];
                     int x1y0 = samples[cellInGroup_x + 1, cellInGroup_y];
                     int x1y1 = samples[cellInGroup_x + 1, cellInGroup_y + 1];
-                    HeightData data = new HeightData(x0y0, x0y1, x1y0, x1y1);
-                    data = options.TerrainAlgorithm.Process(data);
+                    ResultHeightData data = options.TerrainAlgorithm.Process(new HeightData(x0y0, x0y1, x1y0, x1y1));
                     results[cellInGroup_x, cellInGroup_y] = data;
-                    if (Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread)
+                    if (isUnityThread)
                     {
                         Profiler.EndSample();
                     }
-
-
-                    if (Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread)
+                    
+                    if (isUnityThread)
                     {
                         Profiler.BeginSample("TerrainMesher.AddCell()");
                     }
                     //process cell to mesh      
-                    options.TerrainMesher.AddCell(data, results, cellInGroup);
+                    options.TerrainMesher.AddCell(cellInGroup);
 
-                    if (Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread)
+                    if (isUnityThread)
                     {
                         Profiler.EndSample();
                     }
@@ -124,18 +131,18 @@ public class TerrainGenerator : ITerrainGenerator
         return samples;
     }
 
-    private MatrixWithOffset<HeightData> GetCachedResults(TerrainOptions options)
+    private MatrixWithOffset<ResultHeightData> GetCachedResults(TerrainOptions options)
     {
         var cellCount = options.CellInGroupCount;
 
-        MatrixWithOffset<HeightData> results;
+        MatrixWithOffset<ResultHeightData> results;
         if (_resultsCache != null && _resultsCache.IsSameSize(cellCount, Vector2i.One))
         {
             results = _resultsCache;
         }
         else
         {
-            results = new MatrixWithOffset<HeightData>(cellCount, Vector2i.One);
+            results = new MatrixWithOffset<ResultHeightData>(cellCount, Vector2i.One);
             _resultsCache = results;
             //Debug.Log("Creating new HeightData[,]");
         }

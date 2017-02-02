@@ -8,5 +8,5 @@ public interface ITerrainAlgorithm
 {
     bool RequiresWalls { get; }
 
-    HeightData Process(HeightData sampleData);
+    ResultHeightData Process(HeightData sampleData);
 }

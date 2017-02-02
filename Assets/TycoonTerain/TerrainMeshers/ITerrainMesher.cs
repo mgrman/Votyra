@@ -3,7 +3,7 @@
 public interface ITerrainMesher
 {
     void Initialize(TerrainOptions terrainOptions);
-    void InitializeGroup( Vector2i group, ITriangleMesh mesh);
+    void InitializeGroup( Vector2i group, ITriangleMesh mesh, IMatrix<ResultHeightData> data);
     int TriangleCount { get; }
-    void AddCell(HeightData heightData, IMatrix<HeightData> data, Vector2i cellInGroup);
+    void AddCell(Vector2i cellInGroup);
 }
