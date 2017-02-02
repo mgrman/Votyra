@@ -50,7 +50,7 @@ public class TerrainGeneratorBehaviour : MonoBehaviour
         TerrainOptions terrainOptions = new TerrainOptions(this, groupsToUpdate);
         var results=_terrainGenerator.Generate(terrainOptions);
         Profiler.EndSample();
-
+        
         Profiler.BeginSample("Applying mesh");
         MeshOptions meshOptions = new MeshOptions(this);
         _meshUpdater.UpdateMesh(meshOptions, results);

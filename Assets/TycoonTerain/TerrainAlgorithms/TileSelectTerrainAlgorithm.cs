@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -12,23 +13,14 @@ public class TileSelectTerrainAlgorithm : MonoBehaviour, ITerrainAlgorithm
     public HeightData Process(HeightData sampleData)
     {
         int height = sampleData.Max - 1;
-
-        HeightData normalizedHeightData = (sampleData- height).ClipMinZ(-1);
         
-        HeightData choosenTemplateTile = TileMap[normalizedHeightData];
-        //    default(HeightData);
-        //float choosenTemplateTileDiff = float.MaxValue;
-        //for (int it = 0; it < PossibleTiles.Length; it++)
-        //{
-        //    HeightData tile = PossibleTiles[it];
-        //    var value = HeightData.Dif(tile, normalizedHeightData);
-        //    if (value < choosenTemplateTileDiff)
-        //    {
-        //        choosenTemplateTile = tile;
-        //        choosenTemplateTileDiff = value;
-        //    }
-        //}
-
+        HeightData normalizedHeightData = new HeightData(Math.Max(sampleData.x0y0 - height, -1),
+            Math.Max(sampleData.x0y1 - height, -1),
+            Math.Max(sampleData.x1y0 - height, -1),
+            Math.Max(sampleData.x1y1 - height, -1));
+        
+        HeightData choosenTemplateTile = TileMap[normalizedHeightData]; 
+      
         var resultingHeightData = choosenTemplateTile+ height;
 
         return resultingHeightData;

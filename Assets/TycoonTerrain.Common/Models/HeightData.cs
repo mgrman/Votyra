@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public struct HeightData
+public struct HeightData:IEquatable<HeightData>
 {
     public readonly int x0y0;
     public readonly int x0y1;
@@ -145,7 +145,7 @@ public struct HeightData
         if (obj is HeightData)
         {
             var that = (HeightData)obj;
-            return this.x0y0 == that.x0y0 && this.x0y1 == that.x0y1 && this.x1y0 == that.x1y0 && this.x1y1 == that.x1y1;
+            return this.Equals(that);
         }
         else
         {
@@ -161,5 +161,20 @@ public struct HeightData
     public override string ToString()
     {
         return string.Format("x0y0:{0} , x0y1:{1} , x1y0:{2} , x1y1:{3}", x0y0, x0y1, x1y0, x1y1);
+    }
+
+    public bool Equals(HeightData that)
+    {
+        return this == that;
+    }
+
+    public static bool operator ==(HeightData a,HeightData b)
+    {
+        return a.x0y0 == b.x0y0 && a.x0y1 == b.x0y1 && a.x1y0 == b.x1y0 && a.x1y1 == b.x1y1;
+    }
+
+    public static bool operator !=(HeightData a, HeightData b)
+    {
+        return a.x0y0 != b.x0y0 && a.x0y1 != b.x0y1 && a.x1y0 != b.x1y0 && a.x1y1 != b.x1y1;
     }
 }

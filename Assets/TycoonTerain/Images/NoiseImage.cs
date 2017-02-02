@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 
 class NoiseImage : MonoBehaviour, IImage2
@@ -64,7 +65,7 @@ class NoiseImage : MonoBehaviour, IImage2
         float offsetTime;
         offsetTime = timeRounding > 0 ? (time * timeScale).Round(timeRounding) : time * timeScale;
 #if UNITY_EDITOR
-        if (!Application.isPlaying)
+        if (Thread.CurrentThread==TerrainGeneratorBehaviour.UnityThread && !Application.isPlaying)
         {
             offsetTime = 0;
         }

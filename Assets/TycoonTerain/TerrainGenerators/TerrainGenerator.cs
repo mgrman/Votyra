@@ -81,11 +81,11 @@ public class TerrainGenerator : ITerrainGenerator
                     HeightData data = new HeightData(x0y0, x0y1, x1y0, x1y1);
                     data = options.TerrainAlgorithm.Process(data);
                     results[cellInGroup_x, cellInGroup_y] = data;
-
                     if (Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread)
                     {
                         Profiler.EndSample();
                     }
+
 
                     if (Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread)
                     {

@@ -20,7 +20,7 @@ public class GroupsByCameraVisibilitySelector : IGroupSelector
         {
             return null;
         }
-        if(_oldOptions!=null && !options.IsChanged(_oldOptions))
+        if (_oldOptions != null && !options.IsChanged(_oldOptions))
         {
             return _cachedGroups;
         }
@@ -40,13 +40,13 @@ public class GroupsByCameraVisibilitySelector : IGroupSelector
         for (int i = 0; i < 4; i++)
         {
             var vector = options.ParentContainer.transform.InverseTransformVector(camera.transform.TransformVector(frustumCorners[i]));
-            
+
             localCameraBounds.Encapsulate(cameraPositionLocal + vector);
         }
 
         var bounds_center = options.GroupBounds.center;
         var bounds_size = options.GroupBounds.size;
-        
+
 
         int min_group_x = Mathf.FloorToInt(localCameraBounds.min.x);
         int min_group_y = Mathf.FloorToInt(localCameraBounds.min.y);
@@ -56,6 +56,7 @@ public class GroupsByCameraVisibilitySelector : IGroupSelector
         var cellInGroupCount_y = options.CellInGroupCount.y;
 
         IList<Vector2i> groups = Pool.Vector2iListPool.GetObject();
+        groups.Clear();
         _cachedGroups.Clear();
         for (int group_x = min_group_x; group_x <= max_group_x; group_x++)
         {
@@ -63,8 +64,8 @@ public class GroupsByCameraVisibilitySelector : IGroupSelector
             {
                 var groupBounds = new Bounds(new Vector3
                     (
-                        bounds_center.x + group_x* cellInGroupCount_x,
-                        bounds_center.y + group_y* cellInGroupCount_y,
+                        bounds_center.x + group_x * cellInGroupCount_x,
+                        bounds_center.y + group_y * cellInGroupCount_y,
                         bounds_center.z
                     ), bounds_size);
 
