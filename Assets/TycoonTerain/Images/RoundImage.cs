@@ -6,26 +6,27 @@ using UnityEngine;
 
 class RoundImage : IImage2i
 {
-    private readonly IImage2 _image;
+    public readonly IImage2 Image;
 
     public RoundImage(IImage2 image)
     {
-        _image = image;
+        Image = image;
     }
-
+    
+    
     public bool IsAnimated
     {
         get
         {
-            return _image.IsAnimated;
+            return (Image).IsAnimated;
         }
     }
 
-    public Range2i RangeZ { get { return new Range2i(_image.RangeZ); } }
+    public Range2i RangeZ { get { return new Range2i((Image).RangeZ); } }
 
-    public int Sample(Vector2 point, float time)
+    public int Sample(Vector2i point, float time)
     {
-        return Mathf.FloorToInt(_image.Sample(point, time));
+        return Mathf.FloorToInt((Image).Sample(point.ToVector2(), time));
     }
 }
 

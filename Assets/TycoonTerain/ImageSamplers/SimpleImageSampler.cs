@@ -6,24 +6,16 @@ using UnityEngine;
 
 public class SimpleImageSampler : MonoBehaviour,IImageSampler
 {
-   public void Sample(MatrixWithOffset<int> result,IImage2i image,Rect bounds,float time)
+    public HeightData Sample(IImage2i image, Vector2i offset, float time)
     {
-        Vector2i pointCount = result.size;
+        offset = offset + offset;
 
-        Vector2 step = bounds.size.DivideBy(pointCount-1);
+        int x0y0 = image.Sample(offset, time);
+        int x0y1 = image.Sample(new Vector2i(offset.x, offset.y + 2), time);
+        int x1y0 = image.Sample(new Vector2i(offset.x + 2, offset.y), time);
+        int x1y1 = image.Sample(new Vector2i(offset.x + 2, offset.y + 2), time);
 
-        for (int ix = -result.offset.x; ix < pointCount.x; ix++)
-        {
-            float x = bounds.xMin + ix * step.x;
-            for (int iy = -result.offset.y; iy < pointCount.y; iy++)
-            {
-                float y = bounds.yMin + iy * step.y;
-                Vector2 pos = new Vector2(x, y);
-
-                result[ix, iy] = image.Sample(pos,time);
-            }
-        }
-        
+        return new HeightData(x0y0, x0y1, x1y0, x1y1);
     }
 }
 

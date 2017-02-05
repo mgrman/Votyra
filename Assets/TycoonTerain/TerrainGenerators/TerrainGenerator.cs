@@ -9,7 +9,6 @@ using UnityEngine.Profiling;
 
 public class TerrainGenerator : ITerrainGenerator
 {
-    private MatrixWithOffset<int> _samplesCache;
     private MatrixWithOffset<ResultHeightData> _resultsCache;
 
     private TerrainOptions _old_options;
@@ -24,7 +23,11 @@ public class TerrainGenerator : ITerrainGenerator
         {
             return null;
         }
-        _old_options = options;
+        if (_old_options != null)
+        {
+            _old_options.Dispose();
+        }
+        _old_options = options.Clone();
         bool isUnityThread = Thread.CurrentThread == TerrainGeneratorBehaviour.UnityThread;
 
         if (isUnityThread)
@@ -50,16 +53,15 @@ public class TerrainGenerator : ITerrainGenerator
             {
                 Profiler.BeginSample("Other");
             }
-            var samples = GetCachedSamples(options);
             var results = GetCachedResults(options);
 
-            var group_area = new Rect(group.x * cellInGroupCount_x, group.y * cellInGroupCount_y, cellInGroupCount_x, cellInGroupCount_y);
+            Vector2i firstCell = options.CellInGroupCount * group;
+            
             if (isUnityThread)
             {
                 Profiler.BeginSample("ImageSampler.Sample()");
             }
             //take image and sample it
-            options.ImageSampler.Sample(samples, options.Image, group_area, options.Time);
 
             if (isUnityThread)
             {
@@ -77,18 +79,16 @@ public class TerrainGenerator : ITerrainGenerator
                 for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
                 {
                     Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
+                    Vector2i cell = cellInGroup + firstCell;
 
                     if (isUnityThread)
                     {
                         Profiler.BeginSample("TerrainAlgorithm.Process()");
                     }
                     //compute cell using alg
-                    int x0y0 = samples[cellInGroup_x, cellInGroup_y];
-                    int x0y1 = samples[cellInGroup_x, cellInGroup_y + 1];
-                    int x1y0 = samples[cellInGroup_x + 1, cellInGroup_y];
-                    int x1y1 = samples[cellInGroup_x + 1, cellInGroup_y + 1];
-                    ResultHeightData data = options.TerrainAlgorithm.Process(new HeightData(x0y0, x0y1, x1y0, x1y1));
-                    results[cellInGroup_x, cellInGroup_y] = data;
+                    HeightData inputData = options.ImageSampler.Sample(options.Image, cell, options.Time);
+                    ResultHeightData outputData = options.TerrainAlgorithm.Process(inputData);
+                    results[cellInGroup_x, cellInGroup_y] = outputData;
                     if (isUnityThread)
                     {
                         Profiler.EndSample();
@@ -111,24 +111,6 @@ public class TerrainGenerator : ITerrainGenerator
         }
         options.Dispose();
         return meshes;
-    }
-
-    private MatrixWithOffset<int> GetCachedSamples(TerrainOptions options)
-    {
-        var pointCount = options.CellInGroupCount + 1;
-
-        MatrixWithOffset<int> samples;
-        if (_samplesCache != null && _samplesCache.IsSameSize(pointCount, Vector2i.One))
-        {
-            samples = _samplesCache;
-        }
-        else
-        {
-            samples = new MatrixWithOffset<int>(pointCount, Vector2i.One);
-            _samplesCache = samples;
-            //Debug.Log("Creating new Samples[,]");
-        }
-        return samples;
     }
 
     private MatrixWithOffset<ResultHeightData> GetCachedResults(TerrainOptions options)

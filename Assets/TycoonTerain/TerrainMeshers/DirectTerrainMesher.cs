@@ -14,9 +14,7 @@ public class DirectTerrainMesher : TerrainMesher
         if (cellInGroup.x >= 0 && cellInGroup.y >= 0)
         {
             Vector2i position = groupPosition + cellInGroup;
-
-            Rect cell_area = new Rect(position.x, position.y, 1, 1);
-
+            
             ResultHeightData heightData = results[cellInGroup];
 
             ResultHeightData minusXres = results[cellInGroup.x - 1, cellInGroup.y];

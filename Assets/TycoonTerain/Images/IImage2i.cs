@@ -10,5 +10,5 @@ public interface IImage2i
 
     Range2i RangeZ { get; }
 
-    int Sample(Vector2 point, float time);
+    int Sample(Vector2i point, float time);
 }

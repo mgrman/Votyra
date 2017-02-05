@@ -78,6 +78,11 @@ public struct Vector2i : IEquatable<Vector2i>
         return new Vector2i(a.x.DivideUp(b), a.y.DivideUp(b));
     }
 
+    public Vector2 ToVector2()
+    {
+        return new Vector2(x, y);
+    }
+
     public static bool operator ==(Vector2i a, Vector2i b)
     {
         return a.x == b.x && a.y == b.y;

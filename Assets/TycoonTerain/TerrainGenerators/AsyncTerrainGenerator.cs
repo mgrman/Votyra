@@ -20,6 +20,8 @@ public class AsyncTerrainGenerator<T> : ITerrainGenerator,IDisposable
     private bool _lastJobFinished = true;
     private IList<ITriangleMesh> _lastComputedTriangleMesh = null;
 
+    private TerrainOptions _old_options;
+
     public AsyncTerrainGenerator()
     {
         _terrainGenerator = new T();
@@ -30,24 +32,55 @@ public class AsyncTerrainGenerator<T> : ITerrainGenerator,IDisposable
 
     public IList<ITriangleMesh> Generate(TerrainOptions options)
     {
-        IList<ITriangleMesh> computedTriangleMesh;
-        lock (_threadAccessLock)
+        if (!options.IsValid)
         {
-            if (this._lastJobFinished)
+            return null;
+        }
+        else if (_old_options != null && !options.IsChanged(_old_options))
+        {
+            IList<ITriangleMesh> computedTriangleMesh;
+            lock (_threadAccessLock)
             {
-                computedTriangleMesh = this._lastComputedTriangleMesh;
-                this._lastComputedTriangleMesh = null;
-                this._lastJobFinished = false;
+                if (this._lastJobFinished)
+                {
+                    computedTriangleMesh = this._lastComputedTriangleMesh;
+                    this._lastComputedTriangleMesh = null;
+                    this._lastJobFinished = false;
+                }
+                else
+                {
+                    computedTriangleMesh = null;
+                }
+            }
+            return computedTriangleMesh;
+        }
+        else
+        {
+            if (_old_options != null)
+            {
+                _old_options.Dispose();
+            }
+            _old_options = options.Clone();
 
-                this._optionsToCompute = options;
-            }
-            else
+            IList<ITriangleMesh> computedTriangleMesh;
+            lock (_threadAccessLock)
             {
-                computedTriangleMesh = null;
+                if (this._lastJobFinished)
+                {
+                    computedTriangleMesh = this._lastComputedTriangleMesh;
+                    this._lastComputedTriangleMesh = null;
+                    this._lastJobFinished = false;
+
+                    this._optionsToCompute = options;
+                }
+                else
+                {
+                    computedTriangleMesh = null;
+                }
             }
+            return computedTriangleMesh;
         }
 
-        return computedTriangleMesh;
     }
 
     private void Compute()

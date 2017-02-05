@@ -7,6 +7,10 @@ using UnityEngine;
 
 public static class ArrayUtils
 {
+    public static Vector2i GetCount<T>(this T[,] data)
+    {
+        return new Vector2i(data.GetCountX(), data.GetCountY());
+    }
     public static int GetCountX<T>(this T[,] data)
     {
         return data.GetUpperBound(0)+1;

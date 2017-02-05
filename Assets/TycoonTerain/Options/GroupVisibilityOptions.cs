@@ -7,25 +7,34 @@ using UnityEngine;
 using UnityEngine.Profiling;
 
 
-public class GroupVisibilityOptions:IDisposable
+public class GroupVisibilityOptions : IDisposable
 {
-    
+
     public readonly GameObject ParentContainer;
     public readonly Camera Camera;
     public readonly Matrix4x4 CameraTransform;
     public readonly Bounds GroupBounds;
-    public readonly Range2 RangeZ;
+    public readonly Range2i RangeZ;
 
 
     public readonly Vector2i CellInGroupCount;
-    private readonly IImage2 Image;
+    private readonly IImage2i Image;
+
+
 
     public GroupVisibilityOptions(TerrainGeneratorBehaviour terrainGenerator)
     {
         this.Camera = Camera.main;
         this.CameraTransform = this.Camera.cameraToWorldMatrix;
         this.ParentContainer = terrainGenerator.gameObject;
-        this.Image = terrainGenerator.Image as IImage2;
+        if (terrainGenerator.Image is IImage2i)
+        {
+            this.Image = terrainGenerator.Image as IImage2i;
+        }
+        else if (terrainGenerator.Image is IImage2)
+        {
+            this.Image = new RoundImage(terrainGenerator.Image as IImage2);
+        }
         this.RangeZ = Image.RangeZ;
         this.CellInGroupCount = terrainGenerator.CellInGroupCount;
 
@@ -38,17 +47,17 @@ public class GroupVisibilityOptions:IDisposable
         //not complete check!
         return old == null ||
             this.ParentContainer != old.ParentContainer ||
-            this.RangeZ!=old.RangeZ ||
+            this.RangeZ != old.RangeZ ||
             this.Camera != old.Camera ||
             this.CameraTransform != old.CameraTransform;
 
     }
-    
+
     public bool IsValid
     {
         get
         {
-            return  this.ParentContainer != null;
+            return this.ParentContainer != null;
         }
     }
 

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-public interface IImageSampler 
-{  
-    void Sample(MatrixWithOffset<int> result, IImage2i image, Rect bounds,float time);
+public interface IImageSampler
+{
+    HeightData Sample(IImage2i image, Vector2i offset, float time);
 }
 
