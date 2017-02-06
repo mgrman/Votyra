@@ -66,15 +66,14 @@ public class TerrainOptions : IDisposable
         this.TerrainAlgorithm = template.TerrainAlgorithm;
         this.TerrainMesher = template.TerrainMesher;
         this.Time = template.Time;
-
-
-
+        
         this.RangeZ = template.RangeZ;
         this.GroupBounds = template.GroupBounds;
 
         if (template.GroupsToUpdate != null)
         {
             this.GroupsToUpdate = Pool.Vector2iListPool.GetObject();
+            this.GroupsToUpdate.Clear();
 
             foreach (var group in template.GroupsToUpdate)
             {

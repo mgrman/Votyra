@@ -50,7 +50,7 @@ public class TerrainMeshUpdater : IMeshUpdater
             Pool.Meshes2.ReturnObject(terrainMeshes,new Pool.MeshKey(terrainMeshes.Count,terrainMeshes.Count==0?0: terrainMeshes[0].TriangleCount));
 
             int terrainMeshCount = meshIndex;
-            for (int toDeleteIndex= _meshFilters.Count-1; toDeleteIndex >= terrainMeshCount; toDeleteIndex++)
+            for (int toDeleteIndex= _meshFilters.Count-1; toDeleteIndex >= terrainMeshCount; toDeleteIndex--)
             {
                 _meshFilters[toDeleteIndex].gameObject.Destroy();
                 _meshFilters.RemoveAt(toDeleteIndex);

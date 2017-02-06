@@ -22,7 +22,13 @@ public class GroupsByCameraVisibilitySelector : IGroupSelector
         }
         if (_oldOptions != null && !options.IsChanged(_oldOptions))
         {
-            return _cachedGroups;
+            var cachedGroupsClone = Pool.Vector2iListPool.GetObject();
+            cachedGroupsClone.Clear();
+            foreach (var group in _cachedGroups)
+            {
+                cachedGroupsClone.Add(group);
+            }
+            return cachedGroupsClone;
         }
         _oldOptions = options;
 
