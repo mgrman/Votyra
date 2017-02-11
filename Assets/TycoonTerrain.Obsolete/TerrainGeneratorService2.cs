@@ -7,7 +7,7 @@
 //using UnityEngine;
 //using UnityEngine.Profiling;
 
-//public class TerainGeneratorService2 : ITerainGeneratorService
+//public class TerrainGeneratorService2 : ITerainGeneratorService
 //{
 //    private const int MAX_CELL_COUNT = 60;
 //    private const int CELL_TO_TRIANGLE = 3 * 2;
@@ -23,7 +23,7 @@
 
 //    private TerainGeneratorOptions _old_options;
 
-//    public TerainGeneratorService2()
+//    public TerrainGeneratorService2()
 //    {
 //    }
 
