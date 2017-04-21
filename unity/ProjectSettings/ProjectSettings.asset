@@ -507,10 +507,13 @@ PlayerSettings:
     20: MOBILE_INPUT
     22: MOBILE_INPUT
   platformArchitecture: {}
-  scriptingBackend: {}
+  scriptingBackend:
+    Android: 1
+    Metro: 2
   incrementalIl2cppBuild: {}
   additionalIl2CppArgs: 
-  apiCompatibilityLevelPerPlatform: {}
+  apiCompatibilityLevelPerPlatform:
+    Metro: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: TycoonTerain
