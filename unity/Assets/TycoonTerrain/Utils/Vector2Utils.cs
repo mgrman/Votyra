@@ -8,7 +8,7 @@ namespace TycoonTerrain.Common.Utils
     {
         public static Vector2 ToVector2(this Vector2i vec)
         {
-            return new Vector2(vec.x,vec.y);
+            return new Vector2(vec.x, vec.y);
         }
 
         public static Vector2i ToVector2i(this Vector2 vec)

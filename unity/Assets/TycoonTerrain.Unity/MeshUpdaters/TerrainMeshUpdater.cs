@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using TycoonTerrain.Common.Profiling;
 using TycoonTerrain.Pooling;
 using TycoonTerrain.Unity.Utils;
@@ -19,11 +18,11 @@ namespace TycoonTerrain.Unity.MeshUpdaters
         {
 #if UNITY_EDITOR
 
-        if (!Application.isPlaying)
-        {
-            _meshFilters.Clear();
-            options.ParentContainer.DestroyAllChildren();
-        }
+            if (!Application.isPlaying)
+            {
+                _meshFilters.Clear();
+                options.ParentContainer.DestroyAllChildren();
+            }
 #endif
             if (options.ParentContainer.transform.childCount != _meshFilters.Count)
             {
@@ -76,14 +75,14 @@ namespace TycoonTerrain.Unity.MeshUpdaters
             if (mesh.vertexCount != triangleMesh.PointCount)
             {
                 mesh.Clear();
-                mesh.vertices = triangleMesh.Vertices ;
+                mesh.vertices = triangleMesh.Vertices;
                 //mesh.normals = this._normals;
                 mesh.uv = triangleMesh.UV;
                 mesh.triangles = triangleMesh.Indices;
             }
             else
             {
-                mesh.vertices = triangleMesh.Vertices ;
+                mesh.vertices = triangleMesh.Vertices;
                 //mesh.normals = this._normals;
                 mesh.uv = triangleMesh.UV;
             }
@@ -122,6 +121,7 @@ namespace TycoonTerrain.Unity.MeshUpdaters
         {
             string name = string.Format("group_{0}", _meshFilters.Count);
             var tile = new GameObject(name);
+            tile.hideFlags = HideFlags.DontSave;
             tile.transform.SetParent(options.ParentContainer.transform, false);
             var meshFilter = tile.GetComponent<MeshFilter>();
             if (meshFilter == null)

@@ -1,5 +1,4 @@
-﻿using TycoonTerrain.Common.Models;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TycoonTerrain.Common.Utils
 {

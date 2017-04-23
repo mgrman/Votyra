@@ -12,7 +12,7 @@ namespace TycoonTerrain.Unity.Utils
         public static void DestroyAllChildren(this Transform transform)
         {
             int childCount = transform.childCount;
-            for (int i = childCount-1; i >= 0; i--)
+            for (int i = childCount - 1; i >= 0; i--)
             {
                 var child = transform.GetChild(i);
                 child.gameObject.Destroy();
@@ -22,7 +22,6 @@ namespace TycoonTerrain.Unity.Utils
         public static void Destroy(this GameObject gameObject)
         {
             GameObject.DestroyImmediate(gameObject);
-
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using TycoonTerrain.Common.Models;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TycoonTerrain.TerrainMeshers.TriangleMesh
 {

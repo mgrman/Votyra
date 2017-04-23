@@ -88,13 +88,13 @@ namespace TycoonTerrain.TerrainGenerators
             options.Dispose();
             return meshes;
         }
-        
+
         private MatrixWithOffset<ResultHeightData> GetCachedResults(TerrainOptions options)
         {
             var cellCount = options.CellInGroupCount;
 
             MatrixWithOffset<ResultHeightData> results;
-            if (_resultsCache!=null && _resultsCache.IsSameSize(cellCount, Vector2i.One))
+            if (_resultsCache != null && _resultsCache.IsSameSize(cellCount, Vector2i.One))
             {
                 results = _resultsCache;
             }

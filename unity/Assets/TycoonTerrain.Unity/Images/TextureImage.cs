@@ -1,5 +1,4 @@
 ﻿using TycoonTerrain.Common.Models;
-using TycoonTerrain.Common.Utils;
 using UnityEngine;
 
 namespace TycoonTerrain.Images
@@ -8,13 +7,13 @@ namespace TycoonTerrain.Images
     {
         public Texture2D Texture { get; private set; }
         public Range2i RangeZ { get; private set; }
-                
+
         public TextureImage(Range2i rangeZ, Texture2D texture)
         {
             RangeZ = rangeZ;
             Texture = texture;
         }
-        
+
         public bool IsAnimated
         {
             get

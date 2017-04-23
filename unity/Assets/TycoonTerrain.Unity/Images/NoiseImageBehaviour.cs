@@ -1,6 +1,5 @@
 ﻿using TycoonTerrain.Images;
 using UnityEngine;
-using TycoonTerrain.Unity.Utils;
 
 namespace TycoonTerrain.Unity.Images
 {
@@ -17,12 +16,13 @@ namespace TycoonTerrain.Unity.Images
         public float timeScale = 1;
 
         private IImage2i _image = null;
+
         public IImage2i Image
         {
             get
             {
                 //if (_image == null)
-                    SetImage();
+                SetImage();
                 return _image;
             }
         }
@@ -65,7 +65,7 @@ namespace TycoonTerrain.Unity.Images
 
         private void SetImage()
         {
-            _image = new RoundImage(new TycoonTerrain.Images.NoiseImage(offset,scale, timeRounding, timeScale));
+            _image = new RoundImage(new TycoonTerrain.Images.NoiseImage(offset, scale, timeRounding, timeScale));
         }
     }
 }

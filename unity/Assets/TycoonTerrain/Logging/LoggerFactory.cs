@@ -4,7 +4,7 @@ namespace TycoonTerrain.Common.Logging
 {
     public static class LoggerFactory
     {
-        public static Func<string, ILogger> Factory {  get; set; }
+        public static Func<string, ILogger> Factory { get; set; }
 
         public static ILogger Create<T>()
         {

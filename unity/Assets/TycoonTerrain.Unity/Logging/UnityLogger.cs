@@ -1,10 +1,9 @@
 ﻿using System;
-using TycoonTerrain.Common.Logging;
 using UnityEngine;
 
 namespace TycoonTerrain.Unity.Logging
 {
-    public class UnityLogger: Common.Logging.ILogger
+    public class UnityLogger : Common.Logging.ILogger
     {
         public string Name { get; private set; }
 
@@ -13,9 +12,9 @@ namespace TycoonTerrain.Unity.Logging
             Name = name;
         }
 
-       public void LogMessage(object message)
+        public void LogMessage(object message)
         {
-            Debug.LogFormat("{0} : {1}",Name,message);
+            Debug.LogFormat("{0} : {1}", Name, message);
         }
 
         public void LogError(object message)

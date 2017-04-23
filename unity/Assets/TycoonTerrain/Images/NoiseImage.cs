@@ -11,8 +11,8 @@ namespace TycoonTerrain.Images
 
         public float TimeRounding { get; private set; }
         public float TimeScale { get; private set; }
-        
-        public NoiseImage(Vector3 offset,Vector3 scale, float timeRounding, float timeScale)
+
+        public NoiseImage(Vector3 offset, Vector3 scale, float timeRounding, float timeScale)
         {
             Offset = offset;
             Scale = scale;
@@ -42,10 +42,10 @@ namespace TycoonTerrain.Images
         {
             float offsetTime = TimeRounding > 0 ? (time * TimeScale).Round(TimeRounding) : time * TimeScale;
 
-            point = point.DivideBy( Scale.XY()) + Offset.XY();
+            point = point.DivideBy(Scale.XY()) + Offset.XY();
 
-            float value = (float)Mathf.PerlinNoise(point.x, point.y+ offsetTime);
-         
+            float value = (float)Mathf.PerlinNoise(point.x, point.y + offsetTime);
+
             return value * Scale.z + Offset.z;
         }
     }

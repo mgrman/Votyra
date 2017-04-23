@@ -1,7 +1,6 @@
 ﻿using System;
 using TycoonTerrain.Images;
 using TycoonTerrain.Unity.Images;
-using TycoonTerrain.Unity.Utils;
 using UnityEngine;
 
 namespace TycoonTerrain.Unity.GroupSelectors
@@ -17,14 +16,14 @@ namespace TycoonTerrain.Unity.GroupSelectors
         public readonly TycoonTerrain.Common.Models.Vector2i CellInGroupCount;
         private readonly IImage2i Image;
 
-        public GroupVisibilityOptions(TerrainGeneratorBehaviour terrainGenerator,Camera camera)
+        public GroupVisibilityOptions(TerrainGeneratorBehaviour terrainGenerator, Camera camera)
         {
             this.Camera = camera;
             this.CameraTransform = this.Camera.cameraToWorldMatrix;
             this.ParentContainer = terrainGenerator.gameObject;
 
             IImage2iProvider imageProvider = (terrainGenerator.Image as IImage2iProvider);
-            IImage2i image = imageProvider==null?null: imageProvider.Image;
+            IImage2i image = imageProvider == null ? null : imageProvider.Image;
             this.Image = image;
             this.RangeZ = Image.RangeZ;
             this.CellInGroupCount = new Common.Models.Vector2i(terrainGenerator.CellInGroupCount.x, terrainGenerator.CellInGroupCount.y);

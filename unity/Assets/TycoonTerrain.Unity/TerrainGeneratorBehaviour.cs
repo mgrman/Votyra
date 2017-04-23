@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using TycoonTerrain.Common.Utils;
-using TycoonTerrain.Images;
 using TycoonTerrain.ImageSamplers;
 using TycoonTerrain.TerrainAlgorithms;
 using TycoonTerrain.TerrainGenerators;
@@ -29,7 +28,7 @@ namespace TycoonTerrain.Unity
 
         public Material Material = null;
         public MonoBehaviour Image = null;
-        
+
         public ITerrainAlgorithm MeshGenerator = new TileSelectTerrainAlgorithm();
         public ITerrainMesher TerrainMesher = new TerrainMesher();
         public IImageSampler Sampler = new DualImageSampler();
@@ -80,10 +79,10 @@ namespace TycoonTerrain.Unity
         {
             bool computeOnAnotherThread = this.ComputeOnAnotherThread;
 #if UNITY_EDITOR
-        if (!Application.isPlaying)
-        {
-            computeOnAnotherThread = false;
-        }
+            if (!Application.isPlaying)
+            {
+                computeOnAnotherThread = false;
+            }
 #endif
             if (computeOnAnotherThread)
             {
