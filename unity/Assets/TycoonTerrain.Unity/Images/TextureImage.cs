@@ -1,4 +1,5 @@
-﻿using TycoonTerrain.Common.Models;
+﻿using System;
+using TycoonTerrain.Common.Models;
 using UnityEngine;
 
 namespace TycoonTerrain.Images
@@ -6,11 +7,12 @@ namespace TycoonTerrain.Images
     public class TextureImage : IImage2i
     {
         public Texture2D Texture { get; private set; }
-        public Range2i RangeZ { get; private set; }
+        public Bounds Bounds { get; private set; }
 
-        public TextureImage(Range2i rangeZ, Texture2D texture)
+        public TextureImage(Bounds bounds, Texture2D texture)
         {
-            RangeZ = rangeZ;
+            Bounds = bounds;
+            RangeZ = new Range2i((int)bounds.min.z, (int)bounds.max.z);
             Texture = texture;
         }
 
@@ -22,9 +24,21 @@ namespace TycoonTerrain.Images
             }
         }
 
+        public Range2i RangeZ { get; private set; }
+
         public int Sample(Vector2i point, float time)
         {
-            return RangeZ.min + (int)(RangeZ.Size * Texture.GetPixel(point.x, point.y).grayscale);
+            //float xNorm = (float)point.x / Texture.width;
+            //float x = xNorm * Bounds.extents.x - Bounds.min.x;
+            //float yNorm = (float)point.y / Texture.height;
+            //float y = yNorm * Bounds.extents.y - Bounds.min.y;
+            float xNorm = (point.x - Bounds.min.x) / Bounds.size.x;
+            float x = xNorm;
+            float yNorm = (point.y - Bounds.min.y) / Bounds.size.y;
+            float y = yNorm ;
+
+            float zNorm = Texture.GetPixelBilinear(x, y).grayscale;
+            return (int)(zNorm * Bounds.size.z + Bounds.min.z);
         }
     }
 }

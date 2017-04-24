@@ -34,7 +34,7 @@ namespace TycoonTerrain.Images
         {
             get
             {
-                return TimeScale != 0;
+                return TimeScale != 0f;
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using TycoonTerrain.Common.Utils;
 using UnityEngine;
 
@@ -22,6 +23,37 @@ namespace TycoonTerrain.Common.Models
             this.x0y1 = x0y1;
             this.x1y0 = x1y0;
             this.x1y1 = x1y1;
+        }
+        
+
+        public HeightData GetRotated(int offset)
+        {
+            return new HeightData(GetIndexedValueCW(0 + offset), GetIndexedValueCW(1 + offset), GetIndexedValueCW(3 + offset), GetIndexedValueCW(2 + offset));
+        }
+
+        public int GetIndexedValueCW(int index)
+        {
+            switch (index % 4)
+            {
+                case 0:
+                    return x0y0;
+                case 1:
+                    return x0y1;
+                case 2:
+                    return x1y1;
+                case 3:
+                    return x1y0;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        public bool IsFlat
+        {
+            get
+            {
+                return x0y0 == x1y0 && x1y0 == x0y1 && x0y1 == x1y1;
+            }
         }
 
         public int Max
@@ -179,6 +211,24 @@ namespace TycoonTerrain.Common.Models
         public static bool operator !=(HeightData a, HeightData b)
         {
             return a.x0y0 != b.x0y0 && a.x0y1 != b.x0y1 && a.x1y0 != b.x1y0 && a.x1y1 != b.x1y1;
+        }
+
+
+        public static IEnumerable<HeightData> GenerateAllValues(Range2i range)
+        {
+            for (int x0y0 = range.min; x0y0 <= range.max; x0y0++)
+            {
+                for (int x0y1 = range.min; x0y1 <= range.max; x0y1++)
+                {
+                    for (int x1y0 = range.min; x1y0 <= range.max; x1y0++)
+                    {
+                        for (int x1y1 = range.min; x1y1 <= range.max; x1y1++)
+                        {
+                            yield return new HeightData(x0y0, x0y1, x1y0, x1y1);
+                        }
+                    }
+                }
+            }
         }
     }
 }

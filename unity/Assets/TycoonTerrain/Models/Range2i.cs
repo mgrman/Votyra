@@ -47,6 +47,16 @@ namespace TycoonTerrain.Common.Models
             return new Range2i(Math.Min(this.min, range.min), Math.Min(this.max, range.max));
         }
 
+        public static Range2i operator +(Range2i a, Range2i b)
+        {
+            return new Range2i(a.min + b.min, a.max + b.max);
+        }
+
+        public static Range2i operator -(Range2i a, Range2i b)
+        {
+            return new Range2i(a.min - b.min, a.max - b.max);
+        }
+
         public static bool operator ==(Range2i a, Range2i b)
         {
             return a.min == b.min && a.max == b.max;

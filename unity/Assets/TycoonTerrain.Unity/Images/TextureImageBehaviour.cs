@@ -5,12 +5,9 @@ namespace TycoonTerrain.Unity.Images
 {
     internal class TextureImageBehaviour : MonoBehaviour, IImage2iProvider
     {
-        private int _oldMin = 0;
-        public int Min = 0;
-
-        private int _oldMax = 1;
-        public int Max = 1;
-
+        private Bounds _oldBounds;
+        public Bounds Bounds;
+        
         private Texture2D _oldTexture = null;
         public Texture2D Texture;
 
@@ -36,14 +33,9 @@ namespace TycoonTerrain.Unity.Images
         private void Update()
         {
             _fieldsChanged = false;
-            if (_oldMin != Min)
+            if (_oldBounds != Bounds)
             {
-                _oldMin = Min;
-                _fieldsChanged = _fieldsChanged || true;
-            }
-            if (_oldMax != Max)
-            {
-                _oldMax = Max;
+                _oldBounds = Bounds;
                 _fieldsChanged = _fieldsChanged || true;
             }
             if (_oldTexture != Texture)
@@ -59,7 +51,7 @@ namespace TycoonTerrain.Unity.Images
 
         private void SetImage()
         {
-            _image = new TextureImage(new Common.Models.Range2i(Min, Max), Texture);
+            _image = new TextureImage(Bounds, Texture);
         }
     }
 }
