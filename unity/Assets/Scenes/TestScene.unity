@@ -141,7 +141,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   scale: {x: 10, y: 10, z: 2}
   timeRounding: 0
-  timeScale: 10
+  timeScale: 0
 --- !u!114 &30384096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,7 +202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ImageA: {fileID: 30384098}
   ImageB: {fileID: 30384095}
-  Operation: 2
+  Operation: 0
 --- !u!1 &707654410
 GameObject:
   m_ObjectHideFlags: 0

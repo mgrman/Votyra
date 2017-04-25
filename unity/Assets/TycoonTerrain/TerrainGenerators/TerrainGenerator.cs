@@ -7,7 +7,9 @@ using TycoonTerrain.TerrainMeshers.TriangleMesh;
 
 namespace TycoonTerrain.TerrainGenerators
 {
-    public class TerrainGenerator : ITerrainGenerator
+    //TODO
+    // Split into TerrainMeshGenerator and TerrainTilesGenerator
+    public class TerrainGenerator : ITerrainMeshGenerator, ITerrainTileGenerator
     {
         private readonly ILogger _logger = LoggerFactory.Create<TerrainGenerator>();
 
@@ -15,7 +17,7 @@ namespace TycoonTerrain.TerrainGenerators
 
         private TerrainOptions _old_options;
 
-        public IList<ITriangleMesh> GenerateMesh(TerrainOptions options)
+        IList<ITriangleMesh> IGenerator<TerrainOptions, IList<ITriangleMesh>>.Generate(TerrainOptions options)
         {
             if (!options.IsValid)
             {
@@ -35,10 +37,7 @@ namespace TycoonTerrain.TerrainGenerators
             return meshes;
         }
 
-        //TODO
-        // Split into TerrainMeshGenerator and TerrainTilesGenerator
-
-        public IList<ITerrainGroup> GenerateTiles(TerrainOptions options)
+        IList<ITerrainGroup> IGenerator<TerrainOptions, IList<ITerrainGroup>>.Generate(TerrainOptions options)
         {
             if (!options.IsValid)
             {

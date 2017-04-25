@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using TycoonTerrain.Common.Utils;
 using TycoonTerrain.ImageSamplers;
 using TycoonTerrain.TerrainAlgorithms;
 using TycoonTerrain.TerrainGenerators;
 using TycoonTerrain.TerrainMeshers;
+using TycoonTerrain.TerrainMeshers.TriangleMesh;
 using TycoonTerrain.Unity.GroupSelectors;
 using TycoonTerrain.Unity.Logging;
 using TycoonTerrain.Unity.MeshUpdaters;
@@ -34,7 +36,7 @@ namespace TycoonTerrain.Unity
         public IImageSampler Sampler = new DualImageSampler();
 
         private IGroupSelector _groupsSelector;
-        private ITerrainGenerator _terrainGenerator;
+        private IGenerator<TerrainOptions, IList<ITriangleMesh>> _terrainGenerator;
         private IMeshUpdater _meshUpdater;
 
         public static Thread UnityThread { get; private set; }
@@ -66,7 +68,7 @@ namespace TycoonTerrain.Unity
 
             Profiler.BeginSample("Sampling mesh");
             TerrainOptions terrainOptions = TerrainOptionsFactory.Create(this, groupsToUpdate);
-            var results = _terrainGenerator.GenerateMesh(terrainOptions);
+            var results = _terrainGenerator.Generate(terrainOptions);
             Profiler.EndSample();
 
             Profiler.BeginSample("Applying mesh");
@@ -86,11 +88,11 @@ namespace TycoonTerrain.Unity
 #endif
             if (computeOnAnotherThread)
             {
-                ObjectUtils.UpdateType<AsyncTerrainGenerator<TerrainGenerator>, ITerrainGenerator>(ref _terrainGenerator);
+                ObjectUtils.UpdateType<AsyncGenerator<TerrainGenerator, TerrainOptions, IList<ITriangleMesh>>, IGenerator<TerrainOptions, IList<ITriangleMesh>>>(ref _terrainGenerator);
             }
             else
             {
-                ObjectUtils.UpdateType<TerrainGenerator, ITerrainGenerator>(ref _terrainGenerator);
+                ObjectUtils.UpdateType<TerrainGenerator, IGenerator<TerrainOptions, IList<ITriangleMesh>>>(ref _terrainGenerator);
             }
 
             ObjectUtils.UpdateType<TerrainMeshUpdater, IMeshUpdater>(ref _meshUpdater);
