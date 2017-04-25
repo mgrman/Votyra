@@ -119,6 +119,8 @@ namespace TycoonTerrain.Unity.MeshUpdaters
 
         private void CreateMeshObject(MeshOptions options)
         {
+            //TODO: use prefab so custom scripts can be attached! Like OnMouseDown, ...
+
             string name = string.Format("group_{0}", _meshFilters.Count);
             var tile = new GameObject(name);
             tile.hideFlags = HideFlags.DontSave;

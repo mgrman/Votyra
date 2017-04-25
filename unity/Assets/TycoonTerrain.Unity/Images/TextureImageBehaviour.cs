@@ -11,16 +11,13 @@ namespace TycoonTerrain.Unity.Images
         private Texture2D _oldTexture = null;
         public Texture2D Texture;
 
-        private IImage2i _image = null;
+        private TextureImage _image = null;
 
-        public IImage2i Image
+        public IImage2i CreateImage()
         {
-            get
-            {
-                //if (_image == null)
-                SetImage();
+            
                 return _image;
-            }
+            
         }
 
         private bool _fieldsChanged = true;

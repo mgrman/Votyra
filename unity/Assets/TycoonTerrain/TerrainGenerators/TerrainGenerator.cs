@@ -27,6 +27,9 @@ namespace TycoonTerrain.TerrainGenerators
             {
                 return null;
             }
+
+            _logger.LogMessage("Recomputing meshes");
+
             if (_old_options != null)
                 _old_options.Dispose();
 

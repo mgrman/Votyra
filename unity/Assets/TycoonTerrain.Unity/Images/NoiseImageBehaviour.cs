@@ -15,16 +15,13 @@ namespace TycoonTerrain.Unity.Images
         private float _old_timeScale = 1;
         public float timeScale = 1;
 
-        private IImage2i _image = null;
+        private RoundImage _image = null;
 
-        public IImage2i Image
+        public IImage2i CreateImage()
         {
-            get
-            {
-                //if (_image == null)
-                SetImage();
+        
                 return _image;
-            }
+            
         }
 
         private bool _fieldsChanged = true;
@@ -65,7 +62,7 @@ namespace TycoonTerrain.Unity.Images
 
         private void SetImage()
         {
-            _image = new RoundImage(new TycoonTerrain.Images.NoiseImage(offset, scale, timeRounding, timeScale));
+            _image = new RoundImage(new NoiseImage(offset, scale, timeRounding, timeScale));
         }
     }
 }

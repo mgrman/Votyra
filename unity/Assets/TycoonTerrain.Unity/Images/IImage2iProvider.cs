@@ -4,6 +4,6 @@ namespace TycoonTerrain.Unity.Images
 {
     internal interface IImage2iProvider
     {
-        IImage2i Image { get; }
+        IImage2i CreateImage();
     }
 }

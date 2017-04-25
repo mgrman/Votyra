@@ -1,53 +1,28 @@
 ﻿using System;
 using TycoonTerrain.Common.Models;
 using TycoonTerrain.Common.Utils;
+using TycoonTerrain.Models;
 
 namespace TycoonTerrain.Images
 {
-    internal class MatrixImage : IImage2i
+    internal class MatrixImage : IImage2i,IDisposable
     {
-        public Vector2i Size { get; private set; }
-
         public Range2i RangeZ { get; private set; }
 
-        private readonly int[,] _image;
+        private readonly LockableMatrix<int> _image;
 
-        public MatrixImage(Vector2i size, Range2i rangeZ)
+        public MatrixImage(LockableMatrix<int> values )
         {
-            Size = size;
-            RangeZ = rangeZ;
-            _image = new int[size.x, size.y];
+            values.Lock(this);
+            _image = values;
+            RangeZ = CalculateRangeZ(values);
         }
+        
 
-        public int this[int x, int y]
+        private static Range2i CalculateRangeZ(LockableMatrix<int> values)
         {
-            get
-            {
-                x = Math.Max(Math.Min(x, Size.x - 1), 0);
-                y = Math.Max(Math.Min(y, Size.y - 1), 0);
-                return _image[x, y];
-            }
-            set
-            {
-                if (x >= 0 && x < Size.x && y >= 0 && y < Size.y)
-                {
-                    _image[x, y] = value;
-                    RecalculateRange(value);
-                }
-            }
-        }
-
-        private void RecalculateRange(int value)
-        {
-            int min = Math.Min(RangeZ.min, value);
-            int max = Math.Max(RangeZ.max, value);
-            RangeZ = new Range2i(min, max);
-        }
-
-        private void RecalculateRange()
-        {
-            int countX = _image.GetCountX();
-            int countY = _image.GetCountY();
+            int countX = values.size.x;
+            int countY = values.size.y;
 
             int min = int.MaxValue;
             int max = int.MinValue;
@@ -55,35 +30,32 @@ namespace TycoonTerrain.Images
             {
                 for (int y = 0; y < countY; y++)
                 {
-                    int val = _image[x, y];
+                    int val = values[x, y];
 
                     min = Math.Min(min, val);
                     max = Math.Max(max, val);
                 }
             }
-            RangeZ = new Range2i(min, max);
+            return new Range2i(min, max);
         }
-
-        #region IImage2i
-
-        Range2i IImage2i.RangeZ
-        {
-            get { return RangeZ; }
-        }
-
+        
         public bool IsAnimated
         {
-            get { return true; }
+            get { return false; }
         }
 
         public int Sample(Vector2i point, float time)
         {
-            if (point.x < 0 || point.y < 0 || point.x >= Size.x || point.y >= Size.y)
+            if (point.x < 0 || point.y < 0 || point.x >= _image.size.x || point.y >= _image.size.y)
                 return 0;
 
             return _image[point.x, point.y];
         }
 
-        #endregion IImage2i
+        public void Dispose()
+        {
+            _image .Unlock(this);
+        }
+        
     }
 }

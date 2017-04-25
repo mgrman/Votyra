@@ -57,24 +57,31 @@ namespace TycoonTerrain.Unity
 
         private void Update()
         {
-            Profiler.BeginSample("Updating cached services");
-            UpdateCachedServices();
-            Profiler.EndSample();
+            try
+            {
+                Profiler.BeginSample("Updating cached services");
+                UpdateCachedServices();
+                Profiler.EndSample();
 
-            Profiler.BeginSample("Creating visible groups");
-            var groupVisibilityOptions = new GroupVisibilityOptions(this, Camera.main);
-            var groupsToUpdate = _groupsSelector.GetGroupsToUpdate(groupVisibilityOptions);
-            Profiler.EndSample();
+                Profiler.BeginSample("Creating visible groups");
+                var groupVisibilityOptions = new GroupVisibilityOptions(this, Camera.main);
+                var groupsToUpdate = _groupsSelector.GetGroupsToUpdate(groupVisibilityOptions);
+                Profiler.EndSample();
 
-            Profiler.BeginSample("Sampling mesh");
-            TerrainOptions terrainOptions = TerrainOptionsFactory.Create(this, groupsToUpdate);
-            var results = _terrainGenerator.Generate(terrainOptions);
-            Profiler.EndSample();
+                Profiler.BeginSample("Sampling mesh");
+                TerrainOptions terrainOptions = TerrainOptionsFactory.Create(this, groupsToUpdate);
+                var results = _terrainGenerator.Generate(terrainOptions);
+                Profiler.EndSample();
 
-            Profiler.BeginSample("Applying mesh");
-            MeshOptions meshOptions = new MeshOptions(this);
-            _meshUpdater.UpdateMesh(meshOptions, results);
-            Profiler.EndSample();
+                Profiler.BeginSample("Applying mesh");
+                MeshOptions meshOptions = new MeshOptions(this);
+                _meshUpdater.UpdateMesh(meshOptions, results);
+                Profiler.EndSample();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
         }
 
         private void UpdateCachedServices()

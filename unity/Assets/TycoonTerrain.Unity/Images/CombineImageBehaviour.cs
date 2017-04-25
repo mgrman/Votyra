@@ -15,14 +15,13 @@ namespace TycoonTerrain.Unity.Images
         public CombineImage.Operations Operation;
 
 
-        private IImage2i _image = null;
-        public IImage2i Image
+        private CombineImage _image = null;
+        public IImage2i CreateImage()
         {
-            get
-            {
+          
                 SetImage();
                 return _image;
-            }
+            
         }
 
         private bool _fieldsChanged = true;
@@ -58,7 +57,7 @@ namespace TycoonTerrain.Unity.Images
 
         private void SetImage()
         {
-            _image = new CombineImage((ImageA as IImage2iProvider).Image, (ImageB as IImage2iProvider).Image,Operation);
+            _image = new CombineImage((ImageA as IImage2iProvider).CreateImage(), (ImageB as IImage2iProvider).CreateImage(), Operation);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace TycoonTerrain.Unity.GroupSelectors
             this.ParentContainer = terrainGenerator.gameObject;
 
             IImage2iProvider imageProvider = (terrainGenerator.Image as IImage2iProvider);
-            IImage2i image = imageProvider == null ? null : imageProvider.Image;
+            IImage2i image = imageProvider == null ? null : imageProvider.CreateImage();
             this.Image = image;
             this.RangeZ = Image.RangeZ;
             this.CellInGroupCount = new Common.Models.Vector2i(terrainGenerator.CellInGroupCount.x, terrainGenerator.CellInGroupCount.y);
