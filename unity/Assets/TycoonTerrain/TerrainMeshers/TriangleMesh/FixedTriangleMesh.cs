@@ -88,7 +88,7 @@ namespace TycoonTerrain.TerrainMeshers.TriangleMesh
             //_normals[index * 3 + 2] = normal;
         }
 
-        public void FinilizeMesh()
+        public void FinalizeMesh()
         {
         }
     }

@@ -18,9 +18,11 @@ namespace TycoonTerrain.TerrainGenerators
 
         private DateTime _lastResult = DateTime.Now;
 
-        private TerrainOptions _optionsToCompute = null;
+        private TerrainOptions _optionsToComputeMesh = null;
+        private TerrainOptions _optionsToComputeTiles = null;
         private bool _lastJobFinished = true;
         private IList<ITriangleMesh> _lastComputedTriangleMesh = null;
+        private IList<ITerrainGroup> _lastComputedTiles = null;
 
         private TerrainOptions _old_options;
 
@@ -73,7 +75,7 @@ namespace TycoonTerrain.TerrainGenerators
                         this._lastComputedTriangleMesh = null;
                         this._lastJobFinished = false;
 
-                        this._optionsToCompute = options;
+                        this._optionsToComputeMesh = options;
                     }
                     else
                     {
@@ -84,18 +86,70 @@ namespace TycoonTerrain.TerrainGenerators
             }
         }
 
+        public IList<ITerrainGroup> GenerateTiles(TerrainOptions options)
+        {
+            if (!options.IsValid)
+            {
+                return null;
+            }
+            else if (_old_options != null && !options.IsChanged(_old_options))
+            {
+                IList<ITerrainGroup> computedTiles;
+                lock (_threadAccessLock)
+                {
+                    if (this._lastJobFinished)
+                    {
+                        computedTiles = this._lastComputedTiles;
+                        this._lastComputedTiles = null;
+                        this._lastJobFinished = false;
+                    }
+                    else
+                    {
+                        computedTiles = null;
+                    }
+                }
+                return computedTiles;
+            }
+            else
+            {
+                if (_old_options != null)
+                {
+                    _old_options.Dispose();
+                }
+                _old_options = options.Clone();
+
+                IList<ITerrainGroup> computedTiles;
+                lock (_threadAccessLock)
+                {
+                    if (this._lastJobFinished)
+                    {
+                        computedTiles = this._lastComputedTiles;
+                        this._lastComputedTiles = null;
+                        this._lastJobFinished = false;
+
+                        this._optionsToComputeTiles = options;
+                    }
+                    else
+                    {
+                        computedTiles = null;
+                    }
+                }
+                return computedTiles;
+            }
+        }
+
         private void Compute()
         {
             int counter = 0;
             while (!_stop)
             {
-                if (_optionsToCompute != null)
+                if (_optionsToComputeMesh != null)
                 {
                     TerrainOptions optionsToCompute;
                     lock (_threadAccessLock)
                     {
-                        optionsToCompute = _optionsToCompute;
-                        _optionsToCompute = null;
+                        optionsToCompute = _optionsToComputeMesh;
+                        _optionsToComputeMesh = null;
                     }
 
                     var computedTriangleMesh = _terrainGenerator.GenerateMesh(optionsToCompute);
@@ -111,6 +165,37 @@ namespace TycoonTerrain.TerrainGenerators
                     {
                         this._lastJobFinished = true;
                         this._lastComputedTriangleMesh = computedTriangleMesh;
+                    }
+
+                    counter++;
+                    if (counter % 10 == 0)
+                    {
+                        double freq = 1.0 / (DateTime.Now - _lastResult).TotalSeconds;
+                        _logger.LogMessage(string.Format("Computation is at {0}fps", freq));
+                    }
+                }
+                else if (_optionsToComputeTiles != null)
+                {
+                    TerrainOptions optionsToCompute;
+                    lock (_threadAccessLock)
+                    {
+                        optionsToCompute = _optionsToComputeTiles;
+                        _optionsToComputeTiles = null;
+                    }
+
+                    var computedTiles = _terrainGenerator.GenerateTiles(optionsToCompute);
+
+                    if (computedTiles != null)
+                    {
+                        //TODO zistit efekt ked sa mesh clonuje vs ked nie!
+                        //computedTriangleMesh = computedTriangleMesh.Select(o => o.Clone()).ToArray();
+                        //computedTriangleMesh = computedTriangleMesh.ToArray();
+                    }
+
+                    lock (_threadAccessLock)
+                    {
+                        this._lastJobFinished = true;
+                        this._lastComputedTiles = computedTiles;
                     }
 
                     counter++;

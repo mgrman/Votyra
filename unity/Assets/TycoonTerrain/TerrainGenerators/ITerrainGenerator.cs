@@ -6,5 +6,6 @@ namespace TycoonTerrain.TerrainGenerators
     public interface ITerrainGenerator
     {
         IList<ITriangleMesh> GenerateMesh(TerrainOptions options);
+        IList<ITerrainGroup> GenerateTiles(TerrainOptions options);
     }
 }

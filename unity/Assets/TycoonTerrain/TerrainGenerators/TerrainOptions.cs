@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace TycoonTerrain.TerrainGenerators
 {
-    public class TerrainOptions : IDisposable
+    public class TerrainOptions : IOptions<TerrainOptions>
     {
         private const int MAX_CELL_COUNT = 60 * 60;
 
@@ -124,6 +124,19 @@ namespace TycoonTerrain.TerrainGenerators
                 Pool.Vector2ListPool.ReturnObject(GroupsToUpdate as List<Vector2i>);
                 GroupsToUpdate = null;
             }
+        }
+
+        public bool IsChanged(IOptions options)
+        {
+            if (options is TerrainOptions)
+                return IsChanged(options as TerrainOptions);
+            else
+                return true;
+        }
+
+        IOptions IOptions.Clone()
+        {
+            return Clone();
         }
     }
 }

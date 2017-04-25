@@ -18,7 +18,7 @@ namespace TycoonTerrain.TerrainMeshers.TriangleMesh
 
         void Add(int index, Vector3 posA, Vector3 posB, Vector3 posC);
 
-        void FinilizeMesh();
+        void FinalizeMesh();
 
         //void UpdateMesh(Mesh mesh);
     }
