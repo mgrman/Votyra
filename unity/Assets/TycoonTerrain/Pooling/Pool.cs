@@ -4,6 +4,7 @@ using System.Linq;
 using TycoonTerrain.Common.Models;
 using TycoonTerrain.Common.Models.ObjectPool;
 using TycoonTerrain.TerrainMeshers.TriangleMesh;
+using TycoonTerrain.Models;
 
 namespace TycoonTerrain.Pooling
 {

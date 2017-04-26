@@ -1,4 +1,5 @@
 ﻿using System;
+using TycoonTerrain.Common.Models;
 using UnityEngine;
 
 namespace TycoonTerrain.Unity.MeshUpdaters
@@ -8,20 +9,23 @@ namespace TycoonTerrain.Unity.MeshUpdaters
         public readonly Material Material;
         public readonly GameObject ParentContainer;
         public readonly bool DrawBounds;
+        public readonly Func<GameObject> GameObjectFactory;
 
-        public MeshOptions(TerrainGeneratorBehaviour terrainGenerator)
+        public MeshOptions(Material material, GameObject parentContainer, bool drawBounds, Func<GameObject> gameObjectFactory)
         {
-            this.Material = terrainGenerator.Material;
+            this.Material = material;
 
-            this.ParentContainer = terrainGenerator.gameObject;
-            this.DrawBounds = terrainGenerator.DrawBounds;
+            this.ParentContainer = parentContainer;
+            this.DrawBounds = drawBounds;
+            this.GameObjectFactory = gameObjectFactory;
         }
 
         public bool IsChanged(MeshOptions old)
         {
             return old == null ||
                 this.Material != old.Material ||
-                this.ParentContainer != old.ParentContainer;
+                this.ParentContainer != old.ParentContainer ||
+                this.GameObjectFactory != old.GameObjectFactory;
         }
 
         public bool IsValid

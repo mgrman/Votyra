@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using TycoonTerrain.Common.Models;
 using TycoonTerrain.Common.Utils;
+using TycoonTerrain.Images;
 using TycoonTerrain.ImageSamplers;
 using TycoonTerrain.TerrainAlgorithms;
 using TycoonTerrain.TerrainGenerators;
 using TycoonTerrain.TerrainMeshers;
 using TycoonTerrain.TerrainMeshers.TriangleMesh;
+using TycoonTerrain.Unity.Behaviours;
 using TycoonTerrain.Unity.GroupSelectors;
+using TycoonTerrain.Unity.Images;
 using TycoonTerrain.Unity.Logging;
 using TycoonTerrain.Unity.MeshUpdaters;
 using TycoonTerrain.Unity.Models;
 using TycoonTerrain.Unity.Profiling;
-using TycoonTerrain.Unity.TerrainGenerators;
 using TycoonTerrain.Unity.Utils;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -63,18 +66,22 @@ namespace TycoonTerrain.Unity
                 UpdateCachedServices();
                 Profiler.EndSample();
 
+                Profiler.BeginSample("Getting image");
+                var image = GetImage();
+                Profiler.EndSample();
+
                 Profiler.BeginSample("Creating visible groups");
-                var groupVisibilityOptions = new GroupVisibilityOptions(this, Camera.main);
+                var groupVisibilityOptions = CreateGroupVisibilityOptions(image);
                 var groupsToUpdate = _groupsSelector.GetGroupsToUpdate(groupVisibilityOptions);
                 Profiler.EndSample();
 
                 Profiler.BeginSample("Sampling mesh");
-                TerrainOptions terrainOptions = TerrainOptionsFactory.Create(this, groupsToUpdate);
+                TerrainOptions terrainOptions = CreateTerrainOptions(image, groupsToUpdate);
                 var results = _terrainGenerator.Generate(terrainOptions);
                 Profiler.EndSample();
 
                 Profiler.BeginSample("Applying mesh");
-                MeshOptions meshOptions = new MeshOptions(this);
+                MeshOptions meshOptions = CreateMeshOptions();
                 _meshUpdater.UpdateMesh(meshOptions, results);
                 Profiler.EndSample();
             }
@@ -82,6 +89,52 @@ namespace TycoonTerrain.Unity
             {
                 Debug.LogException(ex);
             }
+
+            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            {
+
+                Debug.LogFormat("OnMouseDown on tile.");
+
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                // Casts the ray and get the first game object hit
+                Physics.Raycast(ray, out hit);
+
+                var point = this.transform.worldToLocalMatrix.MultiplyPoint(hit.point).XY();
+                point = this.Sampler.TransformPoint(point);
+
+                this.SendMessage("OnCellClick", point, SendMessageOptions.DontRequireReceiver);
+            }
+        }
+        
+        private IImage2i GetImage()
+        {
+            var imageProvider = this.Image as IImage2iProvider;
+            return imageProvider == null ? null : imageProvider.CreateImage();
+        }
+
+        private GroupVisibilityOptions CreateGroupVisibilityOptions(IImage2i image)
+        {
+            var CellInGroupCount = new Vector2i(this.CellInGroupCount.x, this.CellInGroupCount.y);
+            return new GroupVisibilityOptions(Camera.main, this.gameObject, image.RangeZ, CellInGroupCount);
+        }
+
+        private static GameObject GameObjectFactory()
+        {
+            var go= new GameObject();
+            go.AddComponent<ClickGroupBehaviour>();
+            return go;
+        }
+
+        private MeshOptions CreateMeshOptions()
+        {
+            return new MeshOptions(this.Material, this.gameObject, this.DrawBounds, GameObjectFactory);
+        }
+
+        private TerrainOptions CreateTerrainOptions(IImage2i image, IList<Vector2i> groupsToUpdate)
+        {
+            Vector2i cellInGroupCount = new Vector2i(this.CellInGroupCount.x, this.CellInGroupCount.y);
+            return new TerrainOptions(cellInGroupCount, this.FlipTriangles, image, this.Sampler, this.MeshGenerator, this.TerrainMesher, UnityEngine.Time.time, groupsToUpdate);
         }
 
         private void UpdateCachedServices()

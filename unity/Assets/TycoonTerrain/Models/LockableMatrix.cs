@@ -6,7 +6,7 @@ using TycoonTerrain.Common.Models;
 
 namespace TycoonTerrain.Models
 {
-    class LockableMatrix<T> : IMatrix<T>
+    public class LockableMatrix<T> : IMatrix<T>
     {
         private T[,] _points;
 

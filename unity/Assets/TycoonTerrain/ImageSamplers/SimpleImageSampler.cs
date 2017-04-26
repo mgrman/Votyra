@@ -1,10 +1,17 @@
-﻿using TycoonTerrain.Common.Models;
+﻿using System;
+using TycoonTerrain.Common.Models;
 using TycoonTerrain.Images;
+using UnityEngine;
 
 namespace TycoonTerrain.ImageSamplers
 {
     public class SimpleImageSampler : IImageSampler
     {
+        public Vector2 TransformPoint(Vector2 pos)
+        {
+            return pos;
+        }
+
         public HeightData Sample(IImage2i image, Vector2i offset, float time)
         {
             //offset = offset + offset;

@@ -12,53 +12,23 @@ namespace TycoonTerrain.Unity.Images
         public Texture2D InitialValueTexture;
         public float InitialValueScale;
 
-        private LockableMatrix<int> _editableMatrix;
+        private Matrix<int> _editableMatrix;
 
         private readonly List<LockableMatrix<int>> _readonlyMatrices = new List<LockableMatrix<int>>();
-
-
+        
         private MatrixImage _image = null;
         public IImage2i CreateImage()
         {
-            return _image;
-        }
-        
-        private bool _fieldsChanged = true;
-
-        private void Start()
-        {
-            if (InitialValueTexture == null)
+            if (_fieldsChanged)
             {
-                var size = new Vector2i(10, 10);
-                _editableMatrix = new LockableMatrix<int>(size);
-            }
-            else
-            {
-                var texture = InitialValueTexture;
-                var size = new Vector2i(texture.width, texture.height);
-                _editableMatrix = new LockableMatrix<int>(size);
+                _fieldsChanged = false;
 
-                for (int x = 0; x < texture.width; x++)
-                {
-                    for (int y = 0; y < texture.height; y++)
-                    {
-                        _editableMatrix[x, y] = (int)(texture.GetPixel(x, y).grayscale * InitialValueScale);
-                    }
-                }
-            }
-        }
-
-        private void Update()
-        {
-            
-            if (_fieldsChanged )
-            {
                 Debug.LogFormat("Update readonlyCount:{0} fieldsChanged:{1}", _readonlyMatrices.Count, _fieldsChanged);
 
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)
                 {
-                    readonlyMatrix= new LockableMatrix<int>(_editableMatrix.size);
+                    readonlyMatrix = new LockableMatrix<int>(_editableMatrix.size);
                     _readonlyMatrices.Add(readonlyMatrix);
                 }
 
@@ -73,8 +43,46 @@ namespace TycoonTerrain.Unity.Images
 
                 _image = new MatrixImage(readonlyMatrix);
             }
-            
-            _fieldsChanged = false;
+            return _image;
+        }
+        
+        private bool _fieldsChanged = false;
+
+        private void Start()
+        {
+            if (InitialValueTexture == null)
+            {
+                var size = new Vector2i(10, 10);
+                _editableMatrix = new Matrix<int>(size);
+            }
+            else
+            {
+                var texture = InitialValueTexture;
+                var size = new Vector2i(texture.width, texture.height);
+                _editableMatrix = new Matrix<int>(size);
+
+                for (int x = 0; x < texture.width; x++)
+                {
+                    for (int y = 0; y < texture.height; y++)
+                    {
+                        _editableMatrix[x, y] = (int)(texture.GetPixel(x, y).grayscale * InitialValueScale);
+                        if (_editableMatrix[x, y] != 0)
+                        {
+
+                        }
+                    }
+                }
+            }
+            _fieldsChanged = true;
+        }
+
+        private void Update()
+        {
+        }
+
+        public void SetByOffsetValue(Vector2i pos, int value)
+        {
+            SetValue(pos, _editableMatrix[pos] + value);
         }
 
         public void SetValue(Vector2i pos, int value)

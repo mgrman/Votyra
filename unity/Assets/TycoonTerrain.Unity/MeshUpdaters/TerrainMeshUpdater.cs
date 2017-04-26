@@ -52,6 +52,9 @@ namespace TycoonTerrain.Unity.MeshUpdaters
                         {
                             UpdateMesh(triangleMesh, meshFilter.sharedMesh);
                         }
+                        var collider = meshFilter.gameObject.GetComponent<MeshCollider>();
+                        collider.sharedMesh = null;
+                        collider.sharedMesh = meshFilter.sharedMesh;
 
                         meshIndex++;
                     }
@@ -91,6 +94,9 @@ namespace TycoonTerrain.Unity.MeshUpdaters
             //Profiler.EndSample();
 
             mesh.bounds = triangleMesh.MeshBounds;
+
+            
+            
         }
 
         //private void UpdateMesh(TerrainMeshers.TriangleMesh.FixedTriangleMesh triangleMesh, Mesh mesh)
@@ -122,7 +128,8 @@ namespace TycoonTerrain.Unity.MeshUpdaters
             //TODO: use prefab so custom scripts can be attached! Like OnMouseDown, ...
 
             string name = string.Format("group_{0}", _meshFilters.Count);
-            var tile = new GameObject(name);
+            var tile = options.GameObjectFactory != null ? options.GameObjectFactory() : new GameObject();
+            tile.name = name;
             tile.hideFlags = HideFlags.DontSave;
             tile.transform.SetParent(options.ParentContainer.transform, false);
             var meshFilter = tile.GetComponent<MeshFilter>();
@@ -134,6 +141,11 @@ namespace TycoonTerrain.Unity.MeshUpdaters
             if (meshRenderer == null)
             {
                 meshRenderer = tile.AddComponent<MeshRenderer>();
+            }
+            var meshCollider = tile.GetComponent<MeshCollider>();
+            if (meshCollider == null)
+            {
+                meshCollider = tile.AddComponent<MeshCollider>();
             }
             if (options.DrawBounds)
             {
