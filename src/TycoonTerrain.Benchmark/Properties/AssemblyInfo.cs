@@ -1,14 +1,15 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TycoonTerrain")]
+[assembly: AssemblyTitle("TycoonTerrain.Benchmark")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TycoonTerrain")]
+[assembly: AssemblyProduct("TycoonTerrain.Benchmark")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("516c125b-3b6b-47e0-bc12-7fe11abb0f42")]
+[assembly: Guid("54eb5618-fe8e-4c67-a946-90a83303d496")]
 
 // Version information for an assembly consists of the following four values:
 //
