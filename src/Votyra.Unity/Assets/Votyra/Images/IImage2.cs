@@ -5,10 +5,10 @@ namespace Votyra.Images
 {
     public interface IImage2
     {
-        bool IsAnimated { get; }
+        Rect InvalidatedArea { get; }
 
         Range2 RangeZ { get; }
 
-        float Sample(Vector2 point, float time);
+        float Sample(Vector2 point);
     }
 }

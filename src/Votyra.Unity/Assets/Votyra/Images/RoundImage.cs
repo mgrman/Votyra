@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 using Votyra.Common.Models;
 
 namespace Votyra.Images
@@ -12,19 +13,13 @@ namespace Votyra.Images
             Image = image;
         }
 
-        public bool IsAnimated
-        {
-            get
-            {
-                return (Image).IsAnimated;
-            }
-        }
-
         public Range2i RangeZ { get { return new Range2i((Image).RangeZ); } }
 
-        public int Sample(Vector2i point, float time)
+        public Rect InvalidatedArea => Image.InvalidatedArea;
+
+        public int Sample(Vector2i point)
         {
-            return (int)Math.Floor(Image.Sample(point.ToVector2(), time));
+            return (int)Math.Floor(Image.Sample(point.ToVector2()));
         }
     }
 }

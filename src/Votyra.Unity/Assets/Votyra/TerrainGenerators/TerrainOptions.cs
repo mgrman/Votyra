@@ -20,17 +20,17 @@ namespace Votyra.TerrainGenerators
         public readonly Range2i RangeZ;
 
         public readonly IImage2i Image;
+        public readonly Rect TransformedInvalidatedArea;
         public readonly IImageSampler ImageSampler;
         public readonly ITerrainAlgorithm TerrainAlgorithm;
         public readonly ITerrainMesher TerrainMesher;
-        public readonly float Time;
         public readonly bool ComputeAsync;
         public readonly bool FlipTriangles;
 
         public IList<Vector2i> GroupsToUpdate;
 
         public TerrainOptions(Vector2i cellInGroupCount, bool flipTriangles, IImage2i image,
-            IImageSampler sampler, ITerrainAlgorithm terrainAlgorithm, ITerrainMesher terrainMesher, float time, IList<Vector2i> groupsToUpdate)
+            IImageSampler sampler, ITerrainAlgorithm terrainAlgorithm, ITerrainMesher terrainMesher, IList<Vector2i> groupsToUpdate)
         {
             this.CellInGroupCount = cellInGroupCount;
             this.FlipTriangles = flipTriangles;
@@ -45,12 +45,13 @@ namespace Votyra.TerrainGenerators
             this.ImageSampler = sampler;
             this.TerrainAlgorithm = terrainAlgorithm;
             this.TerrainMesher = terrainMesher;
-            this.Time = time;
 
             this.RangeZ = Image.RangeZ;
             this.GroupBounds = new Bounds(new Vector3(CellInGroupCount.x / 2.0f, CellInGroupCount.y / 2.0f, RangeZ.Center), new Vector3(CellInGroupCount.x, CellInGroupCount.y, RangeZ.Size));
 
             this.GroupsToUpdate = groupsToUpdate;
+
+            this.TransformedInvalidatedArea = ImageSampler.InverseTransform(this.Image.InvalidatedArea);
         }
 
         public TerrainOptions(TerrainOptions template)
@@ -62,7 +63,6 @@ namespace Votyra.TerrainGenerators
             this.ImageSampler = template.ImageSampler;
             this.TerrainAlgorithm = template.TerrainAlgorithm;
             this.TerrainMesher = template.TerrainMesher;
-            this.Time = template.Time;
 
             this.RangeZ = template.RangeZ;
             this.GroupBounds = template.GroupBounds;
@@ -86,7 +86,6 @@ namespace Votyra.TerrainGenerators
                 this.CellInGroupCount != old.CellInGroupCount ||
                 this.FlipTriangles != old.FlipTriangles ||
                 this.Image != old.Image ||
-                this.Image.IsAnimated ||
                 this.TerrainAlgorithm != old.TerrainAlgorithm ||
                 this.ImageSampler != old.ImageSampler ||
                 this.RangeZ != old.RangeZ ||
@@ -105,7 +104,7 @@ namespace Votyra.TerrainGenerators
             get
             {
                 return this.TerrainAlgorithm != null
-                    && this.CellInGroupCount.Positive
+                    && this.CellInGroupCount.BothPositive
                     && this.Image != null
                     && this.ImageSampler != null
                     && this.TerrainMesher != null;

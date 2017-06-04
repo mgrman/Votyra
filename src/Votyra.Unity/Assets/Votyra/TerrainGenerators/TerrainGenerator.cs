@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 using Votyra.Common.Logging;
 using Votyra.Common.Models;
 using Votyra.Common.Profiling;
+using Votyra.Common.Utils;
 using Votyra.Pooling;
 using Votyra.TerrainMeshers.TriangleMesh;
 
@@ -11,13 +13,13 @@ namespace Votyra.TerrainGenerators
     // Split into TerrainMeshGenerator and TerrainTilesGenerator
     public class TerrainGenerator : ITerrainMeshGenerator, ITerrainTileGenerator
     {
-        private readonly ILogger _logger = LoggerFactory.Create<TerrainGenerator>();
+        // private readonly ILogger _logger = LoggerFactory.Create<TerrainGenerator>();
 
         private MatrixWithOffset<ResultHeightData> _resultsCache;
 
         private TerrainOptions _old_options;
 
-        IList<ITriangleMesh> IGenerator<TerrainOptions, IList<ITriangleMesh>>.Generate(TerrainOptions options)
+        IReadOnlyDictionary<Vector2i, ITriangleMesh> IGenerator<TerrainOptions, IReadOnlyDictionary<Vector2i, ITriangleMesh>>.Generate(TerrainOptions options)
         {
             if (!options.IsValid)
             {
@@ -28,7 +30,7 @@ namespace Votyra.TerrainGenerators
                 return null;
             }
 
-            _logger.LogMessage("Recomputing meshes");
+            // _logger.LogMessage("Recomputing meshes");
 
             if (_old_options != null)
                 _old_options.Dispose();
@@ -60,7 +62,7 @@ namespace Votyra.TerrainGenerators
             options.Dispose();
             return terrainGroups;
         }
-        
+
         private IList<ITriangleMesh> GenerateMeshImpl(TerrainOptions options)
         {
             int cellInGroupCount_x = options.CellInGroupCount.x;
@@ -99,7 +101,7 @@ namespace Votyra.TerrainGenerators
                         using (ProfilerFactory.Create("ImageSampler.Sample()"))
                         {
                             //sample image
-                            inputData = options.ImageSampler.Sample(options.Image, cell, options.Time);
+                            inputData = options.ImageSampler.Sample(options.Image, cell);
                         }
 
                         using (ProfilerFactory.Create("TerrainAlgorithm.Process()"))
@@ -117,54 +119,65 @@ namespace Votyra.TerrainGenerators
                 }
                 mesh.FinalizeMesh();
             }
-            
+
             return meshes;
         }
 
-        private IList<ITriangleMesh> GenerateMeshUsingTilesImpl(TerrainOptions options)
+        private IReadOnlyDictionary<Vector2i, ITriangleMesh> GenerateMeshUsingTilesImpl(TerrainOptions options)
         {
             int cellInGroupCount_x = options.CellInGroupCount.x;
             int cellInGroupCount_y = options.CellInGroupCount.y;
-            IList<ITriangleMesh> meshes;
+            IReadOnlyDictionary<Vector2i, ITriangleMesh> readonlyMeshes;
+            IDictionary<Vector2i, ITriangleMesh> meshes;
             using (ProfilerFactory.Create("init"))
             {
                 options.TerrainMesher.Initialize(options);
 
-                meshes = Pool.Meshes2.GetObject(new Pool.MeshKey(options.GroupsToUpdate.Count, options.TerrainMesher.TriangleCount));
+                readonlyMeshes = Pool.Meshes3.GetObject(new Pool.MeshKey2(options.TerrainMesher.TriangleCount));
+                meshes = readonlyMeshes as IDictionary<Vector2i, ITriangleMesh>;
+                meshes.Clear();
             }
 
             var terrainGroups = GenerateTilesImpl(options);
 
-            int groupIndex = -1;
             foreach (var group in terrainGroups)
             {
-                groupIndex++;
-                
                 ITriangleMesh mesh;
                 MatrixWithOffset<ResultHeightData> results = group.Data;
-                using (ProfilerFactory.Create("Other"))
-                {
 
-                    mesh = meshes[groupIndex];
-                    options.TerrainMesher.InitializeGroup(group.Group, mesh, results);
-                }
-                for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
+                if (group.Invalidated)
                 {
-                    for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
+                    using (ProfilerFactory.Create("Other"))
                     {
-                        Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
-                        
-                        using (ProfilerFactory.Create("TerrainMesher.AddCell()"))
+                        if (!meshes.TryGetValue(group.Group, out mesh))
                         {
-                            //process cell to mesh
-                            options.TerrainMesher.AddCell(cellInGroup);
+                            mesh = Pool.Meshes.GetObject(options.TerrainMesher.TriangleCount);
+                            meshes[group.Group] = mesh;
+                        }
+                        options.TerrainMesher.InitializeGroup(group.Group, mesh, results);
+                    }
+                    for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
+                    {
+                        for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
+                        {
+                            Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
+
+                            using (ProfilerFactory.Create("TerrainMesher.AddCell()"))
+                            {
+                                //process cell to mesh
+                                options.TerrainMesher.AddCell(cellInGroup);
+                            }
                         }
                     }
+                    mesh.FinalizeMesh();
                 }
-                mesh.FinalizeMesh();
+                else
+                {
+                    meshes[group.Group] = null;
+                }
             }
 
-            return meshes;
+            return readonlyMeshes;
         }
 
         private IList<ITerrainGroup> GenerateTilesImpl(TerrainOptions options)
@@ -177,44 +190,54 @@ namespace Votyra.TerrainGenerators
                 terrainGroups = Pool.TerrainGroups.GetObject(new Pool.TerrainGroupKey(options.GroupsToUpdate.Count, options.CellInGroupCount));
             }
 
+
+            int invalidatedCount = 0;
             int groupIndex = -1;
             foreach (var group in options.GroupsToUpdate)
             {
                 groupIndex++;
 
                 Vector2i firstCell = options.CellInGroupCount * group;
+
+                var groupArea = new UnityEngine.Rect(firstCell.x, firstCell.y, options.CellInGroupCount.x, options.CellInGroupCount.y);
+
                 ITerrainGroup terrainGroup;
-                MatrixWithOffset<ResultHeightData> terrainGroupData;
 
                 using (ProfilerFactory.Create("Other"))
                 {
                     terrainGroup = terrainGroups[groupIndex];
-                    terrainGroup.Clear(group);
-                    terrainGroupData = terrainGroup.Data;
+                    bool recomputeArea = groupArea.Overlaps(options.TransformedInvalidatedArea);
+                    terrainGroup.Clear(group, recomputeArea);
                 }
-                for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
+
+                if (terrainGroup.Invalidated)
                 {
-                    for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
+                    invalidatedCount++;
+                    MatrixWithOffset<ResultHeightData> terrainGroupData = terrainGroup.Data;
+                    for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
                     {
-                        Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
-                        Vector2i cell = cellInGroup + firstCell;
-
-                        HeightData inputData;
-                        using (ProfilerFactory.Create("ImageSampler.Sample()"))
+                        for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
                         {
-                            //sample image
-                            inputData = options.ImageSampler.Sample(options.Image, cell, options.Time);
-                        }
+                            Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
+                            Vector2i cell = cellInGroup + firstCell;
 
-                        using (ProfilerFactory.Create("TerrainAlgorithm.Process()"))
-                        {
-                            //compute cell using alg
-                            terrainGroupData[cellInGroup_x, cellInGroup_y] = options.TerrainAlgorithm.Process(inputData);
+                            HeightData inputData;
+                            using (ProfilerFactory.Create("ImageSampler.Sample()"))
+                            {
+                                //sample image
+                                inputData = options.ImageSampler.Sample(options.Image, cell);
+                            }
+
+                            using (ProfilerFactory.Create("TerrainAlgorithm.Process()"))
+                            {
+                                //compute cell using alg
+                                terrainGroupData[cellInGroup_x, cellInGroup_y] = options.TerrainAlgorithm.Process(inputData);
+                            }
                         }
                     }
                 }
             }
-            
+            // Debug.Log($"Invalidated count {invalidatedCount}. {options.TransformedInvalidatedArea}");
             return terrainGroups;
         }
 

@@ -15,6 +15,11 @@ namespace Votyra.Pooling
 
         public static readonly ConcurentObjectDictionaryPool<IList<ITriangleMesh>, MeshKey> Meshes2 = new ConcurentObjectDictionaryPool<IList<ITriangleMesh>, MeshKey>(3, key => Enumerable.Range(0, key.MeshCount).Select(o => new FixedTriangleMesh(key.TriangleCount)).ToArray());
 
+
+
+        public static readonly ConcurentObjectDictionaryPool<IReadOnlyDictionary<Vector2i, ITriangleMesh>, MeshKey2> Meshes3 = new ConcurentObjectDictionaryPool<IReadOnlyDictionary<Vector2i, ITriangleMesh>, MeshKey2>(3, key => new Dictionary<Vector2i, ITriangleMesh>());
+
+
         public static readonly ConcurentObjectDictionaryPool<IList<ITerrainGroup>, TerrainGroupKey> TerrainGroups = new ConcurentObjectDictionaryPool<IList<ITerrainGroup>, TerrainGroupKey>(3, key => Enumerable.Range(0, key.GroupsToUpdate).Select(o => new TerrainGroup(key.CellInGroupCount)).ToArray());
 
         public struct TerrainGroupKey
@@ -37,6 +42,15 @@ namespace Votyra.Pooling
             public MeshKey(int meshCount, int triangleCount)
             {
                 MeshCount = meshCount;
+                TriangleCount = triangleCount;
+            }
+        }
+        public struct MeshKey2
+        {
+            public readonly int TriangleCount;
+
+            public MeshKey2(int triangleCount)
+            {
                 TriangleCount = triangleCount;
             }
         }

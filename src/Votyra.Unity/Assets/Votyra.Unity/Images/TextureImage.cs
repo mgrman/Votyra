@@ -1,6 +1,7 @@
 ﻿using System;
 using Votyra.Common.Models;
 using UnityEngine;
+using Votyra.Common.Utils;
 
 namespace Votyra.Images
 {
@@ -16,17 +17,11 @@ namespace Votyra.Images
             Texture = texture;
         }
 
-        public bool IsAnimated
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public Range2i RangeZ { get; private set; }
 
-        public int Sample(Vector2i point, float time)
+        public Rect InvalidatedArea => RectUtils.All;
+
+        public int Sample(Vector2i point)
         {
             //float xNorm = (float)point.x / Texture.width;
             //float x = xNorm * Bounds.extents.x - Bounds.min.x;
@@ -35,7 +30,7 @@ namespace Votyra.Images
             float xNorm = (point.x - Bounds.min.x) / Bounds.size.x;
             float x = xNorm;
             float yNorm = (point.y - Bounds.min.y) / Bounds.size.y;
-            float y = yNorm ;
+            float y = yNorm;
 
             float zNorm = Texture.GetPixelBilinear(x, y).grayscale;
             return (int)(zNorm * Bounds.size.z + Bounds.min.z);

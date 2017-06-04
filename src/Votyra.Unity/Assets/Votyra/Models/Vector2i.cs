@@ -21,7 +21,7 @@ namespace Votyra.Common.Models
             this.y = vec.y.RoundToInt();
         }
 
-        public bool Positive
+        public bool BothPositive
         {
             get
             {
@@ -29,12 +29,25 @@ namespace Votyra.Common.Models
             }
         }
 
-        public bool ZeroOrPositive
+        public bool BothZeroOrPositive
         {
             get
             {
                 return this.x >= 0 && this.y >= 0;
             }
+        }
+
+        public bool AnyNegative
+        {
+            get
+            {
+                return this.x < 0 || this.y < 0;
+            }
+        }
+
+        public bool IsAsIndexContained(Vector2i size)
+        {
+            return x >= 0 && y >= 0 && x < size.x && y < size.y;
         }
 
         public int AreaSum { get { return x * y; } }

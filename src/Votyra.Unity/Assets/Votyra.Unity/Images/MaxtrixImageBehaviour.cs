@@ -3,6 +3,7 @@ using System.Linq;
 using Votyra.Common.Models;
 using Votyra.Images;
 using Votyra.Models;
+using Votyra.Common.Utils;
 using UnityEngine;
 
 namespace Votyra.Unity.Images
@@ -14,16 +15,16 @@ namespace Votyra.Unity.Images
 
         private Matrix<int> _editableMatrix;
 
+        private Rect? _invalidatedArea;
+
         private readonly List<LockableMatrix<int>> _readonlyMatrices = new List<LockableMatrix<int>>();
-        
         private MatrixImage _image = null;
+
         public IImage2i CreateImage()
         {
-            if (_fieldsChanged)
+            if (_invalidatedArea.HasValue)
             {
-                _fieldsChanged = false;
-
-                Debug.LogFormat("Update readonlyCount:{0} fieldsChanged:{1}", _readonlyMatrices.Count, _fieldsChanged);
+                Debug.LogFormat("Update readonlyCount:{0}", _readonlyMatrices.Count);
 
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)
@@ -41,12 +42,11 @@ namespace Votyra.Unity.Images
                     }
                 }
 
-                _image = new MatrixImage(readonlyMatrix);
+                _image = new MatrixImage(readonlyMatrix, _invalidatedArea.Value);
+                _invalidatedArea = null;
             }
             return _image;
         }
-        
-        private bool _fieldsChanged = false;
 
         private void Start()
         {
@@ -54,12 +54,14 @@ namespace Votyra.Unity.Images
             {
                 var size = new Vector2i(10, 10);
                 _editableMatrix = new Matrix<int>(size);
+                _invalidatedArea = new Rect(0, 0, 10, 10);
             }
             else
             {
                 var texture = InitialValueTexture;
                 var size = new Vector2i(texture.width, texture.height);
                 _editableMatrix = new Matrix<int>(size);
+                _invalidatedArea = new Rect(0, 0, size.x, size.y);
 
                 for (int x = 0; x < texture.width; x++)
                 {
@@ -73,7 +75,6 @@ namespace Votyra.Unity.Images
                     }
                 }
             }
-            _fieldsChanged = true;
         }
 
         private void Update()
@@ -82,18 +83,28 @@ namespace Votyra.Unity.Images
 
         public void SetByOffsetValue(Vector2i pos, int value)
         {
+            if (!pos.IsAsIndexContained(_editableMatrix.size))
+            {
+                Debug.LogWarningFormat("Position {0} is outside of bounds!", pos);
+                return;
+            }
+
             SetValue(pos, _editableMatrix[pos] + value);
         }
 
         public void SetValue(Vector2i pos, int value)
         {
-            
-                Debug.LogWarningFormat("Setting value at {0} to {1} readonlyCount:{2} fieldsChanged:{3}", pos,value, _readonlyMatrices.Count, _fieldsChanged);
+            if (!pos.IsAsIndexContained(_editableMatrix.size))
+            {
+                Debug.LogWarningFormat("Position {0} is outside of bounds!", pos);
+                return;
+            }
+
+            // Debug.LogFormat("Setting value at {0} to {1} readonlyCount:{2}", pos, value, _readonlyMatrices.Count);
 
             _editableMatrix[pos] = value;
 
-            _fieldsChanged = true;
+            _invalidatedArea = _invalidatedArea.TryCombineWith(new Rect(pos.x, pos.y, 1, 1));
         }
-
     }
 }

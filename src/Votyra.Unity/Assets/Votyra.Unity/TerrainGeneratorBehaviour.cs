@@ -39,7 +39,7 @@ namespace Votyra.Unity
         public IImageSampler Sampler = new DualImageSampler();
 
         private IGroupSelector _groupsSelector;
-        private IGenerator<TerrainOptions, IList<ITriangleMesh>> _terrainGenerator;
+        private IGenerator<TerrainOptions, IReadOnlyDictionary<Vector2i, ITriangleMesh>> _terrainGenerator;
         private IMeshUpdater _meshUpdater;
 
         public static Thread UnityThread { get; private set; }
@@ -90,7 +90,7 @@ namespace Votyra.Unity
                 Debug.LogException(ex);
             }
 
-            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
             {
 
                 Debug.LogFormat("OnMouseDown on tile.");
@@ -101,12 +101,12 @@ namespace Votyra.Unity
                 Physics.Raycast(ray, out hit);
 
                 var point = this.transform.worldToLocalMatrix.MultiplyPoint(hit.point).XY();
-                point = this.Sampler.TransformPoint(point);
+                point = this.Sampler.Transform(point);
 
                 this.SendMessage("OnCellClick", point, SendMessageOptions.DontRequireReceiver);
             }
         }
-        
+
         private IImage2i GetImage()
         {
             var imageProvider = this.Image as IImage2iProvider;
@@ -121,7 +121,7 @@ namespace Votyra.Unity
 
         private static GameObject GameObjectFactory()
         {
-            var go= new GameObject();
+            var go = new GameObject();
             go.AddComponent<ClickGroupBehaviour>();
             return go;
         }
@@ -134,7 +134,7 @@ namespace Votyra.Unity
         private TerrainOptions CreateTerrainOptions(IImage2i image, IList<Vector2i> groupsToUpdate)
         {
             Vector2i cellInGroupCount = new Vector2i(this.CellInGroupCount.x, this.CellInGroupCount.y);
-            return new TerrainOptions(cellInGroupCount, this.FlipTriangles, image, this.Sampler, this.MeshGenerator, this.TerrainMesher, UnityEngine.Time.time, groupsToUpdate);
+            return new TerrainOptions(cellInGroupCount, this.FlipTriangles, image, this.Sampler, this.MeshGenerator, this.TerrainMesher, groupsToUpdate);
         }
 
         private void UpdateCachedServices()
@@ -148,11 +148,11 @@ namespace Votyra.Unity
 #endif
             if (computeOnAnotherThread)
             {
-                ObjectUtils.UpdateType<AsyncGenerator<TerrainGenerator, TerrainOptions, IList<ITriangleMesh>>, IGenerator<TerrainOptions, IList<ITriangleMesh>>>(ref _terrainGenerator);
+                ObjectUtils.UpdateType<AsyncGenerator<TerrainGenerator, TerrainOptions, IReadOnlyDictionary<Vector2i, ITriangleMesh>>, IGenerator<TerrainOptions, IReadOnlyDictionary<Vector2i, ITriangleMesh>>>(ref _terrainGenerator);
             }
             else
             {
-                ObjectUtils.UpdateType<TerrainGenerator, IGenerator<TerrainOptions, IList<ITriangleMesh>>>(ref _terrainGenerator);
+                ObjectUtils.UpdateType<TerrainGenerator, IGenerator<TerrainOptions, IReadOnlyDictionary<Vector2i, ITriangleMesh>>>(ref _terrainGenerator);
             }
 
             ObjectUtils.UpdateType<TerrainMeshUpdater, IMeshUpdater>(ref _meshUpdater);

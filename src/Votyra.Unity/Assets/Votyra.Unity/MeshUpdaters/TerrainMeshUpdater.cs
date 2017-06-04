@@ -3,18 +3,21 @@ using Votyra.Common.Profiling;
 using Votyra.Pooling;
 using Votyra.Unity.Utils;
 using UnityEngine;
+using Votyra.Common.Models;
+using System.Linq;
+using Votyra.TerrainMeshers.TriangleMesh;
 
 namespace Votyra.Unity.MeshUpdaters
 {
     public class TerrainMeshUpdater : IMeshUpdater
     {
-        private List<MeshFilter> _meshFilters = new List<MeshFilter>();
+        private Dictionary<Vector2i, MeshFilter> _meshFilters = new Dictionary<Vector2i, MeshFilter>();
 
         public TerrainMeshUpdater()
         {
         }
 
-        public void UpdateMesh(MeshOptions options, IList<TerrainMeshers.TriangleMesh.ITriangleMesh> terrainMeshes)
+        public void UpdateMesh(MeshOptions options, IReadOnlyDictionary<Vector2i, ITriangleMesh> terrainMeshes)
         {
 #if UNITY_EDITOR
 
@@ -24,11 +27,11 @@ namespace Votyra.Unity.MeshUpdaters
                 options.ParentContainer.DestroyAllChildren();
             }
 #endif
-            if (options.ParentContainer.transform.childCount != _meshFilters.Count)
-            {
-                options.ParentContainer.DestroyAllChildren();
-                _meshFilters.Clear();
-            }
+            // if (options.ParentContainer.transform.childCount != _meshFilters.Count)
+            // {
+            //     options.ParentContainer.DestroyAllChildren();
+            //     _meshFilters.Clear();
+            // }
 
             if (terrainMeshes != null)
             {
@@ -37,13 +40,18 @@ namespace Votyra.Unity.MeshUpdaters
                     int meshIndex = 0;
                     foreach (var terrainMesh in terrainMeshes)
                     {
-                        if (meshIndex >= _meshFilters.Count)
+
+
+                        MeshFilter meshFilter;
+                        if (!_meshFilters.TryGetValue(terrainMesh.Key, out meshFilter))
                         {
-                            CreateMeshObject(options);
+                            meshFilter = CreateMeshObject(terrainMesh.Key, options);
+                            _meshFilters[terrainMesh.Key] = meshFilter;
                         }
 
-                        var meshFilter = _meshFilters[meshIndex];
-                        TerrainMeshers.TriangleMesh.ITriangleMesh triangleMesh = terrainMesh;
+
+
+                        TerrainMeshers.TriangleMesh.ITriangleMesh triangleMesh = terrainMesh.Value;
                         if (triangleMesh is TerrainMeshers.TriangleMesh.FixedTriangleMesh)
                         {
                             UpdateMesh(triangleMesh, meshFilter.sharedMesh);
@@ -59,16 +67,25 @@ namespace Votyra.Unity.MeshUpdaters
                         meshIndex++;
                     }
 
-                    Pool.Meshes2.ReturnObject(terrainMeshes, new Pool.MeshKey(terrainMeshes.Count, terrainMeshes.Count == 0 ? 0 : terrainMeshes[0].TriangleCount));
 
-                    int terrainMeshCount = meshIndex;
-                    for (int toDeleteIndex = _meshFilters.Count - 1; toDeleteIndex >= terrainMeshCount; toDeleteIndex--)
+                    var toDeleteGroups = _meshFilters.Keys.Except(terrainMeshes.Keys).ToArray();
+                    foreach (var toDeleteGroup in toDeleteGroups)
                     {
-                        _meshFilters[toDeleteIndex].gameObject.Destroy();
-                        _meshFilters.RemoveAt(toDeleteIndex);
+                        _meshFilters[toDeleteGroup].gameObject.Destroy();
+                        _meshFilters.Remove(toDeleteGroup);
                     }
+
+                    // var key = terrainMeshes.Count == 0 ? 0 : (terrainMeshes.First().Value.TriangleCount);
+                    foreach (var mesh in terrainMeshes.Values.Where(o => o != null))
+                    {
+                        Pool.Meshes.ReturnObject(mesh, mesh.TriangleCount);
+                    }
+                    (terrainMeshes as IDictionary<Vector2i, ITriangleMesh>).Clear();
+                    // Pool.Meshes3.ReturnObject(terrainMeshes, new Pool.MeshKey2(key));
+
                 }
             }
+
 
             options.Dispose();
         }
@@ -95,8 +112,8 @@ namespace Votyra.Unity.MeshUpdaters
 
             mesh.bounds = triangleMesh.MeshBounds;
 
-            
-            
+
+
         }
 
         //private void UpdateMesh(TerrainMeshers.TriangleMesh.FixedTriangleMesh triangleMesh, Mesh mesh)
@@ -123,7 +140,7 @@ namespace Votyra.Unity.MeshUpdaters
         //    mesh.bounds = this.MeshBounds;
         //}
 
-        private void CreateMeshObject(MeshOptions options)
+        private MeshFilter CreateMeshObject(Vector2i group, MeshOptions options)
         {
             //TODO: use prefab so custom scripts can be attached! Like OnMouseDown, ...
 
@@ -161,7 +178,8 @@ namespace Votyra.Unity.MeshUpdaters
             var mesh = meshFilter.sharedMesh;
             mesh.MarkDynamic();
 
-            _meshFilters.Add(meshFilter);
+            return meshFilter;
+            // _meshFilters[group] = meshFilter;
         }
     }
 }

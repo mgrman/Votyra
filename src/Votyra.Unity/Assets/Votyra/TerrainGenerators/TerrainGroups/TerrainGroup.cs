@@ -7,19 +7,23 @@ using UnityEngine;
 
 namespace Votyra.TerrainGenerators
 {
-    public class TerrainGroup: ITerrainGroup
+    public class TerrainGroup : ITerrainGroup
     {
         public Vector2i Group { get; private set; }
         public MatrixWithOffset<ResultHeightData> Data { get; private set; }
+
+        public bool Invalidated { get; private set; }
 
         public TerrainGroup(Vector2i cellInGroupCount)
         {
             Data = new MatrixWithOffset<ResultHeightData>(cellInGroupCount, Vector2i.One);
         }
 
-        public void Clear(Vector2i group)
+
+        public void Clear(Vector2i group, bool invalidated)
         {
             Group = group;
+            Invalidated = invalidated;
         }
     }
 }

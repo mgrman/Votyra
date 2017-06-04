@@ -6,8 +6,9 @@ namespace Votyra.ImageSamplers
 {
     public interface IImageSampler
     {
-        HeightData Sample(IImage2i image, Vector2i offset, float time);
+        HeightData Sample(IImage2i image, Vector2i offset);
 
-        Vector2 TransformPoint(Vector2 pos);
+        Vector2 Transform(Vector2 pos);
+        Vector2 InverseTransform(Vector2 pos);
     }
 }
