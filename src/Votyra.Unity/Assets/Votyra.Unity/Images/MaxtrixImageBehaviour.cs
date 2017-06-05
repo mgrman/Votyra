@@ -43,7 +43,7 @@ namespace Votyra.Unity.Images
                     }
                 }
 
-                Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
+                // Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
 
                 var oldImage = _image;
                 oldImage?.Dispose();
@@ -96,6 +96,19 @@ namespace Votyra.Unity.Images
             }
 
             SetValue(pos, _editableMatrix[pos] + value);
+        }
+
+        public int GetValue(Vector2i pos)
+        {
+            if (!pos.IsAsIndexContained(_editableMatrix.size))
+            {
+                Debug.LogWarningFormat("Position {0} is outside of bounds!", pos);
+                return 0;
+            }
+
+            // Debug.LogFormat("Setting value at {0} to {1} readonlyCount:{2}", pos, value, _readonlyMatrices.Count);
+
+            return _editableMatrix[pos];
         }
 
         public void SetValue(Vector2i pos, int value)

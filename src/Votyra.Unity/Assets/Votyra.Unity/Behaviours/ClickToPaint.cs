@@ -8,6 +8,7 @@ namespace Votyra.Unity.Behaviours
     public class ClickToPaint : MonoBehaviour
     {
         private const float Period = 0.1f;
+
         private float lastTime;
         private Vector2i lastCell;
 
@@ -28,30 +29,89 @@ namespace Votyra.Unity.Behaviours
             lastCell = cell;
             lastTime = Time.time;
 
-            int offset = 0;
 
-            if (Input.GetMouseButton(0))
-            {
-                offset = 1;
-            }
-            else if (Input.GetMouseButton(1))
-            {
-                offset = -1;
-            }
             // Debug.LogFormat("Changing pixel {0},{1} by {2} .", cell.x, cell.y, offset);
-
-            int maxDist;
-            if (Input.GetButton("Modifier1"))
-                maxDist = 3;
-            else
-                maxDist = 1;
-
-            for (int ox = -maxDist; ox <= maxDist; ox++)
+            if (Input.GetButton("Modifier1") && Input.GetButton("Modifier2"))
             {
+                int maxDist = 4;
+
+                int sumValue = 0;
+                for (int ox = -maxDist; ox <= maxDist; ox++)
+                {
+                    sumValue += _image.GetValue(cell + new Vector2i(ox, maxDist));
+                    sumValue += _image.GetValue(cell + new Vector2i(ox, -maxDist));
+                }
                 for (int oy = -maxDist; oy <= maxDist; oy++)
                 {
-                    var dist = Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy));
-                    _image.SetByOffsetValue(cell + new Vector2i(ox, oy), offset * (maxDist - dist));
+                    sumValue += _image.GetValue(cell + new Vector2i(maxDist, oy));
+                    sumValue += _image.GetValue(cell + new Vector2i(-maxDist, oy));
+                }
+                float avg = sumValue / ((maxDist * 2 + 1) * 4);
+
+
+                for (int ox = -maxDist; ox <= maxDist; ox++)
+                {
+                    for (int oy = -maxDist; oy <= maxDist; oy++)
+                    {
+                        var value = _image.GetValue(cell + new Vector2i(ox, oy));
+                        var offsetF = (avg - value) * 0.2f;
+                        int offsetI = 0;
+                        if (offsetF > 0.1f)
+                            offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
+                        else if (offsetF < -0.1f)
+                            offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
+
+                        _image.SetByOffsetValue(cell + new Vector2i(ox, oy), offsetI);
+                    }
+                }
+            }
+            else if (Input.GetButton("Modifier1"))
+            {
+                int maxDist = 4;
+
+
+                var centerValue = _image.GetValue(cell);
+                for (int ox = -maxDist; ox <= maxDist; ox++)
+                {
+                    for (int oy = -maxDist; oy <= maxDist; oy++)
+                    {
+                        var value = _image.GetValue(cell + new Vector2i(ox, oy));
+                        var offsetF = (centerValue - value) * 0.2f;
+                        int offsetI = 0;
+                        if (offsetF > 0.1f)
+                            offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
+                        else if (offsetF < -0.1f)
+                            offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
+
+                        _image.SetByOffsetValue(cell + new Vector2i(ox, oy), offsetI);
+                    }
+                }
+            }
+            else
+            {
+                int offset = 0;
+
+                if (Input.GetMouseButton(0))
+                {
+                    offset = 1;
+                }
+                else if (Input.GetMouseButton(1))
+                {
+                    offset = -1;
+                }
+                int maxDist;
+                if (Input.GetButton("Modifier2"))
+                    maxDist = 3;
+                else
+                    maxDist = 1;
+
+                for (int ox = -maxDist; ox <= maxDist; ox++)
+                {
+                    for (int oy = -maxDist; oy <= maxDist; oy++)
+                    {
+                        var dist = Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy));
+                        _image.SetByOffsetValue(cell + new Vector2i(ox, oy), offset * (maxDist - dist));
+                    }
                 }
             }
         }

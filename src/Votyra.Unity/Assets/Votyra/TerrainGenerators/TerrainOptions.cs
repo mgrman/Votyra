@@ -9,6 +9,7 @@ using Votyra.TerrainAlgorithms;
 using Votyra.TerrainMeshers;
 using UnityEngine;
 using Votyra.Common.Utils;
+using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.TerrainGenerators
 {
@@ -28,10 +29,10 @@ namespace Votyra.TerrainGenerators
         public readonly bool ComputeAsync;
         public readonly bool FlipTriangles;
 
-        public IList<Vector2i> GroupsToUpdate;
+        public IReadOnlyCollection<Vector2i> GroupsToUpdate;
 
         public TerrainOptions(Vector2i cellInGroupCount, bool flipTriangles, IImage2i image,
-            IImageSampler sampler, ITerrainAlgorithm terrainAlgorithm, ITerrainMesher terrainMesher, IList<Vector2i> groupsToUpdate)
+            IImageSampler sampler, ITerrainAlgorithm terrainAlgorithm, ITerrainMesher terrainMesher, IReadOnlyCollection<Vector2i> groupsToUpdate)
         {
             this.CellInGroupCount = cellInGroupCount;
             this.FlipTriangles = flipTriangles;
@@ -72,7 +73,7 @@ namespace Votyra.TerrainGenerators
 
             if (template.GroupsToUpdate != null)
             {
-                var groupsToUpdate = Pool.Vector2ListPool.GetObject();
+                var groupsToUpdate = PooledList<Vector2i>.Create();
                 groupsToUpdate.Clear();
 
                 foreach (var group in template.GroupsToUpdate)
@@ -121,11 +122,8 @@ namespace Votyra.TerrainGenerators
 
         public void Dispose()
         {
-            if (GroupsToUpdate is List<Vector2i>)
-            {
-                Pool.Vector2ListPool.ReturnObject(GroupsToUpdate as List<Vector2i>);
-                GroupsToUpdate = null;
-            }
+            (GroupsToUpdate as IDisposable)?.Dispose();
+            GroupsToUpdate = null;
         }
 
         public bool IsChanged(IOptions options)

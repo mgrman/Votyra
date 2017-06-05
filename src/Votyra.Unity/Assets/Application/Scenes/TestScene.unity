@@ -155,7 +155,6 @@ MonoBehaviour:
     x: 4
     y: 4
   FlipTriangles: 0
-  ComputeOnAnotherThread: 0
   DrawBounds: 0
   Material: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
   Image: {fileID: 30384100}
@@ -346,7 +345,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1196365546}
   m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: -24.7, y: 62.4, z: -130.2}
+  m_LocalPosition: {x: -24.7, y: 35.2, z: -130.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -420,9 +419,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd4e606ff1df30e4587eb17f475694a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Position: {x: 0, y: 0, z: 0}
-  Rotation: {x: 0, y: 0, z: 0}
-  Speed: {x: 2, y: 2, z: 2}
+  SpeedTranslation: {x: 1, y: -10, z: 1}
+  SpeedRotation: {x: 1, y: 5, z: 1}
 --- !u!1 &1422467586
 GameObject:
   m_ObjectHideFlags: 0

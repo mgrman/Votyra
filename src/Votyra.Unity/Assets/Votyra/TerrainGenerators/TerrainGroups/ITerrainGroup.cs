@@ -9,8 +9,7 @@ namespace Votyra.TerrainGenerators
         Vector2i Group { get; }
         MatrixWithOffset<ResultHeightData> Data { get; }
 
-        void Clear(Vector2i group, bool invalidated);
+        void Clear(Vector2i group);
 
-        bool Invalidated { get; }
     }
 }

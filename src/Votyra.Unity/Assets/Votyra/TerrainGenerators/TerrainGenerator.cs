@@ -61,66 +61,6 @@ namespace Votyra.TerrainGenerators
             return terrainGroups;
         }
 
-        private IList<ITriangleMesh> GenerateMeshImpl(TerrainOptions options)
-        {
-            int cellInGroupCount_x = options.CellInGroupCount.x;
-            int cellInGroupCount_y = options.CellInGroupCount.y;
-            IList<ITriangleMesh> meshes;
-            using (ProfilerFactory.Create("init"))
-            {
-                options.TerrainMesher.Initialize(options);
-
-                meshes = Pool.Meshes2.GetObject(new Pool.MeshKey(options.GroupsToUpdate.Count, options.TerrainMesher.TriangleCount));
-            }
-
-            int groupIndex = -1;
-            foreach (var group in options.GroupsToUpdate)
-            {
-                groupIndex++;
-
-                Vector2i firstCell = options.CellInGroupCount * group;
-                ITriangleMesh mesh;
-                MatrixWithOffset<ResultHeightData> results;
-                using (ProfilerFactory.Create("Other"))
-                {
-                    results = GetCachedResults(options);
-
-                    mesh = meshes[groupIndex];
-                    options.TerrainMesher.InitializeGroup(group, mesh, results);
-                }
-                for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
-                {
-                    for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
-                    {
-                        Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
-                        Vector2i cell = cellInGroup + firstCell;
-
-                        HeightData inputData;
-                        using (ProfilerFactory.Create("ImageSampler.Sample()"))
-                        {
-                            //sample image
-                            inputData = options.ImageSampler.Sample(options.Image, cell);
-                        }
-
-                        using (ProfilerFactory.Create("TerrainAlgorithm.Process()"))
-                        {
-                            //compute cell using alg
-                            results[cellInGroup_x, cellInGroup_y] = options.TerrainAlgorithm.Process(inputData);
-                        }
-
-                        using (ProfilerFactory.Create("TerrainMesher.AddCell()"))
-                        {
-                            //process cell to mesh
-                            options.TerrainMesher.AddCell(cellInGroup);
-                        }
-                    }
-                }
-                mesh.FinalizeMesh();
-            }
-
-            return meshes;
-        }
-
         private IReadOnlyDictionary<Vector2i, ITriangleMesh> GenerateMeshUsingTilesImpl(TerrainOptions options)
         {
             int cellInGroupCount_x = options.CellInGroupCount.x;
@@ -143,36 +83,30 @@ namespace Votyra.TerrainGenerators
                 ITriangleMesh mesh;
                 MatrixWithOffset<ResultHeightData> results = group.Data;
 
-                if (group.Invalidated)
+                using (ProfilerFactory.Create("Other"))
                 {
-                    using (ProfilerFactory.Create("Other"))
+                    if (!meshes.TryGetValue(group.Group, out mesh))
                     {
-                        if (!meshes.TryGetValue(group.Group, out mesh))
-                        {
-                            mesh = Pool.Meshes.GetObject(options.TerrainMesher.TriangleCount);
-                            meshes[group.Group] = mesh;
-                        }
-                        options.TerrainMesher.InitializeGroup(group.Group, mesh, results);
+                        mesh = Pool.Meshes.GetObject(options.TerrainMesher.TriangleCount);
+                        meshes[group.Group] = mesh;
                     }
-                    for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
+                    options.TerrainMesher.InitializeGroup(group.Group, mesh, results);
+                }
+                for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
+                {
+                    for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
                     {
-                        for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
-                        {
-                            Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
+                        Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
 
-                            using (ProfilerFactory.Create("TerrainMesher.AddCell()"))
-                            {
-                                //process cell to mesh
-                                options.TerrainMesher.AddCell(cellInGroup);
-                            }
+                        using (ProfilerFactory.Create("TerrainMesher.AddCell()"))
+                        {
+                            //process cell to mesh
+                            options.TerrainMesher.AddCell(cellInGroup);
                         }
                     }
-                    mesh.FinalizeMesh();
                 }
-                else
-                {
-                    meshes[group.Group] = null;
-                }
+                mesh.FinalizeMesh();
+
             }
 
             return readonlyMeshes;
@@ -188,8 +122,6 @@ namespace Votyra.TerrainGenerators
                 terrainGroups = Pool.TerrainGroups.GetObject(new Pool.TerrainGroupKey(options.GroupsToUpdate.Count, options.CellInGroupCount));
             }
 
-
-            int invalidatedCount = 0;
             int groupIndex = -1;
             foreach (var group in options.GroupsToUpdate)
             {
@@ -204,57 +136,36 @@ namespace Votyra.TerrainGenerators
                 using (ProfilerFactory.Create("Other"))
                 {
                     terrainGroup = terrainGroups[groupIndex];
-                    bool recomputeArea = groupArea.Overlaps(options.TransformedInvalidatedArea);
-                    terrainGroup.Clear(group, recomputeArea);
+                    terrainGroup.Clear(group);
                 }
 
-                if (terrainGroup.Invalidated)
+
+                MatrixWithOffset<ResultHeightData> terrainGroupData = terrainGroup.Data;
+                for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
                 {
-                    invalidatedCount++;
-                    MatrixWithOffset<ResultHeightData> terrainGroupData = terrainGroup.Data;
-                    for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
+                    for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
                     {
-                        for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
+                        Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
+                        Vector2i cell = cellInGroup + firstCell;
+
+                        HeightData inputData;
+                        using (ProfilerFactory.Create("ImageSampler.Sample()"))
                         {
-                            Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
-                            Vector2i cell = cellInGroup + firstCell;
+                            //sample image
+                            inputData = options.ImageSampler.Sample(options.Image, cell);
+                        }
 
-                            HeightData inputData;
-                            using (ProfilerFactory.Create("ImageSampler.Sample()"))
-                            {
-                                //sample image
-                                inputData = options.ImageSampler.Sample(options.Image, cell);
-                            }
-
-                            using (ProfilerFactory.Create("TerrainAlgorithm.Process()"))
-                            {
-                                //compute cell using alg
-                                terrainGroupData[cellInGroup_x, cellInGroup_y] = options.TerrainAlgorithm.Process(inputData);
-                            }
+                        using (ProfilerFactory.Create("TerrainAlgorithm.Process()"))
+                        {
+                            //compute cell using alg
+                            terrainGroupData[cellInGroup_x, cellInGroup_y] = options.TerrainAlgorithm.Process(inputData);
                         }
                     }
                 }
+
             }
             // Debug.Log($"Invalidated count {invalidatedCount}. {options.TransformedInvalidatedArea}");
             return terrainGroups;
-        }
-
-        private MatrixWithOffset<ResultHeightData> GetCachedResults(TerrainOptions options)
-        {
-            var cellCount = options.CellInGroupCount;
-
-            MatrixWithOffset<ResultHeightData> results;
-            if (_resultsCache != null && _resultsCache.IsSameSize(cellCount, Vector2i.One))
-            {
-                results = _resultsCache;
-            }
-            else
-            {
-                results = new MatrixWithOffset<ResultHeightData>(cellCount, Vector2i.One);
-                _resultsCache = results;
-                //Debug.Log("Creating new HeightData[,]");
-            }
-            return results;
         }
     }
 }

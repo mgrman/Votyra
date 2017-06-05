@@ -12,18 +12,14 @@ namespace Votyra.TerrainGenerators
         public Vector2i Group { get; private set; }
         public MatrixWithOffset<ResultHeightData> Data { get; private set; }
 
-        public bool Invalidated { get; private set; }
-
         public TerrainGroup(Vector2i cellInGroupCount)
         {
             Data = new MatrixWithOffset<ResultHeightData>(cellInGroupCount, Vector2i.One);
         }
 
-
-        public void Clear(Vector2i group, bool invalidated)
+        public void Clear(Vector2i group)
         {
             Group = group;
-            Invalidated = invalidated;
         }
     }
 }

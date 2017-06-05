@@ -5,20 +5,17 @@ using Votyra.Common.Models;
 using Votyra.Common.Models.ObjectPool;
 using Votyra.TerrainMeshers.TriangleMesh;
 using Votyra.Models;
+using Votyra.Unity.GroupSelectors;
 
 namespace Votyra.Pooling
 {
     public static class Pool
     {
-        public static readonly ConcurentObjectPool<List<Vector2i>> Vector2ListPool = new ConcurentObjectPool<List<Vector2i>>(5, () => new List<Vector2i>(0));
         public static readonly ConcurentObjectDictionaryPool<ITriangleMesh, int> Meshes = new ConcurentObjectDictionaryPool<ITriangleMesh, int>(100, triangleCount => new FixedTriangleMesh(triangleCount));
 
         public static readonly ConcurentObjectDictionaryPool<IList<ITriangleMesh>, MeshKey> Meshes2 = new ConcurentObjectDictionaryPool<IList<ITriangleMesh>, MeshKey>(3, key => Enumerable.Range(0, key.MeshCount).Select(o => new FixedTriangleMesh(key.TriangleCount)).ToArray());
 
-
-
         public static readonly ConcurentObjectDictionaryPool<IReadOnlyDictionary<Vector2i, ITriangleMesh>, MeshKey2> Meshes3 = new ConcurentObjectDictionaryPool<IReadOnlyDictionary<Vector2i, ITriangleMesh>, MeshKey2>(3, key => new Dictionary<Vector2i, ITriangleMesh>());
-
 
         public static readonly ConcurentObjectDictionaryPool<IList<ITerrainGroup>, TerrainGroupKey> TerrainGroups = new ConcurentObjectDictionaryPool<IList<ITerrainGroup>, TerrainGroupKey>(3, key => Enumerable.Range(0, key.GroupsToUpdate).Select(o => new TerrainGroup(key.CellInGroupCount)).ToArray());
 
