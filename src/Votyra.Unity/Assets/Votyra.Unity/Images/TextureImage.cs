@@ -19,7 +19,7 @@ namespace Votyra.Images
 
         public Range2i RangeZ { get; private set; }
 
-        public Rect InvalidatedArea => RectUtils.All;
+        public Rect2i InvalidatedArea => Rect2i.All;
 
         public int Sample(Vector2i point)
         {

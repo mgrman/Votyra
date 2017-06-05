@@ -87,7 +87,6 @@ namespace Votyra.Unity.MeshUpdaters
             }
 
 
-            options.Dispose();
         }
 
         private void UpdateMesh(TerrainMeshers.TriangleMesh.ITriangleMesh triangleMesh, Mesh mesh)

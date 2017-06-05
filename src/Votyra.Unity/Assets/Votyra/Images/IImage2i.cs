@@ -5,7 +5,7 @@ namespace Votyra.Images
 {
     public interface IImage2i
     {
-        Rect InvalidatedArea { get; }
+        Rect2i InvalidatedArea { get; }
 
         Range2i RangeZ { get; }
 

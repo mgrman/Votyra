@@ -15,9 +15,10 @@ namespace Votyra.Unity.Images
 
         private Matrix<int> _editableMatrix;
 
-        private Rect? _invalidatedArea;
+        private Rect2i? _invalidatedArea;
 
         private readonly List<LockableMatrix<int>> _readonlyMatrices = new List<LockableMatrix<int>>();
+
         private MatrixImage _image = null;
 
         public IImage2i CreateImage()
@@ -42,6 +43,11 @@ namespace Votyra.Unity.Images
                     }
                 }
 
+                Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
+
+                var oldImage = _image;
+                oldImage?.Dispose();
+
                 _image = new MatrixImage(readonlyMatrix, _invalidatedArea.Value);
                 _invalidatedArea = null;
             }
@@ -54,14 +60,14 @@ namespace Votyra.Unity.Images
             {
                 var size = new Vector2i(10, 10);
                 _editableMatrix = new Matrix<int>(size);
-                _invalidatedArea = new Rect(0, 0, 10, 10);
+                _invalidatedArea = new Rect2i(0, 0, 10, 10);
             }
             else
             {
                 var texture = InitialValueTexture;
                 var size = new Vector2i(texture.width, texture.height);
                 _editableMatrix = new Matrix<int>(size);
-                _invalidatedArea = new Rect(0, 0, size.x, size.y);
+                _invalidatedArea = new Rect2i(0, 0, size.x, size.y);
 
                 for (int x = 0; x < texture.width; x++)
                 {
@@ -104,7 +110,8 @@ namespace Votyra.Unity.Images
 
             _editableMatrix[pos] = value;
 
-            _invalidatedArea = _invalidatedArea.TryCombineWith(new Rect(pos.x, pos.y, 1, 1));
+            var changedArea = new Rect2i(pos.x, pos.y, 1, 1);
+            _invalidatedArea = _invalidatedArea?.CombineWith(changedArea) ?? changedArea;
         }
     }
 }

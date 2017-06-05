@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using Votyra.Common.Models;
+using Votyra.Common.Utils;
 
 namespace Votyra.Images
 {
@@ -15,7 +16,7 @@ namespace Votyra.Images
 
         public Range2i RangeZ { get { return new Range2i((Image).RangeZ); } }
 
-        public Rect InvalidatedArea => Image.InvalidatedArea;
+        public Rect2i InvalidatedArea => Image.InvalidatedArea.RoundToInt();
 
         public int Sample(Vector2i point)
         {

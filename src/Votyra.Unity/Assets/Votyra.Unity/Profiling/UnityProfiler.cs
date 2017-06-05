@@ -4,7 +4,7 @@ using UnityEngine.Profiling;
 
 namespace Votyra.Unity.Profiling
 {
-    public class UnityProfiler : IProfiler
+    public struct UnityProfiler : IProfiler
     {
         private readonly bool _calledProfiler;
 
@@ -14,6 +14,10 @@ namespace Votyra.Unity.Profiling
             {
                 Profiler.BeginSample(name);
                 _calledProfiler = true;
+            }
+            else
+            {
+                _calledProfiler = false;
             }
         }
 

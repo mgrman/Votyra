@@ -40,7 +40,12 @@ namespace Votyra.Unity.Behaviours
             }
             // Debug.LogFormat("Changing pixel {0},{1} by {2} .", cell.x, cell.y, offset);
 
-            const int maxDist = 3;
+            int maxDist;
+            if (Input.GetButton("Modifier1"))
+                maxDist = 3;
+            else
+                maxDist = 1;
+
             for (int ox = -maxDist; ox <= maxDist; ox++)
             {
                 for (int oy = -maxDist; oy <= maxDist; oy++)

@@ -27,7 +27,7 @@ namespace Votyra.Images
             RangeZ = ImageA.RangeZ + ImageB.RangeZ;
         }
 
-        public Rect InvalidatedArea
+        public Rect2i InvalidatedArea
         {
             get
             {

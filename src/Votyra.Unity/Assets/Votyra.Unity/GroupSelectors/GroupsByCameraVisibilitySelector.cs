@@ -81,7 +81,6 @@ namespace Votyra.Unity.GroupSelectors
                 }
             }
 
-            options.Dispose();
             return groups;
         }
     }

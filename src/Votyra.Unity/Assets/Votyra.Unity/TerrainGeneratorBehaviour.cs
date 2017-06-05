@@ -62,27 +62,33 @@ namespace Votyra.Unity
         {
             try
             {
+
                 Profiler.BeginSample("Updating cached services");
                 UpdateCachedServices();
                 Profiler.EndSample();
 
                 Profiler.BeginSample("Getting image");
                 var image = GetImage();
+                (image as IInitializableImage).StartUsing();
                 Profiler.EndSample();
 
                 Profiler.BeginSample("Creating visible groups");
                 var groupVisibilityOptions = CreateGroupVisibilityOptions(image);
                 var groupsToUpdate = _groupsSelector.GetGroupsToUpdate(groupVisibilityOptions);
+                groupVisibilityOptions.Dispose();
                 Profiler.EndSample();
 
                 Profiler.BeginSample("Sampling mesh");
                 TerrainOptions terrainOptions = CreateTerrainOptions(image, groupsToUpdate);
                 var results = _terrainGenerator.Generate(terrainOptions);
+                terrainOptions.Dispose();
+                (image as IInitializableImage).FinishUsing();
                 Profiler.EndSample();
 
                 Profiler.BeginSample("Applying mesh");
                 MeshOptions meshOptions = CreateMeshOptions();
                 _meshUpdater.UpdateMesh(meshOptions, results);
+                meshOptions.Dispose();
                 Profiler.EndSample();
             }
             catch (Exception ex)
@@ -115,6 +121,10 @@ namespace Votyra.Unity
 
         private GroupVisibilityOptions CreateGroupVisibilityOptions(IImage2i image)
         {
+            if (image == null)
+            {
+                return null;
+            }
             var CellInGroupCount = new Vector2i(this.CellInGroupCount.x, this.CellInGroupCount.y);
             return new GroupVisibilityOptions(Camera.main, this.gameObject, image.RangeZ, CellInGroupCount);
         }
@@ -171,16 +181,10 @@ namespace Votyra.Unity
 
         private void DisposeService()
         {
-            if (_terrainGenerator is IDisposable)
-            {
-                (_terrainGenerator as IDisposable).Dispose();
-            }
+            (_terrainGenerator as IDisposable)?.Dispose();
             _terrainGenerator = null;
 
-            if (_meshUpdater is IDisposable)
-            {
-                (_meshUpdater as IDisposable).Dispose();
-            }
+            (_meshUpdater as IDisposable)?.Dispose();
             _meshUpdater = null;
         }
     }

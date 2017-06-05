@@ -8,6 +8,7 @@ using Votyra.Pooling;
 using Votyra.TerrainAlgorithms;
 using Votyra.TerrainMeshers;
 using UnityEngine;
+using Votyra.Common.Utils;
 
 namespace Votyra.TerrainGenerators
 {
@@ -20,7 +21,7 @@ namespace Votyra.TerrainGenerators
         public readonly Range2i RangeZ;
 
         public readonly IImage2i Image;
-        public readonly Rect TransformedInvalidatedArea;
+        public readonly Rect2i TransformedInvalidatedArea;
         public readonly IImageSampler ImageSampler;
         public readonly ITerrainAlgorithm TerrainAlgorithm;
         public readonly ITerrainMesher TerrainMesher;
@@ -46,12 +47,14 @@ namespace Votyra.TerrainGenerators
             this.TerrainAlgorithm = terrainAlgorithm;
             this.TerrainMesher = terrainMesher;
 
-            this.RangeZ = Image.RangeZ;
+            this.RangeZ = Image?.RangeZ ?? Range2i.Zero;
             this.GroupBounds = new Bounds(new Vector3(CellInGroupCount.x / 2.0f, CellInGroupCount.y / 2.0f, RangeZ.Center), new Vector3(CellInGroupCount.x, CellInGroupCount.y, RangeZ.Size));
 
             this.GroupsToUpdate = groupsToUpdate;
 
-            this.TransformedInvalidatedArea = ImageSampler.InverseTransform(this.Image.InvalidatedArea);
+            this.TransformedInvalidatedArea = ImageSampler
+                .InverseTransform(this.Image.InvalidatedArea.ToRect())
+                .RoundToContain();
         }
 
         public TerrainOptions(TerrainOptions template)

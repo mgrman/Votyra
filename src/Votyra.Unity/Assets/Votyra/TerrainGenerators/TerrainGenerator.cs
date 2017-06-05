@@ -38,7 +38,6 @@ namespace Votyra.TerrainGenerators
             _old_options = options.Clone();
             var meshes = GenerateMeshUsingTilesImpl(options);
 
-            options.Dispose();
             return meshes;
         }
 
@@ -59,7 +58,6 @@ namespace Votyra.TerrainGenerators
 
             var terrainGroups = GenerateTilesImpl(options);
 
-            options.Dispose();
             return terrainGroups;
         }
 
@@ -199,7 +197,7 @@ namespace Votyra.TerrainGenerators
 
                 Vector2i firstCell = options.CellInGroupCount * group;
 
-                var groupArea = new UnityEngine.Rect(firstCell.x, firstCell.y, options.CellInGroupCount.x, options.CellInGroupCount.y);
+                var groupArea = new Rect2i(firstCell, options.CellInGroupCount);
 
                 ITerrainGroup terrainGroup;
 

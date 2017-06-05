@@ -6,22 +6,20 @@ using Votyra.Models;
 
 namespace Votyra.Images
 {
-    internal class MatrixImage : IImage2i, IDisposable
+    internal class MatrixImage : IImage2i, IInitializableImage, IDisposable
     {
         public Range2i RangeZ { get; }
 
         private readonly LockableMatrix<int> _image;
 
-        public Rect InvalidatedArea { get; }
+        public Rect2i InvalidatedArea { get; }
 
-        public MatrixImage(LockableMatrix<int> values, Rect invalidatedArea)
+        public MatrixImage(LockableMatrix<int> values, Rect2i invalidatedArea)
         {
-            values.Lock(this);
             _image = values;
             RangeZ = CalculateRangeZ(values);
             InvalidatedArea = invalidatedArea;
         }
-
 
         private static Range2i CalculateRangeZ(LockableMatrix<int> values)
         {
@@ -51,10 +49,22 @@ namespace Votyra.Images
             return _image[point.x, point.y];
         }
 
-        public void Dispose()
+        public void StartUsing()
+        {
+            _image.Lock(this);
+        }
+
+        public void FinishUsing()
         {
             _image.Unlock(this);
         }
 
+        public void Dispose()
+        {
+            if (_image.IsLocked)
+            {
+                _image.Unlock(this);
+            }
+        }
     }
 }

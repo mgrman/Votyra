@@ -29,26 +29,14 @@ namespace Votyra.Common.Utils
             return new Rect(new Vector2(minX, minY), new Vector2(sizeX, sizeY));
         }
 
-        public static Rect? TryCombineWith(this Rect? a, Rect? b)
+        public static Rect2i RoundToInt(this Rect rec)
         {
-            if (a == null)
-            {
-                return b;
-            }
-            if (b == null)
-            {
-                return a;
-            }
-            return a.Value.CombineWith(b.Value);
+            return new Rect2i(Mathf.RoundToInt(rec.x), Mathf.RoundToInt(rec.y), Mathf.RoundToInt(rec.width), Mathf.RoundToInt(rec.height));
         }
 
-        public static Rect? TryCombineWith(this Rect? a, Rect b)
+        public static Rect2i RoundToContain(this Rect rec)
         {
-            if (a == null)
-            {
-                return b;
-            }
-            return a.Value.CombineWith(b);
+            return Rect2i.MinMaxRect(Mathf.FloorToInt(rec.xMin), Mathf.FloorToInt(rec.yMin), Mathf.CeilToInt(rec.xMax), Mathf.CeilToInt(rec.yMax));
         }
 
         public static Rect CombineWith(this Rect a, Rect b)
