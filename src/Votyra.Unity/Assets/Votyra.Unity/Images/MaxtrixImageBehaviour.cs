@@ -25,7 +25,7 @@ namespace Votyra.Unity.Images
         {
             if (_invalidatedArea.HasValue)
             {
-                Debug.LogFormat("Update readonlyCount:{0}", _readonlyMatrices.Count);
+                // Debug.LogFormat("Update readonlyCount:{0}", _readonlyMatrices.Count);
 
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)

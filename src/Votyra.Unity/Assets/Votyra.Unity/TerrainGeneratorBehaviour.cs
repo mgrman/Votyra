@@ -84,7 +84,7 @@ namespace Votyra.Unity
 
         private void ProcessMouseClick()
         {
-            Debug.LogFormat("OnMouseDown on tile.");
+            // Debug.LogFormat("OnMouseDown on tile.");
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -206,7 +206,6 @@ namespace Votyra.Unity
                 go.AddComponent<DrawBounds>();
             }
             var meshRenderer = go.GetOrAddComponent<MeshRenderer>();
-
             meshRenderer.material = Material;
             return go;
         }
