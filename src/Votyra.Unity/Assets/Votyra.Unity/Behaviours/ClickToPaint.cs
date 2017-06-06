@@ -9,20 +9,35 @@ namespace Votyra.Unity.Behaviours
     {
         private const float Period = 0.1f;
 
+        private const int maxDistBig = 4;
+        private const int maxDistSmall = 1;
+        private const float smoothSpeedRelative = 0.2f;
+        private const float smoothCutoff = smoothSpeedRelative / 2;
+
         private float lastTime;
         private Vector2i lastCell;
 
         private MaxtrixImageBehaviour _image;
+
+        private int? _centerValueToReuse;
         void Start()
         {
             _image = GetComponent<MaxtrixImageBehaviour>();
+        }
+
+        void Update()
+        {
+            if (Input.GetButtonUp("Modifier1"))
+            {
+                _centerValueToReuse = null;
+            }
         }
 
         private void OnCellClick(Vector2 position)
         {
             var cell = new Vector2i(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y));
 
-            if (cell == lastCell && Time.time < lastTime + Period)
+            if (cell == lastCell || Time.time < lastTime + Period)
             {
                 return;
             }
@@ -30,57 +45,31 @@ namespace Votyra.Unity.Behaviours
             lastTime = Time.time;
 
 
-            // Debug.LogFormat("Changing pixel {0},{1} by {2} .", cell.x, cell.y, offset);
-            if (Input.GetButton("Modifier1") && Input.GetButton("Modifier2"))
+            if (Input.GetButton("Modifier1"))
             {
                 int maxDist = 4;
 
-                int sumValue = 0;
-                for (int ox = -maxDist; ox <= maxDist; ox++)
+                int centerValue;
+                if (_centerValueToReuse.HasValue)
                 {
-                    sumValue += _image.GetValue(cell + new Vector2i(ox, maxDist));
-                    sumValue += _image.GetValue(cell + new Vector2i(ox, -maxDist));
+                    centerValue = _centerValueToReuse.Value;
                 }
-                for (int oy = -maxDist; oy <= maxDist; oy++)
+                else
                 {
-                    sumValue += _image.GetValue(cell + new Vector2i(maxDist, oy));
-                    sumValue += _image.GetValue(cell + new Vector2i(-maxDist, oy));
+                    centerValue = _image.GetValue(cell);
+                    _centerValueToReuse = centerValue;
                 }
-                float avg = sumValue / ((maxDist * 2 + 1) * 4);
-
 
                 for (int ox = -maxDist; ox <= maxDist; ox++)
                 {
                     for (int oy = -maxDist; oy <= maxDist; oy++)
                     {
                         var value = _image.GetValue(cell + new Vector2i(ox, oy));
-                        var offsetF = (avg - value) * 0.2f;
+                        var offsetF = (centerValue - value) * smoothSpeedRelative;
                         int offsetI = 0;
-                        if (offsetF > 0.1f)
+                        if (offsetF > smoothCutoff)
                             offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
-                        else if (offsetF < -0.1f)
-                            offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
-
-                        _image.SetByOffsetValue(cell + new Vector2i(ox, oy), offsetI);
-                    }
-                }
-            }
-            else if (Input.GetButton("Modifier1"))
-            {
-                int maxDist = 4;
-
-
-                var centerValue = _image.GetValue(cell);
-                for (int ox = -maxDist; ox <= maxDist; ox++)
-                {
-                    for (int oy = -maxDist; oy <= maxDist; oy++)
-                    {
-                        var value = _image.GetValue(cell + new Vector2i(ox, oy));
-                        var offsetF = (centerValue - value) * 0.2f;
-                        int offsetI = 0;
-                        if (offsetF > 0.1f)
-                            offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
-                        else if (offsetF < -0.1f)
+                        else if (offsetF < -smoothCutoff)
                             offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
 
                         _image.SetByOffsetValue(cell + new Vector2i(ox, oy), offsetI);
@@ -89,28 +78,28 @@ namespace Votyra.Unity.Behaviours
             }
             else
             {
-                int offset = 0;
+                int multiplier = 0;
 
                 if (Input.GetMouseButton(0))
                 {
-                    offset = 1;
+                    multiplier = 1;
                 }
                 else if (Input.GetMouseButton(1))
                 {
-                    offset = -1;
+                    multiplier = -1;
                 }
                 int maxDist;
                 if (Input.GetButton("Modifier2"))
-                    maxDist = 3;
+                    maxDist = maxDistBig;
                 else
-                    maxDist = 1;
+                    maxDist = maxDistSmall;
 
                 for (int ox = -maxDist; ox <= maxDist; ox++)
                 {
                     for (int oy = -maxDist; oy <= maxDist; oy++)
                     {
                         var dist = Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy));
-                        _image.SetByOffsetValue(cell + new Vector2i(ox, oy), offset * (maxDist - dist));
+                        _image.SetByOffsetValue(cell + new Vector2i(ox, oy), multiplier * (maxDist - dist));
                     }
                 }
             }

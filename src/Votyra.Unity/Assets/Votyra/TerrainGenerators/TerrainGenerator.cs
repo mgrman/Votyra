@@ -4,8 +4,8 @@ using Votyra.Common.Logging;
 using Votyra.Common.Models;
 using Votyra.Common.Profiling;
 using Votyra.Common.Utils;
-using Votyra.Pooling;
 using Votyra.TerrainMeshers.TriangleMesh;
+using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.TerrainGenerators
 {
@@ -17,113 +17,76 @@ namespace Votyra.TerrainGenerators
 
         private MatrixWithOffset<ResultHeightData> _resultsCache;
 
-        private TerrainOptions _old_options;
-
-        IReadOnlyDictionary<Vector2i, ITriangleMesh> IGenerator<TerrainOptions, IReadOnlyDictionary<Vector2i, ITriangleMesh>>.Generate(TerrainOptions options)
+        IReadOnlyPooledDictionary<Vector2i, ITriangleMesh> ITerrainMeshGenerator.Generate(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate)
         {
-            if (!options.IsValid)
-            {
-                return null;
-            }
-            if (_old_options != null && !options.IsChanged(_old_options))
-            {
-                return null;
-            }
-
             // _logger.LogMessage("Recomputing meshes");
 
-            if (_old_options != null)
-                _old_options.Dispose();
-
-            _old_options = options.Clone();
-            var meshes = GenerateMeshUsingTilesImpl(options);
+            var meshes = GenerateMeshUsingTilesImpl(options, groupsToUpdate);
 
             return meshes;
         }
 
-        IList<ITerrainGroup> IGenerator<TerrainOptions, IList<ITerrainGroup>>.Generate(TerrainOptions options)
+        IReadOnlyPooledCollection<ITerrainGroup> ITerrainTileGenerator.Generate(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate)
         {
-            if (!options.IsValid)
-            {
-                return null;
-            }
-            if (_old_options != null && !options.IsChanged(_old_options))
-            {
-                return null;
-            }
-            if (_old_options != null)
-                _old_options.Dispose();
-
-            _old_options = options.Clone();
-
-            var terrainGroups = GenerateTilesImpl(options);
+            var terrainGroups = GenerateTilesImpl(options, groupsToUpdate);
 
             return terrainGroups;
         }
 
-        private IReadOnlyDictionary<Vector2i, ITriangleMesh> GenerateMeshUsingTilesImpl(TerrainOptions options)
+        private IReadOnlyPooledDictionary<Vector2i, ITriangleMesh> GenerateMeshUsingTilesImpl(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate)
         {
             int cellInGroupCount_x = options.CellInGroupCount.x;
             int cellInGroupCount_y = options.CellInGroupCount.y;
-            IReadOnlyDictionary<Vector2i, ITriangleMesh> readonlyMeshes;
-            IDictionary<Vector2i, ITriangleMesh> meshes;
+            PooledDictionary<Vector2i, ITriangleMesh> meshes;
             using (ProfilerFactory.Create("init"))
             {
                 options.TerrainMesher.Initialize(options);
 
-                readonlyMeshes = Pool.Meshes3.GetObject(new Pool.MeshKey2(options.TerrainMesher.TriangleCount));
-                meshes = readonlyMeshes as IDictionary<Vector2i, ITriangleMesh>;
-                meshes.Clear();
+                meshes = PooledDictionary<Vector2i, ITriangleMesh>.Create();
             }
 
-            var terrainGroups = GenerateTilesImpl(options);
-
-            foreach (var group in terrainGroups)
+            using (var terrainGroups = GenerateTilesImpl(options, groupsToUpdate))
             {
-                ITriangleMesh mesh;
-                MatrixWithOffset<ResultHeightData> results = group.Data;
-
-                using (ProfilerFactory.Create("Other"))
+                foreach (var group in terrainGroups)
                 {
-                    if (!meshes.TryGetValue(group.Group, out mesh))
+                    PooledTriangleMesh mesh;
+                    MatrixWithOffset<ResultHeightData> results = group.Data;
+
+                    using (ProfilerFactory.Create("Other"))
                     {
-                        mesh = Pool.Meshes.GetObject(options.TerrainMesher.TriangleCount);
+                        mesh = PooledTriangleMesh.CreateDirty(options.TerrainMesher.TriangleCount);
                         meshes[group.Group] = mesh;
-                    }
-                    options.TerrainMesher.InitializeGroup(group.Group, mesh, results);
-                }
-                for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
-                {
-                    for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
-                    {
-                        Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
 
-                        using (ProfilerFactory.Create("TerrainMesher.AddCell()"))
+                        options.TerrainMesher.InitializeGroup(group.Group, mesh, results);
+                    }
+                    for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
+                    {
+                        for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
                         {
-                            //process cell to mesh
-                            options.TerrainMesher.AddCell(cellInGroup);
+                            Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
+
+                            using (ProfilerFactory.Create("TerrainMesher.AddCell()"))
+                            {
+                                //process cell to mesh
+                                options.TerrainMesher.AddCell(cellInGroup);
+                            }
                         }
                     }
+                    mesh.FinalizeMesh();
                 }
-                mesh.FinalizeMesh();
-
             }
 
-            return readonlyMeshes;
+            return meshes;
         }
 
-        private IList<ITerrainGroup> GenerateTilesImpl(TerrainOptions options)
+        private IReadOnlyPooledCollection<ITerrainGroup> GenerateTilesImpl(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate)
         {
             int cellInGroupCount_x = options.CellInGroupCount.x;
             int cellInGroupCount_y = options.CellInGroupCount.y;
-            IList<ITerrainGroup> terrainGroups;
-            using (ProfilerFactory.Create("init"))
-            {
-                terrainGroups = Pool.TerrainGroups.GetObject(new Pool.TerrainGroupKey(options.GroupsToUpdate.Count, options.CellInGroupCount));
-            }
+            PooledList<ITerrainGroup> terrainGroups = PooledList<ITerrainGroup>.Create();
 
             int groupIndex = -1;
-            foreach (var group in options.GroupsToUpdate)
+            foreach (var group in groupsToUpdate)
             {
                 groupIndex++;
 
@@ -131,12 +94,13 @@ namespace Votyra.TerrainGenerators
 
                 var groupArea = new Rect2i(firstCell, options.CellInGroupCount);
 
-                ITerrainGroup terrainGroup;
+                PooledTerrainGroup terrainGroup;
 
                 using (ProfilerFactory.Create("Other"))
                 {
-                    terrainGroup = terrainGroups[groupIndex];
+                    terrainGroup = PooledTerrainGroup.CreateDirty(options.CellInGroupCount);
                     terrainGroup.Clear(group);
+                    terrainGroups.Add(terrainGroup);
                 }
 
 
@@ -162,9 +126,7 @@ namespace Votyra.TerrainGenerators
                         }
                     }
                 }
-
             }
-            // Debug.Log($"Invalidated count {invalidatedCount}. {options.TransformedInvalidatedArea}");
             return terrainGroups;
         }
     }

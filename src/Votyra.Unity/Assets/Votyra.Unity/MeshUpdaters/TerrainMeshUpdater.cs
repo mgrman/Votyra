@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Votyra.Common.Profiling;
-using Votyra.Pooling;
 using Votyra.Unity.Utils;
 using UnityEngine;
 using Votyra.Common.Models;
@@ -20,22 +19,8 @@ namespace Votyra.Unity.MeshUpdaters
         {
         }
 
-        public void UpdateMesh(MeshOptions options, IReadOnlyDictionary<Vector2i, ITriangleMesh> terrainMeshes, IEnumerable<Vector2i> toKeepGroups)
+        public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<Vector2i, ITriangleMesh> terrainMeshes, IEnumerable<Vector2i> toKeepGroups)
         {
-#if UNITY_EDITOR
-
-            if (!Application.isPlaying)
-            {
-                _meshFilters.Clear();
-                options.ParentContainer.DestroyAllChildren();
-            }
-#endif
-            // if (options.ParentContainer.transform.childCount != _meshFilters.Count)
-            // {
-            //     options.ParentContainer.DestroyAllChildren();
-            //     _meshFilters.Clear();
-            // }
-
             if (terrainMeshes != null)
             {
                 using (ProfilerFactory.Create("Setting Mesh"))
@@ -86,15 +71,6 @@ namespace Votyra.Unity.MeshUpdaters
                         _meshFilters[toDeleteGroup].gameObject.Destroy();
                         _meshFilters.Remove(toDeleteGroup);
                     }
-
-                    // var key = terrainMeshes.Count == 0 ? 0 : (terrainMeshes.First().Value.TriangleCount);
-                    foreach (var mesh in terrainMeshes.Values.Where(o => o != null))
-                    {
-                        Pool.Meshes.ReturnObject(mesh, mesh.TriangleCount);
-                    }
-                    (terrainMeshes as IDictionary<Vector2i, ITriangleMesh>).Clear();
-                    // Pool.Meshes3.ReturnObject(terrainMeshes, new Pool.MeshKey2(key));
-
                 }
             }
 
@@ -117,9 +93,7 @@ namespace Votyra.Unity.MeshUpdaters
                 //mesh.normals = this._normals;
                 mesh.uv = triangleMesh.UV;
             }
-            //Profiler.BeginSample("RecalculateNormals");
             mesh.RecalculateNormals();
-            //Profiler.EndSample();
 
             mesh.bounds = triangleMesh.MeshBounds;
 
@@ -127,31 +101,8 @@ namespace Votyra.Unity.MeshUpdaters
 
         }
 
-        //private void UpdateMesh(TerrainMeshers.TriangleMesh.FixedTriangleMesh triangleMesh, Mesh mesh)
-        //{
-        //    if (mesh.vertexCount != triangleMesh.PointCount)
-        //    {
-        //        mesh.Clear();
-        //        mesh.vertices = triangleMesh.Vertices;
-        //        //mesh.normals = this._normals;
-        //        mesh.uv = triangleMesh.UV;
-        //        mesh.triangles = triangleMesh.Indices;
 
-        //    }
-        //    else
-        //    {
-        //        mesh.vertices = triangleMesh.Vertices;
-        //        //mesh.normals = this._normals;
-        //        mesh.uv = triangleMesh.UV;
-        //    }
-        //    //Profiler.BeginSample("RecalculateNormals");
-        //    mesh.RecalculateNormals();
-        //    //Profiler.EndSample();
-
-        //    mesh.bounds = this.MeshBounds;
-        //}
-
-        private MeshFilter CreateMeshObject(MeshOptions options)
+        private MeshFilter CreateMeshObject(IMeshContext options)
         {
             //TODO: use prefab so custom scripts can be attached! Like OnMouseDown, ...
 
@@ -159,28 +110,12 @@ namespace Votyra.Unity.MeshUpdaters
             var tile = options.GameObjectFactory != null ? options.GameObjectFactory() : new GameObject();
             tile.name = name;
             tile.hideFlags = HideFlags.DontSave;
-            tile.transform.SetParent(options.ParentContainer.transform, false);
-            var meshFilter = tile.GetComponent<MeshFilter>();
-            if (meshFilter == null)
-            {
-                meshFilter = tile.AddComponent<MeshFilter>();
-            }
-            var meshRenderer = tile.GetComponent<MeshRenderer>();
-            if (meshRenderer == null)
-            {
-                meshRenderer = tile.AddComponent<MeshRenderer>();
-            }
-            var meshCollider = tile.GetComponent<MeshCollider>();
-            if (meshCollider == null)
-            {
-                meshCollider = tile.AddComponent<MeshCollider>();
-            }
-            if (options.DrawBounds)
-            {
-                tile.AddComponent<DrawBounds>();
-            }
 
-            meshRenderer.material = options.Material;
+            var meshFilter = tile.GetOrAddComponent<MeshFilter>();
+
+            var meshRenderer = tile.GetOrAddComponent<MeshRenderer>();
+
+            var meshCollider = tile.GetOrAddComponent<MeshCollider>();
 
             if (meshFilter.sharedMesh == null)
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {
-    public interface IReadOnlyPooledList<T> : IReadOnlyList<T>, IDisposable
+    public interface IReadOnlyPooledList<T> : IReadOnlyList<T>, IReadOnlyPooledCollection<T>, IDisposable
     {
 
     }

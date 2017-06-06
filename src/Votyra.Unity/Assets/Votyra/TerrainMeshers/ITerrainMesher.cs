@@ -6,7 +6,7 @@ namespace Votyra.TerrainMeshers
 {
     public interface ITerrainMesher
     {
-        void Initialize(TerrainOptions terrainOptions);
+        void Initialize(ITerrainContext terrainOptions);
 
         void InitializeGroup(Vector2i group, ITriangleMesh mesh, IMatrix<ResultHeightData> data);
 

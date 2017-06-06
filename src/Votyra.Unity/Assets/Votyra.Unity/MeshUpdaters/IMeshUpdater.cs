@@ -7,6 +7,6 @@ namespace Votyra.Unity.MeshUpdaters
     {
         IEnumerable<Vector2i> ExistingGroups { get; }
 
-        void UpdateMesh(MeshOptions options, IReadOnlyDictionary<Vector2i, TerrainMeshers.TriangleMesh.ITriangleMesh> terrainMeshes, IEnumerable<Vector2i> toKeepGroups);
+        void UpdateMesh(IMeshContext options, IReadOnlyDictionary<Vector2i, TerrainMeshers.TriangleMesh.ITriangleMesh> terrainMeshes, IEnumerable<Vector2i> toKeepGroups);
     }
 }

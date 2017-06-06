@@ -16,17 +16,15 @@ namespace Votyra.TerrainMeshers
         protected Vector3 bounds_center;
         protected Vector3 bounds_size;
         protected int quadIndex;
-        protected bool flipTriangles;
         protected ITriangleMesh mesh;
         protected IMatrix<ResultHeightData> results;
 
-        public virtual void Initialize(TerrainOptions terrainOptions)
+        public virtual void Initialize(ITerrainContext terrainOptions)
         {
             this.cellInGroupCount = terrainOptions.CellInGroupCount;
             this.TriangleCount = terrainOptions.CellInGroupCount.AreaSum * CELL_TO_TRIANGLE;
             this.bounds_center = terrainOptions.GroupBounds.center;
             this.bounds_size = terrainOptions.GroupBounds.size;
-            this.flipTriangles = terrainOptions.FlipTriangles;
         }
 
         public virtual void InitializeGroup(Vector2i group, ITriangleMesh mesh, IMatrix<ResultHeightData> data)

@@ -4,8 +4,10 @@ using Votyra.Common.Models.ObjectPool;
 
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {
-    public class PooledList<T> : List<T>, IReadOnlyPooledCollection<T>, IReadOnlyPooledList<T>
+    public class PooledList<T> : List<T>, IReadOnlyPooledList<T>
     {
+        private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
+
         private static readonly ConcurentObjectPool<PooledList<T>> Pool = new ConcurentObjectPool<PooledList<T>>(5, () => new PooledList<T>());
 
         private PooledList()
@@ -15,12 +17,20 @@ namespace Votyra.Unity.Assets.Votyra.Pooling
 
         public static PooledList<T> Create()
         {
-            return Pool.GetObject();
+            var obj = Pool.GetObject();
+            obj.Clear();
+            return obj;
         }
 
         public void Dispose()
         {
-            this.Clear();
+            if (IsDisposable)
+            {
+                foreach (var item in this)
+                {
+                    (item as IDisposable)?.Dispose();
+                }
+            }
             Pool.ReturnObject(this);
         }
     }

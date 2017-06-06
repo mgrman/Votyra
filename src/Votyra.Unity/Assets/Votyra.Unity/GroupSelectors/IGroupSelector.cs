@@ -6,6 +6,6 @@ namespace Votyra.Unity.GroupSelectors
 {
     public interface IGroupSelector
     {
-        IReadOnlyPooledCollection<Group> GetGroupsToUpdate(GroupVisibilityOptions options);
+        GroupActions GetGroupsToUpdate(IGroupVisibilityContext options);
     }
 }

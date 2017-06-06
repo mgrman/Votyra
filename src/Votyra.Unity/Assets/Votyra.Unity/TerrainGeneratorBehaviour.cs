@@ -36,17 +36,19 @@ namespace Votyra.Unity
         public Material Material = null;
         public MonoBehaviour Image = null;
 
-        public ITerrainAlgorithm _meshGenerator;
+        public ITerrainAlgorithm _terrainAlgorithm;
         public ITerrainMesher _terrainMesher;
         public IImageSampler _sampler;
 
         private IGroupSelector _groupsSelector;
-        private IGenerator<TerrainOptions, IReadOnlyDictionary<Vector2i, ITriangleMesh>> _terrainGenerator;
+        private ITerrainMeshGenerator _terrainGenerator;
         private IMeshUpdater _meshUpdater;
 
         public static Thread UnityThread { get; private set; }
 
         private Task _updateTask = null;
+
+        private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
         static TerrainGeneratorBehaviour()
         {
@@ -70,7 +72,8 @@ namespace Votyra.Unity
                 _updateTask?.Dispose();
                 _updateTask = null;
 
-                _updateTask = UpdateTerrain();
+                var context = GetSceneContext();
+                _updateTask = UpdateTerrain(context, _onDestroyCts.Token);
             }
 
             if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
@@ -94,53 +97,98 @@ namespace Votyra.Unity
             this.SendMessage("OnCellClick", point, SendMessageOptions.DontRequireReceiver);
         }
 
-        private async Task UpdateTerrain()
+        private async static Task UpdateTerrain(SceneContext context, CancellationToken token)
         {
+            GroupActions groupActions = null;
+            IReadOnlyPooledDictionary<Vector2i, ITriangleMesh> results = null;
             try
             {
-                IImage2i image;
-                using (ProfilerFactory.Create("Getting image"))
+                Func<IReadOnlyPooledDictionary<Vector2i, ITriangleMesh>> computeAction = () =>
+                    {
+                        using (ProfilerFactory.Create("Creating visible groups"))
+                        {
+                            groupActions = context.GroupSelector.GetGroupsToUpdate(context);
+                        }
+                        var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i>();
+                        if (toRecompute.Any())
+                        {
+                            using (ProfilerFactory.Create("Sampling mesh"))
+                            {
+                                return context.TerrainGenerator.Generate(context, toRecompute);
+                            }
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    };
+
+                results = await Task.Run(computeAction);
+                // computeAction();
+                if (token.IsCancellationRequested)
                 {
-                    image = GetImage();
-                    (image as IInitializableImage).StartUsing();
+                    return;
                 }
 
-                IReadOnlyPooledCollection<Group> groupsToUpdate;
-                using (ProfilerFactory.Create("Creating visible groups"))
+                if (results != null)
                 {
-                    using (var groupVisibilityOptions = CreateGroupVisibilityOptions(image, _meshUpdater.ExistingGroups))
+                    using (ProfilerFactory.Create("Applying mesh"))
                     {
-                        groupsToUpdate = _groupsSelector.GetGroupsToUpdate(groupVisibilityOptions);
+                        var toKeep = groupActions?.ToKeep ?? Enumerable.Empty<Vector2i>();
+                        context.MeshUpdater.UpdateMesh(context, results, toKeep);
                     }
                 }
 
-                IReadOnlyDictionary<Vector2i, ITriangleMesh> results = null;
-                await Task.Run(() =>
-                 {
-                     using (ProfilerFactory.Create("Sampling mesh"))
-                     {
-                         using (TerrainOptions terrainOptions = CreateTerrainOptions(image, groupsToUpdate.Where(o => o.UpdateAction == UpdateAction.Recompute).Select(o => o.Index).ToArray()))
-                         {
-                             results = _terrainGenerator.Generate(terrainOptions);
-                         }
-                        (image as IInitializableImage).FinishUsing();
-                     }
-                 });
-
-                using (ProfilerFactory.Create("Applying mesh"))
-                {
-                    using (MeshOptions meshOptions = CreateMeshOptions())
-                    {
-                        _meshUpdater.UpdateMesh(meshOptions, results, groupsToUpdate.Where(o => o.UpdateAction == UpdateAction.Keep).Select(o => o.Index).ToArray());
-                    }
-                }
-                groupsToUpdate.Dispose();
             }
             catch (Exception ex)
             {
                 Debug.LogException(ex);
             }
+            finally
+            {
+                context?.Dispose();
+                groupActions?.Dispose();
+                results?.Dispose();
+            }
+        }
 
+        private SceneContext GetSceneContext()
+        {
+            var camera = Camera.main;
+            var container = this.gameObject;
+
+            var existingGroups = _meshUpdater.ExistingGroups;
+
+            var image = GetImage();
+
+            Vector2i cellInGroupCount = new Vector2i(this.CellInGroupCount.x, this.CellInGroupCount.y);
+
+            var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * this.transform.localToWorldMatrix;
+
+            var planes = GeometryUtility.CalculateFrustumPlanes(localToProjection);
+
+            var frustumCorners = PooledArrayContainer<Vector3>.CreateDirty(4);
+
+            camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCorners.Array);
+
+            return new SceneContext
+            (
+                _groupsSelector,
+                _terrainGenerator,
+                _meshUpdater,
+                camera.transform.position,
+                planes,
+                frustumCorners,
+                camera.transform.localToWorldMatrix,
+                container.transform.worldToLocalMatrix,
+                existingGroups,
+                cellInGroupCount,
+                image,
+                _sampler,
+                _terrainAlgorithm,
+                _terrainMesher,
+                () => this.GameObjectFactory()
+            );
         }
 
         private IImage2i GetImage()
@@ -149,54 +197,36 @@ namespace Votyra.Unity
             return imageProvider == null ? null : imageProvider.CreateImage();
         }
 
-        private GroupVisibilityOptions CreateGroupVisibilityOptions(IImage2i image, IEnumerable<Vector2i> existingGroups)
-        {
-            if (image == null)
-            {
-                return null;
-            }
-            var cellInGroupCount = new Vector2i(this.CellInGroupCount.x, this.CellInGroupCount.y);
-
-            var transformedInvalidatedArea = _sampler
-                .InverseTransform(image.InvalidatedArea.ToRect())
-                .RoundToContain();
-
-            return new GroupVisibilityOptions(Camera.main, this.gameObject, image.RangeZ, transformedInvalidatedArea, cellInGroupCount, existingGroups);
-        }
-
-        private static GameObject GameObjectFactory()
+        private GameObject GameObjectFactory()
         {
             var go = new GameObject();
+            go.transform.SetParent(this.transform, false);
+            if (DrawBounds)
+            {
+                go.AddComponent<DrawBounds>();
+            }
+            var meshRenderer = go.GetOrAddComponent<MeshRenderer>();
+
+            meshRenderer.material = Material;
             return go;
-        }
-
-        private MeshOptions CreateMeshOptions()
-        {
-            return new MeshOptions(this.Material, this.gameObject, this.DrawBounds, GameObjectFactory);
-        }
-
-        private TerrainOptions CreateTerrainOptions(IImage2i image, IReadOnlyCollection<Vector2i> groupsToUpdate)
-        {
-            Vector2i cellInGroupCount = new Vector2i(this.CellInGroupCount.x, this.CellInGroupCount.y);
-            return new TerrainOptions(cellInGroupCount, this.FlipTriangles, image, _sampler, _meshGenerator, _terrainMesher, groupsToUpdate);
         }
 
         private void Initialize()
         {
-            _meshGenerator = new TileSelectTerrainAlgorithm();
+            _terrainAlgorithm = new TileSelectTerrainAlgorithm();
             _terrainMesher = new TerrainMesher();
             _sampler = new DualImageSampler();
 
             _terrainGenerator = new TerrainGenerator();
             _meshUpdater = new TerrainMeshUpdater();
-            _groupsSelector = new ForceRecomputeInNotExistingVisibilitySelector(new InvalidatedAreaVisibilitySelector(new GroupsByCameraVisibilitySelector()));
+            _groupsSelector = new GroupsByCameraVisibilitySelector();
         }
 
 
         private void DisposeService()
         {
-            (_meshGenerator as IDisposable)?.Dispose();
-            _meshGenerator = null;
+            (_terrainAlgorithm as IDisposable)?.Dispose();
+            _terrainAlgorithm = null;
 
             (_terrainMesher as IDisposable)?.Dispose();
             _terrainMesher = null;
@@ -216,6 +246,7 @@ namespace Votyra.Unity
 
         private void OnDestroy()
         {
+            _onDestroyCts.Cancel();
             DisposeService();
         }
     }
