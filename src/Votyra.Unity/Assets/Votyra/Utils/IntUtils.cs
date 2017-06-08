@@ -22,6 +22,16 @@
             return res;
         }
 
+        public static int FloorTo2(this int value)
+        {
+            return value - value % 2;
+        }
+
+        public static int CeilTo2(this int value)
+        {
+            return value + value % 2;
+        }
+
         public static int RemainderUp(this int a, int b)
         {
             int res = a % b;

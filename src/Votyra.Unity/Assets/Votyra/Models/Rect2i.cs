@@ -43,6 +43,11 @@ namespace Votyra.Common.Models
 
         public int width => max.x - min.x;
 
+        public static Rect2i CenterAndExtents(Vector2i center, Vector2i extents)
+        {
+            return new Rect2i(center - extents, Vector2i.One + extents + extents);
+        }
+
         public static Rect2i MinMaxRect(int xmin, int ymin, int xmax, int ymax)
         {
             return new Rect2i(new Vector2i(xmin, ymin), new Vector2i(xmax - xmin, ymax - ymin));

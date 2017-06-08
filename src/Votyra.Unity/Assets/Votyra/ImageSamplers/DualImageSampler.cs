@@ -1,18 +1,41 @@
 ﻿using Votyra.Common.Models;
+using Votyra.Common.Utils;
 using Votyra.Images;
 using UnityEngine;
+using System;
 
 namespace Votyra.ImageSamplers
 {
     public class DualImageSampler : IImageSampler
     {
-        public Vector2 Transform(Vector2 pos)
+        public Vector2 WorldToImage(Vector2 pos)
         {
             return pos * 2;
         }
-        public Vector2 InverseTransform(Vector2 pos)
+        public Vector2 ImageToWorld(Vector2i pos)
         {
-            return pos / 2;
+            return pos / 2.0f;
+        }
+
+
+        public Vector2i CellToX0Y0(Vector2i pos)
+        {
+            return new Vector2i(pos.x * 2 + 0, pos.y * 2 + 0);
+        }
+
+        public Vector2i CellToX0Y1(Vector2i pos)
+        {
+            return new Vector2i(pos.x * 2 + 0, pos.y * 2 + 1);
+        }
+
+        public Vector2i CellToX1Y0(Vector2i pos)
+        {
+            return new Vector2i(pos.x * 2 + 1, pos.y * 2 + 0);
+        }
+
+        public Vector2i CellToX1Y1(Vector2i pos)
+        {
+            return new Vector2i(pos.x * 2 + 1, pos.y * 2 + 1);
         }
 
         public HeightData Sample(IImage2i image, Vector2i offset)

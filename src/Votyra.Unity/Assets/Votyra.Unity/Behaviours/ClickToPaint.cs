@@ -2,13 +2,13 @@
 using System.Collections;
 using Votyra.Common.Models;
 using Votyra.Unity.Images;
+using Votyra.Common.Utils;
 
 namespace Votyra.Unity.Behaviours
 {
     public class ClickToPaint : MonoBehaviour
     {
         private const float Period = 0.1f;
-
         private const int maxDistBig = 4;
         private const int maxDistSmall = 1;
         private const float smoothSpeedRelative = 0.2f;
@@ -17,12 +17,12 @@ namespace Votyra.Unity.Behaviours
         private float lastTime;
         private Vector2i lastCell;
 
-        private MaxtrixImageBehaviour _image;
+        private TerrainGeneratorBehaviour _behaviour;
 
         private int? _centerValueToReuse;
         void Start()
         {
-            _image = GetComponent<MaxtrixImageBehaviour>();
+            _behaviour = GetComponent<TerrainGeneratorBehaviour>();
         }
 
         void Update()
@@ -36,7 +36,6 @@ namespace Votyra.Unity.Behaviours
         private void OnCellClick(Vector2 position)
         {
             var cell = new Vector2i(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y));
-
             if (cell == lastCell || Time.time < lastTime + Period)
             {
                 return;
@@ -44,35 +43,44 @@ namespace Votyra.Unity.Behaviours
             lastCell = cell;
             lastTime = Time.time;
 
+            var editableImage = _behaviour.EditableImage;
+            if (editableImage == null)
+            {
+                return;
+            }
 
             if (Input.GetButton("Modifier1"))
             {
                 int maxDist = 4;
 
-                int centerValue;
-                if (_centerValueToReuse.HasValue)
+                using (var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
                 {
-                    centerValue = _centerValueToReuse.Value;
-                }
-                else
-                {
-                    centerValue = _image.GetValue(cell);
-                    _centerValueToReuse = centerValue;
-                }
-
-                for (int ox = -maxDist; ox <= maxDist; ox++)
-                {
-                    for (int oy = -maxDist; oy <= maxDist; oy++)
+                    int centerValue;
+                    if (_centerValueToReuse.HasValue)
                     {
-                        var value = _image.GetValue(cell + new Vector2i(ox, oy));
-                        var offsetF = (centerValue - value) * smoothSpeedRelative;
-                        int offsetI = 0;
-                        if (offsetF > smoothCutoff)
-                            offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
-                        else if (offsetF < -smoothCutoff)
-                            offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
+                        centerValue = _centerValueToReuse.Value;
+                    }
+                    else
+                    {
+                        centerValue = image[cell];
+                        _centerValueToReuse = centerValue;
+                    }
 
-                        _image.SetByOffsetValue(cell + new Vector2i(ox, oy), offsetI);
+                    for (int ox = -maxDist; ox <= maxDist; ox++)
+                    {
+                        for (int oy = -maxDist; oy <= maxDist; oy++)
+                        {
+                            var index = cell + new Vector2i(ox, oy);
+                            var value = image[index];
+                            var offsetF = (centerValue - value) * smoothSpeedRelative;
+                            int offsetI = 0;
+                            if (offsetF > smoothCutoff)
+                                offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
+                            else if (offsetF < -smoothCutoff)
+                                offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
+
+                            image[index] = value + offsetI;
+                        }
                     }
                 }
             }
@@ -94,12 +102,18 @@ namespace Votyra.Unity.Behaviours
                 else
                     maxDist = maxDistSmall;
 
-                for (int ox = -maxDist; ox <= maxDist; ox++)
+                using (var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
                 {
-                    for (int oy = -maxDist; oy <= maxDist; oy++)
+                    for (int ox = -maxDist; ox <= maxDist; ox++)
                     {
-                        var dist = Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy));
-                        _image.SetByOffsetValue(cell + new Vector2i(ox, oy), multiplier * (maxDist - dist));
+                        for (int oy = -maxDist; oy <= maxDist; oy++)
+                        {
+                            var index = cell + new Vector2i(ox, oy);
+
+                            var dist = Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy));
+                            var value = image[index];
+                            image[index] = value + multiplier * (maxDist - dist);
+                        }
                     }
                 }
             }

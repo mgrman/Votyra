@@ -1,6 +1,6 @@
 ﻿using Votyra.Images;
 
-namespace Votyra.Unity.Images
+namespace Votyra.Images
 {
     internal interface IImage2iProvider
     {

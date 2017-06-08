@@ -7,7 +7,7 @@ namespace Votyra.Unity.Images
     {
         private MonoBehaviour _oldImageA;
         public MonoBehaviour ImageA;
-        
+
         private MonoBehaviour _oldImageB = null;
         public MonoBehaviour ImageB;
 
@@ -18,10 +18,10 @@ namespace Votyra.Unity.Images
         private CombineImage _image = null;
         public IImage2i CreateImage()
         {
-          
-                SetImage();
-                return _image;
-            
+
+            SetImage();
+            return _image;
+
         }
 
         private bool _fieldsChanged = true;

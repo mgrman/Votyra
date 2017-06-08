@@ -23,31 +23,33 @@ using System.Linq;
 using System.Threading.Tasks;
 using Votyra.Common.Profiling;
 using Votyra.Unity.Assets.Votyra.Pooling;
+using Votyra.Images.EditableImages;
 
 namespace Votyra.Unity
 {
     public class TerrainGeneratorBehaviour : MonoBehaviour
     {
+        public static Thread UnityThread { get; private set; }
         public UI_Vector2i CellInGroupCount = new UI_Vector2i(10, 10);
-
         public bool FlipTriangles = false;
-        public bool DrawBounds;
-
+        public bool DrawBounds = false;
         public Material Material = null;
-        public MonoBehaviour Image = null;
+        public Texture2D InitialTexture = null;
+        public float InitialTextureScale = 1;
 
-        public ITerrainAlgorithm _terrainAlgorithm;
-        public ITerrainMesher _terrainMesher;
-        public IImageSampler _sampler;
+        public IEditableImage EditableImage { get { return _imageProvider as IEditableImage; } }
 
+        private IImage2iProvider _imageProvider;
+        private ITerrainAlgorithm _terrainAlgorithm;
+        private ITerrainAlgorithm _onEditTerrainAlgorithm;
+        private ITerrainMesher _terrainMesher;
+        private IImageSampler _sampler;
         private IGroupSelector _groupsSelector;
         private ITerrainMeshGenerator _terrainGenerator;
         private IMeshUpdater _meshUpdater;
 
-        public static Thread UnityThread { get; private set; }
 
         private Task _updateTask = null;
-
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
         static TerrainGeneratorBehaviour()
@@ -91,10 +93,10 @@ namespace Votyra.Unity
             // Casts the ray and get the first game object hit
             Physics.Raycast(ray, out hit);
 
-            var point = this.transform.worldToLocalMatrix.MultiplyPoint(hit.point).XY();
-            point = _sampler.Transform(point);
+            var position = this.transform.worldToLocalMatrix.MultiplyPoint(hit.point).XY();
+            position = _sampler.WorldToImage(position);
 
-            this.SendMessage("OnCellClick", point, SendMessageOptions.DontRequireReceiver);
+            this.SendMessage("OnCellClick", position, SendMessageOptions.DontRequireReceiver);
         }
 
         private async static Task UpdateTerrain(SceneContext context, CancellationToken token)
@@ -159,7 +161,7 @@ namespace Votyra.Unity
 
             var existingGroups = _meshUpdater.ExistingGroups;
 
-            var image = GetImage();
+            var image = _imageProvider.CreateImage();
 
             Vector2i cellInGroupCount = new Vector2i(this.CellInGroupCount.x, this.CellInGroupCount.y);
 
@@ -191,12 +193,6 @@ namespace Votyra.Unity
             );
         }
 
-        private IImage2i GetImage()
-        {
-            var imageProvider = this.Image as IImage2iProvider;
-            return imageProvider == null ? null : imageProvider.CreateImage();
-        }
-
         private GameObject GameObjectFactory()
         {
             var go = new GameObject();
@@ -212,18 +208,25 @@ namespace Votyra.Unity
 
         private void Initialize()
         {
-            _terrainAlgorithm = new TileSelectTerrainAlgorithm();
+            _terrainAlgorithm = new SimpleTerrainAlgorithm();
+            _onEditTerrainAlgorithm = new TileSelectTerrainAlgorithm();
             _terrainMesher = new TerrainMesher();
             _sampler = new DualImageSampler();
 
             _terrainGenerator = new TerrainGenerator();
             _meshUpdater = new TerrainMeshUpdater();
             _groupsSelector = new GroupsByCameraVisibilitySelector();
+            _imageProvider = new EditableMatrixImage(InitialTexture, InitialTextureScale, _sampler, _onEditTerrainAlgorithm);
         }
-
 
         private void DisposeService()
         {
+            (_imageProvider as IDisposable)?.Dispose();
+            _imageProvider = null;
+
+            (_onEditTerrainAlgorithm as IDisposable)?.Dispose();
+            _onEditTerrainAlgorithm = null;
+
             (_terrainAlgorithm as IDisposable)?.Dispose();
             _terrainAlgorithm = null;
 

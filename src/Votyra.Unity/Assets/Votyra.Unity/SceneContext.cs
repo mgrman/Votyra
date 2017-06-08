@@ -54,7 +54,7 @@ namespace Votyra.Unity
             RangeZ = image.RangeZ;
             GroupBounds = new Bounds(new Vector3(CellInGroupCount.x / 2.0f, CellInGroupCount.y / 2.0f, RangeZ.Center), new Vector3(CellInGroupCount.x, CellInGroupCount.y, RangeZ.Size));
             TransformedInvalidatedArea = ImageSampler
-                  .InverseTransform(image.InvalidatedArea.ToRect())
+                  .ImageToWorld(image.InvalidatedArea)
                   .RoundToContain();
 
             (Image as IInitializableImage)?.StartUsing();

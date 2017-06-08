@@ -6,16 +6,10 @@ namespace Votyra.ImageSamplers
 {
     public static class ImageSamplerUtils
     {
-        public static Rect Transform(this IImageSampler sampler, Rect rect)
+        public static Rect ImageToWorld(this IImageSampler sampler, Rect2i rect)
         {
-            var min = sampler.Transform(rect.min);
-            var max = sampler.Transform(rect.max);
-            return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
-        }
-        public static Rect InverseTransform(this IImageSampler sampler, Rect rect)
-        {
-            var min = sampler.InverseTransform(rect.min);
-            var max = sampler.InverseTransform(rect.max);
+            var min = sampler.ImageToWorld(rect.min);
+            var max = sampler.ImageToWorld(rect.max);
             return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
         }
     }

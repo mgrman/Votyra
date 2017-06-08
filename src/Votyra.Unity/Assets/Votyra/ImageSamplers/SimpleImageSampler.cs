@@ -1,5 +1,6 @@
 ﻿using System;
 using Votyra.Common.Models;
+using Votyra.Common.Utils;
 using Votyra.Images;
 using UnityEngine;
 
@@ -7,15 +8,35 @@ namespace Votyra.ImageSamplers
 {
     public class SimpleImageSampler : IImageSampler
     {
-        public Vector2 Transform(Vector2 pos)
+        public Vector2 WorldToImage(Vector2 pos)
         {
             return pos;
         }
-        public Vector2 InverseTransform(Vector2 pos)
+        public Vector2 ImageToWorld(Vector2i pos)
         {
-            return pos;
+            return pos.ToVector2();
         }
 
+
+        public Vector2i CellToX0Y0(Vector2i pos)
+        {
+            return new Vector2i(pos.x + 0, pos.y + 0);
+        }
+
+        public Vector2i CellToX0Y1(Vector2i pos)
+        {
+            return new Vector2i(pos.x + 0, pos.y + 2);
+        }
+
+        public Vector2i CellToX1Y0(Vector2i pos)
+        {
+            return new Vector2i(pos.x + 2, pos.y + 0);
+        }
+
+        public Vector2i CellToX1Y1(Vector2i pos)
+        {
+            return new Vector2i(pos.x + 2, pos.y + 2);
+        }
         public HeightData Sample(IImage2i image, Vector2i offset)
         {
             //offset = offset + offset;

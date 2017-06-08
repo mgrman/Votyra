@@ -5,6 +5,7 @@ using Votyra.Images;
 using Votyra.Models;
 using Votyra.Common.Utils;
 using UnityEngine;
+using System;
 
 namespace Votyra.Unity.Images
 {
@@ -65,21 +66,21 @@ namespace Votyra.Unity.Images
             else
             {
                 var texture = InitialValueTexture;
-                var size = new Vector2i(texture.width, texture.height);
-                _editableMatrix = new Matrix<int>(size);
-                _invalidatedArea = new Rect2i(0, 0, size.x, size.y);
 
-                for (int x = 0; x < texture.width; x++)
+                int width = texture.width.FloorTo2();
+                int height = texture.height.FloorTo2();
+
+                var size = new Vector2i(width, height);
+                _editableMatrix = new Matrix<int>(size);
+
+                for (int x = 0; x < width; x++)
                 {
-                    for (int y = 0; y < texture.height; y++)
+                    for (int y = 0; y < height; y++)
                     {
                         _editableMatrix[x, y] = (int)(texture.GetPixel(x, y).grayscale * InitialValueScale);
-                        if (_editableMatrix[x, y] != 0)
-                        {
-
-                        }
                     }
                 }
+                FixImage(new Rect2i(0, 0, size.x, size.y), Direction.Unknown);
             }
         }
 
@@ -87,44 +88,126 @@ namespace Votyra.Unity.Images
         {
         }
 
-        public void SetByOffsetValue(Vector2i pos, int value)
-        {
-            if (!pos.IsAsIndexContained(_editableMatrix.size))
-            {
-                Debug.LogWarningFormat("Position {0} is outside of bounds!", pos);
-                return;
-            }
 
-            SetValue(pos, _editableMatrix[pos] + value);
+        public MatrixImageAccessor RequestAccess(Rect2i area)
+        {
+            return new MatrixImageAccessor(this, area);
         }
 
-        public int GetValue(Vector2i pos)
+        private enum Direction
         {
-            if (!pos.IsAsIndexContained(_editableMatrix.size))
-            {
-                Debug.LogWarningFormat("Position {0} is outside of bounds!", pos);
-                return 0;
-            }
-
-            // Debug.LogFormat("Setting value at {0} to {1} readonlyCount:{2}", pos, value, _readonlyMatrices.Count);
-
-            return _editableMatrix[pos];
+            Unknown = 0,
+            Up = 1,
+            Down = -1
         }
 
-        public void SetValue(Vector2i pos, int value)
+        private void FixImage(Rect2i area, Direction direction)
         {
-            if (!pos.IsAsIndexContained(_editableMatrix.size))
+            _invalidatedArea = _invalidatedArea?.CombineWith(area) ?? area;
+
+            if (direction != Direction.Up && direction != Direction.Down)
             {
-                Debug.LogWarningFormat("Position {0} is outside of bounds!", pos);
-                return;
+                direction = Direction.Down;
             }
 
-            // Debug.LogFormat("Setting value at {0} to {1} readonlyCount:{2}", pos, value, _readonlyMatrices.Count);
+            const int maxDiference = 1;
 
-            _editableMatrix[pos] = value;
+            Func<int, int, int> op;
+            Func<int, int> getLimit;
+            if (direction == Direction.Up)
+            {
+                op = Math.Max;
+                getLimit = l => l - maxDiference;
+            }
+            else
+            {
+                op = Math.Min;
+                getLimit = l => l + maxDiference;
+            }
 
-            var changedArea = new Rect2i(pos.x, pos.y, 1, 1);
-            _invalidatedArea = _invalidatedArea?.CombineWith(changedArea) ?? changedArea;
+            Queue<Vector2i> toCheck = new Queue<Vector2i>();
+            for (int ix = area.xMin.FloorTo2(); ix < area.xMax.CeilTo2(); ix += 2)
+            {
+                for (int iy = area.yMin.FloorTo2(); iy < area.yMax.CeilTo2(); iy += 2)
+                {
+                    int x0y0 = _editableMatrix[ix + 0, iy + 0];
+                    int x0y1 = _editableMatrix[ix + 0, iy + 1];
+                    int x1y0 = _editableMatrix[ix + 1, iy + 0];
+                    int x1y1 = _editableMatrix[ix + 1, iy + 1];
+
+                    int limit = getLimit(op(op(op(x0y0, x0y1), x1y0), x1y1));
+
+                    _editableMatrix[ix + 0, iy + 0] = op(_editableMatrix[ix + 0, iy + 0], limit);
+                    _editableMatrix[ix + 0, iy + 1] = op(_editableMatrix[ix + 0, iy + 1], limit);
+                    _editableMatrix[ix + 1, iy + 0] = op(_editableMatrix[ix + 1, iy + 0], limit);
+                    _editableMatrix[ix + 1, iy + 1] = op(_editableMatrix[ix + 1, iy + 1], limit);
+                }
+            }
+        }
+
+
+        public class MatrixImageAccessor : IDisposable
+        {
+            private readonly MaxtrixImageBehaviour _behaviour;
+            private readonly Matrix<int> _editableMatrix;
+
+            public Rect2i Area { get; }
+
+            private int _changeCounter;
+
+            public MatrixImageAccessor(MaxtrixImageBehaviour behaviour, Rect2i area)
+            {
+                _behaviour = behaviour;
+                _editableMatrix = behaviour._editableMatrix;
+                Area = area;
+            }
+
+            public int this[Vector2i pos]
+            {
+                get { return GetValue(pos); }
+                set { SetValue(pos, value); }
+            }
+
+            public int GetValue(Vector2i pos)
+            {
+                if (!Area.Contains(pos))
+                {
+                    Debug.LogWarningFormat("Position {0} is outside of bounds!", pos);
+                    return 0;
+                }
+
+                // Debug.LogFormat("Setting value at {0} to {1} readonlyCount:{2}", pos, value, _readonlyMatrices.Count);
+
+                return _editableMatrix[pos];
+            }
+
+            public void SetByOffsetValue(Vector2i pos, int value)
+            {
+                if (!Area.Contains(pos))
+                {
+                    Debug.LogWarningFormat("Position {0} is outside of bounds!", pos);
+                    return;
+                }
+                _changeCounter += value;
+                _editableMatrix[pos] = _editableMatrix[pos] + value;
+            }
+
+            public void SetValue(Vector2i pos, int value)
+            {
+                if (!Area.Contains(pos))
+                {
+                    Debug.LogWarningFormat("Position {0} is outside of bounds!", pos);
+                    return;
+                }
+
+                _changeCounter += _editableMatrix[pos] - value;
+                _editableMatrix[pos] = value;
+            }
+
+            public void Dispose()
+            {
+                _behaviour.FixImage(Area, (Direction)Math.Sign(_changeCounter));
+            }
         }
     }
 }

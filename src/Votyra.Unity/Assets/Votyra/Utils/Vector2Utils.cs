@@ -6,14 +6,19 @@ namespace Votyra.Common.Utils
 {
     public static class Vector2Utils
     {
-        public static Vector2 ToVector2(this Vector2i vec)
-        {
-            return new Vector2(vec.x, vec.y);
-        }
-
         public static Vector2i ToVector2i(this Vector2 vec)
         {
             return new Vector2i(vec);
+        }
+
+        public static Vector2i FloorToVector2i(this Vector2 vec)
+        {
+            return new Vector2i(Mathf.FloorToInt(vec.x), Mathf.FloorToInt(vec.y));
+        }
+
+        public static Vector2i CeilToVector2i(this Vector2 vec)
+        {
+            return new Vector2i(Mathf.CeilToInt(vec.x), Mathf.CeilToInt(vec.y));
         }
 
         public static Vector2 ToVectorXY(this Vector3 a)

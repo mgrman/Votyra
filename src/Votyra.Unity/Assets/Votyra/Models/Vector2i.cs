@@ -106,6 +106,10 @@ namespace Votyra.Common.Models
             return new Vector2i(a.x / b, a.y / b);
         }
 
+        public static Vector2 operator /(Vector2i a, float b)
+        {
+            return new Vector2(a.x / b, a.y / b);
+        }
         public Vector2i DivideUp(Vector2i a, int b)
         {
             return new Vector2i(a.x.DivideUp(b), a.y.DivideUp(b));
