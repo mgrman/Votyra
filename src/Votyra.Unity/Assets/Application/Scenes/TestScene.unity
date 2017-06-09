@@ -368,7 +368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpeedTranslation: {x: 1, y: -10, z: 1}
-  SpeedRotation: {x: 1, y: 5, z: 1}
+  SpeedRotation: {x: 1, y: 2, z: 1}
 --- !u!1 &1255882547
 GameObject:
   m_ObjectHideFlags: 0

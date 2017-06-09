@@ -83,17 +83,20 @@ namespace Votyra.Unity.MeshUpdaters
             {
                 mesh.Clear();
                 mesh.vertices = triangleMesh.Vertices;
-                //mesh.normals = this._normals;
+                mesh.normals = triangleMesh.Normals;
                 mesh.uv = triangleMesh.UV;
                 mesh.triangles = triangleMesh.Indices;
             }
             else
             {
                 mesh.vertices = triangleMesh.Vertices;
-                //mesh.normals = this._normals;
+                mesh.normals = triangleMesh.Normals;
                 mesh.uv = triangleMesh.UV;
             }
-            mesh.RecalculateNormals();
+            if (triangleMesh.Normals == null)
+            {
+                mesh.RecalculateNormals();
+            }
 
             mesh.bounds = triangleMesh.MeshBounds;
 

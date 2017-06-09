@@ -75,17 +75,16 @@ namespace Votyra.TerrainMeshers.TriangleMesh
             Vertices[index * 3 + 1] = posB;
             Vertices[index * 3 + 2] = posC;
 
-            //var size = _meshBounds.size;
-            //_uv[index * 3 + 0] = new Vector2(posA.x / size.x, posA.y / size.y);
-            //_uv[index * 3 + 1] = new Vector2(posB.x / size.x, posB.y / size.y);
-            //_uv[index * 3 + 2] = new Vector2(posC.x / size.x, posC.y / size.y);
+            UV[index * 3 + 0] = new Vector2(posA.x, posA.y);
+            UV[index * 3 + 1] = new Vector2(posB.x, posB.y);
+            UV[index * 3 + 2] = new Vector2(posC.x, posC.y);
 
-            //var side1 = posB - posA;
-            //var side2 = posC - posA;
-            //var normal = Vector3.Cross(side1, side2).normalized;
-            //_normals[index * 3 + 0] = normal;
-            //_normals[index * 3 + 1] = normal;
-            //_normals[index * 3 + 2] = normal;
+            var side1 = posB - posA;
+            var side2 = posC - posA;
+            var normal = Vector3.Cross(side1, side2).normalized;
+            Normals[index * 3 + 0] = normal;
+            Normals[index * 3 + 1] = normal;
+            Normals[index * 3 + 2] = normal;
         }
 
         public void FinalizeMesh()
