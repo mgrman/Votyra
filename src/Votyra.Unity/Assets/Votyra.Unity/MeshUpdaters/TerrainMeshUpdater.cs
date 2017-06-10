@@ -6,6 +6,7 @@ using Votyra.Common.Models;
 using System.Linq;
 using Votyra.TerrainMeshers.TriangleMesh;
 using System;
+using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.Unity.MeshUpdaters
 {
@@ -50,15 +51,9 @@ namespace Votyra.Unity.MeshUpdaters
                             }
                         }
 
-                        TerrainMeshers.TriangleMesh.ITriangleMesh triangleMesh = terrainMesh.Value;
-                        if (triangleMesh is TerrainMeshers.TriangleMesh.FixedTriangleMesh)
-                        {
-                            UpdateMesh(triangleMesh, meshFilter.sharedMesh);
-                        }
-                        else if (triangleMesh != null)
-                        {
-                            UpdateMesh(triangleMesh, meshFilter.sharedMesh);
-                        }
+                        ITriangleMesh triangleMesh = terrainMesh.Value;
+                        UpdateMesh(triangleMesh, meshFilter.sharedMesh);
+
                         var collider = meshFilter.gameObject.GetComponent<MeshCollider>();
                         collider.sharedMesh = null;
                         collider.sharedMesh = meshFilter.sharedMesh;
@@ -73,42 +68,43 @@ namespace Votyra.Unity.MeshUpdaters
                     }
                 }
             }
-
-
         }
 
-        private void UpdateMesh(TerrainMeshers.TriangleMesh.ITriangleMesh triangleMesh, Mesh mesh)
+        private void UpdateMesh(ITriangleMesh triangleMesh, Mesh mesh)
         {
-            if (mesh.vertexCount != triangleMesh.PointCount)
+            if (triangleMesh is FixedTriangleMesh)
+            {
+                UpdateMesh(triangleMesh as FixedTriangleMesh, mesh);
+            }
+            else if (triangleMesh is IPooledTriangleMesh)
+            {
+                UpdateMesh((triangleMesh as IPooledTriangleMesh).Mesh, mesh);
+            }
+            else if (triangleMesh != null)
+            {
+                Debug.LogError($"Unsuported ITriangleMesh implementation '{triangleMesh.GetType().Name}'");
+            }
+        }
+        private void UpdateMesh(FixedTriangleMesh triangleMesh, Mesh mesh)
+        {
+            bool recomputeTriangles = mesh.vertexCount != triangleMesh.PointCount;
+            if (recomputeTriangles)
             {
                 mesh.Clear();
-                mesh.vertices = triangleMesh.Vertices;
-                mesh.normals = triangleMesh.Normals;
-                mesh.uv = triangleMesh.UV;
-                mesh.triangles = triangleMesh.Indices;
-            }
-            else
-            {
-                mesh.vertices = triangleMesh.Vertices;
-                mesh.normals = triangleMesh.Normals;
-                mesh.uv = triangleMesh.UV;
-            }
-            if (triangleMesh.Normals == null)
-            {
-                mesh.RecalculateNormals();
             }
 
+            mesh.vertices = triangleMesh.Vertices;
+            mesh.SetNormalsOrRecompute(triangleMesh.Normals);
+            mesh.uv = triangleMesh.UV;
+            if (recomputeTriangles)
+            {
+                mesh.SetTriangles(triangleMesh.Indices, 0, false);
+            }
             mesh.bounds = triangleMesh.MeshBounds;
-
-
-
         }
-
 
         private MeshFilter CreateMeshObject(IMeshContext options)
         {
-            //TODO: use prefab so custom scripts can be attached! Like OnMouseDown, ...
-
             string name = string.Format("group_{0}", _meshFilters.Count);
             var tile = options.GameObjectFactory != null ? options.GameObjectFactory() : new GameObject();
             tile.name = name;
@@ -128,7 +124,6 @@ namespace Votyra.Unity.MeshUpdaters
             mesh.MarkDynamic();
 
             return meshFilter;
-            // _meshFilters[group] = meshFilter;
         }
     }
 }

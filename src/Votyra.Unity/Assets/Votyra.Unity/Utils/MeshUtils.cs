@@ -24,5 +24,17 @@ namespace Votyra.Unity.Utils
             Vector2 size = xyBounds.size;
             mesh.bounds = new Bounds(new Vector3(center.x, center.y, rangeZ.Center), new Vector3(size.x, size.y, rangeZ.Size));
         }
+
+        public static void SetNormalsOrRecompute(this Mesh mesh, Vector3[] normals)
+        {
+            if (normals == null || normals.Length != mesh.vertices.Length)
+            {
+                mesh.RecalculateNormals();
+            }
+            else
+            {
+                mesh.normals = normals;
+            }
+        }
     }
 }

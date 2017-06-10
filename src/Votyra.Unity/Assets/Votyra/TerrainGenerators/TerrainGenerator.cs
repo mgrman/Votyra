@@ -19,8 +19,6 @@ namespace Votyra.TerrainGenerators
 
         IReadOnlyPooledDictionary<Vector2i, ITriangleMesh> ITerrainMeshGenerator.Generate(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate)
         {
-            // _logger.LogMessage("Recomputing meshes");
-
             var meshes = GenerateMeshUsingTilesImpl(options, groupsToUpdate);
 
             return meshes;
@@ -49,12 +47,12 @@ namespace Votyra.TerrainGenerators
             {
                 foreach (var group in terrainGroups)
                 {
-                    PooledTriangleMesh mesh;
+                    IPooledTriangleMesh mesh;
                     MatrixWithOffset<ResultHeightData> results = group.Data;
 
                     using (ProfilerFactory.Create("Other"))
                     {
-                        mesh = PooledTriangleMesh.CreateDirty(options.TerrainMesher.TriangleCount);
+                        mesh = options.TerrainMeshFactory(options.TerrainMesher.CellCount);
                         meshes[group.Group] = mesh;
 
                         options.TerrainMesher.InitializeGroup(group.Group, mesh, results);
@@ -72,7 +70,6 @@ namespace Votyra.TerrainGenerators
                             }
                         }
                     }
-                    mesh.FinalizeMesh();
                 }
             }
 
@@ -102,7 +99,6 @@ namespace Votyra.TerrainGenerators
                     terrainGroup.Clear(group);
                     terrainGroups.Add(terrainGroup);
                 }
-
 
                 MatrixWithOffset<ResultHeightData> terrainGroupData = terrainGroup.Data;
                 for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)

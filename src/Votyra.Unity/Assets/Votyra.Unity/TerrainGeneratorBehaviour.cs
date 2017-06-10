@@ -27,6 +27,8 @@ using Votyra.Images.EditableImages;
 
 namespace Votyra.Unity
 {
+
+    //TODO: move to floats
     public class TerrainGeneratorBehaviour : MonoBehaviour
     {
         public static Thread UnityThread { get; private set; }
@@ -34,6 +36,7 @@ namespace Votyra.Unity
         public bool FlipTriangles = false;
         public bool DrawBounds = false;
         public Material Material = null;
+        public Material MaterialWalls = null;
         public Texture2D InitialTexture = null;
         public float InitialTextureScale = 1;
 
@@ -47,6 +50,7 @@ namespace Votyra.Unity
         private IGroupSelector _groupsSelector;
         private ITerrainMeshGenerator _terrainGenerator;
         private IMeshUpdater _meshUpdater;
+        private Func<int, IPooledTriangleMesh> _terrainMeshFactory;
 
 
         private Task _updateTask = null;
@@ -189,6 +193,7 @@ namespace Votyra.Unity
                 _sampler,
                 _terrainAlgorithm,
                 _terrainMesher,
+                _terrainMeshFactory,
                 () => this.GameObjectFactory()
             );
         }
@@ -203,6 +208,7 @@ namespace Votyra.Unity
             }
             var meshRenderer = go.GetOrAddComponent<MeshRenderer>();
             meshRenderer.material = Material;
+            meshRenderer.materials = new Material[] { Material, MaterialWalls };
             return go;
         }
 
@@ -210,13 +216,14 @@ namespace Votyra.Unity
         {
             _terrainAlgorithm = new SimpleTerrainAlgorithm();
             _onEditTerrainAlgorithm = new TileSelectTerrainAlgorithm();
-            _terrainMesher = new TerrainMesher();
+            _terrainMesher = new DirectTerrainMesher();
             _sampler = new DualImageSampler();
 
             _terrainGenerator = new TerrainGenerator();
             _meshUpdater = new TerrainMeshUpdater();
             _groupsSelector = new GroupsByCameraVisibilitySelector();
             _imageProvider = new EditableMatrixImage(InitialTexture, InitialTextureScale, _sampler, _onEditTerrainAlgorithm);
+            _terrainMeshFactory = PooledTriangleMeshContainer<FixedTriangleMesh>.CreateDirty;
         }
 
         private void DisposeService()

@@ -13,55 +13,27 @@ namespace Votyra.TerrainMeshers.TriangleMesh
         public Vector2[] UV { get; private set; }
         public int[] Indices { get; private set; }
 
-        public int PointCount { get { return Vertices.Length; } }
-        public int TriangleCount { get { return PointCount / 3; } }
+        public int CellCount { get; private set; }
+        public int QuadCount { get; private set; }
+        public int TriangleCount { get; private set; }
+        public int PointCount { get; private set; }
 
-        #region ITriangleMesh
-
-        Vector3[] ITriangleMesh.Vertices { get { return Vertices; } }
-        Vector3[] ITriangleMesh.Normals { get { return Normals; } }
-        Vector2[] ITriangleMesh.UV { get { return UV; } }
-        int[] ITriangleMesh.Indices { get { return Indices; } }
-
-        #endregion ITriangleMesh
-
-        public FixedTriangleMesh(Bounds meshBounds, int triangleCount)
+        public FixedTriangleMesh()
         {
-            Clear(triangleCount);
-            Clear(meshBounds);
+
         }
 
-        public FixedTriangleMesh(int triangleCount)
+        public virtual void Initialize(int cellCount)
         {
-            Clear(triangleCount);
-        }
+            CellCount = cellCount;
+            QuadCount = CellCount * 3;
+            TriangleCount = QuadCount * 2;
+            PointCount = TriangleCount * 3;
 
-        public FixedTriangleMesh(Bounds meshBounds, int triangleCount, IList<Vector3> vertices,
-            IList<Vector3> normals,
-            IList<Vector2> uv,
-            IList<int> indices)
-        {
-            int pointCount = triangleCount * 3;
-            if (pointCount != vertices.Count || pointCount != normals.Count || pointCount != uv.Count || pointCount != indices.Count)
-            {
-                throw new InvalidOperationException();
-            }
-
-            MeshBounds = meshBounds;
-            Vertices = vertices.ToArray();
-            UV = uv.ToArray();
-            Indices = indices.ToArray();
-            Normals = normals.ToArray();
-        }
-
-        public void Clear(int triangleCount)
-        {
-            int pointCount = triangleCount * 3;
-
-            Vertices = new Vector3[pointCount];
-            UV = new Vector2[pointCount];
-            Indices = Enumerable.Range(0, pointCount).ToArray();
-            Normals = new Vector3[pointCount];
+            Vertices = new Vector3[PointCount];
+            UV = new Vector2[PointCount];
+            Indices = Enumerable.Range(0, PointCount).ToArray();
+            Normals = new Vector3[PointCount];
         }
 
         public void Clear(Bounds meshBounds)
@@ -69,7 +41,27 @@ namespace Votyra.TerrainMeshers.TriangleMesh
             MeshBounds = meshBounds;
         }
 
-        public void Add(int index, Vector3 posA, Vector3 posB, Vector3 posC)
+        public void AddQuad(int quadIndex, Vector3 x0y0, Vector3 x0y1, Vector3 x1y0, Vector3 x1y1, bool flipSides)
+        {
+            if (flipSides)
+            {
+                AddTriangle(quadIndex * 2, x0y0, x1y0, x1y1);
+                AddTriangle(quadIndex * 2 + 1, x1y1, x0y1, x0y0);
+            }
+            else
+            {
+                AddTriangle(quadIndex * 2, x0y0, x1y0, x0y1);
+                AddTriangle(quadIndex * 2 + 1, x1y0, x1y1, x0y1);
+            }
+        }
+
+        public void AddWall(int quadIndex, Vector3 a, Vector3 b, Vector3 b_lower, Vector3 a_lower)
+        {
+            AddTriangle(quadIndex * 2, a, b, b_lower);
+            AddTriangle(quadIndex * 2 + 1, a, b_lower, a_lower);
+        }
+
+        private void AddTriangle(int index, Vector3 posA, Vector3 posB, Vector3 posC)
         {
             Vertices[index * 3 + 0] = posA;
             Vertices[index * 3 + 1] = posB;
@@ -87,8 +79,5 @@ namespace Votyra.TerrainMeshers.TriangleMesh
             Normals[index * 3 + 2] = normal;
         }
 
-        public void FinalizeMesh()
-        {
-        }
     }
 }

@@ -7,8 +7,6 @@ namespace Votyra.TerrainAlgorithms
 {
     public class TileSelectTerrainAlgorithm : ITerrainAlgorithm
     {
-        public bool RequiresWalls { get { return true; } }
-
         public ResultHeightData Process(HeightData sampleData)
         {
             int height = sampleData.Max - 1;
@@ -17,12 +15,12 @@ namespace Votyra.TerrainAlgorithms
                 Math.Max(sampleData.x0y1 - height, -1),
                 Math.Max(sampleData.x1y0 - height, -1),
                 Math.Max(sampleData.x1y1 - height, -1));
-            
+
             ResultHeightData choosenTemplateTile = TileMap[normalizedHeightData];
 
             return new ResultHeightData(choosenTemplateTile.data + height, choosenTemplateTile.flip);
         }
-        
+
         private readonly static HeightData[] Templates = new HeightData[]
         {
             //plane
@@ -38,9 +36,12 @@ namespace Votyra.TerrainAlgorithms
             new HeightData(0,0,0,1),
 
             //partialDownSlope
-            new HeightData(0,1,1,1)
+            new HeightData(0,1,1,1),
+
+            //slopeDiagonal
+            new HeightData(1,0,0,1),
         };
-        
+
         private readonly static ResultHeightData[] ExpandedTemplates = Templates
             .SelectMany(template =>
             {
@@ -64,7 +65,6 @@ namespace Votyra.TerrainAlgorithms
             .Distinct()
             .ToArray();
 
-
         private readonly static Dictionary<HeightData, ResultHeightData> TileMap = HeightData.GenerateAllValues(new Range2i(-1, 1))
             .ToDictionary(inputValue => inputValue, inputValue =>
             {
@@ -82,133 +82,5 @@ namespace Votyra.TerrainAlgorithms
                 }
                 return choosenTemplateTile;
             });
-
-        //private readonly static HeightData[] PossibleTiles = new HeightData[]
-        //{
-        //    //plane
-        //    new HeightData(1,1,1,1),
-
-        //    //slopeX+
-        //    new HeightData(0,1,0,1),
-        //    //slopeX-
-        //    new HeightData(1,0,1,0),
-
-        //    //slopeY+
-        //    new HeightData(0,0,1,1),
-        //    //slopeY-
-        //    new HeightData(1,1,0,0),
-
-        //    //slopeX+Y+
-        //    new HeightData(-1,0,0,1),
-        //    //slopeX-Y-
-        //    new HeightData(1,0,0,-1),
-        //    //slopeX+Y-
-        //    new HeightData(0,-1,1,0),
-        //    //slopeX-Y+
-        //    new HeightData(0,1,-1,0),
-
-        //    //partialUpSlopeX+Y+
-        //    new HeightData(0,0,0,1),
-        //    //partialUpSlopeX-Y-
-        //    new HeightData(1,0,0,0),
-        //    //partialUpSlopeX+Y-
-        //    new HeightData(0,0,1,0),
-        //    //partialUpSlopeX-Y+
-        //    new HeightData(0,1,0,0),
-
-        //    //partialDownSlopeX+Y+
-        //    new HeightData(0,1,1,1),
-        //    //partialDownSlopeX-Y-
-        //    new HeightData(1,1,1,0),
-        //    //partialDownSlopeX+Y-
-        //    new HeightData(1,0,1,1),
-        //    //partialDownSlopeX-Y+
-        //    new HeightData(1,1,0,1),
-        //};
-
-        //private readonly static Dictionary<HeightData, ResultHeightData> TileMap = new Dictionary<HeightData, ResultHeightData>()
-        //{
-        //    {new HeightData(-1,-1,-1,-1),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,-1,-1,0),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,-1,-1,1),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,-1,0,-1),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,-1,0,0),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,-1,0,1),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,-1,1,-1),new ResultHeightData(0,-1,1,0,true)},
-        //    {new HeightData(-1,-1,1,0),new ResultHeightData(0,-1,1,0,true)},
-        //    {new HeightData(-1,-1,1,1),new ResultHeightData(0,0,1,1,false)},
-        //    {new HeightData(-1,0,-1,-1),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,0,-1,0),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,0,-1,1),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,0,0,-1),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,0,0,0),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,0,0,1),new ResultHeightData(-1,0,0,1,false)},
-        //    {new HeightData(-1,0,1,-1),new ResultHeightData(0,0,1,0,true)},
-        //    {new HeightData(-1,0,1,0),new ResultHeightData(0,0,1,0,true)},
-        //    {new HeightData(-1,0,1,1),new ResultHeightData(0,0,1,1,false)},
-        //    {new HeightData(-1,1,-1,-1),new ResultHeightData(0,1,-1,0,true)},
-        //    {new HeightData(-1,1,-1,0),new ResultHeightData(0,1,-1,0,true)},
-        //    {new HeightData(-1,1,-1,1),new ResultHeightData(0,1,0,1,false)},
-        //    {new HeightData(-1,1,0,-1),new ResultHeightData(0,1,0,0,true)},
-        //    {new HeightData(-1,1,0,0),new ResultHeightData(0,1,0,0,true)},
-        //    {new HeightData(-1,1,0,1),new ResultHeightData(0,1,0,1,false)},
-        //    {new HeightData(-1,1,1,-1),new ResultHeightData(0,0,1,0,true)},
-        //    {new HeightData(-1,1,1,0),new ResultHeightData(0,0,1,0,true)},
-        //    {new HeightData(-1,1,1,1),new ResultHeightData(0,1,1,1,false)},
-        //    {new HeightData(0,-1,-1,-1),new ResultHeightData(1,0,0,-1,false)},
-        //    {new HeightData(0,-1,-1,0),new ResultHeightData(0,-1,1,0,true)},
-        //    {new HeightData(0,-1,-1,1),new ResultHeightData(0,0,0,1,false)},
-        //    {new HeightData(0,-1,0,-1),new ResultHeightData(1,0,0,-1,false)},
-        //    {new HeightData(0,-1,0,0),new ResultHeightData(0,-1,1,0,true)},
-        //    {new HeightData(0,-1,0,1),new ResultHeightData(0,0,0,1,false)},
-        //    {new HeightData(0,-1,1,-1),new ResultHeightData(0,-1,1,0,true)},
-        //    {new HeightData(0,-1,1,0),new ResultHeightData(0,-1,1,0,true)},
-        //    {new HeightData(0,-1,1,1),new ResultHeightData(0,0,1,1,false)},
-        //    {new HeightData(0,0,-1,-1),new ResultHeightData(1,0,0,-1,false)},
-        //    {new HeightData(0,0,-1,0),new ResultHeightData(0,1,-1,0,true)},
-        //    {new HeightData(0,0,-1,1),new ResultHeightData(0,0,0,1,false)},
-        //    {new HeightData(0,0,0,-1),new ResultHeightData(1,0,0,-1,false)},
-        //    {new HeightData(0,0,0,0),new ResultHeightData(0,0,0,1,false)},
-        //    {new HeightData(0,0,0,1),new ResultHeightData(0,0,0,1,false)},
-        //    {new HeightData(0,0,1,-1),new ResultHeightData(0,0,1,0,true)},
-        //    {new HeightData(0,0,1,0),new ResultHeightData(0,0,1,0,true)},
-        //    {new HeightData(0,0,1,1),new ResultHeightData(0,0,1,1,false)},
-        //    {new HeightData(0,1,-1,-1),new ResultHeightData(0,1,-1,0,true)},
-        //    {new HeightData(0,1,-1,0),new ResultHeightData(0,1,-1,0,true)},
-        //    {new HeightData(0,1,-1,1),new ResultHeightData(0,1,0,1,false)},
-        //    {new HeightData(0,1,0,-1),new ResultHeightData(0,1,0,0,true)},
-        //    {new HeightData(0,1,0,0),new ResultHeightData(0,1,0,0,true)},
-        //    {new HeightData(0,1,0,1),new ResultHeightData(0,1,0,1,false)},
-        //    {new HeightData(0,1,1,-1),new ResultHeightData(0,0,1,0,true)},
-        //    {new HeightData(0,1,1,0),new ResultHeightData(0,0,1,0,true)},
-        //    {new HeightData(0,1,1,1),new ResultHeightData(0,1,1,1,false)},
-        //    {new HeightData(1,-1,-1,-1),new ResultHeightData(1,0,0,-1,false)},
-        //    {new HeightData(1,-1,-1,0),new ResultHeightData(1,0,0,0,false)},
-        //    {new HeightData(1,-1,-1,1),new ResultHeightData(0,0,0,1,false)},
-        //    {new HeightData(1,-1,0,-1),new ResultHeightData(1,0,0,-1,false)},
-        //    {new HeightData(1,-1,0,0),new ResultHeightData(1,0,0,0,false)},
-        //    {new HeightData(1,-1,0,1),new ResultHeightData(0,0,0,1,false)},
-        //    {new HeightData(1,-1,1,-1),new ResultHeightData(1,0,1,0,false)},
-        //    {new HeightData(1,-1,1,0),new ResultHeightData(1,0,1,0,false)},
-        //    {new HeightData(1,-1,1,1),new ResultHeightData(1,0,1,1,true)},
-        //    {new HeightData(1,0,-1,-1),new ResultHeightData(1,0,0,-1,false)},
-        //    {new HeightData(1,0,-1,0),new ResultHeightData(1,0,0,0,false)},
-        //    {new HeightData(1,0,-1,1),new ResultHeightData(0,0,0,1,false)},
-        //    {new HeightData(1,0,0,-1),new ResultHeightData(1,0,0,-1,false)},
-        //    {new HeightData(1,0,0,0),new ResultHeightData(1,0,0,0,false)},
-        //    {new HeightData(1,0,0,1),new ResultHeightData(0,0,0,1,false)},
-        //    {new HeightData(1,0,1,-1),new ResultHeightData(1,0,1,0,false)},
-        //    {new HeightData(1,0,1,0),new ResultHeightData(1,0,1,0,false)},
-        //    {new HeightData(1,0,1,1),new ResultHeightData(1,0,1,1,true)},
-        //    {new HeightData(1,1,-1,-1),new ResultHeightData(1,1,0,0,false)},
-        //    {new HeightData(1,1,-1,0),new ResultHeightData(1,1,0,0,false)},
-        //    {new HeightData(1,1,-1,1),new ResultHeightData(1,1,0,1,true)},
-        //    {new HeightData(1,1,0,-1),new ResultHeightData(1,1,0,0,false)},
-        //    {new HeightData(1,1,0,0),new ResultHeightData(1,1,0,0,false)},
-        //    {new HeightData(1,1,0,1),new ResultHeightData(1,1,0,1,true)},
-        //    {new HeightData(1,1,1,-1),new ResultHeightData(1,1,1,0,false)},
-        //    {new HeightData(1,1,1,0),new ResultHeightData(1,1,1,0,false)},
-        //    {new HeightData(1,1,1,1),new ResultHeightData(1,1,1,1,false)},
-        //};
     }
 }

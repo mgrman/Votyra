@@ -6,6 +6,7 @@ using Votyra.Images;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
 using Votyra.TerrainMeshers;
+using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.TerrainGenerators
 {
@@ -20,5 +21,6 @@ namespace Votyra.TerrainGenerators
         IImageSampler ImageSampler { get; }
         ITerrainAlgorithm TerrainAlgorithm { get; }
         ITerrainMesher TerrainMesher { get; }
+        Func<int, IPooledTriangleMesh> TerrainMeshFactory { get; }
     }
 }

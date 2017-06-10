@@ -8,11 +8,9 @@ namespace Votyra.TerrainMeshers
 {
     public class TerrainMesher : ITerrainMesher
     {
-        protected const int CELL_TO_TRIANGLE = 3 * 2;
-
         protected Vector2i cellInGroupCount;
         protected Vector2i groupPosition;
-        public int TriangleCount { get; private set; }
+        public int CellCount { get; private set; }
         protected Vector3 bounds_center;
         protected Vector3 bounds_size;
         protected int quadIndex;
@@ -22,7 +20,7 @@ namespace Votyra.TerrainMeshers
         public virtual void Initialize(ITerrainContext terrainOptions)
         {
             this.cellInGroupCount = terrainOptions.CellInGroupCount;
-            this.TriangleCount = terrainOptions.CellInGroupCount.AreaSum * CELL_TO_TRIANGLE;
+            this.CellCount = terrainOptions.CellInGroupCount.AreaSum;
             this.bounds_center = terrainOptions.GroupBounds.center;
             this.bounds_size = terrainOptions.GroupBounds.size;
         }
@@ -53,7 +51,12 @@ namespace Votyra.TerrainMeshers
 
                 ResultHeightData heightData = results[cellInGroup];
 
-                mesh.AddQuad(quadIndex, cell_area, heightData, heightData.flip);
+                Vector3 x0y0 = new Vector3(cell_area.xMin, cell_area.yMin, heightData.data.x0y0);
+                Vector3 x0y1 = new Vector3(cell_area.xMin, cell_area.yMax, heightData.data.x0y1);
+                Vector3 x1y0 = new Vector3(cell_area.xMax, cell_area.yMin, heightData.data.x1y0);
+                Vector3 x1y1 = new Vector3(cell_area.xMax, cell_area.yMax, heightData.data.x1y1);
+
+                mesh.AddQuad(quadIndex, x0y0, x0y1, x1y0, x1y1, heightData.flip);
                 quadIndex++;
 
                 var minusXres = results[cellInGroup.x - 1, cellInGroup.y];
