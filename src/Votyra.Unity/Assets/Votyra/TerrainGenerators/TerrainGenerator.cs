@@ -52,7 +52,7 @@ namespace Votyra.TerrainGenerators
 
                     using (ProfilerFactory.Create("Other"))
                     {
-                        mesh = options.TerrainMeshFactory(options.TerrainMesher.CellCount);
+                        mesh = options.TerrainMeshFactory(options.CellInGroupCount);
                         meshes[group.Group] = mesh;
 
                         options.TerrainMesher.InitializeGroup(group.Group, mesh, results);

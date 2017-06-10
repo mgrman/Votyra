@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Votyra.Common.Models;
 using Votyra.Common.Models.ObjectPool;
 using Votyra.TerrainMeshers.TriangleMesh;
 
@@ -12,23 +13,23 @@ namespace Votyra.Unity.Assets.Votyra.Pooling
     {
         public T Mesh { get; }
 
-        public int CellCount => Mesh.CellCount;
+        public Vector2i CellInGroupCount => Mesh.CellInGroupCount;
 
         ITriangleMesh IPooledTriangleMesh.Mesh => Mesh;
 
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
 
-        private static readonly ConcurentObjectDictionaryPool<PooledTriangleMeshContainer<T>, int> Pool = new ConcurentObjectDictionaryPool<PooledTriangleMeshContainer<T>, int>(5, (cellCount) => new PooledTriangleMeshContainer<T>(cellCount));
+        private static readonly ConcurentObjectDictionaryPool<PooledTriangleMeshContainer<T>, Vector2i> Pool = new ConcurentObjectDictionaryPool<PooledTriangleMeshContainer<T>, Vector2i>(5, (CellInGroupCount) => new PooledTriangleMeshContainer<T>(CellInGroupCount));
 
-        private PooledTriangleMeshContainer(int cellCount)
+        private PooledTriangleMeshContainer(Vector2i CellInGroupCount)
         {
             Mesh = new T();
-            Mesh.Initialize(cellCount);
+            Mesh.Initialize(CellInGroupCount);
         }
 
-        public static PooledTriangleMeshContainer<T> CreateDirty(int cellCount)
+        public static PooledTriangleMeshContainer<T> CreateDirty(Vector2i CellInGroupCount)
         {
-            var obj = Pool.GetObject(cellCount);
+            var obj = Pool.GetObject(CellInGroupCount);
             return obj;
         }
 
@@ -38,7 +39,7 @@ namespace Votyra.Unity.Assets.Votyra.Pooling
             {
                 (Mesh as IDisposable)?.Dispose();
             }
-            Pool.ReturnObject(this, this.CellCount);
+            Pool.ReturnObject(this, this.CellInGroupCount);
         }
 
         public void Clear(Bounds meshBounds)
@@ -46,17 +47,22 @@ namespace Votyra.Unity.Assets.Votyra.Pooling
             Mesh.Clear(meshBounds);
         }
 
-        public void AddQuad(int quadIndex, Vector3 x0y0, Vector3 x0y1, Vector3 x1y0, Vector3 x1y1, bool flipSides)
+        public void AddQuad(Vector2i cellInGroup, Vector3 x0y0, Vector3 x0y1, Vector3 x1y0, Vector3 x1y1, bool flipSides)
         {
-            Mesh.AddQuad(quadIndex, x0y0, x0y1, x1y0, x1y1, flipSides);
+            Mesh.AddQuad(cellInGroup, x0y0, x0y1, x1y0, x1y1, flipSides);
         }
 
-        public void AddWall(int quadIndex, Vector3 a, Vector3 b, Vector3 b_lower, Vector3 a_lower)
+        public void AddWallX(Vector2i cellInGroup, Vector3 a, Vector3 b, Vector3 b_lower, Vector3 a_lower)
         {
-            Mesh.AddWall(quadIndex, a, b, b_lower, a_lower);
+            Mesh.AddWallX(cellInGroup, a, b, b_lower, a_lower);
         }
 
-        public void Initialize(int cellCount)
+        public void AddWallY(Vector2i cellInGroup, Vector3 a, Vector3 b, Vector3 b_lower, Vector3 a_lower)
+        {
+            Mesh.AddWallY(cellInGroup, a, b, b_lower, a_lower);
+        }
+
+        public void Initialize(Vector2i CellInGroupCount)
         {
             throw new InvalidOperationException("Cannot initialize pooled mesh.");
         }

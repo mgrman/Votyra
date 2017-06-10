@@ -10,7 +10,7 @@ namespace Votyra.TerrainMeshers
 
         void InitializeGroup(Vector2i group, ITriangleMesh mesh, IMatrix<ResultHeightData> data);
 
-        int CellCount { get; }
+        Vector2i CellInGroupCount { get; }
 
         void AddCell(Vector2i cellInGroup);
     }

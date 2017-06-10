@@ -21,6 +21,6 @@ namespace Votyra.TerrainGenerators
         IImageSampler ImageSampler { get; }
         ITerrainAlgorithm TerrainAlgorithm { get; }
         ITerrainMesher TerrainMesher { get; }
-        Func<int, IPooledTriangleMesh> TerrainMeshFactory { get; }
+        Func<Vector2i, IPooledTriangleMesh> TerrainMeshFactory { get; }
     }
 }

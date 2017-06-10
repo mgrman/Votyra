@@ -50,7 +50,7 @@ namespace Votyra.Unity
         private IGroupSelector _groupsSelector;
         private ITerrainMeshGenerator _terrainGenerator;
         private IMeshUpdater _meshUpdater;
-        private Func<int, IPooledTriangleMesh> _terrainMeshFactory;
+        private Func<Vector2i, IPooledTriangleMesh> _terrainMeshFactory;
 
 
         private Task _updateTask = null;
@@ -216,7 +216,7 @@ namespace Votyra.Unity
         {
             _terrainAlgorithm = new SimpleTerrainAlgorithm();
             _onEditTerrainAlgorithm = new TileSelectTerrainAlgorithm();
-            _terrainMesher = new DirectTerrainMesher();
+            _terrainMesher = new TerrainMesher();
             _sampler = new DualImageSampler();
 
             _terrainGenerator = new TerrainGenerator();

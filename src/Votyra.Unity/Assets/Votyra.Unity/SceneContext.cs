@@ -34,7 +34,7 @@ namespace Votyra.Unity
             IImageSampler imageSampler,
             ITerrainAlgorithm terrainAlgorithm,
             ITerrainMesher terrainMesher,
-            Func<int, IPooledTriangleMesh> terrainMeshFactory,
+            Func<Vector2i, IPooledTriangleMesh> terrainMeshFactory,
             Func<GameObject> gameObjectFactory)
         {
             GroupSelector = groupSelector;
@@ -82,7 +82,7 @@ namespace Votyra.Unity
         public IImageSampler ImageSampler { get; }
         public ITerrainAlgorithm TerrainAlgorithm { get; }
         public ITerrainMesher TerrainMesher { get; }
-        public Func<int, IPooledTriangleMesh> TerrainMeshFactory { get; }
+        public Func<Vector2i, IPooledTriangleMesh> TerrainMeshFactory { get; }
         public Func<GameObject> GameObjectFactory { get; }
 
         public void Dispose()
