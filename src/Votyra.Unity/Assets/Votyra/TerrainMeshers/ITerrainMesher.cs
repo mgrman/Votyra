@@ -8,7 +8,7 @@ namespace Votyra.TerrainMeshers
     {
         void Initialize(ITerrainContext terrainOptions);
 
-        void InitializeGroup(Vector2i group, ITriangleMesh mesh, IMatrix<ResultHeightData> data);
+        void InitializeGroup(Vector2i group, ITerrainMesh mesh, IMatrix<ResultHeightData> data);
 
         Vector2i CellInGroupCount { get; }
 

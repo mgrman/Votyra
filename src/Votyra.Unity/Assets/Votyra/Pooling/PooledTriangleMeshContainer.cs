@@ -9,13 +9,13 @@ using Votyra.TerrainMeshers.TriangleMesh;
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {
     public class PooledTriangleMeshContainer<T> : IPooledTriangleMesh
-        where T : ITriangleMesh, new()
+        where T : ITerrainMesh, new()
     {
         public T Mesh { get; }
 
         public Vector2i CellInGroupCount => Mesh.CellInGroupCount;
 
-        ITriangleMesh IPooledTriangleMesh.Mesh => Mesh;
+        ITerrainMesh IPooledTriangleMesh.Mesh => Mesh;
 
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
 

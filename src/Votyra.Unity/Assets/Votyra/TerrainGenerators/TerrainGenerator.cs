@@ -17,7 +17,7 @@ namespace Votyra.TerrainGenerators
 
         private MatrixWithOffset<ResultHeightData> _resultsCache;
 
-        IReadOnlyPooledDictionary<Vector2i, ITriangleMesh> ITerrainMeshGenerator.Generate(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate)
+        IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> ITerrainMeshGenerator.Generate(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate)
         {
             var meshes = GenerateMeshUsingTilesImpl(options, groupsToUpdate);
 
@@ -31,16 +31,16 @@ namespace Votyra.TerrainGenerators
             return terrainGroups;
         }
 
-        private IReadOnlyPooledDictionary<Vector2i, ITriangleMesh> GenerateMeshUsingTilesImpl(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate)
+        private IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> GenerateMeshUsingTilesImpl(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate)
         {
             int cellInGroupCount_x = options.CellInGroupCount.x;
             int cellInGroupCount_y = options.CellInGroupCount.y;
-            PooledDictionary<Vector2i, ITriangleMesh> meshes;
+            PooledDictionary<Vector2i, ITerrainMesh> meshes;
             using (ProfilerFactory.Create("init"))
             {
                 options.TerrainMesher.Initialize(options);
 
-                meshes = PooledDictionary<Vector2i, ITriangleMesh>.Create();
+                meshes = PooledDictionary<Vector2i, ITerrainMesh>.Create();
             }
 
             using (var terrainGroups = GenerateTilesImpl(options, groupsToUpdate))

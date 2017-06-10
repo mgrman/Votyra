@@ -7,6 +7,6 @@ namespace Votyra.TerrainGenerators
 {
     public interface ITerrainMeshGenerator
     {
-        IReadOnlyPooledDictionary<Vector2i, ITriangleMesh> Generate(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate);
+        IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> Generate(ITerrainContext options, IEnumerable<Vector2i> groupsToUpdate);
     }
 }

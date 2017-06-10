@@ -106,10 +106,10 @@ namespace Votyra.Unity
         private async static Task UpdateTerrain(SceneContext context, CancellationToken token)
         {
             GroupActions groupActions = null;
-            IReadOnlyPooledDictionary<Vector2i, ITriangleMesh> results = null;
+            IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> results = null;
             try
             {
-                Func<IReadOnlyPooledDictionary<Vector2i, ITriangleMesh>> computeAction = () =>
+                Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh>> computeAction = () =>
                     {
                         using (ProfilerFactory.Create("Creating visible groups"))
                         {
@@ -223,7 +223,7 @@ namespace Votyra.Unity
             _meshUpdater = new TerrainMeshUpdater();
             _groupsSelector = new GroupsByCameraVisibilitySelector();
             _imageProvider = new EditableMatrixImage(InitialTexture, InitialTextureScale, _sampler, _onEditTerrainAlgorithm);
-            _terrainMeshFactory = PooledTriangleMeshContainer<FixedTriangleMesh>.CreateDirty;
+            _terrainMeshFactory = PooledTriangleMeshContainer<FixedTerrainMesh>.CreateDirty;
         }
 
         private void DisposeService()

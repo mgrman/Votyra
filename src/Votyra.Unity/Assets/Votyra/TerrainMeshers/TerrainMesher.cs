@@ -12,7 +12,7 @@ namespace Votyra.TerrainMeshers
         protected Vector2i groupPosition;
         protected Vector3 bounds_center;
         protected Vector3 bounds_size;
-        protected ITriangleMesh mesh;
+        protected ITerrainMesh mesh;
         protected IMatrix<ResultHeightData> results;
 
         public virtual void Initialize(ITerrainContext terrainOptions)
@@ -22,7 +22,7 @@ namespace Votyra.TerrainMeshers
             this.bounds_size = terrainOptions.GroupBounds.size;
         }
 
-        public virtual void InitializeGroup(Vector2i group, ITriangleMesh mesh, IMatrix<ResultHeightData> data)
+        public virtual void InitializeGroup(Vector2i group, ITerrainMesh mesh, IMatrix<ResultHeightData> data)
         {
             this.results = data;
             this.mesh = mesh;

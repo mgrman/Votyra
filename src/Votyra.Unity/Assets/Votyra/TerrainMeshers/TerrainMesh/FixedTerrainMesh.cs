@@ -6,7 +6,7 @@ using Votyra.Common.Models;
 
 namespace Votyra.TerrainMeshers.TriangleMesh
 {
-    public class FixedTriangleMesh : ITriangleMesh
+    public class FixedTerrainMesh : ITerrainMesh
     {
         public Bounds MeshBounds { get; private set; }
         public Vector3[] Vertices { get; private set; }
@@ -20,7 +20,7 @@ namespace Votyra.TerrainMeshers.TriangleMesh
         public int TriangleCount { get; private set; }
         public int PointCount { get; private set; }
 
-        public FixedTriangleMesh()
+        public FixedTerrainMesh()
         {
 
         }

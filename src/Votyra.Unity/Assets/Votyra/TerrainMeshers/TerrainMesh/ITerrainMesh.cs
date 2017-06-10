@@ -3,7 +3,7 @@ using Votyra.Common.Models;
 
 namespace Votyra.TerrainMeshers.TriangleMesh
 {
-    public interface ITriangleMesh
+    public interface ITerrainMesh
     {
         Vector2i CellInGroupCount { get; }
         void Initialize(Vector2i CellInGroupCount);

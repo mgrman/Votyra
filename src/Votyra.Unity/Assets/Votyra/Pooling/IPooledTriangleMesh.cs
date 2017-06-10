@@ -4,8 +4,8 @@ using Votyra.TerrainMeshers.TriangleMesh;
 
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {
-    public interface IPooledTriangleMesh : ITriangleMesh, IDisposable
+    public interface IPooledTriangleMesh : ITerrainMesh, IDisposable
     {
-        ITriangleMesh Mesh { get; }
+        ITerrainMesh Mesh { get; }
     }
 }

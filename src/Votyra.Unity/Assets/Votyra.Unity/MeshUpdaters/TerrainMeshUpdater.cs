@@ -20,7 +20,7 @@ namespace Votyra.Unity.MeshUpdaters
         {
         }
 
-        public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<Vector2i, ITriangleMesh> terrainMeshes, IEnumerable<Vector2i> toKeepGroups)
+        public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<Vector2i, ITerrainMesh> terrainMeshes, IEnumerable<Vector2i> toKeepGroups)
         {
             if (terrainMeshes != null)
             {
@@ -51,7 +51,7 @@ namespace Votyra.Unity.MeshUpdaters
                             }
                         }
 
-                        ITriangleMesh triangleMesh = terrainMesh.Value;
+                        ITerrainMesh triangleMesh = terrainMesh.Value;
                         UpdateMesh(triangleMesh, meshFilter.sharedMesh);
 
                         var collider = meshFilter.gameObject.GetComponent<MeshCollider>();
@@ -70,11 +70,11 @@ namespace Votyra.Unity.MeshUpdaters
             }
         }
 
-        private void UpdateMesh(ITriangleMesh triangleMesh, Mesh mesh)
+        private void UpdateMesh(ITerrainMesh triangleMesh, Mesh mesh)
         {
-            if (triangleMesh is FixedTriangleMesh)
+            if (triangleMesh is FixedTerrainMesh)
             {
-                UpdateMesh(triangleMesh as FixedTriangleMesh, mesh);
+                UpdateMesh(triangleMesh as FixedTerrainMesh, mesh);
             }
             else if (triangleMesh is IPooledTriangleMesh)
             {
@@ -85,7 +85,7 @@ namespace Votyra.Unity.MeshUpdaters
                 Debug.LogError($"Unsuported ITriangleMesh implementation '{triangleMesh.GetType().Name}'");
             }
         }
-        private void UpdateMesh(FixedTriangleMesh triangleMesh, Mesh mesh)
+        private void UpdateMesh(FixedTerrainMesh triangleMesh, Mesh mesh)
         {
             bool recomputeTriangles = mesh.vertexCount != triangleMesh.PointCount;
             if (recomputeTriangles)
