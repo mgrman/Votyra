@@ -15,6 +15,7 @@ namespace Votyra.Unity.Utils
             }
             return component;
         }
+
         public static void DestroyAllChildren(this GameObject gameObject)
         {
             gameObject.transform.DestroyAllChildren();

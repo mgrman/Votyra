@@ -4,21 +4,10 @@ using UnityEngine;
 
 public class RtsCamera : MonoBehaviour
 {
-
-    // public Vector3 Position;
-    // public Vector3 Rotation;
-
     public Vector3 SpeedTranslation = Vector3.one;
 
     public Vector3 SpeedRotation = Vector3.one;
-    // Use this for initialization
-    void Start()
-    {
-        // Position = transform.localPosition;
-        // Rotation = transform.localRotation.eulerAngles;
-    }
 
-    // Update is called once per frame
     void Update()
     {
         var moveX = Input.GetAxis("Horizontal1") * Time.deltaTime * SpeedTranslation.x;
@@ -33,12 +22,7 @@ public class RtsCamera : MonoBehaviour
 
         var rotationXZ = Input.GetAxis("RotationHorizontal") * Time.deltaTime * SpeedRotation.y;
 
-        // Position = new Vector3(Position.x + moveX * Speed.x, Position.y + moveY * Speed.y, Position.z + moveZ * Speed.z);
-
         transform.Translate(move, Space.World);
-
         transform.Rotate(Vector3.up, rotationXZ, Space.World);
-        // transform.localPosition = Position;
-        // transform.localRotation = Quaternion.Euler(Rotation);
     }
 }

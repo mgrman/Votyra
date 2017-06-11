@@ -13,11 +13,8 @@ namespace Votyra.TerrainTileGenerators
     public interface ITerrainTileContext
     {
         Vector2i CellInGroupCount { get; }
-        Bounds GroupBounds { get; }
-        Range2i RangeZ { get; }
 
         IImage2i Image { get; }
-        Rect2i TransformedInvalidatedArea { get; }
         IImageSampler ImageSampler { get; }
         ITerrainAlgorithm TerrainAlgorithm { get; }
     }
