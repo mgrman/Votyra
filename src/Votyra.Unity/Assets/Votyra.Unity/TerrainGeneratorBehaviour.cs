@@ -38,6 +38,7 @@ namespace Votyra.Unity
         public UI_Vector2i CellInGroupCount = new UI_Vector2i(10, 10);
         public bool FlipTriangles = false;
         public bool DrawBounds = false;
+        public bool Async = true;
         public Material Material = null;
         public Material MaterialWalls = null;
         public Texture2D InitialTexture = null;
@@ -71,7 +72,7 @@ namespace Votyra.Unity
                 _updateTask = null;
 
                 var context = GetSceneContext();
-                _updateTask = UpdateTerrain(context, true, _onDestroyCts.Token);
+                _updateTask = UpdateTerrain(context, Async, _onDestroyCts.Token);
             }
 
             if (Input.GetMouseButton(0) || Input.GetMouseButton(1))

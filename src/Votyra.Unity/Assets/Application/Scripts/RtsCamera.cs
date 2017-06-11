@@ -21,9 +21,9 @@ public class RtsCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var moveX = Input.GetAxis("Horizontal1") * SpeedTranslation.x;
-        var moveY = Input.GetAxis("Vertical") * SpeedTranslation.y;
-        var moveZ = Input.GetAxis("Horizontal2") * SpeedTranslation.z;
+        var moveX = Input.GetAxis("Horizontal1") * Time.deltaTime * SpeedTranslation.x;
+        var moveY = Input.GetAxis("Vertical") * Time.deltaTime * SpeedTranslation.y;
+        var moveZ = Input.GetAxis("Horizontal2") * Time.deltaTime * SpeedTranslation.z;
         var move = new Vector3(moveX, moveY, moveZ);
 
         var currentRotationXZ = transform.rotation.eulerAngles.y;
@@ -31,7 +31,7 @@ public class RtsCamera : MonoBehaviour
 
         move = currentRotationPlane * move;
 
-        var rotationXZ = Input.GetAxis("RotationHorizontal") * SpeedRotation.y;
+        var rotationXZ = Input.GetAxis("RotationHorizontal") * Time.deltaTime * SpeedRotation.y;
 
         // Position = new Vector3(Position.x + moveX * Speed.x, Position.y + moveY * Speed.y, Position.z + moveZ * Speed.z);
 
