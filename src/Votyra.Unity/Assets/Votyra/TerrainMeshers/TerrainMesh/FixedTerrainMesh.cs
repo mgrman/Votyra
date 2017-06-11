@@ -20,11 +20,6 @@ namespace Votyra.TerrainMeshers.TriangleMesh
         public int TriangleCount { get; private set; }
         public int PointCount { get; private set; }
 
-        public FixedTerrainMesh()
-        {
-
-        }
-
         public virtual void Initialize(Vector2i cellInGroupCount)
         {
             CellInGroupCount = cellInGroupCount;

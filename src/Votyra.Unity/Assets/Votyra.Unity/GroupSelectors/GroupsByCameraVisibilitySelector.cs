@@ -30,7 +30,6 @@ namespace Votyra.Unity.GroupSelectors
             for (int i = 0; i < 4; i++)
             {
                 var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorners[i]));
-
                 localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
 

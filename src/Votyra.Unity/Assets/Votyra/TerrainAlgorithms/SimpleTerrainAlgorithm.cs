@@ -14,8 +14,8 @@ namespace Votyra.TerrainAlgorithms
             bool flip;
             if (difMain == difMinor)
             {
-                var sumMain = Math.Abs(sampleData.x0y0 + sampleData.x1y1);
-                var sumMinor = Math.Abs(sampleData.x1y0 + sampleData.x0y1);
+                var sumMain = sampleData.x0y0 + sampleData.x1y1;
+                var sumMinor = sampleData.x1y0 + sampleData.x0y1;
                 flip = sumMain < sumMinor;
             }
             else

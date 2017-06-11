@@ -71,7 +71,7 @@ namespace Votyra.Unity
             Initialize();
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if (_updateTask == null || _updateTask.IsCompleted)
             {
