@@ -35,7 +35,6 @@ namespace Votyra.Unity
     //TODO: move to floats
     public class TerrainGeneratorBehaviour : MonoBehaviour
     {
-        public static Thread UnityThread { get; private set; }
         public UI_Vector2i CellInGroupCount = new UI_Vector2i(10, 10);
         public bool FlipTriangles = false;
         public bool DrawBounds = false;
@@ -58,15 +57,6 @@ namespace Votyra.Unity
         private Task _updateTask = null;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
-        static TerrainGeneratorBehaviour()
-        {
-            UnityThread = Thread.CurrentThread;
-            if (LoggerFactory.Factory == null)
-                LoggerFactory.Factory = (name) => new UnityLogger(name);
-            if (ProfilerFactory.Factory == null)
-                ProfilerFactory.Factory = (name) => new UnityProfiler(name, UnityThread);
-        }
-
         private void Start()
         {
             this.gameObject.DestroyAllChildren();
@@ -81,7 +71,7 @@ namespace Votyra.Unity
                 _updateTask = null;
 
                 var context = GetSceneContext();
-                _updateTask = UpdateTerrain(context, _onDestroyCts.Token);
+                _updateTask = UpdateTerrain(context, true, _onDestroyCts.Token);
             }
 
             if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
@@ -105,7 +95,7 @@ namespace Votyra.Unity
             this.SendMessage("OnCellClick", position, SendMessageOptions.DontRequireReceiver);
         }
 
-        private async static Task UpdateTerrain(SceneContext context, CancellationToken token)
+        private async Task UpdateTerrain(SceneContext context, bool async, CancellationToken token)
         {
             GroupActions groupActions = null;
             IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> results = null;
@@ -113,7 +103,7 @@ namespace Votyra.Unity
             {
                 Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh>> computeAction = () =>
                     {
-                        using (ProfilerFactory.Create("Creating visible groups"))
+                        using (this.CreateProfiler("Creating visible groups"))
                         {
                             groupActions = context.GroupSelector.GetGroupsToUpdate(context);
                         }
@@ -121,11 +111,11 @@ namespace Votyra.Unity
                         if (toRecompute.Any())
                         {
                             IReadOnlyPooledCollection<ITerrainGroup> tiles;
-                            using (ProfilerFactory.Create("TerrainTileGenerator"))
+                            using (this.CreateProfiler("TerrainTileGenerator"))
                             {
                                 tiles = context.TerrainTileGenerator.Generate(context, toRecompute);
                             }
-                            using (ProfilerFactory.Create("TerrainMeshGenerator"))
+                            using (this.CreateProfiler("TerrainMeshGenerator"))
                             {
                                 return context.TerrainMeshGenerator.Generate(context, tiles);
                             }
@@ -136,8 +126,15 @@ namespace Votyra.Unity
                         }
                     };
 
-                results = await Task.Run(computeAction);
-                // computeAction();
+                if (async)
+                {
+                    results = await Task.Run(computeAction);
+                }
+                else
+                {
+                    results = computeAction();
+                }
+
                 if (token.IsCancellationRequested)
                 {
                     return;
@@ -145,7 +142,7 @@ namespace Votyra.Unity
 
                 if (results != null)
                 {
-                    using (ProfilerFactory.Create("Applying mesh"))
+                    using (this.CreateProfiler("Applying mesh"))
                     {
                         var toKeep = groupActions?.ToKeep ?? Enumerable.Empty<Vector2i>();
                         context.MeshUpdater.UpdateMesh(context, results, toKeep);
@@ -220,6 +217,11 @@ namespace Votyra.Unity
 
         private void Initialize()
         {
+            if (LoggerFactory.Factory == null)
+                LoggerFactory.Factory = (name, owner) => new UnityLogger(name, owner);
+            if (ProfilerFactory.Factory == null)
+                ProfilerFactory.Factory = (name, owner) => new UnityProfiler(name, owner);
+
             _terrainAlgorithm = new SimpleTerrainAlgorithm();
             _onEditTerrainAlgorithm = new TileSelectTerrainAlgorithm();
             _sampler = new DualImageSampler();

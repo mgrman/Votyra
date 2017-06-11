@@ -35,7 +35,7 @@ namespace Votyra.TerrainTileGenerators
 
                 PooledTerrainGroup terrainGroup;
 
-                using (ProfilerFactory.Create("Other"))
+                using (this.CreateProfiler("Other"))
                 {
                     terrainGroup = PooledTerrainGroup.CreateDirty(options.CellInGroupCount);
                     terrainGroup.Clear(group);
@@ -51,13 +51,13 @@ namespace Votyra.TerrainTileGenerators
                         Vector2i cell = cellInGroup + firstCell;
 
                         HeightData inputData;
-                        using (ProfilerFactory.Create("ImageSampler.Sample()"))
+                        using (this.CreateProfiler("ImageSampler.Sample()"))
                         {
                             //sample image
                             inputData = options.ImageSampler.Sample(options.Image, cell);
                         }
 
-                        using (ProfilerFactory.Create("TerrainAlgorithm.Process()"))
+                        using (this.CreateProfiler("TerrainAlgorithm.Process()"))
                         {
                             //compute cell using alg
                             terrainGroupData[cellInGroup_x, cellInGroup_y] = options.TerrainAlgorithm.Process(inputData);

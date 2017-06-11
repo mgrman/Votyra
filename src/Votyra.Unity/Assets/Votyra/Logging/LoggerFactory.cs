@@ -4,21 +4,21 @@ namespace Votyra.Logging
 {
     public static class LoggerFactory
     {
-        public static Func<string, ILogger> Factory { get; set; }
+        public static Func<string, object, IThreadSafeLogger> Factory { get; set; }
 
-        public static ILogger Create<T>()
+        public static IThreadSafeLogger Create<T>()
         {
-            return Factory(typeof(T).FullName);
+            return Factory(typeof(T).FullName, null);
         }
 
-        public static ILogger Create(Type type)
+        public static IThreadSafeLogger Create(Type type)
         {
-            return Factory(type.FullName);
+            return Factory(type.FullName, null);
         }
 
-        public static ILogger Create(object instance)
+        public static IThreadSafeLogger Create(object instance)
         {
-            return Factory(instance.GetType().FullName);
+            return Factory(instance.GetType().FullName, instance);
         }
     }
 }

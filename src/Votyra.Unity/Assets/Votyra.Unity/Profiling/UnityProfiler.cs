@@ -8,11 +8,11 @@ namespace Votyra.Unity.Profiling
     {
         private readonly bool _calledProfiler;
 
-        public UnityProfiler(string name, Thread unityThread)
+        public UnityProfiler(string name, object owner)
         {
-            if (Thread.CurrentThread == unityThread)
+            if (Thread.CurrentThread == UnitySyncContext.UnityThread)
             {
-                Profiler.BeginSample(name);
+                Profiler.BeginSample(name, owner as UnityEngine.Object);
                 _calledProfiler = true;
             }
             else

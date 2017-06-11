@@ -24,7 +24,7 @@ namespace Votyra.Unity.MeshUpdaters
         {
             if (terrainMeshes != null)
             {
-                using (ProfilerFactory.Create("Setting Mesh"))
+                using (this.CreateProfiler("Setting Mesh"))
                 {
                     var toDeleteGroups = _meshFilters.Keys.Except(terrainMeshes.Keys).Except(toKeepGroups).ToList();
 

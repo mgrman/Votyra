@@ -36,7 +36,7 @@ namespace Votyra.TerrainMeshGenerators
 
             TerrainMesher mesher;
 
-            using (ProfilerFactory.Create("init"))
+            using (this.CreateProfiler("init"))
             {
                 mesher = new TerrainMesher();
                 mesher.Initialize(options);
@@ -48,7 +48,7 @@ namespace Votyra.TerrainMeshGenerators
             {
                 MatrixWithOffset<ResultHeightData> results = group.Data;
 
-                using (ProfilerFactory.Create("Other"))
+                using (this.CreateProfiler("Other"))
                 {
                     mesher.InitializeGroup(group.Group, results);
                 }
@@ -58,14 +58,14 @@ namespace Votyra.TerrainMeshGenerators
                     {
                         Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
 
-                        using (ProfilerFactory.Create("TerrainMesher.AddCell()"))
+                        using (this.CreateProfiler("TerrainMesher.AddCell()"))
                         {
                             //process cell to mesh
                             mesher.AddCell(cellInGroup);
                         }
                     }
                 }
-                using (ProfilerFactory.Create("Other"))
+                using (this.CreateProfiler("Other"))
                 {
                     meshes[group.Group] = mesher.GetResultingMesh();
                 }

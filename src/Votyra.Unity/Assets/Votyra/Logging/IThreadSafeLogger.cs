@@ -2,7 +2,7 @@
 
 namespace Votyra.Logging
 {
-    public interface ILogger
+    public interface IThreadSafeLogger
     {
         void LogMessage(object message);
 
