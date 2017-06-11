@@ -2,7 +2,7 @@
 using Votyra.Models;
 using UnityEngine;
 
-namespace Votyra.TerrainGenerators
+namespace Votyra.TerrainTileGenerators.TerrainGroups
 {
     public interface ITerrainGroup
     {

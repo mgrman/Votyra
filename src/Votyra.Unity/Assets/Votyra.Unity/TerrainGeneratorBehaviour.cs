@@ -6,7 +6,8 @@ using Votyra.Utils;
 using Votyra.Images;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
-using Votyra.TerrainGenerators;
+using Votyra.TerrainMeshGenerators;
+using Votyra.TerrainTileGenerators;
 using Votyra.TerrainMeshers;
 using Votyra.TerrainMeshers.TriangleMesh;
 using Votyra.Unity.Behaviours;
@@ -25,6 +26,8 @@ using Votyra.Profiling;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using Votyra.Images.EditableImages;
 using Votyra.Logging;
+using Votyra.TerrainTileGenerators.TerrainGroups;
+using Votyra.TerrainMeshGenerators.TerrainMeshers;
 
 namespace Votyra.Unity
 {
@@ -46,10 +49,10 @@ namespace Votyra.Unity
         private IImage2iProvider _imageProvider;
         private ITerrainAlgorithm _terrainAlgorithm;
         private ITerrainAlgorithm _onEditTerrainAlgorithm;
-        private ITerrainMesher _terrainMesher;
         private IImageSampler _sampler;
         private IGroupSelector _groupsSelector;
-        private ITerrainMeshGenerator _terrainGenerator;
+        private ITerrainMeshGenerator _terrainMeshGenerator;
+        private ITerrainTileGenerator _terrainTileGenerator;
         private IMeshUpdater _meshUpdater;
 
         private Task _updateTask = null;
@@ -117,9 +120,14 @@ namespace Votyra.Unity
                         var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i>();
                         if (toRecompute.Any())
                         {
-                            using (ProfilerFactory.Create("Sampling mesh"))
+                            IReadOnlyPooledCollection<ITerrainGroup> tiles;
+                            using (ProfilerFactory.Create("TerrainTileGenerator"))
                             {
-                                return context.TerrainGenerator.Generate(context, toRecompute);
+                                tiles = context.TerrainTileGenerator.Generate(context, toRecompute);
+                            }
+                            using (ProfilerFactory.Create("TerrainMeshGenerator"))
+                            {
+                                return context.TerrainMeshGenerator.Generate(context, tiles);
                             }
                         }
                         else
@@ -179,7 +187,8 @@ namespace Votyra.Unity
             return new SceneContext
             (
                 _groupsSelector,
-                _terrainGenerator,
+                _terrainMeshGenerator,
+                _terrainTileGenerator,
                 _meshUpdater,
                 camera.transform.position,
                 planes,
@@ -191,7 +200,6 @@ namespace Votyra.Unity
                 image,
                 _sampler,
                 _terrainAlgorithm,
-                _terrainMesher,
                 () => this.GameObjectFactory()
             );
         }
@@ -214,10 +222,10 @@ namespace Votyra.Unity
         {
             _terrainAlgorithm = new SimpleTerrainAlgorithm();
             _onEditTerrainAlgorithm = new TileSelectTerrainAlgorithm();
-            _terrainMesher = new TerrainMesher();
             _sampler = new DualImageSampler();
 
-            _terrainGenerator = new TerrainGenerator();
+            _terrainMeshGenerator = new TerrainMeshGenerator<TerrainMesher>();
+            _terrainTileGenerator = new TerrainTileGenerator();
             _meshUpdater = new TerrainMeshUpdater();
             _groupsSelector = new GroupsByCameraVisibilitySelector();
             _imageProvider = new EditableMatrixImage(InitialTexture, InitialTextureScale, _sampler, _onEditTerrainAlgorithm);
@@ -234,14 +242,14 @@ namespace Votyra.Unity
             (_terrainAlgorithm as IDisposable)?.Dispose();
             _terrainAlgorithm = null;
 
-            (_terrainMesher as IDisposable)?.Dispose();
-            _terrainMesher = null;
-
             (_sampler as IDisposable)?.Dispose();
             _sampler = null;
 
-            (_terrainGenerator as IDisposable)?.Dispose();
-            _terrainGenerator = null;
+            (_terrainMeshGenerator as IDisposable)?.Dispose();
+            _terrainMeshGenerator = null;
+
+            (_terrainTileGenerator as IDisposable)?.Dispose();
+            _terrainTileGenerator = null;
 
             (_meshUpdater as IDisposable)?.Dispose();
             _meshUpdater = null;

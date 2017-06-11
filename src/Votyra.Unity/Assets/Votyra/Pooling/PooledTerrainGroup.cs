@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Votyra.Models;
 using Votyra.Models.ObjectPool;
-using Votyra.TerrainGenerators;
+using Votyra.TerrainTileGenerators.TerrainGroups;
 
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {

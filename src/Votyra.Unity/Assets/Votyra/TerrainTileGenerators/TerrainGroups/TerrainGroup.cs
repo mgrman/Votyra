@@ -5,7 +5,7 @@ using System.Text;
 using Votyra.Models;
 using UnityEngine;
 
-namespace Votyra.TerrainGenerators
+namespace Votyra.TerrainTileGenerators.TerrainGroups
 {
     public class TerrainGroup : ITerrainGroup
     {

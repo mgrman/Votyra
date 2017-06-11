@@ -12,9 +12,9 @@ namespace Votyra.Unity.MeshUpdaters
 {
     public class TerrainMeshUpdater : IMeshUpdater
     {
-        private Dictionary<Vector2i, MeshFilter> _meshFilters = new Dictionary<Vector2i, MeshFilter>();
+        private SetDictionary<Vector2i, MeshFilter> _meshFilters = new SetDictionary<Vector2i, MeshFilter>();
 
-        public IEnumerable<Vector2i> ExistingGroups => _meshFilters.Keys;
+        public IReadOnlySet<Vector2i> ExistingGroups => _meshFilters;
 
         public TerrainMeshUpdater()
         {
@@ -76,9 +76,9 @@ namespace Votyra.Unity.MeshUpdaters
             {
                 UpdateMesh(triangleMesh as FixedTerrainMesh, mesh);
             }
-            else if (triangleMesh is IPooledTriangleMesh)
+            else if (triangleMesh is IPooledTerrainMesh)
             {
-                UpdateMesh((triangleMesh as IPooledTriangleMesh).Mesh, mesh);
+                UpdateMesh((triangleMesh as IPooledTerrainMesh).Mesh, mesh);
             }
             else if (triangleMesh != null)
             {

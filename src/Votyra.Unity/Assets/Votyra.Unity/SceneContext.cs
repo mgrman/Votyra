@@ -6,7 +6,8 @@ using Votyra.Utils;
 using Votyra.Images;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
-using Votyra.TerrainGenerators;
+using Votyra.TerrainMeshGenerators;
+using Votyra.TerrainTileGenerators;
 using Votyra.TerrainMeshers;
 using Votyra.TerrainMeshers.TriangleMesh;
 using Votyra.Unity.Assets.Votyra.Pooling;
@@ -15,29 +16,30 @@ using Votyra.Unity.MeshUpdaters;
 
 namespace Votyra.Unity
 {
-    public class SceneContext : ITerrainContext, IGroupVisibilityContext, IMeshContext, IDisposable
+    public class SceneContext : ITerrainMeshContext, ITerrainTileContext, IGroupVisibilityContext, IMeshContext, IDisposable
     {
         private const int MAX_CELL_COUNT = 60 * 60;
 
         public SceneContext(
             IGroupSelector groupSelector,
-            ITerrainMeshGenerator terrainGenerator,
+            ITerrainMeshGenerator terrainMeshGenerator,
+            ITerrainTileGenerator terrainTileGenerator,
             IMeshUpdater meshUpdater,
             Vector3 cameraPosition,
             IReadOnlyList<Plane> cameraPlanes,
             IReadOnlyPooledList<Vector3> cameraFrustumCorners,
             Matrix4x4 cameraLocalToWorldMatrix,
             Matrix4x4 parentContainerWorldToLocalMatrix,
-            IEnumerable<Vector2i> existingGroups,
+            IReadOnlySet<Vector2i> existingGroups,
             Vector2i cellInGroupCount,
             IImage2i image,
             IImageSampler imageSampler,
             ITerrainAlgorithm terrainAlgorithm,
-            ITerrainMesher terrainMesher,
             Func<GameObject> gameObjectFactory)
         {
             GroupSelector = groupSelector;
-            TerrainGenerator = terrainGenerator;
+            TerrainMeshGenerator = terrainMeshGenerator;
+            TerrainTileGenerator = terrainTileGenerator;
             MeshUpdater = meshUpdater;
             CameraPosition = cameraPosition;
             CameraPlanes = cameraPlanes;
@@ -49,7 +51,6 @@ namespace Votyra.Unity
             Image = image;
             ImageSampler = imageSampler;
             TerrainAlgorithm = terrainAlgorithm;
-            TerrainMesher = terrainMesher;
             GameObjectFactory = gameObjectFactory;
 
             RangeZ = image.RangeZ;
@@ -62,7 +63,8 @@ namespace Votyra.Unity
         }
 
         public IGroupSelector GroupSelector { get; }
-        public ITerrainMeshGenerator TerrainGenerator { get; }
+        public ITerrainMeshGenerator TerrainMeshGenerator { get; }
+        public ITerrainTileGenerator TerrainTileGenerator { get; }
         public IMeshUpdater MeshUpdater { get; }
 
 
@@ -73,13 +75,12 @@ namespace Votyra.Unity
         public Matrix4x4 ParentContainerWorldToLocalMatrix { get; }
         public Bounds GroupBounds { get; }
         public Range2i RangeZ { get; }
-        public IEnumerable<Vector2i> ExistingGroups { get; }
+        public IReadOnlySet<Vector2i> ExistingGroups { get; }
         public Vector2i CellInGroupCount { get; }
         public IImage2i Image { get; }
         public Rect2i TransformedInvalidatedArea { get; }
         public IImageSampler ImageSampler { get; }
         public ITerrainAlgorithm TerrainAlgorithm { get; }
-        public ITerrainMesher TerrainMesher { get; }
         public Func<GameObject> GameObjectFactory { get; }
 
         public void Dispose()

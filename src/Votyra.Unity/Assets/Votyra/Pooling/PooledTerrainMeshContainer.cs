@@ -8,26 +8,26 @@ using Votyra.TerrainMeshers.TriangleMesh;
 
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {
-    public class PooledTriangleMeshContainer<T> : IPooledTriangleMesh
+    public class PooledTerrainMeshContainer<T> : IPooledTerrainMesh
         where T : ITerrainMesh, new()
     {
         public T Mesh { get; }
 
         public Vector2i CellInGroupCount => Mesh.CellInGroupCount;
 
-        ITerrainMesh IPooledTriangleMesh.Mesh => Mesh;
+        ITerrainMesh IPooledTerrainMesh.Mesh => Mesh;
 
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
 
-        private static readonly ConcurentObjectDictionaryPool<PooledTriangleMeshContainer<T>, Vector2i> Pool = new ConcurentObjectDictionaryPool<PooledTriangleMeshContainer<T>, Vector2i>(5, (CellInGroupCount) => new PooledTriangleMeshContainer<T>(CellInGroupCount));
+        private static readonly ConcurentObjectDictionaryPool<PooledTerrainMeshContainer<T>, Vector2i> Pool = new ConcurentObjectDictionaryPool<PooledTerrainMeshContainer<T>, Vector2i>(5, (CellInGroupCount) => new PooledTerrainMeshContainer<T>(CellInGroupCount));
 
-        private PooledTriangleMeshContainer(Vector2i CellInGroupCount)
+        private PooledTerrainMeshContainer(Vector2i CellInGroupCount)
         {
             Mesh = new T();
             Mesh.Initialize(CellInGroupCount);
         }
 
-        public static PooledTriangleMeshContainer<T> CreateDirty(Vector2i CellInGroupCount)
+        public static PooledTerrainMeshContainer<T> CreateDirty(Vector2i CellInGroupCount)
         {
             var obj = Pool.GetObject(CellInGroupCount);
             return obj;

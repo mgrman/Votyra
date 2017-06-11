@@ -1,11 +1,10 @@
 ﻿using Votyra.Models;
 using Votyra.Utils;
-using Votyra.TerrainGenerators;
 using Votyra.TerrainMeshers.TriangleMesh;
 using UnityEngine;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
-namespace Votyra.TerrainMeshers
+namespace Votyra.TerrainMeshGenerators.TerrainMeshers
 {
     public class TerrainMesher : ITerrainMesher
     {
@@ -13,11 +12,11 @@ namespace Votyra.TerrainMeshers
         protected Vector2i groupPosition;
         protected Vector3 bounds_center;
         protected Vector3 bounds_size;
-        protected IPooledTriangleMesh pooledMesh;
+        protected IPooledTerrainMesh pooledMesh;
         protected ITerrainMesh mesh;
         protected IMatrix<ResultHeightData> results;
 
-        public void Initialize(ITerrainContext terrainOptions)
+        public void Initialize(ITerrainMeshContext terrainOptions)
         {
             this.CellInGroupCount = terrainOptions.CellInGroupCount;
             this.bounds_center = terrainOptions.GroupBounds.center;
@@ -36,7 +35,7 @@ namespace Votyra.TerrainMeshers
 
             this.groupPosition = CellInGroupCount * group;
 
-            this.pooledMesh = PooledTriangleMeshContainer<FixedTerrainMesh>.CreateDirty(CellInGroupCount);
+            this.pooledMesh = PooledTerrainMeshContainer<FixedTerrainMesh>.CreateDirty(CellInGroupCount);
             this.mesh = this.pooledMesh.Mesh;
             mesh.Clear(bounds);
         }
@@ -71,7 +70,7 @@ namespace Votyra.TerrainMeshers
             }
         }
 
-        public IPooledTriangleMesh GetResultingMesh()
+        public IPooledTerrainMesh GetResultingMesh()
         {
             return pooledMesh;
         }

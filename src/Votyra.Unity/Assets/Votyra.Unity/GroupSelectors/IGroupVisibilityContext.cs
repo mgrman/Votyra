@@ -18,7 +18,7 @@ namespace Votyra.Unity.GroupSelectors
         Matrix4x4 ParentContainerWorldToLocalMatrix { get; }
         Bounds GroupBounds { get; }
         Rect2i TransformedInvalidatedArea { get; }
-        IEnumerable<Vector2i> ExistingGroups { get; }
+        IReadOnlySet<Vector2i> ExistingGroups { get; }
         Vector2i CellInGroupCount { get; }
     }
 }

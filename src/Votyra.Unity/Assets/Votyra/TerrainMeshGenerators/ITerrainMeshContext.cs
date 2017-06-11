@@ -8,9 +8,9 @@ using Votyra.TerrainAlgorithms;
 using Votyra.TerrainMeshers;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
-namespace Votyra.TerrainGenerators
+namespace Votyra.TerrainMeshGenerators
 {
-    public interface ITerrainContext
+    public interface ITerrainMeshContext
     {
         Vector2i CellInGroupCount { get; }
         Bounds GroupBounds { get; }
@@ -20,6 +20,5 @@ namespace Votyra.TerrainGenerators
         Rect2i TransformedInvalidatedArea { get; }
         IImageSampler ImageSampler { get; }
         ITerrainAlgorithm TerrainAlgorithm { get; }
-        ITerrainMesher TerrainMesher { get; }
     }
 }
