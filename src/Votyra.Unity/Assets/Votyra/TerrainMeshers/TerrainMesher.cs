@@ -1,8 +1,9 @@
-﻿using Votyra.Common.Models;
-using Votyra.Common.Utils;
+﻿using Votyra.Models;
+using Votyra.Utils;
 using Votyra.TerrainGenerators;
 using Votyra.TerrainMeshers.TriangleMesh;
 using UnityEngine;
+using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.TerrainMeshers
 {
@@ -12,29 +13,32 @@ namespace Votyra.TerrainMeshers
         protected Vector2i groupPosition;
         protected Vector3 bounds_center;
         protected Vector3 bounds_size;
+        protected IPooledTriangleMesh pooledMesh;
         protected ITerrainMesh mesh;
         protected IMatrix<ResultHeightData> results;
 
-        public virtual void Initialize(ITerrainContext terrainOptions)
+        public void Initialize(ITerrainContext terrainOptions)
         {
             this.CellInGroupCount = terrainOptions.CellInGroupCount;
             this.bounds_center = terrainOptions.GroupBounds.center;
             this.bounds_size = terrainOptions.GroupBounds.size;
         }
 
-        public virtual void InitializeGroup(Vector2i group, ITerrainMesh mesh, IMatrix<ResultHeightData> data)
+        public void InitializeGroup(Vector2i group, IMatrix<ResultHeightData> data)
         {
             this.results = data;
-            this.mesh = mesh;
             var bounds = new Bounds(new Vector3
              (
                  bounds_center.x + (group.x * CellInGroupCount.x),
                  bounds_center.y + (group.y * CellInGroupCount.y),
                  bounds_center.z
              ), bounds_size);
-            mesh.Clear(bounds);
 
             this.groupPosition = CellInGroupCount * group;
+
+            this.pooledMesh = PooledTriangleMeshContainer<FixedTerrainMesh>.CreateDirty(CellInGroupCount);
+            this.mesh = this.pooledMesh.Mesh;
+            mesh.Clear(bounds);
         }
 
         public void AddCell(Vector2i cellInGroup)
@@ -65,6 +69,11 @@ namespace Votyra.TerrainMeshers
 
                 mesh.AddWallX(cellInGroup, pos_x1y0, pos_x0y0, pos_x0y0_lowerX, pos_x1y0_lowerX);
             }
+        }
+
+        public IPooledTriangleMesh GetResultingMesh()
+        {
+            return pooledMesh;
         }
     }
 }

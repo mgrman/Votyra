@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Common.Models;
-using Votyra.Common.Models.ObjectPool;
+using Votyra.Models;
+using Votyra.Models.ObjectPool;
 using Votyra.TerrainMeshers.TriangleMesh;
 
 namespace Votyra.Unity.Assets.Votyra.Pooling

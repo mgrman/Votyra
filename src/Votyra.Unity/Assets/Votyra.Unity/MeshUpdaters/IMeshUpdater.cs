@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Votyra.Common.Models;
+using Votyra.Models;
 
 namespace Votyra.Unity.MeshUpdaters
 {

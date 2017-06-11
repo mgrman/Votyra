@@ -1,7 +1,7 @@
 ﻿using System;
-using Votyra.Common.Models;
+using Votyra.Models;
 using UnityEngine;
-using Votyra.Common.Utils;
+using Votyra.Utils;
 
 namespace Votyra.Images
 {

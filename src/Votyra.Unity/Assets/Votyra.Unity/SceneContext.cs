@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Common.Models;
-using Votyra.Common.Utils;
+using Votyra.Models;
+using Votyra.Utils;
 using Votyra.Images;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
@@ -34,7 +34,6 @@ namespace Votyra.Unity
             IImageSampler imageSampler,
             ITerrainAlgorithm terrainAlgorithm,
             ITerrainMesher terrainMesher,
-            Func<Vector2i, IPooledTriangleMesh> terrainMeshFactory,
             Func<GameObject> gameObjectFactory)
         {
             GroupSelector = groupSelector;
@@ -51,7 +50,6 @@ namespace Votyra.Unity
             ImageSampler = imageSampler;
             TerrainAlgorithm = terrainAlgorithm;
             TerrainMesher = terrainMesher;
-            TerrainMeshFactory = terrainMeshFactory;
             GameObjectFactory = gameObjectFactory;
 
             RangeZ = image.RangeZ;
@@ -82,7 +80,6 @@ namespace Votyra.Unity
         public IImageSampler ImageSampler { get; }
         public ITerrainAlgorithm TerrainAlgorithm { get; }
         public ITerrainMesher TerrainMesher { get; }
-        public Func<Vector2i, IPooledTriangleMesh> TerrainMeshFactory { get; }
         public Func<GameObject> GameObjectFactory { get; }
 
         public void Dispose()

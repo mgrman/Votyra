@@ -1,4 +1,4 @@
-﻿namespace Votyra.Common.Models
+﻿namespace Votyra.Models
 {
     public struct ResultHeightData
     {

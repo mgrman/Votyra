@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Votyra.Common.Models;
-using Votyra.Common.Utils;
+using Votyra.Models;
+using Votyra.Utils;
 using Votyra.Images;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
@@ -21,9 +21,10 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using System.Linq;
 using System.Threading.Tasks;
-using Votyra.Common.Profiling;
+using Votyra.Profiling;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using Votyra.Images.EditableImages;
+using Votyra.Logging;
 
 namespace Votyra.Unity
 {
@@ -50,8 +51,6 @@ namespace Votyra.Unity
         private IGroupSelector _groupsSelector;
         private ITerrainMeshGenerator _terrainGenerator;
         private IMeshUpdater _meshUpdater;
-        private Func<Vector2i, IPooledTriangleMesh> _terrainMeshFactory;
-
 
         private Task _updateTask = null;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
@@ -59,10 +58,10 @@ namespace Votyra.Unity
         static TerrainGeneratorBehaviour()
         {
             UnityThread = Thread.CurrentThread;
-            if (Common.Logging.LoggerFactory.Factory == null)
-                Common.Logging.LoggerFactory.Factory = (name) => new UnityLogger(name);
-            if (Common.Profiling.ProfilerFactory.Factory == null)
-                Common.Profiling.ProfilerFactory.Factory = (name) => new UnityProfiler(name, UnityThread);
+            if (LoggerFactory.Factory == null)
+                LoggerFactory.Factory = (name) => new UnityLogger(name);
+            if (ProfilerFactory.Factory == null)
+                ProfilerFactory.Factory = (name) => new UnityProfiler(name, UnityThread);
         }
 
         private void Start()
@@ -193,7 +192,6 @@ namespace Votyra.Unity
                 _sampler,
                 _terrainAlgorithm,
                 _terrainMesher,
-                _terrainMeshFactory,
                 () => this.GameObjectFactory()
             );
         }
@@ -223,7 +221,6 @@ namespace Votyra.Unity
             _meshUpdater = new TerrainMeshUpdater();
             _groupsSelector = new GroupsByCameraVisibilitySelector();
             _imageProvider = new EditableMatrixImage(InitialTexture, InitialTextureScale, _sampler, _onEditTerrainAlgorithm);
-            _terrainMeshFactory = PooledTriangleMeshContainer<FixedTerrainMesh>.CreateDirty;
         }
 
         private void DisposeService()

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Votyra.Unity.Logging
 {
-    public class UnityLogger : Common.Logging.ILogger
+    public class UnityLogger : Votyra.Logging.ILogger
     {
         public string Name { get; private set; }
 

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Votyra.Common.Models;
+using Votyra.Models;
 using Votyra.TerrainMeshers.TriangleMesh;
 using Votyra.Unity.Assets.Votyra.Pooling;
 

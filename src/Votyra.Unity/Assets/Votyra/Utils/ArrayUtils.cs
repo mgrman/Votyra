@@ -1,6 +1,6 @@
-﻿using Votyra.Common.Models;
+﻿using Votyra.Models;
 
-namespace Votyra.Common.Utils
+namespace Votyra.Utils
 {
     public static class ArrayUtils
     {

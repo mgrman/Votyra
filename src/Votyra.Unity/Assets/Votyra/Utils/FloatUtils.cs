@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Votyra.Common.Utils
+namespace Votyra.Utils
 {
     public static class FloatUtils
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Votyra.Common.Models.ObjectPool
+namespace Votyra.Models.ObjectPool
 {
     public class ConcurentObjectListPool<T, TKey> : ObjectListPool<T, TKey>
         where TKey : struct

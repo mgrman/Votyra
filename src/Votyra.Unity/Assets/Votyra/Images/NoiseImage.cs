@@ -1,5 +1,5 @@
-﻿using Votyra.Common.Models;
-using Votyra.Common.Utils;
+﻿using Votyra.Models;
+using Votyra.Utils;
 using UnityEngine;
 using System;
 

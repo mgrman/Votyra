@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Votyra.Common.Utils;
+using Votyra.Utils;
 using UnityEngine;
 
-namespace Votyra.Common.Models
+namespace Votyra.Models
 {
     public struct HeightData : IEquatable<HeightData>
     {
@@ -24,7 +24,7 @@ namespace Votyra.Common.Models
             this.x1y0 = x1y0;
             this.x1y1 = x1y1;
         }
-        
+
 
         public HeightData GetRotated(int offset)
         {

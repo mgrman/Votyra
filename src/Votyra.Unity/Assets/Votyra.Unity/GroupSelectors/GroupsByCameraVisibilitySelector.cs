@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Common.Models;
+using Votyra.Models;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using System.Linq;
 

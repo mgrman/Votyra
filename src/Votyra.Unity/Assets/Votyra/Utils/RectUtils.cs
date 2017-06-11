@@ -1,7 +1,7 @@
-﻿using Votyra.Common.Models;
+﻿using Votyra.Models;
 using UnityEngine;
 
-namespace Votyra.Common.Utils
+namespace Votyra.Utils
 {
     public static class RectUtils
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Votyra.Common.Models;
+using Votyra.Models;
 
 namespace Votyra.TerrainAlgorithms
 {

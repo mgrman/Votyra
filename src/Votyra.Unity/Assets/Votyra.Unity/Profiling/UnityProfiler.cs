@@ -1,5 +1,5 @@
 ﻿using System.Threading;
-using Votyra.Common.Profiling;
+using Votyra.Profiling;
 using UnityEngine.Profiling;
 
 namespace Votyra.Unity.Profiling

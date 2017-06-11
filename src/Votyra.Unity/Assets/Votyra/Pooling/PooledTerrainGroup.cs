@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Votyra.Common.Models;
-using Votyra.Common.Models.ObjectPool;
+using Votyra.Models;
+using Votyra.Models.ObjectPool;
 using Votyra.TerrainGenerators;
 
 namespace Votyra.Unity.Assets.Votyra.Pooling

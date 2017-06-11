@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using Votyra.Common.Models;
+using Votyra.Models;
 
 namespace Votyra.Models
 {

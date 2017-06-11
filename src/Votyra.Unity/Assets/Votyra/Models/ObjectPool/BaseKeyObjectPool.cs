@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Votyra.Common.Models.ObjectPool
+namespace Votyra.Models.ObjectPool
 {
     public abstract class BaseKeyObjectPool<T, TKey> : IObjectDictionaryPool<T, TKey>
         where TKey : struct

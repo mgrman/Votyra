@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Common.Logging;
-using Votyra.Common.Models;
-using Votyra.Common.Profiling;
-using Votyra.Common.Utils;
+using Votyra.Logging;
+using Votyra.Models;
+using Votyra.Profiling;
+using Votyra.Utils;
 using Votyra.TerrainMeshers.TriangleMesh;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
@@ -47,15 +47,11 @@ namespace Votyra.TerrainGenerators
             {
                 foreach (var group in terrainGroups)
                 {
-                    IPooledTriangleMesh mesh;
                     MatrixWithOffset<ResultHeightData> results = group.Data;
 
                     using (ProfilerFactory.Create("Other"))
                     {
-                        mesh = options.TerrainMeshFactory(options.CellInGroupCount);
-                        meshes[group.Group] = mesh;
-
-                        options.TerrainMesher.InitializeGroup(group.Group, mesh, results);
+                        options.TerrainMesher.InitializeGroup(group.Group, results);
                     }
                     for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
                     {
@@ -69,6 +65,10 @@ namespace Votyra.TerrainGenerators
                                 options.TerrainMesher.AddCell(cellInGroup);
                             }
                         }
+                    }
+                    using (ProfilerFactory.Create("Other"))
+                    {
+                        meshes[group.Group] = options.TerrainMesher.GetResultingMesh();
                     }
                 }
             }

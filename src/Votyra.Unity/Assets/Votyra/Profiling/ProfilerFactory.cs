@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Votyra.Common.Profiling
+namespace Votyra.Profiling
 {
     public static class ProfilerFactory
     {

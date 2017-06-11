@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Votyra.Common.Profiling;
+using Votyra.Profiling;
 using Votyra.Unity.Utils;
 using UnityEngine;
-using Votyra.Common.Models;
+using Votyra.Models;
 using System.Linq;
 using Votyra.TerrainMeshers.TriangleMesh;
 using System;

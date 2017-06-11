@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Votyra.Common.Models;
+using Votyra.Models;
 using Votyra.Images;
 using Votyra.Models;
-using Votyra.Common.Utils;
+using Votyra.Utils;
 using UnityEngine;
 using System;
 

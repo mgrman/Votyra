@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Votyra.Models;
 
 namespace Votyra.Unity.Utils
 {
@@ -15,10 +16,10 @@ namespace Votyra.Unity.Utils
                 minZ = Mathf.Min(minZ, z);
                 maxZ = Mathf.Max(maxZ, z);
             }
-            mesh.UpdateBounds(xyBounds, new Common.Models.Range2(minZ, maxZ));
+            mesh.UpdateBounds(xyBounds, new Range2(minZ, maxZ));
         }
 
-        public static void UpdateBounds(this Mesh mesh, Rect xyBounds, Common.Models.Range2 rangeZ)
+        public static void UpdateBounds(this Mesh mesh, Rect xyBounds, Range2 rangeZ)
         {
             Vector2 center = xyBounds.center;
             Vector2 size = xyBounds.size;

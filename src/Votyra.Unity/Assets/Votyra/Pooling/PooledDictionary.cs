@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Votyra.Common.Models.ObjectPool;
+using Votyra.Models.ObjectPool;
 
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {

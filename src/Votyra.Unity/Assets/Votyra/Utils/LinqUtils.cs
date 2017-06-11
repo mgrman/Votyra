@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Votyra.Common.Utils
+namespace Votyra.Utils
 {
     public static class LinqUtils
     {

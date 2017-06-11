@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Votyra.Common.Models;
+using Votyra.Models;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.TerrainGenerators

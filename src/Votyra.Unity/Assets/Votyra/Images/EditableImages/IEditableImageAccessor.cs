@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using Votyra.Common.Models;
+using Votyra.Models;
 
 namespace Votyra.Images.EditableImages
 {

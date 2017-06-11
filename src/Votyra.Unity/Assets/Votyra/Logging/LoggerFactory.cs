@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Votyra.Common.Logging
+namespace Votyra.Logging
 {
     public static class LoggerFactory
     {

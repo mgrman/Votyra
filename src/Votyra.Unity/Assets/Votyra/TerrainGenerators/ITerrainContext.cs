@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Common.Models;
+using Votyra.Models;
 using Votyra.Images;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
@@ -21,6 +21,5 @@ namespace Votyra.TerrainGenerators
         IImageSampler ImageSampler { get; }
         ITerrainAlgorithm TerrainAlgorithm { get; }
         ITerrainMesher TerrainMesher { get; }
-        Func<Vector2i, IPooledTriangleMesh> TerrainMeshFactory { get; }
     }
 }

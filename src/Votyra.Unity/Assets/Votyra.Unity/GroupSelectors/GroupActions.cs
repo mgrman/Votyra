@@ -1,5 +1,5 @@
 using System;
-using Votyra.Common.Models;
+using Votyra.Models;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.Unity.GroupSelectors

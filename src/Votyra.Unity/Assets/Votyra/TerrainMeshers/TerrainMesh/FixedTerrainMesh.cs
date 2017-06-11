@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Votyra.Common.Models;
+using Votyra.Models;
 
 namespace Votyra.TerrainMeshers.TriangleMesh
 {

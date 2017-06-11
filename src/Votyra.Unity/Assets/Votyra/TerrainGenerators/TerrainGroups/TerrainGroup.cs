@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Votyra.Common.Models;
+using Votyra.Models;
 using UnityEngine;
 
 namespace Votyra.TerrainGenerators

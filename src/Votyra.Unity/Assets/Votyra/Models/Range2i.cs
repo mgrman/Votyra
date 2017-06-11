@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Votyra.Common.Models
+namespace Votyra.Models
 {
     public struct Range2i : IEquatable<Range2i>
     {

@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Votyra.Common.Models;
+using Votyra.Models;
 using Votyra.Unity.Images;
-using Votyra.Common.Utils;
+using Votyra.Utils;
 
 namespace Votyra.Unity.Behaviours
 {
