@@ -1,9 +1,15 @@
 ﻿using UnityEngine;
+using Votyra.Models;
 
 namespace Votyra.Utils
 {
     public static class Vector3Utils
     {
+        public static Vector3i ToVector3i(this Vector3 vec)
+        {
+            return new Vector3i(vec);
+        }
+
         public static Vector2 XY(this Vector3 a)
         {
             return new Vector2(a.x, a.y);

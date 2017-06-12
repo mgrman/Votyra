@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Votyra.Utils
 {
@@ -26,7 +27,15 @@ namespace Votyra.Utils
 
         public static int RoundToInt(this float val)
         {
-            return (int)Math.Round(val);
+            return Mathf.RoundToInt(val);
+        }
+        public static int FloorToInt(this float val)
+        {
+            return Mathf.FloorToInt(val);
+        }
+        public static int CeilToInt(this float val)
+        {
+            return Mathf.CeilToInt(val);
         }
     }
 }

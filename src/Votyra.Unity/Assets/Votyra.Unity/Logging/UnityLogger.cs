@@ -39,7 +39,6 @@ namespace Votyra.Unity.Logging
 
         private string Format(object message)
         {
-            System.Diagnostics.StackTrace t = new System.Diagnostics.StackTrace();
             return $"{Name} : {message}";//\r\n{t}";
         }
 

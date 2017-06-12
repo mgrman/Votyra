@@ -44,7 +44,7 @@ namespace Votyra.Unity
         public Texture2D InitialTexture = null;
         public float InitialTextureScale = 1;
 
-        public IEditableImage EditableImage { get { return _imageProvider as IEditableImage; } }
+        public IEditableImage2i EditableImage { get { return _imageProvider as IEditableImage2i; } }
 
         private IImage2iProvider _imageProvider;
         private ITerrainAlgorithm _terrainAlgorithm;
@@ -104,7 +104,7 @@ namespace Votyra.Unity
             {
                 Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh>> computeAction = () =>
                     {
-                        using (this.CreateProfiler("Creating visible groups"))
+                        using (context.ProfilerFactory.Create("Creating visible groups"))
                         {
                             groupActions = context.GroupSelector.GetGroupsToUpdate(context);
                         }
@@ -112,11 +112,11 @@ namespace Votyra.Unity
                         if (toRecompute.Any())
                         {
                             IReadOnlyPooledCollection<ITerrainGroup> tiles;
-                            using (this.CreateProfiler("TerrainTileGenerator"))
+                            using (context.ProfilerFactory.Create("TerrainTileGenerator"))
                             {
                                 tiles = context.TerrainTileGenerator.Generate(context, toRecompute);
                             }
-                            using (this.CreateProfiler("TerrainMeshGenerator"))
+                            using (context.ProfilerFactory.Create("TerrainMeshGenerator"))
                             {
                                 return context.TerrainMeshGenerator.Generate(context, tiles);
                             }
@@ -143,7 +143,7 @@ namespace Votyra.Unity
 
                 if (results != null)
                 {
-                    using (this.CreateProfiler("Applying mesh"))
+                    using (context.ProfilerFactory.Create("Applying mesh"))
                     {
                         var toKeep = groupActions?.ToKeep ?? Enumerable.Empty<Vector2i>();
                         context.MeshUpdater.UpdateMesh(context, results, toKeep);
@@ -196,9 +196,12 @@ namespace Votyra.Unity
                 existingGroups,
                 cellInGroupCount,
                 image,
+                (image as IImageInvalidatableImage2i)?.InvalidatedArea ?? Rect2i.All,
                 _sampler,
                 _terrainAlgorithm,
-                () => this.GameObjectFactory()
+                () => this.GameObjectFactory(),
+                CreateProfiler,
+                CreateLogger
             );
         }
 
@@ -216,13 +219,18 @@ namespace Votyra.Unity
             return go;
         }
 
+        private static IThreadSafeLogger CreateLogger(string name, object owner)
+        {
+            return new UnityLogger(name, owner);
+        }
+
+        private IProfiler CreateProfiler(string name, object owner)
+        {
+            return new UnityProfiler(name, owner);
+        }
+
         private void Initialize()
         {
-            if (LoggerFactory.Factory == null)
-                LoggerFactory.Factory = (name, owner) => new UnityLogger(name, owner);
-            if (ProfilerFactory.Factory == null)
-                ProfilerFactory.Factory = (name, owner) => new UnityProfiler(name, owner);
-
             _terrainAlgorithm = new SimpleTerrainAlgorithm();
             _onEditTerrainAlgorithm = new TileSelectTerrainAlgorithm();
             _sampler = new DualImageSampler();
@@ -231,7 +239,7 @@ namespace Votyra.Unity
             _terrainTileGenerator = new TerrainTileGenerator();
             _meshUpdater = new TerrainMeshUpdater();
             _groupsSelector = new GroupsByCameraVisibilitySelector();
-            _imageProvider = new EditableMatrixImage(InitialTexture, InitialTextureScale, _sampler, _onEditTerrainAlgorithm);
+            _imageProvider = new EditableMatrixImage2i(InitialTexture, InitialTextureScale, _sampler, _onEditTerrainAlgorithm);
         }
 
         private void DisposeService()

@@ -9,7 +9,7 @@ using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.Unity.GroupSelectors
 {
-    public interface IGroupVisibilityContext
+    public interface IGroupVisibilityContext : IContext
     {
         Vector3 CameraPosition { get; }
         IReadOnlyList<Plane> CameraPlanes { get; }
@@ -17,7 +17,7 @@ namespace Votyra.Unity.GroupSelectors
         Matrix4x4 CameraLocalToWorldMatrix { get; }
         Matrix4x4 ParentContainerWorldToLocalMatrix { get; }
         Bounds GroupBounds { get; }
-        Rect2i TransformedInvalidatedArea { get; }
+        Rect2i InvalidatedArea_worldSpace { get; }
         IReadOnlySet<Vector2i> ExistingGroups { get; }
         Vector2i CellInGroupCount { get; }
     }

@@ -2,23 +2,22 @@
 using UnityEngine;
 using Votyra.Models;
 using Votyra.Utils;
-using Votyra.Models;
 
 namespace Votyra.Images
 {
-    internal class MatrixImage : IImage2i, IInitializableImage, IDisposable
+    internal class MatrixImage2i : IImage2i, IInitializableImage, IImageInvalidatableImage2i, IDisposable
     {
         public Range2i RangeZ { get; }
 
-        private readonly LockableMatrix<int> _image;
-
         public Rect2i InvalidatedArea { get; }
 
-        public MatrixImage(LockableMatrix<int> values, Rect2i invalidatedArea)
+        private readonly LockableMatrix<int> _image;
+
+        public MatrixImage2i(LockableMatrix<int> values, Rect2i invalidatedArea)
         {
             _image = values;
-            RangeZ = CalculateRangeZ(values);
             InvalidatedArea = invalidatedArea;
+            RangeZ = CalculateRangeZ(values);
         }
 
         private static Range2i CalculateRangeZ(LockableMatrix<int> values)
@@ -40,7 +39,6 @@ namespace Votyra.Images
             }
             return new Range2i(min, max);
         }
-
 
         public int Sample(Vector2i point)
         {

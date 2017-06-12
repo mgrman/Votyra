@@ -4,9 +4,24 @@ namespace Votyra.Profiling
 {
     public static class ProfilerFactoryExtensions
     {
-        public static IProfiler CreateProfiler(this object owner, string name)
+        public static IProfiler Create<T>(this ProfilerFactoryDelegate factory)
         {
-            return ProfilerFactory.Create(name, owner);
+            return factory(typeof(T).FullName, null);
+        }
+
+        public static IProfiler Create(this ProfilerFactoryDelegate factory, Type type)
+        {
+            return factory(type.FullName, null);
+        }
+
+        public static IProfiler Create(this ProfilerFactoryDelegate factory, string name)
+        {
+            return factory(name, null);
+        }
+
+        public static IProfiler Create(this ProfilerFactoryDelegate factory, object instance)
+        {
+            return factory(instance.GetType().FullName, instance);
         }
     }
 }

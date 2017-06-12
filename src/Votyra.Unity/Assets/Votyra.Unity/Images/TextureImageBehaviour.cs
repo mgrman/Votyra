@@ -5,19 +5,19 @@ namespace Votyra.Unity.Images
 {
     internal class TextureImageBehaviour : MonoBehaviour, IImage2iProvider
     {
-        private Bounds _oldBounds;
-        public Bounds Bounds;
-        
+        private Bounds _oldBounds = new Bounds();
+        public Bounds Bounds = new Bounds();
+
         private Texture2D _oldTexture = null;
-        public Texture2D Texture;
+        public Texture2D Texture = null;
 
         private TextureImage _image = null;
 
         public IImage2i CreateImage()
         {
-            
-                return _image;
-            
+
+            return _image;
+
         }
 
         private bool _fieldsChanged = true;

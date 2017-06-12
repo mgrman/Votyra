@@ -18,6 +18,7 @@ namespace Votyra.TerrainTileGenerators
 
             return terrainGroups;
         }
+
         private IReadOnlyPooledCollection<ITerrainGroup> GenerateTilesImpl(ITerrainTileContext options, IEnumerable<Vector2i> groupsToUpdate)
         {
             int cellInGroupCount_x = options.CellInGroupCount.x;
@@ -31,11 +32,9 @@ namespace Votyra.TerrainTileGenerators
 
                 Vector2i firstCell = options.CellInGroupCount * group;
 
-                var groupArea = new Rect2i(firstCell, options.CellInGroupCount);
-
                 PooledTerrainGroup terrainGroup;
 
-                using (this.CreateProfiler("Other"))
+                using (options.ProfilerFactory("Other", this))
                 {
                     terrainGroup = PooledTerrainGroup.CreateDirty(options.CellInGroupCount);
                     terrainGroup.Clear(group);
@@ -51,13 +50,13 @@ namespace Votyra.TerrainTileGenerators
                         Vector2i cell = cellInGroup + firstCell;
 
                         HeightData inputData;
-                        using (this.CreateProfiler("ImageSampler.Sample()"))
+                        using (options.ProfilerFactory("ImageSampler.Sample()", this))
                         {
                             //sample image
                             inputData = options.ImageSampler.Sample(options.Image, cell);
                         }
 
-                        using (this.CreateProfiler("TerrainAlgorithm.Process()"))
+                        using (options.ProfilerFactory("TerrainAlgorithm.Process()", this))
                         {
                             //compute cell using alg
                             terrainGroupData[cellInGroup_x, cellInGroup_y] = options.TerrainAlgorithm.Process(inputData);

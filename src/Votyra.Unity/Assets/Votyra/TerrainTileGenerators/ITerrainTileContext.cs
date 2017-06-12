@@ -10,7 +10,7 @@ using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.TerrainTileGenerators
 {
-    public interface ITerrainTileContext
+    public interface ITerrainTileContext : IContext
     {
         Vector2i CellInGroupCount { get; }
 

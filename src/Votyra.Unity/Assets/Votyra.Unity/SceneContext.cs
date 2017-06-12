@@ -13,6 +13,8 @@ using Votyra.TerrainMeshers.TriangleMesh;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using Votyra.Unity.GroupSelectors;
 using Votyra.Unity.MeshUpdaters;
+using Votyra.Profiling;
+using Votyra.Logging;
 
 namespace Votyra.Unity
 {
@@ -33,9 +35,12 @@ namespace Votyra.Unity
             IReadOnlySet<Vector2i> existingGroups,
             Vector2i cellInGroupCount,
             IImage2i image,
+            Rect2i invalidatedArea_imageSpace,
             IImageSampler imageSampler,
             ITerrainAlgorithm terrainAlgorithm,
-            Func<GameObject> gameObjectFactory)
+            Func<GameObject> gameObjectFactory,
+            ProfilerFactoryDelegate profilerFactory,
+            LoggerFactoryDelegate loggerFactory)
         {
             GroupSelector = groupSelector;
             TerrainMeshGenerator = terrainMeshGenerator;
@@ -52,11 +57,13 @@ namespace Votyra.Unity
             ImageSampler = imageSampler;
             TerrainAlgorithm = terrainAlgorithm;
             GameObjectFactory = gameObjectFactory;
+            ProfilerFactory = profilerFactory;
+            LoggerFactory = loggerFactory;
 
             RangeZ = image.RangeZ;
             GroupBounds = new Bounds(new Vector3(CellInGroupCount.x / 2.0f, CellInGroupCount.y / 2.0f, RangeZ.Center), new Vector3(CellInGroupCount.x, CellInGroupCount.y, RangeZ.Size));
-            TransformedInvalidatedArea = ImageSampler
-                  .ImageToWorld(image.InvalidatedArea)
+            InvalidatedArea_worldSpace = ImageSampler
+                  .ImageToWorld(invalidatedArea_imageSpace)
                   .RoundToContain();
 
             (Image as IInitializableImage)?.StartUsing();
@@ -78,10 +85,13 @@ namespace Votyra.Unity
         public IReadOnlySet<Vector2i> ExistingGroups { get; }
         public Vector2i CellInGroupCount { get; }
         public IImage2i Image { get; }
-        public Rect2i TransformedInvalidatedArea { get; }
+        public Rect2i InvalidatedArea_worldSpace { get; }
         public IImageSampler ImageSampler { get; }
         public ITerrainAlgorithm TerrainAlgorithm { get; }
         public Func<GameObject> GameObjectFactory { get; }
+
+        public ProfilerFactoryDelegate ProfilerFactory { get; }
+        public LoggerFactoryDelegate LoggerFactory { get; }
 
         public void Dispose()
         {

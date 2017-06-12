@@ -6,16 +6,16 @@ namespace Votyra.Unity.Images
     internal class CombineImageBehaviour : MonoBehaviour, IImage2iProvider
     {
         private MonoBehaviour _oldImageA;
-        public MonoBehaviour ImageA;
+        public MonoBehaviour ImageA = null;
 
         private MonoBehaviour _oldImageB = null;
-        public MonoBehaviour ImageB;
+        public MonoBehaviour ImageB = null;
 
-        private CombineImage.Operations _oldOperation = CombineImage.Operations.Add;
-        public CombineImage.Operations Operation;
+        private CombineImage2i.Operations _oldOperation = CombineImage2i.Operations.Add;
+        public CombineImage2i.Operations Operation = CombineImage2i.Operations.Add;
 
 
-        private CombineImage _image = null;
+        private CombineImage2i _image = null;
         public IImage2i CreateImage()
         {
 
@@ -57,7 +57,7 @@ namespace Votyra.Unity.Images
 
         private void SetImage()
         {
-            _image = new CombineImage((ImageA as IImage2iProvider).CreateImage(), (ImageB as IImage2iProvider).CreateImage(), Operation);
+            _image = new CombineImage2i((ImageA as IImage2iProvider).CreateImage(), (ImageB as IImage2iProvider).CreateImage(), Operation);
         }
     }
 }

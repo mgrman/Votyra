@@ -5,7 +5,7 @@ using Votyra.Utils;
 
 namespace Votyra.Images
 {
-    public class CombineImage : IImage2i
+    public class CombineImage2i : IImage2i
     {
         public IImage2i ImageA { get; private set; }
         public IImage2i ImageB { get; private set; }
@@ -19,22 +19,13 @@ namespace Votyra.Images
             Divide
         }
 
-        public CombineImage(IImage2i imageA, IImage2i imageB, Operations operation)
+        public CombineImage2i(IImage2i imageA, IImage2i imageB, Operations operation)
         {
             ImageA = imageA;
             ImageB = imageB;
             Operation = operation;
             RangeZ = ImageA.RangeZ + ImageB.RangeZ;
         }
-
-        public Rect2i InvalidatedArea
-        {
-            get
-            {
-                return ImageA.InvalidatedArea.CombineWith(ImageB.InvalidatedArea);
-            }
-        }
-
         public Range2i RangeZ { get; private set; }
 
         public int Sample(Vector2i point)

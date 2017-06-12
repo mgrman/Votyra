@@ -15,6 +15,15 @@ namespace Votyra.Unity.Utils
             }
             return component;
         }
+        public static void AddComponentIfMissing<T>(this GameObject gameObject)
+            where T : Component
+        {
+            var component = gameObject.GetComponent<T>();
+            if (component == null)
+            {
+                gameObject.AddComponent<T>();
+            }
+        }
 
         public static void DestroyAllChildren(this GameObject gameObject)
         {

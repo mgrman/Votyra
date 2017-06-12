@@ -22,7 +22,7 @@ namespace Votyra.Unity.GroupSelectors
             var parentContainerWorldToLocalMatrix = options.ParentContainerWorldToLocalMatrix;
             var groupBoundsTemplate = options.GroupBounds;
             var cellInGroupCount = options.CellInGroupCount;
-            var invalidatedArea = options.TransformedInvalidatedArea;
+            var invalidatedArea = options.InvalidatedArea_worldSpace;
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition);
 

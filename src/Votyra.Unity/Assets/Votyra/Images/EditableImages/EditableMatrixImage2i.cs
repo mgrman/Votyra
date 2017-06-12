@@ -2,7 +2,6 @@
 using System.Linq;
 using Votyra.Models;
 using Votyra.Images;
-using Votyra.Models;
 using Votyra.Utils;
 using UnityEngine;
 using System;
@@ -11,7 +10,7 @@ using Votyra.TerrainAlgorithms;
 
 namespace Votyra.Images.EditableImages
 {
-    internal class EditableMatrixImage : IImage2iProvider, IEditableImage
+    internal class EditableMatrixImage2i : IImage2iProvider, IEditableImage2i
     {
         private Matrix<int> _editableMatrix;
 
@@ -19,12 +18,12 @@ namespace Votyra.Images.EditableImages
 
         private readonly List<LockableMatrix<int>> _readonlyMatrices = new List<LockableMatrix<int>>();
 
-        private MatrixImage _image = null;
+        private MatrixImage2i _image = null;
 
         private ITerrainAlgorithm _terrainAlgorithm;
         private IImageSampler _sampler;
 
-        public EditableMatrixImage(Vector2i size, IImageSampler sampler, ITerrainAlgorithm onEditAlgorithm)
+        public EditableMatrixImage2i(Vector2i size, IImageSampler sampler, ITerrainAlgorithm onEditAlgorithm)
         {
             _terrainAlgorithm = onEditAlgorithm;
             _sampler = sampler;
@@ -33,7 +32,7 @@ namespace Votyra.Images.EditableImages
             FixImage(new Rect2i(0, 0, size.x, size.y), Direction.Unknown);
         }
 
-        public EditableMatrixImage(Texture2D texture, float scale, IImageSampler sampler, ITerrainAlgorithm onEditAlgorithm)
+        public EditableMatrixImage2i(Texture2D texture, float scale, IImageSampler sampler, ITerrainAlgorithm onEditAlgorithm)
         {
             _terrainAlgorithm = onEditAlgorithm;
             _sampler = sampler;
@@ -81,13 +80,13 @@ namespace Votyra.Images.EditableImages
                 var oldImage = _image;
                 oldImage?.Dispose();
 
-                _image = new MatrixImage(readonlyMatrix, _invalidatedArea.Value);
+                _image = new MatrixImage2i(readonlyMatrix, _invalidatedArea.Value);
                 _invalidatedArea = null;
             }
             return _image;
         }
 
-        public IEditableImageAccessor RequestAccess(Rect2i area)
+        public IEditableImageAccessor2i RequestAccess(Rect2i area)
         {
             return new MatrixImageAccessor(this, area);
         }
@@ -254,7 +253,7 @@ namespace Votyra.Images.EditableImages
             }
         }
 
-        private class MatrixImageAccessor : IEditableImageAccessor
+        private class MatrixImageAccessor : IEditableImageAccessor2i
         {
             public Rect2i Area { get; }
 
@@ -263,8 +262,8 @@ namespace Votyra.Images.EditableImages
                 get { return _editableImage._editableMatrix[pos]; }
                 set { _editableImage._editableMatrix[pos] = value; }
             }
-            private readonly EditableMatrixImage _editableImage;
-            public MatrixImageAccessor(EditableMatrixImage editableImage, Rect2i area)
+            private readonly EditableMatrixImage2i _editableImage;
+            public MatrixImageAccessor(EditableMatrixImage2i editableImage, Rect2i area)
             {
                 _editableImage = editableImage;
                 Area = area;

@@ -10,8 +10,8 @@ namespace Votyra.Unity.Images
 {
     internal class MaxtrixImageBehaviour : MonoBehaviour, IImage2iProvider
     {
-        public Texture2D InitialValueTexture;
-        public float InitialValueScale;
+        public Texture2D InitialValueTexture = null;
+        public float InitialValueScale = 1;
 
         private Matrix<int> _editableMatrix;
 
@@ -19,7 +19,7 @@ namespace Votyra.Unity.Images
 
         private readonly List<LockableMatrix<int>> _readonlyMatrices = new List<LockableMatrix<int>>();
 
-        private MatrixImage _image = null;
+        private MatrixImage2i _image = null;
 
         public IImage2i CreateImage()
         {
@@ -48,7 +48,7 @@ namespace Votyra.Unity.Images
                 var oldImage = _image;
                 oldImage?.Dispose();
 
-                _image = new MatrixImage(readonlyMatrix, _invalidatedArea.Value);
+                _image = new MatrixImage2i(readonlyMatrix, _invalidatedArea.Value);
                 _invalidatedArea = null;
             }
             return _image;
@@ -124,7 +124,6 @@ namespace Votyra.Unity.Images
                 getLimit = l => l + maxDiference;
             }
 
-            Queue<Vector2i> toCheck = new Queue<Vector2i>();
             for (int ix = area.xMin.FloorTo2(); ix < area.xMax.CeilTo2(); ix += 2)
             {
                 for (int iy = area.yMin.FloorTo2(); iy < area.yMax.CeilTo2(); iy += 2)

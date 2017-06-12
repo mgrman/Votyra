@@ -4,7 +4,7 @@ using Votyra.Models;
 
 namespace Votyra.Images.EditableImages
 {
-    public interface IEditableImageAccessor : IDisposable
+    public interface IEditableImageAccessor2i : IDisposable
     {
         Rect2i Area { get; }
 

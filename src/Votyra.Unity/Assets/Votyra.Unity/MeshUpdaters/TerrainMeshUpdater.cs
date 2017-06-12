@@ -24,7 +24,7 @@ namespace Votyra.Unity.MeshUpdaters
         {
             if (terrainMeshes != null)
             {
-                using (this.CreateProfiler("Setting Mesh"))
+                using (options.ProfilerFactory("Setting Mesh", this))
                 {
                     var toDeleteGroups = _meshFilters.Keys.Except(terrainMeshes.Keys).Except(toKeepGroups).ToList();
 
@@ -111,10 +111,8 @@ namespace Votyra.Unity.MeshUpdaters
             tile.hideFlags = HideFlags.DontSave;
 
             var meshFilter = tile.GetOrAddComponent<MeshFilter>();
-
-            var meshRenderer = tile.GetOrAddComponent<MeshRenderer>();
-
-            var meshCollider = tile.GetOrAddComponent<MeshCollider>();
+            tile.AddComponentIfMissing<MeshRenderer>();
+            tile.AddComponentIfMissing<MeshCollider>();
 
             if (meshFilter.sharedMesh == null)
             {
