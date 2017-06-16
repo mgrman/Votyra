@@ -4,9 +4,9 @@ using System.Linq;
 using UnityEngine;
 using Votyra.Models;
 
-namespace Votyra.TerrainMeshers.TriangleMesh
+namespace Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes
 {
-    public class FixedTerrainMesh : ITerrainMesh
+    public class FixedTerrainMesh2 : ITerrainMesh2
     {
         public Bounds MeshBounds { get; private set; }
         public Vector3[] Vertices { get; private set; }

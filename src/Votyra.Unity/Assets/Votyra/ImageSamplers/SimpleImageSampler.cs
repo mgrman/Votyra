@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Votyra.ImageSamplers
 {
-    public class SimpleImageSampler : IImageSampler
+    public class SimpleImageSampler : IImageSampler2i
     {
         public Vector2 WorldToImage(Vector2 pos)
         {
@@ -37,7 +37,7 @@ namespace Votyra.ImageSamplers
         {
             return new Vector2i(pos.x + 2, pos.y + 2);
         }
-        public HeightData Sample(IImage2i image, Vector2i offset)
+        public SampledData2i Sample(IImage2i image, Vector2i offset)
         {
             //offset = offset + offset;
 
@@ -46,7 +46,27 @@ namespace Votyra.ImageSamplers
             int x1y0 = image.Sample(new Vector2i(offset.x + 2, offset.y));
             int x1y1 = image.Sample(new Vector2i(offset.x + 2, offset.y + 2));
 
-            return new HeightData(x0y0, x0y1, x1y0, x1y1);
+            return new SampledData2i(x0y0, x0y1, x1y0, x1y1);
+        }
+
+        public int SampleX0Y0(IImage2i image, Vector2i pos)
+        {
+            return image.Sample(new Vector2i(pos.x + 0, pos.y + 0));
+        }
+
+        public int SampleX0Y1(IImage2i image, Vector2i pos)
+        {
+            return image.Sample(new Vector2i(pos.x + 0, pos.y + 2));
+        }
+
+        public int SampleX1Y0(IImage2i image, Vector2i pos)
+        {
+            return image.Sample(new Vector2i(pos.x + 2, pos.y + 0));
+        }
+
+        public int SampleX1Y1(IImage2i image, Vector2i pos)
+        {
+            return image.Sample(new Vector2i(pos.x + 2, pos.y + 2));
         }
     }
 }

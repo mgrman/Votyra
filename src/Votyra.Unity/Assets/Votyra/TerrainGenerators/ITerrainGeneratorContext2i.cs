@@ -5,13 +5,14 @@ using Votyra.Models;
 using Votyra.Images;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
-using Votyra.TerrainMeshers;
 
-namespace Votyra.TerrainMeshGenerators
+namespace Votyra.TerrainGenerators
 {
-    public interface ITerrainMeshContext : IContext
+    public interface ITerrainGeneratorContext2i : IContext
     {
         Vector2i CellInGroupCount { get; }
         Bounds GroupBounds { get; }
+        IImageSampler2i ImageSampler { get; }
+        IImage2i Image { get; }
     }
 }

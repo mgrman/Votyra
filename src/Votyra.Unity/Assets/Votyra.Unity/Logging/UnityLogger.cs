@@ -19,22 +19,22 @@ namespace Votyra.Unity.Logging
 
         public void LogMessage(object message)
         {
-            InvokeOnUnityThreadIfRequired(() => Debug.Log(Format(message), Owner as UnityEngine.Object));
+            Debug.Log(Format(message), Owner as UnityEngine.Object);
         }
 
         public void LogError(object message)
         {
-            InvokeOnUnityThreadIfRequired(() => Debug.LogError(Format(message), Owner as UnityEngine.Object));
+            Debug.LogError(Format(message), Owner as UnityEngine.Object);
         }
 
         public void LogException(Exception exception)
         {
-            InvokeOnUnityThreadIfRequired(() => Debug.LogException(exception, Owner as UnityEngine.Object));
+            Debug.LogException(exception, Owner as UnityEngine.Object);
         }
 
         public void LogWarning(object message)
         {
-            InvokeOnUnityThreadIfRequired(() => Debug.LogWarning(Format(message), Owner as UnityEngine.Object));
+            Debug.LogWarning(Format(message), Owner as UnityEngine.Object);
         }
 
         private string Format(object message)
@@ -42,20 +42,5 @@ namespace Votyra.Unity.Logging
             return $"{Name} : {message}";//\r\n{t}";
         }
 
-        private void InvokeOnUnityThreadIfRequired(Action action)
-        {
-            if (Thread.CurrentThread == UnitySyncContext.UnityThread)
-            {
-                action();
-            }
-            else
-            {
-                Task.Factory.StartNew(
-                    action,
-                    CancellationToken.None,
-                    TaskCreationOptions.None,
-                    UnitySyncContext.UnityTaskScheduler);
-            }
-        }
     }
 }

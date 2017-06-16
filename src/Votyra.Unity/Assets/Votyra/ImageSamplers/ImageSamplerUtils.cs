@@ -6,7 +6,7 @@ namespace Votyra.ImageSamplers
 {
     public static class ImageSamplerUtils
     {
-        public static Rect ImageToWorld(this IImageSampler sampler, Rect2i rect)
+        public static Rect ImageToWorld(this IImageSampler2i sampler, Rect2i rect)
         {
             var min = sampler.ImageToWorld(rect.min);
             var max = sampler.ImageToWorld(rect.max);

@@ -6,10 +6,8 @@ using Votyra.Utils;
 using Votyra.Images;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
-using Votyra.TerrainMeshGenerators;
-using Votyra.TerrainTileGenerators;
-using Votyra.TerrainMeshers;
-using Votyra.TerrainMeshers.TriangleMesh;
+using Votyra.TerrainGenerators;
+using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using Votyra.Unity.Behaviours;
 using Votyra.Unity.GroupSelectors;
 using Votyra.Unity.Images;
@@ -26,8 +24,7 @@ using Votyra.Profiling;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using Votyra.Images.EditableImages;
 using Votyra.Logging;
-using Votyra.TerrainTileGenerators.TerrainGroups;
-using Votyra.TerrainMeshGenerators.TerrainMeshers;
+using Votyra.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Unity
 {
@@ -47,12 +44,10 @@ namespace Votyra.Unity
         public IEditableImage2i EditableImage { get { return _imageProvider as IEditableImage2i; } }
 
         private IImage2iProvider _imageProvider;
-        private ITerrainAlgorithm _terrainAlgorithm;
-        private ITerrainAlgorithm _onEditTerrainAlgorithm;
-        private IImageSampler _sampler;
+        private IImageConstraint2i _editableImageConstraint;
+        private IImageSampler2i _sampler;
         private IGroupSelector _groupsSelector;
-        private ITerrainMeshGenerator _terrainMeshGenerator;
-        private ITerrainTileGenerator _terrainTileGenerator;
+        private ITerrainGenerator2i _terrainGenerator;
         private IMeshUpdater _meshUpdater;
 
         private Task _updateTask = null;
@@ -99,10 +94,10 @@ namespace Votyra.Unity
         private async Task UpdateTerrain(SceneContext context, bool async, CancellationToken token)
         {
             GroupActions groupActions = null;
-            IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> results = null;
+            IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2> results = null;
             try
             {
-                Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh>> computeAction = () =>
+                Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2>> computeAction = () =>
                     {
                         using (context.ProfilerFactory.Create("Creating visible groups"))
                         {
@@ -111,14 +106,9 @@ namespace Votyra.Unity
                         var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i>();
                         if (toRecompute.Any())
                         {
-                            IReadOnlyPooledCollection<ITerrainGroup> tiles;
-                            using (context.ProfilerFactory.Create("TerrainTileGenerator"))
-                            {
-                                tiles = context.TerrainTileGenerator.Generate(context, toRecompute);
-                            }
                             using (context.ProfilerFactory.Create("TerrainMeshGenerator"))
                             {
-                                return context.TerrainMeshGenerator.Generate(context, tiles);
+                                return context.TerrainGenerator.Generate(context, toRecompute);
                             }
                         }
                         else
@@ -185,8 +175,7 @@ namespace Votyra.Unity
             return new SceneContext
             (
                 _groupsSelector,
-                _terrainMeshGenerator,
-                _terrainTileGenerator,
+                _terrainGenerator,
                 _meshUpdater,
                 camera.transform.position,
                 planes,
@@ -198,7 +187,6 @@ namespace Votyra.Unity
                 image,
                 (image as IImageInvalidatableImage2i)?.InvalidatedArea ?? Rect2i.All,
                 _sampler,
-                _terrainAlgorithm,
                 () => this.GameObjectFactory(),
                 CreateProfiler,
                 CreateLogger
@@ -231,15 +219,13 @@ namespace Votyra.Unity
 
         private void Initialize()
         {
-            _terrainAlgorithm = new SimpleTerrainAlgorithm();
-            _onEditTerrainAlgorithm = new TileSelectTerrainAlgorithm();
-            _sampler = new DualImageSampler();
+            _editableImageConstraint = new TycoonTileConstraint2i();
+            _sampler = new DualImageSampler2i();
 
-            _terrainMeshGenerator = new TerrainMeshGenerator<TerrainMesher>();
-            _terrainTileGenerator = new TerrainTileGenerator();
+            _terrainGenerator = new TerrainGenerator2i<TerrainMesher2i>();
             _meshUpdater = new TerrainMeshUpdater();
             _groupsSelector = new GroupsByCameraVisibilitySelector();
-            _imageProvider = new EditableMatrixImage2i(InitialTexture, InitialTextureScale, _sampler, _onEditTerrainAlgorithm);
+            _imageProvider = new EditableMatrixImage2i(InitialTexture, InitialTextureScale, _sampler, _editableImageConstraint);
         }
 
         private void DisposeService()
@@ -247,20 +233,14 @@ namespace Votyra.Unity
             (_imageProvider as IDisposable)?.Dispose();
             _imageProvider = null;
 
-            (_onEditTerrainAlgorithm as IDisposable)?.Dispose();
-            _onEditTerrainAlgorithm = null;
-
-            (_terrainAlgorithm as IDisposable)?.Dispose();
-            _terrainAlgorithm = null;
+            (_editableImageConstraint as IDisposable)?.Dispose();
+            _editableImageConstraint = null;
 
             (_sampler as IDisposable)?.Dispose();
             _sampler = null;
 
-            (_terrainMeshGenerator as IDisposable)?.Dispose();
-            _terrainMeshGenerator = null;
-
-            (_terrainTileGenerator as IDisposable)?.Dispose();
-            _terrainTileGenerator = null;
+            (_terrainGenerator as IDisposable)?.Dispose();
+            _terrainGenerator = null;
 
             (_meshUpdater as IDisposable)?.Dispose();
             _meshUpdater = null;

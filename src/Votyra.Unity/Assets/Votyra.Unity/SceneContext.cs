@@ -6,10 +6,8 @@ using Votyra.Utils;
 using Votyra.Images;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
-using Votyra.TerrainMeshGenerators;
-using Votyra.TerrainTileGenerators;
-using Votyra.TerrainMeshers;
-using Votyra.TerrainMeshers.TriangleMesh;
+using Votyra.TerrainGenerators;
+using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using Votyra.Unity.GroupSelectors;
 using Votyra.Unity.MeshUpdaters;
@@ -18,14 +16,13 @@ using Votyra.Logging;
 
 namespace Votyra.Unity
 {
-    public class SceneContext : ITerrainMeshContext, ITerrainTileContext, IGroupVisibilityContext, IMeshContext, IDisposable
+    public class SceneContext : ITerrainGeneratorContext2i, IGroupVisibilityContext, IMeshContext, IDisposable
     {
         private const int MAX_CELL_COUNT = 60 * 60;
 
         public SceneContext(
             IGroupSelector groupSelector,
-            ITerrainMeshGenerator terrainMeshGenerator,
-            ITerrainTileGenerator terrainTileGenerator,
+            ITerrainGenerator2i terrainGenerator,
             IMeshUpdater meshUpdater,
             Vector3 cameraPosition,
             IReadOnlyList<Plane> cameraPlanes,
@@ -36,15 +33,13 @@ namespace Votyra.Unity
             Vector2i cellInGroupCount,
             IImage2i image,
             Rect2i invalidatedArea_imageSpace,
-            IImageSampler imageSampler,
-            ITerrainAlgorithm terrainAlgorithm,
+            IImageSampler2i imageSampler,
             Func<GameObject> gameObjectFactory,
             ProfilerFactoryDelegate profilerFactory,
             LoggerFactoryDelegate loggerFactory)
         {
             GroupSelector = groupSelector;
-            TerrainMeshGenerator = terrainMeshGenerator;
-            TerrainTileGenerator = terrainTileGenerator;
+            TerrainGenerator = terrainGenerator;
             MeshUpdater = meshUpdater;
             CameraPosition = cameraPosition;
             CameraPlanes = cameraPlanes;
@@ -55,7 +50,6 @@ namespace Votyra.Unity
             CellInGroupCount = cellInGroupCount;
             Image = image;
             ImageSampler = imageSampler;
-            TerrainAlgorithm = terrainAlgorithm;
             GameObjectFactory = gameObjectFactory;
             ProfilerFactory = profilerFactory;
             LoggerFactory = loggerFactory;
@@ -70,8 +64,7 @@ namespace Votyra.Unity
         }
 
         public IGroupSelector GroupSelector { get; }
-        public ITerrainMeshGenerator TerrainMeshGenerator { get; }
-        public ITerrainTileGenerator TerrainTileGenerator { get; }
+        public ITerrainGenerator2i TerrainGenerator { get; }
         public IMeshUpdater MeshUpdater { get; }
 
 
@@ -86,8 +79,7 @@ namespace Votyra.Unity
         public Vector2i CellInGroupCount { get; }
         public IImage2i Image { get; }
         public Rect2i InvalidatedArea_worldSpace { get; }
-        public IImageSampler ImageSampler { get; }
-        public ITerrainAlgorithm TerrainAlgorithm { get; }
+        public IImageSampler2i ImageSampler { get; }
         public Func<GameObject> GameObjectFactory { get; }
 
         public ProfilerFactoryDelegate ProfilerFactory { get; }

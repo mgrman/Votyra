@@ -4,18 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Models;
 using Votyra.Models.ObjectPool;
-using Votyra.TerrainMeshers.TriangleMesh;
+using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {
     public class PooledTerrainMeshContainer<T> : IPooledTerrainMesh
-        where T : ITerrainMesh, new()
+        where T : ITerrainMesh2, new()
     {
         public T Mesh { get; }
 
         public Vector2i CellInGroupCount => Mesh.CellInGroupCount;
 
-        ITerrainMesh IPooledTerrainMesh.Mesh => Mesh;
+        ITerrainMesh2 IPooledTerrainMesh.Mesh => Mesh;
 
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
 

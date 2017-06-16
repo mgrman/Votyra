@@ -20,21 +20,21 @@ namespace Votyra.Images.EditableImages
 
         private MatrixImage2i _image = null;
 
-        private ITerrainAlgorithm _terrainAlgorithm;
-        private IImageSampler _sampler;
+        private IImageConstraint2i _constraint;
+        private IImageSampler2i _sampler;
 
-        public EditableMatrixImage2i(Vector2i size, IImageSampler sampler, ITerrainAlgorithm onEditAlgorithm)
+        public EditableMatrixImage2i(Vector2i size, IImageSampler2i sampler, IImageConstraint2i constraint)
         {
-            _terrainAlgorithm = onEditAlgorithm;
+            _constraint = constraint;
             _sampler = sampler;
 
             _editableMatrix = new Matrix<int>(size);
             FixImage(new Rect2i(0, 0, size.x, size.y), Direction.Unknown);
         }
 
-        public EditableMatrixImage2i(Texture2D texture, float scale, IImageSampler sampler, ITerrainAlgorithm onEditAlgorithm)
+        public EditableMatrixImage2i(Texture2D texture, float scale, IImageSampler2i sampler, IImageConstraint2i constraint)
         {
-            _terrainAlgorithm = onEditAlgorithm;
+            _constraint = constraint;
             _sampler = sampler;
 
             int width = texture.width;
@@ -102,7 +102,7 @@ namespace Votyra.Images.EditableImages
         {
             _invalidatedArea = _invalidatedArea?.CombineWith(area) ?? area;
 
-            if (_sampler == null || _terrainAlgorithm == null)
+            if (_sampler == null || _constraint == null)
             {
                 return;
             }
@@ -173,7 +173,7 @@ namespace Votyra.Images.EditableImages
                     var cell = new Vector2i(ix, iy);
                     var sample = _sampler.Sample(image, cell);
 
-                    var processedSample = _terrainAlgorithm.Process(sample);
+                    var processedSample = _constraint.Process(sample);
 
                     Vector2i cell_x0y0 = _sampler.CellToX0Y0(cell);
                     Vector2i cell_x0y1 = _sampler.CellToX0Y1(cell);
@@ -181,13 +181,13 @@ namespace Votyra.Images.EditableImages
                     Vector2i cell_x1y1 = _sampler.CellToX1Y1(cell);
 
                     if (cell_x0y0.IsAsIndexContained(_editableMatrix.size))
-                        _editableMatrix[cell_x0y0] = processedSample.data.x0y0;
+                        _editableMatrix[cell_x0y0] = processedSample.x0y0;
                     if (cell_x0y1.IsAsIndexContained(_editableMatrix.size))
-                        _editableMatrix[cell_x0y1] = processedSample.data.x0y1;
+                        _editableMatrix[cell_x0y1] = processedSample.x0y1;
                     if (cell_x1y0.IsAsIndexContained(_editableMatrix.size))
-                        _editableMatrix[cell_x1y0] = processedSample.data.x1y0;
+                        _editableMatrix[cell_x1y0] = processedSample.x1y0;
                     if (cell_x1y1.IsAsIndexContained(_editableMatrix.size))
-                        _editableMatrix[cell_x1y1] = processedSample.data.x1y1;
+                        _editableMatrix[cell_x1y1] = processedSample.x1y1;
 
                 }
             }

@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using Votyra.Models;
 
-namespace Votyra.TerrainMeshers.TriangleMesh
+namespace Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes
 {
-    public interface ITerrainMesh
+    public interface ITerrainMesh2
     {
         Vector2i CellInGroupCount { get; }
         void Initialize(Vector2i CellInGroupCount);

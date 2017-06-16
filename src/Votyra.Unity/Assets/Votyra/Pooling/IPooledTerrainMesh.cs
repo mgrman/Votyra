@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Votyra.TerrainMeshers.TriangleMesh;
+using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {
-    public interface IPooledTerrainMesh : ITerrainMesh, IDisposable
+    public interface IPooledTerrainMesh : ITerrainMesh2, IDisposable
     {
-        ITerrainMesh Mesh { get; }
+        ITerrainMesh2 Mesh { get; }
     }
 }

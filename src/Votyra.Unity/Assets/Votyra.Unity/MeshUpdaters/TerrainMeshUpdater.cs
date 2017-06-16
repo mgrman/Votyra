@@ -4,7 +4,7 @@ using Votyra.Unity.Utils;
 using UnityEngine;
 using Votyra.Models;
 using System.Linq;
-using Votyra.TerrainMeshers.TriangleMesh;
+using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using System;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
@@ -20,7 +20,7 @@ namespace Votyra.Unity.MeshUpdaters
         {
         }
 
-        public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<Vector2i, ITerrainMesh> terrainMeshes, IEnumerable<Vector2i> toKeepGroups)
+        public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<Vector2i, ITerrainMesh2> terrainMeshes, IEnumerable<Vector2i> toKeepGroups)
         {
             if (terrainMeshes != null)
             {
@@ -51,7 +51,7 @@ namespace Votyra.Unity.MeshUpdaters
                             }
                         }
 
-                        ITerrainMesh triangleMesh = terrainMesh.Value;
+                        ITerrainMesh2 triangleMesh = terrainMesh.Value;
                         UpdateMesh(triangleMesh, meshFilter.sharedMesh);
 
                         var collider = meshFilter.gameObject.GetComponent<MeshCollider>();
@@ -70,11 +70,11 @@ namespace Votyra.Unity.MeshUpdaters
             }
         }
 
-        private void UpdateMesh(ITerrainMesh triangleMesh, Mesh mesh)
+        private void UpdateMesh(ITerrainMesh2 triangleMesh, Mesh mesh)
         {
-            if (triangleMesh is FixedTerrainMesh)
+            if (triangleMesh is FixedTerrainMesh2)
             {
-                UpdateMesh(triangleMesh as FixedTerrainMesh, mesh);
+                UpdateMesh(triangleMesh as FixedTerrainMesh2, mesh);
             }
             else if (triangleMesh is IPooledTerrainMesh)
             {
@@ -85,7 +85,8 @@ namespace Votyra.Unity.MeshUpdaters
                 Debug.LogError($"Unsuported ITriangleMesh implementation '{triangleMesh.GetType().Name}'");
             }
         }
-        private void UpdateMesh(FixedTerrainMesh triangleMesh, Mesh mesh)
+
+        private void UpdateMesh(FixedTerrainMesh2 triangleMesh, Mesh mesh)
         {
             bool recomputeTriangles = mesh.vertexCount != triangleMesh.PointCount;
             if (recomputeTriangles)
