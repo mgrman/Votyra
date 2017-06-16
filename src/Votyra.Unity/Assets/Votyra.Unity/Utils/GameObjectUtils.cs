@@ -42,7 +42,7 @@ namespace Votyra.Unity.Utils
 
         public static void Destroy(this GameObject gameObject)
         {
-            GameObject.DestroyImmediate(gameObject);
+            GameObject.Destroy(gameObject);
         }
     }
 }

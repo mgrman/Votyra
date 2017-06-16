@@ -9,13 +9,13 @@ using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {
     public class PooledTerrainMeshContainer<T> : IPooledTerrainMesh
-        where T : ITerrainMesh2, new()
+        where T : ITerrainMesh2i, new()
     {
         public T Mesh { get; }
 
         public Vector2i CellInGroupCount => Mesh.CellInGroupCount;
 
-        ITerrainMesh2 IPooledTerrainMesh.Mesh => Mesh;
+        ITerrainMesh2i IPooledTerrainMesh.Mesh => Mesh;
 
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
 
@@ -47,17 +47,17 @@ namespace Votyra.Unity.Assets.Votyra.Pooling
             Mesh.Clear(meshBounds);
         }
 
-        public void AddQuad(Vector2i cellInGroup, Vector3 x0y0, Vector3 x0y1, Vector3 x1y0, Vector3 x1y1, bool flipSides)
+        public void AddQuad(Vector2i cellInGroup, Vector3i x0y0, Vector3i x0y1, Vector3i x1y0, Vector3i x1y1, bool flipSides)
         {
             Mesh.AddQuad(cellInGroup, x0y0, x0y1, x1y0, x1y1, flipSides);
         }
 
-        public void AddWallX(Vector2i cellInGroup, Vector3 a, Vector3 b, Vector3 b_lower, Vector3 a_lower)
+        public void AddWallX(Vector2i cellInGroup, Vector3i a, Vector3i b, Vector3i b_lower, Vector3i a_lower)
         {
             Mesh.AddWallX(cellInGroup, a, b, b_lower, a_lower);
         }
 
-        public void AddWallY(Vector2i cellInGroup, Vector3 a, Vector3 b, Vector3 b_lower, Vector3 a_lower)
+        public void AddWallY(Vector2i cellInGroup, Vector3i a, Vector3i b, Vector3i b_lower, Vector3i a_lower)
         {
             Mesh.AddWallY(cellInGroup, a, b, b_lower, a_lower);
         }

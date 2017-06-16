@@ -20,7 +20,7 @@ namespace Votyra.Unity.MeshUpdaters
         {
         }
 
-        public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<Vector2i, ITerrainMesh2> terrainMeshes, IEnumerable<Vector2i> toKeepGroups)
+        public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<Vector2i, ITerrainMesh2i> terrainMeshes, IEnumerable<Vector2i> toKeepGroups)
         {
             if (terrainMeshes != null)
             {
@@ -51,7 +51,7 @@ namespace Votyra.Unity.MeshUpdaters
                             }
                         }
 
-                        ITerrainMesh2 triangleMesh = terrainMesh.Value;
+                        ITerrainMesh2i triangleMesh = terrainMesh.Value;
                         UpdateMesh(triangleMesh, meshFilter.sharedMesh);
 
                         var collider = meshFilter.gameObject.GetComponent<MeshCollider>();
@@ -70,7 +70,7 @@ namespace Votyra.Unity.MeshUpdaters
             }
         }
 
-        private void UpdateMesh(ITerrainMesh2 triangleMesh, Mesh mesh)
+        private void UpdateMesh(ITerrainMesh2i triangleMesh, Mesh mesh)
         {
             if (triangleMesh is FixedTerrainMesh2)
             {

@@ -94,10 +94,10 @@ namespace Votyra.Unity
         private async Task UpdateTerrain(SceneContext context, bool async, CancellationToken token)
         {
             GroupActions groupActions = null;
-            IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2> results = null;
+            IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i> results = null;
             try
             {
-                Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2>> computeAction = () =>
+                Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i>> computeAction = () =>
                     {
                         using (context.ProfilerFactory.Create("Creating visible groups"))
                         {

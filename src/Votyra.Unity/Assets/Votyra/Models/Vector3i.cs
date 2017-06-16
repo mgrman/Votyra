@@ -129,7 +129,27 @@ namespace Votyra.Models
             return new Vector2i(x, y);
         }
 
+        public static Vector3i Cross(Vector3i lhs, Vector3i rhs)
+        {
+            return new Vector3i(lhs.y * rhs.z - lhs.z * rhs.y, lhs.z * rhs.x - lhs.x * rhs.z, lhs.x * rhs.y - lhs.y * rhs.x);
+        }
 
+        public float magnitude
+        {
+            get
+            {
+                return Mathf.Sqrt(x * x + y * y + z * z);
+            }
+        }
+
+        public Vector3 normalized
+        {
+            get
+            {
+                var mag = magnitude;
+                return new Vector3(x / mag, y / mag, z / mag);
+            }
+        }
 
         public static bool operator <(Vector3i a, Vector3i b)
         {

@@ -14,7 +14,7 @@ namespace Votyra.TerrainGenerators.TerrainMeshers
         protected Vector3 bounds_center;
         protected Vector3 bounds_size;
         protected IPooledTerrainMesh pooledMesh;
-        protected ITerrainMesh2 mesh;
+        protected ITerrainMesh2i mesh;
 
         public void Initialize(ITerrainGeneratorContext2i terrainOptions)
         {
@@ -44,34 +44,33 @@ namespace Votyra.TerrainGenerators.TerrainMeshers
         {
             Vector2i cell = cellInGroup + groupPosition;
 
-            if (cellInGroup.x >= 0 && cellInGroup.y >= 0)
-            {
-                Vector2i position = groupPosition + cellInGroup;
 
-                SampledData2i data = options.ImageSampler.Sample(options.Image, cell);
+            Vector2i position = groupPosition + cellInGroup;
 
-                int minusXres_x1y0 = options.ImageSampler.SampleX1Y0(options.Image, new Vector2i(cellInGroup.x - 1, cellInGroup.y - 0));
-                int minusXres_x1y1 = options.ImageSampler.SampleX1Y1(options.Image, new Vector2i(cellInGroup.x - 1, cellInGroup.y - 0));
-                int minusYres_x0y1 = options.ImageSampler.SampleX0Y1(options.Image, new Vector2i(cellInGroup.x - 0, cellInGroup.y - 1));
-                int minusYres_x1y1 = options.ImageSampler.SampleX1Y1(options.Image, new Vector2i(cellInGroup.x - 0, cellInGroup.y - 1));
+            SampledData2i data = options.ImageSampler.Sample(options.Image, cell);
 
-                Vector3 pos_x0y0 = new Vector3(position.x, position.y, data.x0y0);
-                Vector3 pos_x0y1 = new Vector3(position.x, position.y + 1, data.x0y1);
-                Vector3 pos_x1y0 = new Vector3(position.x + 1, position.y, data.x1y0);
-                Vector3 pos_x1y1 = new Vector3(position.x + 1, position.y + 1, data.x1y1);
+            int minusXres_x1y0 = options.ImageSampler.SampleX1Y0(options.Image, new Vector2i(cell.x - 1, cell.y - 0));
+            int minusXres_x1y1 = options.ImageSampler.SampleX1Y1(options.Image, new Vector2i(cell.x - 1, cell.y - 0));
+            int minusYres_x0y1 = options.ImageSampler.SampleX0Y1(options.Image, new Vector2i(cell.x - 0, cell.y - 1));
+            int minusYres_x1y1 = options.ImageSampler.SampleX1Y1(options.Image, new Vector2i(cell.x - 0, cell.y - 1));
+            // Debug.Log($"{minusXres_x1y0} {minusXres_x1y1}");
+            var pos_x0y0 = new Vector3i(position.x, position.y, data.x0y0);
+            var pos_x0y1 = new Vector3i(position.x, position.y + 1, data.x0y1);
+            var pos_x1y0 = new Vector3i(position.x + 1, position.y, data.x1y0);
+            var pos_x1y1 = new Vector3i(position.x + 1, position.y + 1, data.x1y1);
 
-                Vector3 pos_x0y0_lowerY = new Vector3(position.x, position.y, minusXres_x1y0);
-                Vector3 pos_x0y1_lowerY = new Vector3(position.x, position.y + 1, minusXres_x1y1);
+            var pos_x0y0_lowerY = new Vector3i(position.x, position.y, minusXres_x1y0);
+            var pos_x0y1_lowerY = new Vector3i(position.x, position.y + 1, minusXres_x1y1);
 
-                Vector3 pos_x0y0_lowerX = new Vector3(position.x, position.y, minusYres_x0y1);
-                Vector3 pos_x1y0_lowerX = new Vector3(position.x + 1, position.y, minusYres_x1y1);
+            var pos_x0y0_lowerX = new Vector3i(position.x, position.y, minusYres_x0y1);
+            var pos_x1y0_lowerX = new Vector3i(position.x + 1, position.y, minusYres_x1y1);
 
-                mesh.AddQuad(cellInGroup, pos_x0y0, pos_x0y1, pos_x1y0, pos_x1y1, IsFlipped(data));
+            mesh.AddQuad(cellInGroup, pos_x0y0, pos_x0y1, pos_x1y0, pos_x1y1, IsFlipped(data));
 
-                mesh.AddWallY(cellInGroup, pos_x0y0, pos_x0y1, pos_x0y1_lowerY, pos_x0y0_lowerY);
+            mesh.AddWallY(cellInGroup, pos_x0y0, pos_x0y1, pos_x0y1_lowerY, pos_x0y0_lowerY);
 
-                mesh.AddWallX(cellInGroup, pos_x1y0, pos_x0y0, pos_x0y0_lowerX, pos_x1y0_lowerX);
-            }
+            mesh.AddWallX(cellInGroup, pos_x1y0, pos_x0y0, pos_x0y0_lowerX, pos_x1y0_lowerX);
+
         }
 
         private bool IsFlipped(SampledData2i sampleData)

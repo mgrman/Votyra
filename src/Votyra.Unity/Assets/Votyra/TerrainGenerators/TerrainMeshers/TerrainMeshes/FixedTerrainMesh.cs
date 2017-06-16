@@ -6,7 +6,7 @@ using Votyra.Models;
 
 namespace Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes
 {
-    public class FixedTerrainMesh2 : ITerrainMesh2
+    public class FixedTerrainMesh2 : ITerrainMesh2i
     {
         public Bounds MeshBounds { get; private set; }
         public Vector3[] Vertices { get; private set; }
@@ -39,7 +39,7 @@ namespace Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes
             MeshBounds = meshBounds;
         }
 
-        public void AddQuad(Vector2i cellInGroup, Vector3 x0y0, Vector3 x0y1, Vector3 x1y0, Vector3 x1y1, bool flipSides)
+        public void AddQuad(Vector2i cellInGroup, Vector3i x0y0, Vector3i x0y1, Vector3i x1y0, Vector3i x1y1, bool flipSides)
         {
             int cellIndex = cellInGroup.x + cellInGroup.y * CellInGroupCount.x;
             int quadIndex = cellIndex * 3;
@@ -57,7 +57,7 @@ namespace Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes
             }
         }
 
-        public void AddWallX(Vector2i cellInGroup, Vector3 a, Vector3 b, Vector3 b_lower, Vector3 a_lower)
+        public void AddWallX(Vector2i cellInGroup, Vector3i a, Vector3i b, Vector3i b_lower, Vector3i a_lower)
         {
             int cellIndex = cellInGroup.x + cellInGroup.y * CellInGroupCount.x;
             int quadIndex = cellIndex * 3 + 1;
@@ -67,20 +67,21 @@ namespace Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes
             AddTriangle(triIndex + 1, a, b_lower, a_lower);
         }
 
-        public void AddWallY(Vector2i cellInGroup, Vector3 a, Vector3 b, Vector3 b_lower, Vector3 a_lower)
+        public void AddWallY(Vector2i cellInGroup, Vector3i a, Vector3i b, Vector3i b_lower, Vector3i a_lower)
         {
             int cellIndex = cellInGroup.x + cellInGroup.y * CellInGroupCount.x;
             int quadIndex = cellIndex * 3 + 2;
             int triIndex = quadIndex * 2;
+
             AddTriangle(triIndex, a, b, b_lower);
             AddTriangle(triIndex + 1, a, b_lower, a_lower);
         }
 
-        private void AddTriangle(int index, Vector3 posA, Vector3 posB, Vector3 posC)
+        private void AddTriangle(int index, Vector3i posA, Vector3i posB, Vector3i posC)
         {
-            Vertices[index * 3 + 0] = posA;
-            Vertices[index * 3 + 1] = posB;
-            Vertices[index * 3 + 2] = posC;
+            Vertices[index * 3 + 0] = posA.ToVector3();
+            Vertices[index * 3 + 1] = posB.ToVector3();
+            Vertices[index * 3 + 2] = posC.ToVector3();
 
             UV[index * 3 + 0] = new Vector2(posA.x, posA.y);
             UV[index * 3 + 1] = new Vector2(posB.x, posB.y);
@@ -88,7 +89,7 @@ namespace Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes
 
             var side1 = posB - posA;
             var side2 = posC - posA;
-            var normal = Vector3.Cross(side1, side2).normalized;
+            var normal = Vector3i.Cross(side1, side2).normalized;
             Normals[index * 3 + 0] = normal;
             Normals[index * 3 + 1] = normal;
             Normals[index * 3 + 2] = normal;

@@ -13,28 +13,20 @@ namespace Votyra.TerrainGenerators
     public class TerrainGenerator2i<TMesher> : ITerrainGenerator2i
         where TMesher : ITerrainMesher2i, new()
     {
-        public IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2> Generate(ITerrainGeneratorContext2i options, IEnumerable<Vector2i> groupsToUpdate)
-        {
-            var meshes = GenerateMeshUsingTilesImpl(options, groupsToUpdate);
-
-            return meshes;
-        }
-
-
-        private IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2> GenerateMeshUsingTilesImpl(ITerrainGeneratorContext2i options, IEnumerable<Vector2i> groupsToUpdate)
+        public IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i> Generate(ITerrainGeneratorContext2i options, IEnumerable<Vector2i> groupsToUpdate)
         {
             int cellInGroupCount_x = options.CellInGroupCount.x;
             int cellInGroupCount_y = options.CellInGroupCount.y;
-            PooledDictionary<Vector2i, ITerrainMesh2> meshes;
+            PooledDictionary<Vector2i, ITerrainMesh2i> meshes;
 
-            TerrainMesher2i mesher;
+            TMesher mesher;
 
             using (options.ProfilerFactory("init", this))
             {
-                mesher = new TerrainMesher2i();
+                mesher = new TMesher();
                 mesher.Initialize(options);
 
-                meshes = PooledDictionary<Vector2i, ITerrainMesh2>.Create();
+                meshes = PooledDictionary<Vector2i, ITerrainMesh2i>.Create();
             }
 
             foreach (var group in groupsToUpdate)
@@ -43,9 +35,9 @@ namespace Votyra.TerrainGenerators
                 {
                     mesher.InitializeGroup(group);
                 }
-                for (int cellInGroup_x = -1; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
+                for (int cellInGroup_x = 0; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
                 {
-                    for (int cellInGroup_y = -1; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
+                    for (int cellInGroup_y = 0; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
                     {
                         Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
 
