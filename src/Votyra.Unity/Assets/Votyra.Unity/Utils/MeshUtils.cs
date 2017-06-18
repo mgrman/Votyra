@@ -37,5 +37,17 @@ namespace Votyra.Unity.Utils
                 mesh.normals = normals;
             }
         }
+
+        public static void SetNormalsOrRecompute(this Mesh mesh, List<Vector3> normals)
+        {
+            if (normals == null || normals.Count != mesh.vertices.Length)
+            {
+                mesh.RecalculateNormals();
+            }
+            else
+            {
+                mesh.SetNormals(normals);
+            }
+        }
     }
 }

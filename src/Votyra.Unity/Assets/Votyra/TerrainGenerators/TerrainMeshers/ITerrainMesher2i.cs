@@ -6,7 +6,7 @@ namespace Votyra.TerrainGenerators.TerrainMeshers
     public interface ITerrainMesher2i
     {
         void AddCell(Vector2i cellInGroup);
-        IPooledTerrainMesh GetResultingMesh();
+        IPooledTerrainMesh2i GetResultingMesh();
         void Initialize(ITerrainGeneratorContext2i terrainOptions);
         void InitializeGroup(Vector2i group);
     }

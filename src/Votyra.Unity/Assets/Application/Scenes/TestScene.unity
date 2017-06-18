@@ -108,6 +108,68 @@ NavMeshSettings:
     tileSize: 256
     accuratePlacement: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &84891309
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 84891312}
+  - component: {fileID: 84891311}
+  - component: {fileID: 84891310}
+  m_Layer: 0
+  m_Name: Votyra2i
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &84891310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 84891309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9beef45db55a1b4db484021f6434100, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CellInGroupCount:
+    x: 10
+    y: 10
+  FlipTriangles: 0
+  DrawBounds: 0
+  Async: 1
+  Material: {fileID: 0}
+  MaterialWalls: {fileID: 0}
+  InitialTexture: {fileID: 0}
+  InitialTextureScale: 1
+--- !u!114 &84891311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 84891309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89217ad77fe48094db237043697a9edb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &84891312
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 84891309}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &850267109
 GameObject:
   m_ObjectHideFlags: 0
@@ -185,7 +247,7 @@ Transform:
   m_LocalScale: {x: 1, y: 0.9863087, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &886990423
 GameObject:
@@ -214,7 +276,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &886990425
 MonoBehaviour:
@@ -227,6 +289,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ff44c9af32d4649b82e5e26d3247b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &983653646
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 983653648}
+  - component: {fileID: 983653647}
+  m_Layer: 0
+  m_Name: TestMesh
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &983653647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 983653646}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 868b33d97a56f5c48b772dddd8d763b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &983653648
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 983653646}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -25.784962, y: -5.170515, z: -21.985058}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1002470549
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,8 +406,57 @@ Transform:
   m_LocalScale: {x: 1, y: 0.9863087, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1172905335
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1172905336}
+  - component: {fileID: 1172905337}
+  m_Layer: 0
+  m_Name: Votyra3b
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1172905336
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1172905335}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1172905337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1172905335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7bf045562fcb71479caefe999576966, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CellInGroupCount:
+    x: 10
+    y: 10
+    z: 10
+  DrawBounds: 0
+  Async: 1
+  Material: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
+  InitialTexture: {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
+  InitialTextureScale: 40
 --- !u!1 &1196365546
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,8 +483,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1196365546}
-  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: -24.7, y: 35.2, z: -130.2}
+  m_LocalRotation: {x: 0.38268343, y: -0, z: -0, w: 0.92387956}
+  m_LocalPosition: {x: -24.7, y: 6.9, z: -130.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -377,7 +528,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.1
-  far clip plane: 200
+  far clip plane: 20
   field of view: 59.448696
   orthographic: 0
   orthographic size: 5
@@ -407,8 +558,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd4e606ff1df30e4587eb17f475694a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpeedTranslation: {x: 60, y: -1200, z: 60}
-  SpeedRotation: {x: 0, y: 150, z: 0}
+  SpeedTranslation: {x: 1, y: 1, z: 1}
+  SpeedRotation: {x: 1, y: 1, z: 1}
 --- !u!1 &1255882547
 GameObject:
   m_ObjectHideFlags: 0
@@ -486,67 +637,5 @@ Transform:
   m_LocalScale: {x: 1, y: 0.9863087, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1980150119
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1980150123}
-  - component: {fileID: 1980150122}
-  - component: {fileID: 1980150120}
-  m_Layer: 0
-  m_Name: Votyra
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1980150120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1980150119}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89217ad77fe48094db237043697a9edb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1980150122
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1980150119}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e4582d697630cf4db511d1a835c68f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CellInGroupCount:
-    x: 10
-    y: 10
-  FlipTriangles: 0
-  DrawBounds: 0
-  Async: 1
-  Material: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
-  MaterialWalls: {fileID: 0}
-  InitialTexture: {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
-  InitialTextureScale: 20
---- !u!4 &1980150123
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1980150119}
-  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

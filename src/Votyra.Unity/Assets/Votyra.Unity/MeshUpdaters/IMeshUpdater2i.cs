@@ -4,7 +4,7 @@ using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 
 namespace Votyra.Unity.MeshUpdaters
 {
-    public interface IMeshUpdater
+    public interface IMeshUpdater2i
     {
         IReadOnlySet<Vector2i> ExistingGroups { get; }
 

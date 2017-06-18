@@ -4,8 +4,8 @@ using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.Unity.GroupSelectors
 {
-    public interface IGroupSelector
+    public interface IGroupSelector3i
     {
-        GroupActions GetGroupsToUpdate(IGroupVisibilityContext options);
+        GroupActions3i GetGroupsToUpdate(IGroupVisibilityContext3i options);
     }
 }

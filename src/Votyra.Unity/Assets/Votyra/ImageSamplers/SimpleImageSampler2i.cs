@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Votyra.ImageSamplers
 {
-    public class SimpleImageSampler : IImageSampler2i
+    public class SimpleImageSampler2i : IImageSampler2i
     {
         public Vector2 WorldToImage(Vector2 pos)
         {

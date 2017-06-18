@@ -39,6 +39,12 @@ namespace Votyra.Utils
             return Rect2i.MinMaxRect(Mathf.FloorToInt(rec.xMin), Mathf.FloorToInt(rec.yMin), Mathf.CeilToInt(rec.xMax), Mathf.CeilToInt(rec.yMax));
         }
 
+        public static Rect3i RoundToContain(this Bounds rec)
+        {
+            return Rect3i.MinMaxRect(Mathf.FloorToInt(rec.min.x), Mathf.FloorToInt(rec.min.y), Mathf.FloorToInt(rec.min.z), Mathf.CeilToInt(rec.max.x), Mathf.CeilToInt(rec.max.y), Mathf.CeilToInt(rec.max.z));
+        }
+
+
         public static Rect CombineWith(this Rect a, Rect b)
         {
             var aMin = a.min;

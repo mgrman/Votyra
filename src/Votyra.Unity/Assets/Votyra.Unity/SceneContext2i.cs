@@ -16,14 +16,14 @@ using Votyra.Logging;
 
 namespace Votyra.Unity
 {
-    public class SceneContext : ITerrainGeneratorContext2i, IGroupVisibilityContext, IMeshContext, IDisposable
+    public class SceneContext2i : ITerrainGeneratorContext2i, IGroupVisibilityContext2i, IMeshContext, IDisposable
     {
         private const int MAX_CELL_COUNT = 60 * 60;
 
-        public SceneContext(
-            IGroupSelector groupSelector,
+        public SceneContext2i(
+            IGroupSelector2i groupSelector,
             ITerrainGenerator2i terrainGenerator,
-            IMeshUpdater meshUpdater,
+            IMeshUpdater2i meshUpdater,
             Vector3 cameraPosition,
             IReadOnlyList<Plane> cameraPlanes,
             IReadOnlyPooledList<Vector3> cameraFrustumCorners,
@@ -63,9 +63,9 @@ namespace Votyra.Unity
             (Image as IInitializableImage)?.StartUsing();
         }
 
-        public IGroupSelector GroupSelector { get; }
+        public IGroupSelector2i GroupSelector { get; }
         public ITerrainGenerator2i TerrainGenerator { get; }
-        public IMeshUpdater MeshUpdater { get; }
+        public IMeshUpdater2i MeshUpdater { get; }
 
 
         public Vector3 CameraPosition { get; }

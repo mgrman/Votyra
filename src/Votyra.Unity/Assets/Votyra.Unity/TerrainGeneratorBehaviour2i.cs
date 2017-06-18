@@ -30,7 +30,7 @@ namespace Votyra.Unity
 {
 
     //TODO: move to floats
-    public class TerrainGeneratorBehaviour : MonoBehaviour
+    public class TerrainGeneratorBehaviour2i : MonoBehaviour
     {
         public UI_Vector2i CellInGroupCount = new UI_Vector2i(10, 10);
         public bool FlipTriangles = false;
@@ -46,9 +46,9 @@ namespace Votyra.Unity
         private IImage2iProvider _imageProvider;
         private IImageConstraint2i _editableImageConstraint;
         private IImageSampler2i _sampler;
-        private IGroupSelector _groupsSelector;
+        private IGroupSelector2i _groupsSelector;
         private ITerrainGenerator2i _terrainGenerator;
-        private IMeshUpdater _meshUpdater;
+        private IMeshUpdater2i _meshUpdater;
 
         private Task _updateTask = null;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
@@ -91,9 +91,9 @@ namespace Votyra.Unity
             this.SendMessage("OnCellClick", position, SendMessageOptions.DontRequireReceiver);
         }
 
-        private async Task UpdateTerrain(SceneContext context, bool async, CancellationToken token)
+        private async Task UpdateTerrain(SceneContext2i context, bool async, CancellationToken token)
         {
-            GroupActions groupActions = null;
+            GroupActions2i groupActions = null;
             IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i> results = null;
             try
             {
@@ -102,6 +102,7 @@ namespace Votyra.Unity
                         using (context.ProfilerFactory.Create("Creating visible groups"))
                         {
                             groupActions = context.GroupSelector.GetGroupsToUpdate(context);
+                            Debug.Log($"update {groupActions.ToRecompute.Count} keep {groupActions.ToKeep.Count}");
                         }
                         var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i>();
                         if (toRecompute.Any())
@@ -153,7 +154,7 @@ namespace Votyra.Unity
             }
         }
 
-        private SceneContext GetSceneContext()
+        private SceneContext2i GetSceneContext()
         {
             var camera = Camera.main;
             var container = this.gameObject;
@@ -172,7 +173,7 @@ namespace Votyra.Unity
 
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCorners.Array);
 
-            return new SceneContext
+            return new SceneContext2i
             (
                 _groupsSelector,
                 _terrainGenerator,
@@ -223,8 +224,8 @@ namespace Votyra.Unity
             _sampler = new DualImageSampler2i();
 
             _terrainGenerator = new TerrainGenerator2i<TerrainMesher2i>();
-            _meshUpdater = new TerrainMeshUpdater();
-            _groupsSelector = new GroupsByCameraVisibilitySelector();
+            _meshUpdater = new TerrainMeshUpdater2i();
+            _groupsSelector = new GroupsByCameraVisibilitySelector2i();
             _imageProvider = new EditableMatrixImage2i(InitialTexture, InitialTextureScale, _sampler, _editableImageConstraint);
         }
 

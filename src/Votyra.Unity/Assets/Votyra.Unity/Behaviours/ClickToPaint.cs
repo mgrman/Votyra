@@ -17,12 +17,12 @@ namespace Votyra.Unity.Behaviours
         private float lastTime;
         private Vector2i lastCell;
 
-        private TerrainGeneratorBehaviour _behaviour;
+        private TerrainGeneratorBehaviour2i _behaviour;
 
         private int? _centerValueToReuse;
         void Start()
         {
-            _behaviour = GetComponent<TerrainGeneratorBehaviour>();
+            _behaviour = GetComponent<TerrainGeneratorBehaviour2i>();
         }
 
         void Update()

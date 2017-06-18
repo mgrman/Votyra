@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace Votyra.Unity.GroupSelectors
 {
-    public class GroupsByCameraVisibilitySelector : IGroupSelector
+    public class GroupsByCameraVisibilitySelector3i : IGroupSelector3i
     {
-        public GroupActions GetGroupsToUpdate(IGroupVisibilityContext options)
+        public GroupActions3i GetGroupsToUpdate(IGroupVisibilityContext3i options)
         {
             if (options == null)
             {
@@ -20,7 +20,6 @@ namespace Votyra.Unity.GroupSelectors
             var cameraPosition = options.CameraPosition;
             var cameraLocalToWorldMatrix = options.CameraLocalToWorldMatrix;
             var parentContainerWorldToLocalMatrix = options.ParentContainerWorldToLocalMatrix;
-            var groupBoundsTemplate = options.GroupBounds;
             var cellInGroupCount = options.CellInGroupCount;
             var invalidatedArea = options.InvalidatedArea_worldSpace;
 
@@ -33,54 +32,53 @@ namespace Votyra.Unity.GroupSelectors
                 localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
 
-            var bounds_center = groupBoundsTemplate.center;
-            var bounds_size = groupBoundsTemplate.size;
-
-            int min_group_x = Mathf.FloorToInt(localCameraBounds.min.x);
-            int min_group_y = Mathf.FloorToInt(localCameraBounds.min.y);
-            int max_group_x = Mathf.CeilToInt(localCameraBounds.max.x);
-            int max_group_y = Mathf.CeilToInt(localCameraBounds.max.y);
             var cellInGroupCount_x = cellInGroupCount.x;
             var cellInGroupCount_y = cellInGroupCount.y;
+            var cellInGroupCount_z = cellInGroupCount.z;
+            int min_group_x = Mathf.FloorToInt(localCameraBounds.min.x / cellInGroupCount_x);
+            int min_group_y = Mathf.FloorToInt(localCameraBounds.min.y / cellInGroupCount_y);
+            int min_group_z = Mathf.FloorToInt(localCameraBounds.min.z / cellInGroupCount_z);
+            int max_group_x = Mathf.CeilToInt(localCameraBounds.max.x / cellInGroupCount_x);
+            int max_group_y = Mathf.CeilToInt(localCameraBounds.max.y / cellInGroupCount_y);
+            int max_group_z = Mathf.CeilToInt(localCameraBounds.max.z / cellInGroupCount_z);
 
-            var groupsToRecompute = PooledList<Vector2i>.Create();
-            var groupsToKeep = PooledList<Vector2i>.Create();
+            var groupsToRecompute = PooledList<Vector3i>.Create();
+            var groupsToKeep = PooledList<Vector3i>.Create();
 
             for (int group_x = min_group_x; group_x <= max_group_x; group_x++)
             {
                 for (int group_y = min_group_y; group_y <= max_group_y; group_y++)
                 {
-                    var group = new Vector2i(group_x, group_y);
-                    var groupBounds = new Bounds(new Vector3
-                        (
-                            bounds_center.x + group_x * cellInGroupCount_x,
-                            bounds_center.y + group_y * cellInGroupCount_y,
-                            bounds_center.z
-                        ), bounds_size);
-
-                    bool isInside = TestPlanesAABB(planes, groupBounds);
-                    if (isInside)
+                    for (int group_z = min_group_z; group_z <= max_group_z; group_z++)
                     {
-                        var groupArea = new Rect2i(group * cellInGroupCount, cellInGroupCount);
-                        if (groupArea.Overlaps(invalidatedArea))
+                        var group = new Vector3i(group_x, group_y, group_z);
+                        var groupBounds = new Rect3i(group * cellInGroupCount, cellInGroupCount).ToBounds();
+
+
+                        bool isInside = TestPlanesAABB(planes, groupBounds);
+                        if (isInside)
                         {
-                            groupsToRecompute.Add(group);
-                        }
-                        else
-                        {
-                            if (!options.ExistingGroups.Contains(group))
+                            var groupArea = new Rect3i(group * cellInGroupCount, cellInGroupCount);
+                            if (invalidatedArea != null && groupArea.Overlaps(invalidatedArea.Value))
                             {
                                 groupsToRecompute.Add(group);
                             }
                             else
                             {
-                                groupsToKeep.Add(group);
+                                if (!options.ExistingGroups.Contains(group))
+                                {
+                                    groupsToRecompute.Add(group);
+                                }
+                                else
+                                {
+                                    groupsToKeep.Add(group);
+                                }
                             }
                         }
                     }
                 }
             }
-            return new GroupActions(groupsToRecompute, groupsToKeep);
+            return new GroupActions3i(groupsToRecompute, groupsToKeep);
         }
 
         private bool TestPlanesAABB(IEnumerable<Plane> planes, Bounds bounds)

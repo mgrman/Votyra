@@ -9,7 +9,7 @@ using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.Unity.GroupSelectors
 {
-    public interface IGroupVisibilityContext : IContext
+    public interface IGroupVisibilityContext2i : IContext
     {
         Vector3 CameraPosition { get; }
         IReadOnlyList<Plane> CameraPlanes { get; }

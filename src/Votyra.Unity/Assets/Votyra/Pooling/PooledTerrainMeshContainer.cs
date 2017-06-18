@@ -9,27 +9,26 @@ using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 namespace Votyra.Unity.Assets.Votyra.Pooling
 {
     public class PooledTerrainMeshContainer<T> : IPooledTerrainMesh
-        where T : ITerrainMesh2i, new()
+        where T : ITerrainMesh, new()
     {
         public T Mesh { get; }
 
-        public Vector2i CellInGroupCount => Mesh.CellInGroupCount;
+        public int TriangleCount => Mesh.TriangleCount;
 
-        ITerrainMesh2i IPooledTerrainMesh.Mesh => Mesh;
+        ITerrainMesh IPooledTerrainMesh.Mesh => Mesh;
 
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
 
-        private static readonly ConcurentObjectDictionaryPool<PooledTerrainMeshContainer<T>, Vector2i> Pool = new ConcurentObjectDictionaryPool<PooledTerrainMeshContainer<T>, Vector2i>(5, (CellInGroupCount) => new PooledTerrainMeshContainer<T>(CellInGroupCount));
+        private static readonly ConcurentObjectPool<PooledTerrainMeshContainer<T>> Pool = new ConcurentObjectPool<PooledTerrainMeshContainer<T>>(5, () => new PooledTerrainMeshContainer<T>());
 
-        private PooledTerrainMeshContainer(Vector2i CellInGroupCount)
+        private PooledTerrainMeshContainer()
         {
             Mesh = new T();
-            Mesh.Initialize(CellInGroupCount);
         }
 
-        public static PooledTerrainMeshContainer<T> CreateDirty(Vector2i CellInGroupCount)
+        public static PooledTerrainMeshContainer<T> CreateDirty()
         {
-            var obj = Pool.GetObject(CellInGroupCount);
+            var obj = Pool.GetObject();
             return obj;
         }
 
@@ -39,32 +38,16 @@ namespace Votyra.Unity.Assets.Votyra.Pooling
             {
                 (Mesh as IDisposable)?.Dispose();
             }
-            Pool.ReturnObject(this, this.CellInGroupCount);
+            Pool.ReturnObject(this);
         }
 
         public void Clear(Bounds meshBounds)
         {
             Mesh.Clear(meshBounds);
         }
-
-        public void AddQuad(Vector2i cellInGroup, Vector3i x0y0, Vector3i x0y1, Vector3i x1y0, Vector3i x1y1, bool flipSides)
+        public void AddTriangle(Vector3 a, Vector3 b, Vector3 c)
         {
-            Mesh.AddQuad(cellInGroup, x0y0, x0y1, x1y0, x1y1, flipSides);
-        }
-
-        public void AddWallX(Vector2i cellInGroup, Vector3i a, Vector3i b, Vector3i b_lower, Vector3i a_lower)
-        {
-            Mesh.AddWallX(cellInGroup, a, b, b_lower, a_lower);
-        }
-
-        public void AddWallY(Vector2i cellInGroup, Vector3i a, Vector3i b, Vector3i b_lower, Vector3i a_lower)
-        {
-            Mesh.AddWallY(cellInGroup, a, b, b_lower, a_lower);
-        }
-
-        public void Initialize(Vector2i CellInGroupCount)
-        {
-            throw new InvalidOperationException("Cannot initialize pooled mesh.");
+            Mesh.AddTriangle(a, b, c);
         }
     }
 }

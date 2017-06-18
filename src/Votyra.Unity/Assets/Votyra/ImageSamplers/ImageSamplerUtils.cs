@@ -12,5 +12,11 @@ namespace Votyra.ImageSamplers
             var max = sampler.ImageToWorld(rect.max);
             return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
         }
+        public static Bounds ImageToWorld(this IImageSampler3b sampler, Rect3i rect)
+        {
+            var min = sampler.ImageToWorld(rect.min);
+            var max = sampler.ImageToWorld(rect.max);
+            return new Bounds((max + min) / 2, max - min);
+        }
     }
 }

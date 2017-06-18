@@ -10,13 +10,13 @@ using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.Unity.MeshUpdaters
 {
-    public class TerrainMeshUpdater : IMeshUpdater
+    public class TerrainMeshUpdater2i : IMeshUpdater2i
     {
         private SetDictionary<Vector2i, MeshFilter> _meshFilters = new SetDictionary<Vector2i, MeshFilter>();
 
         public IReadOnlySet<Vector2i> ExistingGroups => _meshFilters;
 
-        public TerrainMeshUpdater()
+        public TerrainMeshUpdater2i()
         {
         }
 
@@ -51,7 +51,7 @@ namespace Votyra.Unity.MeshUpdaters
                             }
                         }
 
-                        ITerrainMesh2i triangleMesh = terrainMesh.Value;
+                        ITerrainMesh triangleMesh = terrainMesh.Value;
                         UpdateMesh(triangleMesh, meshFilter.sharedMesh);
 
                         var collider = meshFilter.gameObject.GetComponent<MeshCollider>();
@@ -70,15 +70,19 @@ namespace Votyra.Unity.MeshUpdaters
             }
         }
 
-        private void UpdateMesh(ITerrainMesh2i triangleMesh, Mesh mesh)
+        private void UpdateMesh(ITerrainMesh triangleMesh, Mesh mesh)
         {
-            if (triangleMesh is FixedTerrainMesh2)
+            if (triangleMesh is IPooledTerrainMesh2i)
             {
-                UpdateMesh(triangleMesh as FixedTerrainMesh2, mesh);
+                UpdateMesh((triangleMesh as IPooledTerrainMesh2i).Mesh, mesh);
             }
-            else if (triangleMesh is IPooledTerrainMesh)
+            else if (triangleMesh is FixedTerrainMesh2i)
             {
-                UpdateMesh((triangleMesh as IPooledTerrainMesh).Mesh, mesh);
+                UpdateMesh(triangleMesh as FixedTerrainMesh2i, mesh);
+            }
+            else if (triangleMesh is ExpandingTerrainMesh)
+            {
+                UpdateMesh(triangleMesh as ExpandingTerrainMesh, mesh);
             }
             else if (triangleMesh != null)
             {
@@ -86,7 +90,24 @@ namespace Votyra.Unity.MeshUpdaters
             }
         }
 
-        private void UpdateMesh(FixedTerrainMesh2 triangleMesh, Mesh mesh)
+        private void UpdateMesh(ExpandingTerrainMesh triangleMesh, Mesh mesh)
+        {
+            bool recomputeTriangles = mesh.vertexCount != triangleMesh.PointCount;
+            if (recomputeTriangles)
+            {
+                mesh.Clear();
+            }
+
+            mesh.SetVertices(triangleMesh.Vertices);
+            mesh.SetNormalsOrRecompute(triangleMesh.Normals);
+            mesh.SetUVs(0, triangleMesh.UV);
+            if (recomputeTriangles)
+            {
+                mesh.SetTriangles(triangleMesh.Indices, 0, false);
+            }
+            mesh.bounds = triangleMesh.MeshBounds;
+        }
+        private void UpdateMesh(FixedTerrainMesh2i triangleMesh, Mesh mesh)
         {
             bool recomputeTriangles = mesh.vertexCount != triangleMesh.PointCount;
             if (recomputeTriangles)
