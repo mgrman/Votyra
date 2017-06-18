@@ -13,7 +13,7 @@ using Votyra.Unity.Assets.Votyra.Pooling;
 
 namespace Votyra.Tests
 {
-    public class TerrainMesher3bUtils
+    public static class TerrainMesher3bUtils
     {
         public static readonly Vector3i x0y0z0 = new Vector3i(0, 0, 0);
         public static readonly Vector3i x0y0z1 = new Vector3i(0, 0, 1);
@@ -26,15 +26,19 @@ namespace Votyra.Tests
 
         const string CubeRegex = @"[^01]*([01])[^01]*([01])[^01]*([01])[^01]*([01])[^01]*([01])[^01]*([01])[^01]*([01])[^01]*([01])[^01]*";
 
-        public static void AssertContainsQuad(IReadOnlyCollection<Triangle> triangles, Vector3i x0y0, Vector3i x0y1, Vector3i x1y0, Vector3i x1y1)
+        public static void AssertContainsQuad(IReadOnlyCollection<Triangle> triangles, string cube, Vector3i a, Vector3i b, Vector3i c, Vector3i d)
         {
             bool contains = false;
 
-            contains = contains || triangles.Contains(new Triangle(x0y0, x1y0, x1y1)) && triangles.Contains(new Triangle(x1y1, x0y1, x0y0));
-            contains = contains || triangles.Contains(new Triangle(x0y0, x1y0, x0y1)) && triangles.Contains(new Triangle(x1y0, x1y1, x0y1));
+            contains = contains || triangles.Contains(new Triangle(a, b, c)) && triangles.Contains(new Triangle(a, b, d));//ab
+            contains = contains || triangles.Contains(new Triangle(a, b, c)) && triangles.Contains(new Triangle(a, c, d));//ac
+            contains = contains || triangles.Contains(new Triangle(a, d, c)) && triangles.Contains(new Triangle(a, d, b));//ad
+            contains = contains || triangles.Contains(new Triangle(b, c, a)) && triangles.Contains(new Triangle(b, c, d));//bc
+            contains = contains || triangles.Contains(new Triangle(b, d, a)) && triangles.Contains(new Triangle(b, d, c));//bd
+            contains = contains || triangles.Contains(new Triangle(c, d, a)) && triangles.Contains(new Triangle(c, d, b));//cd
             if (!contains)
             {
-                throw new AssertionException($"Expected collection containing quad {x0y0},{x0y1},{x1y0},{x1y1}. Actual:\r\n{string.Join(", ", triangles)}");
+                throw new AssertionException($"On cube:\r\b{cube.Replace(' ', '\u00A0')}\r\nExpected collection containing quad {a},{b},{c},{d}. Actual:\r\n{(triangles.Any() ? string.Join(", ", triangles) : "<empty>")}");
             }
         }
 
@@ -70,7 +74,7 @@ namespace Votyra.Tests
         }
 
 
-        private static SampledData3b ParseCube(string cube)
+        public static SampledData3b ParseCube(string cube)
         {
             var match = Regex.Match(cube, CubeRegex);
             bool val_x0y0z0 = int.Parse(match.Groups[7].Value) != 0;
@@ -82,6 +86,18 @@ namespace Votyra.Tests
             bool val_x1y1z0 = int.Parse(match.Groups[6].Value) != 0;
             bool val_x1y1z1 = int.Parse(match.Groups[2].Value) != 0;
             return new SampledData3b(val_x0y0z0, val_x0y0z1, val_x0y1z0, val_x0y1z1, val_x1y0z0, val_x1y0z1, val_x1y1z0, val_x1y1z1);
+        }
+
+        public static string ToCubeString(this SampledData3b data)
+        {
+            return $@"
+              {(data.Data_x0y1z1 ? 1 : 0)}-----{(data.Data_x1y1z1 ? 1 : 0)}
+             /|    /|
+            {(data.Data_x0y0z1 ? 1 : 0)}-+---{(data.Data_x1y0z1 ? 1 : 0)} |
+            | {(data.Data_x0y1z0 ? 1 : 0)}---+-{(data.Data_x1y1z0 ? 1 : 0)}
+            |/    |/
+            {(data.Data_x0y0z0 ? 1 : 0)}-----{(data.Data_x1y0z0 ? 1 : 0)}
+            ";
         }
 
         public struct Triangle
@@ -123,7 +139,14 @@ namespace Votyra.Tests
                 }
 
                 var that = (Triangle)obj;
-                return this.Points.SequenceEqual(that.Points);
+                foreach (var point in this.Points)
+                {
+                    if (!that.Points.Contains(point))
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
 
             public override int GetHashCode()

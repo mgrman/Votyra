@@ -74,6 +74,7 @@ namespace Votyra.Models
             i = (i & 0x33333333) + ((i >> 2) & 0x33333333);
             return (((i + (i >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
         }
+
         public SampledData3b(bool x0y0z0, bool x0y0z1, bool x0y1z0, bool x0y1z1, bool x1y0z0, bool x1y0z1, bool x1y1z0, bool x1y1z1)
         {
             Data = (byte)(
@@ -130,44 +131,63 @@ namespace Votyra.Models
         }
 
 
-        public SampledData3b GetRotatedXY(float angleDeg)
-        {
+        // public SampledData3b GetRotatedXY(float angleDeg)
+        // {
 
-            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, 0, angleDeg));
-            return GetRotated(rotationMatrix);
+        //     var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, 0, angleDeg));
+        //     return GetTransformed(rotationMatrix);
+        // }
+
+        // public SampledData3b GetRotatedYZ(float angleDeg)
+        // {
+        //     var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(angleDeg, 0, 0));
+        //     return GetTransformed(rotationMatrix);
+        // }
+
+        // public SampledData3b GetRotatedXZ(float angleDeg)
+        // {
+        //     var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, angleDeg, 0));
+        //     return GetTransformed(rotationMatrix);
+        // }
+
+        public SampledData3b GetRotated(Vector3i rotationSteps)
+        {
+            var rotationMatrix = GetRotationMatrix(rotationSteps);
+
+            return GetTransformed(rotationMatrix);
         }
 
-        public SampledData3b GetRotatedYZ(float angleDeg)
+        public static Matrix4x4 GetRotationMatrix(Vector3i rotationSteps)
         {
-            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(angleDeg, 0, 0));
-            return GetRotated(rotationMatrix);
+            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(rotationSteps.x * 90, rotationSteps.y * 90, rotationSteps.z * 90));
+
+            var offsetInverted = Matrix4x4.Translate(new Vector3(-0.5f, -0.5f, -0.5f));
+            var offset = Matrix4x4.Translate(new Vector3(0.5f, 0.5f, 0.5f));
+
+            var finalMatrix = offset * rotationMatrix * offsetInverted;
+            return finalMatrix;
         }
 
-        public SampledData3b GetRotatedXZ(float angleDeg)
+        public SampledData3b GetTransformed(Matrix4x4 matrix)
         {
-            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, angleDeg, 0));
-            return GetRotated(rotationMatrix);
-        }
 
-        public SampledData3b GetRotated(Matrix4x4 rotationMatrix)
-        {
             return new SampledData3b
             (
-                this[rotationMatrix.MultiplyPoint(new Vector3(0, 0, 0))],
+                this[matrix.MultiplyPoint(new Vector3(0, 0, 0))],
 
-                this[rotationMatrix.MultiplyPoint(new Vector3(0, 0, 1))],
+                this[matrix.MultiplyPoint(new Vector3(0, 0, 1))],
 
-                this[rotationMatrix.MultiplyPoint(new Vector3(0, 1, 0))],
+                this[matrix.MultiplyPoint(new Vector3(0, 1, 0))],
 
-                this[rotationMatrix.MultiplyPoint(new Vector3(0, 1, 1))],
+                this[matrix.MultiplyPoint(new Vector3(0, 1, 1))],
 
-                this[rotationMatrix.MultiplyPoint(new Vector3(1, 0, 0))],
+                this[matrix.MultiplyPoint(new Vector3(1, 0, 0))],
 
-                this[rotationMatrix.MultiplyPoint(new Vector3(1, 0, 1))],
+                this[matrix.MultiplyPoint(new Vector3(1, 0, 1))],
 
-                this[rotationMatrix.MultiplyPoint(new Vector3(1, 1, 0))],
+                this[matrix.MultiplyPoint(new Vector3(1, 1, 0))],
 
-                this[rotationMatrix.MultiplyPoint(new Vector3(1, 1, 1))]
+                this[matrix.MultiplyPoint(new Vector3(1, 1, 1))]
             );
         }
 
@@ -251,13 +271,13 @@ namespace Votyra.Models
                 {
                     for (int z = 0; z < 4; z++)
                     {
+                        var finalMatrix = GetRotationMatrix(new Vector3i(x, y, z));
 
-                        var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(x * 90, y * 90, z * 90));
-                        var rotatedThis = this.GetRotated(rotationMatrix);
-                        //Debug.Log($"{this} rotated by {x},{y},{z} equals {rotatedThis}");
+                        var rotatedThis = this.GetTransformed(finalMatrix);
+                        // Debug.Log($"{this} rotated by {x},{y},{z} equals {rotatedThis}");
                         if (rotatedThis == that)
                         {
-                            matrix = rotationMatrix;
+                            matrix = finalMatrix;
                             return true;
                         }
                     }

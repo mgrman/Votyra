@@ -54,33 +54,34 @@ namespace Votyra.TerrainGenerators.TerrainMeshers
 
             SampledData3b data = ImageSampler.Sample(Image, cell);
 
-            var pos_center = new Vector3(cell.x + 0.5f, cell.y + 0.5f, cell.z + 0.5f);
 
-            var pos_x0y0z0 = new Vector3(-0.5f, -0.5f, -0.5f);
-            var pos_x0y0z1 = new Vector3(-0.5f, -0.5f, 0.5f);
-            var pos_x0y1z0 = new Vector3(-0.5f, 0.5f, -0.5f);
-            var pos_x0y1z1 = new Vector3(-0.5f, 0.5f, 0.5f);
-            var pos_x1y0z0 = new Vector3(0.5f, -0.5f, -0.5f);
-            var pos_x1y0z1 = new Vector3(0.5f, -0.5f, 0.5f);
-            var pos_x1y1z0 = new Vector3(0.5f, 0.5f, -0.5f);
-            var pos_x1y1z1 = new Vector3(0.5f, 0.5f, 0.5f);
+            var pos_x0y0z0 = new Vector3(0, 0, 0);
+            var pos_x0y0z1 = new Vector3(0, 0, 1);
+            var pos_x0y1z0 = new Vector3(0, 1, 0);
+            var pos_x0y1z1 = new Vector3(0, 1, 1);
+            var pos_x1y0z0 = new Vector3(1, 0, 0);
+            var pos_x1y0z1 = new Vector3(1, 0, 1);
+            var pos_x1y1z0 = new Vector3(1, 1, 0);
+            var pos_x1y1z1 = new Vector3(1, 1, 1);
 
-            Matrix4x4 rotation;
-            if (SampledData3b.Floor.EqualsRotationInvariant(data, out rotation))
+            Matrix4x4 matrix;
+            if (SampledData3b.Floor.EqualsRotationInvariant(data, out matrix))
             {
+                matrix = matrix.inverse;
                 mesh.AddQuad(
-                    pos_center + rotation.MultiplyPoint(pos_x0y0z0),
-                    pos_center + rotation.MultiplyPoint(pos_x0y1z0),
-                    pos_center + rotation.MultiplyPoint(pos_x1y0z0),
-                    pos_center + rotation.MultiplyPoint(pos_x1y1z0), false);
+                     matrix.MultiplyPoint(pos_x0y0z0),
+                     matrix.MultiplyPoint(pos_x0y1z0),
+                     matrix.MultiplyPoint(pos_x1y0z0),
+                     matrix.MultiplyPoint(pos_x1y1z0), false);
             }
-            else if (SampledData3b.SlopeX.EqualsRotationInvariant(data, out rotation))
+            else if (SampledData3b.SlopeX.EqualsRotationInvariant(data, out matrix))
             {
+                matrix = matrix.inverse;
                 mesh.AddQuad(
-                    pos_center + rotation.MultiplyPoint(pos_x0y0z1),
-                    pos_center + rotation.MultiplyPoint(pos_x0y1z1),
-                    pos_center + rotation.MultiplyPoint(pos_x1y0z0),
-                    pos_center + rotation.MultiplyPoint(pos_x1y1z0), false);
+                   matrix.MultiplyPoint(pos_x0y0z1),
+                   matrix.MultiplyPoint(pos_x0y1z1),
+                   matrix.MultiplyPoint(pos_x1y0z0),
+                   matrix.MultiplyPoint(pos_x1y1z0), false);
             }
             // else if (data == SampledData3b.Ceiling)
             // {

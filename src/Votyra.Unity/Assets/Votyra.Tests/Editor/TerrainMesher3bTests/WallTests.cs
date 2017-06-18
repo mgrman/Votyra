@@ -12,44 +12,14 @@ using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using static Votyra.Tests.TerrainMesher3bUtils;
 
-namespace Votyra.Tests
+namespace Votyra.Tests.TerrainMesher3bTests
 {
-    public class TerrainMesher3bTests
+    public class WallTests
     {
-        [Test]
-        public void EmptyTest()
-        {
-            var cube = @"
-              0-----0
-             /|    /|
-            0-+---0 |
-            | 0---+-0
-            |/    |/
-            0-----0
-            ";
-            var triangles = Evaluate(cube);
 
-            Assert.IsEmpty(triangles);
-        }
 
         [Test]
-        public void FullTest()
-        {
-            var cube = @"
-              0-----0
-             /|    /|
-            0-+---0 |
-            | 0---+-0
-            |/    |/
-            0-----0
-            ";
-            var triangles = Evaluate(cube);
-
-            Assert.IsEmpty(triangles);
-        }
-
-        [Test]
-        public void X0Test()
+        public void WallX0Test()
         {
             var cube = @"
               1-----0
@@ -61,11 +31,11 @@ namespace Votyra.Tests
             ";
             var triangles = Evaluate(cube);
 
-            AssertContainsQuad(triangles, x0y0z0, x0y1z0, x0y0z1, x0y1z1);
+            AssertContainsQuad(triangles, cube, x0y0z0, x0y1z0, x0y0z1, x0y1z1);
         }
 
         [Test]
-        public void X1Test()
+        public void WallX1Test()
         {
             var cube = @"
               0-----1
@@ -77,11 +47,11 @@ namespace Votyra.Tests
             ";
             var triangles = Evaluate(cube);
 
-            AssertContainsQuad(triangles, x1y0z0, x1y1z0, x1y0z1, x1y1z1);
+            AssertContainsQuad(triangles, cube, x1y0z0, x1y1z0, x1y0z1, x1y1z1);
         }
 
         [Test]
-        public void Y0Test()
+        public void WallY0Test()
         {
             var cube = @"
               0-----0
@@ -93,11 +63,11 @@ namespace Votyra.Tests
             ";
             var triangles = Evaluate(cube);
 
-            AssertContainsQuad(triangles, x0y0z0, x0y0z1, x1y0z0, x1y0z1);
+            AssertContainsQuad(triangles, cube, x0y0z0, x0y0z1, x1y0z0, x1y0z1);
         }
 
         [Test]
-        public void Y1Test()
+        public void WallY1Test()
         {
             var cube = @"
               1-----1
@@ -109,7 +79,7 @@ namespace Votyra.Tests
             ";
             var triangles = Evaluate(cube);
 
-            AssertContainsQuad(triangles, x0y1z0, x0y1z1, x1y1z0, x1y1z1);
+            AssertContainsQuad(triangles, cube, x0y1z0, x0y1z1, x1y1z0, x1y1z1);
         }
 
         [Test]
@@ -125,7 +95,7 @@ namespace Votyra.Tests
             ";
             var triangles = Evaluate(cube);
 
-            AssertContainsQuad(triangles, x0y0z0, x0y1z0, x1y0z0, x1y1z0);
+            AssertContainsQuad(triangles, cube, x0y0z0, x0y1z0, x1y0z0, x1y1z0);
         }
 
         [Test]
@@ -141,7 +111,7 @@ namespace Votyra.Tests
             ";
             var triangles = Evaluate(cube);
 
-            AssertContainsQuad(triangles, x0y0z1, x0y1z1, x1y0z1, x1y1z1);
+            AssertContainsQuad(triangles, cube, x0y0z1, x0y1z1, x1y0z1, x1y1z1);
         }
     }
 }
