@@ -35,10 +35,10 @@ namespace Votyra.Tests
             |/    |/
             1-----1
             ";
-            var initialCube = ParseCube(initialCubeString);
-            var expectedCube = ParseCube(expectedCubeString);
+            var initialCube = SampledData3b.ParseCube(initialCubeString);
+            var expectedCube = SampledData3b.ParseCube(expectedCubeString);
 
-            var rotatedCube = initialCube.GetRotated(new Vector3i(0, 0, 0));
+            var rotatedCube = initialCube.GetRotated(new Vector3i(0, 0, 0), false);
 
             Assert.AreEqual(expectedCube, rotatedCube);
         }
@@ -62,10 +62,10 @@ namespace Votyra.Tests
             |/    |/
             1-----0
             ";
-            var initialCube = ParseCube(initialCubeString);
-            var expectedCube = ParseCube(expectedCubeString);
+            var initialCube = SampledData3b.ParseCube(initialCubeString);
+            var expectedCube = SampledData3b.ParseCube(expectedCubeString);
 
-            var rotatedCube = initialCube.GetRotated(new Vector3i(0, 0, 1));
+            var rotatedCube = initialCube.GetRotated(new Vector3i(0, 0, 1), false);
 
             Assert.AreEqual(expectedCube, rotatedCube);
         }
@@ -89,10 +89,10 @@ namespace Votyra.Tests
             |/    |/
             0-----0
             ";
-            var initialCube = ParseCube(initialCubeString);
-            var expectedCube = ParseCube(expectedCubeString);
+            var initialCube = SampledData3b.ParseCube(initialCubeString);
+            var expectedCube = SampledData3b.ParseCube(expectedCubeString);
 
-            var rotatedCube = initialCube.GetRotated(new Vector3i(0, 0, 2));
+            var rotatedCube = initialCube.GetRotated(new Vector3i(0, 0, 2), false);
 
             Assert.AreEqual(expectedCube, rotatedCube);
         }
@@ -116,10 +116,37 @@ namespace Votyra.Tests
             |/    |/
             0-----1
             ";
-            var initialCube = ParseCube(initialCubeString);
-            var expectedCube = ParseCube(expectedCubeString);
+            var initialCube = SampledData3b.ParseCube(initialCubeString);
+            var expectedCube = SampledData3b.ParseCube(expectedCubeString);
 
-            var rotatedCube = initialCube.GetRotated(new Vector3i(0, 0, 3));
+            var rotatedCube = initialCube.GetRotated(new Vector3i(0, 0, 3), false);
+
+            Assert.AreEqual(expectedCube, rotatedCube);
+        }
+
+        [Test]
+        public void xy0z0Inv()
+        {
+            var initialCubeString = @"
+              0-----0
+             /|    /|
+            1-+---0 |
+            | 0---+-0
+            |/    |/
+            1-----1
+            ";
+            var expectedCubeString = @"
+              0-----0
+             /|    /|
+            1-+---1 |
+            | 0---+-0
+            |/    |/
+            1-----0
+            ";
+            var initialCube = SampledData3b.ParseCube(initialCubeString);
+            var expectedCube = SampledData3b.ParseCube(expectedCubeString);
+
+            var rotatedCube = initialCube.GetRotated(new Vector3i(0, 0, 0), true);
 
             Assert.AreEqual(expectedCube, rotatedCube);
         }

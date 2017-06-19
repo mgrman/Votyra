@@ -28,7 +28,7 @@ namespace Votyra.Tests
             1-----0
             ";
 
-            var cube = ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.AreEqual(string.Join("\n", cubeString.Split('\n').Select(o => o.Trim())), string.Join("\n", cube.ToCubeString().Split('\n').Select(o => o.Trim())));
         }
@@ -44,7 +44,7 @@ namespace Votyra.Tests
             |/    |/
             1-----0
             ";
-            var cube = ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsTrue(cube.Data_x0y0z0);
             Assert.IsFalse(cube.Data_x0y0z1);
@@ -66,7 +66,7 @@ namespace Votyra.Tests
             |/    |/
             0-----0
             ";
-            var cube = ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.Data_x0y0z0);
             Assert.IsTrue(cube.Data_x0y0z1);
@@ -88,7 +88,7 @@ namespace Votyra.Tests
             |/    |/
             0-----0
             ";
-            var cube = ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.Data_x0y0z0);
             Assert.IsFalse(cube.Data_x0y0z1);
@@ -110,7 +110,7 @@ namespace Votyra.Tests
             |/    |/
             0-----0
             ";
-            var cube = ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.Data_x0y0z0);
             Assert.IsFalse(cube.Data_x0y0z1);
@@ -132,7 +132,7 @@ namespace Votyra.Tests
             |/    |/
             0-----1
             ";
-            var cube = ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.Data_x0y0z0);
             Assert.IsFalse(cube.Data_x0y0z1);
@@ -154,7 +154,7 @@ namespace Votyra.Tests
             |/    |/
             0-----0
             ";
-            var cube = ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.Data_x0y0z0);
             Assert.IsFalse(cube.Data_x0y0z1);
@@ -176,7 +176,7 @@ namespace Votyra.Tests
             |/    |/
             0-----0
             ";
-            var cube = ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.Data_x0y0z0);
             Assert.IsFalse(cube.Data_x0y0z1);
@@ -198,7 +198,7 @@ namespace Votyra.Tests
             |/    |/
             0-----0
             ";
-            var cube = ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.Data_x0y0z0);
             Assert.IsFalse(cube.Data_x0y0z1);

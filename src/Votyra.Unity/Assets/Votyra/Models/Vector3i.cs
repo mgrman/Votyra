@@ -74,6 +74,11 @@ namespace Votyra.Models
             return new Vector3i(a.x + b.x, a.y + b.y, a.z + b.z);
         }
 
+        public static Vector3 operator +(Vector3i a, Vector3 b)
+        {
+            return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+        }
+
         public static Vector3i operator -(Vector3i a, Vector3i b)
         {
             return new Vector3i(a.x - b.x, a.y - b.y, a.z - b.z);

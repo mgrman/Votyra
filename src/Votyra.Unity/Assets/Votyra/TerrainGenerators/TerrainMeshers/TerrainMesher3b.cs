@@ -31,6 +31,12 @@ namespace Votyra.TerrainGenerators.TerrainMeshers
             ImageSampler = imageSampler;
             Image = image;
             this.CellInGroupCount = cellInGroupCount;
+
+
+            // foreach (var data in DataWithoutTriangles.Distinct(SampledData3b.RotationInvariantComparer))
+            // {
+            //     Debug.LogError($"Not found any triangles for {data.ToCubeString()}");
+            // }
         }
 
         public void InitializeGroup(Vector3i group)
@@ -48,13 +54,28 @@ namespace Votyra.TerrainGenerators.TerrainMeshers
             mesh.Clear(bounds);
         }
 
+        public static readonly Vector3 CenterZeroCell = new Vector3(0.5f, 0.5f, 0.5f);
+
         public void AddCell(Vector3i cellInGroup)
         {
             Vector3i cell = cellInGroup + groupPosition;
 
             SampledData3b data = ImageSampler.Sample(Image, cell);
 
+            foreach (var tri in DataToTriangles[data])
+            {
+                mesh.AddTriangle(cell + tri.a, cell + tri.b, cell + tri.c);
+            }
+        }
+        private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
 
+        private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3>> DataToTriangles = SampledData3b
+            .GenerateAllValues()
+            .ToDictionary(o => o, o => ChooseTrianglesForCell(o).ToArray() as IReadOnlyCollection<Triangle3>);
+
+
+        private static IEnumerable<Triangle3> ChooseTrianglesForCell(SampledData3b data)
+        {
             var pos_x0y0z0 = new Vector3(0, 0, 0);
             var pos_x0y0z1 = new Vector3(0, 0, 1);
             var pos_x0y1z0 = new Vector3(0, 1, 0);
@@ -64,102 +85,236 @@ namespace Votyra.TerrainGenerators.TerrainMeshers
             var pos_x1y1z0 = new Vector3(1, 1, 0);
             var pos_x1y1z1 = new Vector3(1, 1, 1);
 
+            //TODO slopes might be usefull to also do only subset, since there can be some small outlier like:
+            //   1-----1
+            //  /|    /|
+            // 1-+---1 |
+            // | 0---+-1
+            // |/    |/
+            // 1-----0
+
             Matrix4x4 matrix;
-            if (SampledData3b.Floor.EqualsRotationInvariant(data, out matrix))
+            if (data.Data == 0 || data.Data == byte.MaxValue)
+            {
+                return Enumerable.Empty<Triangle3>();
+            }
+            else if (SampledData3b.ParseCube(@"
+              0-----0
+             /|    /|
+            0-+---0 |
+            | 1---+-1
+            |/    |/
+            1-----1
+            ").EqualsRotationInvariant(data, out matrix))
             {
                 matrix = matrix.inverse;
-                mesh.AddQuad(
+                var isInverted = matrix.determinant < 0;
+                return TerrainMeshExtensions.GetQuadTriangles(
                      matrix.MultiplyPoint(pos_x0y0z0),
                      matrix.MultiplyPoint(pos_x0y1z0),
                      matrix.MultiplyPoint(pos_x1y0z0),
-                     matrix.MultiplyPoint(pos_x1y1z0), false);
+                     matrix.MultiplyPoint(pos_x1y1z0), false)
+                     .ChangeOrderIfTrue(isInverted);
             }
-            else if (SampledData3b.SlopeX.EqualsRotationInvariant(data, out matrix))
+            else if (SampledData3b.ParseCube(@"
+              1-----0
+             /|    /|
+            1-+---0 |
+            | 1---+-1
+            |/    |/
+            1-----1
+            ").EqualsRotationInvariant(data, out matrix))
             {
                 matrix = matrix.inverse;
-                mesh.AddQuad(
+                var isInverted = matrix.determinant < 0;
+                return TerrainMeshExtensions.GetQuadTriangles(
                    matrix.MultiplyPoint(pos_x0y0z1),
                    matrix.MultiplyPoint(pos_x0y1z1),
                    matrix.MultiplyPoint(pos_x1y0z0),
-                   matrix.MultiplyPoint(pos_x1y1z0), false);
+                   matrix.MultiplyPoint(pos_x1y1z0), false)
+                   .ChangeOrderIfTrue(isInverted);
             }
-            // else if (data == SampledData3b.Ceiling)
+            else if (SampledData3b.ParseCube(@"
+              0-----0
+             /|    /|
+            1-+---0 |
+            | 1---+-0
+            |/    |/
+            1-----1
+            ").EqualsRotationInvariant(data, out matrix))
+            {
+                matrix = matrix.inverse;
+                var isInverted = matrix.determinant < 0;
+                return new Triangle3(
+                        matrix.MultiplyPoint(pos_x1y0z0),
+                        matrix.MultiplyPoint(pos_x0y1z0),
+                        matrix.MultiplyPoint(pos_x0y0z1))
+                   .AsEnumerable()
+                   .ChangeOrderIfTrue(isInverted);
+            }
+            else if (SampledData3b.ParseCube(@"
+              0-----0
+             /|    /|
+            1-+---0 |
+            | 1---+-1
+            |/    |/
+            1-----1
+            ").EqualsRotationInvariant(data, out matrix))
+            {
+                matrix = matrix.inverse;
+                var isInverted = matrix.determinant < 0;
+                return new Triangle3[]{
+                    new Triangle3(
+                        matrix.MultiplyPoint(pos_x1y0z0),
+                        matrix.MultiplyPoint(pos_x0y1z0),
+                        matrix.MultiplyPoint(pos_x0y0z1)),
+                    new Triangle3(
+                        matrix.MultiplyPoint(pos_x1y0z0),
+                        matrix.MultiplyPoint(pos_x1y1z0),
+                        matrix.MultiplyPoint(pos_x0y1z0))
+                   }.ChangeOrderIfTrue(isInverted);
+            }
+            else if (SampledData3b.ParseCube(@"
+              1-----0
+             /|    /|
+            1-+---1 |
+            | 1---+-1
+            |/    |/
+            1-----1
+            ").EqualsRotationInvariant(data, out matrix))
+            {
+                matrix = matrix.inverse;
+                var isInverted = matrix.determinant < 0;
+                return new Triangle3[]{
+                    new Triangle3(
+                        matrix.MultiplyPoint(pos_x0y1z1),
+                        matrix.MultiplyPoint(pos_x1y0z1),
+                        matrix.MultiplyPoint(pos_x1y1z0))
+                   }.ChangeOrderIfTrue(isInverted);
+            }
+            else if (SampledData3b.ParseCube(@"
+              0-----1
+             /|    /|
+            1-+---0 |
+            | 1---+-1
+            |/    |/
+            1-----1
+            ").EqualsRotationInvariant(data, out matrix))
+            {
+                matrix = matrix.inverse;
+                var isInverted = matrix.determinant < 0;
+                return new Triangle3[]{
+                    new Triangle3(
+                        matrix.MultiplyPoint(pos_x0y0z1),
+                        matrix.MultiplyPoint(pos_x1y0z0),
+                        matrix.MultiplyPoint(pos_x1y1z1)),
+                    new Triangle3(
+                        matrix.MultiplyPoint(pos_x0y0z1),
+                        matrix.MultiplyPoint(pos_x1y1z1),
+                        matrix.MultiplyPoint(pos_x0y1z0)),
+                   }.ChangeOrderIfTrue(isInverted);
+            }
+            // else if (SampledData3b.ParseCube(@"
+            //   1-----0
+            //  /|    /|
+            // 1-+---1 |
+            // | 1---+-0
+            // |/    |/
+            // 1-----1
+            // ").EqualsRotationInvariant(data, out matrix))
             // {
-            //     mesh.AddQuad(pos_x0y0z1, pos_x0y1z1, pos_x1y0z1, pos_x1y1z1, false);
+            //     matrix = matrix.inverse;
+            //     return new Triangle3[]{
+            //         new Triangle3(
+            //             matrix.MultiplyPoint(pos_x0y1z0),
+            //             matrix.MultiplyPoint(pos_x1y0z1),
+            //             matrix.MultiplyPoint(pos_x1y0z0)),
+            //         new Triangle3(
+            //             matrix.MultiplyPoint(pos_x0y1z0),
+            //             matrix.MultiplyPoint(pos_x0y1z1),
+            //             matrix.MultiplyPoint(pos_x1y0z1)),
+            //        };
             // }
-            // else if (data.EqualsRotationXYInvariant(SampledData3b.SideX))
-            // {
-            //     if (data.Data_x0y0z0 && data.Data_x0y1z0)
-            //     {
-            //         mesh.AddWall(pos_x0y0z1, pos_x0y1z1, pos_x0y1z0, pos_x0y0z0, false);
+            else if (SampledData3b.ParseCube(@"
+              0-----0
+             /|    /|
+            1-+---0 |
+            | 1---+-1
+            |/    |/
+            1-----0
+            ").EqualsRotationInvariant(data, out matrix))
+            {
+                matrix = matrix.inverse;
+                var isInverted = matrix.determinant < 0;
+                return new Triangle3[]{
+                    new Triangle3(
+                        matrix.MultiplyPoint(pos_x0y0z0),
+                        matrix.MultiplyPoint(pos_x1y1z0),
+                        matrix.MultiplyPoint(pos_x0y0z1)),
+                    new Triangle3(
+                        matrix.MultiplyPoint(pos_x1y1z0),
+                        matrix.MultiplyPoint(pos_x0y1z0),
+                        matrix.MultiplyPoint(pos_x0y0z1)),
+                   }.ChangeOrderIfTrue(isInverted);
+            }
+            else if (SampledData3b.ParseCube(@"
+              0-----1
+             /|    /|
+            1-+---0 |
+            | 1---+-1
+            |/    |/
+            1-----0
+            ").EqualsRotationInvariant(data, out matrix))
+            {
+                matrix = matrix.inverse;
+                var isInverted = matrix.determinant < 0;
+                return new Triangle3[]{
+                    new Triangle3(
+                        matrix.MultiplyPoint(pos_x0y1z0),
+                        matrix.MultiplyPoint(pos_x0y0z1),
+                        matrix.MultiplyPoint(pos_x1y1z1)),
+                    new Triangle3(
+                        matrix.MultiplyPoint(pos_x0y0z0),
+                        matrix.MultiplyPoint(pos_x1y1z0),
+                        matrix.MultiplyPoint(pos_x1y1z1)),
+                    new Triangle3(
+                        matrix.MultiplyPoint(pos_x0y0z0),
+                        matrix.MultiplyPoint(pos_x1y1z1),
+                        matrix.MultiplyPoint(pos_x0y0z1)),
+                   }.ChangeOrderIfTrue(isInverted);
+            }
+            else
+            {
+                var template = SampledData3b.ParseCube(@"
+                      0-----0
+                     /|    /|
+                    0-+---0 |
+                    | 1---+-0
+                    |/    |/
+                    1-----1
+                    ");
+                var triangles = template.GetAllRotationSubsets(data)
+                    .Select(m =>
+                    {
+                        var mInv = m.inverse;
+                        return new Triangle3(
+                            mInv.MultiplyPoint(pos_x0y0z0),
+                            mInv.MultiplyPoint(pos_x0y1z0),
+                            mInv.MultiplyPoint(pos_x1y0z0));
+                    })
+                    .Distinct(Triangle3.OrderInvariantComparer)
+                    .Select(t => t.EnsureCCW(CenterZeroCell))
+                    .ToArray();
 
-            //     }
-            //     else if (data.Data_x1y0z0 && data.Data_x0y0z0)
-            //     {
-            //         mesh.AddWall(pos_x1y0z1, pos_x0y0z1, pos_x0y0z0, pos_x1y0z0, false);
-
-            //     }
-            //     else if (data.Data_x1y0z0 && data.Data_x1y1z0)
-            //     {
-            //         mesh.AddWall(pos_x1y0z1, pos_x1y1z1, pos_x1y1z0, pos_x1y0z0, false);
-
-            //     }
-            //     else if (data.Data_x1y1z0 && data.Data_x0y1z0)
-            //     {
-            //         mesh.AddWall(pos_x1y1z1, pos_x0y1z1, pos_x0y1z0, pos_x1y1z0, false);
-            //     }
-            // }
-            // else if (data.EqualsRotationXYInvariant(SampledData3b.SlopeX))
-            // {
-            //     if (data.Data_x0y0z0 && data.Data_x0y1z0) //riseX+
-            //     {
-            //         mesh.AddQuad(pos_x0y0z0, pos_x0y1z0, pos_x1y0z1, pos_x1y1z1, false);
-            //     }
-            //     else if (data.Data_x0y0z0 && data.Data_x1y0z0) //riseY+
-            //     {
-            //         mesh.AddQuad(pos_x0y0z0, pos_x0y1z1, pos_x1y0z0, pos_x1y1z1, false);
-
-            //     }
-            //     else if (data.Data_x0y1z0 && data.Data_x1y1z0)//riseY-
-            //     {
-            //         mesh.AddQuad(pos_x0y0z1, pos_x0y1z0, pos_x1y0z1, pos_x1y1z0, false);
-
-            //     }
-            //     else if (data.Data_x1y0z0 && data.Data_x1y1z0) //riseX-
-            //     {
-            //         mesh.AddQuad(pos_x0y0z1, pos_x0y1z1, pos_x1y0z0, pos_x1y1z0, false);
-            //     }
-            // }
-
-
-            // if (data.Data > 0 && data.Data != byte.MaxValue)
-            // {
-            //     if (data.Data_x0y0z0)
-            //         AddSmallDebugCube(pos_center + pos_x0y0z0, 0.1f);
-            //     if (data.Data_x0y0z1)
-            //         AddSmallDebugCube(pos_center + pos_x0y0z1, 0.1f);
-            //     if (data.Data_x0y1z0)
-            //         AddSmallDebugCube(pos_center + pos_x0y1z0, 0.1f);
-            //     if (data.Data_x0y1z1)
-            //         AddSmallDebugCube(pos_center + pos_x0y1z1, 0.1f);
-            //     if (data.Data_x1y0z0)
-            //         AddSmallDebugCube(pos_center + pos_x1y0z0, 0.1f);
-            //     if (data.Data_x1y0z1)
-            //         AddSmallDebugCube(pos_center + pos_x1y0z1, 0.1f);
-            //     if (data.Data_x1y1z0)
-            //         AddSmallDebugCube(pos_center + pos_x1y1z0, 0.1f);
-            //     if (data.Data_x1y1z1)
-            //         AddSmallDebugCube(pos_center + pos_x1y1z1, 0.1f);
-
-            //     // AddSmallDebugCube(pos_center, 0.2f);
-            // }
-
-            // mesh.AddQuad(pos_x0y0z1, pos_x0y1z1, pos_x1y0z1, pos_x1y1z1, false);
-
-            // mesh.AddWall(pos_x0y0z1, pos_x0y1z1, pos_x0y1z0, pos_x0y0z0, false);
-
-            // mesh.AddWall(pos_x1y0z1, pos_x0y0z1, pos_x0y0z0, pos_x1y0z0, false);
+                if (triangles.Length == 0)
+                {
+                    DataWithoutTriangles.Add(data);
+                }
+                return triangles;
+            }
+            return Enumerable.Empty<Triangle3>();
         }
+
 
 
         private void AddSmallDebugCube(Vector3 pos, float extents)

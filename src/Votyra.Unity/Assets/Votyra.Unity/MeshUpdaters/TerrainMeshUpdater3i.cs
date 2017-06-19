@@ -31,6 +31,11 @@ namespace Votyra.Unity.MeshUpdaters
                     int meshIndex = 0;
                     foreach (var terrainMesh in terrainMeshes)
                     {
+                        if (terrainMesh.Value.TriangleCount == 0)
+                        {
+                            continue;
+                        }
+
                         MeshFilter meshFilter;
                         if (!_meshFilters.TryGetValue(terrainMesh.Key, out meshFilter))
                         {

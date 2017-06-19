@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using Votyra.Models;
 
 namespace Votyra.Utils
@@ -65,5 +66,17 @@ namespace Votyra.Utils
         {
             return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
         }
+        public static Vector3 Average(this IEnumerable<Vector3> items)
+        {
+            Vector3 sum = new Vector3();
+            int count = 0;
+            foreach (var item in items)
+            {
+                sum += item;
+                count++;
+            }
+            return sum / count;
+        }
+
     }
 }
