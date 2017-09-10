@@ -5,42 +5,42 @@ using Votyra.Utils;
 
 namespace Votyra.Images
 {
-    internal class MatrixImage2i : IImage2i, IInitializableImage, IImageInvalidatableImage2i, IDisposable
+    internal class MatrixImage2f : IImage2f, IInitializableImage, IImageInvalidatableImage2i, IDisposable
     {
-        public Range2i RangeZ { get; }
+        public Range2 RangeZ { get; }
 
         public Rect2i InvalidatedArea { get; }
 
-        private readonly LockableMatrix<int> _image;
+        private readonly LockableMatrix<float> _image;
 
-        public MatrixImage2i(LockableMatrix<int> values, Rect2i invalidatedArea)
+        public MatrixImage2f(LockableMatrix<float> values, Rect2i invalidatedArea)
         {
             _image = values;
             InvalidatedArea = invalidatedArea;
             RangeZ = CalculateRangeZ(values);
         }
 
-        private static Range2i CalculateRangeZ(LockableMatrix<int> values)
+        private static Range2 CalculateRangeZ(LockableMatrix<float> values)
         {
             int countX = values.size.x;
             int countY = values.size.y;
 
-            int min = int.MaxValue;
-            int max = int.MinValue;
+            float min = float.MaxValue;
+            float max = float.MinValue;
             for (int x = 0; x < countX; x++)
             {
                 for (int y = 0; y < countY; y++)
                 {
-                    int val = values[x, y];
+                    float val = values[x, y];
 
                     min = Math.Min(min, val);
                     max = Math.Max(max, val);
                 }
             }
-            return new Range2i(min, max);
+            return new Range2(min, max);
         }
 
-        public int Sample(Vector2i point)
+        public float Sample(Vector2i point)
         {
             if (point.x < 0 || point.y < 0 || point.x >= _image.size.x || point.y >= _image.size.y)
                 return 0;

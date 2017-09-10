@@ -5,19 +5,19 @@ using System;
 
 namespace Votyra.Images
 {
-    public class NoiseImage3b : IImage3b
+    public class NoiseImage3f : IImage3f
     {
         public Vector3 Offset { get; private set; }
 
         public Vector3 Scale { get; private set; }
 
-        public NoiseImage3b(Vector3 offset, Vector3 scale)
+        public NoiseImage3f(Vector3 offset, Vector3 scale)
         {
             Offset = offset;
             Scale = scale;
         }
 
-        public bool Sample(Vector3i point)
+        public float Sample(Vector3i point)
         {
             var pointf = (point / Scale + Offset);
 
@@ -27,7 +27,7 @@ namespace Votyra.Images
 
             float value = (valueXY + valueYZ + valueZX) / 3;
 
-            return value > 0.5f;
+            return value - 0.5f;
         }
     }
 }

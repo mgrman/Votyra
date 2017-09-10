@@ -37,36 +37,36 @@ namespace Votyra.ImageSamplers
         {
             return new Vector2i(pos.x + 2, pos.y + 2);
         }
-        public SampledData2i Sample(IImage2i image, Vector2i offset)
+        public SampledData2i Sample(IImage2f image, Vector2i offset)
         {
             //offset = offset + offset;
 
-            int x0y0 = image.Sample(offset);
-            int x0y1 = image.Sample(new Vector2i(offset.x, offset.y + 2));
-            int x1y0 = image.Sample(new Vector2i(offset.x + 2, offset.y));
-            int x1y1 = image.Sample(new Vector2i(offset.x + 2, offset.y + 2));
+            var x0y0 = image.Sample(offset);
+            var x0y1 = image.Sample(new Vector2i(offset.x, offset.y + 2));
+            var x1y0 = image.Sample(new Vector2i(offset.x + 2, offset.y));
+            var x1y1 = image.Sample(new Vector2i(offset.x + 2, offset.y + 2));
 
             return new SampledData2i(x0y0, x0y1, x1y0, x1y1);
         }
 
-        public int SampleX0Y0(IImage2i image, Vector2i pos)
+        public int SampleX0Y0(IImage2f image, Vector2i pos)
         {
-            return image.Sample(new Vector2i(pos.x + 0, pos.y + 0));
+            return image.Sample(new Vector2i(pos.x + 0, pos.y + 0)).FloorToInt();
         }
 
-        public int SampleX0Y1(IImage2i image, Vector2i pos)
+        public int SampleX0Y1(IImage2f image, Vector2i pos)
         {
-            return image.Sample(new Vector2i(pos.x + 0, pos.y + 2));
+            return image.Sample(new Vector2i(pos.x + 0, pos.y + 2)).FloorToInt();
         }
 
-        public int SampleX1Y0(IImage2i image, Vector2i pos)
+        public int SampleX1Y0(IImage2f image, Vector2i pos)
         {
-            return image.Sample(new Vector2i(pos.x + 2, pos.y + 0));
+            return image.Sample(new Vector2i(pos.x + 2, pos.y + 0)).FloorToInt();
         }
 
-        public int SampleX1Y1(IImage2i image, Vector2i pos)
+        public int SampleX1Y1(IImage2f image, Vector2i pos)
         {
-            return image.Sample(new Vector2i(pos.x + 2, pos.y + 2));
+            return image.Sample(new Vector2i(pos.x + 2, pos.y + 2)).FloorToInt();
         }
     }
 }

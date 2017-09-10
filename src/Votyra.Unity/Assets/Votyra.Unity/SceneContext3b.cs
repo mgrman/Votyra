@@ -31,7 +31,7 @@ namespace Votyra.Unity
             Matrix4x4 parentContainerWorldToLocalMatrix,
             IReadOnlySet<Vector3i> existingGroups,
             Vector3i cellInGroupCount,
-            IImage3b image,
+            IImage3f image,
             Rect3i? invalidatedArea_imageSpace,
             IImageSampler3b imageSampler,
             Func<GameObject> gameObjectFactory,
@@ -80,7 +80,7 @@ namespace Votyra.Unity
         public Matrix4x4 ParentContainerWorldToLocalMatrix { get; }
         public IReadOnlySet<Vector3i> ExistingGroups { get; }
         public Vector3i CellInGroupCount { get; }
-        public IImage3b Image { get; }
+        public IImage3f Image { get; }
         public Rect3i? InvalidatedArea_worldSpace { get; }
         public IImageSampler3b ImageSampler { get; }
         public Func<GameObject> GameObjectFactory { get; }

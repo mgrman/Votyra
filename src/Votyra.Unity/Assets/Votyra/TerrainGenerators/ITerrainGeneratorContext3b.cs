@@ -12,6 +12,6 @@ namespace Votyra.TerrainGenerators
     {
         Vector3i CellInGroupCount { get; }
         IImageSampler3b ImageSampler { get; }
-        IImage3b Image { get; }
+        IImage3f Image { get; }
     }
 }

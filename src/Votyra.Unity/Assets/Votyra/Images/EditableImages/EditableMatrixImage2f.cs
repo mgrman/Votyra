@@ -10,29 +10,30 @@ using Votyra.TerrainAlgorithms;
 
 namespace Votyra.Images.EditableImages
 {
-    internal class EditableMatrixImage2i : IImage2iProvider, IEditableImage2i
+    internal class EditableMatrixImage2f : IImage2fProvider, IEditableImage2f
     {
-        private Matrix<int> _editableMatrix;
+        private Matrix<float> _editableMatrix;
 
         private Rect2i? _invalidatedArea;
 
-        private readonly List<LockableMatrix<int>> _readonlyMatrices = new List<LockableMatrix<int>>();
+        private readonly List<LockableMatrix<float>> _readonlyMatrices = new List<LockableMatrix<float>>();
 
-        private MatrixImage2i _image = null;
+        private MatrixImage2f _image = null;
 
         private IImageConstraint2i _constraint;
+
         private IImageSampler2i _sampler;
 
-        public EditableMatrixImage2i(Vector2i size, IImageSampler2i sampler, IImageConstraint2i constraint)
+        public EditableMatrixImage2f(Vector2i size, IImageSampler2i sampler, IImageConstraint2i constraint)
         {
             _constraint = constraint;
             _sampler = sampler;
 
-            _editableMatrix = new Matrix<int>(size);
+            _editableMatrix = new Matrix<float>(size);
             FixImage(new Rect2i(0, 0, size.x, size.y), Direction.Unknown);
         }
 
-        public EditableMatrixImage2i(Texture2D texture, float scale, IImageSampler2i sampler, IImageConstraint2i constraint)
+        public EditableMatrixImage2f(Texture2D texture, float scale, IImageSampler2i sampler, IImageConstraint2i constraint)
         {
             _constraint = constraint;
             _sampler = sampler;
@@ -41,19 +42,19 @@ namespace Votyra.Images.EditableImages
             int height = texture.height;
 
             var size = new Vector2i(width, height);
-            _editableMatrix = new Matrix<int>(size);
+            _editableMatrix = new Matrix<float>(size);
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    _editableMatrix[x, y] = (int)(texture.GetPixel(x, y).grayscale * scale);
+                    _editableMatrix[x, y] = texture.GetPixel(x, y).grayscale * scale;
                 }
             }
             FixImage(new Rect2i(0, 0, size.x, size.y), Direction.Unknown);
         }
 
-        public IImage2i CreateImage()
+        public IImage2f CreateImage()
         {
             if (_invalidatedArea.HasValue)
             {
@@ -62,7 +63,7 @@ namespace Votyra.Images.EditableImages
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)
                 {
-                    readonlyMatrix = new LockableMatrix<int>(_editableMatrix.size);
+                    readonlyMatrix = new LockableMatrix<float>(_editableMatrix.size);
                     _readonlyMatrices.Add(readonlyMatrix);
                 }
 
@@ -80,13 +81,13 @@ namespace Votyra.Images.EditableImages
                 var oldImage = _image;
                 oldImage?.Dispose();
 
-                _image = new MatrixImage2i(readonlyMatrix, _invalidatedArea.Value);
+                _image = new MatrixImage2f(readonlyMatrix, _invalidatedArea.Value);
                 _invalidatedArea = null;
             }
             return _image;
         }
 
-        public IEditableImageAccessor2i RequestAccess(Rect2i area)
+        public IEditableImageAccessor2f RequestAccess(Rect2i area)
         {
             return new MatrixImageAccessor(this, area);
         }
@@ -227,20 +228,20 @@ namespace Votyra.Images.EditableImages
             // }
         }
 
-        private class EditableImageWrapper : IImage2i
+        private class EditableImageWrapper : IImage2f
         {
-            private readonly Matrix<int> _editableMatrix;
+            private readonly Matrix<float> _editableMatrix;
 
-            public EditableImageWrapper(Matrix<int> editableMatrix)
+            public EditableImageWrapper(Matrix<float> editableMatrix)
             {
                 _editableMatrix = editableMatrix;
             }
 
             public Rect2i InvalidatedArea => Rect2i.zero;
 
-            public Range2i RangeZ => Range2i.Zero;
+            public Range2 RangeZ => new Range2(0, 0);
 
-            public int Sample(Vector2i point)
+            public float Sample(Vector2i point)
             {
                 if (point.IsAsIndexContained(_editableMatrix.size))
                 {
@@ -253,17 +254,17 @@ namespace Votyra.Images.EditableImages
             }
         }
 
-        private class MatrixImageAccessor : IEditableImageAccessor2i
+        private class MatrixImageAccessor : IEditableImageAccessor2f
         {
             public Rect2i Area { get; }
 
-            public int this[Vector2i pos]
+            public float this[Vector2i pos]
             {
                 get { return _editableImage._editableMatrix[pos]; }
                 set { _editableImage._editableMatrix[pos] = value; }
             }
-            private readonly EditableMatrixImage2i _editableImage;
-            public MatrixImageAccessor(EditableMatrixImage2i editableImage, Rect2i area)
+            private readonly EditableMatrixImage2f _editableImage;
+            public MatrixImageAccessor(EditableMatrixImage2f editableImage, Rect2i area)
             {
                 _editableImage = editableImage;
                 Area = area;

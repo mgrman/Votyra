@@ -24,6 +24,13 @@ namespace Votyra.Models
             this.x1y0 = x1y0;
             this.x1y1 = x1y1;
         }
+        public SampledData2i(float x0y0, float x0y1, float x1y0, float x1y1)
+        {
+            this.x0y0 = x0y0.FloorToInt();
+            this.x0y1 = x0y1.FloorToInt();
+            this.x1y0 = x1y0.FloorToInt();
+            this.x1y1 = x1y1.FloorToInt();
+        }
 
         public SampledData2i GetRotated(int offset)
         {

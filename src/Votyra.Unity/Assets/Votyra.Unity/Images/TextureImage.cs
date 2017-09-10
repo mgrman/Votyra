@@ -5,7 +5,7 @@ using Votyra.Utils;
 
 namespace Votyra.Images
 {
-    public class TextureImage : IImage2i
+    public class TextureImage : IImage2f
     {
         public Texture2D Texture { get; private set; }
         public Bounds Bounds { get; private set; }
@@ -13,15 +13,15 @@ namespace Votyra.Images
         public TextureImage(Bounds bounds, Texture2D texture)
         {
             Bounds = bounds;
-            RangeZ = new Range2i((int)bounds.min.z, (int)bounds.max.z);
+            RangeZ = new Range2(bounds.min.z, bounds.max.z);
             Texture = texture;
         }
 
-        public Range2i RangeZ { get; private set; }
+        public Range2 RangeZ { get; private set; }
 
         public Rect2i InvalidatedArea => Rect2i.All;
 
-        public int Sample(Vector2i point)
+        public float Sample(Vector2i point)
         {
             //float xNorm = (float)point.x / Texture.width;
             //float x = xNorm * Bounds.extents.x - Bounds.min.x;
@@ -33,7 +33,7 @@ namespace Votyra.Images
             float y = yNorm;
 
             float zNorm = Texture.GetPixelBilinear(x, y).grayscale;
-            return (int)(zNorm * Bounds.size.z + Bounds.min.z);
+            return zNorm * Bounds.size.z + Bounds.min.z;
         }
     }
 }

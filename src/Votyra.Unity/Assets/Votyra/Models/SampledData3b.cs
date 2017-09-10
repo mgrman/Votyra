@@ -53,6 +53,8 @@ namespace Votyra.Models
 
         public readonly byte Data;
 
+        public readonly Vector3 Normal;
+
         public bool Data_x0y0z0 { get { return (Data & Mask_x0y0z0) != 0; } }
         public bool Data_x0y0z1 { get { return (Data & Mask_x0y0z1) != 0; } }
         public bool Data_x0y1z0 { get { return (Data & Mask_x0y1z0) != 0; } }
@@ -77,7 +79,7 @@ namespace Votyra.Models
             return (((i + (i >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
         }
 
-        public SampledData3b(bool x0y0z0, bool x0y0z1, bool x0y1z0, bool x0y1z1, bool x1y0z0, bool x1y0z1, bool x1y1z0, bool x1y1z1)
+        public SampledData3b(bool x0y0z0, bool x0y0z1, bool x0y1z0, bool x0y1z1, bool x1y0z0, bool x1y0z1, bool x1y1z0, bool x1y1z1, Vector3? normal)
         {
             Data = (byte)(
                 (x0y0z0 ? Mask_x0y0z0 : 0) |
@@ -89,23 +91,87 @@ namespace Votyra.Models
                 (x1y1z0 ? Mask_x1y1z0 : 0) |
                 (x1y1z1 ? Mask_x1y1z1 : 0));
 
-        }
-        public SampledData3b(int x0y0z0, int x0y0z1, int x0y1z0, int x0y1z1, int x1y0z0, int x1y0z1, int x1y1z0, int x1y1z1)
-        {
-            Data = (byte)(
-                x0y0z0 << MaskBitShift_x0y0z0 | //0
-                x0y0z1 << MaskBitShift_x0y0z1 | //1
-                x0y1z0 << MaskBitShift_x0y1z0 | //2
-                x0y1z1 << MaskBitShift_x0y1z1 | //3
-                x1y0z0 << MaskBitShift_x1y0z0 | //4
-                x1y0z1 << MaskBitShift_x1y0z1 | //5
-                x1y1z0 << MaskBitShift_x1y1z0 | //6
-                x1y1z1 << MaskBitShift_x1y1z1); //7
+            Normal = normal ?? ComputeNormal(x0y0z0 ? 1 : 0, x0y0z1 ? 1 : 0, x0y1z0 ? 1 : 0, x0y1z1 ? 1 : 0, x1y0z0 ? 1 : 0, x1y0z1 ? 1 : 0, x1y1z0 ? 1 : 0, x1y1z1 ? 1 : 0);
         }
 
-        public SampledData3b(byte data)
+        public SampledData3b(int x0y0z0, int x0y0z1, int x0y1z0, int x0y1z1, int x1y0z0, int x1y0z1, int x1y1z0, int x1y1z1, Vector3? normal)
+        {
+            Data = (byte)(
+                (x0y0z0 > 0 ? Mask_x0y0z0 : 0) |
+                (x0y0z1 > 0 ? Mask_x0y0z1 : 0) |
+                (x0y1z0 > 0 ? Mask_x0y1z0 : 0) |
+                (x0y1z1 > 0 ? Mask_x0y1z1 : 0) |
+                (x1y0z0 > 0 ? Mask_x1y0z0 : 0) |
+                (x1y0z1 > 0 ? Mask_x1y0z1 : 0) |
+                (x1y1z0 > 0 ? Mask_x1y1z0 : 0) |
+                (x1y1z1 > 0 ? Mask_x1y1z1 : 0));
+
+            Normal = normal ?? ComputeNormal(x0y0z0, x0y0z1, x0y1z0, x0y1z1, x1y0z0, x1y0z1, x1y1z0, x1y1z1);
+        }
+
+        public SampledData3b(float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1, float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1, Vector3? normal)
+        {
+            Data = (byte)(
+                (x0y0z0 > 0 ? Mask_x0y0z0 : 0) |
+                (x0y0z1 > 0 ? Mask_x0y0z1 : 0) |
+                (x0y1z0 > 0 ? Mask_x0y1z0 : 0) |
+                (x0y1z1 > 0 ? Mask_x0y1z1 : 0) |
+                (x1y0z0 > 0 ? Mask_x1y0z0 : 0) |
+                (x1y0z1 > 0 ? Mask_x1y0z1 : 0) |
+                (x1y1z0 > 0 ? Mask_x1y1z0 : 0) |
+                (x1y1z1 > 0 ? Mask_x1y1z1 : 0));
+
+            Normal = normal ?? ComputeNormal(x0y0z0, x0y0z1, x0y1z0, x0y1z1, x1y0z0, x1y0z1, x1y1z0, x1y1z1);
+        }
+        public SampledData3b(SampledData3b data, Vector3? normal)
+        {
+            Data = data.Data;
+
+            Normal = normal ?? Vector3.zero;
+            if (normal == null)
+            {
+                Normal = normal ?? ComputeNormal(Data_x0y0z0 ? 1 : 0, Data_x0y0z1 ? 1 : 0, Data_x0y1z0 ? 1 : 0, Data_x0y1z1 ? 1 : 0, Data_x1y0z0 ? 1 : 0, Data_x1y0z1 ? 1 : 0, Data_x1y1z0 ? 1 : 0, Data_x1y1z1 ? 1 : 0);
+            }
+        }
+
+        public SampledData3b(byte data, Vector3? normal)
         {
             Data = data;
+
+            Normal = normal ?? Vector3.zero;
+            if (normal == null)
+            {
+                Normal = normal ?? ComputeNormal(Data_x0y0z0 ? 1 : 0, Data_x0y0z1 ? 1 : 0, Data_x0y1z0 ? 1 : 0, Data_x0y1z1 ? 1 : 0, Data_x1y0z0 ? 1 : 0, Data_x1y0z1 ? 1 : 0, Data_x1y1z0 ? 1 : 0, Data_x1y1z1 ? 1 : 0);
+            }
+        }
+
+        private static Vector3 ComputeNormal(float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1, float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1)
+        {
+            var dx_y0z0 = x1y0z0 - x0y0z0;
+            var dx_y0z1 = x1y0z1 - x0y0z1;
+            var dx_y0 = (dx_y0z0 + dx_y0z1) / 2;
+            var dx_y1z0 = x1y1z0 - x0y1z0;
+            var dx_y1z1 = x1y1z1 - x0y1z1;
+            var dx_y1 = (dx_y1z0 + dx_y1z1) / 2;
+            var dx = (dx_y0 + dx_y1) / 2;
+
+            var dy_x0z0 = x0y1z0 - x0y0z0;
+            var dy_x0z1 = x0y1z1 - x0y0z1;
+            var dy_x0 = (dy_x0z0 + dy_x0z1) / 2;
+            var dy_x1z0 = x1y1z0 - x1y0z0;
+            var dy_x1z1 = x1y1z1 - x1y0z1;
+            var dy_x1 = (dy_x1z0 + dy_x1z1) / 2;
+            var dy = (dy_x0 + dy_x1) / 2;
+
+            var dz_x0y0 = x0y0z1 - x0y0z0;
+            var dz_x0y1 = x0y1z1 - x0y1z0;
+            var dz_x0 = (dz_x0y0 + dz_x0y1) / 2;
+            var dz_x1y0 = x1y0z1 - x1y0z0;
+            var dz_x1y1 = x1y1z1 - x1y1z0;
+            var dz_x1 = (dz_x1y0 + dz_x1y1) / 2;
+            var dz = (dz_x0 + dz_x1) / 2;
+
+            return -new Vector3(dx, dy, dz).normalized;
         }
 
         public bool this[Vector3i vec]
@@ -211,7 +277,8 @@ namespace Votyra.Models
 
                 this[matrix.MultiplyPoint(new Vector3(1, 1, 0))],
 
-                this[matrix.MultiplyPoint(new Vector3(1, 1, 1))]
+                this[matrix.MultiplyPoint(new Vector3(1, 1, 1))],
+                matrix.MultiplyVector(Normal)
             );
         }
 
@@ -279,12 +346,18 @@ namespace Votyra.Models
 
         public static bool operator ==(SampledData3b a, SampledData3b b)
         {
-            return a.Data == b.Data;
+            return a.Data == b.Data
+            && Mathf.Approximately(a.Normal.x, b.Normal.x)
+            && Mathf.Approximately(a.Normal.y, b.Normal.y)
+            && Mathf.Approximately(a.Normal.z, b.Normal.z);
         }
 
         public static bool operator !=(SampledData3b a, SampledData3b b)
         {
-            return a.Data != b.Data;
+            return a.Data != b.Data
+            || !Mathf.Approximately(a.Normal.x, b.Normal.x)
+            || !Mathf.Approximately(a.Normal.y, b.Normal.y)
+            || !Mathf.Approximately(a.Normal.z, b.Normal.z);
         }
 
         public bool EqualsRotationInvariant(SampledData3b that, out Matrix4x4 matrix)
@@ -294,9 +367,11 @@ namespace Votyra.Models
             return matrix != default(Matrix4x4);
         }
 
-        public static readonly IEqualityComparer<SampledData3b> RotationInvariantComparer = new RotationInvariantSampledData3bComparer();
+        public static readonly IEqualityComparer<SampledData3b> RotationInvariantNormallessComparer = new RotationInvariantNormallessSampledData3bComparer();
 
-        public class RotationInvariantSampledData3bComparer : IEqualityComparer<SampledData3b>
+        public static readonly IEqualityComparer<SampledData3b> NormallessComparer = new NormallessSampledData3bComparer();
+
+        public class RotationInvariantNormallessSampledData3bComparer : IEqualityComparer<SampledData3b>
         {
             public bool Equals(SampledData3b x, SampledData3b y)
             {
@@ -307,6 +382,18 @@ namespace Votyra.Models
             public int GetHashCode(SampledData3b obj)
             {
                 return obj.TrueCount;
+            }
+        }
+        public class NormallessSampledData3bComparer : IEqualityComparer<SampledData3b>
+        {
+            public bool Equals(SampledData3b x, SampledData3b y)
+            {
+                return x.Data == y.Data;
+            }
+
+            public int GetHashCode(SampledData3b obj)
+            {
+                return obj.Data;
             }
         }
 
@@ -324,7 +411,7 @@ namespace Votyra.Models
 
                             var rotatedThis = this.GetTransformed(finalMatrix);
                             // Debug.Log($"{this} rotated by {x},{y},{z} equals {rotatedThis}");
-                            if (rotatedThis == that)
+                            if (NormallessComparer.Equals(rotatedThis, that))
                             {
                                 yield return finalMatrix;
                             }
@@ -357,25 +444,25 @@ namespace Votyra.Models
             }
         }
 
-        public static IEnumerable<SampledData3b> GenerateAllValues()
-        {
-            return Enumerable.Range(0, byte.MaxValue + 1).Select(o => new SampledData3b((byte)o));
-        }
+        public static IEnumerable<SampledData3b> AllValues = Enumerable.Range(0, byte.MaxValue + 1)
+        .Select(o => new SampledData3b((byte)o, null))
+        .ToArray();
 
-        const string CubeRegex = @"[^01]*([01])[^01]*([01])[^01]*([01])[^01]*([01])[^01]*([01])[^01]*([01])[^01]*([01])[^01]*([01])[^01]*";
+
+        const string CubeRegex = @"[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*";
 
         public static SampledData3b ParseCube(string cube)
         {
             var match = Regex.Match(cube, CubeRegex);
-            bool val_x0y0z0 = int.Parse(match.Groups[7].Value) != 0;
-            bool val_x0y0z1 = int.Parse(match.Groups[3].Value) != 0;
-            bool val_x0y1z0 = int.Parse(match.Groups[5].Value) != 0;
-            bool val_x0y1z1 = int.Parse(match.Groups[1].Value) != 0;
-            bool val_x1y0z0 = int.Parse(match.Groups[8].Value) != 0;
-            bool val_x1y0z1 = int.Parse(match.Groups[4].Value) != 0;
-            bool val_x1y1z0 = int.Parse(match.Groups[6].Value) != 0;
-            bool val_x1y1z1 = int.Parse(match.Groups[2].Value) != 0;
-            return new SampledData3b(val_x0y0z0, val_x0y0z1, val_x0y1z0, val_x0y1z1, val_x1y0z0, val_x1y0z1, val_x1y1z0, val_x1y1z1);
+            float val_x0y0z0 = int.Parse(match.Groups[7].Value);
+            float val_x0y0z1 = int.Parse(match.Groups[3].Value);
+            float val_x0y1z0 = int.Parse(match.Groups[5].Value);
+            float val_x0y1z1 = int.Parse(match.Groups[1].Value);
+            float val_x1y0z0 = int.Parse(match.Groups[8].Value);
+            float val_x1y0z1 = int.Parse(match.Groups[4].Value);
+            float val_x1y1z0 = int.Parse(match.Groups[6].Value);
+            float val_x1y1z1 = int.Parse(match.Groups[2].Value);
+            return new SampledData3b(val_x0y0z0, val_x0y0z1, val_x0y1z0, val_x0y1z1, val_x1y0z0, val_x1y0z1, val_x1y1z0, val_x1y1z1, null);
         }
 
         public string ToCubeString()

@@ -42,7 +42,7 @@ namespace Votyra.Unity
 
         // public IEditableImage3i EditableImage { get { return _imageProvider as IEditableImage2i; } }
 
-        private IImage3b _image;
+        private IImage3f _image;
         // private IImage3iProvider _imageProvider;
         // private IImageConstraint2i _editableImageConstraint;
         private IImageSampler3b _sampler;
@@ -239,16 +239,16 @@ namespace Votyra.Unity
             int height = InitialTexture.height;
 
             var size = new Vector2i(width, height);
-            var matrix = new LockableMatrix<int>(size);
+            var matrix = new LockableMatrix<float>(size);
 
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    matrix[x, y] = (int)(InitialTexture.GetPixel(x, y).grayscale * InitialTextureScale);
+                    matrix[x, y] = (InitialTexture.GetPixel(x, y).grayscale * InitialTextureScale);
                 }
             }
-            _image = new UmbraImage3b(new MatrixImage2i(matrix, Rect2i.All));
+            _image = new UmbraImage3f(new MatrixImage2f(matrix, Rect2i.All));
         }
 
         private void DisposeService()

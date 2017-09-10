@@ -57,7 +57,7 @@ namespace Votyra.ImageSamplers
             return new Vector3i(pos.x * 2 + 2, pos.y * 2 + 2, pos.z * 2 + 2);
         }
 
-        public SampledData3b Sample(IImage3b image, Vector3i offset)
+        public SampledData3b Sample(IImage3f image, Vector3i offset)
         {
             offset = offset + offset;
             return new SampledData3b(image.Sample(new Vector3i(offset.x + 0, offset.y + 0, offset.z + 0)),
@@ -67,7 +67,8 @@ namespace Votyra.ImageSamplers
                 image.Sample(new Vector3i(offset.x + 2, offset.y + 0, offset.z + 0)),
                 image.Sample(new Vector3i(offset.x + 2, offset.y + 0, offset.z + 2)),
                 image.Sample(new Vector3i(offset.x + 2, offset.y + 2, offset.z + 0)),
-                image.Sample(new Vector3i(offset.x + 2, offset.y + 2, offset.z + 2)));
+                image.Sample(new Vector3i(offset.x + 2, offset.y + 2, offset.z + 2)),
+                null);
         }
     }
 }

@@ -6,6 +6,8 @@ namespace Votyra.Utils
 {
     public static class Vector3Utils
     {
+        public static Vector3 Half { get { return new Vector3(0.5f, 0.5f, 0.5f); } }
+
         public static Vector3i ToVector3i(this Vector3 vec)
         {
             return new Vector3i(vec);

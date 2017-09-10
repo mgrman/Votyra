@@ -13,6 +13,6 @@ namespace Votyra.TerrainGenerators
         Vector2i CellInGroupCount { get; }
         Bounds GroupBounds { get; }
         IImageSampler2i ImageSampler { get; }
-        IImage2i Image { get; }
+        IImage2f Image { get; }
     }
 }

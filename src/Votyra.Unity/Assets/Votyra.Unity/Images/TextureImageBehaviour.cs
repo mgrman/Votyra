@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Votyra.Unity.Images
 {
-    internal class TextureImageBehaviour : MonoBehaviour, IImage2iProvider
+    internal class TextureImageBehaviour : MonoBehaviour, IImage2fProvider
     {
         private Bounds _oldBounds = new Bounds();
         public Bounds Bounds = new Bounds();
@@ -13,7 +13,7 @@ namespace Votyra.Unity.Images
 
         private TextureImage _image = null;
 
-        public IImage2i CreateImage()
+        public IImage2f CreateImage()
         {
 
             return _image;

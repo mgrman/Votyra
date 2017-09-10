@@ -6,7 +6,7 @@ namespace Votyra.ImageSamplers
 {
     public interface IImageSampler3b
     {
-        SampledData3b Sample(IImage3b image, Vector3i offset);
+        SampledData3b Sample(IImage3f image, Vector3i offset);
 
 
         Vector3 WorldToImage(Vector3 pos);

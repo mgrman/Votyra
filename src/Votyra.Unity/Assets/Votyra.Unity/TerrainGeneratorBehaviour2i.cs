@@ -41,9 +41,9 @@ namespace Votyra.Unity
         public Texture2D InitialTexture = null;
         public float InitialTextureScale = 1;
 
-        public IEditableImage2i EditableImage { get { return _imageProvider as IEditableImage2i; } }
+        public IEditableImage2f EditableImage { get { return _imageProvider as IEditableImage2f; } }
 
-        private IImage2iProvider _imageProvider;
+        private IImage2fProvider _imageProvider;
         private IImageConstraint2i _editableImageConstraint;
         private IImageSampler2i _sampler;
         private IGroupSelector2i _groupsSelector;
@@ -226,7 +226,7 @@ namespace Votyra.Unity
             _terrainGenerator = new TerrainGenerator2i<TerrainMesher2i>();
             _meshUpdater = new TerrainMeshUpdater2i();
             _groupsSelector = new GroupsByCameraVisibilitySelector2i();
-            _imageProvider = new EditableMatrixImage2i(InitialTexture, InitialTextureScale, _sampler, _editableImageConstraint);
+            _imageProvider = new EditableMatrixImage2f(InitialTexture, InitialTextureScale, _sampler, _editableImageConstraint);
         }
 
         private void DisposeService()

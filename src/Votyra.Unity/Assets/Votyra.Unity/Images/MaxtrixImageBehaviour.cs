@@ -8,20 +8,20 @@ using System;
 
 namespace Votyra.Unity.Images
 {
-    internal class MaxtrixImageBehaviour : MonoBehaviour, IImage2iProvider
+    internal class MaxtrixImageBehaviour : MonoBehaviour, IImage2fProvider
     {
         public Texture2D InitialValueTexture = null;
         public float InitialValueScale = 1;
 
-        private Matrix<int> _editableMatrix;
+        private Matrix<float> _editableMatrix;
 
         private Rect2i? _invalidatedArea;
 
-        private readonly List<LockableMatrix<int>> _readonlyMatrices = new List<LockableMatrix<int>>();
+        private readonly List<LockableMatrix<float>> _readonlyMatrices = new List<LockableMatrix<float>>();
 
-        private MatrixImage2i _image = null;
+        private MatrixImage2f _image = null;
 
-        public IImage2i CreateImage()
+        public IImage2f CreateImage()
         {
             if (_invalidatedArea.HasValue)
             {
@@ -30,7 +30,7 @@ namespace Votyra.Unity.Images
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)
                 {
-                    readonlyMatrix = new LockableMatrix<int>(_editableMatrix.size);
+                    readonlyMatrix = new LockableMatrix<float>(_editableMatrix.size);
                     _readonlyMatrices.Add(readonlyMatrix);
                 }
 
@@ -48,7 +48,7 @@ namespace Votyra.Unity.Images
                 var oldImage = _image;
                 oldImage?.Dispose();
 
-                _image = new MatrixImage2i(readonlyMatrix, _invalidatedArea.Value);
+                _image = new MatrixImage2f(readonlyMatrix, _invalidatedArea.Value);
                 _invalidatedArea = null;
             }
             return _image;
@@ -59,7 +59,7 @@ namespace Votyra.Unity.Images
             if (InitialValueTexture == null)
             {
                 var size = new Vector2i(10, 10);
-                _editableMatrix = new Matrix<int>(size);
+                _editableMatrix = new Matrix<float>(size);
                 _invalidatedArea = new Rect2i(0, 0, 10, 10);
             }
             else
@@ -70,7 +70,7 @@ namespace Votyra.Unity.Images
                 int height = texture.height.FloorTo2();
 
                 var size = new Vector2i(width, height);
-                _editableMatrix = new Matrix<int>(size);
+                _editableMatrix = new Matrix<float>(size);
 
                 for (int x = 0; x < width; x++)
                 {
@@ -111,8 +111,8 @@ namespace Votyra.Unity.Images
 
             const int maxDiference = 1;
 
-            Func<int, int, int> op;
-            Func<int, int> getLimit;
+            Func<float, float, float> op;
+            Func<float, float> getLimit;
             if (direction == Direction.Up)
             {
                 op = Math.Max;
@@ -128,12 +128,12 @@ namespace Votyra.Unity.Images
             {
                 for (int iy = area.yMin.FloorTo2(); iy < area.yMax.CeilTo2(); iy += 2)
                 {
-                    int x0y0 = _editableMatrix[ix + 0, iy + 0];
-                    int x0y1 = _editableMatrix[ix + 0, iy + 1];
-                    int x1y0 = _editableMatrix[ix + 1, iy + 0];
-                    int x1y1 = _editableMatrix[ix + 1, iy + 1];
+                    float x0y0 = _editableMatrix[ix + 0, iy + 0];
+                    float x0y1 = _editableMatrix[ix + 0, iy + 1];
+                    float x1y0 = _editableMatrix[ix + 1, iy + 0];
+                    float x1y1 = _editableMatrix[ix + 1, iy + 1];
 
-                    int limit = getLimit(op(op(op(x0y0, x0y1), x1y0), x1y1));
+                    float limit = getLimit(op(op(op(x0y0, x0y1), x1y0), x1y1));
 
                     _editableMatrix[ix + 0, iy + 0] = op(_editableMatrix[ix + 0, iy + 0], limit);
                     _editableMatrix[ix + 0, iy + 1] = op(_editableMatrix[ix + 0, iy + 1], limit);
@@ -147,11 +147,11 @@ namespace Votyra.Unity.Images
         public class MatrixImageAccessor : IDisposable
         {
             private readonly MaxtrixImageBehaviour _behaviour;
-            private readonly Matrix<int> _editableMatrix;
+            private readonly Matrix<float> _editableMatrix;
 
             public Rect2i Area { get; }
 
-            private int _changeCounter;
+            private float _changeCounter;
 
             public MatrixImageAccessor(MaxtrixImageBehaviour behaviour, Rect2i area)
             {
@@ -160,13 +160,13 @@ namespace Votyra.Unity.Images
                 Area = area;
             }
 
-            public int this[Vector2i pos]
+            public float this[Vector2i pos]
             {
                 get { return GetValue(pos); }
                 set { SetValue(pos, value); }
             }
 
-            public int GetValue(Vector2i pos)
+            public float GetValue(Vector2i pos)
             {
                 if (!Area.Contains(pos))
                 {
@@ -179,7 +179,7 @@ namespace Votyra.Unity.Images
                 return _editableMatrix[pos];
             }
 
-            public void SetByOffsetValue(Vector2i pos, int value)
+            public void SetByOffsetValue(Vector2i pos, float value)
             {
                 if (!Area.Contains(pos))
                 {
@@ -190,7 +190,7 @@ namespace Votyra.Unity.Images
                 _editableMatrix[pos] = _editableMatrix[pos] + value;
             }
 
-            public void SetValue(Vector2i pos, int value)
+            public void SetValue(Vector2i pos, float value)
             {
                 if (!Area.Contains(pos))
                 {

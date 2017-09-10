@@ -3,8 +3,8 @@ using Votyra.Models;
 
 namespace Votyra.Images
 {
-    public interface IImage3b
+    public interface IImage3f
     {
-        bool Sample(Vector3i point);
+        float Sample(Vector3i point);
     }
 }

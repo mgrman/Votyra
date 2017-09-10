@@ -19,7 +19,7 @@ namespace Votyra.Unity.Behaviours
 
         private TerrainGeneratorBehaviour2i _behaviour;
 
-        private int? _centerValueToReuse;
+        private float? _centerValueToReuse;
         void Start()
         {
             _behaviour = GetComponent<TerrainGeneratorBehaviour2i>();
@@ -55,7 +55,7 @@ namespace Votyra.Unity.Behaviours
 
                 using (var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
                 {
-                    int centerValue;
+                    float centerValue;
                     if (_centerValueToReuse.HasValue)
                     {
                         centerValue = _centerValueToReuse.Value;

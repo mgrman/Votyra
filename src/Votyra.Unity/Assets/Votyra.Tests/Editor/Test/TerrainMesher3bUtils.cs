@@ -45,11 +45,11 @@ namespace Votyra.Tests
         public static List<Triangle3i> Evaluate(string cubeString)
         {
             var sampler = new SimpleImageSampler3b();
-            var imageMock = new Mock<IImage3b>();
+            var imageMock = new Mock<IImage3f>();
             var cube = SampledData3b.ParseCube(cubeString);
             //            Debug.Log(cube);
             imageMock.Setup(o => o.Sample(It.IsAny<Vector3i>()))
-                .Returns<Vector3i>((pos) => cube[pos]);
+                .Returns<Vector3i>((pos) => cube[pos] ? 1f : 0f);
 
             var triangles = new List<Triangle3i>();
             var meshMock = new Mock<ITerrainMesh>();

@@ -31,7 +31,7 @@ namespace Votyra.Unity
             Matrix4x4 parentContainerWorldToLocalMatrix,
             IReadOnlySet<Vector2i> existingGroups,
             Vector2i cellInGroupCount,
-            IImage2i image,
+            IImage2f image,
             Rect2i invalidatedArea_imageSpace,
             IImageSampler2i imageSampler,
             Func<GameObject> gameObjectFactory,
@@ -74,10 +74,10 @@ namespace Votyra.Unity
         public Matrix4x4 CameraLocalToWorldMatrix { get; }
         public Matrix4x4 ParentContainerWorldToLocalMatrix { get; }
         public Bounds GroupBounds { get; }
-        public Range2i RangeZ { get; }
+        public Range2 RangeZ { get; }
         public IReadOnlySet<Vector2i> ExistingGroups { get; }
         public Vector2i CellInGroupCount { get; }
-        public IImage2i Image { get; }
+        public IImage2f Image { get; }
         public Rect2i InvalidatedArea_worldSpace { get; }
         public IImageSampler2i ImageSampler { get; }
         public Func<GameObject> GameObjectFactory { get; }

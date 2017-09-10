@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Votyra.Unity.Images
 {
-    internal class CombineImageBehaviour : MonoBehaviour, IImage2iProvider
+    internal class CombineImageBehaviour : MonoBehaviour, IImage2fProvider
     {
         private MonoBehaviour _oldImageA;
         public MonoBehaviour ImageA = null;
@@ -11,12 +11,12 @@ namespace Votyra.Unity.Images
         private MonoBehaviour _oldImageB = null;
         public MonoBehaviour ImageB = null;
 
-        private CombineImage2i.Operations _oldOperation = CombineImage2i.Operations.Add;
-        public CombineImage2i.Operations Operation = CombineImage2i.Operations.Add;
+        private CombineImage2f.Operations _oldOperation = CombineImage2f.Operations.Add;
+        public CombineImage2f.Operations Operation = CombineImage2f.Operations.Add;
 
 
-        private CombineImage2i _image = null;
-        public IImage2i CreateImage()
+        private CombineImage2f _image = null;
+        public IImage2f CreateImage()
         {
 
             SetImage();
@@ -57,7 +57,7 @@ namespace Votyra.Unity.Images
 
         private void SetImage()
         {
-            _image = new CombineImage2i((ImageA as IImage2iProvider).CreateImage(), (ImageB as IImage2iProvider).CreateImage(), Operation);
+            _image = new CombineImage2f((ImageA as IImage2fProvider).CreateImage(), (ImageB as IImage2fProvider).CreateImage(), Operation);
         }
     }
 }
