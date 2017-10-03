@@ -4,12 +4,12 @@ using System.Text.RegularExpressions;
 using Moq;
 using NUnit.Framework;
 using UnityEngine;
-using Votyra.Images;
-using Votyra.ImageSamplers;
-using Votyra.Models;
-using Votyra.TerrainGenerators.TerrainMeshers;
-using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
-using Votyra.Unity.Assets.Votyra.Pooling;
+using Votyra.Core.Images;
+using Votyra.Core.Models;
+using Votyra.Core.Pooling;
+using Votyra.Core.TerrainMeshes;
+using Votyra.Cubical.ImageSamplers;
+using Votyra.Cubical.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 {

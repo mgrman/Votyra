@@ -1,9 +1,10 @@
 using System;
-using Votyra.Models;
-using UnityEngine;
-using Votyra.Utils;
 
-namespace Votyra.Unity.Images
+using UnityEngine;
+using Votyra.Core.Images;
+using Votyra.Core.Models;
+
+namespace Votyra.Core.Images
 {
     public class TextureImage : IImage2f
     {

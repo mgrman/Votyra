@@ -1,12 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Logging;
-using Votyra.Models;
-using Votyra.Profiling;
-using Votyra.Utils;
-using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
-using Votyra.Unity.Assets.Votyra.Pooling;
-using Votyra.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.Models;
+using Votyra.Core.Pooling;
+using Votyra.Core.TerrainMeshes;
+using Votyra.Cubical.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Cubical.TerrainGenerators
 {

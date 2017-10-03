@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Votyra.Unity.Utils
+namespace Votyra.Core.Utils
 {
     public static class TransformUtils
     {

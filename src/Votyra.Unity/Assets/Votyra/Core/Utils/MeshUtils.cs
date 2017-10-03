@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Models;
+using Votyra.Core.Models;
 
-namespace Votyra.Unity.Utils
+namespace Votyra.Core.Utils
 {
     public static class MeshUtils
     {

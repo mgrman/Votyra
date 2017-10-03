@@ -1,12 +1,15 @@
 using System.Collections.Generic;
-using Votyra.Profiling;
-using Votyra.Unity.Utils;
+
+
 using UnityEngine;
-using Votyra.Models;
+
 using System.Linq;
-using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
+
 using System;
-using Votyra.Unity.Assets.Votyra.Pooling;
+using Votyra.Core.Models;
+using Votyra.Core.TerrainMeshes;
+using Votyra.Core.Utils;
+using Votyra.Core.Pooling;
 
 namespace Votyra.Cubical.MeshUpdaters
 {

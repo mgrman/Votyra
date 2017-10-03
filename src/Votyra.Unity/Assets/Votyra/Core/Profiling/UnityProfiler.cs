@@ -1,8 +1,9 @@
 using System.Threading;
-using Votyra.Profiling;
-using UnityEngine.Profiling;
 
-namespace Votyra.Unity.Profiling
+using UnityEngine.Profiling;
+using Votyra.Core.Profiling;
+
+namespace Votyra.Core.Profiling
 {
     public struct UnityProfiler : IProfiler
     {

@@ -1,8 +1,11 @@
 using System;
-using Votyra.Models;
-using Votyra.Utils;
-using Votyra.Images;
+
+
+
 using UnityEngine;
+using Votyra.Core.Images;
+using Votyra.Core.Models;
+using Votyra.Core.Utils;
 
 namespace Votyra.Plannar.ImageSamplers
 {

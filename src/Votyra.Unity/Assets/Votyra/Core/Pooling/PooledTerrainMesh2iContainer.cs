@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Models;
-using Votyra.Models.ObjectPool;
-using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
+using Votyra.Core.Models;
+using Votyra.Core.Models.ObjectPool;
+using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {

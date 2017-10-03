@@ -1,7 +1,8 @@
-using Votyra.Images;
-using UnityEngine;
 
-namespace Votyra.Unity.Images
+using UnityEngine;
+using Votyra.Core.Images;
+
+namespace Votyra.Core.Images
 {
     internal class TextureImageBehaviour : MonoBehaviour, IImage2fProvider
     {

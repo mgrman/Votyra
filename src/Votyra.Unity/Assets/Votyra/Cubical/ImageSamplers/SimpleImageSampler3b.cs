@@ -1,8 +1,10 @@
-using Votyra.Models;
-using Votyra.Utils;
-using Votyra.Images;
+
+
+
 using UnityEngine;
 using System;
+using Votyra.Core.Models;
+using Votyra.Core.Images;
 
 namespace Votyra.Cubical.ImageSamplers
 {

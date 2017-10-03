@@ -1,13 +1,17 @@
-using Votyra.Models;
-using Votyra.Utils;
-using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
+
+
+
 using UnityEngine;
-using Votyra.Unity.Assets.Votyra.Pooling;
+
 using System.Linq;
 using System.Collections.Generic;
 using System;
-using Votyra.ImageSamplers;
-using Votyra.Images;
+using Votyra.Cubical.ImageSamplers;
+using Votyra.Core.Images;
+using Votyra.Core.Models;
+using Votyra.Core.Pooling;
+using Votyra.Core.TerrainMeshes;
+using Votyra.Core.Utils;
 
 namespace Votyra.Cubical.TerrainGenerators.TerrainMeshers
 {

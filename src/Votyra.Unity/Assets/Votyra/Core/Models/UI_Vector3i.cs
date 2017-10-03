@@ -1,6 +1,6 @@
 using System;
 
-namespace Votyra.Unity.Models
+namespace Votyra.Core.Models
 {
     [Serializable]
     public struct UI_Vector3i

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
-using Votyra.Profiling;
-using Votyra.Logging;
+using Votyra.Core.Logging;
+using Votyra.Core.Profiling;
 
 namespace Votyra.Core
 {

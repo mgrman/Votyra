@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Models;
-using Votyra.Unity.Assets.Votyra.Pooling;
+
+
 using System.Linq;
+using Votyra.Core.Pooling;
+using Votyra.Core.Models;
 
 namespace Votyra.Cubical.GroupSelectors
 {

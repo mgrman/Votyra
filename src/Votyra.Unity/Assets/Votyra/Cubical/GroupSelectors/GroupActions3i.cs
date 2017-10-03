@@ -1,6 +1,6 @@
 using System;
-using Votyra.Models;
-using Votyra.Unity.Assets.Votyra.Pooling;
+using Votyra.Core.Models;
+using Votyra.Core.Pooling;
 
 namespace Votyra.Cubical.GroupSelectors
 {

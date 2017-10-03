@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
-using Votyra.Models;
-using Votyra.Images;
-using Votyra.Utils;
+
+
+
 using UnityEngine;
 using System;
+using Votyra.Core.Models;
+using Votyra.Core.Images;
+using Votyra.Core.Utils;
 
-namespace Votyra.Unity.Images
+namespace Votyra.Core.Images
 {
     internal class MaxtrixImageBehaviour : MonoBehaviour, IImage2fProvider
     {

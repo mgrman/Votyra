@@ -1,4 +1,6 @@
-using Votyra.Models;
+
+
+using Votyra.Core.Models;
 
 namespace Votyra.Core.Utils
 {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Votyra.Models;
-using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
+using Votyra.Core.Models;
+using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Plannar.MeshUpdaters
 {

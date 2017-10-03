@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Votyra.Utils;
+
 using UnityEngine;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {

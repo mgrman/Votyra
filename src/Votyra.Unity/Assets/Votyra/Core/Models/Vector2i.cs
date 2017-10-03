@@ -1,6 +1,7 @@
 using System;
-using Votyra.Utils;
+
 using UnityEngine;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {

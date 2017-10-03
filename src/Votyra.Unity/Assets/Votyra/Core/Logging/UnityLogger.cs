@@ -2,9 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-using Votyra.Logging;
+using Votyra.Core.Logging;
 
-namespace Votyra.Unity.Logging
+namespace Votyra.Core.Logging
 {
     public class UnityLogger : IThreadSafeLogger
     {

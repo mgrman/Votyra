@@ -1,12 +1,13 @@
 using System;
-using Votyra.Models;
+
 using UnityEngine;
-using Votyra.Utils;
+using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
     public class UmbraImage3f : IImage3f
     {
+
         public IImage2f Image { get; private set; }
 
 

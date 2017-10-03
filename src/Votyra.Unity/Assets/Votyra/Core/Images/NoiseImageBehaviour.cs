@@ -1,7 +1,7 @@
-﻿// using Votyra.Images;
+﻿// u
 // using UnityEngine;
 
-// namespace Votyra.Unity.Images
+// namespace Votyra.Core.Images
 // {
 //     internal class NoiseImageBehaviour : MonoBehaviour, IImage2iProvider
 //     {

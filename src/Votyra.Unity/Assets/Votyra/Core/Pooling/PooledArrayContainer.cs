@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Votyra.Models.ObjectPool;
+using Votyra.Core.Models.ObjectPool;
 
 namespace Votyra.Core.Pooling
 {

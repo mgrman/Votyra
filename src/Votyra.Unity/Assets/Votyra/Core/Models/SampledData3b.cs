@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Votyra.Utils;
+
 using UnityEngine;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
@@ -89,7 +90,7 @@ namespace Votyra.Core.Models
                 (x1y1z0 ? Mask_x1y1z0 : 0) |
                 (x1y1z1 ? Mask_x1y1z1 : 0));
 
-         }
+        }
 
         public SampledData3b(int x0y0z0, int x0y0z1, int x0y1z0, int x0y1z1, int x1y0z0, int x1y0z1, int x1y1z0, int x1y1z1)
         {

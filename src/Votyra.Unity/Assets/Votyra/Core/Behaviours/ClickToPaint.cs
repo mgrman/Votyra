@@ -1,10 +1,9 @@
 using UnityEngine;
 using System.Collections;
-using Votyra.Models;
-using Votyra.Unity.Images;
-using Votyra.Utils;
+using Votyra.Core.Models;
+using Votyra.Plannar;
 
-namespace Votyra.Unity.Behaviours
+namespace Votyra.Core.Behaviours
 {
     public class ClickToPaint : MonoBehaviour
     {

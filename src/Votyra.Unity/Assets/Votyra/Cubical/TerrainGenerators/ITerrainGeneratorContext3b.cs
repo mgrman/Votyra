@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Models;
-using Votyra.Images;
-using Votyra.ImageSamplers;
-using Votyra.TerrainAlgorithms;
+using Votyra.Core;
+using Votyra.Core.Images;
+using Votyra.Core.Models;
+using Votyra.Cubical.ImageSamplers;
 
 namespace Votyra.Cubical.TerrainGenerators
 {

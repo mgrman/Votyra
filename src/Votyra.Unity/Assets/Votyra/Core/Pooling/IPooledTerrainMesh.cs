@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
+using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {

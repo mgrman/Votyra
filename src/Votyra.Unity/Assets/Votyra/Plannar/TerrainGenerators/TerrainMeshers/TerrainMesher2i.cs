@@ -1,8 +1,10 @@
-using Votyra.Models;
-using Votyra.Utils;
-using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
+
+
+
 using UnityEngine;
-using Votyra.Unity.Assets.Votyra.Pooling;
+using Votyra.Core.Models;
+using Votyra.Core.Pooling;
+using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Plannar.TerrainGenerators.TerrainMeshers
 {

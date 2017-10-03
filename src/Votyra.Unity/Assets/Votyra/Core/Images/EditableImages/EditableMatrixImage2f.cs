@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
-using Votyra.Models;
-using Votyra.Images;
-using Votyra.Utils;
+
+
+
 using UnityEngine;
 using System;
-using Votyra.ImageSamplers;
-using Votyra.TerrainAlgorithms;
+using Votyra.Core.Models;
+using Votyra.Core.Images.EditableImages.Constraints;
+using Votyra.Plannar.ImageSamplers;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.Images.EditableImages
 {

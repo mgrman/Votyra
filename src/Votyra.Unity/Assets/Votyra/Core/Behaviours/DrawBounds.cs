@@ -1,7 +1,8 @@
-using Votyra.Unity.Utils;
-using UnityEngine;
 
-namespace Votyra.Unity.Behaviours
+using UnityEngine;
+using Votyra.Core.Utils;
+
+namespace Votyra.Core.Behaviours
 {
     public class DrawBounds : MonoBehaviour
     {

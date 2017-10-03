@@ -1,18 +1,16 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Models;
-using Votyra.Utils;
-using Votyra.Images;
-using Votyra.ImageSamplers;
-using Votyra.TerrainAlgorithms;
-using Votyra.TerrainGenerators;
-using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
-using Votyra.Unity.Assets.Votyra.Pooling;
-using Votyra.Unity.GroupSelectors;
-using Votyra.Unity.MeshUpdaters;
-using Votyra.Profiling;
-using Votyra.Logging;
+using Votyra.Core.Images;
+using Votyra.Core.Logging;
+using Votyra.Core.Models;
+using Votyra.Core.Pooling;
+using Votyra.Core.Profiling;
+using Votyra.Core.Utils;
+using Votyra.Plannar.GroupSelectors;
+using Votyra.Plannar.ImageSamplers;
+using Votyra.Plannar.MeshUpdaters;
+using Votyra.Plannar.TerrainGenerators;
 
 namespace Votyra.Plannar
 {
