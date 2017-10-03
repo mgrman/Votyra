@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Logging;
 using Votyra.Models;
@@ -8,7 +8,7 @@ using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using Votyra.TerrainGenerators.TerrainMeshers;
 
-namespace Votyra.TerrainGenerators
+namespace Votyra.Plannar.TerrainGenerators
 {
     public class TerrainGenerator2i<TMesher> : ITerrainGenerator2i
         where TMesher : ITerrainMesher2i, new()

@@ -1,9 +1,9 @@
-﻿using Votyra.Models;
+using Votyra.Models;
 using Votyra.Utils;
 using UnityEngine;
 using System;
 
-namespace Votyra.Images
+namespace Votyra.Core.Images
 {
     public class NoiseImage2f : IImage2f
     {

@@ -1,4 +1,4 @@
-﻿namespace Votyra.Models.ObjectPool
+namespace Votyra.Core.Models.ObjectPool
 {
     public interface IObjectDictionaryPool<T, TKey>
 where TKey : struct

@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using Votyra.Utils;
 using UnityEngine;
 
-namespace Votyra.Models
+namespace Votyra.Core.Models
 {
     public struct Vector2i : IEquatable<Vector2i>
     {

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Votyra.Models;
 using Votyra.Images;
@@ -8,7 +8,7 @@ using System;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
 
-namespace Votyra.Images.EditableImages
+namespace Votyra.Core.Images.EditableImages
 {
     internal class EditableMatrixImage2f : IImage2fProvider, IEditableImage2f
     {

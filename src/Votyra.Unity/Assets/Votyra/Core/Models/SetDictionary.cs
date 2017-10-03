@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Votyra.Models
+namespace Votyra.Core.Models
 {
     public class SetDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IReadOnlySet<TKey>
     {

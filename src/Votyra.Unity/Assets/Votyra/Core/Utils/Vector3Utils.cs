@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Models;
 
-namespace Votyra.Utils
+namespace Votyra.Core.Utils
 {
     public static class Vector3Utils
     {

@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using UnityEngine;
 
-namespace Votyra.Utils
+namespace Votyra.Core.Utils
 {
     public static class FloatUtils
     {

@@ -1,4 +1,4 @@
-﻿using Votyra.Models;
+using Votyra.Models;
 using Votyra.Utils;
 using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using UnityEngine;
@@ -9,7 +9,7 @@ using System;
 using Votyra.ImageSamplers;
 using Votyra.Images;
 
-namespace Votyra.TerrainGenerators.TerrainMeshers
+namespace Votyra.Cubical.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher3b : ITerrainMesher3b
     {

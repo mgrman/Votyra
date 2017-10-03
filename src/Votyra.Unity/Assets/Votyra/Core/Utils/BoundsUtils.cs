@@ -1,7 +1,7 @@
-﻿using Votyra.Models;
+using Votyra.Models;
 using UnityEngine;
 
-namespace Votyra.Utils
+namespace Votyra.Core.Utils
 {
     public static class BoundsUtils
     {

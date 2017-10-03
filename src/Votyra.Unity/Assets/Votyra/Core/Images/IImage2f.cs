@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Votyra.Models;
 
-namespace Votyra.Images
+namespace Votyra.Core.Images
 {
     public interface IImage2f
     {

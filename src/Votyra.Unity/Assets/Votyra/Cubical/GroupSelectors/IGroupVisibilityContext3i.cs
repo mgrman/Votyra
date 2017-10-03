@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Votyra.Models;
 using Votyra.Images;
 using Votyra.Unity.Images;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
-namespace Votyra.Unity.GroupSelectors
+namespace Votyra.Cubical.GroupSelectors
 {
     public interface IGroupVisibilityContext3i : IContext
     {

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Votyra.Profiling;
 using Votyra.Unity.Utils;
 using UnityEngine;
@@ -8,7 +8,7 @@ using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using System;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
-namespace Votyra.Unity.MeshUpdaters
+namespace Votyra.Cubical.MeshUpdaters
 {
     public class TerrainMeshUpdater3i : IMeshUpdater3i
     {

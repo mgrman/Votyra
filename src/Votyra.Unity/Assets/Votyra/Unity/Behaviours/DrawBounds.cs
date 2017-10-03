@@ -1,4 +1,4 @@
-﻿using Votyra.Unity.Utils;
+using Votyra.Unity.Utils;
 using UnityEngine;
 
 namespace Votyra.Unity.Behaviours

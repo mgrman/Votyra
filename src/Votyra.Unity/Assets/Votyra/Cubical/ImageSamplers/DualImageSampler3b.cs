@@ -1,10 +1,10 @@
-﻿using Votyra.Models;
+using Votyra.Models;
 using Votyra.Utils;
 using Votyra.Images;
 using UnityEngine;
 using System;
 
-namespace Votyra.ImageSamplers
+namespace Votyra.Cubical.ImageSamplers
 {
     public class DualImageSampler3b : IImageSampler3b
     {

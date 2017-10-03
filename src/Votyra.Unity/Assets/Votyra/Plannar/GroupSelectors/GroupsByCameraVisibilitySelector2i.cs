@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Models;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using System.Linq;
 
-namespace Votyra.Unity.GroupSelectors
+namespace Votyra.Plannar.GroupSelectors
 {
     public class GroupsByCameraVisibilitySelector2i : IGroupSelector2i
     {

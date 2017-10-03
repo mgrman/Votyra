@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Votyra.Profiling
+namespace Votyra.Core.Profiling
 {
     public interface IProfiler : IDisposable
     {

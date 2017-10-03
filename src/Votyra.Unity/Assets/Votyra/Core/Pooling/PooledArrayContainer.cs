@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Votyra.Models.ObjectPool;
 
-namespace Votyra.Unity.Assets.Votyra.Pooling
+namespace Votyra.Core.Pooling
 {
     public class PooledArrayContainer<T> : IReadOnlyPooledList<T>
     {

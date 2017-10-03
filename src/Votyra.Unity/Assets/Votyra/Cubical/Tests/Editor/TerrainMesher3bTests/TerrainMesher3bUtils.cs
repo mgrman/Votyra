@@ -11,7 +11,7 @@ using Votyra.TerrainGenerators.TerrainMeshers;
 using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
-namespace Votyra.Tests
+namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 {
     public static class TerrainMesher3bUtils
     {

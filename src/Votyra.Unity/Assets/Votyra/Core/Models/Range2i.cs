@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Votyra.Models
+namespace Votyra.Core.Models
 {
     public struct Range2i : IEquatable<Range2i>
     {

@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Votyra.Utils;
 using UnityEngine;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Votyra.Models
+namespace Votyra.Core.Models
 {
 
     public struct SampledData3b : IEquatable<SampledData3b>

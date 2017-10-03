@@ -14,7 +14,7 @@ using Votyra.Unity.MeshUpdaters;
 using Votyra.Profiling;
 using Votyra.Logging;
 
-namespace Votyra.Unity
+namespace Votyra.Plannar
 {
     public class SceneContext2i : ITerrainGeneratorContext2i, IGroupVisibilityContext2i, IMeshContext, IDisposable
     {

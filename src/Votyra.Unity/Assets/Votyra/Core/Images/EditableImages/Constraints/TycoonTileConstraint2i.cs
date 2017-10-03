@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Votyra.Models;
 
-namespace Votyra.TerrainAlgorithms
+namespace Votyra.Core.Images.EditableImages.Constraints
 {
     public class TycoonTileConstraint2i : IImageConstraint2i
     {

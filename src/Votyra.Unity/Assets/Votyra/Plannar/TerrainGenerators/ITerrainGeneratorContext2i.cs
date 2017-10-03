@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Models;
@@ -6,7 +6,7 @@ using Votyra.Images;
 using Votyra.ImageSamplers;
 using Votyra.TerrainAlgorithms;
 
-namespace Votyra.TerrainGenerators
+namespace Votyra.Plannar.TerrainGenerators
 {
     public interface ITerrainGeneratorContext2i : IContext
     {

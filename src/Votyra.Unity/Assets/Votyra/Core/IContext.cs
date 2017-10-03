@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using UnityEngine;
 using Votyra.Profiling;
 using Votyra.Logging;
 
-namespace Votyra
+namespace Votyra.Core
 {
     public interface IContext
     {

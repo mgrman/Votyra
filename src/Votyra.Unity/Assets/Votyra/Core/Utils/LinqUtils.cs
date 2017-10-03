@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace Votyra.Utils
+namespace Votyra.Core.Utils
 {
     public static class LinqUtils
     {

@@ -12,7 +12,7 @@ using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using static Votyra.Tests.TerrainMesher3bUtils;
 
-namespace Votyra.Tests
+namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
 {
     public class RotationTests
     {

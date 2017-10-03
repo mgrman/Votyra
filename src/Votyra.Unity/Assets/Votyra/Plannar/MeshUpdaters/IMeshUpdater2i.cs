@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Votyra.Models;
 using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 
-namespace Votyra.Unity.MeshUpdaters
+namespace Votyra.Plannar.MeshUpdaters
 {
     public interface IMeshUpdater2i
     {

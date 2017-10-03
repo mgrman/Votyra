@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Votyra.Utils;
 using UnityEngine;
 
-namespace Votyra.Models
+namespace Votyra.Core.Models
 {
     public struct SampledData2i : IEquatable<SampledData2i>
     {

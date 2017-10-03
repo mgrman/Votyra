@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Votyra.Models;
 using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
-namespace Votyra.TerrainGenerators
+namespace Votyra.Cubical.TerrainGenerators
 {
     public interface ITerrainGenerator3b
     {

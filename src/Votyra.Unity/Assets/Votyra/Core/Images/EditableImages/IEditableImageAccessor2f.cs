@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Votyra.Models;
 
-namespace Votyra.Images.EditableImages
+namespace Votyra.Core.Images.EditableImages
 {
     public interface IEditableImageAccessor2f : IDisposable
     {

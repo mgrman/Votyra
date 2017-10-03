@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Votyra.Models;
 using UnityEngine;
 using Votyra.Utils;
 
-namespace Votyra.Images
+namespace Votyra.Core.Images
 {
     public class CombineImage2f : IImage2f
     {

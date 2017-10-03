@@ -14,7 +14,7 @@ using Votyra.Unity.MeshUpdaters;
 using Votyra.Profiling;
 using Votyra.Logging;
 
-namespace Votyra.Unity
+namespace Votyra.Cubical
 {
     public class SceneContext3b : ITerrainGeneratorContext3b, IGroupVisibilityContext3i, IMeshContext, IDisposable
     {

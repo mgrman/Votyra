@@ -1,6 +1,6 @@
-﻿using Votyra.Images;
+using Votyra.Images;
 
-namespace Votyra.Images
+namespace Votyra.Core.Images
 {
     internal interface IImage2fProvider
     {

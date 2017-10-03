@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Models;
 
-namespace Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes
+namespace Votyra.Core.TerrainMeshes
 {
     public static class TerrainMeshExtensions
     {

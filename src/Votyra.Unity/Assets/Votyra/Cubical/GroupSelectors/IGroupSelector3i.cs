@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Votyra.Models;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
-namespace Votyra.Unity.GroupSelectors
+namespace Votyra.Cubical.GroupSelectors
 {
     public interface IGroupSelector3i
     {

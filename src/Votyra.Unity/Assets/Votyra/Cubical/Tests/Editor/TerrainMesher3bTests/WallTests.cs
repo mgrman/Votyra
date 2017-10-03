@@ -12,7 +12,7 @@ using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 using Votyra.Unity.Assets.Votyra.Pooling;
 using static Votyra.Tests.TerrainMesher3bUtils;
 
-namespace Votyra.Tests.TerrainMesher3bTests
+namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 {
     public class WallTests
     {

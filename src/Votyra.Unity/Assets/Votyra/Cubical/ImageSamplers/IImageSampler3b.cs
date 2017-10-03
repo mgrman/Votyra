@@ -1,8 +1,8 @@
-﻿using Votyra.Models;
+using Votyra.Models;
 using Votyra.Images;
 using UnityEngine;
 
-namespace Votyra.ImageSamplers
+namespace Votyra.Cubical.ImageSamplers
 {
     public interface IImageSampler3b
     {

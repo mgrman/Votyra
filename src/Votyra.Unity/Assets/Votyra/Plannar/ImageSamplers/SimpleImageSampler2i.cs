@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using Votyra.Models;
 using Votyra.Utils;
 using Votyra.Images;
 using UnityEngine;
 
-namespace Votyra.ImageSamplers
+namespace Votyra.Plannar.ImageSamplers
 {
     public class SimpleImageSampler2i : IImageSampler2i
     {

@@ -6,7 +6,7 @@ using Votyra.Models;
 using Votyra.Models.ObjectPool;
 using Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes;
 
-namespace Votyra.Unity.Assets.Votyra.Pooling
+namespace Votyra.Core.Pooling
 {
     public class PooledTerrainMesh2iContainer<T> : IPooledTerrainMesh2i
         where T : ITerrainMesh2i, new()

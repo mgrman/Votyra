@@ -1,4 +1,4 @@
-﻿namespace Votyra.Models
+namespace Votyra.Core.Models
 {
     public interface IMatrix<T>
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Votyra.Models
+namespace Votyra.Core.Models
 {
     public struct Triangle3i
     {

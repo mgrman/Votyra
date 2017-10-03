@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Votyra.Models.ObjectPool
+namespace Votyra.Core.Models.ObjectPool
 {
     public class ConcurentObjectDictionaryPool<T, TKey> : ObjectDictionaryPool<T, TKey>
         where TKey : struct

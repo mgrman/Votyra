@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Votyra.Models;
 
-namespace Votyra.TerrainGenerators.TerrainMeshers.TerrainMeshes
+namespace Votyra.Core.TerrainMeshes
 {
     public interface ITerrainMesh2i : ITerrainMesh
     {

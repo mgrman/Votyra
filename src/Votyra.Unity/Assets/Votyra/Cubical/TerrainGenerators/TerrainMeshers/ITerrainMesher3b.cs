@@ -1,7 +1,7 @@
-﻿using Votyra.Models;
+using Votyra.Models;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
-namespace Votyra.TerrainGenerators.TerrainMeshers
+namespace Votyra.Cubical.TerrainGenerators.TerrainMeshers
 {
     public interface ITerrainMesher3b
     {

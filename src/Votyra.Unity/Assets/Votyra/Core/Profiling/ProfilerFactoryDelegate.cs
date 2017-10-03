@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Votyra.Profiling
+namespace Votyra.Core.Profiling
 {
     public delegate IProfiler ProfilerFactoryDelegate(string name, object owner);
 

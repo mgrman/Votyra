@@ -2,7 +2,7 @@ using System;
 using Votyra.Models;
 using Votyra.Unity.Assets.Votyra.Pooling;
 
-namespace Votyra.Unity.GroupSelectors
+namespace Votyra.Cubical.GroupSelectors
 {
     public class GroupActions3i : IDisposable
     {

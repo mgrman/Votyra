@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Votyra.Models
+namespace Votyra.Core.Models
 {
     public interface IReadOnlySet<T> : IEnumerable<T>
     {

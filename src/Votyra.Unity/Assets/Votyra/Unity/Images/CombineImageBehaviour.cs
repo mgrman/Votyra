@@ -1,4 +1,4 @@
-﻿using Votyra.Images;
+using Votyra.Images;
 using UnityEngine;
 
 namespace Votyra.Unity.Images

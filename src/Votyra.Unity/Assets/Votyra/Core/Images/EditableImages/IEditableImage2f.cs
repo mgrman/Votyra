@@ -1,6 +1,6 @@
 using Votyra.Models;
 
-namespace Votyra.Images.EditableImages
+namespace Votyra.Core.Images.EditableImages
 {
     public interface IEditableImage2f
     {

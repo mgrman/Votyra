@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using Votyra.Models;
 using UnityEngine;
 
-namespace Votyra.Utils
+namespace Votyra.Core.Utils
 {
     public static class Vector2Utils
     {

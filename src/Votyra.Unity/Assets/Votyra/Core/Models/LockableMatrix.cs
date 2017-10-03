@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
 using Votyra.Models;
 
-namespace Votyra.Models
+namespace Votyra.Core.Models
 {
     public class LockableMatrix<T> : IMatrix<T>
     {

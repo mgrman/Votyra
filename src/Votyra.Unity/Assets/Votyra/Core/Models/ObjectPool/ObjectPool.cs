@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace Votyra.Models.ObjectPool
+namespace Votyra.Core.Models.ObjectPool
 {
     public class ObjectPool<T> : IObjectPool<T>
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Votyra.Models.ObjectPool;
 
-namespace Votyra.Unity.Assets.Votyra.Pooling
+namespace Votyra.Core.Pooling
 {
     public class PooledDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IReadOnlyPooledDictionary<TKey, TValue>
     {

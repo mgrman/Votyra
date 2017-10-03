@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Votyra.Logging
+namespace Votyra.Core.Logging
 {
     public interface IThreadSafeLogger
     {

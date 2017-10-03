@@ -1,4 +1,4 @@
-﻿namespace Votyra.Utils
+namespace Votyra.Core.Utils
 {
     public static class IntUtils
     {

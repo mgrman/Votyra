@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using Votyra.Models;
@@ -26,7 +26,7 @@ using Votyra.Images.EditableImages;
 using Votyra.Logging;
 using Votyra.TerrainGenerators.TerrainMeshers;
 
-namespace Votyra.Unity
+namespace Votyra.Cubical
 {
 
     //TODO: move to floats
