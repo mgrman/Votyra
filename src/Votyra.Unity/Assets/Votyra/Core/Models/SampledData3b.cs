@@ -53,8 +53,6 @@ namespace Votyra.Models
 
         public readonly byte Data;
 
-        public readonly Vector3 Normal;
-
         public bool Data_x0y0z0 { get { return (Data & Mask_x0y0z0) != 0; } }
         public bool Data_x0y0z1 { get { return (Data & Mask_x0y0z1) != 0; } }
         public bool Data_x0y1z0 { get { return (Data & Mask_x0y1z0) != 0; } }
@@ -79,7 +77,7 @@ namespace Votyra.Models
             return (((i + (i >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
         }
 
-        public SampledData3b(bool x0y0z0, bool x0y0z1, bool x0y1z0, bool x0y1z1, bool x1y0z0, bool x1y0z1, bool x1y1z0, bool x1y1z1, Vector3? normal)
+        public SampledData3b(bool x0y0z0, bool x0y0z1, bool x0y1z0, bool x0y1z1, bool x1y0z0, bool x1y0z1, bool x1y1z0, bool x1y1z1)
         {
             Data = (byte)(
                 (x0y0z0 ? Mask_x0y0z0 : 0) |
@@ -91,10 +89,9 @@ namespace Votyra.Models
                 (x1y1z0 ? Mask_x1y1z0 : 0) |
                 (x1y1z1 ? Mask_x1y1z1 : 0));
 
-            Normal = normal ?? ComputeNormal(x0y0z0 ? 1 : 0, x0y0z1 ? 1 : 0, x0y1z0 ? 1 : 0, x0y1z1 ? 1 : 0, x1y0z0 ? 1 : 0, x1y0z1 ? 1 : 0, x1y1z0 ? 1 : 0, x1y1z1 ? 1 : 0);
-        }
+         }
 
-        public SampledData3b(int x0y0z0, int x0y0z1, int x0y1z0, int x0y1z1, int x1y0z0, int x1y0z1, int x1y1z0, int x1y1z1, Vector3? normal)
+        public SampledData3b(int x0y0z0, int x0y0z1, int x0y1z0, int x0y1z1, int x1y0z0, int x1y0z1, int x1y1z0, int x1y1z1)
         {
             Data = (byte)(
                 (x0y0z0 > 0 ? Mask_x0y0z0 : 0) |
@@ -105,11 +102,9 @@ namespace Votyra.Models
                 (x1y0z1 > 0 ? Mask_x1y0z1 : 0) |
                 (x1y1z0 > 0 ? Mask_x1y1z0 : 0) |
                 (x1y1z1 > 0 ? Mask_x1y1z1 : 0));
-
-            Normal = normal ?? ComputeNormal(x0y0z0, x0y0z1, x0y1z0, x0y1z1, x1y0z0, x1y0z1, x1y1z0, x1y1z1);
         }
 
-        public SampledData3b(float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1, float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1, Vector3? normal)
+        public SampledData3b(float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1, float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1)
         {
             Data = (byte)(
                 (x0y0z0 > 0 ? Mask_x0y0z0 : 0) |
@@ -120,29 +115,11 @@ namespace Votyra.Models
                 (x1y0z1 > 0 ? Mask_x1y0z1 : 0) |
                 (x1y1z0 > 0 ? Mask_x1y1z0 : 0) |
                 (x1y1z1 > 0 ? Mask_x1y1z1 : 0));
-
-            Normal = normal ?? ComputeNormal(x0y0z0, x0y0z1, x0y1z0, x0y1z1, x1y0z0, x1y0z1, x1y1z0, x1y1z1);
-        }
-        public SampledData3b(SampledData3b data, Vector3? normal)
-        {
-            Data = data.Data;
-
-            Normal = normal ?? Vector3.zero;
-            if (normal == null)
-            {
-                Normal = normal ?? ComputeNormal(Data_x0y0z0 ? 1 : 0, Data_x0y0z1 ? 1 : 0, Data_x0y1z0 ? 1 : 0, Data_x0y1z1 ? 1 : 0, Data_x1y0z0 ? 1 : 0, Data_x1y0z1 ? 1 : 0, Data_x1y1z0 ? 1 : 0, Data_x1y1z1 ? 1 : 0);
-            }
         }
 
-        public SampledData3b(byte data, Vector3? normal)
+        public SampledData3b(byte data)
         {
             Data = data;
-
-            Normal = normal ?? Vector3.zero;
-            if (normal == null)
-            {
-                Normal = normal ?? ComputeNormal(Data_x0y0z0 ? 1 : 0, Data_x0y0z1 ? 1 : 0, Data_x0y1z0 ? 1 : 0, Data_x0y1z1 ? 1 : 0, Data_x1y0z0 ? 1 : 0, Data_x1y0z1 ? 1 : 0, Data_x1y1z0 ? 1 : 0, Data_x1y1z1 ? 1 : 0);
-            }
         }
 
         private static Vector3 ComputeNormal(float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1, float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1)
@@ -219,25 +196,23 @@ namespace Votyra.Models
 
         }
 
+        public SampledData3b GetRotatedXY(float angleDeg)
+        {
+            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, 0, angleDeg));
+            return GetTransformed(rotationMatrix);
+        }
 
-        // public SampledData3b GetRotatedXY(float angleDeg)
-        // {
+        public SampledData3b GetRotatedYZ(float angleDeg)
+        {
+            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(angleDeg, 0, 0));
+            return GetTransformed(rotationMatrix);
+        }
 
-        //     var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, 0, angleDeg));
-        //     return GetTransformed(rotationMatrix);
-        // }
-
-        // public SampledData3b GetRotatedYZ(float angleDeg)
-        // {
-        //     var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(angleDeg, 0, 0));
-        //     return GetTransformed(rotationMatrix);
-        // }
-
-        // public SampledData3b GetRotatedXZ(float angleDeg)
-        // {
-        //     var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, angleDeg, 0));
-        //     return GetTransformed(rotationMatrix);
-        // }
+        public SampledData3b GetRotatedXZ(float angleDeg)
+        {
+            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, angleDeg, 0));
+            return GetTransformed(rotationMatrix);
+        }
 
         public SampledData3b GetRotated(Vector3i rotationSteps, bool invert)
         {
@@ -277,8 +252,7 @@ namespace Votyra.Models
 
                 this[matrix.MultiplyPoint(new Vector3(1, 1, 0))],
 
-                this[matrix.MultiplyPoint(new Vector3(1, 1, 1))],
-                matrix.MultiplyVector(Normal)
+                this[matrix.MultiplyPoint(new Vector3(1, 1, 1))]
             );
         }
 
@@ -346,18 +320,12 @@ namespace Votyra.Models
 
         public static bool operator ==(SampledData3b a, SampledData3b b)
         {
-            return a.Data == b.Data
-            && Mathf.Approximately(a.Normal.x, b.Normal.x)
-            && Mathf.Approximately(a.Normal.y, b.Normal.y)
-            && Mathf.Approximately(a.Normal.z, b.Normal.z);
+            return a.Data == b.Data;
         }
 
         public static bool operator !=(SampledData3b a, SampledData3b b)
         {
-            return a.Data != b.Data
-            || !Mathf.Approximately(a.Normal.x, b.Normal.x)
-            || !Mathf.Approximately(a.Normal.y, b.Normal.y)
-            || !Mathf.Approximately(a.Normal.z, b.Normal.z);
+            return a.Data != b.Data;
         }
 
         public bool EqualsRotationInvariant(SampledData3b that, out Matrix4x4 matrix)
@@ -410,7 +378,7 @@ namespace Votyra.Models
                             var finalMatrix = GetRotationMatrix(new Vector3i(x, y, z), invert == 1);
 
                             var rotatedThis = this.GetTransformed(finalMatrix);
-                            // Debug.Log($"{this} rotated by {x},{y},{z} equals {rotatedThis}");
+
                             if (NormallessComparer.Equals(rotatedThis, that))
                             {
                                 yield return finalMatrix;
@@ -433,7 +401,7 @@ namespace Votyra.Models
                             var finalMatrix = GetRotationMatrix(new Vector3i(x, y, z), invert == 1);
 
                             var rotatedThis = this.GetTransformed(finalMatrix);
-                            // Debug.Log($"{this} rotated by {x},{y},{z} equals {rotatedThis}");
+
                             if ((rotatedThis.Data & that.Data) == rotatedThis.Data)
                             {
                                 yield return finalMatrix;
@@ -444,10 +412,10 @@ namespace Votyra.Models
             }
         }
 
-        public static IEnumerable<SampledData3b> AllValues = Enumerable.Range(0, byte.MaxValue + 1)
-        .Select(o => new SampledData3b((byte)o, null))
-        .ToArray();
-
+        public static IEnumerable<SampledData3b> AllValues = Enumerable
+            .Range(0, byte.MaxValue + 1)
+            .Select(o => new SampledData3b((byte)o))
+            .ToArray();
 
         const string CubeRegex = @"[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*";
 
@@ -462,7 +430,7 @@ namespace Votyra.Models
             float val_x1y0z1 = int.Parse(match.Groups[4].Value);
             float val_x1y1z0 = int.Parse(match.Groups[6].Value);
             float val_x1y1z1 = int.Parse(match.Groups[2].Value);
-            return new SampledData3b(val_x0y0z0, val_x0y0z1, val_x0y1z0, val_x0y1z1, val_x1y0z0, val_x1y0z1, val_x1y1z0, val_x1y1z1, null);
+            return new SampledData3b(val_x0y0z0, val_x0y0z1, val_x0y1z0, val_x0y1z1, val_x1y0z0, val_x1y0z1, val_x1y1z0, val_x1y1z1);
         }
 
         public string ToCubeString()

@@ -67,8 +67,7 @@ namespace Votyra.ImageSamplers
                 image.Sample(new Vector3i(offset.x + 2, offset.y + 0, offset.z + 0)),
                 image.Sample(new Vector3i(offset.x + 2, offset.y + 0, offset.z + 2)),
                 image.Sample(new Vector3i(offset.x + 2, offset.y + 2, offset.z + 0)),
-                image.Sample(new Vector3i(offset.x + 2, offset.y + 2, offset.z + 2)),
-                null);
+                image.Sample(new Vector3i(offset.x + 2, offset.y + 2, offset.z + 2)));
         }
     }
 }

@@ -141,7 +141,6 @@ namespace Votyra.Models
 
         public static IEnumerable<Triangle3> ChangeOrderIfTrue(this IEnumerable<Triangle3> triangles, bool value)
         {
-
             if (value)
             {
                 return triangles.Select(o => o.GetReversedOrder());
