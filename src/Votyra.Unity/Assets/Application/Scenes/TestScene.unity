@@ -124,12 +124,12 @@ GameObject:
   - component: {fileID: 84891311}
   - component: {fileID: 84891310}
   m_Layer: 0
-  m_Name: Votyra2i
+  m_Name: Votyra2i-SimpleSampled
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &84891310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,7 +138,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 84891309}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6c635d7741ae934a914ccee17137ee2, type: 3}
+  m_Script: {fileID: 11500000, guid: bad769b11d209a14098d76f3a5d1023e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CellInGroupCount:
@@ -280,6 +280,68 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ff44c9af32d4649b82e5e26d3247b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &968854883
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 968854886}
+  - component: {fileID: 968854885}
+  - component: {fileID: 968854884}
+  m_Layer: 0
+  m_Name: Votyra2i-DualSampled
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &968854884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 968854883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 378320e86e66ab443bd0522c5b01c584, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CellInGroupCount:
+    x: 10
+    y: 10
+  FlipTriangles: 0
+  DrawBounds: 0
+  Async: 1
+  Material: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
+  MaterialWalls: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
+  InitialTexture: {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
+  InitialTextureScale: 40
+--- !u!114 &968854885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 968854883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89217ad77fe48094db237043697a9edb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &968854886
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 968854883}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: -1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1002470549
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,7 +422,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1172905336
 Transform:
   m_ObjectHideFlags: 0
@@ -372,7 +434,7 @@ Transform:
   m_LocalScale: {x: -1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1172905337
 MonoBehaviour:

@@ -23,7 +23,7 @@ using Votyra.Plannar.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Plannar {
     //TODO: move to floats
-    public class TerrainGeneratorBehaviour2i : MonoBehaviour {
+    public abstract class TerrainGeneratorBehaviour2i : MonoBehaviour {
         public UI_Vector2i CellInGroupCount = new UI_Vector2i (10, 10);
         public bool FlipTriangles = false;
         public bool DrawBounds = false;
@@ -35,12 +35,12 @@ namespace Votyra.Plannar {
 
         public IEditableImage2f EditableImage { get { return _imageProvider as IEditableImage2f; } }
 
-        private IImage2fProvider _imageProvider;
-        private IImageConstraint2i _editableImageConstraint;
-        private IImageSampler2i _sampler;
-        private IGroupSelector2i _groupsSelector;
-        private ITerrainGenerator2i _terrainGenerator;
-        private IMeshUpdater2i _meshUpdater;
+        protected IImage2fProvider _imageProvider;
+        protected IImageConstraint2i _editableImageConstraint;
+        protected IImageSampler2i _sampler;
+        protected IGroupSelector2i _groupsSelector;
+        protected ITerrainGenerator2i _terrainGenerator;
+        protected IMeshUpdater2i _meshUpdater;
 
         private Task _updateTask = null;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource ();
@@ -180,15 +180,7 @@ namespace Votyra.Plannar {
             return new UnityProfiler (name, owner);
         }
 
-        private void Initialize () {
-            _editableImageConstraint = new TycoonTileConstraint2i ();
-            _sampler = new DualImageSampler2i ();
-
-            _terrainGenerator = new TerrainGenerator2i<TerrainMesher2i> ();
-            _meshUpdater = new TerrainMeshUpdater2i ();
-            _groupsSelector = new GroupsByCameraVisibilitySelector2i ();
-            _imageProvider = new EditableMatrixImage2f (InitialTexture, InitialTextureScale, _sampler, _editableImageConstraint);
-        }
+        protected abstract void Initialize();
 
         private void DisposeService () {
             (_imageProvider as IDisposable)?.Dispose ();
