@@ -14,17 +14,16 @@ using Votyra.Core.Profiling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
 using Votyra.Plannar.GroupSelectors;
-using Votyra.Plannar.Images;
-using Votyra.Plannar.Images.Constraints;
 using Votyra.Plannar.ImageSamplers;
 using Votyra.Plannar.MeshUpdaters;
 using Votyra.Plannar.TerrainGenerators;
-using Votyra.Plannar.TerrainGenerators.TerrainMeshers;
 
-namespace Votyra.Plannar {
+namespace Votyra.Plannar
+{
     //TODO: move to floats
-    public abstract class TerrainGeneratorBehaviour2i : MonoBehaviour {
-        public UI_Vector2i CellInGroupCount = new UI_Vector2i (10, 10);
+    public abstract class TerrainGeneratorBehaviour2i : MonoBehaviour
+    {
+        public UI_Vector2i CellInGroupCount = new UI_Vector2i(10, 10);
         public bool FlipTriangles = false;
         public bool DrawBounds = false;
         public bool Async = true;
@@ -43,104 +42,128 @@ namespace Votyra.Plannar {
         protected IMeshUpdater2i _meshUpdater;
 
         private Task _updateTask = null;
-        private CancellationTokenSource _onDestroyCts = new CancellationTokenSource ();
+        private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
-        private void Start () {
-            this.gameObject.DestroyAllChildren ();
-            Initialize ();
+        private void Start()
+        {
+            this.gameObject.DestroyAllChildren();
+            Initialize();
         }
 
-        private void LateUpdate () {
-            if (_updateTask == null || _updateTask.IsCompleted) {
-                _updateTask?.Dispose ();
+        private void LateUpdate()
+        {
+            if (_updateTask == null || _updateTask.IsCompleted)
+            {
+                _updateTask?.Dispose();
                 _updateTask = null;
 
-                var context = GetSceneContext ();
-                _updateTask = UpdateTerrain (context, Async, _onDestroyCts.Token);
+                var context = GetSceneContext();
+                _updateTask = UpdateTerrain(context, Async, _onDestroyCts.Token);
             }
 
-            if (Input.GetMouseButton (0) || Input.GetMouseButton (1)) {
-                ProcessMouseClick ();
+            if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
+            {
+                ProcessMouseClick();
             }
         }
 
-        private void ProcessMouseClick () {
+        private void ProcessMouseClick()
+        {
             // Debug.LogFormat("OnMouseDown on tile.");
 
-            Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             // Casts the ray and get the first game object hit
-            Physics.Raycast (ray, out hit);
+            Physics.Raycast(ray, out hit);
 
-            var position = this.transform.worldToLocalMatrix.MultiplyPoint (hit.point).XY ();
-            position = _sampler.WorldToImage (position);
+            var position = this.transform.worldToLocalMatrix.MultiplyPoint(hit.point).XY();
+            position = _sampler.WorldToImage(position);
 
-            this.SendMessage ("OnCellClick", position, SendMessageOptions.DontRequireReceiver);
+            this.SendMessage("OnCellClick", position, SendMessageOptions.DontRequireReceiver);
         }
 
-        private async Task UpdateTerrain (SceneContext2i context, bool async, CancellationToken token) {
+        private async Task UpdateTerrain(SceneContext2i context, bool async, CancellationToken token)
+        {
             GroupActions2i groupActions = null;
             IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i> results = null;
-            try {
-                Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i>> computeAction = () => {
-                    using (context.ProfilerFactory.Create ("Creating visible groups")) {
-                        groupActions = context.GroupSelector.GetGroupsToUpdate (context);
-                        Debug.Log ($"update {groupActions.ToRecompute.Count} keep {groupActions.ToKeep.Count}");
+            try
+            {
+                Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i>> computeAction = () =>
+                {
+                    using (context.ProfilerFactory.Create("Creating visible groups"))
+                    {
+                        groupActions = context.GroupSelector.GetGroupsToUpdate(context);
+                        Debug.Log($"update {groupActions.ToRecompute.Count} keep {groupActions.ToKeep.Count}");
                     }
-                    var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i> ();
-                    if (toRecompute.Any ()) {
-                        using (context.ProfilerFactory.Create ("TerrainMeshGenerator")) {
-                            return context.TerrainGenerator.Generate (context, toRecompute);
+                    var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i>();
+                    if (toRecompute.Any())
+                    {
+                        using (context.ProfilerFactory.Create("TerrainMeshGenerator"))
+                        {
+                            return context.TerrainGenerator.Generate(context, toRecompute);
                         }
-                    } else {
+                    }
+                    else
+                    {
                         return null;
                     }
                 };
 
-                if (async) {
-                    results = await Task.Run (computeAction);
-                } else {
-                    results = computeAction ();
+                if (async)
+                {
+                    results = await Task.Run(computeAction);
+                }
+                else
+                {
+                    results = computeAction();
                 }
 
-                if (token.IsCancellationRequested) {
+                if (token.IsCancellationRequested)
+                {
                     return;
                 }
 
-                if (results != null) {
-                    using (context.ProfilerFactory.Create ("Applying mesh")) {
-                        var toKeep = groupActions?.ToKeep ?? Enumerable.Empty<Vector2i> ();
-                        context.MeshUpdater.UpdateMesh (context, results, toKeep);
+                if (results != null)
+                {
+                    using (context.ProfilerFactory.Create("Applying mesh"))
+                    {
+                        var toKeep = groupActions?.ToKeep ?? Enumerable.Empty<Vector2i>();
+                        context.MeshUpdater.UpdateMesh(context, results, toKeep);
                     }
                 }
-            } catch (Exception ex) {
-                Debug.LogException (ex);
-            } finally {
-                context?.Dispose ();
-                groupActions?.Dispose ();
-                results?.Dispose ();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+            finally
+            {
+                context?.Dispose();
+                groupActions?.Dispose();
+                results?.Dispose();
             }
         }
 
-        private SceneContext2i GetSceneContext () {
+        private SceneContext2i GetSceneContext()
+        {
             var camera = Camera.main;
             var container = this.gameObject;
 
             var existingGroups = _meshUpdater.ExistingGroups;
 
-            var image = _imageProvider.CreateImage ();
+            var image = _imageProvider.CreateImage();
 
-            Vector2i cellInGroupCount = new Vector2i (this.CellInGroupCount.x, this.CellInGroupCount.y);
+            Vector2i cellInGroupCount = new Vector2i(this.CellInGroupCount.x, this.CellInGroupCount.y);
 
             var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * this.transform.localToWorldMatrix;
 
-            var planes = GeometryUtility.CalculateFrustumPlanes (localToProjection);
+            var planes = GeometryUtility.CalculateFrustumPlanes(localToProjection);
 
-            var frustumCorners = PooledArrayContainer<Vector3>.CreateDirty (4);
+            var frustumCorners = PooledArrayContainer<Vector3>.CreateDirty(4);
 
-            camera.CalculateFrustumCorners (new Rect (0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCorners.Array);
+            camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCorners.Array);
 
-            return new SceneContext2i (
+            return new SceneContext2i(
                 _groupsSelector,
                 _terrainGenerator,
                 _meshUpdater,
@@ -154,57 +177,63 @@ namespace Votyra.Plannar {
                 image,
                 (image as IImageInvalidatableImage2i)?.InvalidatedArea ?? Rect2i.All,
                 _sampler,
-                () => this.GameObjectFactory (),
+                () => this.GameObjectFactory(),
                 CreateProfiler,
                 CreateLogger
             );
         }
 
-        private GameObject GameObjectFactory () {
-            var go = new GameObject ();
-            go.transform.SetParent (this.transform, false);
-            if (DrawBounds) {
-                go.AddComponent<DrawBounds> ();
+        private GameObject GameObjectFactory()
+        {
+            var go = new GameObject();
+            go.transform.SetParent(this.transform, false);
+            if (DrawBounds)
+            {
+                go.AddComponent<DrawBounds>();
             }
-            var meshRenderer = go.GetOrAddComponent<MeshRenderer> ();
+            var meshRenderer = go.GetOrAddComponent<MeshRenderer>();
             meshRenderer.material = Material;
             meshRenderer.materials = new Material[] { Material, MaterialWalls };
             return go;
         }
 
-        private static IThreadSafeLogger CreateLogger (string name, object owner) {
-            return new UnityLogger (name, owner);
+        private static IThreadSafeLogger CreateLogger(string name, object owner)
+        {
+            return new UnityLogger(name, owner);
         }
 
-        private IProfiler CreateProfiler (string name, object owner) {
-            return new UnityProfiler (name, owner);
+        private IProfiler CreateProfiler(string name, object owner)
+        {
+            return new UnityProfiler(name, owner);
         }
 
         protected abstract void Initialize();
 
-        private void DisposeService () {
-            (_imageProvider as IDisposable)?.Dispose ();
+        private void DisposeService()
+        {
+            (_imageProvider as IDisposable)?.Dispose();
             _imageProvider = null;
 
-            (_editableImageConstraint as IDisposable)?.Dispose ();
+            (_editableImageConstraint as IDisposable)?.Dispose();
             _editableImageConstraint = null;
 
-            (_sampler as IDisposable)?.Dispose ();
+            (_sampler as IDisposable)?.Dispose();
             _sampler = null;
 
-            (_terrainGenerator as IDisposable)?.Dispose ();
+            (_terrainGenerator as IDisposable)?.Dispose();
             _terrainGenerator = null;
 
-            (_meshUpdater as IDisposable)?.Dispose ();
+            (_meshUpdater as IDisposable)?.Dispose();
             _meshUpdater = null;
 
-            (_groupsSelector as IDisposable)?.Dispose ();
+            (_groupsSelector as IDisposable)?.Dispose();
             _groupsSelector = null;
         }
 
-        private void OnDestroy () {
-            _onDestroyCts.Cancel ();
-            DisposeService ();
+        private void OnDestroy()
+        {
+            _onDestroyCts.Cancel();
+            DisposeService();
         }
     }
 }

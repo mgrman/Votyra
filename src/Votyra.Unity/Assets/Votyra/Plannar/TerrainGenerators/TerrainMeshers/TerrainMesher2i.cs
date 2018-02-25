@@ -2,6 +2,7 @@ using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
+using Votyra.Plannar.ImageSamplers;
 
 namespace Votyra.Plannar.TerrainGenerators.TerrainMeshers
 {

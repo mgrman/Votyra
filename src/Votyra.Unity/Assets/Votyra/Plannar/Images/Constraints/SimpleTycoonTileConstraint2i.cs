@@ -6,7 +6,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Plannar.Images.Constraints
 {
-    public class TycoonTileConstraint2i : IImageConstraint2i
+    public class SimpleTycoonTileConstraint2i : IImageConstraint2i
     {
         public SampledData2i Process(SampledData2i sampleData)
         {

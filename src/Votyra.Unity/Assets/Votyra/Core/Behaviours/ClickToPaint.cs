@@ -1,8 +1,6 @@
 using UnityEngine;
-using System.Collections;
-using Votyra.Core.Models;
-using Votyra.Core.Images;
 using Votyra.Core.Images.EditableImages;
+using Votyra.Core.Models;
 
 namespace Votyra.Core.Behaviours
 {
@@ -20,11 +18,12 @@ namespace Votyra.Core.Behaviours
         public IEditableImage2f EditableImage { get; }
 
         private float? _centerValueToReuse;
-        void Start()
+
+        private void Start()
         {
         }
 
-        void Update()
+        private void Update()
         {
             if (Input.GetButtonUp("Modifier1"))
             {
