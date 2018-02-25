@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-
-using UnityEngine;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
@@ -25,6 +23,7 @@ namespace Votyra.Core.Models
             this.x1y0 = x1y0;
             this.x1y1 = x1y1;
         }
+
         public SampledData2i(float x0y0, float x0y1, float x1y0, float x1y1)
         {
             this.x0y0 = x0y0.FloorToInt();
@@ -44,17 +43,20 @@ namespace Votyra.Core.Models
             {
                 case 0:
                     return x0y0;
+
                 case 1:
                     return x0y1;
+
                 case 2:
                     return x1y1;
+
                 case 3:
                     return x1y0;
+
                 default:
                     throw new InvalidOperationException();
             }
         }
-
 
         public int Max
         {
@@ -127,7 +129,6 @@ namespace Votyra.Core.Models
         {
             return a.x0y0 != b.x0y0 && a.x0y1 != b.x0y1 && a.x1y0 != b.x1y0 && a.x1y1 != b.x1y1;
         }
-
 
         public static IEnumerable<SampledData2i> GenerateAllValues(Range2i range)
         {

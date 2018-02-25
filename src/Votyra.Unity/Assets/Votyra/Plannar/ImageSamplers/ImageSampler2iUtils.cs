@@ -1,5 +1,3 @@
-
-
 using UnityEngine;
 using Votyra.Core.Models;
 

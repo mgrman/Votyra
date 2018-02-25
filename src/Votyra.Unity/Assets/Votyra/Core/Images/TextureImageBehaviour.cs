@@ -1,10 +1,8 @@
-
 using UnityEngine;
-using Votyra.Core.Images;
 
 namespace Votyra.Core.Images
 {
-    internal class TextureImageBehaviour : MonoBehaviour, IImage2fProvider
+    public class TextureImageBehaviour : MonoBehaviour, IImage2fProvider
     {
         private Bounds _oldBounds = new Bounds();
         public Bounds Bounds = new Bounds();
@@ -16,9 +14,7 @@ namespace Votyra.Core.Images
 
         public IImage2f CreateImage()
         {
-
             return _image;
-
         }
 
         private bool _fieldsChanged = true;

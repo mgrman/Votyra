@@ -1,10 +1,6 @@
-
-
-
 using UnityEngine;
-using System;
-using Votyra.Core.Models;
 using Votyra.Core.Images;
+using Votyra.Core.Models;
 using Votyra.Core.Utils;
 
 namespace Votyra.Plannar.ImageSamplers
@@ -15,11 +11,11 @@ namespace Votyra.Plannar.ImageSamplers
         {
             return pos * 2;
         }
+
         public Vector2 ImageToWorld(Vector2i pos)
         {
             return pos / 2.0f;
         }
-
 
         public Vector2i CellToX0Y0(Vector2i pos)
         {

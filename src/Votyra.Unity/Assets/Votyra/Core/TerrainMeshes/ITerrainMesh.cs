@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 namespace Votyra.Core.TerrainMeshes
 {
     public interface ITerrainMesh

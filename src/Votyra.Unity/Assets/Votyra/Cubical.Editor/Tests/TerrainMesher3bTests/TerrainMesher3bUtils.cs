@@ -1,8 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Moq;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
@@ -24,7 +23,6 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
         public static readonly Vector3i x1y1z0 = new Vector3i(1, 1, 0);
         public static readonly Vector3i x1y1z1 = new Vector3i(1, 1, 1);
 
-
         public static void AssertContainsQuad(IReadOnlyCollection<Triangle3i> triangles, string cube, Vector3i a, Vector3i b, Vector3i c, Vector3i d)
         {
             bool contains = false;
@@ -40,7 +38,6 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
                 throw new AssertionException($"On cube:\r\b{cube.Replace(' ', '\u00A0')}\r\nExpected collection containing quad {a},{b},{c},{d}. Actual:\r\n{(triangles.Any() ? string.Join(", ", triangles) : "<empty>")}");
             }
         }
-
 
         public static List<Triangle3i> Evaluate(string cubeString)
         {
@@ -71,6 +68,5 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             mesher.AddCell(new Vector3i(0, 0, 0));
             return triangles;
         }
-
     }
 }

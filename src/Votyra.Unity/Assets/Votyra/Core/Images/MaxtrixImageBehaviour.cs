@@ -1,17 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-
-
-
 using UnityEngine;
-using System;
 using Votyra.Core.Models;
-using Votyra.Core.Images;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Images
 {
-    internal class MaxtrixImageBehaviour : MonoBehaviour, IImage2fProvider
+    public class MaxtrixImageBehaviour : MonoBehaviour, IImage2fProvider
     {
         public Texture2D InitialValueTexture = null;
         public float InitialValueScale = 1;
@@ -90,7 +86,6 @@ namespace Votyra.Core.Images
         {
         }
 
-
         public MatrixImageAccessor RequestAccess(Rect2i area)
         {
             return new MatrixImageAccessor(this, area);
@@ -145,7 +140,6 @@ namespace Votyra.Core.Images
                 }
             }
         }
-
 
         public class MatrixImageAccessor : IDisposable
         {

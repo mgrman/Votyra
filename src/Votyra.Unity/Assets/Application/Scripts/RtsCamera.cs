@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RtsCamera : MonoBehaviour
 {
@@ -8,7 +6,7 @@ public class RtsCamera : MonoBehaviour
 
     public Vector3 SpeedRotation = Vector3.one;
 
-    void Update()
+    private void Update()
     {
         var moveX = Input.GetAxis("Horizontal1") * Time.deltaTime * SpeedTranslation.x;
         var moveY = Input.GetAxis("Vertical") * Time.deltaTime * SpeedTranslation.y;

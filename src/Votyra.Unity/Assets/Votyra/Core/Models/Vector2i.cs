@@ -101,7 +101,6 @@ namespace Votyra.Core.Models
             return new Vector2(a.x / b.x, a.y / b.y);
         }
 
-
         public static Vector2i operator /(Vector2i a, int b)
         {
             return new Vector2i(a.x / b, a.y / b);
@@ -111,12 +110,11 @@ namespace Votyra.Core.Models
         {
             return new Vector2(a.x / b, a.y / b);
         }
+
         public Vector2i DivideUp(Vector2i a, int b)
         {
             return new Vector2i(a.x.DivideUp(b), a.y.DivideUp(b));
         }
-
-
 
         public Vector2 ToVector2()
         {

@@ -1,0 +1,16 @@
+{
+    "name": "Votyra.Cubical.Editor",
+    "references": [
+        "Votyra.Cubical",
+        "Votyra.Core",
+        "Votyra.Core.Editor"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

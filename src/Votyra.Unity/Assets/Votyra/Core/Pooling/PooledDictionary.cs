@@ -12,7 +12,6 @@ namespace Votyra.Core.Pooling
 
         private PooledDictionary()
         {
-
         }
 
         public static PooledDictionary<TKey, TValue> Create()

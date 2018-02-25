@@ -1,15 +1,10 @@
 using System.Collections.Generic;
-
-
-using UnityEngine;
-
 using System.Linq;
-
-using System;
+using UnityEngine;
 using Votyra.Core.Models;
+using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
-using Votyra.Core.Pooling;
 
 namespace Votyra.Cubical.MeshUpdaters
 {
@@ -111,6 +106,7 @@ namespace Votyra.Cubical.MeshUpdaters
             }
             mesh.bounds = triangleMesh.MeshBounds;
         }
+
         private void UpdateMesh(FixedTerrainMesh2i triangleMesh, Mesh mesh)
         {
             bool recomputeTriangles = mesh.vertexCount != triangleMesh.PointCount;

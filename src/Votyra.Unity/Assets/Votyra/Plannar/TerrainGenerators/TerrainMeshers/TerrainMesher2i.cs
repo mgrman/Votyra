@@ -1,6 +1,3 @@
-
-
-
 using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
@@ -46,7 +43,6 @@ namespace Votyra.Plannar.TerrainGenerators.TerrainMeshers
         {
             Vector2i cell = cellInGroup + groupPosition;
 
-
             Vector2i position = groupPosition + cellInGroup;
 
             SampledData2i data = options.ImageSampler.Sample(options.Image, cell);
@@ -72,7 +68,6 @@ namespace Votyra.Plannar.TerrainGenerators.TerrainMeshers
             mesh.AddWall(pos_x0y0, pos_x0y1, pos_x0y1_lowerY, pos_x0y0_lowerY, false);
 
             mesh.AddWall(pos_x1y0, pos_x0y0, pos_x0y0_lowerX, pos_x1y0_lowerX, false);
-
         }
 
         private bool IsFlipped(SampledData2i sampleData)

@@ -1,7 +1,6 @@
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.Profiling;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Application.Scripts
 {
@@ -19,7 +18,6 @@ namespace Application.Scripts
 
                 Profiler.EndSample();
             }
-
 
             var list = Enumerable.Range(0, 10000).Select(o => new Vector3(o, o, o)).ToList();
             for (int i = 0; i < 10000; i++)

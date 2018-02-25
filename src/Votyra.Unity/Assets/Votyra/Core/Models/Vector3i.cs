@@ -1,7 +1,6 @@
 using System;
-
-using UnityEngine;
 using System.Globalization;
+using UnityEngine;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
@@ -110,7 +109,6 @@ namespace Votyra.Core.Models
             return new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
         }
 
-
         public static Vector3i operator /(Vector3i a, int b)
         {
             return new Vector3i(a.x / b, a.y / b, a.z / b);
@@ -120,6 +118,7 @@ namespace Votyra.Core.Models
         {
             return new Vector3(a.x / b, a.y / b, a.z / b);
         }
+
         public Vector3i DivideUp(Vector3i a, int b)
         {
             return new Vector3i(a.x.DivideUp(b), a.y.DivideUp(b), a.z.DivideUp(b));

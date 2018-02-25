@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections;
 using Votyra.Core.Models;
-using Votyra.Plannar;
+using Votyra.Core.Images;
+using Votyra.Core.Images.EditableImages;
 
 namespace Votyra.Core.Behaviours
 {
@@ -16,12 +17,11 @@ namespace Votyra.Core.Behaviours
         private float lastTime;
         private Vector2i lastCell;
 
-        private TerrainGeneratorBehaviour2i _behaviour;
+        public IEditableImage2f EditableImage { get; }
 
         private float? _centerValueToReuse;
         void Start()
         {
-            _behaviour = GetComponent<TerrainGeneratorBehaviour2i>();
         }
 
         void Update()
@@ -42,7 +42,7 @@ namespace Votyra.Core.Behaviours
             lastCell = cell;
             lastTime = Time.time;
 
-            var editableImage = _behaviour.EditableImage;
+            var editableImage = EditableImage;
             if (editableImage == null)
             {
                 return;

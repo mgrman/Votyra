@@ -1,10 +1,9 @@
 using System;
-using UnityEngine;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    internal class MatrixImage2f : IImage2f, IInitializableImage, IImageInvalidatableImage2i, IDisposable
+    public class MatrixImage2f : IImage2f, IInitializableImage, IImageInvalidatableImage2i, IDisposable
     {
         public Range2 RangeZ { get; }
 

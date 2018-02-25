@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
 
 namespace Votyra.Core.Models
 {
@@ -13,9 +8,11 @@ namespace Votyra.Core.Models
 
         //public readonly Vector2i offset;
         public readonly Vector2i size;
+
         private readonly object _syncLock = new object();
 
         private object _accessLock;
+
         public bool IsLocked
         {
             get
@@ -46,7 +43,6 @@ namespace Votyra.Core.Models
             }
         }
 
-
         public LockableMatrix(Vector2i matrixSize)
         {
             _points = new T[matrixSize.x, matrixSize.y];
@@ -54,7 +50,6 @@ namespace Votyra.Core.Models
             //offset = indicesOffset;
             size = matrixSize;
         }
-
 
         public bool IsSameSize(Vector2i size)
         {
@@ -96,11 +91,9 @@ namespace Votyra.Core.Models
 
     public class MatrixNotLockedWithThisKeyException : Exception
     {
-
     }
 
     public class MatrixLockedException : Exception
     {
-
     }
 }

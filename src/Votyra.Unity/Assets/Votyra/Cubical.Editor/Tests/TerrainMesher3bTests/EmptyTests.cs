@@ -1,15 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Moq;
 using NUnit.Framework;
-using UnityEngine;
-
-
-
-
-
-
 using static Votyra.Cubical.Tests.Editor.TerrainMesher3bTests.TerrainMesher3bUtils;
 
 namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests

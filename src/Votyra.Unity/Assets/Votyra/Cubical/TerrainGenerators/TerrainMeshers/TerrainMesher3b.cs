@@ -1,17 +1,13 @@
-
-
-
-using UnityEngine;
-
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using Votyra.Cubical.ImageSamplers;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
+using Votyra.Cubical.ImageSamplers;
 
 namespace Votyra.Cubical.TerrainGenerators.TerrainMeshers
 {
@@ -41,6 +37,7 @@ namespace Votyra.Cubical.TerrainGenerators.TerrainMeshers
         {
             InitializeGroup(group, PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty());
         }
+
         public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
         {
             var bounds = new Rect3i(group * CellInGroupCount, CellInGroupCount).ToBounds();
@@ -71,6 +68,7 @@ namespace Votyra.Cubical.TerrainGenerators.TerrainMeshers
             // probablby has to check the other side if there is something?
             // or maybe postProcessing?
         }
+
         private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
 
         private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3>> DataToTriangles = SampledData3b.AllValues

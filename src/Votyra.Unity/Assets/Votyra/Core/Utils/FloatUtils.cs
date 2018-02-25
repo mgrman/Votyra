@@ -29,10 +29,12 @@ namespace Votyra.Core.Utils
         {
             return Mathf.RoundToInt(val);
         }
+
         public static int FloorToInt(this float val)
         {
             return Mathf.FloorToInt(val);
         }
+
         public static int CeilToInt(this float val)
         {
             return Mathf.CeilToInt(val);

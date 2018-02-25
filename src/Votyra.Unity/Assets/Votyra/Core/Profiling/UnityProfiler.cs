@@ -1,7 +1,6 @@
 using System.Threading;
 
 using UnityEngine.Profiling;
-using Votyra.Core.Profiling;
 
 namespace Votyra.Core.Profiling
 {
@@ -13,7 +12,10 @@ namespace Votyra.Core.Profiling
         {
             if (Thread.CurrentThread == UnitySyncContext.UnityThread)
             {
-                Profiler.BeginSample(name, owner as UnityEngine.Object);
+                if (owner is UnityEngine.Object)
+                    Profiler.BeginSample(name, owner as UnityEngine.Object);
+                else
+                    Profiler.BeginSample(name);
                 _calledProfiler = true;
             }
             else

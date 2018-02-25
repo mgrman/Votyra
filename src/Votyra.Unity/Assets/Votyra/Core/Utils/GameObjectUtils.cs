@@ -4,7 +4,6 @@ namespace Votyra.Core.Utils
 {
     public static class GameObjectUtils
     {
-
         public static T GetOrAddComponent<T>(this GameObject gameObject)
             where T : Component
         {
@@ -15,6 +14,7 @@ namespace Votyra.Core.Utils
             }
             return component;
         }
+
         public static void AddComponentIfMissing<T>(this GameObject gameObject)
             where T : Component
         {

@@ -1,11 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Moq;
 using NUnit.Framework;
-using UnityEngine;
+using System.Linq;
 using Votyra.Core.Models;
-using static Votyra.Cubical.Tests.Editor.TerrainMesher3bTests.TerrainMesher3bUtils;
 
 namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
 {
@@ -50,6 +45,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z0);
             Assert.IsFalse(cube.Data_x1y1z1);
         }
+
         [Test]
         public void x0y0z1()
         {
@@ -72,6 +68,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z0);
             Assert.IsFalse(cube.Data_x1y1z1);
         }
+
         [Test]
         public void x0y1z0()
         {
@@ -94,6 +91,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z0);
             Assert.IsFalse(cube.Data_x1y1z1);
         }
+
         [Test]
         public void x0y1z1()
         {
@@ -116,6 +114,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z0);
             Assert.IsFalse(cube.Data_x1y1z1);
         }
+
         [Test]
         public void x1y0z0()
         {
@@ -138,6 +137,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z0);
             Assert.IsFalse(cube.Data_x1y1z1);
         }
+
         [Test]
         public void x1y0z1()
         {
@@ -160,6 +160,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z0);
             Assert.IsFalse(cube.Data_x1y1z1);
         }
+
         [Test]
         public void x1y1z0()
         {
@@ -182,6 +183,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsTrue(cube.Data_x1y1z0);
             Assert.IsFalse(cube.Data_x1y1z1);
         }
+
         [Test]
         public void x1y1z1()
         {

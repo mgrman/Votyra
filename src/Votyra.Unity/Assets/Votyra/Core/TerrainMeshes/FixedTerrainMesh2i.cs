@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Votyra.Core.Models;
@@ -42,7 +40,6 @@ namespace Votyra.Core.TerrainMeshes
             _counter = 0;
         }
 
-
         public void AddTriangle(Vector3 posA, Vector3 posB, Vector3 posC)
         {
             var side1 = posB - posA;
@@ -63,7 +60,6 @@ namespace Votyra.Core.TerrainMeshes
             UV[_counter] = new Vector2(posC.x, posC.y);
             Normals[_counter] = normal;
             _counter++;
-
         }
     }
 }

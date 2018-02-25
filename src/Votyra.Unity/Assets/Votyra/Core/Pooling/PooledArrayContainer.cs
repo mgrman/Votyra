@@ -51,6 +51,7 @@ namespace Votyra.Core.Pooling
         {
             return ((IReadOnlyList<T>)this.Array).GetEnumerator();
         }
-        #endregion
+
+        #endregion IReadOnlyList<T>
     }
 }

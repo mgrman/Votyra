@@ -68,6 +68,7 @@ namespace Votyra.Core.Utils
         {
             return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
         }
+
         public static Vector3 Average(this IEnumerable<Vector3> items)
         {
             Vector3 sum = new Vector3();
@@ -79,6 +80,5 @@ namespace Votyra.Core.Utils
             }
             return sum / count;
         }
-
     }
 }

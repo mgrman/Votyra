@@ -1,0 +1,14 @@
+{
+    "name": "Votyra.Plannar.Editor",
+    "references": [
+        "Votyra.Plannar"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

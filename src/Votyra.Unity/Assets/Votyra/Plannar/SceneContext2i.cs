@@ -65,7 +65,6 @@ namespace Votyra.Plannar
         public ITerrainGenerator2i TerrainGenerator { get; }
         public IMeshUpdater2i MeshUpdater { get; }
 
-
         public Vector3 CameraPosition { get; }
         public IReadOnlyList<Plane> CameraPlanes { get; }
         public IReadOnlyPooledList<Vector3> CameraFrustumCorners { get; }

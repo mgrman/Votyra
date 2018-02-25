@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-
-
-
 namespace Votyra.Cubical.GroupSelectors
 {
     public interface IGroupSelector3i

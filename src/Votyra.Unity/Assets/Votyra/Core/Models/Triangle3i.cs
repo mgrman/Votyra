@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -29,7 +28,6 @@ namespace Votyra.Core.Models
         {
             get
             {
-
                 yield return a;
                 yield return b;
                 yield return c;
@@ -62,7 +60,6 @@ namespace Votyra.Core.Models
         {
             public TriangleInvariantComparer()
             {
-
             }
 
             public bool Equals(Triangle3i x, Triangle3i y)

@@ -18,6 +18,7 @@ namespace Votyra.Core.Logging
         {
             return factory(name, null);
         }
+
         public static IThreadSafeLogger Create(this LoggerFactoryDelegate factory, object instance)
         {
             return factory(instance.GetType().FullName, instance);

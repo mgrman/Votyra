@@ -70,7 +70,6 @@ namespace Votyra.Cubical
         public ITerrainGenerator3b TerrainGenerator { get; }
         public IMeshUpdater3i MeshUpdater { get; }
 
-
         public Vector3 CameraPosition { get; }
         public IReadOnlyList<Plane> CameraPlanes { get; }
         public IReadOnlyPooledList<Vector3> CameraFrustumCorners { get; }

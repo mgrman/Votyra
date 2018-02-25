@@ -1,23 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Moq;
 using NUnit.Framework;
-using UnityEngine;
-
-
-
-
-
-
 using static Votyra.Cubical.Tests.Editor.TerrainMesher3bTests.TerrainMesher3bUtils;
 
 namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 {
     public class SlopeTests
     {
-
-
         [Test]
         public void SlopeX0()
         {
@@ -33,7 +20,6 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 
             AssertContainsQuad(triangles, cube, x1y0z0, x1y1z0, x0y0z1, x0y1z1);
         }
-
 
         [Test]
         public void SlopeX1()

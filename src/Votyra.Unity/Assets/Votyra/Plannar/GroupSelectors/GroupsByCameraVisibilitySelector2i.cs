@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-
-
-using System.Linq;
-using Votyra.Core.Pooling;
 using Votyra.Core.Models;
+using Votyra.Core.Pooling;
 
 namespace Votyra.Plannar.GroupSelectors
 {

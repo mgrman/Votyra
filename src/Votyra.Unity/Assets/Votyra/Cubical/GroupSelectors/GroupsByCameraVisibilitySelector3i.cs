@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
-
-
-using System.Linq;
-using Votyra.Core.Pooling;
 using Votyra.Core.Models;
+using Votyra.Core.Pooling;
 
 namespace Votyra.Cubical.GroupSelectors
 {
@@ -55,7 +52,6 @@ namespace Votyra.Cubical.GroupSelectors
                     {
                         var group = new Vector3i(group_x, group_y, group_z);
                         var groupBounds = new Rect3i(group * cellInGroupCount, cellInGroupCount).ToBounds();
-
 
                         bool isInside = TestPlanesAABB(planes, groupBounds);
                         if (isInside)

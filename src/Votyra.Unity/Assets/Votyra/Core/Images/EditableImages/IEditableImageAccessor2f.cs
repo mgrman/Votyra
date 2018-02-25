@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.Images.EditableImages

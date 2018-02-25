@@ -3,7 +3,7 @@
 
 // namespace Votyra.Core.Images
 // {
-//     internal class NoiseImageBehaviour : MonoBehaviour, IImage2iProvider
+//     public class NoiseImageBehaviour : MonoBehaviour, IImage2iProvider
 //     {
 //         private Vector3 _old_offset = Vector3.zero;
 //         public Vector3 offset = Vector3.zero;
@@ -19,7 +19,6 @@
 
 //         public IImage2i CreateImage()
 //         {
-
 //             return _image;
 
 //         }

@@ -67,6 +67,7 @@ namespace Votyra.Core.Models
         {
             return point >= min && point <= max;
         }
+
         public bool Overlaps(Rect2i that)
         {
             bool overlapX = this.xMin < that.xMax && that.xMin < this.xMax;

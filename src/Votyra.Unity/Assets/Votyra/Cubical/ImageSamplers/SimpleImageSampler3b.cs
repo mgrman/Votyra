@@ -1,10 +1,6 @@
-
-
-
 using UnityEngine;
-using System;
-using Votyra.Core.Models;
 using Votyra.Core.Images;
+using Votyra.Core.Models;
 
 namespace Votyra.Cubical.ImageSamplers
 {
@@ -14,16 +10,17 @@ namespace Votyra.Cubical.ImageSamplers
         {
             return pos * 2;
         }
+
         public Vector3 ImageToWorld(Vector3i pos)
         {
             return pos / 2.0f;
         }
 
-
         public Vector3i CellToX0Y0Z0(Vector3i pos)
         {
             return new Vector3i(pos.x * 2 + 0, pos.y * 2 + 0, pos.z * 2 + 0);
         }
+
         public Vector3i CellToX0Y0Z1(Vector3i pos)
         {
             return new Vector3i(pos.x * 2 + 0, pos.y * 2 + 0, pos.z * 2 + 2);

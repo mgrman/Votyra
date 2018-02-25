@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
@@ -33,7 +32,6 @@ namespace Votyra.Cubical.TerrainGenerators
                 {
                     mesher.InitializeGroup(group);
                 }
-
 
                 for (int cellInGroup_x = 0; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
                 {

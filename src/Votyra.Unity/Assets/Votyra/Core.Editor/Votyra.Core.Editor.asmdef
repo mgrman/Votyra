@@ -1,0 +1,14 @@
+{
+    "name": "Votyra.Core.Editor",
+    "references": [
+        "Votyra.Core"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

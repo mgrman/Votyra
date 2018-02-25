@@ -12,7 +12,6 @@ namespace Votyra.Core.Pooling
 
         private PooledList()
         {
-
         }
 
         public static PooledList<T> Create()

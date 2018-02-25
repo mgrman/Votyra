@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-
-using UnityEngine;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEngine;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
-
     public struct SampledData3b : IEquatable<SampledData3b>
     {
         public enum MaskBitShift : int
@@ -22,6 +20,7 @@ namespace Votyra.Core.Models
             x1y1z0 = 6,
             x1y1z1 = 7
         }
+
         public const int MaskBitShift_x0y0z0 = (int)MaskBitShift.x0y0z0;
         public const int MaskBitShift_x0y0z1 = (int)MaskBitShift.x0y0z1;
         public const int MaskBitShift_x0y1z0 = (int)MaskBitShift.x0y1z0;
@@ -71,7 +70,7 @@ namespace Votyra.Core.Models
             }
         }
 
-        int NumberOfSetBits(int i)
+        private int NumberOfSetBits(int i)
         {
             i = i - ((i >> 1) & 0x55555555);
             i = (i & 0x33333333) + ((i >> 2) & 0x33333333);
@@ -89,7 +88,6 @@ namespace Votyra.Core.Models
                 (x1y0z1 ? Mask_x1y0z1 : 0) |
                 (x1y1z0 ? Mask_x1y1z0 : 0) |
                 (x1y1z1 ? Mask_x1y1z1 : 0));
-
         }
 
         public SampledData3b(int x0y0z0, int x0y0z1, int x0y1z0, int x0y1z1, int x1y0z0, int x1y0z1, int x1y1z0, int x1y1z1)
@@ -194,7 +192,6 @@ namespace Votyra.Core.Models
                 yield return new Vector3i(1, 1, 0);
             if (Data_x1y1z1 == value)
                 yield return new Vector3i(1, 1, 1);
-
         }
 
         public SampledData3b GetRotatedXY(float angleDeg)
@@ -236,7 +233,6 @@ namespace Votyra.Core.Models
 
         public SampledData3b GetTransformed(Matrix4x4 matrix)
         {
-
             return new SampledData3b
             (
                 this[matrix.MultiplyPoint(new Vector3(0, 0, 0))],
@@ -263,12 +259,16 @@ namespace Votyra.Core.Models
             {
                 case 0:
                     return Data_x0y0z0;
+
                 case 1:
                     return Data_x1y0z0;
+
                 case 2:
                     return Data_x1y1z0;
+
                 case 3:
                     return Data_x0y1z0;
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -280,12 +280,16 @@ namespace Votyra.Core.Models
             {
                 case 0:
                     return Data_x0y0z1;
+
                 case 1:
                     return Data_x1y0z1;
+
                 case 2:
                     return Data_x1y1z1;
+
                 case 3:
                     return Data_x0y1z1;
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -353,6 +357,7 @@ namespace Votyra.Core.Models
                 return obj.TrueCount;
             }
         }
+
         public class NormallessSampledData3bComparer : IEqualityComparer<SampledData3b>
         {
             public bool Equals(SampledData3b x, SampledData3b y)
@@ -389,6 +394,7 @@ namespace Votyra.Core.Models
                 }
             }
         }
+
         public IEnumerable<Matrix4x4> GetAllRotationSubsets(SampledData3b that)
         {
             for (int x = 0; x < 4; x++)
@@ -418,7 +424,7 @@ namespace Votyra.Core.Models
             .Select(o => new SampledData3b((byte)o))
             .ToArray();
 
-        const string CubeRegex = @"[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*";
+        private const string CubeRegex = @"[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*";
 
         public static SampledData3b ParseCube(string cube)
         {
@@ -445,6 +451,5 @@ namespace Votyra.Core.Models
             {(this.Data_x0y0z0 ? 1 : 0)}-----{(this.Data_x1y0z0 ? 1 : 0)}
             ";
         }
-
     }
 }

@@ -1,8 +1,5 @@
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
-using Votyra.Core.Logging;
 
 namespace Votyra.Core.Logging
 {
@@ -41,6 +38,5 @@ namespace Votyra.Core.Logging
         {
             return $"{Name} : {message}";//\r\n{t}";
         }
-
     }
 }

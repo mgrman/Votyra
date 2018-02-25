@@ -1,10 +1,8 @@
-
 using UnityEngine;
-using Votyra.Core.Images;
 
 namespace Votyra.Core.Images
 {
-    internal class CombineImageBehaviour : MonoBehaviour, IImage2fProvider
+    public class CombineImageBehaviour : MonoBehaviour, IImage2fProvider
     {
         private MonoBehaviour _oldImageA;
         public MonoBehaviour ImageA = null;
@@ -15,14 +13,12 @@ namespace Votyra.Core.Images
         private CombineImage2f.Operations _oldOperation = CombineImage2f.Operations.Add;
         public CombineImage2f.Operations Operation = CombineImage2f.Operations.Add;
 
-
         private CombineImage2f _image = null;
+
         public IImage2f CreateImage()
         {
-
             SetImage();
             return _image;
-
         }
 
         private bool _fieldsChanged = true;

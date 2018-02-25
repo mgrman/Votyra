@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using Votyra.Core.Models;
 
@@ -7,6 +6,7 @@ namespace Votyra.Core.Utils
     public static class RectUtils
     {
         public static readonly Rect All = new Rect(float.MinValue / 2, float.MinValue / 2, float.MaxValue, float.MaxValue);
+
         public static Rect GetRectangle(this Rect rect, Vector2i cellCount, Vector2i cell)
         {
             var step = rect.size.DivideBy(cellCount);
@@ -44,7 +44,6 @@ namespace Votyra.Core.Utils
         {
             return Rect3i.MinMaxRect(Mathf.FloorToInt(rec.min.x), Mathf.FloorToInt(rec.min.y), Mathf.FloorToInt(rec.min.z), Mathf.CeilToInt(rec.max.x), Mathf.CeilToInt(rec.max.y), Mathf.CeilToInt(rec.max.z));
         }
-
 
         public static Rect CombineWith(this Rect a, Rect b)
         {

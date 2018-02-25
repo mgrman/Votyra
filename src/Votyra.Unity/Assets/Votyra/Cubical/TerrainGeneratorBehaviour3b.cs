@@ -1,27 +1,24 @@
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using UnityEngine;
-using UnityEngine.Profiling;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using Votyra.Core.Models;
-using Votyra.Core.Images;
-using Votyra.Cubical.ImageSamplers;
-using Votyra.Cubical.TerrainGenerators;
-using Votyra.Cubical.GroupSelectors;
-using Votyra.Cubical.MeshUpdaters;
-using Votyra.Core.Utils;
-using Votyra.Core.TerrainMeshes;
-using Votyra.Core.Pooling;
+using UnityEngine;
 using Votyra.Core.Behaviours;
+using Votyra.Core.Images;
 using Votyra.Core.Logging;
+using Votyra.Core.Models;
+using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
+using Votyra.Core.TerrainMeshes;
+using Votyra.Core.Utils;
+using Votyra.Cubical.GroupSelectors;
+using Votyra.Cubical.ImageSamplers;
+using Votyra.Cubical.MeshUpdaters;
+using Votyra.Cubical.TerrainGenerators;
 using Votyra.Cubical.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Cubical
 {
-
     //TODO: move to floats
     public class TerrainGeneratorBehaviour3b : MonoBehaviour
     {
@@ -29,16 +26,20 @@ namespace Votyra.Cubical
         public bool DrawBounds = false;
         public bool Async = true;
         public Material Material = null;
+
         // public Material MaterialWalls = null;
         public Texture2D InitialTexture = null;
+
         public float InitialTextureScale = 1;
 
         // public IEditableImage3i EditableImage { get { return _imageProvider as IEditableImage2i; } }
 
         private IImage3f _image;
+
         // private IImage3iProvider _imageProvider;
         // private IImageConstraint2i _editableImageConstraint;
         private IImageSampler3b _sampler;
+
         private IGroupSelector3i _groupsSelector;
         private ITerrainGenerator3b _terrainGenerator;
         private IMeshUpdater3i _meshUpdater;
@@ -137,7 +138,6 @@ namespace Votyra.Cubical
                         context.MeshUpdater.UpdateMesh(context, results, toKeep);
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -169,8 +169,6 @@ namespace Votyra.Cubical
             var frustumCorners = PooledArrayContainer<Vector3>.CreateDirty(4);
 
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCorners.Array);
-
-
 
             return new SceneContext3b
             (
@@ -225,8 +223,6 @@ namespace Votyra.Cubical
             _meshUpdater = new TerrainMeshUpdater3i();
             _groupsSelector = new GroupsByCameraVisibilitySelector3i();
             //_image = new NoiseImage3b(Vector3.zero, new Vector3(100, 100, 100));//new EditableMatrixImagei(InitialTexture, InitialTextureScale, _sampler, _editableImageConstraint);
-
-
 
             int width = InitialTexture.width;
             int height = InitialTexture.height;

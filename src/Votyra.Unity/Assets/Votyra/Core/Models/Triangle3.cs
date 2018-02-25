@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,12 +18,10 @@ namespace Votyra.Core.Models
             this.c = c;
         }
 
-
         public IEnumerable<Vector3> Points
         {
             get
             {
-
                 yield return a;
                 yield return b;
                 yield return c;
@@ -57,6 +54,7 @@ namespace Votyra.Core.Models
             var normal = Vector3.Cross(b - a, c - a);
             return Vector3.Dot(observer - center, normal);
         }
+
         public bool IsCCW(Vector3 observer)
         {
             var dot = DotWithObserver(observer);
@@ -78,11 +76,10 @@ namespace Votyra.Core.Models
                 return GetReversedOrder();
             }
         }
+
         public Triangle3 GetReversedOrder()
         {
-
             return new Triangle3(a, c, b);
-
         }
 
         public static readonly IEqualityComparer<Triangle3> OrderInvariantComparer = new TriangleInvariantComparer();
@@ -91,7 +88,6 @@ namespace Votyra.Core.Models
         {
             public TriangleInvariantComparer()
             {
-
             }
 
             public bool Equals(Triangle3 x, Triangle3 y)
@@ -112,9 +108,9 @@ namespace Votyra.Core.Models
             }
         }
     }
+
     public static class Triangle3Extensions
     {
-
         private static readonly Vector3 CenterZeroCell = new Vector3(0.5f, 0.5f, 0.5f);
 
         public static IEnumerable<Triangle3> EnsureCCW(this IEnumerable<Triangle3> triangles, SampledData3b data)
