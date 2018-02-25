@@ -5,7 +5,7 @@ namespace Votyra.Plannar.ImageSamplers
 {
     public class SimpleImageSampler2i : IImageSampler2i
     {
-        private const int StepSize = 2;
+        private const int StepSize = 1;
         private const float StepSizeFloat = StepSize;
 
         public Vector2 WorldToImage(Vector2 pos)

@@ -14,7 +14,6 @@ namespace Votyra.Plannar
         protected override void Initialize()
         {
             _editableImageConstraint = new SimpleTycoonTileConstraint2i();
-            new TycoonTileConstraint2i();
             _sampler = new SimpleImageSampler2i();
 
             _terrainGenerator = new TerrainGenerator2i<TerrainMesher2i>();

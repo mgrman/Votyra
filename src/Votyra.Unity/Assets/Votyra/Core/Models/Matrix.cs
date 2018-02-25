@@ -43,5 +43,10 @@ namespace Votyra.Core.Models
                 _points[i.x, i.y] = value;
             }
         }
+
+        public T TryGet(Vector2i i, T defaultValue)
+        {
+            return i.IsAsIndexContained(size) ? _points[i.x, i.y] : defaultValue;
+        }
     }
 }

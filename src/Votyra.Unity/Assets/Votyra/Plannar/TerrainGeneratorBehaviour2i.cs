@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Votyra.Core.Behaviours;
 using Votyra.Core.Images;
-using Votyra.Core.Images.EditableImages;
-using Votyra.Core.Images.EditableImages.Constraints;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
@@ -14,6 +12,8 @@ using Votyra.Core.Profiling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
 using Votyra.Plannar.GroupSelectors;
+using Votyra.Plannar.Images;
+using Votyra.Plannar.Images.Constraints;
 using Votyra.Plannar.ImageSamplers;
 using Votyra.Plannar.MeshUpdaters;
 using Votyra.Plannar.TerrainGenerators;
@@ -21,7 +21,7 @@ using Votyra.Plannar.TerrainGenerators;
 namespace Votyra.Plannar
 {
     //TODO: move to floats
-    public abstract class TerrainGeneratorBehaviour2i : MonoBehaviour
+    public abstract class TerrainGeneratorBehaviour2i : MonoBehaviour, IEditableImage2fProvider
     {
         public UI_Vector2i CellInGroupCount = new UI_Vector2i(10, 10);
         public bool FlipTriangles = false;

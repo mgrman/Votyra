@@ -1,11 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Votyra.Core.Images;
-using Votyra.Core.Images.EditableImages;
-using Votyra.Core.Images.EditableImages.Constraints;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
+using Votyra.Plannar.Images.Constraints;
 using Votyra.Plannar.ImageSamplers;
 
 namespace Votyra.Plannar.Images
@@ -118,110 +118,21 @@ namespace Votyra.Plannar.Images
 
             var cellMin = transformedArea.min.FloorToVector2i();
             var cellMax = transformedArea.max.CeilToVector2i();
+            _constraint.Constrain(cellMin, cellMax, _sampler, image, _editableMatrix);
+        }
 
-            // Func<Vector2i, bool> processCell = (cell) =>
-            // {
-            //     var sample = _sampler.Sample(image, cell);
+        private struct PositionWithValue
+        {
+            public readonly Vector2i Position;
+            public readonly float Value;
 
-            //     var processedSample = _terrainAlgorithm.Process(sample);
-
-            //     Vector2i cell_x0y0 = _sampler.CellToX0Y0(cell);
-            //     Vector2i cell_x0y1 = _sampler.CellToX0Y1(cell);
-            //     Vector2i cell_x1y0 = _sampler.CellToX1Y0(cell);
-            //     Vector2i cell_x1y1 = _sampler.CellToX1Y1(cell);
-
-            //     if (cell_x0y0.IsAsIndexContained(_editableMatrix.size))
-            //         _editableMatrix[cell_x0y0] = processedSample.data.x0y0;
-            //     if (cell_x0y1.IsAsIndexContained(_editableMatrix.size))
-            //         _editableMatrix[cell_x0y1] = processedSample.data.x0y1;
-            //     if (cell_x1y0.IsAsIndexContained(_editableMatrix.size))
-            //         _editableMatrix[cell_x1y0] = processedSample.data.x1y0;
-            //     if (cell_x1y1.IsAsIndexContained(_editableMatrix.size))
-            //         _editableMatrix[cell_x1y1] = processedSample.data.x1y1;
-
-            //     return false;
-            // };
-
-            // int maxDist = Math.Max(area.width, area.height);
-            // int dist = 1;
-            // Vector2i center = area.center;
-
-            // bool isChanged = processCell(center);
-            // while (dist < maxDist || isChanged)
-            // {
-            //     isChanged = false;
-            //     for (int ix = center.x - dist; ix <= center.x + dist; ix++)
-            //     {
-            //         isChanged = isChanged || processCell(new Vector2i(ix, center.y - dist));
-            //         isChanged = isChanged || processCell(new Vector2i(ix, center.y + dist));
-            //     }
-            //     for (int iy = center.y - dist + 1; iy <= center.y + dist - 1; iy++)
-            //     {
-            //         isChanged = isChanged || processCell(new Vector2i(center.x - dist, iy));
-            //         isChanged = isChanged || processCell(new Vector2i(center.x + dist, iy));
-            //     }
-            //     dist++;
-            // }
-
-            for (int ix = cellMin.x; ix <= cellMax.x; ix++)
+            public PositionWithValue(Vector2i pos, float value)
             {
-                for (int iy = cellMin.y; iy <= cellMax.y; iy++)
-                {
-                    var cell = new Vector2i(ix, iy);
-                    var sample = _sampler.Sample(image, cell);
-
-                    var processedSample = _constraint.Process(sample);
-
-                    Vector2i cell_x0y0 = _sampler.CellToX0Y0(cell);
-                    Vector2i cell_x0y1 = _sampler.CellToX0Y1(cell);
-                    Vector2i cell_x1y0 = _sampler.CellToX1Y0(cell);
-                    Vector2i cell_x1y1 = _sampler.CellToX1Y1(cell);
-
-                    if (cell_x0y0.IsAsIndexContained(_editableMatrix.size))
-                        _editableMatrix[cell_x0y0] = processedSample.x0y0;
-                    if (cell_x0y1.IsAsIndexContained(_editableMatrix.size))
-                        _editableMatrix[cell_x0y1] = processedSample.x0y1;
-                    if (cell_x1y0.IsAsIndexContained(_editableMatrix.size))
-                        _editableMatrix[cell_x1y0] = processedSample.x1y0;
-                    if (cell_x1y1.IsAsIndexContained(_editableMatrix.size))
-                        _editableMatrix[cell_x1y1] = processedSample.x1y1;
-                }
+                Position = pos;
+                Value = value;
             }
 
-            // const int maxDiference = 1;
-
-            // Func<int, int, int> op;
-            // Func<int, int> getLimit;
-            // if (direction == Direction.Up)
-            // {
-            //     op = Math.Max;
-            //     getLimit = l => l - maxDiference;
-            // }
-            // else
-            // {
-            //     op = Math.Min;
-            //     getLimit = l => l + maxDiference;
-            // }
-
-            // Queue<Vector2i> toCheck = new Queue<Vector2i>();
-            // for (int ix = area.xMin.FloorTo2(); ix < area.xMax.CeilTo2(); ix += 2)
-            // {
-            //     for (int iy = area.yMin.FloorTo2(); iy < area.yMax.CeilTo2(); iy += 2)
-            //     {
-            //         int x0y0 = _editableMatrix[ix + 0, iy + 0];
-            //         int x0y1 = _editableMatrix[ix + 0, iy + 1];
-            //         int x1y0 = _editableMatrix[ix + 1, iy + 0];
-            //         int x1y1 = _editableMatrix[ix + 1, iy + 1];
-
-            //         int limit = getLimit(op(op(op(x0y0, x0y1), x1y0), x1y1));
-
-            //         _editableMatrix[ix + 0, iy + 0] = op(_editableMatrix[ix + 0, iy + 0], limit);
-            //         _editableMatrix[ix + 0, iy + 1] = op(_editableMatrix[ix + 0, iy + 1], limit);
-            //         _editableMatrix[ix + 1, iy + 0] = op(_editableMatrix[ix + 1, iy + 0], limit);
-            //         _editableMatrix[ix + 1, iy + 1] = op(_editableMatrix[ix + 1, iy + 1], limit);
-            //     }
-            // }
-        }
+        };
 
         private class EditableImageWrapper : IImage2f
         {

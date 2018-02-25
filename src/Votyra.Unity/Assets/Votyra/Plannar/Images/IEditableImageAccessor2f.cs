@@ -1,7 +1,7 @@
 using System;
 using Votyra.Core.Models;
 
-namespace Votyra.Core.Images.EditableImages
+namespace Votyra.Plannar.Images
 {
     public interface IEditableImageAccessor2f : IDisposable
     {

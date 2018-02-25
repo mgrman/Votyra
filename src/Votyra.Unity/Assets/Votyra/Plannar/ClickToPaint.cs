@@ -1,8 +1,8 @@
 using UnityEngine;
-using Votyra.Core.Images.EditableImages;
+using Votyra.Plannar.Images;
 using Votyra.Core.Models;
 
-namespace Votyra.Core.Behaviours
+namespace Votyra.Plannar
 {
     public class ClickToPaint : MonoBehaviour
     {
@@ -15,12 +15,13 @@ namespace Votyra.Core.Behaviours
         private float lastTime;
         private Vector2i lastCell;
 
-        public IEditableImage2f EditableImage { get; }
+        public IEditableImage2f EditableImage { get; set; }
 
         private float? _centerValueToReuse;
 
         private void Start()
         {
+            EditableImage = this.GetComponent<IEditableImage2fProvider>()?.EditableImage;
         }
 
         private void Update()
