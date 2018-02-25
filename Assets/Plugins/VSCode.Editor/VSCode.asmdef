@@ -1,7 +1,9 @@
 {
-    "name": "VSCode",
+    "name": "VSCode.Editor",
     "references": [],
-    "optionalUnityReferences": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
     "includePlatforms": [
         "Editor"
     ],

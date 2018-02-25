@@ -10,7 +10,7 @@ namespace Votyra.Core
         public static SynchronizationContext UnitySynchronizationContext { get; private set; }
         public static TaskScheduler UnityTaskScheduler { get; private set; }
 
-        static UnitySyncContext()
+        protected virtual void Awake()
         {
             UnityThread = Thread.CurrentThread;
             UnitySynchronizationContext = SynchronizationContext.Current;
