@@ -14,6 +14,20 @@ namespace Votyra.Plannar.ImageSamplers
             return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
         }
 
+        public static Rect2i WorldToImage(this IImageSampler2i sampler, Rect rect)
+        {
+            var min = sampler.WorldToImage(rect.min);
+            var max = sampler.WorldToImage(rect.max);
+            return Rect2i.MinMaxRect(min.x, min.y, max.x, max.y);
+        }
+
+        public static Rect2i WorldToImage(this IImageSampler2i sampler, Rect2i rect)
+        {
+            var min = sampler.WorldToImage(rect.min.ToVector2());
+            var max = sampler.WorldToImage(rect.max.ToVector2());
+            return Rect2i.MinMaxRect(min.x, min.y, max.x, max.y);
+        }
+
         public static SampledData2i Sample(this IImageSampler2i sampler, IImage2f image, Vector2i pos)
         {
             var x0y0 = image.Sample(sampler.CellToX0Y0(pos));

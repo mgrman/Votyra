@@ -10,11 +10,17 @@ namespace Votyra.Plannar.Images.Constraints
     public class DualSampledTycoonTileConstraint2i : IImageConstraint2i
     {
 
-        public void Constrain(Vector2i cellMin, Vector2i cellMax, IImageSampler2i sampler, IImage2f image, Matrix<float> editableMatrix)
+        public Rect2i Constrain(Direction direction, Rect2i invalidatedArea, IImageSampler2i sampler, IImage2f image, Matrix<float> editableMatrix)
         {
-            for (int ix = cellMin.x; ix <= cellMax.x; ix++)
+
+            if (direction != Direction.Up && direction != Direction.Down)
             {
-                for (int iy = cellMin.y; iy <= cellMax.y; iy++)
+                direction = Direction.Down;
+            }
+
+            for (int ix = invalidatedArea.min.x; ix <= invalidatedArea.max.x; ix++)
+            {
+                for (int iy = invalidatedArea.min.y; iy <= invalidatedArea.max.y; iy++)
                 {
                     var cell = new Vector2i(ix, iy);
                     var sample = sampler.Sample(image, cell);
@@ -36,8 +42,7 @@ namespace Votyra.Plannar.Images.Constraints
                         editableMatrix[cell_x1y1] = processedSample.x1y1;
                 }
             }
-
-
+            return invalidatedArea;
         }
 
         private struct PositionWithValue
@@ -67,34 +72,36 @@ namespace Votyra.Plannar.Images.Constraints
             return choosenTemplateTile + height;
         }
 
-        private readonly static SampledData2i[] Templates = new SampledData2i[] {
+        private readonly static SampledData2i[] Templates = new SampledData2i[]
+        {
             //plane
-            new SampledData2i (1, 1, 1, 1),
+            new SampledData2i(1, 1, 1, 1),
 
             //slope
-            new SampledData2i (0, 1, 0, 1),
+            new SampledData2i(0, 1, 0, 1),
 
             //slopeDiagonal
-            new SampledData2i (-1, 0, 0, 1),
+            new SampledData2i(-1, 0, 0, 1),
 
             //partialUpSlope
-            new SampledData2i (0, 0, 0, 1),
+            new SampledData2i(0, 0, 0, 1),
 
             //partialDownSlope
-            new SampledData2i (0, 1, 1, 1),
+            new SampledData2i(0, 1, 1, 1),
 
             //slopeDiagonal
-            new SampledData2i (1, 0, 0, 1),
+            new SampledData2i(1, 0, 0, 1),
         };
 
         private readonly static SampledData2i[] ExpandedTemplates = Templates
             .SelectMany(template =>
             {
-                return new[] {
+                return new []
+                {
                 template,
-                template.GetRotated (1),
-                template.GetRotated (2),
-                template.GetRotated (3),
+                template.GetRotated(1),
+                template.GetRotated(2),
+                template.GetRotated(3),
                 };
             })
             .Distinct()

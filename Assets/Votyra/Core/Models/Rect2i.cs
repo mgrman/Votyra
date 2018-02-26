@@ -23,7 +23,7 @@ namespace Votyra.Core.Models
             this.max = min + size;
         }
 
-        public Vector2i extents => (max - min) / 2;
+        public Vector2i extents =>(max - min) / 2;
 
         public Vector2i center => min + extents;
 
@@ -53,6 +53,11 @@ namespace Votyra.Core.Models
             return new Rect2i(new Vector2i(xmin, ymin), new Vector2i(xmax - xmin, ymax - ymin));
         }
 
+        public static Rect2i MinMaxRect(Vector2i min, Vector2i max)
+        {
+            return new Rect2i(min, max - min);
+        }
+
         public Vector2i Denormalize(Vector2 normalizedRectCoordinates)
         {
             return min + (size * normalizedRectCoordinates).ToVector2i();
@@ -80,11 +85,25 @@ namespace Votyra.Core.Models
             var bMin = b.min;
             var bMax = b.max;
             return Rect2i
-                     .MinMaxRect(
-                         Mathf.Min(this.min.x, bMin.x),
-                         Mathf.Min(this.min.y, bMin.y),
-                         Mathf.Max(this.max.x, bMax.x),
-                         Mathf.Max(this.max.y, bMax.y));
+                .MinMaxRect(
+                    Mathf.Min(this.min.x, bMin.x),
+                    Mathf.Min(this.min.y, bMin.y),
+                    Mathf.Max(this.max.x, bMax.x),
+                    Mathf.Max(this.max.y, bMax.y));
+        }
+        public Rect2i CombineWith(Vector2i b)
+        {
+            if (Contains(b))
+                return this;
+
+            var bMin = b;
+            var bMax = b;
+            return Rect2i
+                .MinMaxRect(
+                    Mathf.Min(this.min.x, bMin.x),
+                    Mathf.Min(this.min.y, bMin.y),
+                    Mathf.Max(this.max.x, bMax.x),
+                    Mathf.Max(this.max.y, bMax.y));
         }
 
         public Rect ToRect()
@@ -112,7 +131,7 @@ namespace Votyra.Core.Models
             if (!(obj is Rect2i))
                 return false;
 
-            return this.Equals((Rect2i)obj);
+            return this.Equals((Rect2i) obj);
         }
 
         public override int GetHashCode()

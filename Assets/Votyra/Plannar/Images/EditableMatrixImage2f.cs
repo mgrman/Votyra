@@ -94,13 +94,6 @@ namespace Votyra.Plannar.Images
             return new MatrixImageAccessor(this, area);
         }
 
-        private enum Direction
-        {
-            Unknown = 0,
-            Up = 1,
-            Down = -1
-        }
-
         private void FixImage(Rect2i area, Direction direction)
         {
             _invalidatedArea = _invalidatedArea?.CombineWith(area) ?? area;
@@ -110,17 +103,17 @@ namespace Votyra.Plannar.Images
                 return;
             }
 
-            if (direction != Direction.Up && direction != Direction.Down)
-            {
-                direction = Direction.Down;
-            }
-
             var transformedArea = _sampler.ImageToWorld(area);
             var image = new EditableImageWrapper(_editableMatrix);
 
             var cellMin = transformedArea.min.FloorToVector2i();
             var cellMax = transformedArea.max.CeilToVector2i();
-            _constraint.Constrain(cellMin, cellMax, _sampler, image, _editableMatrix);
+            var invalidatedCells = Rect2i.MinMaxRect(cellMin, cellMax);
+            var newInvalidatedCells = _constraint.Constrain(direction, invalidatedCells, _sampler, image, _editableMatrix);
+
+            var newInvalidatedArea = _sampler.WorldToImage(newInvalidatedCells);
+
+            _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedArea) ?? newInvalidatedArea;
         }
 
         private struct PositionWithValue
@@ -164,12 +157,17 @@ namespace Votyra.Plannar.Images
 
         private class MatrixImageAccessor : IEditableImageAccessor2f
         {
+            float _changeCounter = 0;
             public Rect2i Area { get; }
 
             public float this [Vector2i pos]
             {
                 get { return _editableImage._editableMatrix[pos]; }
-                set { _editableImage._editableMatrix[pos] = value; }
+                set
+                {
+                    _changeCounter += value - _editableImage._editableMatrix[pos];
+                    _editableImage._editableMatrix[pos] = value;
+                }
             }
 
             private readonly EditableMatrixImage2f _editableImage;
@@ -182,7 +180,7 @@ namespace Votyra.Plannar.Images
 
             public void Dispose()
             {
-                this._editableImage.FixImage(Area, Direction.Unknown);
+                this._editableImage.FixImage(Area, _changeCounter > 0 ? Direction.Up : Direction.Down);
             }
         }
     }
