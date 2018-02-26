@@ -1,6 +1,6 @@
 using UnityEngine;
-using Votyra.Plannar.Images;
 using Votyra.Core.Models;
+using Votyra.Plannar.Images;
 
 namespace Votyra.Plannar
 {
@@ -15,14 +15,11 @@ namespace Votyra.Plannar
         private float lastTime;
         private Vector2i lastCell;
 
-        public IEditableImage2f EditableImage { get; set; }
+        public IEditableImage2f EditableImage => this.GetComponent<IEditableImage2fProvider>()?.EditableImage;
 
         private float? _centerValueToReuse;
 
-        private void Start()
-        {
-            EditableImage = this.GetComponent<IEditableImage2fProvider>()?.EditableImage;
-        }
+        private void OnEnable() { }
 
         private void Update()
         {
@@ -32,15 +29,16 @@ namespace Votyra.Plannar
             }
         }
 
-        private void OnCellClick(Vector2 position)
+        private void OnCellClick(Vector2i cell)
         {
-            var cell = new Vector2i(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y));
+            //var cell = new Vector2i(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y));
             if (cell == lastCell || Time.time < lastTime + Period)
             {
                 return;
             }
             lastCell = cell;
             lastTime = Time.time;
+            Debug.Log($"CellClick:{cell}");
 
             var editableImage = EditableImage;
             if (editableImage == null)
@@ -52,7 +50,7 @@ namespace Votyra.Plannar
             {
                 int maxDist = 4;
 
-                using (var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
+                using(var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
                 {
                     float centerValue;
                     if (_centerValueToReuse.HasValue)
@@ -101,7 +99,7 @@ namespace Votyra.Plannar
                 else
                     maxDist = maxDistSmall;
 
-                using (var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
+                using(var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
                 {
                     for (int ox = -maxDist; ox <= maxDist; ox++)
                     {

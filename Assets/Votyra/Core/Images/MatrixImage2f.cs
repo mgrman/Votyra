@@ -9,11 +9,11 @@ namespace Votyra.Core.Images
 
         public Rect2i InvalidatedArea { get; }
 
-        private readonly LockableMatrix<float> _image;
+        public LockableMatrix<float> Image { get; }
 
         public MatrixImage2f(LockableMatrix<float> values, Rect2i invalidatedArea)
         {
-            _image = values;
+            Image = values;
             InvalidatedArea = invalidatedArea;
             RangeZ = CalculateRangeZ(values);
         }
@@ -40,26 +40,26 @@ namespace Votyra.Core.Images
 
         public float Sample(Vector2i point)
         {
-            if (point.x < 0 || point.y < 0 || point.x >= _image.size.x || point.y >= _image.size.y)
+            if (point.x < 0 || point.y < 0 || point.x >= Image.size.x || point.y >= Image.size.y)
                 return 0;
-            return _image[point.x, point.y];
+            return Image[point.x, point.y];
         }
 
         public void StartUsing()
         {
-            _image.Lock(this);
+            Image.Lock(this);
         }
 
         public void FinishUsing()
         {
-            _image.Unlock(this);
+            Image.Unlock(this);
         }
 
         public void Dispose()
         {
-            if (_image.IsLocked)
+            if (Image.IsLocked)
             {
-                _image.Unlock(this);
+                Image.Unlock(this);
             }
         }
     }

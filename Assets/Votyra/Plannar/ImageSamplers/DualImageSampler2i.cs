@@ -7,9 +7,9 @@ namespace Votyra.Plannar.ImageSamplers
 {
     public class DualImageSampler2i : IImageSampler2i
     {
-        public Vector2 WorldToImage(Vector2 pos)
+        public Vector2i WorldToImage(Vector2 pos)
         {
-            return pos * 2;
+            return new Vector2i((pos.x * 2).FloorToInt(), (pos.y * 2).FloorToInt());
         }
 
         public Vector2 ImageToWorld(Vector2i pos)

@@ -56,7 +56,11 @@ namespace Votyra.Plannar.Images
 
         public IImage2f CreateImage()
         {
-            if (_invalidatedArea.HasValue)
+            if (_invalidatedArea == Rect2i.zero)
+            {
+                _image = new MatrixImage2f(_image.Image, _invalidatedArea.Value);
+            }
+            else if (_invalidatedArea.HasValue)
             {
                 // Debug.LogFormat("Update readonlyCount:{0}", _readonlyMatrices.Count);
 
@@ -75,14 +79,12 @@ namespace Votyra.Plannar.Images
                         readonlyMatrix[x, y] = _editableMatrix[x, y];
                     }
                 }
+                _image?.Dispose();
 
                 // Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
 
-                var oldImage = _image;
-                oldImage?.Dispose();
-
                 _image = new MatrixImage2f(readonlyMatrix, _invalidatedArea.Value);
-                _invalidatedArea = null;
+                _invalidatedArea = Rect2i.zero;
             }
             return _image;
         }
@@ -164,7 +166,7 @@ namespace Votyra.Plannar.Images
         {
             public Rect2i Area { get; }
 
-            public float this[Vector2i pos]
+            public float this [Vector2i pos]
             {
                 get { return _editableImage._editableMatrix[pos]; }
                 set { _editableImage._editableMatrix[pos] = value; }

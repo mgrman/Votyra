@@ -55,8 +55,8 @@ namespace Votyra.Plannar
             RangeZ = image.RangeZ;
             GroupBounds = new Bounds(new Vector3(CellInGroupCount.x / 2.0f, CellInGroupCount.y / 2.0f, RangeZ.Center), new Vector3(CellInGroupCount.x, CellInGroupCount.y, RangeZ.Size));
             InvalidatedArea_worldSpace = ImageSampler
-                  .ImageToWorld(invalidatedArea_imageSpace)
-                  .RoundToContain();
+                .ImageToWorld(invalidatedArea_imageSpace)
+                .RoundToContain();
 
             (Image as IInitializableImage)?.StartUsing();
         }

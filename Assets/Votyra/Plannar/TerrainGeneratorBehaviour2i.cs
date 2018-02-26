@@ -76,10 +76,10 @@ namespace Votyra.Plannar
             // Casts the ray and get the first game object hit
             Physics.Raycast(ray, out hit);
 
-            var position = this.transform.worldToLocalMatrix.MultiplyPoint(hit.point).XY();
-            position = _sampler.WorldToImage(position);
+            var localPosition = this.transform.worldToLocalMatrix.MultiplyPoint(hit.point).XY();
 
-            this.SendMessage("OnCellClick", position, SendMessageOptions.DontRequireReceiver);
+            var imagePosition = _sampler.WorldToImage(localPosition);
+            this.SendMessage("OnCellClick", imagePosition, SendMessageOptions.DontRequireReceiver);
         }
 
         private async Task UpdateTerrain(SceneContext2i context, bool async, CancellationToken token)
@@ -90,15 +90,15 @@ namespace Votyra.Plannar
             {
                 Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i>> computeAction = () =>
                 {
-                    using (context.ProfilerFactory.Create("Creating visible groups"))
+                    using(context.ProfilerFactory.Create("Creating visible groups"))
                     {
                         groupActions = context.GroupSelector.GetGroupsToUpdate(context);
-                        Debug.Log($"update {groupActions.ToRecompute.Count} keep {groupActions.ToKeep.Count}");
+                        //Debug.Log($"update {groupActions.ToRecompute.Count} keep {groupActions.ToKeep.Count}");
                     }
                     var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i>();
                     if (toRecompute.Any())
                     {
-                        using (context.ProfilerFactory.Create("TerrainMeshGenerator"))
+                        using(context.ProfilerFactory.Create("TerrainMeshGenerator"))
                         {
                             return context.TerrainGenerator.Generate(context, toRecompute);
                         }
@@ -125,7 +125,7 @@ namespace Votyra.Plannar
 
                 if (results != null)
                 {
-                    using (context.ProfilerFactory.Create("Applying mesh"))
+                    using(context.ProfilerFactory.Create("Applying mesh"))
                     {
                         var toKeep = groupActions?.ToKeep ?? Enumerable.Empty<Vector2i>();
                         context.MeshUpdater.UpdateMesh(context, results, toKeep);

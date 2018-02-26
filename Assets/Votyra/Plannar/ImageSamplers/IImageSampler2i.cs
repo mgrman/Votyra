@@ -5,7 +5,7 @@ namespace Votyra.Plannar.ImageSamplers
 {
     public interface IImageSampler2i
     {
-        Vector2 WorldToImage(Vector2 pos);
+        Vector2i WorldToImage(Vector2 pos);
 
         Vector2 ImageToWorld(Vector2i pos);
 
