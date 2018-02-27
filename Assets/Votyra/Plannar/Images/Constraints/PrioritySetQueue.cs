@@ -10,13 +10,6 @@ namespace Votyra.Plannar.Images.Constraints
         private IComparer<TPriority> _priorityOrderComparer;
         private IEqualityComparer<TValue> _valueEqualityComparer;
 
-        public PrioritySetQueue()
-        {
-            _priorityOrderComparer = Comparer<TPriority>.Default;
-            _valueEqualityComparer = EqualityComparer<TValue>.Default;
-            _queue = new LinkedList<PrioritisedValue>();
-        }
-
         public PrioritySetQueue(IEnumerable<TValue> values, IEqualityComparer<TValue> valueEqualityComparer, Func<TValue, TPriority> getPriority, IComparer<TPriority> priorityOrderComparer)
         {
             _priorityOrderComparer = priorityOrderComparer;
@@ -24,6 +17,13 @@ namespace Votyra.Plannar.Images.Constraints
             _queue = new LinkedList<PrioritisedValue>(values
                 .Select(cell => new PrioritisedValue(cell, getPriority(cell)))
                 .OrderBy(cell => cell.Priority, priorityOrderComparer));
+        }
+
+        public PrioritySetQueue(IEqualityComparer<TValue> valueEqualityComparer, IComparer<TPriority> priorityOrderComparer)
+        {
+            _priorityOrderComparer = priorityOrderComparer;
+            _valueEqualityComparer = valueEqualityComparer;
+            _queue = new LinkedList<PrioritisedValue>();
         }
 
         public int Count => _queue.Count;

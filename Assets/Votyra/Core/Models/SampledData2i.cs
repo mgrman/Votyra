@@ -11,10 +11,7 @@ namespace Votyra.Core.Models
         public readonly int x1y0;
         public readonly int x1y1;
 
-        public SampledData2i(SampledData2i data, Func<int, int> transformation)
-            : this(transformation(data.x0y0), transformation(data.x0y1), transformation(data.x1y0), transformation(data.x1y1))
-        {
-        }
+        public SampledData2i(SampledData2i data, Func<int, int> transformation) : this(transformation(data.x0y0), transformation(data.x0y1), transformation(data.x1y0), transformation(data.x1y1)) { }
 
         public SampledData2i(int x0y0, int x0y1, int x1y0, int x1y1)
         {
@@ -74,6 +71,22 @@ namespace Votyra.Core.Models
             }
         }
 
+        public SampledData2i ClipMin(int clipValue)
+        {
+            return new SampledData2i(Math.Max(this.x0y0, clipValue),
+                Math.Max(this.x0y1, clipValue),
+                Math.Max(this.x1y0, clipValue),
+                Math.Max(this.x1y1, clipValue));
+        }
+
+        public SampledData2i ClipMax(int clipValue)
+        {
+            return new SampledData2i(Math.Min(this.x0y0, clipValue),
+                Math.Min(this.x0y1, clipValue),
+                Math.Min(this.x1y0, clipValue),
+                Math.Min(this.x1y1, clipValue));
+        }
+
         public static SampledData2i operator +(SampledData2i a, int b)
         {
             return new SampledData2i(a.x0y0 + b, a.x0y1 + b, a.x1y0 + b, a.x1y1 + b);
@@ -84,19 +97,24 @@ namespace Votyra.Core.Models
             return new SampledData2i(a.x0y0 - b, a.x0y1 - b, a.x1y0 - b, a.x1y1 - b);
         }
 
+        public static SampledData2i operator -(SampledData2i a)
+        {
+            return new SampledData2i(-a.x0y0, -a.x0y1, -a.x1y0, -a.x1y1);
+        }
+
         public static int Dif(SampledData2i a, SampledData2i b)
         {
             return Math.Abs(a.x0y0 - b.x0y0) +
-                   Math.Abs(a.x0y1 - b.x0y1) +
-                   Math.Abs(a.x1y0 - b.x1y0) +
-                   Math.Abs(a.x1y1 - b.x1y1);
+                Math.Abs(a.x0y1 - b.x0y1) +
+                Math.Abs(a.x1y0 - b.x1y0) +
+                Math.Abs(a.x1y1 - b.x1y1);
         }
 
         public override bool Equals(object obj)
         {
             if (obj is SampledData2i)
             {
-                var that = (SampledData2i)obj;
+                var that = (SampledData2i) obj;
                 return this.Equals(that);
             }
             else

@@ -58,7 +58,8 @@ namespace Votyra.Plannar.Images
         {
             if (_invalidatedArea == Rect2i.zero)
             {
-                _image = new MatrixImage2f(_image.Image, _invalidatedArea.Value);
+                _image?.Dispose();
+                _image = new MatrixImage2f(_image.Image, Rect2i.zero);
             }
             else if (_invalidatedArea.HasValue)
             {
@@ -79,10 +80,10 @@ namespace Votyra.Plannar.Images
                         readonlyMatrix[x, y] = _editableMatrix[x, y];
                     }
                 }
-                _image?.Dispose();
 
                 // Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
 
+                _image?.Dispose();
                 _image = new MatrixImage2f(readonlyMatrix, _invalidatedArea.Value);
                 _invalidatedArea = Rect2i.zero;
             }
@@ -94,40 +95,24 @@ namespace Votyra.Plannar.Images
             return new MatrixImageAccessor(this, area);
         }
 
-        private void FixImage(Rect2i area, Direction direction)
+        private void FixImage(Rect2i invalidatedImageArea, Direction direction)
         {
-            _invalidatedArea = _invalidatedArea?.CombineWith(area) ?? area;
+            _invalidatedArea = _invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
 
             if (_sampler == null || _constraint == null)
             {
                 return;
             }
 
-            var transformedArea = _sampler.ImageToWorld(area);
-            var image = new EditableImageWrapper(_editableMatrix);
+            var invalidatedCellArea = _sampler.ImageToWorld(invalidatedImageArea)
+                .RoundToContain();
 
-            var cellMin = transformedArea.min.FloorToVector2i();
-            var cellMax = transformedArea.max.CeilToVector2i();
-            var invalidatedCells = Rect2i.MinMaxRect(cellMin, cellMax);
-            var newInvalidatedCells = _constraint.Constrain(direction, invalidatedCells, _sampler, image, _editableMatrix);
+            var newInvalidatedCellArea = _constraint.Constrain(direction, invalidatedCellArea, _sampler, _editableMatrix);
 
-            var newInvalidatedArea = _sampler.WorldToImage(newInvalidatedCells);
+            var newInvalidatedImageArea = _sampler.WorldToImage(newInvalidatedCellArea);
 
-            _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedArea) ?? newInvalidatedArea;
+            _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedImageArea) ?? newInvalidatedImageArea;
         }
-
-        private struct PositionWithValue
-        {
-            public readonly Vector2i Position;
-            public readonly float Value;
-
-            public PositionWithValue(Vector2i pos, float value)
-            {
-                Position = pos;
-                Value = value;
-            }
-
-        };
 
         private class EditableImageWrapper : IImage2f
         {

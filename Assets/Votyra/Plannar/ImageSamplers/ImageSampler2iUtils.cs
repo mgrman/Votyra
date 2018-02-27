@@ -23,9 +23,19 @@ namespace Votyra.Plannar.ImageSamplers
 
         public static Rect2i WorldToImage(this IImageSampler2i sampler, Rect2i rect)
         {
-            var min = sampler.WorldToImage(rect.min.ToVector2());
-            var max = sampler.WorldToImage(rect.max.ToVector2());
+            var min = sampler.CellToX0Y0(rect.min);
+            var max = sampler.CellToX1Y1(rect.max);
             return Rect2i.MinMaxRect(min.x, min.y, max.x, max.y);
+        }
+
+        public static SampledData2i Sample(this IImageSampler2i sampler, Matrix<float> image, Vector2i pos)
+        {
+            var x0y0 = image.TryGet(sampler.CellToX0Y0(pos), 0);
+            var x0y1 = image.TryGet(sampler.CellToX0Y1(pos), 0);
+            var x1y0 = image.TryGet(sampler.CellToX1Y0(pos), 0);
+            var x1y1 = image.TryGet(sampler.CellToX1Y1(pos), 0);
+
+            return new SampledData2i(x0y0, x0y1, x1y0, x1y1);
         }
 
         public static SampledData2i Sample(this IImageSampler2i sampler, IImage2f image, Vector2i pos)

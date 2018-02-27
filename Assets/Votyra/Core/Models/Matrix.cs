@@ -2,12 +2,12 @@ namespace Votyra.Core.Models
 {
     public class Matrix<T> : IMatrix<T>
     {
-        private T[,] _points;
+        private T[, ] _points;
 
         //public readonly Vector2i offset;
         public readonly Vector2i size;
 
-        public Matrix(Vector2i matrixSize)//, Vector2i indicesOffset)
+        public Matrix(Vector2i matrixSize) //, Vector2i indicesOffset)
         {
             _points = new T[matrixSize.x, matrixSize.y];
             //_points = new T[matrixSize.x+indicesOffset.x, matrixSize.y + indicesOffset.y];
@@ -17,7 +17,7 @@ namespace Votyra.Core.Models
 
         public bool IsSameSize(Vector2i size)
         {
-            return this.size == size;//&& this.offset == offset;
+            return this.size == size; //&& this.offset == offset;
         }
 
         public T this[int ix, int iy]

@@ -10,20 +10,19 @@ namespace Votyra.Plannar.Images.Constraints
     public class DualSampledTycoonTileConstraint2i : IImageConstraint2i
     {
 
-        public Rect2i Constrain(Direction direction, Rect2i invalidatedArea, IImageSampler2i sampler, IImage2f image, Matrix<float> editableMatrix)
+        public Rect2i Constrain(Direction direction, Rect2i invalidatedCellArea, IImageSampler2i sampler, Matrix<float> editableMatrix)
         {
-
             if (direction != Direction.Up && direction != Direction.Down)
             {
                 direction = Direction.Down;
             }
 
-            for (int ix = invalidatedArea.min.x; ix <= invalidatedArea.max.x; ix++)
+            for (int ix = invalidatedCellArea.min.x; ix <= invalidatedCellArea.max.x; ix++)
             {
-                for (int iy = invalidatedArea.min.y; iy <= invalidatedArea.max.y; iy++)
+                for (int iy = invalidatedCellArea.min.y; iy <= invalidatedCellArea.max.y; iy++)
                 {
                     var cell = new Vector2i(ix, iy);
-                    var sample = sampler.Sample(image, cell);
+                    var sample = sampler.Sample(editableMatrix, cell);
 
                     var processedSample = Process(sample);
 
@@ -42,7 +41,7 @@ namespace Votyra.Plannar.Images.Constraints
                         editableMatrix[cell_x1y1] = processedSample.x1y1;
                 }
             }
-            return invalidatedArea;
+            return invalidatedCellArea;
         }
 
         private struct PositionWithValue
