@@ -33,7 +33,6 @@ namespace Votyra.Plannar
         public float InitialTextureScale = 1;
 
         public IEditableImage2f EditableImage { get { return _imageProvider as IEditableImage2f; } }
-
         protected IImage2fProvider _imageProvider;
         protected IImageConstraint2i _editableImageConstraint;
         protected IImageSampler2i _sampler;
@@ -48,6 +47,47 @@ namespace Votyra.Plannar
         {
             this.gameObject.DestroyAllChildren();
             Initialize();
+            _imageProvider = new EditableMatrixImage2f(new Vector2i(InitialTexture.width, InitialTexture.height), _editableImageConstraint);
+
+            FillInitialState(EditableImage, InitialTexture, InitialTextureScale);
+        }
+
+        private static void FillInitialState(IEditableImage2f editableImage, object initialData, float scale)
+        {
+            if (editableImage == null)
+                return;
+            if (initialData is Texture2D)
+            {
+                FillInitialState(editableImage, initialData as Texture2D, scale);
+            }
+        }
+
+        private static void FillInitialState(IEditableImage2f editableImage, Texture2D texture, float scale)
+        {
+            using (var imageAccessor = editableImage.RequestAccess(Rect2i.All))
+            {
+                Rect2i matrixAreaToFill;
+                if (imageAccessor.Area == Rect2i.All)
+                {
+                    matrixAreaToFill = new Vector2i(texture.width, texture.height).ToRect2i();
+                }
+                else
+                {
+                    matrixAreaToFill = imageAccessor.Area;
+                }
+
+                var matrixSizeX = matrixAreaToFill.size.x;
+                var matrixSizeY = matrixAreaToFill.size.y;
+
+                for (int x = matrixAreaToFill.xMin; x < matrixAreaToFill.xMax; x++)
+                {
+                    for (int y = matrixAreaToFill.yMin; y < matrixAreaToFill.yMax; y++)
+                    {
+                        var pos = new Vector2i(x, y);
+                        imageAccessor[pos] = texture.GetPixelBilinear((float)x / matrixSizeX, (float)y / matrixSizeY).grayscale * scale;
+                    }
+                }
+            }
         }
 
         private void LateUpdate()
@@ -90,7 +130,7 @@ namespace Votyra.Plannar
             {
                 Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i>> computeAction = () =>
                 {
-                    using(context.ProfilerFactory.Create("Creating visible groups"))
+                    using (context.ProfilerFactory.Create("Creating visible groups"))
                     {
                         groupActions = context.GroupSelector.GetGroupsToUpdate(context);
                         //Debug.Log($"update {groupActions.ToRecompute.Count} keep {groupActions.ToKeep.Count}");
@@ -98,7 +138,7 @@ namespace Votyra.Plannar
                     var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i>();
                     if (toRecompute.Any())
                     {
-                        using(context.ProfilerFactory.Create("TerrainMeshGenerator"))
+                        using (context.ProfilerFactory.Create("TerrainMeshGenerator"))
                         {
                             return context.TerrainGenerator.Generate(context, toRecompute);
                         }
@@ -125,7 +165,7 @@ namespace Votyra.Plannar
 
                 if (results != null)
                 {
-                    using(context.ProfilerFactory.Create("Applying mesh"))
+                    using (context.ProfilerFactory.Create("Applying mesh"))
                     {
                         var toKeep = groupActions?.ToKeep ?? Enumerable.Empty<Vector2i>();
                         context.MeshUpdater.UpdateMesh(context, results, toKeep);

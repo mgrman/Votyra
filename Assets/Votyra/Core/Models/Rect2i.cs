@@ -23,7 +23,7 @@ namespace Votyra.Core.Models
             this.max = min + size;
         }
 
-        public Vector2i extents =>(max - min) / 2;
+        public Vector2i extents => (max - min) / 2;
 
         public Vector2i center => min + extents;
 
@@ -50,6 +50,7 @@ namespace Votyra.Core.Models
 
         public static Rect2i MinMaxRect(int xmin, int ymin, int xmax, int ymax)
         {
+
             return new Rect2i(new Vector2i(xmin, ymin), new Vector2i(xmax - xmin, ymax - ymin));
         }
 
@@ -91,6 +92,21 @@ namespace Votyra.Core.Models
                     Mathf.Max(this.max.x, bMax.x),
                     Mathf.Max(this.max.y, bMax.y));
         }
+
+        public Rect2i IntersectWith(Rect2i b)
+        {
+            var bMin = b.min;
+            var bMax = b.max;
+            int minX = Mathf.Max(this.min.x, bMin.x);
+            int minY = Mathf.Max(this.min.y, bMin.y);
+            int maxX = Mathf.Min(this.max.x, bMax.x);
+            int maxY = Mathf.Min(this.max.y, bMax.y);
+
+            maxX = Math.Max(minX, maxX);
+            maxY = Math.Max(minY, maxY);
+            return Rect2i.MinMaxRect(minX, minY, maxX, maxY);
+        }
+
         public Rect2i CombineWith(Vector2i b)
         {
             if (Contains(b))
@@ -131,7 +147,7 @@ namespace Votyra.Core.Models
             if (!(obj is Rect2i))
                 return false;
 
-            return this.Equals((Rect2i) obj);
+            return this.Equals((Rect2i)obj);
         }
 
         public override int GetHashCode()

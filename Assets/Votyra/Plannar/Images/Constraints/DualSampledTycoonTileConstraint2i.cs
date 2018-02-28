@@ -3,12 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
+using Votyra.Core.Utils;
 using Votyra.Plannar.ImageSamplers;
 
 namespace Votyra.Plannar.Images.Constraints
 {
     public class DualSampledTycoonTileConstraint2i : IImageConstraint2i
     {
+        private IImageSampler2i _sampler;
+
+        public DualSampledTycoonTileConstraint2i(IImageSampler2i sampler)
+        {
+            _sampler = sampler;
+        }
+
+        public Rect2i FixImage(Matrix<float> editableMatrix, Rect2i invalidatedImageArea, Direction direction)
+        {
+            if (_sampler == null)
+            {
+                return invalidatedImageArea;
+            }
+
+            var invalidatedCellArea = _sampler.ImageToWorld(invalidatedImageArea)
+                .RoundToContain();
+
+            var newInvalidatedCellArea = Constrain(direction, invalidatedCellArea, _sampler, editableMatrix);
+
+            var newInvalidatedImageArea = _sampler.WorldToImage(newInvalidatedCellArea);
+
+            return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
+        }
+
 
         public Rect2i Constrain(Direction direction, Rect2i invalidatedCellArea, IImageSampler2i sampler, Matrix<float> editableMatrix)
         {
@@ -95,7 +120,7 @@ namespace Votyra.Plannar.Images.Constraints
         private readonly static SampledData2i[] ExpandedTemplates = Templates
             .SelectMany(template =>
             {
-                return new []
+                return new[]
                 {
                 template,
                 template.GetRotated(1),

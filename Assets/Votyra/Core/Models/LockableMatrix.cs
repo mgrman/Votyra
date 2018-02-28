@@ -7,7 +7,7 @@ namespace Votyra.Core.Models
         private T[,] _points;
 
         //public readonly Vector2i offset;
-        public readonly Vector2i size;
+        public Vector2i size { get; }
 
         private readonly object _syncLock = new object();
 

@@ -3,8 +3,8 @@ namespace Votyra.Core.Models
     public class MatrixWithOffset<T> : IMatrix<T>
     {
         private T[,] _points;
-        public readonly Vector2i offset;
-        public readonly Vector2i size;
+        public Vector2i offset { get; }
+        public Vector2i size { get; }
 
         public MatrixWithOffset(Vector2i matrixSize, Vector2i indicesOffset)
         {

@@ -6,6 +6,8 @@ namespace Votyra.Plannar.Images.Constraints
 {
     public interface IImageConstraint2i
     {
-        Rect2i Constrain(Direction direction, Rect2i invalidatedCellArea, IImageSampler2i sampler, Matrix<float> editableMatrix);
+
+        Rect2i FixImage(Matrix<float> editableMatrix, Rect2i invalidatedImageArea, Direction direction);
+
     }
 }

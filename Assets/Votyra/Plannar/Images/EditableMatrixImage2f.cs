@@ -12,7 +12,7 @@ namespace Votyra.Plannar.Images
 {
     public class EditableMatrixImage2f : IImage2fProvider, IEditableImage2f
     {
-        private Matrix<float> _editableMatrix;
+        private readonly Matrix<float> _editableMatrix;
 
         private Rect2i? _invalidatedArea;
 
@@ -22,36 +22,10 @@ namespace Votyra.Plannar.Images
 
         private IImageConstraint2i _constraint;
 
-        private IImageSampler2i _sampler;
-
-        public EditableMatrixImage2f(Vector2i size, IImageSampler2i sampler, IImageConstraint2i constraint)
+        public EditableMatrixImage2f(Vector2i size, IImageConstraint2i constraint)
         {
             _constraint = constraint;
-            _sampler = sampler;
-
             _editableMatrix = new Matrix<float>(size);
-            FixImage(new Rect2i(0, 0, size.x, size.y), Direction.Unknown);
-        }
-
-        public EditableMatrixImage2f(Texture2D texture, float scale, IImageSampler2i sampler, IImageConstraint2i constraint)
-        {
-            _constraint = constraint;
-            _sampler = sampler;
-
-            int width = texture.width;
-            int height = texture.height;
-
-            var size = new Vector2i(width, height);
-            _editableMatrix = new Matrix<float>(size);
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    _editableMatrix[x, y] = texture.GetPixel(x, y).grayscale * scale;
-                }
-            }
-            FixImage(new Rect2i(0, 0, size.x, size.y), Direction.Unknown);
         }
 
         public IImage2f CreateImage()
@@ -90,26 +64,21 @@ namespace Votyra.Plannar.Images
             return _image;
         }
 
-        public IEditableImageAccessor2f RequestAccess(Rect2i area)
+        public IEditableImageAccessor2f RequestAccess(Rect2i areaRequest)
         {
-            return new MatrixImageAccessor(this, area);
+            return new MatrixImageAccessor(this, areaRequest);
         }
 
         private void FixImage(Rect2i invalidatedImageArea, Direction direction)
         {
             _invalidatedArea = _invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
 
-            if (_sampler == null || _constraint == null)
+            if (_constraint == null)
             {
                 return;
             }
 
-            var invalidatedCellArea = _sampler.ImageToWorld(invalidatedImageArea)
-                .RoundToContain();
-
-            var newInvalidatedCellArea = _constraint.Constrain(direction, invalidatedCellArea, _sampler, _editableMatrix);
-
-            var newInvalidatedImageArea = _sampler.WorldToImage(newInvalidatedCellArea);
+            var newInvalidatedImageArea = _constraint.FixImage(_editableMatrix, invalidatedImageArea, direction);
 
             _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedImageArea) ?? newInvalidatedImageArea;
         }
@@ -142,16 +111,17 @@ namespace Votyra.Plannar.Images
 
         private class MatrixImageAccessor : IEditableImageAccessor2f
         {
-            float _changeCounter = 0;
+            private readonly float[,] _editableMatrix;
+            private float _changeCounter = 0;
             public Rect2i Area { get; }
 
-            public float this [Vector2i pos]
+            public float this[Vector2i pos]
             {
-                get { return _editableImage._editableMatrix[pos]; }
+                get { return _editableMatrix[pos.x, pos.y]; }
                 set
                 {
-                    _changeCounter += value - _editableImage._editableMatrix[pos];
-                    _editableImage._editableMatrix[pos] = value;
+                    _changeCounter += value - _editableMatrix[pos.x, pos.y];
+                    _editableMatrix[pos.x, pos.y] = value;
                 }
             }
 
@@ -159,13 +129,14 @@ namespace Votyra.Plannar.Images
 
             public MatrixImageAccessor(EditableMatrixImage2f editableImage, Rect2i area)
             {
+                _editableMatrix = editableImage._editableMatrix.NativeMatrix;
                 _editableImage = editableImage;
-                Area = area;
+                Area = area.IntersectWith(editableImage._editableMatrix.size.ToRect2i());
             }
 
             public void Dispose()
             {
-                this._editableImage.FixImage(Area, _changeCounter > 0 ? Direction.Up : Direction.Down);
+                this._editableImage.FixImage(Area, _changeCounter > 0 ? Direction.Up : (_changeCounter < 0 ? Direction.Down : Direction.Unknown));
             }
         }
     }

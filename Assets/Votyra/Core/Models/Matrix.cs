@@ -2,14 +2,15 @@ namespace Votyra.Core.Models
 {
     public class Matrix<T> : IMatrix<T>
     {
-        private T[, ] _points;
+
+        public T[,] NativeMatrix;
 
         //public readonly Vector2i offset;
-        public readonly Vector2i size;
+        public Vector2i size { get; }
 
         public Matrix(Vector2i matrixSize) //, Vector2i indicesOffset)
         {
-            _points = new T[matrixSize.x, matrixSize.y];
+            NativeMatrix = new T[matrixSize.x, matrixSize.y];
             //_points = new T[matrixSize.x+indicesOffset.x, matrixSize.y + indicesOffset.y];
             //offset = indicesOffset;
             size = matrixSize;
@@ -24,11 +25,11 @@ namespace Votyra.Core.Models
         {
             get
             {
-                return _points[ix, iy];
+                return NativeMatrix[ix, iy];
             }
             set
             {
-                _points[ix, iy] = value;
+                NativeMatrix[ix, iy] = value;
             }
         }
 
@@ -36,17 +37,17 @@ namespace Votyra.Core.Models
         {
             get
             {
-                return _points[i.x, i.y];
+                return NativeMatrix[i.x, i.y];
             }
             set
             {
-                _points[i.x, i.y] = value;
+                NativeMatrix[i.x, i.y] = value;
             }
         }
 
         public T TryGet(Vector2i i, T defaultValue)
         {
-            return i.IsAsIndexContained(size) ? _points[i.x, i.y] : defaultValue;
+            return i.IsAsIndexContained(size) ? NativeMatrix[i.x, i.y] : defaultValue;
         }
     }
 }

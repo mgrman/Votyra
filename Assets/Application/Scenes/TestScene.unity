@@ -123,6 +123,7 @@ GameObject:
   - component: {fileID: 84891312}
   - component: {fileID: 84891311}
   - component: {fileID: 84891310}
+  - component: {fileID: 84891313}
   m_Layer: 0
   m_Name: Votyra2i-SimpleSampled
   m_TagString: Untagged
@@ -150,7 +151,7 @@ MonoBehaviour:
   Material: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
   MaterialWalls: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
   InitialTexture: {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
-  InitialTextureScale: 20
+  InitialTextureScale: 50
 --- !u!114 &84891311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,6 +176,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &84891313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 84891309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d433267f670dfd048a001e8ca6c31254, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Scale: {x: 1, y: 1, z: 50}
+  Texture: {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
 --- !u!1 &850267109
 GameObject:
   m_ObjectHideFlags: 0

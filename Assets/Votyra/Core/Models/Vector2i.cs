@@ -126,6 +126,11 @@ namespace Votyra.Core.Models
             return new Vector2(x, y);
         }
 
+        public Rect2i ToRect2i()
+        {
+            return new Rect2i(Vector2i.Zero, this);
+        }
+
         public static bool operator <(Vector2i a, Vector2i b)
         {
             return a.x < b.x && a.y < b.y;
@@ -154,6 +159,16 @@ namespace Votyra.Core.Models
         public static bool operator !=(Vector2i a, Vector2i b)
         {
             return a.x != b.x || a.y != b.y;
+        }
+
+        public static Vector2i Max(Vector2i a, Vector2i b)
+        {
+            return new Vector2i(Math.Max(a.x, b.x), Math.Max(a.y, b.y));
+        }
+
+        public static Vector2i Min(Vector2i a, Vector2i b)
+        {
+            return new Vector2i(Math.Min(a.x, b.x), Math.Min(a.y, b.y));
         }
 
         public bool Equals(Vector2i other)

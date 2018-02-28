@@ -13,7 +13,7 @@ namespace Votyra.Plannar
         private const float smoothCutoff = smoothSpeedRelative / 2;
 
         private float lastTime;
-        private Vector2i lastCell;
+        private Vector2i? lastCell;
 
         public IEditableImage2f EditableImage => this.GetComponent<IEditableImage2fProvider>()?.EditableImage;
 
@@ -27,6 +27,10 @@ namespace Votyra.Plannar
             {
                 _centerValueToReuse = null;
             }
+            if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1))
+            {
+                lastCell = null;
+            }
         }
 
         private void OnCellClick(Vector2i cell)
@@ -38,7 +42,7 @@ namespace Votyra.Plannar
             }
             lastCell = cell;
             lastTime = Time.time;
-            Debug.Log($"CellClick:{cell}");
+            Debug.Log($"CellClick:{cell} at {Time.time}");
 
             var editableImage = EditableImage;
             if (editableImage == null)
@@ -50,7 +54,7 @@ namespace Votyra.Plannar
             {
                 int maxDist = 4;
 
-                using(var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
+                using (var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
                 {
                     float centerValue;
                     if (_centerValueToReuse.HasValue)
@@ -99,7 +103,7 @@ namespace Votyra.Plannar
                 else
                     maxDist = maxDistSmall;
 
-                using(var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
+                using (var image = editableImage.RequestAccess(Rect2i.CenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
                 {
                     for (int ox = -maxDist; ox <= maxDist; ox++)
                     {
