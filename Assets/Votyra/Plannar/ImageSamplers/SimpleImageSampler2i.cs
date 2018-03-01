@@ -1,4 +1,3 @@
-using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
 
@@ -9,12 +8,12 @@ namespace Votyra.Plannar.ImageSamplers
         private const int StepSize = 1;
         private const float StepSizeFloat = StepSize;
 
-        public Vector2i WorldToImage(Vector2 pos)
+        public Vector2i WorldToImage(Vector2f pos)
         {
             return new Vector2i((pos.x * StepSize).RoundToInt(), (pos.y * StepSize).RoundToInt());
         }
 
-        public Vector2 ImageToWorld(Vector2i pos)
+        public Vector2f ImageToWorld(Vector2i pos)
         {
             return pos / StepSizeFloat;
         }

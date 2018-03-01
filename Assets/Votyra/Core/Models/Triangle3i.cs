@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace Votyra.Core.Models
 {
@@ -17,7 +16,7 @@ namespace Votyra.Core.Models
             this.c = c;
         }
 
-        public Triangle3i(Vector3 a, Vector3 b, Vector3 c)
+        public Triangle3i(Vector3f a, Vector3f b, Vector3f c)
         {
             this.a = new Vector3i(a);
             this.b = new Vector3i(b);

@@ -1,4 +1,3 @@
-using UnityEngine;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
@@ -7,12 +6,12 @@ namespace Votyra.Plannar.ImageSamplers
 {
     public class DualImageSampler2i : IImageSampler2i
     {
-        public Vector2i WorldToImage(Vector2 pos)
+        public Vector2i WorldToImage(Vector2f pos)
         {
             return new Vector2i((pos.x * 2).FloorToInt(), (pos.y * 2).FloorToInt());
         }
 
-        public Vector2 ImageToWorld(Vector2i pos)
+        public Vector2f ImageToWorld(Vector2i pos)
         {
             return pos / 2.0f;
         }

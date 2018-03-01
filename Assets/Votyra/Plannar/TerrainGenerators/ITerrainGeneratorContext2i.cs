@@ -1,4 +1,3 @@
-using UnityEngine;
 using Votyra.Core;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
@@ -9,7 +8,7 @@ namespace Votyra.Plannar.TerrainGenerators
     public interface ITerrainGeneratorContext2i : IContext
     {
         Vector2i CellInGroupCount { get; }
-        Bounds GroupBounds { get; }
+        Rect3f GroupBounds { get; }
         IImageSampler2i ImageSampler { get; }
         IImage2f Image { get; }
     }

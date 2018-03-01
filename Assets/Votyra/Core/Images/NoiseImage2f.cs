@@ -1,4 +1,3 @@
-using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
 
@@ -6,11 +5,11 @@ namespace Votyra.Core.Images
 {
     public class NoiseImage2f : IImage2f
     {
-        public Vector3 Offset { get; private set; }
+        public Vector3f Offset { get; private set; }
 
-        public Vector3 Scale { get; private set; }
+        public Vector3f Scale { get; private set; }
 
-        public NoiseImage2f(Vector3 offset, Vector3 scale)
+        public NoiseImage2f(Vector3f offset, Vector3f scale)
         {
             Offset = offset;
             Scale = scale;
@@ -20,9 +19,9 @@ namespace Votyra.Core.Images
 
         public float Sample(Vector2i point)
         {
-            point = (point / Scale.XY() + Offset.XY()).ToVector2i();
+            point = (point / Scale.XY + Offset.XY).ToVector2i();
 
-            float value = (float)Mathf.PerlinNoise(point.x, point.y);
+            float value = (float)MathUtils.PerlinNoise(point.x, point.y);
 
             return value * Scale.z + Offset.z;
         }

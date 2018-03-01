@@ -1,24 +1,28 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using Votyra.Core.Logging;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
     public struct Triangle3
     {
-        public readonly Vector3 a;
-        public readonly Vector3 b;
-        public readonly Vector3 c;
+        private static readonly Lazy<IThreadSafeLogger> _logger = new Lazy<IThreadSafeLogger>(() => LoggerFactoryExtensions.factory.Create<Triangle3>());
+        public static IThreadSafeLogger Logger => _logger.Value;
 
-        public Triangle3(Vector3 a, Vector3 b, Vector3 c)
+        public readonly Vector3f a;
+        public readonly Vector3f b;
+        public readonly Vector3f c;
+
+        public Triangle3(Vector3f a, Vector3f b, Vector3f c)
         {
             this.a = a;
             this.b = b;
             this.c = c;
         }
 
-        public IEnumerable<Vector3> Points
+        public IEnumerable<Vector3f> Points
         {
             get
             {
@@ -48,24 +52,24 @@ namespace Votyra.Core.Models
             return $"{a},{b},{c}";
         }
 
-        public float DotWithObserver(Vector3 observer)
+        public float DotWithObserver(Vector3f observer)
         {
             var center = (a + b + c) / 3f;
-            var normal = Vector3.Cross(b - a, c - a);
-            return Vector3.Dot(observer - center, normal);
+            var normal = Vector3f.Cross(b - a, c - a);
+            return Vector3f.Dot(observer - center, normal);
         }
 
-        public bool IsCCW(Vector3 observer)
+        public bool IsCCW(Vector3f observer)
         {
             var dot = DotWithObserver(observer);
             if (dot == 0f)
             {
-                Debug.LogError("Wrong observer!");
+                _logger.Value.LogError("Wrong observer!");
             }
             return dot >= 0;
         }
 
-        public Triangle3 EnsureCCW(Vector3 observer)
+        public Triangle3 EnsureCCW(Vector3f observer)
         {
             if (IsCCW(observer))
             {
@@ -111,17 +115,17 @@ namespace Votyra.Core.Models
 
     public static class Triangle3Extensions
     {
-        private static readonly Vector3 CenterZeroCell = new Vector3(0.5f, 0.5f, 0.5f);
+        private static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
 
         public static IEnumerable<Triangle3> EnsureCCW(this IEnumerable<Triangle3> triangles, SampledData3b data)
         {
             var observer = data.GetPointsWithValue(false)
-                .Select(o => o.ToVector3())
+                .Select(o => o.ToVector3f())
                 .Average();
             return EnsureCCW(triangles, data, observer);
         }
 
-        public static IEnumerable<Triangle3> EnsureCCW(this IEnumerable<Triangle3> triangles, SampledData3b data, Vector3 observer)
+        public static IEnumerable<Triangle3> EnsureCCW(this IEnumerable<Triangle3> triangles, SampledData3b data, Vector3f observer)
         {
             observer = observer == CenterZeroCell ? CenterZeroCell : (CenterZeroCell + (observer - CenterZeroCell) * 10);
 
@@ -129,7 +133,7 @@ namespace Votyra.Core.Models
             {
                 if (t.DotWithObserver(observer) == 0f)
                 {
-                    Debug.LogError($"Zero dot:\r\n{data.ToCubeString()}");
+                    Triangle3.Logger.LogError($"Zero dot:\r\n{data.ToCubeString()}");
                 }
                 return t.EnsureCCW(observer);
             });

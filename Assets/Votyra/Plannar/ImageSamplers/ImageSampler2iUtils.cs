@@ -1,4 +1,3 @@
-using UnityEngine;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
@@ -7,14 +6,14 @@ namespace Votyra.Plannar.ImageSamplers
 {
     public static class ImageSampler2iUtils
     {
-        public static Rect ImageToWorld(this IImageSampler2i sampler, Rect2i rect)
+        public static Rect2f ImageToWorld(this IImageSampler2i sampler, Rect2i rect)
         {
             var min = sampler.ImageToWorld(rect.min);
             var max = sampler.ImageToWorld(rect.max);
-            return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+            return Rect2f.MinMaxRect(min.x, min.y, max.x, max.y);
         }
 
-        public static Rect2i WorldToImage(this IImageSampler2i sampler, Rect rect)
+        public static Rect2i WorldToImage(this IImageSampler2i sampler, Rect2f rect)
         {
             var min = sampler.WorldToImage(rect.min);
             var max = sampler.WorldToImage(rect.max);

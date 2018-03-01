@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
@@ -59,14 +58,14 @@ namespace Votyra.Core.Models
             return new Rect2i(min, max - min);
         }
 
-        public Vector2i Denormalize(Vector2 normalizedRectCoordinates)
+        public Vector2i Denormalize(Vector2f normalizedRectCoordinates)
         {
             return min + (size * normalizedRectCoordinates).ToVector2i();
         }
 
-        public Vector2 Normalize(Vector2i point)
+        public Vector2f Normalize(Vector2i point)
         {
-            return (point - min) / size.ToVector2();
+            return (point - min) / size.ToVector2f();
         }
 
         public bool Contains(Vector2i point)
@@ -87,20 +86,20 @@ namespace Votyra.Core.Models
             var bMax = b.max;
             return Rect2i
                 .MinMaxRect(
-                    Mathf.Min(this.min.x, bMin.x),
-                    Mathf.Min(this.min.y, bMin.y),
-                    Mathf.Max(this.max.x, bMax.x),
-                    Mathf.Max(this.max.y, bMax.y));
+                    Math.Min(this.min.x, bMin.x),
+                    Math.Min(this.min.y, bMin.y),
+                    Math.Max(this.max.x, bMax.x),
+                    Math.Max(this.max.y, bMax.y));
         }
 
         public Rect2i IntersectWith(Rect2i b)
         {
             var bMin = b.min;
             var bMax = b.max;
-            int minX = Mathf.Max(this.min.x, bMin.x);
-            int minY = Mathf.Max(this.min.y, bMin.y);
-            int maxX = Mathf.Min(this.max.x, bMax.x);
-            int maxY = Mathf.Min(this.max.y, bMax.y);
+            int minX = Math.Max(this.min.x, bMin.x);
+            int minY = Math.Max(this.min.y, bMin.y);
+            int maxX = Math.Min(this.max.x, bMax.x);
+            int maxY = Math.Min(this.max.y, bMax.y);
 
             maxX = Math.Max(minX, maxX);
             maxY = Math.Max(minY, maxY);
@@ -116,15 +115,15 @@ namespace Votyra.Core.Models
             var bMax = b;
             return Rect2i
                 .MinMaxRect(
-                    Mathf.Min(this.min.x, bMin.x),
-                    Mathf.Min(this.min.y, bMin.y),
-                    Mathf.Max(this.max.x, bMax.x),
-                    Mathf.Max(this.max.y, bMax.y));
+                    Math.Min(this.min.x, bMin.x),
+                    Math.Min(this.min.y, bMin.y),
+                    Math.Max(this.max.x, bMax.x),
+                    Math.Max(this.max.y, bMax.y));
         }
 
-        public Rect ToRect()
+        public Rect2f ToRect()
         {
-            return new Rect(min.x, min.y, max.x - min.x, max.y - min.y);
+            return new Rect2f(min.x, min.y, max.x - min.x, max.y - min.y);
         }
 
         public static bool operator ==(Rect2i a, Rect2i b)

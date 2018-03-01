@@ -1,4 +1,4 @@
-using UnityEngine;
+using Votyra.Core.Models;
 
 namespace Votyra.Core.TerrainMeshes
 {
@@ -6,8 +6,8 @@ namespace Votyra.Core.TerrainMeshes
     {
         int TriangleCount { get; }
 
-        void Clear(Bounds meshBounds);
+        void Clear(Rect3f meshBounds);
 
-        void AddTriangle(Vector3 a, Vector3 b, Vector3 c);
+        void AddTriangle(Vector3f a, Vector3f b, Vector3f c);
     }
 }

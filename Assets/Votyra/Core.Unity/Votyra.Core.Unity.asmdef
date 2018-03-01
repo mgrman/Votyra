@@ -1,0 +1,10 @@
+{
+    "name": "Votyra.Core.Unity",
+    "references": [
+        "Votyra.Core"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

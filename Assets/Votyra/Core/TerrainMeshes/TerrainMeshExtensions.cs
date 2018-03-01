@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.TerrainMeshes
@@ -11,7 +10,7 @@ namespace Votyra.Core.TerrainMeshes
             mesh.AddTriangle(triangle.a, triangle.b, triangle.c);
         }
 
-        public static void AddQuad(this ITerrainMesh mesh, Vector3 x0y0, Vector3 x0y1, Vector3 x1y0, Vector3 x1y1, bool flipSides)
+        public static void AddQuad(this ITerrainMesh mesh, Vector3f x0y0, Vector3f x0y1, Vector3f x1y0, Vector3f x1y1, bool flipSides)
         {
             if (flipSides)
             {
@@ -25,7 +24,7 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static IEnumerable<Triangle3> GetQuadTriangles(Vector3 x0y0, Vector3 x0y1, Vector3 x1y0, Vector3 x1y1, bool flipSides)
+        public static IEnumerable<Triangle3> GetQuadTriangles(Vector3f x0y0, Vector3f x0y1, Vector3f x1y0, Vector3f x1y1, bool flipSides)
         {
             if (flipSides)
             {
@@ -39,7 +38,7 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddWall(this ITerrainMesh mesh, Vector3 a, Vector3 b, Vector3 b_lower, Vector3 a_lower, bool flipSides)
+        public static void AddWall(this ITerrainMesh mesh, Vector3f a, Vector3f b, Vector3f b_lower, Vector3f a_lower, bool flipSides)
         {
             if (flipSides)
             {
@@ -53,7 +52,7 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static IEnumerable<Triangle3> GetWallTriangles(Vector3 a, Vector3 b, Vector3 b_lower, Vector3 a_lower, bool flipSides)
+        public static IEnumerable<Triangle3> GetWallTriangles(Vector3f a, Vector3f b, Vector3f b_lower, Vector3f a_lower, bool flipSides)
         {
             if (flipSides)
             {

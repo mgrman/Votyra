@@ -16,7 +16,7 @@ namespace Votyra.Core.Models
             this.y = y;
         }
 
-        public Vector2i(Vector2 vec)
+        public Vector2i(Vector2f vec)
         {
             this.x = vec.x.RoundToInt();
             this.y = vec.y.RoundToInt();
@@ -76,14 +76,14 @@ namespace Votyra.Core.Models
             return new Vector2i(a.x - b.x, a.y - b.y);
         }
 
-        public static Vector2 operator *(Vector2 a, Vector2i b)
+        public static Vector2f operator *(Vector2f a, Vector2i b)
         {
-            return new Vector2(a.x * b.x, a.y * b.y);
+            return new Vector2f(a.x * b.x, a.y * b.y);
         }
 
-        public static Vector2 operator *(Vector2i a, Vector2 b)
+        public static Vector2f operator *(Vector2i a, Vector2f b)
         {
-            return new Vector2(a.x * b.x, a.y * b.y);
+            return new Vector2f(a.x * b.x, a.y * b.y);
         }
 
         public static Vector2i operator *(Vector2i a, Vector2i b)
@@ -96,9 +96,9 @@ namespace Votyra.Core.Models
             return new Vector2i(a.x / b.x, a.y / b.y);
         }
 
-        public static Vector2 operator /(Vector2i a, Vector2 b)
+        public static Vector2f operator /(Vector2i a, Vector2f b)
         {
-            return new Vector2(a.x / b.x, a.y / b.y);
+            return new Vector2f(a.x / b.x, a.y / b.y);
         }
 
         public static Vector2i operator /(Vector2i a, int b)
@@ -106,9 +106,9 @@ namespace Votyra.Core.Models
             return new Vector2i(a.x / b, a.y / b);
         }
 
-        public static Vector2 operator /(Vector2i a, float b)
+        public static Vector2f operator /(Vector2i a, float b)
         {
-            return new Vector2(a.x / b, a.y / b);
+            return new Vector2f(a.x / b, a.y / b);
         }
 
         public static Vector2i operator *(Vector2i a, int b)
@@ -121,9 +121,9 @@ namespace Votyra.Core.Models
             return new Vector2i(a.x.DivideUp(b), a.y.DivideUp(b));
         }
 
-        public Vector2 ToVector2()
+        public Vector2f ToVector2f()
         {
-            return new Vector2(x, y);
+            return new Vector2f(x, y);
         }
 
         public Rect2i ToRect2i()

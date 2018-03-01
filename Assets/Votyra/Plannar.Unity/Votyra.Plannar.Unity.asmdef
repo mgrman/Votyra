@@ -1,0 +1,12 @@
+{
+    "name": "Votyra.Plannar.Unity",
+    "references": [
+        "Votyra.Core",
+        "Votyra.Core.Unity",
+        "Votyra.Plannar"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

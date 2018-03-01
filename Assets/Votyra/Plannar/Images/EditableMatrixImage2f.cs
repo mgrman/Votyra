@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;

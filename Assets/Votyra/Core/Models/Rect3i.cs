@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
@@ -53,14 +52,14 @@ namespace Votyra.Core.Models
             return new Rect3i(new Vector3i(xmin, ymin, zmin), new Vector3i(xmax - xmin, ymax - ymin, zmax - zmin));
         }
 
-        public Vector3i Denormalize(Vector3 normalizedRectCoordinates)
+        public Vector3i Denormalize(Vector3f normalizedRectCoordinates)
         {
             return min + (size * normalizedRectCoordinates).ToVector3i();
         }
 
-        public Vector3 Normalize(Vector3i point)
+        public Vector3f Normalize(Vector3i point)
         {
-            return (point - min) / size.ToVector3();
+            return (point - min) / size.ToVector3f();
         }
 
         public bool Contains(Vector3i point)
@@ -81,17 +80,17 @@ namespace Votyra.Core.Models
             var bMax = b.max;
             return Rect3i
                      .MinMaxRect(
-                         Mathf.Min(this.min.x, bMin.x),
-                         Mathf.Min(this.min.y, bMin.y),
-                         Mathf.Min(this.min.z, bMin.z),
-                         Mathf.Max(this.max.x, bMax.x),
-                         Mathf.Max(this.max.y, bMax.y),
-                         Mathf.Max(this.max.z, bMax.z));
+                         Math.Min(this.min.x, bMin.x),
+                         Math.Min(this.min.y, bMin.y),
+                         Math.Min(this.min.z, bMin.z),
+                         Math.Max(this.max.x, bMax.x),
+                         Math.Max(this.max.y, bMax.y),
+                         Math.Max(this.max.z, bMax.z));
         }
 
-        public Bounds ToBounds()
+        public Rect3f ToBounds()
         {
-            return new Bounds(center.ToVector3(), size.ToVector3());
+            return new Rect3f(center.ToVector3f(), size.ToVector3f());
         }
 
         public static bool operator ==(Rect3i a, Rect3i b)

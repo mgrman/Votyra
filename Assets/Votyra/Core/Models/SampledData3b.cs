@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityEngine;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
@@ -121,7 +120,7 @@ namespace Votyra.Core.Models
             Data = data;
         }
 
-        private static Vector3 ComputeNormal(float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1, float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1)
+        private static Vector3f ComputeNormal(float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1, float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1)
         {
             var dx_y0z0 = x1y0z0 - x0y0z0;
             var dx_y0z1 = x1y0z1 - x0y0z1;
@@ -147,7 +146,7 @@ namespace Votyra.Core.Models
             var dz_x1 = (dz_x1y0 + dz_x1y1) / 2;
             var dz = (dz_x0 + dz_x1) / 2;
 
-            return -new Vector3(dx, dy, dz).normalized;
+            return -new Vector3f(dx, dy, dz).normalized;
         }
 
         public bool this[Vector3i vec]
@@ -158,7 +157,7 @@ namespace Votyra.Core.Models
             }
         }
 
-        public bool this[Vector3 vec]
+        public bool this[Vector3f vec]
         {
             get
             {
@@ -196,19 +195,19 @@ namespace Votyra.Core.Models
 
         public SampledData3b GetRotatedXY(float angleDeg)
         {
-            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, 0, angleDeg));
+            var rotationMatrix = Matrix4x4f.Rotate(Quaternion4f.Euler(0, 0, angleDeg));
             return GetTransformed(rotationMatrix);
         }
 
         public SampledData3b GetRotatedYZ(float angleDeg)
         {
-            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(angleDeg, 0, 0));
+            var rotationMatrix = Matrix4x4f.Rotate(Quaternion4f.Euler(angleDeg, 0, 0));
             return GetTransformed(rotationMatrix);
         }
 
         public SampledData3b GetRotatedXZ(float angleDeg)
         {
-            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(0, angleDeg, 0));
+            var rotationMatrix = Matrix4x4f.Rotate(Quaternion4f.Euler(0, angleDeg, 0));
             return GetTransformed(rotationMatrix);
         }
 
@@ -219,37 +218,37 @@ namespace Votyra.Core.Models
             return GetTransformed(rotationMatrix);
         }
 
-        public static Matrix4x4 GetRotationMatrix(Vector3i rotationSteps, bool invert)
+        public static Matrix4x4f GetRotationMatrix(Vector3i rotationSteps, bool invert)
         {
-            var rotationMatrix = Matrix4x4.Rotate(Quaternion.Euler(rotationSteps.x * 90, rotationSteps.y * 90, rotationSteps.z * 90));
-            var inversion = invert ? Matrix4x4.Scale(new Vector3(1, 1, -1)) : Matrix4x4.identity;
+            var rotationMatrix = Matrix4x4f.Rotate(Quaternion4f.Euler(rotationSteps.x * 90, rotationSteps.y * 90, rotationSteps.z * 90));
+            var inversion = invert ? Matrix4x4f.Scale(new Vector3f(1, 1, -1)) : Matrix4x4f.identity;
 
-            var offsetInverted = Matrix4x4.Translate(new Vector3(-0.5f, -0.5f, -0.5f));
-            var offset = Matrix4x4.Translate(new Vector3(0.5f, 0.5f, 0.5f));
+            var offsetInverted = Matrix4x4f.Translate(new Vector3f(-0.5f, -0.5f, -0.5f));
+            var offset = Matrix4x4f.Translate(new Vector3f(0.5f, 0.5f, 0.5f));
 
             var finalMatrix = offset * inversion * rotationMatrix * offsetInverted;
             return finalMatrix;
         }
 
-        public SampledData3b GetTransformed(Matrix4x4 matrix)
+        public SampledData3b GetTransformed(Matrix4x4f matrix)
         {
             return new SampledData3b
             (
-                this[matrix.MultiplyPoint(new Vector3(0, 0, 0))],
+                this[matrix.MultiplyPoint(new Vector3f(0, 0, 0))],
 
-                this[matrix.MultiplyPoint(new Vector3(0, 0, 1))],
+                this[matrix.MultiplyPoint(new Vector3f(0, 0, 1))],
 
-                this[matrix.MultiplyPoint(new Vector3(0, 1, 0))],
+                this[matrix.MultiplyPoint(new Vector3f(0, 1, 0))],
 
-                this[matrix.MultiplyPoint(new Vector3(0, 1, 1))],
+                this[matrix.MultiplyPoint(new Vector3f(0, 1, 1))],
 
-                this[matrix.MultiplyPoint(new Vector3(1, 0, 0))],
+                this[matrix.MultiplyPoint(new Vector3f(1, 0, 0))],
 
-                this[matrix.MultiplyPoint(new Vector3(1, 0, 1))],
+                this[matrix.MultiplyPoint(new Vector3f(1, 0, 1))],
 
-                this[matrix.MultiplyPoint(new Vector3(1, 1, 0))],
+                this[matrix.MultiplyPoint(new Vector3f(1, 1, 0))],
 
-                this[matrix.MultiplyPoint(new Vector3(1, 1, 1))]
+                this[matrix.MultiplyPoint(new Vector3f(1, 1, 1))]
             );
         }
 
@@ -333,11 +332,11 @@ namespace Votyra.Core.Models
             return a.Data != b.Data;
         }
 
-        public bool EqualsRotationInvariant(SampledData3b that, out Matrix4x4 matrix)
+        public bool EqualsRotationInvariant(SampledData3b that, out Matrix4x4f matrix)
         {
             matrix = GetAllRotationEquivalencies(that).FirstOrDefault();
 
-            return matrix != default(Matrix4x4);
+            return matrix != default(Matrix4x4f);
         }
 
         public static readonly IEqualityComparer<SampledData3b> RotationInvariantNormallessComparer = new RotationInvariantNormallessSampledData3bComparer();
@@ -348,7 +347,7 @@ namespace Votyra.Core.Models
         {
             public bool Equals(SampledData3b x, SampledData3b y)
             {
-                Matrix4x4 temp;
+                Matrix4x4f temp;
                 return x.EqualsRotationInvariant(y, out temp);
             }
 
@@ -371,7 +370,7 @@ namespace Votyra.Core.Models
             }
         }
 
-        public IEnumerable<Matrix4x4> GetAllRotationEquivalencies(SampledData3b that)
+        public IEnumerable<Matrix4x4f> GetAllRotationEquivalencies(SampledData3b that)
         {
             for (int x = 0; x < 4; x++)
             {
@@ -395,7 +394,7 @@ namespace Votyra.Core.Models
             }
         }
 
-        public IEnumerable<Matrix4x4> GetAllRotationSubsets(SampledData3b that)
+        public IEnumerable<Matrix4x4f> GetAllRotationSubsets(SampledData3b that)
         {
             for (int x = 0; x < 4; x++)
             {

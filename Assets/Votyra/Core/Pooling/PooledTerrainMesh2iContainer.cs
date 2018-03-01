@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Models.ObjectPool;
 using Votyra.Core.TerrainMeshes;
@@ -42,12 +41,12 @@ namespace Votyra.Core.Pooling
             Pool.ReturnObject(this, this.CellInGroupCount);
         }
 
-        public void Clear(Bounds meshBounds)
+        public void Clear(Rect3f meshBounds)
         {
             Mesh.Clear(meshBounds);
         }
 
-        public void AddTriangle(Vector3 a, Vector3 b, Vector3 c)
+        public void AddTriangle(Vector3f a, Vector3f b, Vector3f c)
         {
             Mesh.AddTriangle(a, b, c);
         }

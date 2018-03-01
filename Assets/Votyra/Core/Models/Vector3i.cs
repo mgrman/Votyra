@@ -18,7 +18,7 @@ namespace Votyra.Core.Models
             this.z = z;
         }
 
-        public Vector3i(Vector3 vec)
+        public Vector3i(Vector3f vec)
         {
             this.x = vec.x.RoundToInt();
             this.y = vec.y.RoundToInt();
@@ -74,9 +74,9 @@ namespace Votyra.Core.Models
             return new Vector3i(a.x + b.x, a.y + b.y, a.z + b.z);
         }
 
-        public static Vector3 operator +(Vector3i a, Vector3 b)
+        public static Vector3f operator +(Vector3i a, Vector3f b)
         {
-            return new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+            return new Vector3f(a.x + b.x, a.y + b.y, a.z + b.z);
         }
 
         public static Vector3i operator -(Vector3i a, Vector3i b)
@@ -84,14 +84,14 @@ namespace Votyra.Core.Models
             return new Vector3i(a.x - b.x, a.y - b.y, a.z - b.z);
         }
 
-        public static Vector3 operator *(Vector3 a, Vector3i b)
+        public static Vector3f operator *(Vector3f a, Vector3i b)
         {
-            return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+            return new Vector3f(a.x * b.x, a.y * b.y, a.z * b.z);
         }
 
-        public static Vector3 operator *(Vector3i a, Vector3 b)
+        public static Vector3f operator *(Vector3i a, Vector3f b)
         {
-            return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
+            return new Vector3f(a.x * b.x, a.y * b.y, a.z * b.z);
         }
 
         public static Vector3i operator *(Vector3i a, Vector3i b)
@@ -104,9 +104,9 @@ namespace Votyra.Core.Models
             return new Vector3i(a.x / b.x, a.y / b.y, a.z / b.z);
         }
 
-        public static Vector3 operator /(Vector3i a, Vector3 b)
+        public static Vector3f operator /(Vector3i a, Vector3f b)
         {
-            return new Vector3(a.x / b.x, a.y / b.y, a.z / b.z);
+            return new Vector3f(a.x / b.x, a.y / b.y, a.z / b.z);
         }
 
         public static Vector3i operator /(Vector3i a, int b)
@@ -114,9 +114,9 @@ namespace Votyra.Core.Models
             return new Vector3i(a.x / b, a.y / b, a.z / b);
         }
 
-        public static Vector3 operator /(Vector3i a, float b)
+        public static Vector3f operator /(Vector3i a, float b)
         {
-            return new Vector3(a.x / b, a.y / b, a.z / b);
+            return new Vector3f(a.x / b, a.y / b, a.z / b);
         }
 
         public Vector3i DivideUp(Vector3i a, int b)
@@ -124,9 +124,9 @@ namespace Votyra.Core.Models
             return new Vector3i(a.x.DivideUp(b), a.y.DivideUp(b), a.z.DivideUp(b));
         }
 
-        public Vector3 ToVector3()
+        public Vector3f ToVector3f()
         {
-            return new Vector3(x, y, z);
+            return new Vector3f(x, y, z);
         }
 
         public Vector2i XY()
@@ -147,12 +147,12 @@ namespace Votyra.Core.Models
             }
         }
 
-        public Vector3 normalized
+        public Vector3f normalized
         {
             get
             {
                 var mag = magnitude;
-                return new Vector3(x / mag, y / mag, z / mag);
+                return new Vector3f(x / mag, y / mag, z / mag);
             }
         }
 
