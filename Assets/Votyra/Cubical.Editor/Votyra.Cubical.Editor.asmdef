@@ -1,9 +1,9 @@
 {
     "name": "Votyra.Cubical.Editor",
     "references": [
-        "Votyra.Cubical",
         "Votyra.Core",
-        "Votyra.Core.Editor"
+        "Votyra.Core.Editor",
+        "Votyra.Cubical"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"

@@ -1,9 +1,9 @@
 {
     "name": "Votyra.Plannar.Editor",
     "references": [
-        "Votyra.Plannar",
         "Votyra.Core",
-        "Votyra.Core.Editor"
+        "Votyra.Core.Editor",
+        "Votyra.Plannar"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
