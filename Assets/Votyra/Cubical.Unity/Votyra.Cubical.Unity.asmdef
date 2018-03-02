@@ -1,0 +1,12 @@
+{
+    "name": "Votyra.Cubical.Unity",
+    "references": [
+        "Votyra.Core",
+        "Votyra.Core.Unity",
+        "Votyra.Cubical"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

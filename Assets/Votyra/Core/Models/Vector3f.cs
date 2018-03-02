@@ -38,6 +38,21 @@ namespace Votyra.Core.Models
             }
         }
 
+        public Vector3i FloorToInt()
+        {
+            return new Vector3i(x.FloorToInt(), y.FloorToInt(), z.FloorToInt());
+        }
+
+        public Vector3i RoundToInt()
+        {
+            return new Vector3i(x.RoundToInt(), y.FloorToInt(), z.RoundToInt());
+        }
+
+        public Vector3i CeilToInt()
+        {
+            return new Vector3i(x.CeilToInt(), y.CeilToInt(), z.CeilToInt());
+        }
+
         public float VolumeSum { get { return x * y * z; } }
 
         public Vector2f XY { get { return new Vector2f(x, y); } }

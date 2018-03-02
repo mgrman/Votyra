@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
-using Votyra.Plannar.Images;
 
-namespace Votyra.Plannar
+namespace Votyra.Core.Utils
 {
     public static class ConversionUtils
     {
@@ -64,7 +62,7 @@ namespace Votyra.Plannar
         public static List<UnityEngine.Vector3> ToVector3(this List<Vector3f> vector)
         {
             throw new NotSupportedException();
-            return vector.Select(o => o.ToVector3()).ToList();
+            //return vector.Select(o => o.ToVector3()).ToList();
         }
 
         public static UnityEngine.Vector3[] ToVector3(this Vector3f[] vector)
@@ -85,7 +83,7 @@ namespace Votyra.Plannar
         public static List<UnityEngine.Vector2> ToVector2(this List<Vector2f> vector)
         {
             throw new NotSupportedException();
-            return vector.Select(o => o.ToVector2()).ToList();
+            //return vector.Select(o => o.ToVector2()).ToList();
         }
 
         public static UnityEngine.Vector2[] ToVector2(this Vector2f[] vector)

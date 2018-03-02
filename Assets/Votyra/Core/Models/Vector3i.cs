@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using UnityEngine;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
@@ -143,7 +142,7 @@ namespace Votyra.Core.Models
         {
             get
             {
-                return Mathf.Sqrt(x * x + y * y + z * z);
+                return (float)Math.Sqrt(x * x + y * y + z * z);
             }
         }
 
