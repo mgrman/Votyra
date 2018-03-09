@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -12,6 +13,29 @@ namespace Votyra.Core
 {
     public static class TestUtils
     {
+        public static void AssertListEquality<T>(IList<T> expectedResult, IList<T> resultItems, IEqualityComparer<T> comparer = null)
+        {
+            if (comparer == null)
+            {
+                comparer = EqualityComparer<T>.Default;
+            }
+            for (int i = 0; i < Math.Max(resultItems.Count, expectedResult.Count); i++)
+            {
+                if (i >= resultItems.Count)
+                {
+                    throw new AssertionException($"Expected list has more elements. Expected {expectedResult.Count}, was {resultItems.Count}. Expected:\n{string.Join(", ", expectedResult)}\n\nActual:\n{string.Join(", ", resultItems)}");
+                }
+                if (i >= expectedResult.Count)
+                {
+                    throw new AssertionException($"Expected list has less elements. Expected {expectedResult.Count}, was {resultItems.Count}. Expected:\n{string.Join(", ", expectedResult)}\n\nActual:\n{string.Join(", ", resultItems)}");
+                }
+                if (!comparer.Equals(resultItems[i], expectedResult[i]))
+                {
+                    throw new AssertionException($"Items as position [{i}] do not match. Expected '{expectedResult[i]}' was '{resultItems[i]}. Expected:\n{string.Join(", ", expectedResult)}\n\nActual:\n{string.Join(", ", resultItems)}");
+                }
+            }
+        }
+
         public static void UnityAsyncTest(this Func<Task> taskFactory)
         {
             Debug.Log("Creating task.");
@@ -26,6 +50,19 @@ namespace Votyra.Core
             ValidateSyncContextType(unitySyncContext);
 
             AwaitTaskUsingExecMethodOfSyncContext(task, unitySyncContext);
+            Exception exception = task.Exception;
+            if (exception != null)
+            {
+                if (exception is AggregateException)
+                {
+                    var ag = exception as AggregateException;
+                    if (ag.InnerExceptions.Count == 1)
+                    {
+                        exception = ag.InnerExceptions[0];
+                    }
+                }
+                ExceptionDispatchInfo.Capture(exception).Throw();
+            }
         }
 
         private static void AwaitTaskUsingExecMethodOfSyncContext(Task task, SynchronizationContext context)

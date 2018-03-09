@@ -1,3 +1,11 @@
-﻿{
-	"name": "Votyra.Core"
+{
+    "name": "Votyra.Core",
+    "references": [
+        "UniRx",
+        "Zenject"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
 }

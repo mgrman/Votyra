@@ -1,7 +1,10 @@
 {
     "name": "Votyra.Core.Editor",
     "references": [
-        "Votyra.Core"
+        "Votyra.Core",
+        "UniRx",
+        "Zenject",
+        "Zenject.Editor"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"

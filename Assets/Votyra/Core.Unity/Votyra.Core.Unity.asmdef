@@ -1,7 +1,9 @@
 {
     "name": "Votyra.Core.Unity",
     "references": [
-        "Votyra.Core"
+        "Votyra.Core",
+        "UniRx",
+        "Zenject"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
