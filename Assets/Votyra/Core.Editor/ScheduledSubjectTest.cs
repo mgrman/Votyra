@@ -16,7 +16,7 @@ namespace Votyra.Core
     public class ScheduledSubjectTest
     {
         [Test]
-        public void QueuedSubject_OnNext_HandlersAreSerialized()
+        public void ScheduledSubject_OnNext_HandlersAreSerialized()
         {
             TestUtils.UnityAsyncTest(async () =>
             {
@@ -67,7 +67,7 @@ namespace Votyra.Core
         }
 
         [Test]
-        public void QueuedSubjects_CircullarConnection_CombinedValueIsCorrect()
+        public void ScheduledSubject_CircullarConnection_CombinedValueIsCorrect()
         {
 
             TestUtils.UnityAsyncTest(async () =>
