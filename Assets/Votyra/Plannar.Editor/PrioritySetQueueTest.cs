@@ -22,9 +22,9 @@ namespace Votyra.Plannar.Editor
             var second = queue.GetFirst();
             var third = queue.GetFirst();
 
-            Assert.AreEqual(new Vector2i(0, 0), first);
-            Assert.AreEqual(new Vector2i(1, 1), second);
-            Assert.AreEqual(new Vector2i(7, 7), third);
+            Assert.AreEqual(new Vector2i(0, 0), first.Value);
+            Assert.AreEqual(new Vector2i(1, 1), second.Value);
+            Assert.AreEqual(new Vector2i(7, 7), third.Value);
         }
 
         [Test]
@@ -43,10 +43,10 @@ namespace Votyra.Plannar.Editor
             var second = queue.GetFirst();
             var third = queue.GetFirst();
             var fourth = queue.GetFirst();
-            Assert.AreEqual(new Vector2i(0, 0), first);
-            Assert.AreEqual(new Vector2i(1, 1), second);
-            Assert.AreEqual(new Vector2i(2, 2), third);
-            Assert.AreEqual(new Vector2i(7, 7), fourth);
+            Assert.AreEqual(new Vector2i(0, 0), first.Value);
+            Assert.AreEqual(new Vector2i(1, 1), second.Value);
+            Assert.AreEqual(new Vector2i(2, 2), third.Value);
+            Assert.AreEqual(new Vector2i(7, 7), fourth.Value);
         }
 
         [Test]
@@ -62,9 +62,9 @@ namespace Votyra.Plannar.Editor
             var second = queue.GetFirst();
             var third = queue.GetFirst();
 
-            Assert.AreEqual(new Vector2i(7, 7), first);
-            Assert.AreEqual(new Vector2i(1, 1), second);
-            Assert.AreEqual(new Vector2i(0, 0), third);
+            Assert.AreEqual(new Vector2i(7, 7), first.Value);
+            Assert.AreEqual(new Vector2i(1, 1), second.Value);
+            Assert.AreEqual(new Vector2i(0, 0), third.Value);
         }
 
         [Test]
@@ -82,10 +82,10 @@ namespace Votyra.Plannar.Editor
             var second = queue.GetFirst();
             var third = queue.GetFirst();
             var fourth = queue.GetFirst();
-            Assert.AreEqual(new Vector2i(7, 7), first);
-            Assert.AreEqual(new Vector2i(2, 2), second);
-            Assert.AreEqual(new Vector2i(1, 1), third);
-            Assert.AreEqual(new Vector2i(0, 0), fourth);
+            Assert.AreEqual(new Vector2i(7, 7), first.Value);
+            Assert.AreEqual(new Vector2i(2, 2), second.Value);
+            Assert.AreEqual(new Vector2i(1, 1), third.Value);
+            Assert.AreEqual(new Vector2i(0, 0), fourth.Value);
         }
     }
 }
