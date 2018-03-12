@@ -28,7 +28,7 @@ namespace Votyra.Cubical.GroupSelectors
             foreach (var frustumCorner in frustumCorners)
             {
                 var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner));
-                localCameraBounds.Encapsulate(cameraPositionLocal + vector);
+                localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
 
             var cellInGroupCount_x = cellInGroupCount.x;
@@ -95,7 +95,7 @@ namespace Votyra.Cubical.GroupSelectors
         private bool TestPlaneAABB(Plane3f plane, Vector3f boundsMin, Vector3f boundsMax)
         {
             return
-                TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMin.y, boundsMin.z)) ||
+            TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMin.y, boundsMin.z)) ||
                 TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMin.y, boundsMax.z)) ||
                 TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMax.y, boundsMin.z)) ||
                 TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMax.y, boundsMax.z)) ||

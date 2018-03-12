@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
@@ -21,12 +23,7 @@ namespace Votyra.Core.Utils
 
         public static Vector3f[] ToVector3f(this PooledArrayContainer<UnityEngine.Vector3> planesUnity)
         {
-            Vector3f[] planes = new Vector3f[planesUnity.Count];
-            for (int i = 0; i < planes.Length; i++)
-            {
-                planes[i] = planesUnity.Array[i].ToVector3f();
-            }
-            return planes;
+            return planesUnity.Array.ToVector3f();
         }
 
         public static Plane3f ToPlane3f(this UnityEngine.Plane plane)
@@ -36,12 +33,14 @@ namespace Votyra.Core.Utils
 
         public static Plane3f[] ToPlane3f(this PooledArrayContainer<UnityEngine.Plane> planesUnity)
         {
-            Plane3f[] planes = new Plane3f[planesUnity.Count];
-            for (int i = 0; i < planes.Length; i++)
-            {
-                planes[i] = planesUnity[i].ToPlane3f();
-            }
-            return planes;
+            return planesUnity.Array.ToPlane3f();
+        }
+
+        public static Plane3f[] ToPlane3f(this UnityEngine.Plane[] vector)
+        {
+            var union = new UnionPlane();
+            union.Unity = vector;
+            return union.Votyra;
         }
 
         public static UnityEngine.Vector2 ToVector2(this Vector2f vector)
@@ -59,10 +58,14 @@ namespace Votyra.Core.Utils
             return new UnityEngine.Bounds(bounds.center.ToVector3(), bounds.size.ToVector3());
         }
 
-        public static List<UnityEngine.Vector3> ToVector3(this List<Vector3f> vector)
+        public static UnityEngine.Vector3[] ToVector3Array(this List<Vector3f> vector)
         {
-            throw new NotSupportedException();
-            //return vector.Select(o => o.ToVector3()).ToList();
+            return vector.GetInnerArray<Vector3f>().ToVector3();
+        }
+
+        public static List<UnityEngine.Vector3> ToVector3List(this List<Vector3f> vector)
+        {
+            return vector.ConvertListOfMatchingStructs<Vector3f, UnityEngine.Vector3>(ToVector3);
         }
 
         public static UnityEngine.Vector3[] ToVector3(this Vector3f[] vector)
@@ -73,17 +76,99 @@ namespace Votyra.Core.Utils
             //return vector.Select(o => o.ToVector3()).ToArray();
         }
 
-        [StructLayout(LayoutKind.Explicit)]
-        private struct UnionVector3
+        public static Vector3f[] ToVector3f(this UnityEngine.Vector3[] vector)
         {
-            [FieldOffset(0)] public UnityEngine.Vector3[] Unity;
-            [FieldOffset(0)] public Vector3f[] Votyra;
+            var union = new UnionVector3();
+            union.Unity = vector;
+            return union.Votyra;
+            //return vector.Select(o => o.ToVector3()).ToArray();
         }
 
-        public static List<UnityEngine.Vector2> ToVector2(this List<Vector2f> vector)
+        public static UnityEngine.Vector2[] ToVector2Array(this List<Vector2f> vector)
         {
-            throw new NotSupportedException();
-            //return vector.Select(o => o.ToVector2()).ToList();
+            return vector.GetInnerArray<Vector2f>().ToVector2();
+        }
+
+        public static List<UnityEngine.Vector2> ToVector2List(this List<Vector2f> vector)
+        {
+            // return vector.Select(ToVector2).ToList();
+            return vector.ConvertListOfMatchingStructs<Vector2f, UnityEngine.Vector2>(ToVector2);
+        }
+
+        private static T[] GetInnerArray<T>(this List<T> source)
+        {
+            source.TrimExcess();
+            var sourceItemsField = source.GetType().GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
+            return sourceItemsField.GetValue(source) as T[];
+        }
+
+        private static List<TResult> ConvertListOfMatchingStructs<TSource, TResult>(this List<TSource> source, Func<TSource[], TResult[]> convert)
+        {
+            var target = new List<TResult>();
+            var targetItemsField = ListConvertorCache<TSource, TResult>.targetItemsField;
+            var sourceItemsField = ListConvertorCache<TSource, TResult>.sourceItemsField;
+            var targetSizeField = ListConvertorCache<TSource, TResult>.targetSizeField;
+            var sourceSizeField = ListConvertorCache<TSource, TResult>.sourceSizeField;
+
+            var sourceItemsValue = sourceItemsField.GetValue(source);
+            var targetItems = convert(sourceItemsValue as TSource[]);
+
+            targetItemsField.SetValue(target, targetItems, BindingFlags.SetField, new ArrayKeepBinder<TSource, TResult>(), null);
+            targetSizeField.SetValue(target, source.Count);
+            return target;
+        }
+
+        private static class ListConvertorCache<TSource, TResult>
+        {
+            public static readonly FieldInfo targetItemsField;
+            public static readonly FieldInfo sourceItemsField;
+            public static readonly FieldInfo targetSizeField;
+            public static readonly FieldInfo sourceSizeField;
+
+            static ListConvertorCache()
+            {
+                targetItemsField = typeof(List<TResult>).GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
+                sourceItemsField = typeof(List<TSource>).GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
+                targetSizeField = typeof(List<TResult>).GetField("_size", BindingFlags.Instance | BindingFlags.NonPublic);
+                sourceSizeField = typeof(List<TSource>).GetField("_size", BindingFlags.Instance | BindingFlags.NonPublic);
+            }
+        }
+
+        private class ArrayKeepBinder<TSource, TResult> : Binder
+        {
+            public override FieldInfo BindToField(BindingFlags bindingAttr, FieldInfo[] match, object value, CultureInfo culture)
+            {
+                return Type.DefaultBinder.BindToField(bindingAttr, match, value, culture);
+            }
+
+            public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] names, out object state)
+            {
+                return Type.DefaultBinder.BindToMethod(bindingAttr, match, ref args, modifiers, culture, names, out state);
+            }
+
+            public override object ChangeType(object value, Type type, CultureInfo culture)
+            {
+                if (value.GetType() == typeof(TSource[]) && type == typeof(TResult[]))
+                {
+                    return value;
+                }
+                throw new NotImplementedException();
+            }
+
+            public override void ReorderArgumentArray(ref object[] args, object state)
+            {
+                Type.DefaultBinder.ReorderArgumentArray(ref args, state);
+            }
+
+            public override MethodBase SelectMethod(BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers)
+            {
+                return Type.DefaultBinder.SelectMethod(bindingAttr, match, types, modifiers);
+            }
+
+            public override PropertyInfo SelectProperty(BindingFlags bindingAttr, PropertyInfo[] match, Type returnType, Type[] indexes, ParameterModifier[] modifiers)
+            {
+                return Type.DefaultBinder.SelectProperty(bindingAttr, match, returnType, indexes, modifiers);
+            }
         }
 
         public static UnityEngine.Vector2[] ToVector2(this Vector2f[] vector)
@@ -93,14 +178,6 @@ namespace Votyra.Core.Utils
             return union.Unity;
             //return vector.Select(o => o.ToVector2()).ToArray();
         }
-
-        [StructLayout(LayoutKind.Explicit)]
-        private struct UnionVector2
-        {
-            [FieldOffset(0)] public UnityEngine.Vector2[] Unity;
-            [FieldOffset(0)] public Vector2f[] Votyra;
-        }
-
 
         public static Matrix4x4f ToMatrix4x4f(this UnityEngine.Matrix4x4 mat)
         {
@@ -128,6 +205,27 @@ namespace Votyra.Core.Utils
             mat2.m23 = mat.m23;
             mat2.m33 = mat.m33;
             return mat2;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionVector3
+        {
+            [FieldOffset(0)] public UnityEngine.Vector3[] Unity;
+            [FieldOffset(0)] public Vector3f[] Votyra;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionVector2
+        {
+            [FieldOffset(0)] public UnityEngine.Vector2[] Unity;
+            [FieldOffset(0)] public Vector2f[] Votyra;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionPlane
+        {
+            [FieldOffset(0)] public UnityEngine.Plane[] Unity;
+            [FieldOffset(0)] public Plane3f[] Votyra;
         }
     }
 }

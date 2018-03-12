@@ -14,15 +14,13 @@ namespace Votyra.Cubical.MeshUpdaters
 
         public IReadOnlySet<Vector3i> ExistingGroups => _meshFilters;
 
-        public TerrainMeshUpdater3i()
-        {
-        }
+        public TerrainMeshUpdater3i() { }
 
         public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<Vector3i, ITerrainMesh> terrainMeshes, IEnumerable<Vector3i> toKeepGroups)
         {
             if (terrainMeshes != null)
             {
-                using (options.ProfilerFactory("Setting Mesh", this))
+                using(options.ProfilerFactory("Setting Mesh", this))
                 {
                     var toDeleteGroups = _meshFilters.Keys.Except(terrainMeshes.Keys).Except(toKeepGroups).ToList();
 
@@ -79,6 +77,10 @@ namespace Votyra.Cubical.MeshUpdaters
             {
                 UpdateMesh((triangleMesh as IPooledTerrainMesh).Mesh, mesh);
             }
+            else if (triangleMesh is FixedTerrainMesh2i)
+            {
+                UpdateMesh(triangleMesh as FixedTerrainMesh2i, mesh);
+            }
             else if (triangleMesh is ExpandingTerrainMesh)
             {
                 UpdateMesh(triangleMesh as ExpandingTerrainMesh, mesh);
@@ -97,14 +99,23 @@ namespace Votyra.Cubical.MeshUpdaters
                 mesh.Clear();
             }
 
-            mesh.SetVertices(triangleMesh.Vertices.ToVector3());
-            mesh.SetNormalsOrRecompute(triangleMesh.Normals.ToVector3());
-            mesh.SetUVs(0, triangleMesh.UV.ToVector2());
+            mesh.vertices = triangleMesh.Vertices.ToVector3Array();
+            mesh.SetNormalsOrRecompute(triangleMesh.Normals.ToVector3Array());
+            mesh.uv = triangleMesh.UV.ToVector2Array();
             if (recomputeTriangles)
             {
                 mesh.SetTriangles(triangleMesh.Indices, 0, false);
             }
             mesh.bounds = triangleMesh.MeshBounds.ToBounds();
+
+            // mesh.SetVertices(triangleMesh.Vertices.ToVector3List());
+            // mesh.SetNormalsOrRecompute(triangleMesh.Normals.ToVector3List());
+            // mesh.SetUVs(0, triangleMesh.UV.ToVector2List());
+            // if (recomputeTriangles)
+            // {
+            //     mesh.SetTriangles(triangleMesh.Indices, 0, false);
+            // }
+            // mesh.bounds = triangleMesh.MeshBounds.ToBounds();
         }
 
         private void UpdateMesh(FixedTerrainMesh2i triangleMesh, Mesh mesh)

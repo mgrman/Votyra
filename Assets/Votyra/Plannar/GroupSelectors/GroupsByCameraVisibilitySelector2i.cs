@@ -13,6 +13,7 @@ namespace Votyra.Plannar.GroupSelectors
             {
                 return null;
             }
+            // var logger = options.LoggerFactory(this.GetType().Name, this);
 
             var planes = options.CameraPlanes;
             var frustumCorners = options.CameraFrustumCorners;
@@ -29,7 +30,7 @@ namespace Votyra.Plannar.GroupSelectors
             foreach (var frustumCorner in frustumCorners)
             {
                 var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner));
-                localCameraBounds.Encapsulate(cameraPositionLocal + vector);
+                localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
 
             var bounds_center = groupBoundsTemplate.center;
@@ -50,12 +51,11 @@ namespace Votyra.Plannar.GroupSelectors
                 for (int group_y = min_group_y; group_y <= max_group_y; group_y++)
                 {
                     var group = new Vector2i(group_x, group_y);
-                    var groupBounds = new Rect3f(new Vector3f
-                        (
-                            bounds_center.x + group_x * cellInGroupCount_x,
-                            bounds_center.y + group_y * cellInGroupCount_y,
-                            bounds_center.z
-                        ), bounds_size);
+                    var groupBounds = new Rect3f(new Vector3f(
+                        bounds_center.x + group_x * cellInGroupCount_x,
+                        bounds_center.y + group_y * cellInGroupCount_y,
+                        bounds_center.z
+                    ), bounds_size);
 
                     bool isInside = TestPlanesAABB(planes, groupBounds);
                     if (isInside)
@@ -98,7 +98,7 @@ namespace Votyra.Plannar.GroupSelectors
         private bool TestPlaneAABB(Plane3f plane, Vector3f boundsMin, Vector3f boundsMax)
         {
             return
-                TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMin.y, boundsMin.z)) ||
+            TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMin.y, boundsMin.z)) ||
                 TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMin.y, boundsMax.z)) ||
                 TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMax.y, boundsMin.z)) ||
                 TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMax.y, boundsMax.z)) ||

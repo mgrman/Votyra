@@ -4,7 +4,8 @@
         "Votyra.Core",
         "UniRx",
         "Zenject",
-        "Zenject.Editor"
+        "Zenject.Editor",
+        "Votyra.Core.Unity"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
