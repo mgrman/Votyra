@@ -43,8 +43,8 @@ namespace Votyra.Plannar.GroupSelectors
             int max_group_x = MathUtils.CeilToInt(localCameraBounds.max.x / cellInGroupCount_x);
             int max_group_y = MathUtils.CeilToInt(localCameraBounds.max.y / cellInGroupCount_y);
 
-            var groupsToRecompute = PooledList<Vector2i>.Create();
-            var groupsToKeep = PooledList<Vector2i>.Create();
+            var groupsToRecompute = PooledSet<Vector2i>.Create();
+            var groupsToKeep = PooledSet<Vector2i>.Create();
 
             for (int group_x = min_group_x; group_x <= max_group_x; group_x++)
             {

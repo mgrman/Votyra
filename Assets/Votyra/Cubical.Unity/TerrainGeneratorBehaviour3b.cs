@@ -7,6 +7,7 @@ using UnityEngine;
 using Votyra.Core.Behaviours;
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
+using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
@@ -14,7 +15,6 @@ using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
 using Votyra.Cubical.GroupSelectors;
 using Votyra.Cubical.ImageSamplers;
-using Votyra.Cubical.MeshUpdaters;
 using Votyra.Cubical.TerrainGenerators;
 using Votyra.Cubical.TerrainGenerators.TerrainMeshers;
 
@@ -44,7 +44,7 @@ namespace Votyra.Cubical
 
         private IGroupSelector3i _groupsSelector;
         private ITerrainGenerator3b _terrainGenerator;
-        private IMeshUpdater3i _meshUpdater;
+        private IMeshUpdater<Vector3i> _meshUpdater;
 
         private Task _updateTask = null;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
@@ -95,28 +95,28 @@ namespace Votyra.Cubical
             try
             {
                 Func<IReadOnlyPooledDictionary<Vector3i, ITerrainMesh>> computeAction = () =>
+                {
+                    using(context.ProfilerFactory.Create("Creating visible groups"))
                     {
-                        using (context.ProfilerFactory.Create("Creating visible groups"))
+                        groupActions = context.GroupSelector.GetGroupsToUpdate(context);
+                        if (groupActions.ToRecompute.Any())
                         {
-                            groupActions = context.GroupSelector.GetGroupsToUpdate(context);
-                            if (groupActions.ToRecompute.Any())
-                            {
-                                Debug.Log($"Groups to recompute {groupActions.ToRecompute.Count()}. Groups to keep {groupActions.ToKeep.Count()}.");
-                            }
+                            Debug.Log($"Groups to recompute {groupActions.ToRecompute.Count()}. Groups to keep {groupActions.ToKeep.Count()}.");
                         }
-                        var toRecompute = groupActions.ToRecompute;
-                        if (toRecompute.Any())
+                    }
+                    var toRecompute = groupActions.ToRecompute;
+                    if (toRecompute.Any())
+                    {
+                        using(context.ProfilerFactory.Create("TerrainMeshGenerator"))
                         {
-                            using (context.ProfilerFactory.Create("TerrainMeshGenerator"))
-                            {
-                                return context.TerrainGenerator.Generate(context, toRecompute);
-                            }
+                            return context.TerrainGenerator.Generate(context, toRecompute);
                         }
-                        else
-                        {
-                            return null;
-                        }
-                    };
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                };
 
                 if (async)
                 {
@@ -134,7 +134,7 @@ namespace Votyra.Cubical
 
                 if (results != null)
                 {
-                    using (context.ProfilerFactory.Create("Applying mesh"))
+                    using(context.ProfilerFactory.Create("Applying mesh"))
                     {
                         var toKeep = groupActions.ToKeep;
                         context.MeshUpdater.UpdateMesh(context, results, toKeep);
@@ -160,7 +160,7 @@ namespace Votyra.Cubical
 
             var existingGroups = _meshUpdater.ExistingGroups;
 
-            var image = _image;//_image ?? _imageProvider.CreateImage();
+            var image = _image; //_image ?? _imageProvider.CreateImage();
 
             Vector3i cellInGroupCount = new Vector3i(this.CellInGroupCount.x, this.CellInGroupCount.y, this.CellInGroupCount.z);
 
@@ -174,8 +174,7 @@ namespace Votyra.Cubical
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);
             IEnumerable<Vector3f> frustumCorners = frustumCornersUnity.ToVector3f();
 
-            return new SceneContext3b
-            (
+            return new SceneContext3b(
                 _groupsSelector,
                 _terrainGenerator,
                 _meshUpdater,
@@ -187,7 +186,7 @@ namespace Votyra.Cubical
                 existingGroups,
                 cellInGroupCount,
                 image,
-                null,//Rect3i.All, //(image as IImageInvalidatableImage3i)?.InvalidatedArea ?? Rect2i.All,
+                null, //Rect3i.All, //(image as IImageInvalidatableImage3i)?.InvalidatedArea ?? Rect2i.All,
                 _sampler,
                 () => this.GameObjectFactory(),
                 CreateProfiler,
@@ -224,7 +223,7 @@ namespace Votyra.Cubical
             _sampler = new SimpleImageSampler3b();
 
             _terrainGenerator = new TerrainGenerator3b<TerrainMesher3b>();
-            _meshUpdater = new TerrainMeshUpdater3i();
+            _meshUpdater = new TerrainMeshUpdater<Vector3i>();
             _groupsSelector = new GroupsByCameraVisibilitySelector3i();
             //_image = new NoiseImage3b(Vector3.zero, new Vector3(100, 100, 100));//new EditableMatrixImagei(InitialTexture, InitialTextureScale, _sampler, _editableImageConstraint);
 

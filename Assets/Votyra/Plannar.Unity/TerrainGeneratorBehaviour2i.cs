@@ -7,6 +7,7 @@ using UnityEngine;
 using Votyra.Core.Behaviours;
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
+using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
@@ -16,7 +17,6 @@ using Votyra.Plannar.GroupSelectors;
 using Votyra.Plannar.Images;
 using Votyra.Plannar.Images.Constraints;
 using Votyra.Plannar.ImageSamplers;
-using Votyra.Plannar.MeshUpdaters;
 using Votyra.Plannar.TerrainGenerators;
 
 namespace Votyra.Plannar
@@ -39,7 +39,7 @@ namespace Votyra.Plannar
         protected IImageSampler2i _sampler;
         protected IGroupSelector2i _groupsSelector;
         protected ITerrainGenerator2i _terrainGenerator;
-        protected IMeshUpdater2i _meshUpdater;
+        protected IMeshUpdater<Vector2i> _meshUpdater;
 
         private Task _updateTask = null;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
@@ -65,7 +65,7 @@ namespace Votyra.Plannar
 
         private static void FillInitialState(IEditableImage2f editableImage, Texture2D texture, float scale)
         {
-            using (var imageAccessor = editableImage.RequestAccess(Rect2i.All))
+            using(var imageAccessor = editableImage.RequestAccess(Rect2i.All))
             {
                 Rect2i matrixAreaToFill;
                 if (imageAccessor.Area == Rect2i.All)
@@ -85,7 +85,7 @@ namespace Votyra.Plannar
                     for (int y = matrixAreaToFill.yMin; y < matrixAreaToFill.yMax; y++)
                     {
                         var pos = new Vector2i(x, y);
-                        imageAccessor[pos] = texture.GetPixelBilinear((float)x / matrixSizeX, (float)y / matrixSizeY).grayscale * scale;
+                        imageAccessor[pos] = texture.GetPixelBilinear((float) x / matrixSizeX, (float) y / matrixSizeY).grayscale * scale;
                     }
                 }
             }
@@ -126,12 +126,12 @@ namespace Votyra.Plannar
         private async Task UpdateTerrain(SceneContext2i context, bool async, CancellationToken token)
         {
             GroupActions2i groupActions = null;
-            IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i> results = null;
+            IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> results = null;
             try
             {
-                Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh2i>> computeAction = () =>
+                Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh>> computeAction = () =>
                 {
-                    using (context.ProfilerFactory.Create("Creating visible groups"))
+                    using(context.ProfilerFactory.Create("Creating visible groups"))
                     {
                         groupActions = context.GroupSelector.GetGroupsToUpdate(context);
                         //Debug.Log($"update {groupActions.ToRecompute.Count} keep {groupActions.ToKeep.Count}");
@@ -139,7 +139,7 @@ namespace Votyra.Plannar
                     var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i>();
                     if (toRecompute.Any())
                     {
-                        using (context.ProfilerFactory.Create("TerrainMeshGenerator"))
+                        using(context.ProfilerFactory.Create("TerrainMeshGenerator"))
                         {
                             return context.TerrainGenerator.Generate(context, toRecompute);
                         }
@@ -166,9 +166,9 @@ namespace Votyra.Plannar
 
                 if (results != null)
                 {
-                    using (context.ProfilerFactory.Create("Applying mesh"))
+                    using(context.ProfilerFactory.Create("Applying mesh"))
                     {
-                        var toKeep = groupActions?.ToKeep ?? Enumerable.Empty<Vector2i>();
+                        var toKeep = groupActions?.ToKeep ?? ReadOnlySet<Vector2i>.Empty;
                         context.MeshUpdater.UpdateMesh(context, results, toKeep);
                     }
                 }

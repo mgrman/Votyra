@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
+using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
 using Votyra.Core.Utils;
 using Votyra.Plannar.GroupSelectors;
 using Votyra.Plannar.ImageSamplers;
-using Votyra.Plannar.MeshUpdaters;
 using Votyra.Plannar.TerrainGenerators;
 
 namespace Votyra.Plannar
@@ -21,7 +21,7 @@ namespace Votyra.Plannar
         public SceneContext2i(
             IGroupSelector2i groupSelector,
             ITerrainGenerator2i terrainGenerator,
-            IMeshUpdater2i meshUpdater,
+            IMeshUpdater<Vector2i> meshUpdater,
             Vector3f cameraPosition,
             IEnumerable<Plane3f> cameraPlanes,
             IEnumerable<Vector3f> cameraFrustumCorners,
@@ -63,7 +63,7 @@ namespace Votyra.Plannar
 
         public IGroupSelector2i GroupSelector { get; }
         public ITerrainGenerator2i TerrainGenerator { get; }
-        public IMeshUpdater2i MeshUpdater { get; }
+        public IMeshUpdater<Vector2i> MeshUpdater { get; }
 
         public Vector3f CameraPosition { get; }
         public IEnumerable<Plane3f> CameraPlanes { get; }

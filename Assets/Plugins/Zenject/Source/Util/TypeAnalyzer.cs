@@ -1,8 +1,8 @@
-using ModestTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ModestTree;
 
 namespace Zenject
 {
@@ -18,7 +18,7 @@ namespace Zenject
         public static ZenjectTypeInfo GetInfo(Type type)
         {
 #if UNITY_EDITOR && ZEN_PROFILING_ENABLED
-            using (ProfileBlock.Start("Zenject Reflection"))
+            using(ProfileBlock.Start("Zenject Reflection"))
 #endif
             {
                 Assert.That(!type.IsAbstract(),
@@ -27,7 +27,7 @@ namespace Zenject
                 ZenjectTypeInfo info;
 
 #if ZEN_MULTITHREADING
-                lock (_typeInfo)
+                lock(_typeInfo)
 #endif
                 {
                     if (!_typeInfo.TryGetValue(type, out info))
@@ -186,11 +186,11 @@ namespace Zenject
                     propertyName, parentType.FullName, string.Join(";", allFields.Select(f => f.Name).ToArray())));
             }
 
-			return (injectable, value) => writeableFields.ForEach(f => f.SetValue(injectable, value));
-		}
+            return (injectable, value) => writeableFields.ForEach(f => f.SetValue(injectable, value));
+        }
 #endif
 
-		static InjectableInfo CreateForMember(MemberInfo memInfo, Type parentType)
+        static InjectableInfo CreateForMember(MemberInfo memInfo, Type parentType)
         {
             var injectAttributes = memInfo.AllAttributes<InjectAttributeBase>().ToList();
 
@@ -215,14 +215,14 @@ namespace Zenject
 
             if (memInfo is FieldInfo)
             {
-                var fieldInfo = (FieldInfo)memInfo;
+                var fieldInfo = (FieldInfo) memInfo;
                 setter = ((object injectable, object value) => fieldInfo.SetValue(injectable, value));
                 memberType = fieldInfo.FieldType;
             }
             else
             {
                 Assert.That(memInfo is PropertyInfo);
-                var propInfo = (PropertyInfo)memInfo;
+                var propInfo = (PropertyInfo) memInfo;
                 memberType = propInfo.PropertyType;
 
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR
@@ -297,16 +297,16 @@ namespace Zenject
 
             if (args.Length == 1)
             {
-                return args[0].ParameterType == typeof(UIntPtr)
-                    && (string.IsNullOrEmpty(args[0].Name) || args[0].Name == "dummy");
+                return args[0].ParameterType == typeof(UIntPtr) &&
+                    (string.IsNullOrEmpty(args[0].Name) || args[0].Name == "dummy");
             }
 
             if (args.Length == 2)
             {
-                return args[0].ParameterType == typeof(UIntPtr)
-                    && args[1].ParameterType == typeof(Int64*)
-                    && (string.IsNullOrEmpty(args[0].Name) || args[0].Name == "dummy")
-                    && (string.IsNullOrEmpty(args[1].Name) || args[1].Name == "dummy");
+                return args[0].ParameterType == typeof(UIntPtr) &&
+                    args[1].ParameterType == typeof(Int64 * ) &&
+                    (string.IsNullOrEmpty(args[0].Name) || args[0].Name == "dummy") &&
+                    (string.IsNullOrEmpty(args[1].Name) || args[1].Name == "dummy");
             }
 
             return false;

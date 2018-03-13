@@ -32,12 +32,19 @@ namespace Votyra.Core.Editor
                 list.Capacity = list.Capacity + 7;
                 return list;
             };
-            Debug.Log("capacity: " + createNewList().Capacity);
-            TimeSpan forLoop = new TimeSpan();
+            // Debug.Log("capacity: " + createNewList().Capacity);
+
+            DateTime start = DateTime.UtcNow;
             for (int test = 0; test < tests; test++)
             {
                 var initialList = createNewList();
-                DateTime start = DateTime.UtcNow;
+            }
+            TimeSpan nothing = DateTime.UtcNow - start;
+
+            start = DateTime.UtcNow;
+            for (int test = 0; test < tests; test++)
+            {
+                var initialList = createNewList();
 
                 var newList = new List<UnityEngine.Vector3>(initialList.Count);
                 for (int i = 0; i < initialList.Count; i++)
@@ -46,30 +53,28 @@ namespace Votyra.Core.Editor
                     newList.Add(new UnityEngine.Vector3(vec.x, vec.y, vec.z));
                 }
 
-                forLoop += DateTime.UtcNow - start;
             }
+            TimeSpan forLoop = DateTime.UtcNow - start - nothing;
 
-            TimeSpan innerArray = new TimeSpan();
+            start = DateTime.UtcNow;
             for (int test = 0; test < tests; test++)
             {
                 var initialList = createNewList();
-                DateTime start = DateTime.UtcNow;
 
                 var newArray = initialList.ToVector3Array();
 
-                innerArray += DateTime.UtcNow - start;
             }
+            TimeSpan innerArray = DateTime.UtcNow - start - nothing;
 
-            TimeSpan newListWithSameArray = new TimeSpan();
+            start = DateTime.UtcNow;
             for (int test = 0; test < tests; test++)
             {
                 var initialList = createNewList();
-                DateTime start = DateTime.UtcNow;
 
                 var newArray = initialList.ToVector3List();
 
-                newListWithSameArray += DateTime.UtcNow - start;
             }
+            TimeSpan newListWithSameArray = DateTime.UtcNow - start - nothing;
 
             Debug.Log("forLoop: " + (int) forLoop.TotalMilliseconds);
             Debug.Log("innerArray: " + (int) innerArray.TotalMilliseconds);
@@ -91,11 +96,17 @@ namespace Votyra.Core.Editor
                 return list;
             };
 
-            TimeSpan forLoop = new TimeSpan();
+            DateTime start = DateTime.UtcNow;
             for (int test = 0; test < tests; test++)
             {
                 var initialList = createNewArray();
-                DateTime start = DateTime.UtcNow;
+            }
+            TimeSpan nothing = DateTime.UtcNow - start;
+
+            start = DateTime.UtcNow;
+            for (int test = 0; test < tests; test++)
+            {
+                var initialList = createNewArray();
 
                 var newList = new UnityEngine.Vector3[initialList.Length];
                 for (int i = 0; i < initialList.Length; i++)
@@ -104,19 +115,18 @@ namespace Votyra.Core.Editor
                     newList[i] = new UnityEngine.Vector3(vec.x, vec.y, vec.z);
                 }
 
-                forLoop += DateTime.UtcNow - start;
             }
+            TimeSpan forLoop = DateTime.UtcNow - start - nothing;
 
-            TimeSpan structConversion = new TimeSpan();
+            start = DateTime.UtcNow;
             for (int test = 0; test < tests; test++)
             {
                 var initialList = createNewArray();
-                DateTime start = DateTime.UtcNow;
 
                 var newArray = initialList.ToVector3();
 
-                structConversion += DateTime.UtcNow - start;
             }
+            TimeSpan structConversion = DateTime.UtcNow - start - nothing;
 
             Debug.Log("forLoop: " + (int) forLoop.TotalMilliseconds);
             Debug.Log("newListWithSameArray: " + (int) structConversion.TotalMilliseconds);

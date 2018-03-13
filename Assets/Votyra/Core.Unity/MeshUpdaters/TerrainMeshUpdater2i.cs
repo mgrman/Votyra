@@ -6,17 +6,15 @@ using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
 
-namespace Votyra.Cubical.MeshUpdaters
+namespace Votyra.Core.MeshUpdaters
 {
-    public class TerrainMeshUpdater3i : IMeshUpdater3i
+    public class TerrainMeshUpdater<TKey> : IMeshUpdater<TKey>
     {
-        private SetDictionary<Vector3i, MeshFilter> _meshFilters = new SetDictionary<Vector3i, MeshFilter>();
+        private SetDictionary<TKey, MeshFilter> _meshFilters = new SetDictionary<TKey, MeshFilter>();
 
-        public IReadOnlySet<Vector3i> ExistingGroups => _meshFilters;
+        public IReadOnlySet<TKey> ExistingGroups => _meshFilters;
 
-        public TerrainMeshUpdater3i() { }
-
-        public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<Vector3i, ITerrainMesh> terrainMeshes, IEnumerable<Vector3i> toKeepGroups)
+        public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<TKey, ITerrainMesh> terrainMeshes, IReadOnlySet<TKey> toKeepGroups)
         {
             if (terrainMeshes != null)
             {
@@ -31,7 +29,6 @@ namespace Votyra.Cubical.MeshUpdaters
                         {
                             continue;
                         }
-
                         MeshFilter meshFilter;
                         if (!_meshFilters.TryGetValue(terrainMesh.Key, out meshFilter))
                         {
@@ -99,23 +96,14 @@ namespace Votyra.Cubical.MeshUpdaters
                 mesh.Clear();
             }
 
-            mesh.vertices = triangleMesh.Vertices.ToVector3Array();
-            mesh.SetNormalsOrRecompute(triangleMesh.Normals.ToVector3Array());
-            mesh.uv = triangleMesh.UV.ToVector2Array();
+            mesh.SetVertices(triangleMesh.Vertices.ToVector3List());
+            mesh.SetNormalsOrRecompute(triangleMesh.Normals.ToVector3List());
+            mesh.SetUVs(0, triangleMesh.UV.ToVector2List());
             if (recomputeTriangles)
             {
                 mesh.SetTriangles(triangleMesh.Indices, 0, false);
             }
             mesh.bounds = triangleMesh.MeshBounds.ToBounds();
-
-            // mesh.SetVertices(triangleMesh.Vertices.ToVector3List());
-            // mesh.SetNormalsOrRecompute(triangleMesh.Normals.ToVector3List());
-            // mesh.SetUVs(0, triangleMesh.UV.ToVector2List());
-            // if (recomputeTriangles)
-            // {
-            //     mesh.SetTriangles(triangleMesh.Indices, 0, false);
-            // }
-            // mesh.bounds = triangleMesh.MeshBounds.ToBounds();
         }
 
         private void UpdateMesh(FixedTerrainMesh2i triangleMesh, Mesh mesh)
@@ -156,5 +144,6 @@ namespace Votyra.Cubical.MeshUpdaters
 
             return meshFilter;
         }
+
     }
 }

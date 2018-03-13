@@ -41,8 +41,8 @@ namespace Votyra.Cubical.GroupSelectors
             int max_group_y = MathUtils.CeilToInt(localCameraBounds.max.y / cellInGroupCount_y);
             int max_group_z = MathUtils.CeilToInt(localCameraBounds.max.z / cellInGroupCount_z);
 
-            var groupsToRecompute = PooledList<Vector3i>.Create();
-            var groupsToKeep = PooledList<Vector3i>.Create();
+            var groupsToRecompute = PooledSet<Vector3i>.Create();
+            var groupsToKeep = PooledSet<Vector3i>.Create();
 
             for (int group_x = min_group_x; group_x <= max_group_x; group_x++)
             {

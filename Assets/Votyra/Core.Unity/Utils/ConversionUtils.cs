@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Votyra.Core.Models;
@@ -98,39 +99,69 @@ namespace Votyra.Core.Utils
         private static T[] GetInnerArray<T>(this List<T> source)
         {
             source.TrimExcess();
-            var sourceItemsField = source.GetType().GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
-            return sourceItemsField.GetValue(source) as T[];
+            var itemsGet = ListInternals<T>.ItemsGet;
+            return itemsGet(source);
         }
 
         private static List<TResult> ConvertListOfMatchingStructs<TSource, TResult>(this List<TSource> source, Func<TSource[], TResult[]> convert)
         {
             var target = new List<TResult>();
-            var targetItemsField = ListConvertorCache<TSource, TResult>.targetItemsField;
-            var sourceItemsField = ListConvertorCache<TSource, TResult>.sourceItemsField;
-            var targetSizeField = ListConvertorCache<TSource, TResult>.targetSizeField;
-            var sourceSizeField = ListConvertorCache<TSource, TResult>.sourceSizeField;
+            var targetItemsSet = ListInternals<TResult>.ItemsSet;
+            var sourceItemsGet = ListInternals<TSource>.ItemsGet;
+            var targetSizeSet = ListInternals<TResult>.SizeSet;
+            var sourceSizeGet = ListInternals<TSource>.SizeGet;
 
-            var sourceItemsValue = sourceItemsField.GetValue(source);
-            var targetItems = convert(sourceItemsValue as TSource[]);
+            var sourceItemsValue = sourceItemsGet(source);
+            var targetItems = convert(sourceItemsValue);
 
-            targetItemsField.SetValue(target, targetItems, BindingFlags.SetField, new ArrayKeepBinder<TSource, TResult>(), null);
-            targetSizeField.SetValue(target, source.Count);
+            targetItemsSet(target, targetItems);
+            // targetItemsSet.SetValue(target, targetItems, BindingFlags.SetField, new ArrayKeepBinder<TSource, TResult>(), null);
+            targetSizeSet(target, source.Count);
             return target;
         }
 
-        private static class ListConvertorCache<TSource, TResult>
+        private static class ListInternals<T>
         {
-            public static readonly FieldInfo targetItemsField;
-            public static readonly FieldInfo sourceItemsField;
-            public static readonly FieldInfo targetSizeField;
-            public static readonly FieldInfo sourceSizeField;
+            public static readonly Func<List<T>, T[]> ItemsGet;
+            public static readonly Action<List<T>, T[]> ItemsSet;
+            public static readonly Func<List<T>, int> SizeGet;
+            public static readonly Action<List<T>, int> SizeSet;
 
-            static ListConvertorCache()
+            static ListInternals()
             {
-                targetItemsField = typeof(List<TResult>).GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
-                sourceItemsField = typeof(List<TSource>).GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
-                targetSizeField = typeof(List<TResult>).GetField("_size", BindingFlags.Instance | BindingFlags.NonPublic);
-                sourceSizeField = typeof(List<TSource>).GetField("_size", BindingFlags.Instance | BindingFlags.NonPublic);
+                var itemsField = typeof(List<T>).GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
+                ItemsGet = CreateGetFieldDelegate<List<T>, T[]>(itemsField);
+                ItemsSet = CreateSetFieldDelegate<List<T>, T[]>(itemsField);
+
+                var sizeField = typeof(List<T>).GetField("_size", BindingFlags.Instance | BindingFlags.NonPublic);
+                SizeGet = CreateGetFieldDelegate<List<T>, int>(sizeField);
+                SizeSet = CreateSetFieldDelegate<List<T>, int>(sizeField);
+            }
+
+            private static Func<S, T> CreateGetFieldDelegate<S, T>(FieldInfo fieldInfo)
+            {
+                ParameterExpression ownerParameter = Expression.Parameter(typeof(S));
+
+                var fieldExpression = Expression.Field(
+                    Expression.Convert(ownerParameter, typeof(S)), fieldInfo);
+
+                return Expression.Lambda<Func<S, T>>(
+                    Expression.Convert(fieldExpression, typeof(T)),
+                    ownerParameter).Compile();
+            }
+
+            private static Action<S, T> CreateSetFieldDelegate<S, T>(FieldInfo fieldInfo)
+            {
+                ParameterExpression ownerParameter = Expression.Parameter(typeof(S));
+                ParameterExpression fieldParameter = Expression.Parameter(typeof(T));
+
+                var fieldExpression = Expression.Field(
+                    Expression.Convert(ownerParameter, typeof(S)), fieldInfo);
+
+                return Expression.Lambda<Action<S, T>>(
+                    Expression.Assign(fieldExpression,
+                        Expression.Convert(fieldParameter, fieldInfo.FieldType)),
+                    ownerParameter, fieldParameter).Compile();
             }
         }
 

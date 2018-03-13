@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
+using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
 using Votyra.Core.Utils;
 using Votyra.Cubical.GroupSelectors;
 using Votyra.Cubical.ImageSamplers;
-using Votyra.Cubical.MeshUpdaters;
 using Votyra.Cubical.TerrainGenerators;
 
 namespace Votyra.Cubical
@@ -21,7 +21,7 @@ namespace Votyra.Cubical
         public SceneContext3b(
             IGroupSelector3i groupSelector,
             ITerrainGenerator3b terrainGenerator,
-            IMeshUpdater3i meshUpdater,
+            IMeshUpdater<Vector3i> meshUpdater,
             Vector3f cameraPosition,
             IEnumerable<Plane3f> cameraPlanes,
             IEnumerable<Vector3f> cameraFrustumCorners,
@@ -55,8 +55,8 @@ namespace Votyra.Cubical
             if (invalidatedArea_imageSpace.HasValue)
             {
                 InvalidatedArea_worldSpace = ImageSampler
-                      .ImageToWorld(invalidatedArea_imageSpace.Value)
-                      .RoundToContain();
+                    .ImageToWorld(invalidatedArea_imageSpace.Value)
+                    .RoundToContain();
             }
             else
             {
@@ -68,7 +68,7 @@ namespace Votyra.Cubical
 
         public IGroupSelector3i GroupSelector { get; }
         public ITerrainGenerator3b TerrainGenerator { get; }
-        public IMeshUpdater3i MeshUpdater { get; }
+        public IMeshUpdater<Vector3i> MeshUpdater { get; }
 
         public Vector3f CameraPosition { get; }
         public IEnumerable<Plane3f> CameraPlanes { get; }
