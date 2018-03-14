@@ -5,18 +5,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using Votyra.Core.Behaviours;
+using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.Logging;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
+using Votyra.Core.TerrainGenerators;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
-using Votyra.Cubical.GroupSelectors;
-using Votyra.Cubical.ImageSamplers;
-using Votyra.Cubical.TerrainGenerators;
-using Votyra.Cubical.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Cubical
 {
@@ -96,7 +96,7 @@ namespace Votyra.Cubical
             {
                 Func<IReadOnlyPooledDictionary<Vector3i, ITerrainMesh>> computeAction = () =>
                 {
-                    using(context.ProfilerFactory.Create("Creating visible groups"))
+                    using (context.ProfilerFactory.Create("Creating visible groups"))
                     {
                         groupActions = context.GroupSelector.GetGroupsToUpdate(context);
                         if (groupActions.ToRecompute.Any())
@@ -107,7 +107,7 @@ namespace Votyra.Cubical
                     var toRecompute = groupActions.ToRecompute;
                     if (toRecompute.Any())
                     {
-                        using(context.ProfilerFactory.Create("TerrainMeshGenerator"))
+                        using (context.ProfilerFactory.Create("TerrainMeshGenerator"))
                         {
                             return context.TerrainGenerator.Generate(context, toRecompute);
                         }
@@ -134,7 +134,7 @@ namespace Votyra.Cubical
 
                 if (results != null)
                 {
-                    using(context.ProfilerFactory.Create("Applying mesh"))
+                    using (context.ProfilerFactory.Create("Applying mesh"))
                     {
                         var toKeep = groupActions.ToKeep;
                         context.MeshUpdater.UpdateMesh(context, results, toKeep);

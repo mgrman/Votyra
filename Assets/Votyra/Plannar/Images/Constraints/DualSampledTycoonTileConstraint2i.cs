@@ -4,7 +4,8 @@ using System.Linq;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
-using Votyra.Plannar.ImageSamplers;
+using Votyra.Core.ImageSamplers;
+using Votyra.Core.Images.Constraints;
 
 namespace Votyra.Plannar.Images.Constraints
 {

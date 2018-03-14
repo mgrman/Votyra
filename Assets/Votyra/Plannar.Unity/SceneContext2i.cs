@@ -8,9 +8,9 @@ using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
 using Votyra.Core.Utils;
-using Votyra.Plannar.GroupSelectors;
-using Votyra.Plannar.ImageSamplers;
-using Votyra.Plannar.TerrainGenerators;
+using Votyra.Core.GroupSelectors;
+using Votyra.Core.ImageSamplers;
+using Votyra.Core.TerrainGenerators;
 
 namespace Votyra.Plannar
 {

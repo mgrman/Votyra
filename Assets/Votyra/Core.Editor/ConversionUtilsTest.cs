@@ -76,9 +76,9 @@ namespace Votyra.Core.Editor
             }
             TimeSpan newListWithSameArray = DateTime.UtcNow - start - nothing;
 
-            Debug.Log("forLoop: " + (int) forLoop.TotalMilliseconds);
-            Debug.Log("innerArray: " + (int) innerArray.TotalMilliseconds);
-            Debug.Log("newListWithSameArray: " + (int) newListWithSameArray.TotalMilliseconds);
+            Debug.Log("forLoop: " + (int)forLoop.TotalMilliseconds);
+            Debug.Log("innerArray: " + (int)innerArray.TotalMilliseconds);
+            Debug.Log("newListWithSameArray: " + (int)newListWithSameArray.TotalMilliseconds);
         }
 
         [Test]
@@ -128,8 +128,8 @@ namespace Votyra.Core.Editor
             }
             TimeSpan structConversion = DateTime.UtcNow - start - nothing;
 
-            Debug.Log("forLoop: " + (int) forLoop.TotalMilliseconds);
-            Debug.Log("newListWithSameArray: " + (int) structConversion.TotalMilliseconds);
+            Debug.Log("forLoop: " + (int)forLoop.TotalMilliseconds);
+            Debug.Log("newListWithSameArray: " + (int)structConversion.TotalMilliseconds);
         }
     }
 }

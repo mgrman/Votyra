@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Votyra.Core.Images;
+using Votyra.Core.Images.Constraints;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
-using Votyra.Plannar.ImageSamplers;
 
 namespace Votyra.Plannar.Images.Constraints
 {

@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.Logging;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
+using Votyra.Core.TerrainGenerators;
 using Votyra.Core.Utils;
-using Votyra.Cubical.GroupSelectors;
-using Votyra.Cubical.ImageSamplers;
-using Votyra.Cubical.TerrainGenerators;
 
 namespace Votyra.Cubical
 {

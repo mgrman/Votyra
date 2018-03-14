@@ -274,7 +274,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 873199099}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad963178f785d9344a47589b1d26d8f1, type: 3}
+  m_Script: {fileID: 11500000, guid: 544505c1b6d43924ca9e1a2f0a8c160c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _imageSize:
@@ -282,13 +282,13 @@ MonoBehaviour:
     y: 100
     z: 100
   _initialData: {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
-  _initialDataScale: {x: 1, y: 1, z: 20}
+  _initialDataScale: {x: 1, y: 1, z: 10}
   _cellInGroupCount:
     x: 10
     y: 10
   _flipTriangles: 0
   _drawBounds: 0
-  _async: 0
+  _async: 1
   _material: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
   _materialWalls: {fileID: 0}
 --- !u!114 &873199101

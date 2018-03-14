@@ -13,11 +13,11 @@ using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
-using Votyra.Plannar.GroupSelectors;
+using Votyra.Core.GroupSelectors;
 using Votyra.Plannar.Images;
 using Votyra.Plannar.Images.Constraints;
-using Votyra.Plannar.ImageSamplers;
-using Votyra.Plannar.TerrainGenerators;
+using Votyra.Core.ImageSamplers;
+using Votyra.Core.TerrainGenerators;
 using Zenject;
 
 namespace Votyra.Plannar
@@ -53,19 +53,22 @@ namespace Votyra.Plannar
         [Inject]
         public void Initialize()
         {
-            Update();
+            StartUpdateing();
         }
 
-        private async void Update()
+        private async void StartUpdateing()
         {
-            Debug.Log("Updateing...");
-
             while (!_onDestroyCts.IsCancellationRequested)
             {
-
-                var context = GetSceneContext();
-                await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
-                await Task.Delay(100);
+                if (_root.activeInHierarchy)
+                {
+                    var context = GetSceneContext();
+                    await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
+                }
+                else
+                {
+                    await Task.Delay(100);
+                }
             }
         }
 
