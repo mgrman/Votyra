@@ -18,109 +18,55 @@ using Votyra.Plannar.Images;
 using Votyra.Plannar.Images.Constraints;
 using Votyra.Plannar.ImageSamplers;
 using Votyra.Plannar.TerrainGenerators;
+using Zenject;
 
 namespace Votyra.Plannar
 {
     //TODO: move to floats
-    public abstract class TerrainGeneratorBehaviour2i : MonoBehaviour, IEditableImage2fProvider
+    public class TerrainGeneratorBehaviour2i
     {
-        public UI_Vector2i CellInGroupCount = new UI_Vector2i(10, 10);
-        public bool FlipTriangles = false;
-        public bool DrawBounds = false;
-        public bool Async = true;
-        public Material Material = null;
-        public Material MaterialWalls = null;
-        public Texture2D InitialTexture = null;
-        public float InitialTextureScale = 1;
-
         public IEditableImage2f EditableImage { get { return _imageProvider as IEditableImage2f; } }
+
+        [Inject]
+        protected ITerrainConfig _terrainConfig;
+
+        [Inject]
         protected IImage2fProvider _imageProvider;
-        protected IImageConstraint2i _editableImageConstraint;
+
+        [Inject]
         protected IImageSampler2i _sampler;
+
+        [Inject]
         protected IGroupSelector2i _groupsSelector;
+
+        [Inject]
         protected ITerrainGenerator2i _terrainGenerator;
+
+        [Inject]
         protected IMeshUpdater<Vector2i> _meshUpdater;
 
-        private Task _updateTask = null;
+        [Inject(Id = "root")]
+        protected GameObject _root;
+
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
-        private void Start()
+        [Inject]
+        public void Initialize()
         {
-            this.gameObject.DestroyAllChildren();
-            Initialize();
-            _imageProvider = new EditableMatrixImage2f(new Vector2i(InitialTexture.width, InitialTexture.height), _editableImageConstraint);
-
-            FillInitialState(EditableImage, InitialTexture, InitialTextureScale);
+            Update();
         }
 
-        private static void FillInitialState(IEditableImage2f editableImage, object initialData, float scale)
+        private async void Update()
         {
-            if (editableImage == null)
-                return;
-            if (initialData is Texture2D)
+            Debug.Log("Updateing...");
+
+            while (!_onDestroyCts.IsCancellationRequested)
             {
-                FillInitialState(editableImage, initialData as Texture2D, scale);
-            }
-        }
-
-        private static void FillInitialState(IEditableImage2f editableImage, Texture2D texture, float scale)
-        {
-            using(var imageAccessor = editableImage.RequestAccess(Rect2i.All))
-            {
-                Rect2i matrixAreaToFill;
-                if (imageAccessor.Area == Rect2i.All)
-                {
-                    matrixAreaToFill = new Vector2i(texture.width, texture.height).ToRect2i();
-                }
-                else
-                {
-                    matrixAreaToFill = imageAccessor.Area;
-                }
-
-                var matrixSizeX = matrixAreaToFill.size.x;
-                var matrixSizeY = matrixAreaToFill.size.y;
-
-                for (int x = matrixAreaToFill.xMin; x < matrixAreaToFill.xMax; x++)
-                {
-                    for (int y = matrixAreaToFill.yMin; y < matrixAreaToFill.yMax; y++)
-                    {
-                        var pos = new Vector2i(x, y);
-                        imageAccessor[pos] = texture.GetPixelBilinear((float) x / matrixSizeX, (float) y / matrixSizeY).grayscale * scale;
-                    }
-                }
-            }
-        }
-
-        private void LateUpdate()
-        {
-            if (_updateTask == null || _updateTask.IsCompleted)
-            {
-                _updateTask?.Dispose();
-                _updateTask = null;
 
                 var context = GetSceneContext();
-                _updateTask = UpdateTerrain(context, Async, _onDestroyCts.Token);
+                await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
+                await Task.Delay(100);
             }
-
-            if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
-            {
-                ProcessMouseClick();
-            }
-        }
-
-        private void ProcessMouseClick()
-        {
-            // Debug.LogFormat("OnMouseDown on tile.");
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            // Casts the ray and get the first game object hit
-            Physics.Raycast(ray, out hit);
-
-            var localPosition = this.transform.worldToLocalMatrix.MultiplyPoint(hit.point);
-
-            var imagePosition = _sampler.WorldToImage(new Vector2f(localPosition.x, localPosition.y));
-            this.SendMessage("OnCellClick", imagePosition, SendMessageOptions.DontRequireReceiver);
         }
 
         private async Task UpdateTerrain(SceneContext2i context, bool async, CancellationToken token)
@@ -131,7 +77,7 @@ namespace Votyra.Plannar
             {
                 Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh>> computeAction = () =>
                 {
-                    using(context.ProfilerFactory.Create("Creating visible groups"))
+                    using (context.ProfilerFactory.Create("Creating visible groups"))
                     {
                         groupActions = context.GroupSelector.GetGroupsToUpdate(context);
                         //Debug.Log($"update {groupActions.ToRecompute.Count} keep {groupActions.ToKeep.Count}");
@@ -139,7 +85,7 @@ namespace Votyra.Plannar
                     var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i>();
                     if (toRecompute.Any())
                     {
-                        using(context.ProfilerFactory.Create("TerrainMeshGenerator"))
+                        using (context.ProfilerFactory.Create("TerrainMeshGenerator"))
                         {
                             return context.TerrainGenerator.Generate(context, toRecompute);
                         }
@@ -166,7 +112,7 @@ namespace Votyra.Plannar
 
                 if (results != null)
                 {
-                    using(context.ProfilerFactory.Create("Applying mesh"))
+                    using (context.ProfilerFactory.Create("Applying mesh"))
                     {
                         var toKeep = groupActions?.ToKeep ?? ReadOnlySet<Vector2i>.Empty;
                         context.MeshUpdater.UpdateMesh(context, results, toKeep);
@@ -188,15 +134,14 @@ namespace Votyra.Plannar
         private SceneContext2i GetSceneContext()
         {
             var camera = Camera.main;
-            var container = this.gameObject;
+            var container = _root.gameObject;
 
             var existingGroups = _meshUpdater.ExistingGroups;
 
             var image = _imageProvider.CreateImage();
+            Vector2i cellInGroupCount = _terrainConfig.CellInGroupCount;
 
-            Vector2i cellInGroupCount = new Vector2i(this.CellInGroupCount.x, this.CellInGroupCount.y);
-
-            var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * this.transform.localToWorldMatrix;
+            var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
 
             var planesUnity = PooledArrayContainer<Plane>.CreateDirty(6);
             GeometryUtility.CalculateFrustumPlanes(localToProjection, planesUnity.Array);
@@ -229,14 +174,14 @@ namespace Votyra.Plannar
         private GameObject GameObjectFactory()
         {
             var go = new GameObject();
-            go.transform.SetParent(this.transform, false);
-            if (DrawBounds)
+            go.transform.SetParent(_root.transform, false);
+            if (_terrainConfig.DrawBounds)
             {
                 go.AddComponent<DrawBounds>();
             }
             var meshRenderer = go.GetOrAddComponent<MeshRenderer>();
-            meshRenderer.material = Material;
-            meshRenderer.materials = new Material[] { Material, MaterialWalls };
+            meshRenderer.material = _terrainConfig.Material;
+            meshRenderer.materials = new Material[] { _terrainConfig.Material, _terrainConfig.MaterialWalls };
             return go;
         }
 
@@ -250,33 +195,9 @@ namespace Votyra.Plannar
             return new UnityProfiler(name, owner);
         }
 
-        protected abstract void Initialize();
-
-        private void DisposeService()
-        {
-            (_imageProvider as IDisposable)?.Dispose();
-            _imageProvider = null;
-
-            (_editableImageConstraint as IDisposable)?.Dispose();
-            _editableImageConstraint = null;
-
-            (_sampler as IDisposable)?.Dispose();
-            _sampler = null;
-
-            (_terrainGenerator as IDisposable)?.Dispose();
-            _terrainGenerator = null;
-
-            (_meshUpdater as IDisposable)?.Dispose();
-            _meshUpdater = null;
-
-            (_groupsSelector as IDisposable)?.Dispose();
-            _groupsSelector = null;
-        }
-
-        private void OnDestroy()
+        public void Dispose()
         {
             _onDestroyCts.Cancel();
-            DisposeService();
         }
     }
 }

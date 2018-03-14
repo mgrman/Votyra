@@ -6,7 +6,7 @@ using Votyra.Plannar.ImageSamplers;
 
 namespace Votyra.Plannar.TerrainGenerators.TerrainMeshers
 {
-    public class TerrainMesher2i : ITerrainMesher2i
+    public class PlaneTerrainMesher2i : ITerrainMesher2i
     {
         protected ITerrainGeneratorContext2i options;
         public Vector2i CellInGroupCount { get; private set; }
@@ -40,7 +40,7 @@ namespace Votyra.Plannar.TerrainGenerators.TerrainMeshers
             mesh.Clear(bounds);
         }
 
-        public void AddCell(Vector2i cellInGroup)
+        public virtual void AddCell(Vector2i cellInGroup)
         {
             Vector2i cell = cellInGroup + groupPosition;
 
@@ -65,13 +65,9 @@ namespace Votyra.Plannar.TerrainGenerators.TerrainMeshers
             var pos_x1y0_lowerX = new Vector3f(position.x + 1, position.y, minusYres_x1y1);
 
             mesh.AddQuad(pos_x0y0, pos_x0y1, pos_x1y0, pos_x1y1, IsFlipped(data));
-
-            mesh.AddWall(pos_x0y0, pos_x0y1, pos_x0y1_lowerY, pos_x0y0_lowerY, false);
-
-            mesh.AddWall(pos_x1y0, pos_x0y0, pos_x0y0_lowerX, pos_x1y0_lowerX, false);
         }
 
-        private bool IsFlipped(SampledData2i sampleData)
+        protected bool IsFlipped(SampledData2i sampleData)
         {
             var difMain = Math.Abs(sampleData.x0y0 - sampleData.x1y1);
             var difMinor = Math.Abs(sampleData.x1y0 - sampleData.x0y1);

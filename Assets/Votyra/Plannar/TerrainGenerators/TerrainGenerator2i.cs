@@ -6,21 +6,23 @@ using Votyra.Plannar.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Plannar.TerrainGenerators
 {
-    public class TerrainGenerator2i<TMesher> : ITerrainGenerator2i
-    where TMesher : ITerrainMesher2i, new()
+    public class TerrainGenerator2i : ITerrainGenerator2i
     {
+        ITerrainMesher2i _mesher;
+        public TerrainGenerator2i(ITerrainMesher2i mesher)
+        {
+            _mesher = mesher;
+        }
+
         public IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> Generate(ITerrainGeneratorContext2i options, IEnumerable<Vector2i> groupsToUpdate)
         {
             int cellInGroupCount_x = options.CellInGroupCount.x;
             int cellInGroupCount_y = options.CellInGroupCount.y;
             PooledDictionary<Vector2i, ITerrainMesh> meshes;
 
-            TMesher mesher;
-
             using(options.ProfilerFactory("init", this))
             {
-                mesher = new TMesher();
-                mesher.Initialize(options);
+                _mesher.Initialize(options);
 
                 meshes = PooledDictionary<Vector2i, ITerrainMesh>.Create();
             }
@@ -29,7 +31,7 @@ namespace Votyra.Plannar.TerrainGenerators
             {
                 using(options.ProfilerFactory("Other", this))
                 {
-                    mesher.InitializeGroup(group);
+                    _mesher.InitializeGroup(group);
                 }
                 for (int cellInGroup_x = 0; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
                 {
@@ -40,13 +42,13 @@ namespace Votyra.Plannar.TerrainGenerators
                         using(options.ProfilerFactory("TerrainMesher.AddCell()", this))
                         {
                             //process cell to mesh
-                            mesher.AddCell(cellInGroup);
+                            _mesher.AddCell(cellInGroup);
                         }
                     }
                 }
                 using(options.ProfilerFactory("Other", this))
                 {
-                    meshes[group] = mesher.GetResultingMesh();
+                    meshes[group] = _mesher.GetResultingMesh();
                 }
             }
 

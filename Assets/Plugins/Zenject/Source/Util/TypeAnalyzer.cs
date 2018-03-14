@@ -215,14 +215,14 @@ namespace Zenject
 
             if (memInfo is FieldInfo)
             {
-                var fieldInfo = (FieldInfo) memInfo;
+                var fieldInfo = (FieldInfo)memInfo;
                 setter = ((object injectable, object value) => fieldInfo.SetValue(injectable, value));
                 memberType = fieldInfo.FieldType;
             }
             else
             {
                 Assert.That(memInfo is PropertyInfo);
-                var propInfo = (PropertyInfo) memInfo;
+                var propInfo = (PropertyInfo)memInfo;
                 memberType = propInfo.PropertyType;
 
 #if UNITY_WSA && ENABLE_DOTNET && !UNITY_EDITOR

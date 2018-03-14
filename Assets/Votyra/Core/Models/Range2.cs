@@ -4,6 +4,7 @@ namespace Votyra.Core.Models
 {
     public struct Range2 : IEquatable<Range2>
     {
+        public static readonly Range2 Zero = new Range2(0, 0);
         public readonly float min;
         public readonly float max;
 

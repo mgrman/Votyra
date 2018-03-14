@@ -52,7 +52,8 @@ namespace Votyra.Plannar
             ProfilerFactory = profilerFactory;
             LoggerFactory = loggerFactory;
 
-            RangeZ = image.RangeZ;
+            RangeZ = image?.RangeZ ?? Range2.Zero;
+
             GroupBounds = new Rect3f(new Vector3f(CellInGroupCount.x / 2.0f, CellInGroupCount.y / 2.0f, RangeZ.Center), new Vector3f(CellInGroupCount.x, CellInGroupCount.y, RangeZ.Size));
             InvalidatedArea_worldSpace = ImageSampler
                 .ImageToWorld(invalidatedArea_imageSpace)

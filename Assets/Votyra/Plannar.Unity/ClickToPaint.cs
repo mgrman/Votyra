@@ -1,11 +1,23 @@
 using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Plannar.Images;
+using Votyra.Plannar.ImageSamplers;
+using Zenject;
 
 namespace Votyra.Plannar
 {
-    public class ClickToPaint : MonoBehaviour
+    public class ClickToPaint : ITickable
     {
+        [Inject]
+        private IEditableImage2f _editableImage;
+
+        [Inject]
+        protected IImageSampler2i _sampler;
+
+        [Inject(Id = "root")]
+        protected GameObject _root;
+
+
         private const float Period = 0.1f;
         private const int maxDistBig = 4;
         private const int maxDistSmall = 1;
@@ -15,13 +27,12 @@ namespace Votyra.Plannar
         private float lastTime;
         private Vector2i? lastCell;
 
-        public IEditableImage2f EditableImage => this.GetComponent<IEditableImage2fProvider>()?.EditableImage;
-
         private float? _centerValueToReuse;
 
-        private void OnEnable() { }
 
-        private void Update()
+
+
+        public void Tick()
         {
             if (Input.GetButtonUp("Modifier1"))
             {
@@ -31,6 +42,25 @@ namespace Votyra.Plannar
             {
                 lastCell = null;
             }
+            if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
+            {
+                ProcessMouseClick();
+            }
+        }
+
+        private void ProcessMouseClick()
+        {
+            // Debug.LogFormat("OnMouseDown on tile.");
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            // Casts the ray and get the first game object hit
+            Physics.Raycast(ray, out hit);
+
+            var localPosition = _root.transform.worldToLocalMatrix.MultiplyPoint(hit.point);
+
+            var imagePosition = _sampler.WorldToImage(new Vector2f(localPosition.x, localPosition.y));
+            OnCellClick(imagePosition);
         }
 
         private void OnCellClick(Vector2i cell)
@@ -44,7 +74,7 @@ namespace Votyra.Plannar
             lastTime = Time.time;
             Debug.Log($"CellClick:{cell} at {Time.time}");
 
-            var editableImage = EditableImage;
+            var editableImage = _editableImage;
             if (editableImage == null)
             {
                 return;

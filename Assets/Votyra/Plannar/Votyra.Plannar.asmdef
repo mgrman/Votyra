@@ -1,7 +1,8 @@
 {
     "name": "Votyra.Plannar",
     "references": [
-        "Votyra.Core"
+        "Votyra.Core",
+        "Zenject"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

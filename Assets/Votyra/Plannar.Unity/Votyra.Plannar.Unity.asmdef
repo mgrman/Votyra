@@ -3,7 +3,8 @@
     "references": [
         "Votyra.Core",
         "Votyra.Core.Unity",
-        "Votyra.Plannar"
+        "Votyra.Plannar",
+        "Zenject"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

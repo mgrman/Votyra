@@ -128,9 +128,12 @@ namespace Votyra.Core.Models
             return new Vector3f(x, y, z);
         }
 
-        public Vector2i XY()
+        public Vector2i XY
         {
-            return new Vector2i(x, y);
+            get
+            {
+                return new Vector2i(x, y);
+            }
         }
 
         public static Vector3i Cross(Vector3i lhs, Vector3i rhs)

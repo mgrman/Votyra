@@ -6,6 +6,7 @@ using Votyra.Core.Models;
 using Votyra.Core.Utils;
 using Votyra.Plannar.Images.Constraints;
 using Votyra.Plannar.ImageSamplers;
+using Zenject;
 
 namespace Votyra.Plannar.Images
 {
@@ -21,10 +22,10 @@ namespace Votyra.Plannar.Images
 
         private IImageConstraint2i _constraint;
 
-        public EditableMatrixImage2f(Vector2i size, IImageConstraint2i constraint)
+        public EditableMatrixImage2f([InjectOptional] IImageConstraint2i constraint, IImageConfig imageConfig)
         {
             _constraint = constraint;
-            _editableMatrix = new Matrix<float>(size);
+            _editableMatrix = new Matrix<float>(imageConfig.ImageSize.XY);
         }
 
         public IImage2f CreateImage()
@@ -34,8 +35,9 @@ namespace Votyra.Plannar.Images
                 _image?.Dispose();
                 _image = new MatrixImage2f(_image.Image, Rect2i.zero);
             }
-            else if (_invalidatedArea.HasValue)
+            else if (_invalidatedArea.HasValue || _image == null)
             {
+                _invalidatedArea = _invalidatedArea ?? _editableMatrix.size.ToRect2i();
                 // Debug.LogFormat("Update readonlyCount:{0}", _readonlyMatrices.Count);
 
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
