@@ -257,7 +257,7 @@ MonoBehaviour:
     x: 20
     y: 20
     z: 20
-  _boolKeepImageChanges: 1
+  _keepImageChanges: 1
   _cellInGroupCount:
     x: 10
     y: 10

@@ -19,39 +19,39 @@ namespace Votyra.Core.Unity
     public class TerrainDataController : MonoBehaviour
     {
         [SerializeField]
-        private UI_Vector3i _imageSize;
+        private UI_Vector3i _imageSize = new UI_Vector3i(100, 100, 100);
 
         [SerializeField]
-        private UnityEngine.Object _initialData;
+        private UnityEngine.Object _initialData = null;
 
         [SerializeField]
-        private UI_Vector3f _initialDataScale;
+        private UI_Vector3f _initialDataScale = new UI_Vector3f(1, 1, 1);
 
-        private Matrix<float> _initialDataFromPrevious;
+        private Matrix<float> _initialDataFromPrevious = null;
 
         [SerializeField]
-        private bool _keepImageChanges;
+        private bool _keepImageChanges = true;
 
         [SerializeField]
         private UI_Vector3i _cellInGroupCount = new UI_Vector3i(10, 10, 10);
 
         [SerializeField]
-        private bool _flipTriangles;
+        private bool _flipTriangles = false;
 
         [SerializeField]
-        private bool _drawBounds;
+        private bool _drawBounds = false;
 
         [SerializeField]
         private bool _async = true;
 
         [SerializeField]
-        private Material _material;
+        private Material _material = null;
 
         [SerializeField]
-        private Material _materialWalls;
+        private Material _materialWalls = null;
 
         [SerializeField]
-        private int _activeTerrainAlgorithm;
+        private int _activeTerrainAlgorithm = 0;
 
         [SerializeField]
         private GameObject[] _availableTerrainAlgorithms;
@@ -65,6 +65,7 @@ namespace Votyra.Core.Unity
         public void Initialize(ITerrainManagerModel terrainManagerModel, Context context)
         {
             _terrainManagerModel = terrainManagerModel;
+            var container = context.Container;
 
             UpdateModel();
 
@@ -82,11 +83,23 @@ namespace Votyra.Core.Unity
                         _activeTerrainRoot.Destroy();
                         _activeTerrainRoot = null;
                     }
+                    container.Unbind<IImageConfig>();
+                    container.Unbind<IInitialImageConfig>();
+                    container.Unbind<ITerrainConfig>();
                     if (data.activeAlgorithm == null || data.activeAlgorithm.Prefab == null)
                         return;
 
                     Debug.Log("activeAlgorithm:" + data.activeAlgorithm.Name);
-                    var instance = context.Container.InstantiatePrefab(data.activeAlgorithm.Prefab, context.transform);
+                    container.Bind<IImageConfig>().FromInstance(data.imageConfig);
+                    container.Bind<IInitialImageConfig>().FromInstance(data.initialImageConfig);
+                    container.Bind<ITerrainConfig>().FromInstance(data.terrainConfig);
+                    var instance = container.InstantiatePrefab(data.activeAlgorithm.Prefab, context.transform);
+
+                    // TODO Not working, but there might be a way to inject directly into the child container
+                    // var childContainer = instance.GetComponentInChildren<GameObjectContext>().Container;
+                    // childContainer.Bind<IImageConfig>().FromInstance(data.imageConfig);
+                    // childContainer.Bind<IInitialImageConfig>().FromInstance(data.initialImageConfig);
+                    // childContainer.Bind<ITerrainConfig>().FromInstance(data.terrainConfig);
 
                     _activeTerrainRoot = instance;
                 });
@@ -107,7 +120,7 @@ namespace Votyra.Core.Unity
             {
                 return;
             }
-            if (_keepImageChanges)
+            if (_keepImageChanges && _activeTerrainRoot != null)
             {
                 Debug.Log("Has old values");
                 var goContext = _activeTerrainRoot.GetComponentInChildren<GameObjectContext>();
@@ -140,7 +153,11 @@ namespace Votyra.Core.Unity
             if (!_terrainManagerModel.AvailableAlgorithms.Value.SequenceEqual(availableAlgorithms))
                 _terrainManagerModel.AvailableAlgorithms.OnNext(availableAlgorithms);
 
-            var activeAlgorithm = _activeTerrainAlgorithm < 0 || _activeTerrainAlgorithm >= availableAlgorithms.Length ? null : availableAlgorithms.Skip(_activeTerrainAlgorithm).FirstOrDefault();
+            TerrainAlgorithm activeAlgorithm;
+            if (_activeTerrainAlgorithm < 0 || _activeTerrainAlgorithm >= availableAlgorithms.Length)
+                activeAlgorithm = null;
+            else
+                activeAlgorithm = availableAlgorithms.Skip(_activeTerrainAlgorithm).FirstOrDefault();
             if (_terrainManagerModel.ActiveAlgorithm.Value != activeAlgorithm)
                 _terrainManagerModel.ActiveAlgorithm.OnNext(activeAlgorithm);
 
