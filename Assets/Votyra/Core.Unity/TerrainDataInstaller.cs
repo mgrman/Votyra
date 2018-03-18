@@ -25,7 +25,7 @@ namespace Votyra.Core.Unity
         private Vector3 _initialDataScale;
 
         [SerializeField]
-        private UI_Vector2i _cellInGroupCount = new UI_Vector2i(10, 10);
+        private UI_Vector3i _cellInGroupCount = new UI_Vector3i(10, 10, 10);
 
         [SerializeField]
         private bool _flipTriangles;

@@ -5,25 +5,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using Votyra.Core.Behaviours;
+using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.Logging;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
+using Votyra.Core.TerrainGenerators;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
-using Votyra.Core.GroupSelectors;
-using Votyra.Plannar.Images;
-using Votyra.Plannar.Images.Constraints;
-using Votyra.Core.ImageSamplers;
-using Votyra.Core.TerrainGenerators;
+using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Zenject;
 
-namespace Votyra.Plannar
+namespace Votyra.Cubical
 {
     //TODO: move to floats
-    public class TerrainGeneratorBehaviour2i
+    public class TerrainGeneratorManager3b : IDisposable
     {
         public IEditableImage2f EditableImage { get { return _imageProvider as IEditableImage2f; } }
 
@@ -31,23 +30,25 @@ namespace Votyra.Plannar
         protected ITerrainConfig _terrainConfig;
 
         [Inject]
-        protected IImage2fProvider _imageProvider;
+        protected IImage3fProvider _imageProvider;
 
         [Inject]
-        protected IImageSampler2i _sampler;
+        protected IImageSampler3b _sampler;
 
         [Inject]
-        protected IGroupSelector2i _groupsSelector;
+        protected IGroupSelector3i _groupsSelector;
 
         [Inject]
-        protected ITerrainGenerator2i _terrainGenerator;
+        protected ITerrainGenerator3b _terrainGenerator;
 
         [Inject]
-        protected IMeshUpdater<Vector2i> _meshUpdater;
+        protected IMeshUpdater<Vector3i> _meshUpdater;
 
         [Inject(Id = "root")]
         protected GameObject _root;
 
+
+        private Task _updateTask = null;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
         [Inject]
@@ -72,20 +73,24 @@ namespace Votyra.Plannar
             }
         }
 
-        private async Task UpdateTerrain(SceneContext2i context, bool async, CancellationToken token)
+        private async Task UpdateTerrain(SceneContext3b context, bool async, CancellationToken token)
         {
-            GroupActions2i groupActions = null;
-            IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> results = null;
+            //Debug.Log($"UpdateTerrain");
+            GroupActions3i groupActions = null;
+            IReadOnlyPooledDictionary<Vector3i, ITerrainMesh> results = null;
             try
             {
-                Func<IReadOnlyPooledDictionary<Vector2i, ITerrainMesh>> computeAction = () =>
+                Func<IReadOnlyPooledDictionary<Vector3i, ITerrainMesh>> computeAction = () =>
                 {
                     using (context.ProfilerFactory.Create("Creating visible groups"))
                     {
                         groupActions = context.GroupSelector.GetGroupsToUpdate(context);
-                        //Debug.Log($"update {groupActions.ToRecompute.Count} keep {groupActions.ToKeep.Count}");
+                        if (groupActions.ToRecompute.Any())
+                        {
+                            Debug.Log($"Groups to recompute {groupActions.ToRecompute.Count()}. Groups to keep {groupActions.ToKeep.Count()}.");
+                        }
                     }
-                    var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<Vector2i>();
+                    var toRecompute = groupActions.ToRecompute;
                     if (toRecompute.Any())
                     {
                         using (context.ProfilerFactory.Create("TerrainMeshGenerator"))
@@ -117,7 +122,7 @@ namespace Votyra.Plannar
                 {
                     using (context.ProfilerFactory.Create("Applying mesh"))
                     {
-                        var toKeep = groupActions?.ToKeep ?? ReadOnlySet<Vector2i>.Empty;
+                        var toKeep = groupActions.ToKeep;
                         context.MeshUpdater.UpdateMesh(context, results, toKeep);
                     }
                 }
@@ -134,7 +139,7 @@ namespace Votyra.Plannar
             }
         }
 
-        private SceneContext2i GetSceneContext()
+        private SceneContext3b GetSceneContext()
         {
             var camera = Camera.main;
             var container = _root.gameObject;
@@ -142,7 +147,8 @@ namespace Votyra.Plannar
             var existingGroups = _meshUpdater.ExistingGroups;
 
             var image = _imageProvider.CreateImage();
-            Vector2i cellInGroupCount = _terrainConfig.CellInGroupCount;
+
+            Vector3i cellInGroupCount = _terrainConfig.CellInGroupCount;
 
             var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
 
@@ -154,7 +160,7 @@ namespace Votyra.Plannar
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);
             IEnumerable<Vector3f> frustumCorners = frustumCornersUnity.ToVector3f();
 
-            return new SceneContext2i(
+            return new SceneContext3b(
                 _groupsSelector,
                 _terrainGenerator,
                 _meshUpdater,
@@ -166,7 +172,7 @@ namespace Votyra.Plannar
                 existingGroups,
                 cellInGroupCount,
                 image,
-                (image as IImageInvalidatableImage2i)?.InvalidatedArea ?? Rect2i.All,
+                (image as IImageInvalidatableImage3i)?.InvalidatedArea ?? Rect3i.zero,
                 _sampler,
                 () => this.GameObjectFactory(),
                 CreateProfiler,
@@ -183,8 +189,7 @@ namespace Votyra.Plannar
                 go.AddComponent<DrawBounds>();
             }
             var meshRenderer = go.GetOrAddComponent<MeshRenderer>();
-            meshRenderer.material = _terrainConfig.Material;
-            meshRenderer.materials = new Material[] { _terrainConfig.Material, _terrainConfig.MaterialWalls };
+            meshRenderer.materials = ArrayUtils.CreateNonNull(_terrainConfig.Material, _terrainConfig.MaterialWalls);
             return go;
         }
 
@@ -197,6 +202,33 @@ namespace Votyra.Plannar
         {
             return new UnityProfiler(name, owner);
         }
+
+        // private void Initialize()
+        // {
+        //     // _editableImageConstraint = new TycoonTileConstraint2i();
+        //     _sampler = new SimpleImageSampler3b();
+
+        //     _terrainGenerator = new TerrainGenerator3b<TerrainMesher3b>();
+        //     _meshUpdater = new TerrainMeshUpdater<Vector3i>();
+        //     _groupsSelector = new GroupsByCameraVisibilitySelector3i();
+        //     //_image = new NoiseImage3b(Vector3.zero, new Vector3(100, 100, 100));//new EditableMatrixImagei(InitialTexture, InitialTextureScale, _sampler, _editableImageConstraint);
+
+        //     int width = InitialTexture.width;
+        //     int height = InitialTexture.height;
+
+        //     var size = new Vector2i(width, height);
+        //     var matrix = new LockableMatrix<float>(size);
+
+        //     for (int x = 0; x < width; x++)
+        //     {
+        //         for (int y = 0; y < height; y++)
+        //         {
+        //             matrix[x, y] = (InitialTexture.GetPixel(x, y).grayscale * InitialTextureScale);
+        //         }
+        //     }
+        //     _image = new UmbraImage3f(new MatrixImage2f(matrix, Rect2i.All));
+        // }
+
 
         public void Dispose()
         {

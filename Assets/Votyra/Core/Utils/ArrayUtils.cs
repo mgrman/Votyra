@@ -1,3 +1,4 @@
+using System;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.Utils
@@ -32,6 +33,27 @@ namespace Votyra.Core.Utils
         public static bool IsInRange<T>(this T[,] data, int i, int dimension)
         {
             return i >= 0 && i <= data.GetUpperBound(dimension);
+        }
+
+        public static T[] CreateNonNull<T>(T item1, T item2)
+            where T : class
+        {
+            if (item1 != default(T) && item2 != default(T))
+            {
+                return new[] { item1, item2 };
+            }
+            else if (item1 != default(T))
+            {
+                return new[] { item1 };
+            }
+            else if (item2 != default(T))
+            {
+                return new[] { item2 };
+            }
+            else
+            {
+                return Array.Empty<T>();
+            }
         }
     }
 }

@@ -72,7 +72,6 @@ namespace Votyra.Core
             }
             lastCell = cell;
             lastTime = Time.time;
-            Debug.Log($"CellClick:{cell} at {Time.time}");
 
             var editableImage = _editableImage;
             if (editableImage == null)

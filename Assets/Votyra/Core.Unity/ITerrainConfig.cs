@@ -8,7 +8,7 @@ namespace Votyra.Core.Images
 {
     public interface ITerrainConfig : IInitialImageConfig
     {
-        Vector2i CellInGroupCount { get; }
+        Vector3i CellInGroupCount { get; }
         bool FlipTriangles { get; }
         bool DrawBounds { get; }
         bool Async { get; }

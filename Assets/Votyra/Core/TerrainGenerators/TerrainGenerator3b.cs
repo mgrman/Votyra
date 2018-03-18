@@ -6,9 +6,15 @@ using Votyra.Core.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Core.TerrainGenerators
 {
-    public class TerrainGenerator3b<TMesher> : ITerrainGenerator3b
-        where TMesher : ITerrainMesher3b, new()
+    public class TerrainGenerator3b : ITerrainGenerator3b
     {
+        ITerrainMesher3b _mesher;
+
+        public TerrainGenerator3b(ITerrainMesher3b mesher)
+        {
+            _mesher = mesher;
+        }
+
         public IReadOnlyPooledDictionary<Vector3i, ITerrainMesh> Generate(ITerrainGeneratorContext3b options, IEnumerable<Vector3i> groupsToUpdate)
         {
             int cellInGroupCount_x = options.CellInGroupCount.x;
@@ -16,12 +22,10 @@ namespace Votyra.Core.TerrainGenerators
             int cellInGroupCount_z = options.CellInGroupCount.z;
             PooledDictionary<Vector3i, ITerrainMesh> meshes;
 
-            TMesher mesher;
 
             using (options.ProfilerFactory("init", this))
             {
-                mesher = new TMesher();
-                mesher.Initialize(options);
+                _mesher.Initialize(options);
 
                 meshes = PooledDictionary<Vector3i, ITerrainMesh>.Create();
             }
@@ -30,7 +34,7 @@ namespace Votyra.Core.TerrainGenerators
             {
                 using (options.ProfilerFactory("Other", this))
                 {
-                    mesher.InitializeGroup(group);
+                    _mesher.InitializeGroup(group);
                 }
 
                 for (int cellInGroup_x = 0; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
@@ -44,14 +48,14 @@ namespace Votyra.Core.TerrainGenerators
                             using (options.ProfilerFactory("TerrainMesher.AddCell()", this))
                             {
                                 //process cell to mesh
-                                mesher.AddCell(cellInGroup);
+                                _mesher.AddCell(cellInGroup);
                             }
                         }
                     }
                 }
                 using (options.ProfilerFactory("Other", this))
                 {
-                    meshes[group] = mesher.GetResultingMesh();
+                    meshes[group] = _mesher.GetResultingMesh();
                 }
             }
 

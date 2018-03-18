@@ -57,7 +57,7 @@ namespace Votyra.Core.GroupSelectors
                         if (isInside)
                         {
                             var groupArea = new Rect3i(group * cellInGroupCount, cellInGroupCount);
-                            if (invalidatedArea != null && groupArea.Overlaps(invalidatedArea.Value))
+                            if (groupArea.Overlaps(invalidatedArea))
                             {
                                 groupsToRecompute.Add(group);
                             }

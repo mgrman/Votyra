@@ -30,7 +30,7 @@ namespace Votyra.Plannar.Unity
 
             Container.BindInterfacesAndSelfTo<ClickToPaint>().AsSingle().NonLazy();
 
-            Container.BindInterfacesAndSelfTo<TerrainGeneratorBehaviour2i>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<TerrainGeneratorManager2i>().AsSingle().NonLazy();
         }
     }
 }

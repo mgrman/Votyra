@@ -18,7 +18,7 @@ namespace Votyra.Core.MeshUpdaters
         {
             if (terrainMeshes != null)
             {
-                using(options.ProfilerFactory("Setting Mesh", this))
+                using (options.ProfilerFactory("Setting Mesh", this))
                 {
                     var toDeleteGroups = _meshFilters.Keys.Except(terrainMeshes.Keys).Except(toKeepGroups).ToList();
 
@@ -27,10 +27,11 @@ namespace Votyra.Core.MeshUpdaters
                     {
                         if (terrainMesh.Value.TriangleCount == 0)
                         {
+                            _meshFilters[terrainMesh.Key] = null;
                             continue;
                         }
-                        MeshFilter meshFilter;
-                        if (!_meshFilters.TryGetValue(terrainMesh.Key, out meshFilter))
+                        MeshFilter meshFilter = _meshFilters.TryGetValue(terrainMesh.Key);
+                        if (meshFilter == null)
                         {
                             if (toDeleteGroups.Count > 0)
                             {
@@ -42,7 +43,7 @@ namespace Votyra.Core.MeshUpdaters
 
                                 toDeleteGroups.RemoveAt(toDeleteIndex);
                             }
-                            else
+                            if (meshFilter == null)
                             {
                                 meshFilter = CreateMeshObject(options);
                                 _meshFilters[terrainMesh.Key] = meshFilter;
@@ -61,7 +62,7 @@ namespace Votyra.Core.MeshUpdaters
 
                     foreach (var toDeleteGroup in toDeleteGroups)
                     {
-                        _meshFilters[toDeleteGroup].gameObject.Destroy();
+                        _meshFilters[toDeleteGroup]?.gameObject.Destroy();
                         _meshFilters.Remove(toDeleteGroup);
                     }
                 }

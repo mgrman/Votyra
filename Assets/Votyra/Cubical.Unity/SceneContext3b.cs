@@ -30,7 +30,7 @@ namespace Votyra.Cubical
             IReadOnlySet<Vector3i> existingGroups,
             Vector3i cellInGroupCount,
             IImage3f image,
-            Rect3i? invalidatedArea_imageSpace,
+            Rect3i invalidatedArea_imageSpace,
             IImageSampler3b imageSampler,
             Func<GameObject> gameObjectFactory,
             ProfilerFactoryDelegate profilerFactory,
@@ -52,16 +52,9 @@ namespace Votyra.Cubical
             ProfilerFactory = profilerFactory;
             LoggerFactory = loggerFactory;
 
-            if (invalidatedArea_imageSpace.HasValue)
-            {
-                InvalidatedArea_worldSpace = ImageSampler
-                    .ImageToWorld(invalidatedArea_imageSpace.Value)
-                    .RoundToContain();
-            }
-            else
-            {
-                InvalidatedArea_worldSpace = null;
-            }
+            InvalidatedArea_worldSpace = ImageSampler
+               .ImageToWorld(invalidatedArea_imageSpace)
+               .RoundToContain();
 
             (Image as IInitializableImage)?.StartUsing();
         }
@@ -78,7 +71,7 @@ namespace Votyra.Cubical
         public IReadOnlySet<Vector3i> ExistingGroups { get; }
         public Vector3i CellInGroupCount { get; }
         public IImage3f Image { get; }
-        public Rect3i? InvalidatedArea_worldSpace { get; }
+        public Rect3i InvalidatedArea_worldSpace { get; }
         public IImageSampler3b ImageSampler { get; }
         public Func<GameObject> GameObjectFactory { get; }
 

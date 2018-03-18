@@ -12,7 +12,7 @@ namespace Votyra.Core.GroupSelectors
         IEnumerable<Vector3f> CameraFrustumCorners { get; }
         Matrix4x4f CameraLocalToWorldMatrix { get; }
         Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
-        Rect3i? InvalidatedArea_worldSpace { get; }
+        Rect3i InvalidatedArea_worldSpace { get; }
         IReadOnlySet<Vector3i> ExistingGroups { get; }
         Vector3i CellInGroupCount { get; }
     }
