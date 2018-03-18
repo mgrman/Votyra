@@ -10,6 +10,7 @@ namespace Votyra.Core.Models
 
         private class InnerSet<T> : IReadOnlySet<T>
         {
+
             public int Count => 0;
 
             public bool Contains(T value)

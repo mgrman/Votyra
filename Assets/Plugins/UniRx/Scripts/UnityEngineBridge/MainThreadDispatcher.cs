@@ -151,7 +151,7 @@ namespace UniRx
                     }
 #endif
 
-                    ENQUEUE:
+                ENQUEUE:
                     editorQueueWorker.Enqueue(_ => ConsumeEnumerator(routine), null); // next update
                 }
             }

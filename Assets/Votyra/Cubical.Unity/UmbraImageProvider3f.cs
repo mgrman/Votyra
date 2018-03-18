@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Votyra.Core.Images;
 using UnityEngine;
 using Votyra.Core.Models;
+using Votyra.Core;
 
 namespace Votyra.Cubical.Unity
 {

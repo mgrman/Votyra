@@ -19,6 +19,7 @@ using Votyra.Plannar.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.TerrainGenerators;
 using Zenject;
+using Votyra.Core;
 
 namespace Votyra.Plannar
 {

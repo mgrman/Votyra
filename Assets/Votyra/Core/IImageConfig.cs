@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Votyra.Core.Models;
 using Votyra.Core.Images.Constraints;
+using System;
 
-namespace Votyra.Core.Images
+namespace Votyra.Core
 {
     public interface IImageConfig
     {

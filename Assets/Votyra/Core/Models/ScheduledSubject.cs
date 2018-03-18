@@ -5,6 +5,7 @@ namespace Votyra.Core.Models
 {
     public class ScheduledSubject<T> : IBehaviorSubject<T>
     {
+
         private readonly IScheduler _scheduler;
         private readonly IObservable<T> _observable;
         private readonly IObserver<T> _observer;

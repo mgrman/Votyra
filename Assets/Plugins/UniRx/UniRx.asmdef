@@ -1,12 +1,8 @@
-﻿{
-	"name": "UniRx",
+{
+    "name": "UniRx",
     "references": [],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false
 }

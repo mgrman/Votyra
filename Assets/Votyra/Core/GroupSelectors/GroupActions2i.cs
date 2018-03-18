@@ -13,6 +13,7 @@ namespace Votyra.Core.GroupSelectors
         {
             ToRecompute = toRecompute;
             ToKeep = toKeep;
+
         }
 
         public void Dispose()

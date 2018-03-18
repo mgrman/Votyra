@@ -20,6 +20,10 @@ namespace Votyra.Core.Images
             {
                 FillInitialState(editableImage, imageConfig.InitialData as Texture2D, imageConfig.InitialDataScale.z);
             }
+            if (imageConfig.InitialData is Matrix<float>)
+            {
+                FillInitialState(editableImage, imageConfig.InitialData as Matrix<float>, imageConfig.InitialDataScale.z);
+            }
         }
 
         private static void FillInitialState(IEditableImage2f editableImage, Texture2D texture, float scale)
@@ -45,6 +49,33 @@ namespace Votyra.Core.Images
                     {
                         var pos = new Vector2i(x, y);
                         imageAccessor[pos] = texture.GetPixelBilinear((float)x / matrixSizeX, (float)y / matrixSizeY).grayscale * scale;
+                    }
+                }
+            }
+        }
+        private static void FillInitialState(IEditableImage2f editableImage, Matrix<float> texture, float scale)
+        {
+            using (var imageAccessor = editableImage.RequestAccess(Rect2i.All))
+            {
+                Rect2i matrixAreaToFill;
+                if (imageAccessor.Area == Rect2i.All)
+                {
+                    matrixAreaToFill = texture.size.ToRect2i();
+                }
+                else
+                {
+                    matrixAreaToFill = imageAccessor.Area;
+                }
+
+                var matrixSizeX = matrixAreaToFill.size.x;
+                var matrixSizeY = matrixAreaToFill.size.y;
+
+                for (int x = matrixAreaToFill.xMin; x < matrixAreaToFill.xMax; x++)
+                {
+                    for (int y = matrixAreaToFill.yMin; y < matrixAreaToFill.yMax; y++)
+                    {
+                        var pos = new Vector2i(x, y);
+                        imageAccessor[pos] = texture[x, y] * scale;
                     }
                 }
             }

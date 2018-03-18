@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Images.Constraints;
+using System;
 
-namespace Votyra.Core.Images
+namespace Votyra.Core
 {
-    public interface ITerrainConfig : IInitialImageConfig
+    public interface ITerrainConfig
     {
         Vector3i CellInGroupCount { get; }
         bool FlipTriangles { get; }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Votyra.Core.Utils
 {
@@ -51,6 +52,11 @@ namespace Votyra.Core.Utils
             yield return source.Current;
             for (int i = 0; i < batchSize && source.MoveNext(); i++)
                 yield return source.Current;
+        }
+
+        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> items)
+        {
+            return items ?? Enumerable.Empty<T>();
         }
     }
 }
