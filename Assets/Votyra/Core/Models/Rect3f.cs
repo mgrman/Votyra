@@ -9,6 +9,8 @@ namespace Votyra.Core.Models
         public readonly Vector3f center;
         public readonly Vector3f size;
 
+        public static Rect3f zero { get; } = new Rect3f();
+
         public Rect3f(Vector3f center, Vector3f size)
         {
             this.center = center;

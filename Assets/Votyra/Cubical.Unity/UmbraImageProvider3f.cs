@@ -14,22 +14,45 @@ namespace Votyra.Cubical.Unity
         public UmbraImageProvider3f(IInitialImageConfig imageConfig)
         {
             var initialTexture = imageConfig.InitialData as Texture2D;
-            var scale = imageConfig.InitialDataScale;
-
-            int width = initialTexture.width;
-            int height = initialTexture.height;
-
-            var size = new Vector2i(width, height);
-            var matrix = new LockableMatrix<float>(size);
-
-            for (int x = 0; x < width; x++)
+            if (initialTexture != null)
             {
-                for (int y = 0; y < height; y++)
+                var scale = imageConfig.InitialDataScale;
+
+                int width = initialTexture.width;
+                int height = initialTexture.height;
+
+                var size = new Vector2i(width, height);
+                var matrix = new LockableMatrix2<float>(size);
+
+                for (int x = 0; x < width; x++)
                 {
-                    matrix[x, y] = (initialTexture.GetPixel(x, y).grayscale * scale.z);
+                    for (int y = 0; y < height; y++)
+                    {
+                        matrix[x, y] = (initialTexture.GetPixel(x, y).grayscale * scale.z);
+                    }
                 }
+                _image = new UmbraImage3f(new MatrixImage2f(matrix, Rect2i.zero));
             }
-            _image = new UmbraImage3f(new MatrixImage2f(matrix, Rect2i.zero));
+            var initialMatrix = imageConfig.InitialData as IMatrix2<float>;
+            if (initialMatrix != null)
+            {
+                var scale = imageConfig.InitialDataScale;
+
+                int width = initialMatrix.size.x;
+                int height = initialMatrix.size.y;
+
+                var size = new Vector2i(width, height);
+                var matrix = new LockableMatrix2<float>(size);
+
+                for (int x = 0; x < width; x++)
+                {
+                    for (int y = 0; y < height; y++)
+                    {
+                        matrix[x, y] = initialMatrix[x, y] * scale.z;
+                    }
+                }
+                _image = new UmbraImage3f(new MatrixImage2f(matrix, Rect2i.zero));
+            }
         }
 
         public IImage3f CreateImage()

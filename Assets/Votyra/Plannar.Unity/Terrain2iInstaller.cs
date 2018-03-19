@@ -22,9 +22,9 @@ namespace Votyra.Plannar.Unity
             Container.Bind<ITerrainGenerator2i>().To<TerrainGenerator2i>().AsSingle();
             Container.Bind<IMeshUpdater<Vector2i>>().To<TerrainMeshUpdater<Vector2i>>().AsSingle();
             Container.Bind<IGroupSelector2i>().To<GroupsByCameraVisibilitySelector2i>().AsSingle();
+            Container.BindInterfacesAndSelfTo<InitialStateSetter2f>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<EditableMatrixImage2f>().AsSingle();
-            Container.BindInterfacesAndSelfTo<EditableImage2fInitialStateSetter>().AsSingle().NonLazy();
 
             Container.BindInstance<GameObject>(this.gameObject).WithId("root").AsSingle();
 

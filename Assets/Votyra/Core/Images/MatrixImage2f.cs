@@ -9,16 +9,16 @@ namespace Votyra.Core.Images
 
         public Rect2i InvalidatedArea { get; }
 
-        public LockableMatrix<float> Image { get; }
+        public LockableMatrix2<float> Image { get; }
 
-        public MatrixImage2f(LockableMatrix<float> values, Rect2i invalidatedArea)
+        public MatrixImage2f(LockableMatrix2<float> values, Rect2i invalidatedArea)
         {
             Image = values;
             InvalidatedArea = invalidatedArea;
             RangeZ = CalculateRangeZ(values);
         }
 
-        private static Range2 CalculateRangeZ(LockableMatrix<float> values)
+        private static Range2 CalculateRangeZ(LockableMatrix2<float> values)
         {
             int countX = values.size.x;
             int countY = values.size.y;

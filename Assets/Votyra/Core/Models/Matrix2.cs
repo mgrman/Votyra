@@ -1,6 +1,6 @@
 namespace Votyra.Core.Models
 {
-    public class Matrix<T> : IMatrix<T>
+    public class Matrix2<T> : IMatrix2<T>
     {
 
         public T[,] NativeMatrix;
@@ -8,7 +8,7 @@ namespace Votyra.Core.Models
         //public readonly Vector2i offset;
         public Vector2i size { get; }
 
-        public Matrix(Vector2i matrixSize) //, Vector2i indicesOffset)
+        public Matrix2(Vector2i matrixSize) //, Vector2i indicesOffset)
         {
             NativeMatrix = new T[matrixSize.x, matrixSize.y];
             //_points = new T[matrixSize.x+indicesOffset.x, matrixSize.y + indicesOffset.y];

@@ -12,11 +12,11 @@ namespace Votyra.Core.Images
 {
     public class EditableMatrixImage2f : IImage2fProvider, IEditableImage2f
     {
-        private readonly Matrix<float> _editableMatrix;
+        private readonly Matrix2<float> _editableMatrix;
 
         private Rect2i? _invalidatedArea;
 
-        private readonly List<LockableMatrix<float>> _readonlyMatrices = new List<LockableMatrix<float>>();
+        private readonly List<LockableMatrix2<float>> _readonlyMatrices = new List<LockableMatrix2<float>>();
 
         private MatrixImage2f _image = null;
 
@@ -25,7 +25,7 @@ namespace Votyra.Core.Images
         public EditableMatrixImage2f([InjectOptional] IImageConstraint2i constraint, IImageConfig imageConfig)
         {
             _constraint = constraint;
-            _editableMatrix = new Matrix<float>(imageConfig.ImageSize.XY);
+            _editableMatrix = new Matrix2<float>(imageConfig.ImageSize.XY);
         }
 
         public IImage2f CreateImage()
@@ -43,7 +43,7 @@ namespace Votyra.Core.Images
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)
                 {
-                    readonlyMatrix = new LockableMatrix<float>(_editableMatrix.size);
+                    readonlyMatrix = new LockableMatrix2<float>(_editableMatrix.size);
                     _readonlyMatrices.Add(readonlyMatrix);
                 }
 
@@ -86,9 +86,9 @@ namespace Votyra.Core.Images
 
         private class EditableImageWrapper : IImage2f
         {
-            private readonly Matrix<float> _editableMatrix;
+            private readonly Matrix2<float> _editableMatrix;
 
-            public EditableImageWrapper(Matrix<float> editableMatrix)
+            public EditableImageWrapper(Matrix2<float> editableMatrix)
             {
                 _editableMatrix = editableMatrix;
             }

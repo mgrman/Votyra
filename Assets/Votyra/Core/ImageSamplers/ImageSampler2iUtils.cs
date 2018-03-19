@@ -27,7 +27,7 @@ namespace Votyra.Core.ImageSamplers
             return Rect2i.MinMaxRect(min.x, min.y, max.x, max.y);
         }
 
-        public static SampledData2i Sample(this IImageSampler2i sampler, Matrix<float> image, Vector2i pos)
+        public static SampledData2i Sample(this IImageSampler2i sampler, Matrix2<float> image, Vector2i pos)
         {
             var x0y0 = image.TryGet(sampler.CellToX0Y0(pos), 0);
             var x0y1 = image.TryGet(sampler.CellToX0Y1(pos), 0);

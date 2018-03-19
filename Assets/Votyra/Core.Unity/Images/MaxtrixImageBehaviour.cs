@@ -12,11 +12,11 @@ namespace Votyra.Core.Images
         public Texture2D InitialValueTexture = null;
         public float InitialValueScale = 1;
 
-        private Matrix<float> _editableMatrix;
+        private Matrix2<float> _editableMatrix;
 
         private Rect2i? _invalidatedArea;
 
-        private readonly List<LockableMatrix<float>> _readonlyMatrices = new List<LockableMatrix<float>>();
+        private readonly List<LockableMatrix2<float>> _readonlyMatrices = new List<LockableMatrix2<float>>();
 
         private MatrixImage2f _image = null;
 
@@ -29,7 +29,7 @@ namespace Votyra.Core.Images
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)
                 {
-                    readonlyMatrix = new LockableMatrix<float>(_editableMatrix.size);
+                    readonlyMatrix = new LockableMatrix2<float>(_editableMatrix.size);
                     _readonlyMatrices.Add(readonlyMatrix);
                 }
 
@@ -58,7 +58,7 @@ namespace Votyra.Core.Images
             if (InitialValueTexture == null)
             {
                 var size = new Vector2i(10, 10);
-                _editableMatrix = new Matrix<float>(size);
+                _editableMatrix = new Matrix2<float>(size);
                 _invalidatedArea = new Rect2i(0, 0, 10, 10);
             }
             else
@@ -69,7 +69,7 @@ namespace Votyra.Core.Images
                 int height = texture.height.FloorTo2();
 
                 var size = new Vector2i(width, height);
-                _editableMatrix = new Matrix<float>(size);
+                _editableMatrix = new Matrix2<float>(size);
 
                 for (int x = 0; x < width; x++)
                 {
@@ -144,7 +144,7 @@ namespace Votyra.Core.Images
         public class MatrixImageAccessor : IDisposable
         {
             private readonly MaxtrixImageBehaviour _behaviour;
-            private readonly Matrix<float> _editableMatrix;
+            private readonly Matrix2<float> _editableMatrix;
 
             public Rect2i Area { get; }
 

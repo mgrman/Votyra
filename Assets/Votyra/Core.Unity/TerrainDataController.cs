@@ -27,7 +27,7 @@ namespace Votyra.Core.Unity
         [SerializeField]
         private UI_Vector3f _initialDataScale = new UI_Vector3f(1, 1, 1);
 
-        private Matrix<float> _initialDataFromPrevious = null;
+        private object _initialDataFromPrevious = null;
 
         [SerializeField]
         private bool _keepImageChanges = true;
@@ -125,21 +125,45 @@ namespace Votyra.Core.Unity
                 Debug.Log("Has old values");
                 var goContext = _activeTerrainRoot.GetComponentInChildren<GameObjectContext>();
                 var oldImageConfig = goContext.Container.Resolve<IImageConfig>();
-                var oldImage2f = goContext.Container.Resolve<IImage2fProvider>();
-                // var lastImage3f = goContext.Container.Resolve<IImage3fProvider>();
-
-                var image = oldImage2f.CreateImage();
-                var matrix = new Matrix<float>(oldImageConfig.ImageSize.XY);
-                for (int ix = 0; ix < matrix.size.x; ix++)
+                var oldImage2f = goContext.Container.TryResolve<IImage2fProvider>();
+                var oldImage3f = goContext.Container.TryResolve<IImage3fProvider>();
+                if (oldImage2f != null && oldImage3f != null)
                 {
-                    for (int iy = 0; iy < matrix.size.y; iy++)
-                    {
-                        var i = new Vector2i(ix, iy);
-                        matrix[i] = image.Sample(i);
-                    }
+                    Debug.LogWarning("Previous algorithm worked in 2d and 3d mode. Using 2D data to keep.");
                 }
-                _initialDataFromPrevious = matrix;
 
+                if (oldImage2f != null)
+                {
+                    var image = oldImage2f.CreateImage();
+                    var matrix = new Matrix2<float>(oldImageConfig.ImageSize.XY);
+                    for (int ix = 0; ix < matrix.size.x; ix++)
+                    {
+                        for (int iy = 0; iy < matrix.size.y; iy++)
+                        {
+                            var i = new Vector2i(ix, iy);
+                            matrix[i] = image.Sample(i);
+                        }
+                    }
+                    _initialDataFromPrevious = matrix;
+                }
+                else if (oldImage3f != null)
+                {
+                    var image = oldImage3f.CreateImage();
+                    var matrix = new Matrix3<bool>(oldImageConfig.ImageSize);
+                    for (int ix = 0; ix < matrix.size.x; ix++)
+                    {
+                        for (int iy = 0; iy < matrix.size.y; iy++)
+                        {
+
+                            for (int iz = 0; iz < matrix.size.z; iz++)
+                            {
+                                var i = new Vector3i(ix, iy, iz);
+                                matrix[i] = image.Sample(i) > 0;
+                            }
+                        }
+                    }
+                    _initialDataFromPrevious = matrix;
+                }
             }
             else
             {

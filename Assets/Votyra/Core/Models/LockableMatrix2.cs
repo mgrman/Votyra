@@ -2,7 +2,7 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    public class LockableMatrix<T> : IMatrix<T>
+    public class LockableMatrix2<T> : IMatrix2<T>
     {
         private T[,] _points;
 
@@ -43,7 +43,7 @@ namespace Votyra.Core.Models
             }
         }
 
-        public LockableMatrix(Vector2i matrixSize)
+        public LockableMatrix2(Vector2i matrixSize)
         {
             _points = new T[matrixSize.x, matrixSize.y];
             //_points = new T[matrixSize.x+indicesOffset.x, matrixSize.y + indicesOffset.y];

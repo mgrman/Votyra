@@ -50,13 +50,13 @@ namespace Votyra.Core.Images
             _image = new MatrixImage2f(GetInitialState(Texture, Scale), Rect2i.All);
         }
 
-        private LockableMatrix<float> GetInitialState(Texture2D texture, Vector3 scale)
+        private LockableMatrix2<float> GetInitialState(Texture2D texture, Vector3 scale)
         {
             int textureWidth = texture.width;
             int textureHeight = texture.height;
 
             var matrixSize = new Vector2i((textureWidth * scale.x).RoundToInt(), (textureHeight * scale.y).RoundToInt());
-            var matrix = new LockableMatrix<float>(matrixSize);
+            var matrix = new LockableMatrix2<float>(matrixSize);
 
             for (int x = 0; x < matrixSize.x; x++)
             {

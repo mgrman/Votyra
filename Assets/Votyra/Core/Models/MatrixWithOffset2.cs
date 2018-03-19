@@ -1,12 +1,12 @@
 namespace Votyra.Core.Models
 {
-    public class MatrixWithOffset<T> : IMatrix<T>
+    public class MatrixWithOffset2<T> : IMatrix2<T>
     {
         private T[,] _points;
         public Vector2i offset { get; }
         public Vector2i size { get; }
 
-        public MatrixWithOffset(Vector2i matrixSize, Vector2i indicesOffset)
+        public MatrixWithOffset2(Vector2i matrixSize, Vector2i indicesOffset)
         {
             _points = new T[matrixSize.x + indicesOffset.x, matrixSize.y + indicesOffset.y];
             offset = indicesOffset;
