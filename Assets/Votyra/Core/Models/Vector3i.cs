@@ -158,6 +158,11 @@ namespace Votyra.Core.Models
             }
         }
 
+        public Rect3i ToRect3i()
+        {
+            return new Rect3i(Vector3i.Zero, this);
+        }
+
         public static bool operator <(Vector3i a, Vector3i b)
         {
             return a.x < b.x && a.y < b.y && a.z < b.z;

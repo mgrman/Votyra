@@ -62,14 +62,21 @@ namespace Votyra.Cubical
         {
             while (!_onDestroyCts.IsCancellationRequested)
             {
-                if (_root.activeInHierarchy)
+                try
                 {
-                    var context = GetSceneContext();
-                    await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
+                    if (_root.activeInHierarchy)
+                    {
+                        var context = GetSceneContext();
+                        await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
+                    }
+                    else
+                    {
+                        await Task.Delay(100);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    await Task.Delay(100);
+                    Debug.LogException(ex);
                 }
             }
         }

@@ -29,6 +29,13 @@ namespace Votyra.Core.Models
 
         public Vector3f max => center + extents;
 
+        public float DiagonalLength
+        {
+            get
+            {
+                return (float)Math.Sqrt(size.x * size.x + size.y * size.y + size.z * size.z);
+            }
+        }
         public bool Contains(Vector3f point)
         {
             return point >= min && point <= max;

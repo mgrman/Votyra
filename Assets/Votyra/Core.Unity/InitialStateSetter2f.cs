@@ -36,9 +36,9 @@ namespace Votyra.Core.Images
             {
                 FillInitialState(editableImage, imageConfig.InitialData as IMatrix2<float>, imageConfig.InitialDataScale.z);
             }
-            if (imageConfig.InitialData is IMatrix3<bool>)
+            if (imageConfig.InitialData is IMatrix3<float>)
             {
-                FillInitialState(editableImage, imageConfig.InitialData as IMatrix3<bool>, imageConfig.InitialDataScale.z);
+                FillInitialState(editableImage, imageConfig.InitialData as IMatrix3<float>, imageConfig.InitialDataScale.z);
             }
         }
 
@@ -137,7 +137,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage2f editableImage, IMatrix3<bool> texture, float scale)
+        private static void FillInitialState(IEditableImage2f editableImage, IMatrix3<float> texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Rect2i.All))
             {
@@ -163,7 +163,7 @@ namespace Votyra.Core.Images
 
                         for (int z = texture.size.z - 1; z >= 0; z--)
                         {
-                            if (texture[x, y, z])
+                            if (texture[x, y, z] > 0)
                             {
                                 value = z;
                                 break;

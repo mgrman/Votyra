@@ -352,7 +352,7 @@ MonoBehaviour:
   _async: 1
   _material: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
   _materialWalls: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
-  _activeTerrainAlgorithm: 1
+  _activeTerrainAlgorithm: 3
   _availableTerrainAlgorithms:
   - {fileID: 1101794731832008, guid: f4f93c13563af724e9805d1070d56d88, type: 2}
   - {fileID: 1101794731832008, guid: a3fa91a0e395d7643bf043b4c7bfd4fd, type: 2}

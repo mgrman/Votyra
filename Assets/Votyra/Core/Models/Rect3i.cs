@@ -30,12 +30,12 @@ namespace Votyra.Core.Models
 
         public static Rect3i zero { get; } = new Rect3i();
 
+        public int zMax => max.z;
         public int yMax => max.y;
-
         public int xMax => max.x;
 
+        public int zMin => min.z;
         public int yMin => min.y;
-
         public int xMin => min.x;
 
         public int height => max.y - min.y;
@@ -92,6 +92,24 @@ namespace Votyra.Core.Models
         {
             return new Rect3f(center.ToVector3f(), size.ToVector3f());
         }
+
+        public Rect3i IntersectWith(Rect3i b)
+        {
+            var bMin = b.min;
+            var bMax = b.max;
+            int minX = Math.Max(this.min.x, bMin.x);
+            int minY = Math.Max(this.min.y, bMin.y);
+            int minZ = Math.Max(this.min.z, bMin.z);
+            int maxX = Math.Min(this.max.x, bMax.x);
+            int maxY = Math.Min(this.max.y, bMax.y);
+            int maxZ = Math.Min(this.max.z, bMax.z);
+
+            maxX = Math.Max(minX, maxX);
+            maxY = Math.Max(minY, maxY);
+            maxZ = Math.Max(minZ, maxZ);
+            return Rect3i.MinMaxRect(minX, minY, minZ, maxX, maxY, maxZ);
+        }
+
 
         public static bool operator ==(Rect3i a, Rect3i b)
         {

@@ -2,12 +2,12 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    public class LockableMatrix2<T> : IMatrix2<T>
+    public class LockableMatrix3<T> : IMatrix3<T>
     {
-        private T[,] _points;
+        private T[,,] _points;
 
         //public readonly Vector2i offset;
-        public Vector2i size { get; }
+        public Vector3i size { get; }
 
         private readonly object _syncLock = new object();
 
@@ -43,24 +43,24 @@ namespace Votyra.Core.Models
             }
         }
 
-        public LockableMatrix2(Vector2i matrixSize)
+        public LockableMatrix3(Vector3i matrixSize)
         {
-            _points = new T[matrixSize.x, matrixSize.y];
+            _points = new T[matrixSize.x, matrixSize.y, matrixSize.z];
             //_points = new T[matrixSize.x+indicesOffset.x, matrixSize.y + indicesOffset.y];
             //offset = indicesOffset;
             size = matrixSize;
         }
 
-        public bool IsSameSize(Vector2i size)
+        public bool IsSameSize(Vector3i size)
         {
             return this.size == size;//&& this.offset == offset;
         }
 
-        public T this[int ix, int iy]
+        public T this[int ix, int iy, int iz]
         {
             get
             {
-                return _points[ix, iy];
+                return _points[ix, iy, iz];
             }
             set
             {
@@ -68,15 +68,15 @@ namespace Votyra.Core.Models
                 {
                     throw new MatrixLockedException();
                 }
-                _points[ix, iy] = value;
+                _points[ix, iy, iz] = value;
             }
         }
 
-        public T this[Vector2i i]
+        public T this[Vector3i i]
         {
             get
             {
-                return _points[i.x, i.y];
+                return _points[i.x, i.y, i.z];
             }
             set
             {
@@ -84,7 +84,7 @@ namespace Votyra.Core.Models
                 {
                     throw new MatrixLockedException();
                 }
-                _points[i.x, i.y] = value;
+                _points[i.x, i.y, i.z] = value;
             }
         }
     }

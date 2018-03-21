@@ -8,6 +8,7 @@ using Votyra.Core.TerrainGenerators;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Zenject;
 using Votyra.Core.Images.Constraints;
+using Votyra.Core.Images;
 
 namespace Votyra.Cubical.Unity
 {
@@ -19,14 +20,10 @@ namespace Votyra.Cubical.Unity
             Container.Bind<ITerrainGenerator3b>().To<TerrainGenerator3b>().AsSingle();
             Container.Bind<IMeshUpdater<Vector3i>>().To<TerrainMeshUpdater<Vector3i>>().AsSingle();
             Container.Bind<IGroupSelector3i>().To<GroupsByCameraVisibilitySelector3i>().AsSingle();
-
-            Container.BindInterfacesAndSelfTo<UmbraImageProvider3f>().AsSingle();
-            // Container.BindInterfacesAndSelfTo<EditableImage3fInitialStateSetter>().AsSingle().NonLazy();
-
+            Container.BindInterfacesAndSelfTo<InitialStateSetter3f>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<EditableMatrixImage3f>().AsSingle();
             Container.BindInstance<GameObject>(this.gameObject).WithId("root").AsSingle();
-
             // Container.BindInterfacesAndSelfTo<ClickToPaint>().AsSingle().NonLazy();
-
             Container.BindInterfacesAndSelfTo<TerrainGeneratorManager3b>().AsSingle().NonLazy();
         }
 
