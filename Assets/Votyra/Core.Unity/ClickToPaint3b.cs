@@ -26,7 +26,7 @@ namespace Votyra.Core
         private float _lastTime;
         private Vector3i? _lastCell;
 
-        private float? _centerValueToReuse;
+        private bool? _centerValueToReuse;
 
         public void Tick()
         {
@@ -76,69 +76,56 @@ namespace Votyra.Core
                 return;
             }
 
-            // if (Input.GetButton("Modifier1"))
-            // {
-            //     int maxDist = 4;
+            if (Input.GetButton("Modifier1"))
+            {
+                int maxDist = 4;
 
-            //     var area = Rect3i.CenterAndExtents(cell, new Vector3i(maxDist, maxDist, maxDist));
-            //     using (var image = editableImage.RequestAccess(area))
-            //     {
-            //         area = area.IntersectWith(image.Area);
-            //         float centerValue;
-            //         if (_centerValueToReuse.HasValue)
-            //         {
-            //             centerValue = _centerValueToReuse.Value;
-            //         }
-            //         else
-            //         {
-            //             centerValue = image[cell];
-            //             _centerValueToReuse = centerValue;
-            //         }
+                var area = Rect3i.CenterAndExtents(cell, new Vector3i(maxDist, maxDist, maxDist));
+                using (var image = editableImage.RequestAccess(area))
+                {
+                    area = area.IntersectWith(image.Area);
+                    bool centerValue;
+                    if (_centerValueToReuse.HasValue)
+                    {
+                        centerValue = _centerValueToReuse.Value;
+                    }
+                    else
+                    {
+                        centerValue = image[cell];
+                        _centerValueToReuse = centerValue;
+                    }
 
-            //         area.ForeachPoint(index =>
-            //         {
-            //             var value = image[index];
-            //             var offsetF = (centerValue - value) * smoothSpeedRelative;
-            //             int offsetI = 0;
-            //             if (offsetF > smoothCutoff)
-            //                 offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
-            //             else if (offsetF < -smoothCutoff)
-            //                 offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
+                    area.ForeachPoint(index =>
+                    {
+                        image[index] = centerValue;
+                    });
+                }
+            }
+            else
+            {
+                bool value = false;
 
-            //             image[index] = value + offsetI;
-            //         });
-            //     }
-            // }
-            // else
-            // {
-            //     int multiplier = 0;
+                if (Input.GetMouseButton(0))
+                {
+                    value = true;
+                }
+                int maxDist;
+                if (Input.GetButton("Modifier2"))
+                    maxDist = maxDistBig;
+                else
+                    maxDist = maxDistSmall;
 
-            //     if (Input.GetMouseButton(0))
-            //     {
-            //         multiplier = 1;
-            //     }
-            //     else if (Input.GetMouseButton(1))
-            //     {
-            //         multiplier = -1;
-            //     }
-            //     int maxDist;
-            //     if (Input.GetButton("Modifier2"))
-            //         maxDist = maxDistBig;
-            //     else
-            //         maxDist = maxDistSmall;
-
-            //     var area = Rect3i.CenterAndExtents(cell, new Vector3i(maxDist, maxDist, maxDist));
-            //     using (var image = editableImage.RequestAccess(area))
-            //     {
-            //         area = area.IntersectWith(image.Area);
-            //         area.ForeachPoint(index =>
-            //         {
-            //             var dist = (index - cell).magnitudeManhatanRing;
-            //             var value = image[index];
-            //             image[index] = value + multiplier * (maxDist - dist);
-            //         });
-            //     }
-            // }
+                var area = Rect3i.CenterAndExtents(cell, new Vector3i(maxDist, maxDist, maxDist));
+                using (var image = editableImage.RequestAccess(area))
+                {
+                    area = area.IntersectWith(image.Area);
+                    area.ForeachPoint(index =>
+                    {
+                        var dist = (index - cell).magnitudeManhatanRing;
+                        image[index] = value;
+                    });
+                }
+            }
         }
     }
 }
