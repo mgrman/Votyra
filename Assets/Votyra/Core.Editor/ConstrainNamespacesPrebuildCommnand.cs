@@ -7,7 +7,7 @@ using UnityEditor.Build.Reporting;
 using UnityEngine;
 
 [InitializeOnLoad]
-public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuild
+public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
 {
     private const string UnityEngineNamespace = "UnityEngine";
     private const string UnityEngineNamespaceUsage1 = "using " + UnityEngineNamespace;
@@ -32,7 +32,11 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuild
             }
         };
     }
+    public void OnPreprocessBuild(BuildReport report, string path)
+    {
 
+        ConstrainNamespaces();
+    }
     public void OnPreprocessBuild(BuildReport report)
     {
         ConstrainNamespaces();
@@ -75,4 +79,5 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuild
             }
         }
     }
+
 }

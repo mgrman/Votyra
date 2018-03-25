@@ -188,9 +188,6 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = imageAccessor.Area;
                 }
 
-                var matrixSizeX = matrixAreaToFill.size.x;
-                var matrixSizeY = matrixAreaToFill.size.y;
-
                 for (int x = matrixAreaToFill.xMin; x < matrixAreaToFill.xMax; x++)
                 {
                     for (int y = matrixAreaToFill.yMin; y < matrixAreaToFill.yMax; y++)

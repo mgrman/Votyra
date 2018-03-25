@@ -48,8 +48,6 @@ namespace Votyra.Cubical
         [Inject(Id = "root")]
         protected GameObject _root;
 
-
-        private Task _updateTask = null;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
         [Inject]

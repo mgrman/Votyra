@@ -25,7 +25,7 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<InitialStateSetter2f>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<EditableMatrixImage2f>().AsSingle();
             Container.BindInstance<GameObject>(this.gameObject).WithId("root").AsSingle();
-            Container.BindInterfacesAndSelfTo<ClickToPaint>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ClickToPaint2i>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<TerrainGeneratorManager2i>().AsSingle().NonLazy();
         }
     }

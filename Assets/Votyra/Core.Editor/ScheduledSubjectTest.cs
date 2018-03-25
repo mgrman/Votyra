@@ -69,44 +69,41 @@ namespace Votyra.Core
         [Test]
         public void ScheduledSubject_CircullarConnection_CombinedValueIsCorrect()
         {
+            var subjectA = new BehaviorSubject<string>(null).MakeScheduledOnCurrentThread();
+            var subjectB = new BehaviorSubject<string>(null).MakeScheduledOnCurrentThread();
+            var subjectC = new BehaviorSubject<string>(null).MakeScheduledOnCurrentThread();
 
-            TestUtils.UnityAsyncTest(async () =>
+            subjectA.Subscribe((valueA) =>
             {
-                var subjectA = new BehaviorSubject<string>(null).MakeScheduledOnCurrentThread();
-                var subjectB = new BehaviorSubject<string>(null).MakeScheduledOnCurrentThread();
-                var subjectC = new BehaviorSubject<string>(null).MakeScheduledOnCurrentThread();
+                if (valueA != null)
+                    subjectB.OnNext("B_" + valueA);
+                else
+                    subjectB.OnNext(null);
+            });
+            subjectB.Subscribe((valueB) =>
+            {
+                if (valueB != null)
+                    subjectC.OnNext("C_" + valueB);
+                else
+                    subjectC.OnNext(null);
+            });
+            subjectC.Subscribe((valueC) =>
+            {
+                if (valueC != null)
+                    subjectA.OnNext(null);
+            });
 
-                subjectA.Subscribe((valueA) =>
+            List<Tuple<string, string, string>> handlerCalls = new List<Tuple<string, string, string>>();
+            subjectA
+                .CombineLatest(subjectB, subjectC, (a, b, c) =>
                 {
-                    if (valueA != null)
-                        subjectB.OnNext("B_" + valueA);
-                    else
-                        subjectB.OnNext(null);
-                });
-                subjectB.Subscribe((valueB) =>
-                {
-                    if (valueB != null)
-                        subjectC.OnNext("C_" + valueB);
-                    else
-                        subjectC.OnNext(null);
-                });
-                subjectC.Subscribe((valueC) =>
-                {
-                    if (valueC != null)
-                        subjectA.OnNext(null);
-                });
+                    return Tuple.Create(a, b, c);
+                })
+                .Subscribe(call => handlerCalls.Add(call));
 
-                List<Tuple<string, string, string>> handlerCalls = new List<Tuple<string, string, string>>();
-                subjectA
-                    .CombineLatest(subjectB, subjectC, (a, b, c) =>
-                    {
-                        return Tuple.Create(a, b, c);
-                    })
-                    .Subscribe(call => handlerCalls.Add(call));
+            subjectA.OnNext("A");
 
-                subjectA.OnNext("A");
-
-                var expectedResult = new List<Tuple<string, string, string>>()
+            var expectedResult = new List<Tuple<string, string, string>>()
                     {
                         Tuple.Create<string,string,string>(null,null,null),
                         Tuple.Create<string,string,string>("A",null,null),
@@ -116,9 +113,7 @@ namespace Votyra.Core
                         Tuple.Create<string,string,string>(null,null,"C_B_A"),
                         Tuple.Create<string,string,string>(null,null,null),
                     };
-                TestUtils.AssertListEquality(expectedResult, handlerCalls);
-
-            });
+            TestUtils.AssertListEquality(expectedResult, handlerCalls);
         }
     }
 }

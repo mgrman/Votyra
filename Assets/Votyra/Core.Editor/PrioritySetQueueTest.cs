@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.Models;
-using Votyra.Core.Images.Constraints;
 
 namespace Votyra.Plannar.Editor
 {

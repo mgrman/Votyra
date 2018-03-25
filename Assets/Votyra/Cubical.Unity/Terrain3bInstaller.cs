@@ -1,4 +1,5 @@
 using UnityEngine;
+using Votyra.Core;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
@@ -23,7 +24,7 @@ namespace Votyra.Cubical.Unity
             Container.BindInterfacesAndSelfTo<InitialStateSetter3f>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<EditableMatrixImage3f>().AsSingle();
             Container.BindInstance<GameObject>(this.gameObject).WithId("root").AsSingle();
-            // Container.BindInterfacesAndSelfTo<ClickToPaint>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ClickToPaint3b>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<TerrainGeneratorManager3b>().AsSingle().NonLazy();
         }
 

@@ -109,7 +109,6 @@ namespace Votyra.Core.Utils
             var targetItemsSet = ListInternals<TResult>.ItemsSet;
             var sourceItemsGet = ListInternals<TSource>.ItemsGet;
             var targetSizeSet = ListInternals<TResult>.SizeSet;
-            var sourceSizeGet = ListInternals<TSource>.SizeGet;
 
             var sourceItemsValue = sourceItemsGet(source);
             var targetItems = convert(sourceItemsValue);
@@ -138,27 +137,27 @@ namespace Votyra.Core.Utils
                 SizeSet = CreateSetFieldDelegate<List<T>, int>(sizeField);
             }
 
-            private static Func<S, T> CreateGetFieldDelegate<S, T>(FieldInfo fieldInfo)
+            private static Func<TOwner, TValue> CreateGetFieldDelegate<TOwner, TValue>(FieldInfo fieldInfo)
             {
-                ParameterExpression ownerParameter = Expression.Parameter(typeof(S));
+                ParameterExpression ownerParameter = Expression.Parameter(typeof(TOwner));
 
                 var fieldExpression = Expression.Field(
-                    Expression.Convert(ownerParameter, typeof(S)), fieldInfo);
+                    Expression.Convert(ownerParameter, typeof(TOwner)), fieldInfo);
 
-                return Expression.Lambda<Func<S, T>>(
-                    Expression.Convert(fieldExpression, typeof(T)),
+                return Expression.Lambda<Func<TOwner, TValue>>(
+                    Expression.Convert(fieldExpression, typeof(TValue)),
                     ownerParameter).Compile();
             }
 
-            private static Action<S, T> CreateSetFieldDelegate<S, T>(FieldInfo fieldInfo)
+            private static Action<TOwner, TValue> CreateSetFieldDelegate<TOwner, TValue>(FieldInfo fieldInfo)
             {
-                ParameterExpression ownerParameter = Expression.Parameter(typeof(S));
-                ParameterExpression fieldParameter = Expression.Parameter(typeof(T));
+                ParameterExpression ownerParameter = Expression.Parameter(typeof(TOwner));
+                ParameterExpression fieldParameter = Expression.Parameter(typeof(TValue));
 
                 var fieldExpression = Expression.Field(
-                    Expression.Convert(ownerParameter, typeof(S)), fieldInfo);
+                    Expression.Convert(ownerParameter, typeof(TOwner)), fieldInfo);
 
-                return Expression.Lambda<Action<S, T>>(
+                return Expression.Lambda<Action<TOwner, TValue>>(
                     Expression.Assign(fieldExpression,
                         Expression.Convert(fieldParameter, fieldInfo.FieldType)),
                     ownerParameter, fieldParameter).Compile();

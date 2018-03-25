@@ -37,7 +37,7 @@ namespace Votyra.Core.Editor
             DateTime start = DateTime.UtcNow;
             for (int test = 0; test < tests; test++)
             {
-                var initialList = createNewList();
+                createNewList();
             }
             TimeSpan nothing = DateTime.UtcNow - start;
 
@@ -61,8 +61,7 @@ namespace Votyra.Core.Editor
             {
                 var initialList = createNewList();
 
-                var newArray = initialList.ToVector3Array();
-
+                initialList.ToVector3Array();
             }
             TimeSpan innerArray = DateTime.UtcNow - start - nothing;
 
@@ -71,8 +70,7 @@ namespace Votyra.Core.Editor
             {
                 var initialList = createNewList();
 
-                var newArray = initialList.ToVector3List();
-
+                initialList.ToVector3List();
             }
             TimeSpan newListWithSameArray = DateTime.UtcNow - start - nothing;
 
@@ -99,7 +97,7 @@ namespace Votyra.Core.Editor
             DateTime start = DateTime.UtcNow;
             for (int test = 0; test < tests; test++)
             {
-                var initialList = createNewArray();
+                createNewArray();
             }
             TimeSpan nothing = DateTime.UtcNow - start;
 
@@ -123,8 +121,7 @@ namespace Votyra.Core.Editor
             {
                 var initialList = createNewArray();
 
-                var newArray = initialList.ToVector3();
-
+                initialList.ToVector3();
             }
             TimeSpan structConversion = DateTime.UtcNow - start - nothing;
 
