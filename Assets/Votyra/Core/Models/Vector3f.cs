@@ -38,17 +38,17 @@ namespace Votyra.Core.Models
             }
         }
 
-        public Vector3i FloorToInt()
+        public Vector3i FloorToVector3i()
         {
             return new Vector3i(x.FloorToInt(), y.FloorToInt(), z.FloorToInt());
         }
 
-        public Vector3i RoundToInt()
+        public Vector3i RoundToVector3i()
         {
-            return new Vector3i(x.RoundToInt(), y.FloorToInt(), z.RoundToInt());
+            return new Vector3i(x.RoundToInt(), y.RoundToInt(), z.RoundToInt());
         }
 
-        public Vector3i CeilToInt()
+        public Vector3i CeilToVector3i()
         {
             return new Vector3i(x.CeilToInt(), y.CeilToInt(), z.CeilToInt());
         }
@@ -222,7 +222,7 @@ namespace Votyra.Core.Models
 
         public override string ToString()
         {
-            return string.Format("({0} , {1}, {1})", x, y, z);
+            return string.Format("({0} , {1}, {2})", x, y, z);
         }
     }
 

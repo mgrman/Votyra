@@ -7,7 +7,7 @@ namespace Votyra.Core.ImageSamplers
     {
         public Vector3i WorldToImage(Vector3f pos)
         {
-            return (pos * 2).FloorToInt();
+            return (pos * 2).FloorToVector3i();
         }
 
         public Vector3f ImageToWorld(Vector3i pos)

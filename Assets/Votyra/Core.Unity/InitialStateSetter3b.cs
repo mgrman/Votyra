@@ -20,11 +20,15 @@ namespace Votyra.Core.Images
             }
             if (initialImageConfig.InitialData is GameObject)
             {
-                FillInitialState(editableImage, (initialImageConfig.InitialData as GameObject).GetComponentsInChildren<Collider>(), initialImageConfig.InitialDataScale.z, sampler, root);
+                var gameObject = initialImageConfig.InitialData as GameObject;
+                FillInitialState(editableImage, gameObject.GetComponentsInChildren<Collider>(), initialImageConfig.InitialDataScale.z, sampler, root);
+                gameObject.SetActive(false);
             }
             if (initialImageConfig.InitialData is Collider)
             {
-                FillInitialState(editableImage, new[] { initialImageConfig.InitialData as Collider }, initialImageConfig.InitialDataScale.z, sampler, root);
+                var collider = initialImageConfig.InitialData as Collider;
+                FillInitialState(editableImage, new[] { collider }, initialImageConfig.InitialDataScale.z, sampler, root);
+                collider.enabled = false;
             }
             if (initialImageConfig.InitialData is IMatrix2<float>)
             {

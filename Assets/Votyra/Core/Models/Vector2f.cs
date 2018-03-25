@@ -141,6 +141,11 @@ namespace Votyra.Core.Models
             return new Vector2i(this);
         }
 
+        public Vector2i RoundToVector2i()
+        {
+            return new Vector2i(MathUtils.RoundToInt(this.x), MathUtils.RoundToInt(this.y));
+        }
+
         public Vector2i FloorToVector2i()
         {
             return new Vector2i(MathUtils.FloorToInt(this.x), MathUtils.FloorToInt(this.y));

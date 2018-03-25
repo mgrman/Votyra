@@ -3,6 +3,7 @@ using Votyra.Core.Models;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Zenject;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core
 {
@@ -53,7 +54,7 @@ namespace Votyra.Core
             // Casts the ray and get the first game object hit
             Physics.Raycast(ray, out hit);
 
-            var localPosition = _root.transform.worldToLocalMatrix.MultiplyPoint(hit.point);
+            var localPosition = _root.transform.InverseTransformPoint(hit.point);
 
             var imagePosition = _sampler.WorldToImage(new Vector3f(localPosition.x, localPosition.y, localPosition.z));
 
@@ -78,28 +79,28 @@ namespace Votyra.Core
 
             if (Input.GetButton("Modifier1"))
             {
-                int maxDist = 4;
+                // int maxDist = 4;
 
-                var area = Rect3i.CenterAndExtents(cell, new Vector3i(maxDist, maxDist, maxDist));
-                using (var image = editableImage.RequestAccess(area))
-                {
-                    area = area.IntersectWith(image.Area);
-                    bool centerValue;
-                    if (_centerValueToReuse.HasValue)
-                    {
-                        centerValue = _centerValueToReuse.Value;
-                    }
-                    else
-                    {
-                        centerValue = image[cell];
-                        _centerValueToReuse = centerValue;
-                    }
+                // var area = Rect3i.CenterAndExtents(cell, new Vector3i(maxDist, maxDist, maxDist));
+                // using (var image = editableImage.RequestAccess(area))
+                // {
+                //     area = area.IntersectWith(image.Area);
+                //     bool centerValue;
+                //     if (_centerValueToReuse.HasValue)
+                //     {
+                //         centerValue = _centerValueToReuse.Value;
+                //     }
+                //     else
+                //     {
+                //         centerValue = image[cell];
+                //         _centerValueToReuse = centerValue;
+                //     }
 
-                    area.ForeachPoint(index =>
-                    {
-                        image[index] = centerValue;
-                    });
-                }
+                //     area.ForeachPoint(index =>
+                //     {
+                //         image[index] = centerValue;
+                //     });
+                // }
             }
             else
             {
@@ -119,11 +120,18 @@ namespace Votyra.Core
                 using (var image = editableImage.RequestAccess(area))
                 {
                     area = area.IntersectWith(image.Area);
-                    area.ForeachPoint(index =>
+                    if (value == true && image[cell])
                     {
-                        var dist = (index - cell).magnitudeManhatanRing;
-                        image[index] = value;
-                    });
+                        image[cell + new Vector3i(0, 0, 1)] = true;
+                    }
+                    else if (value == true)
+                    {
+                        image[cell] = true;
+                    }
+                    else if (value == false)
+                    {
+                        image[cell] = false;
+                    }
                 }
             }
         }

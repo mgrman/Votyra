@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
@@ -62,6 +63,19 @@ namespace Votyra.Core.Models
                     {
                         var i = new Vector3i(ix, iy, iz);
                         action(i);
+                    }
+                }
+            }
+        }
+        public IEnumerable<Vector3i> EnumeratePoints()
+        {
+            for (int ix = this.min.x; ix < this.max.x; ix++)
+            {
+                for (int iy = this.min.y; iy < this.max.y; iy++)
+                {
+                    for (int iz = this.min.z; iz < this.max.z; iz++)
+                    {
+                        yield return new Vector3i(ix, iy, iz);
                     }
                 }
             }

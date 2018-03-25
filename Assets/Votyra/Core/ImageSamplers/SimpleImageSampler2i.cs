@@ -7,12 +7,12 @@ namespace Votyra.Core.ImageSamplers
     {
         public Vector2i WorldToImage(Vector2f pos)
         {
-            return new Vector2i(pos.x.RoundToInt(), pos.y.RoundToInt());
+            return pos.RoundToVector2i();
         }
 
         public Vector2f ImageToWorld(Vector2i pos)
         {
-            return pos / 1f;
+            return pos.ToVector2f();
         }
 
         public Vector2i CellToX0Y0(Vector2i pos)
