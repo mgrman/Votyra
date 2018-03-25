@@ -149,6 +149,21 @@ namespace Votyra.Core.Models
             }
         }
 
+        public float magnitudeManhatan
+        {
+            get
+            {
+                return Math.Abs(x) + Math.Abs(y) + Math.Abs(z);
+            }
+        }
+        public float magnitudeManhatanRing
+        {
+            get
+            {
+                return Math.Max(Math.Max(Math.Abs(x), Math.Abs(y)), Math.Abs(z));
+            }
+        }
+
         public Vector3f normalized
         {
             get

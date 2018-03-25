@@ -13,13 +13,11 @@ namespace Votyra.Cubical.Unity
 {
     public class SimpleSampleTerrain3bInstaller : MonoInstaller
     {
-
         public override void InstallBindings()
         {
             Container.Rebind<IImageSampler3b>().To<SimpleImageSampler3b>().AsSingle();
-            //  Container.Rebind<IImageConstraint2i>().To<SimpleTycoonTileConstraint2i>().AsSingle();
+            Container.Rebind<IImageConstraint3i>().To<BooleanConstraint3i>().AsSingle();
             Container.Rebind<ITerrainMesher3b>().To<TerrainMesher3b>().AsSingle();
         }
-
     }
 }

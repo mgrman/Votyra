@@ -52,6 +52,21 @@ namespace Votyra.Core.Models
             return new Rect3i(new Vector3i(xmin, ymin, zmin), new Vector3i(xmax - xmin, ymax - ymin, zmax - zmin));
         }
 
+        public void ForeachPoint(Action<Vector3i> action)
+        {
+            for (int ix = this.min.x; ix < this.max.x; ix++)
+            {
+                for (int iy = this.min.y; iy < this.max.y; iy++)
+                {
+                    for (int iz = this.min.z; iz < this.max.z; iz++)
+                    {
+                        var i = new Vector3i(ix, iy, iz);
+                        action(i);
+                    }
+                }
+            }
+        }
+
         public Vector3i Denormalize(Vector3f normalizedRectCoordinates)
         {
             return min + (size * normalizedRectCoordinates).ToVector3i();

@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Votyra.Core
 {
-    public class ClickToPaint : ITickable
+    public class ClickToPaint2i : ITickable
     {
         [Inject]
         private IEditableImage2f _editableImage;
@@ -16,7 +16,6 @@ namespace Votyra.Core
 
         [Inject(Id = "root")]
         protected GameObject _root;
-
 
         private const float Period = 0.1f;
         private const int maxDistBig = 4;
