@@ -3,7 +3,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.ImageSamplers
 {
-    public class SimpleImageSampler3b : IImageSampler3b
+    public class SimpleImageSampler3b : IImageSampler3
     {
         public Vector3i WorldToImage(Vector3f pos)
         {

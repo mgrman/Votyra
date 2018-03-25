@@ -8,9 +8,9 @@ using Zenject;
 
 namespace Votyra.Core.Images
 {
-    public class InitialStateSetter3f
+    public class InitialStateSetter3b
     {
-        public InitialStateSetter3f(IEditableImage3f editableImage, IInitialImageConfig initialImageConfig, IImageConfig imageConfig, IImageSampler3b sampler, [Inject(Id = "root")]GameObject root)
+        public InitialStateSetter3b(IEditableImage3b editableImage, IInitialImageConfig initialImageConfig, IImageConfig imageConfig, IImageSampler3 sampler, [Inject(Id = "root")]GameObject root)
         {
             if (editableImage == null)
                 return;
@@ -36,7 +36,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage3f editableImage, Texture2D texture, float scale, int fallbackMaxZ)
+        private static void FillInitialState(IEditableImage3b editableImage, Texture2D texture, float scale, int fallbackMaxZ)
         {
             using (var imageAccessor = editableImage.RequestAccess(Rect3i.All))
             {
@@ -61,14 +61,14 @@ namespace Votyra.Core.Images
                         for (int z = matrixAreaToFill.zMin; z < matrixAreaToFill.zMax; z++)
                         {
                             var pos = new Vector3i(x, y, z);
-                            imageAccessor[pos] = value - z;
+                            imageAccessor[pos] = value - z > 0;
                         }
                     }
                 }
             }
         }
 
-        private static void FillInitialState(IEditableImage3f editableImage, Collider[] colliders, float scale, IImageSampler3b sampler, GameObject root)
+        private static void FillInitialState(IEditableImage3b editableImage, Collider[] colliders, float scale, IImageSampler3 sampler, GameObject root)
         {
             var bounds = colliders.Select(o => o.bounds)
                 .Select(o => new Rect3f(o.center.ToVector3f(), o.size.ToVector3f()))
@@ -93,10 +93,9 @@ namespace Votyra.Core.Images
                             imageAccessor[i] = colliders
                                 .Select(collider =>
                                 {
-                                    return IsInside(collider, worldPos, maxSize) ? 1f : -1f;
+                                    return IsInside(collider, worldPos, maxSize);
                                 })
-                                .DefaultIfEmpty(0)
-                                .Max() * scale;
+                                .Any(o => o);
 
                         }
                     }
@@ -144,7 +143,7 @@ namespace Votyra.Core.Images
             return counter % 2 == 1;
         }
 
-        private static void FillInitialState(IEditableImage3f editableImage, IMatrix2<float> texture, float scale, int fallbackMaxZ)
+        private static void FillInitialState(IEditableImage3b editableImage, IMatrix2<float> texture, float scale, int fallbackMaxZ)
         {
             using (var imageAccessor = editableImage.RequestAccess(Rect3i.All))
             {
@@ -167,14 +166,14 @@ namespace Votyra.Core.Images
                         for (int z = matrixAreaToFill.zMin; z < matrixAreaToFill.zMax; z++)
                         {
                             var pos = new Vector3i(x, y, z);
-                            imageAccessor[pos] = value - z;
+                            imageAccessor[pos] = value - z > 0;
                         }
                     }
                 }
             }
         }
 
-        private static void FillInitialState(IEditableImage3f editableImage, IMatrix3<float> texture, float scale)
+        private static void FillInitialState(IEditableImage3b editableImage, IMatrix3<float> texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Rect3i.All))
             {
@@ -196,7 +195,7 @@ namespace Votyra.Core.Images
                         {
                             var pos = new Vector3i(x, y, z);
 
-                            imageAccessor[pos] = texture[x, y, z] * scale;
+                            imageAccessor[pos] = texture[x, y, z] * scale > 0;
                         }
                     }
                 }

@@ -31,10 +31,10 @@ namespace Votyra.Cubical
         protected ITerrainConfig _terrainConfig;
 
         [Inject]
-        protected IImage3fProvider _imageProvider;
+        protected IImage3bProvider _imageProvider;
 
         [Inject]
-        protected IImageSampler3b _sampler;
+        protected IImageSampler3 _sampler;
 
         [Inject]
         protected IGroupSelector3i _groupsSelector;

@@ -5,14 +5,14 @@ namespace Votyra.Core.ImageSamplers
 {
     public static class ImageSampler3bUtils
     {
-        public static Rect3f ImageToWorld(this IImageSampler3b sampler, Rect3i rect)
+        public static Rect3f ImageToWorld(this IImageSampler3 sampler, Rect3i rect)
         {
             var min = sampler.ImageToWorld(rect.min);
             var max = sampler.ImageToWorld(rect.max);
             return new Rect3f((max + min) / 2, max - min);
         }
 
-        public static SampledData3b Sample(this IImageSampler3b sampler, IImage3f image, Vector3i pos)
+        public static SampledData3b Sample(this IImageSampler3 sampler, IImage3b image, Vector3i pos)
         {
             return new SampledData3b(
                 image.Sample(sampler.CellToX0Y0Z0(pos)),

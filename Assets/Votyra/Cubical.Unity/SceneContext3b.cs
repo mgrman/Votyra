@@ -29,9 +29,9 @@ namespace Votyra.Cubical
             Matrix4x4f parentContainerWorldToLocalMatrix,
             IReadOnlySet<Vector3i> existingGroups,
             Vector3i cellInGroupCount,
-            IImage3f image,
+            IImage3b image,
             Rect3i invalidatedArea_imageSpace,
-            IImageSampler3b imageSampler,
+            IImageSampler3 imageSampler,
             Func<GameObject> gameObjectFactory,
             ProfilerFactoryDelegate profilerFactory,
             LoggerFactoryDelegate loggerFactory)
@@ -70,9 +70,9 @@ namespace Votyra.Cubical
         public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
         public IReadOnlySet<Vector3i> ExistingGroups { get; }
         public Vector3i CellInGroupCount { get; }
-        public IImage3f Image { get; }
+        public IImage3b Image { get; }
         public Rect3i InvalidatedArea_worldSpace { get; }
-        public IImageSampler3b ImageSampler { get; }
+        public IImageSampler3 ImageSampler { get; }
         public Func<GameObject> GameObjectFactory { get; }
 
         public ProfilerFactoryDelegate ProfilerFactory { get; }

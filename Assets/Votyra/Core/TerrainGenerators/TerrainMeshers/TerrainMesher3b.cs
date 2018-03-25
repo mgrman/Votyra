@@ -12,8 +12,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher3b : ITerrainMesher3b
     {
-        protected IImageSampler3b ImageSampler { get; private set; }
-        protected IImage3f Image { get; private set; }
+        protected IImageSampler3 ImageSampler { get; private set; }
+        protected IImage3b Image { get; private set; }
         public Vector3i CellInGroupCount { get; private set; }
         protected Vector3i groupPosition;
         protected Vector3i groupSize;
@@ -25,7 +25,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             this.Initialize(terrainOptions.ImageSampler, terrainOptions.Image, terrainOptions.CellInGroupCount);
         }
 
-        public void Initialize(IImageSampler3b imageSampler, IImage3f image, Vector3i cellInGroupCount)
+        public void Initialize(IImageSampler3 imageSampler, IImage3b image, Vector3i cellInGroupCount)
         {
             ImageSampler = imageSampler;
             Image = image;

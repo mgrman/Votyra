@@ -7,9 +7,9 @@ using Votyra.Core;
 
 namespace Votyra.Cubical.Unity
 {
-    public class UmbraImageProvider3f : IImage3fProvider
+    public class UmbraImageProvider3f : IImage3bProvider
     {
-        private IImage3f _image;
+        private IImage3b _image;
 
         public UmbraImageProvider3f(IInitialImageConfig imageConfig)
         {
@@ -31,7 +31,7 @@ namespace Votyra.Cubical.Unity
                         matrix[x, y] = (initialTexture.GetPixel(x, y).grayscale * scale.z);
                     }
                 }
-                _image = new UmbraImage3f(new MatrixImage2f(matrix, Rect2i.zero));
+                _image = new UmbraImage3b(new MatrixImage2f(matrix, Rect2i.zero));
             }
             var initialMatrix = imageConfig.InitialData as IMatrix2<float>;
             if (initialMatrix != null)
@@ -51,11 +51,11 @@ namespace Votyra.Cubical.Unity
                         matrix[x, y] = initialMatrix[x, y] * scale.z;
                     }
                 }
-                _image = new UmbraImage3f(new MatrixImage2f(matrix, Rect2i.zero));
+                _image = new UmbraImage3b(new MatrixImage2f(matrix, Rect2i.zero));
             }
         }
 
-        public IImage3f CreateImage()
+        public IImage3b CreateImage()
         {
             return _image;
         }

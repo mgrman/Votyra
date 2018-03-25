@@ -119,8 +119,8 @@ namespace Votyra.Core.Unity
                 var goContext = _activeTerrainRoot.GetComponentInChildren<GameObjectContext>();
                 var oldImageConfig = goContext.Container.Resolve<IImageConfig>();
                 var oldImage2f = goContext.Container.TryResolve<IImage2fProvider>();
-                var oldImage3f = goContext.Container.TryResolve<IImage3fProvider>();
-                if (oldImage2f != null && oldImage3f != null)
+                var oldImage3b = goContext.Container.TryResolve<IImage3bProvider>();
+                if (oldImage2f != null && oldImage3b != null)
                 {
                     Debug.LogWarning("Previous algorithm worked in 2d and 3d mode. Using 2D data to keep.");
                 }
@@ -139,19 +139,18 @@ namespace Votyra.Core.Unity
                     }
                     _initialDataFromPrevious = matrix;
                 }
-                else if (oldImage3f != null)
+                else if (oldImage3b != null)
                 {
-                    var image = oldImage3f.CreateImage();
+                    var image = oldImage3b.CreateImage();
                     var matrix = new Matrix3<bool>(oldImageConfig.ImageSize);
                     for (int ix = 0; ix < matrix.size.x; ix++)
                     {
                         for (int iy = 0; iy < matrix.size.y; iy++)
                         {
-
                             for (int iz = 0; iz < matrix.size.z; iz++)
                             {
                                 var i = new Vector3i(ix, iy, iz);
-                                matrix[i] = image.Sample(i) > 0;
+                                matrix[i] = image.Sample(i);
                             }
                         }
                     }

@@ -42,11 +42,11 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
         public static List<Triangle3i> Evaluate(string cubeString)
         {
             var sampler = new SimpleImageSampler3b();
-            var imageMock = new Mock<IImage3f>();
+            var imageMock = new Mock<IImage3b>();
             var cube = SampledData3b.ParseCube(cubeString);
             //            Debug.Log(cube);
             imageMock.Setup(o => o.Sample(It.IsAny<Vector3i>()))
-                .Returns<Vector3i>((pos) => cube[pos] ? 1f : 0f);
+                .Returns<Vector3i>((pos) => cube[pos]);
 
             var triangles = new List<Triangle3i>();
             var meshMock = new Mock<ITerrainMesh>();

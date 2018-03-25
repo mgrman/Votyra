@@ -10,30 +10,30 @@ using Zenject;
 
 namespace Votyra.Core.Images
 {
-    public class EditableMatrixImage3f : IImage3fProvider, IEditableImage3f
+    public class EditableMatrixImage3b : IImage3bProvider, IEditableImage3b
     {
-        private readonly Matrix3<float> _editableMatrix;
+        private readonly Matrix3<bool> _editableMatrix;
 
         private Rect3i? _invalidatedArea;
 
-        private readonly List<LockableMatrix3<float>> _readonlyMatrices = new List<LockableMatrix3<float>>();
+        private readonly List<LockableMatrix3<bool>> _readonlyMatrices = new List<LockableMatrix3<bool>>();
 
-        private MatrixImage3f _image = null;
+        private MatrixImage3b _image = null;
 
-        private IImageConstraint3i _constraint;
+        private IImageConstraint3b _constraint;
 
-        public EditableMatrixImage3f([InjectOptional] IImageConstraint3i constraint, IImageConfig imageConfig)
+        public EditableMatrixImage3b([InjectOptional] IImageConstraint3b constraint, IImageConfig imageConfig)
         {
             _constraint = constraint;
-            _editableMatrix = new Matrix3<float>(imageConfig.ImageSize);
+            _editableMatrix = new Matrix3<bool>(imageConfig.ImageSize);
         }
 
-        public IImage3f CreateImage()
+        public IImage3b CreateImage()
         {
             if (_invalidatedArea == Rect3i.zero)
             {
                 _image?.Dispose();
-                _image = new MatrixImage3f(_image.Image, Rect3i.zero);
+                _image = new MatrixImage3b(_image.Image, Rect3i.zero);
             }
             else if (_invalidatedArea.HasValue || _image == null)
             {
@@ -43,7 +43,7 @@ namespace Votyra.Core.Images
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)
                 {
-                    readonlyMatrix = new LockableMatrix3<float>(_editableMatrix.size);
+                    readonlyMatrix = new LockableMatrix3<bool>(_editableMatrix.size);
                     _readonlyMatrices.Add(readonlyMatrix);
                 }
 
@@ -62,13 +62,13 @@ namespace Votyra.Core.Images
                 // Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
 
                 _image?.Dispose();
-                _image = new MatrixImage3f(readonlyMatrix, _invalidatedArea.Value);
+                _image = new MatrixImage3b(readonlyMatrix, _invalidatedArea.Value);
                 _invalidatedArea = Rect3i.zero;
             }
             return _image;
         }
 
-        public IEditableImageAccessor3f RequestAccess(Rect3i areaRequest)
+        public IEditableImageAccessor3b RequestAccess(Rect3i areaRequest)
         {
             return new MatrixImageAccessor(this, areaRequest);
         }
@@ -87,18 +87,18 @@ namespace Votyra.Core.Images
             _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedImageArea) ?? newInvalidatedImageArea;
         }
 
-        private class EditableImageWrapper : IImage3f
+        private class EditableImageWrapper : IImage3b
         {
-            private readonly Matrix3<float> _editableMatrix;
+            private readonly Matrix3<bool> _editableMatrix;
 
-            public EditableImageWrapper(Matrix3<float> editableMatrix)
+            public EditableImageWrapper(Matrix3<bool> editableMatrix)
             {
                 _editableMatrix = editableMatrix;
             }
 
             public Rect3i InvalidatedArea => Rect3i.zero;
 
-            public float Sample(Vector3i point)
+            public bool Sample(Vector3i point)
             {
                 if (point.IsAsIndexContained(_editableMatrix.size))
                 {
@@ -106,30 +106,37 @@ namespace Votyra.Core.Images
                 }
                 else
                 {
-                    return 0;
+                    return false;
                 }
             }
         }
 
-        private class MatrixImageAccessor : IEditableImageAccessor3f
+        private class MatrixImageAccessor : IEditableImageAccessor3b
         {
-            private readonly float[,,] _editableMatrix;
+            private readonly bool[,,] _editableMatrix;
             private float _changeCounter = 0;
             public Rect3i Area { get; }
 
-            public float this[Vector3i pos]
+            public bool this[Vector3i pos]
             {
                 get { return _editableMatrix[pos.x, pos.y, pos.z]; }
                 set
                 {
-                    _changeCounter += value - _editableMatrix[pos.x, pos.y, pos.z];
+                    if (value && !_editableMatrix[pos.x, pos.y, pos.z])
+                    {
+                        _changeCounter += 1;
+                    }
+                    if (!value && _editableMatrix[pos.x, pos.y, pos.z])
+                    {
+                        _changeCounter -= 1;
+                    }
                     _editableMatrix[pos.x, pos.y, pos.z] = value;
                 }
             }
 
-            private readonly EditableMatrixImage3f _editableImage;
+            private readonly EditableMatrixImage3b _editableImage;
 
-            public MatrixImageAccessor(EditableMatrixImage3f editableImage, Rect3i area)
+            public MatrixImageAccessor(EditableMatrixImage3b editableImage, Rect3i area)
             {
                 _editableMatrix = editableImage._editableMatrix.NativeMatrix;
                 _editableImage = editableImage;

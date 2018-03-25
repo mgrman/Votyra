@@ -8,7 +8,7 @@ namespace Votyra.Core.TerrainGenerators
     public interface ITerrainGeneratorContext3b : IContext
     {
         Vector3i CellInGroupCount { get; }
-        IImageSampler3b ImageSampler { get; }
-        IImage3f Image { get; }
+        IImageSampler3 ImageSampler { get; }
+        IImage3b Image { get; }
     }
 }
