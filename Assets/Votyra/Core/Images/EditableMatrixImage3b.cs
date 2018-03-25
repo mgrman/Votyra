@@ -114,7 +114,8 @@ namespace Votyra.Core.Images
         private class MatrixImageAccessor : IEditableImageAccessor3b
         {
             private readonly bool[,,] _editableMatrix;
-            private float _changeCounter = 0;
+            private int _changeCounter = 0;
+            private bool _changed = true;
             public Rect3i Area { get; }
 
             public bool this[Vector3i pos]
@@ -125,10 +126,12 @@ namespace Votyra.Core.Images
                     if (value && !_editableMatrix[pos.x, pos.y, pos.z])
                     {
                         _changeCounter += 1;
+                        _changed = true;
                     }
                     if (!value && _editableMatrix[pos.x, pos.y, pos.z])
                     {
                         _changeCounter -= 1;
+                        _changed = true;
                     }
                     _editableMatrix[pos.x, pos.y, pos.z] = value;
                 }
@@ -145,6 +148,9 @@ namespace Votyra.Core.Images
 
             public void Dispose()
             {
+                if (!_changed)
+                    return;
+
                 this._editableImage.FixImage(Area, _changeCounter > 0 ? Direction.Up : (_changeCounter < 0 ? Direction.Down : Direction.Unknown));
             }
         }

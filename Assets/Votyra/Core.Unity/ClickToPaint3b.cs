@@ -4,6 +4,7 @@ using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Zenject;
 using Votyra.Core.Utils;
+using System.Collections.Generic;
 
 namespace Votyra.Core
 {
@@ -43,11 +44,72 @@ namespace Votyra.Core
             {
                 ProcessMouseClick();
             }
+            // DebugMouse();
         }
 
         private void ProcessMouseClick()
         {
-            // Debug.LogFormat("OnMouseDown on tile.");
+            OnCellClick(MouseImagePosition());
+        }
+
+        Stack<Renderer> _usedDebugObjects = new Stack<Renderer>();
+        Stack<Renderer> _emptyDebugObjects = new Stack<Renderer>();
+        Material _trueMaterial;
+        Material _falseMaterial;
+
+        private void DebugMouse()
+        {
+            var imageMousePosition = MouseImagePosition();
+
+
+            var temp = _emptyDebugObjects;
+            _emptyDebugObjects = _usedDebugObjects;
+            _usedDebugObjects = temp;
+            foreach (var toDelete in _usedDebugObjects)
+            {
+                GameObject.Destroy(toDelete.gameObject);
+            }
+            _usedDebugObjects.Clear();
+
+
+            var area = Rect3i.CenterAndExtents(imageMousePosition, new Vector3i(2, 2, 2));
+            using (var image = _editableImage.RequestAccess(area))
+            {
+                area.ForeachPoint((imagePosition) =>
+                {
+
+                    var value = image[imagePosition];
+                    var worldPosition = ImageToWorld(imagePosition);
+                    CreateDebugObjectAt(worldPosition, value);
+                });
+            }
+        }
+
+        private void CreateDebugObjectAt(Vector3f worldPos, bool value)
+        {
+            var debugRenderer = _emptyDebugObjects.Count > 0 ? _emptyDebugObjects.Pop() : null;
+
+            if (debugRenderer == null)
+            {
+                var debugObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                debugObject.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                debugObject.name = "Debug pointer";
+                debugRenderer = debugObject.GetComponent<Renderer>();
+                _trueMaterial = Resources.Load<Material>("PointerTrue");
+                _falseMaterial = Resources.Load<Material>("PointerFalse");
+            }
+            debugRenderer.transform.position = worldPos.ToVector3();
+            debugRenderer.material = value ? _trueMaterial : _falseMaterial;
+
+            _usedDebugObjects.Push(debugRenderer);
+        }
+
+        private Vector3i MouseImagePosition()
+        {
+            return ScreenToImage(Input.mousePosition);
+        }
+        private Vector3i ScreenToImage(Vector3 screenPosition)
+        {
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -57,9 +119,16 @@ namespace Votyra.Core
             var localPosition = _root.transform.InverseTransformPoint(hit.point);
 
             var imagePosition = _sampler.WorldToImage(new Vector3f(localPosition.x, localPosition.y, localPosition.z));
-
-            OnCellClick(imagePosition);
+            return imagePosition;
         }
+
+        private Vector3f ImageToWorld(Vector3i imagePosition)
+        {
+            var localPosition = _sampler.ImageToWorld(imagePosition);
+            var worldPosition = _root.transform.TransformPoint(localPosition.ToVector3());
+            return worldPosition.ToVector3f();
+        }
+
 
         private void OnCellClick(Vector3i cell)
         {
@@ -120,17 +189,15 @@ namespace Votyra.Core
                 using (var image = editableImage.RequestAccess(area))
                 {
                     area = area.IntersectWith(image.Area);
-                    if (value == true && image[cell])
-                    {
-                        image[cell + new Vector3i(0, 0, 1)] = true;
-                    }
-                    else if (value == true)
+                    if (value == true)
                     {
                         image[cell] = true;
+                        image[cell + new Vector3i(0, 0, 1)] = true;
                     }
                     else if (value == false)
                     {
                         image[cell] = false;
+                        image[cell + new Vector3i(0, 0, 1)] = false;
                     }
                 }
             }
