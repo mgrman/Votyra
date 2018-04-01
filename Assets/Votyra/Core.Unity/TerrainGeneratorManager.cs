@@ -11,6 +11,7 @@ using Votyra.Core.GroupSelectors;
 using Votyra.Core.TerrainGenerators;
 using Votyra.Core;
 using Votyra.Core.Logging;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core
 {
@@ -86,7 +87,7 @@ namespace Votyra.Core
                         groupActions = _groupsSelector.GetGroupsToUpdate(context);
                         if (groupActions.ToRecompute.Any())
                         {
-                            _logger.LogMessage($"Groups to recompute {groupActions.ToRecompute.Count()}. Groups to keep {groupActions.ToKeep.Count()}.");
+                            _logger.LogMessage($"Groups to recompute {groupActions.ToRecompute.Count()}. Groups to keep {groupActions.ToKeep.Count()}.\r\nRecomputed:\r\n{groupActions.ToRecompute.StringJoin("\r\n")}");
                         }
                     }
                     var toRecompute = groupActions?.ToRecompute ?? Enumerable.Empty<TGroupKey>();

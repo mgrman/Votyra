@@ -36,7 +36,7 @@ namespace Votyra.Core.Logging
 
         private string Format(object message)
         {
-            return $"{_name} : {message}";
+            return $"{message}\n{_name}";
         }
     }
 }

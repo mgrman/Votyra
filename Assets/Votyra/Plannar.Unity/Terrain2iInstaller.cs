@@ -18,7 +18,6 @@ namespace Votyra.Plannar.Unity
 {
     public class Terrain2iInstaller : MonoInstaller
     {
-
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<TerrainGenerator2i>().AsSingle();
