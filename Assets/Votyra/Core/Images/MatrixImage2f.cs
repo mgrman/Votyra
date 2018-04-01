@@ -20,16 +20,17 @@ namespace Votyra.Core.Images
 
         private static Range2f CalculateRangeZ(LockableMatrix2<float> values)
         {
-            int countX = values.size.X;
-            int countY = values.size.Y;
+            int countX = values.Size.X;
+            int countY = values.Size.Y;
 
             float min = float.MaxValue;
             float max = float.MinValue;
-            for (int x = 0; x < countX; x++)
+            for (int ix = 0; ix < countX; ix++)
             {
-                for (int y = 0; y < countY; y++)
+                for (int iy = 0; iy < countY; iy++)
                 {
-                    float val = values[x, y];
+                    var i = new Vector2i(ix, iy);
+                    float val = values[i];
 
                     min = Math.Min(min, val);
                     max = Math.Max(max, val);
@@ -40,9 +41,7 @@ namespace Votyra.Core.Images
 
         public float Sample(Vector2i point)
         {
-            if (point.X < 0 || point.Y < 0 || point.X >= Image.size.X || point.Y >= Image.size.Y)
-                return 0;
-            return Image[point.X, point.Y];
+            return Image.TryGet(point, 0);
         }
 
         public void StartUsing()

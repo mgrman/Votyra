@@ -55,13 +55,13 @@ namespace Votyra.Plannar.Images.Constraints
                     Vector2i cell_x1y0 = sampler.CellToX1Y0(cell);
                     Vector2i cell_x1y1 = sampler.CellToX1Y1(cell);
 
-                    if (cell_x0y0.IsAsIndexContained(editableMatrix.size))
+                    if (editableMatrix.ContainsIndex(cell_x0y0))
                         editableMatrix[cell_x0y0] = processedSample.x0y0;
-                    if (cell_x0y1.IsAsIndexContained(editableMatrix.size))
+                    if (editableMatrix.ContainsIndex(cell_x0y1))
                         editableMatrix[cell_x0y1] = processedSample.x0y1;
-                    if (cell_x1y0.IsAsIndexContained(editableMatrix.size))
+                    if (editableMatrix.ContainsIndex(cell_x1y0))
                         editableMatrix[cell_x1y0] = processedSample.x1y0;
-                    if (cell_x1y1.IsAsIndexContained(editableMatrix.size))
+                    if (editableMatrix.ContainsIndex(cell_x1y1))
                         editableMatrix[cell_x1y1] = processedSample.x1y1;
                 }
             }

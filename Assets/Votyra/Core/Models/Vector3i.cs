@@ -32,17 +32,6 @@ namespace Votyra.Core.Models
             this.Z = z;
         }
 
-        [Obsolete("Use ContainsIndex()")]
-        public bool IsAsIndexContained(Vector3i size)
-        {
-            return X >= 0 && Y >= 0 && Z >= 0 && X < size.X && Y < size.Y && Z < size.Z;
-        }
-
-        public bool ContainsIndex(Vector3i index)
-        {
-            return index.X >= 0 && index.Y >= 0 && index.Z >= 0 && index.X < this.X && index.Y < this.Y && index.Z < this.Z;
-        }
-
         public static Vector3i operator +(Vector3i a, int b)
         {
             return new Vector3i(a.X + b, a.Y + b, a.Z + b);

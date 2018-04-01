@@ -11,13 +11,11 @@ namespace Votyra.Core.GroupSelectors
     {
         private readonly IImageSampler3 _imageSampler;
         private readonly Vector3i _cellInGroupCount;
-        private readonly IThreadSafeLogger _logger;
 
-        public GroupsByCameraVisibilitySelector3i(ITerrainConfig terrainConfig, IImageSampler3 imageSampler, IThreadSafeLogger logger)
+        public GroupsByCameraVisibilitySelector3i(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
             _imageSampler = imageSampler;
             _cellInGroupCount = terrainConfig.CellInGroupCount;
-            _logger = logger;
         }
 
         public GroupActions<Vector3i> GetGroupsToUpdate(IFrameData3b options)

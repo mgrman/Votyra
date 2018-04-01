@@ -4,18 +4,18 @@ namespace Votyra.Core.Models
     {
         private readonly T[,] _points;
         public Vector2i offset { get; }
-        public Vector2i size { get; }
+        public Vector2i Size { get; }
 
         public MatrixWithOffset2(Vector2i matrixSize, Vector2i indicesOffset)
         {
             _points = new T[matrixSize.X + indicesOffset.X, matrixSize.Y + indicesOffset.Y];
             offset = indicesOffset;
-            size = matrixSize;
+            Size = matrixSize;
         }
 
         public bool IsSameSize(Vector2i size, Vector2i offset)
         {
-            return this.size == size && this.offset == offset;
+            return this.Size == size && this.offset == offset;
         }
 
         public T this[int ix, int iy]

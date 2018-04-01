@@ -2,20 +2,20 @@ namespace Votyra.Core.Models
 {
     public class LockableMatrix2<T> : IMatrix2<T>
     {
-        private T[,] _points;
-
-        public Vector2i size { get; }
+        private readonly T[,] _points;
 
         private readonly object _syncLock = new object();
 
         private object _accessLock;
 
-        public bool IsLocked
+        public Vector2i Size { get; }
+
+        public bool IsLocked => _accessLock != null;
+
+        public LockableMatrix2(Vector2i matrixSize)
         {
-            get
-            {
-                return _accessLock != null;
-            }
+            _points = new T[matrixSize.X, matrixSize.Y];
+            Size = matrixSize;
         }
 
         public void Lock(object lockObject)
@@ -40,31 +40,9 @@ namespace Votyra.Core.Models
             }
         }
 
-        public LockableMatrix2(Vector2i matrixSize)
-        {
-            _points = new T[matrixSize.X, matrixSize.Y];
-            size = matrixSize;
-        }
-
         public bool IsSameSize(Vector2i size)
         {
-            return this.size == size;
-        }
-
-        public T this[int ix, int iy]
-        {
-            get
-            {
-                return _points[ix, iy];
-            }
-            set
-            {
-                if (IsLocked)
-                {
-                    throw new MatrixLockedException();
-                }
-                _points[ix, iy] = value;
-            }
+            return this.Size == size;
         }
 
         public T this[Vector2i i]

@@ -22,11 +22,12 @@ namespace Votyra.Cubical.Unity
                 var size = new Vector2i(width, height);
                 var matrix = new LockableMatrix2<float>(size);
 
-                for (int x = 0; x < width; x++)
+                for (int ix = 0; ix < width; ix++)
                 {
-                    for (int y = 0; y < height; y++)
+                    for (int iy = 0; iy < height; iy++)
                     {
-                        matrix[x, y] = (initialTexture.GetPixel(x, y).grayscale * scale.Z);
+                        var i = new Vector2i(ix, iy);
+                        matrix[i] = (initialTexture.GetPixel(ix, iy).grayscale * scale.Z);
                     }
                 }
                 _image = new UmbraImage3b(new MatrixImage2f(matrix, Rect2i.Zero));
@@ -36,17 +37,18 @@ namespace Votyra.Cubical.Unity
             {
                 var scale = imageConfig.InitialDataScale;
 
-                int width = initialMatrix.size.X;
-                int height = initialMatrix.size.Y;
+                int width = initialMatrix.Size.X;
+                int height = initialMatrix.Size.Y;
 
                 var size = new Vector2i(width, height);
                 var matrix = new LockableMatrix2<float>(size);
 
-                for (int x = 0; x < width; x++)
+                for (int ix = 0; ix < width; ix++)
                 {
-                    for (int y = 0; y < height; y++)
+                    for (int iy = 0; iy < height; iy++)
                     {
-                        matrix[x, y] = initialMatrix[x, y] * scale.Z;
+                        var i = new Vector2i(ix, iy);
+                        matrix[i] = initialMatrix[i] * scale.Z;
                     }
                 }
                 _image = new UmbraImage3b(new MatrixImage2f(matrix, Rect2i.Zero));

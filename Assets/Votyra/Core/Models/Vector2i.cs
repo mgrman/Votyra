@@ -25,17 +25,6 @@ namespace Votyra.Core.Models
             return new Vector2i(value, value);
         }
 
-        [Obsolete("Use ContainsIndex()")]
-        public bool IsAsIndexContained(Vector2i size)
-        {
-            return this.X >= 0 && this.Y >= 0 && this.X < size.X && this.Y < size.Y;
-        }
-
-        public bool ContainsIndex(Vector2i index)
-        {
-            return index.X >= 0 && index.Y >= 0 && index.X < this.X && index.Y < this.Y;
-        }
-
         public static Vector2i operator +(Vector2i a, int b)
         {
             return new Vector2i(a.X + b, a.Y + b);

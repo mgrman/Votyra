@@ -97,6 +97,18 @@ namespace Votyra.Core.Models
             return Rect2f.FromMinAndMax(Min.ToVector2f(), Max.ToVector2f());
         }
 
+        public void ForeachPointExlusive(Action<Vector2i> action)
+        {
+            for (int ix = this.Min.X; ix < this.Max.X; ix++)
+            {
+                for (int iy = this.Min.Y; iy < this.Max.Y; iy++)
+                {
+                    var i = new Vector2i(ix, iy);
+                    action(i);
+                }
+            }
+        }
+
         public static bool operator ==(Rect2i a, Rect2i b)
         {
             return a.Min == b.Min && a.Max == b.Max;

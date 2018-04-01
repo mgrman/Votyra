@@ -36,24 +36,25 @@ namespace Votyra.Core.Images
             }
             else if (_invalidatedArea.HasValue || _image == null)
             {
-                _invalidatedArea = _invalidatedArea ?? _editableMatrix.size.ToRect3i();
+                _invalidatedArea = _invalidatedArea ?? _editableMatrix.Size.ToRect3i();
                 // Debug.LogFormat("Update readonlyCount:{0}", _readonlyMatrices.Count);
 
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)
                 {
-                    readonlyMatrix = new LockableMatrix3<bool>(_editableMatrix.size);
+                    readonlyMatrix = new LockableMatrix3<bool>(_editableMatrix.Size);
                     _readonlyMatrices.Add(readonlyMatrix);
                 }
 
                 //sync
-                for (int x = 0; x < _editableMatrix.size.X; x++)
+                for (int ix = 0; ix < _editableMatrix.Size.X; ix++)
                 {
-                    for (int y = 0; y < _editableMatrix.size.Y; y++)
+                    for (int iy = 0; iy < _editableMatrix.Size.Y; iy++)
                     {
-                        for (int z = 0; z < _editableMatrix.size.Z; z++)
+                        for (int iz = 0; iz < _editableMatrix.Size.Z; iz++)
                         {
-                            readonlyMatrix[x, y, z] = _editableMatrix[x, y, z];
+                            var i = new Vector3i(ix, iy, iz);
+                            readonlyMatrix[i] = _editableMatrix[i];
                         }
                     }
                 }
@@ -101,7 +102,7 @@ namespace Votyra.Core.Images
 
             public bool Sample(Vector3i point)
             {
-                if (point.IsAsIndexContained(_editableMatrix.size))
+                if (_editableMatrix.ContainsIndex(point))
                 {
                     return _editableMatrix[point];
                 }
@@ -147,7 +148,7 @@ namespace Votyra.Core.Images
             {
                 _editableMatrix = editableImage._editableMatrix.NativeMatrix;
                 _editableImage = editableImage;
-                Area = area.IntersectWith(editableImage._editableMatrix.size.ToRect3i());
+                Area = area.IntersectWith(editableImage._editableMatrix.Size.ToRect3i());
             }
 
             public void Dispose()

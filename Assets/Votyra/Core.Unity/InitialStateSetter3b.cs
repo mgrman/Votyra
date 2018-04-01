@@ -151,22 +151,23 @@ namespace Votyra.Core.Images
                 Rect3i matrixAreaToFill;
                 if (imageAccessor.Area == Rect3i.All)
                 {
-                    matrixAreaToFill = new Vector3i(texture.size.X, texture.size.Y, fallbackMaxZ).ToRect3i();
+                    matrixAreaToFill = new Vector3i(texture.Size.X, texture.Size.Y, fallbackMaxZ).ToRect3i();
                 }
                 else
                 {
                     matrixAreaToFill = imageAccessor.Area;
                 }
 
-                for (int x = matrixAreaToFill.Min.X; x < matrixAreaToFill.Max.X; x++)
+                for (int ix = matrixAreaToFill.Min.X; ix < matrixAreaToFill.Max.X; ix++)
                 {
-                    for (int y = matrixAreaToFill.Min.Y; y < matrixAreaToFill.Max.Y; y++)
+                    for (int iy = matrixAreaToFill.Min.Y; iy < matrixAreaToFill.Max.Y; iy++)
                     {
-                        var value = texture[x, y] * scale;
+                        var i = new Vector2i(ix, iy);
+                        var value = texture[i] * scale;
 
                         for (int z = matrixAreaToFill.Min.Z; z < matrixAreaToFill.Max.Z; z++)
                         {
-                            var pos = new Vector3i(x, y, z);
+                            var pos = new Vector3i(ix, iy, z);
                             imageAccessor[pos] = value - z > 0;
                         }
                     }
@@ -181,22 +182,22 @@ namespace Votyra.Core.Images
                 Rect3i matrixAreaToFill;
                 if (imageAccessor.Area == Rect3i.All)
                 {
-                    matrixAreaToFill = texture.size.ToRect3i();
+                    matrixAreaToFill = texture.Size.ToRect3i();
                 }
                 else
                 {
                     matrixAreaToFill = imageAccessor.Area;
                 }
 
-                for (int x = matrixAreaToFill.Min.X; x < matrixAreaToFill.Max.X; x++)
+                for (int ix = matrixAreaToFill.Min.X; ix < matrixAreaToFill.Max.X; ix++)
                 {
-                    for (int y = matrixAreaToFill.Min.Y; y < matrixAreaToFill.Max.Y; y++)
+                    for (int iy = matrixAreaToFill.Min.Y; iy < matrixAreaToFill.Max.Y; iy++)
                     {
-                        for (int z = matrixAreaToFill.Min.Z; z < matrixAreaToFill.Max.Z; z++)
+                        for (int iz = matrixAreaToFill.Min.Z; iz < matrixAreaToFill.Max.Z; iz++)
                         {
-                            var pos = new Vector3i(x, y, z);
+                            var i = new Vector3i(ix, iy, iz);
 
-                            imageAccessor[pos] = texture[x, y, z] * scale > 0;
+                            imageAccessor[i] = texture[i] * scale > 0;
                         }
                     }
                 }

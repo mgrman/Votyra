@@ -9,12 +9,13 @@ namespace Votyra.Plannar.Images.Constraints
     {
         public Rect2i FixImage(Matrix2<float> editableMatrix, Rect2i invalidatedImageArea, Direction direction)
         {
-            invalidatedImageArea = (editableMatrix.size - Vector2i.One).ToRect2i().IntersectWith(invalidatedImageArea);
-            for (int cell_x = invalidatedImageArea.Min.X; cell_x <= invalidatedImageArea.Max.X; cell_x++)
+            invalidatedImageArea = (editableMatrix.Size - Vector2i.One).ToRect2i().IntersectWith(invalidatedImageArea);
+            for (int ix = invalidatedImageArea.Min.X; ix <= invalidatedImageArea.Max.X; ix++)
             {
-                for (int cell_y = invalidatedImageArea.Min.Y; cell_y <= invalidatedImageArea.Max.Y; cell_y++)
+                for (int iy = invalidatedImageArea.Min.Y; iy <= invalidatedImageArea.Max.Y; iy++)
                 {
-                    editableMatrix[cell_x, cell_y] = (float)Math.Round(editableMatrix[cell_x, cell_y]);
+                    var i = new Vector2i(ix, iy);
+                    editableMatrix[i] = (float)Math.Round(editableMatrix[i]);
                 }
             }
             return invalidatedImageArea;
