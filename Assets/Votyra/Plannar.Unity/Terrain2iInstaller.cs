@@ -1,18 +1,14 @@
+using System;
 using UnityEngine;
+using Votyra.Core;
+using Votyra.Core.Behaviours;
+using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
-using Votyra.Core.GroupSelectors;
-using Votyra.Plannar.Images;
-using Votyra.Plannar.Images.Constraints;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.TerrainGenerators;
-using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.Utils;
 using Zenject;
-using Votyra.Core;
-using System;
-using Votyra.Core.Behaviours;
 
 namespace Votyra.Plannar.Unity
 {
@@ -38,7 +34,6 @@ namespace Votyra.Plannar.Unity
                     var materialConfig = context.Container.Resolve<IMaterialConfig>();
                     Func<GameObject> factory = () => CreateNewGameObject(root, terrainConfig, materialConfig);
                     return factory;
-
                 }).AsSingle();
         }
 

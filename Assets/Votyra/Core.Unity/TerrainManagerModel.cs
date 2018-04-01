@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Votyra.Core.Models;
-using System;
-using UniRx;
+﻿using System.Collections.Generic;
 using System.Linq;
+using UniRx;
 using Votyra.Core.Images;
 
 namespace Votyra.Core

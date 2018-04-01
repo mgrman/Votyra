@@ -1,6 +1,5 @@
 using System.Linq;
 using UnityEngine;
-using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
@@ -10,7 +9,6 @@ namespace Votyra.Core.Images
 {
     public class InitialStateSetter2f
     {
-
         public InitialStateSetter2f(IEditableImage2f editableImage, IInitialImageConfig imageConfig, IImageSampler2i sampler, [Inject(Id = "root")]GameObject root)
         {
             FillInitialState(editableImage, imageConfig, sampler, root);
@@ -101,7 +99,6 @@ namespace Votyra.Core.Images
                             })
                             .DefaultIfEmpty(0)
                             .Max() * scale;
-
                     }
                 }
             }

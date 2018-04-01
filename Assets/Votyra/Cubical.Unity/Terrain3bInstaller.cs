@@ -1,23 +1,19 @@
+using System;
 using UnityEngine;
 using Votyra.Core;
+using Votyra.Core.Behaviours;
+using Votyra.Core.GroupSelectors;
+using Votyra.Core.Images;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
-using Votyra.Core.GroupSelectors;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.TerrainGenerators;
-using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.Utils;
 using Zenject;
-using Votyra.Core.Images.Constraints;
-using Votyra.Core.Images;
-using Votyra.Core.Behaviours;
-using System;
 
 namespace Votyra.Cubical.Unity
 {
     public class Terrain3bInstaller : MonoInstaller
     {
-
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<TerrainGenerator3b>().AsSingle();
@@ -38,7 +34,6 @@ namespace Votyra.Cubical.Unity
                     var materialConfig = context.Container.Resolve<IMaterialConfig>();
                     Func<GameObject> factory = () => CreateNewGameObject(root, terrainConfig, materialConfig);
                     return factory;
-
                 }).AsSingle();
         }
 
@@ -54,6 +49,5 @@ namespace Votyra.Cubical.Unity
             meshRenderer.materials = ArrayUtils.CreateNonNull(materialConfig.Material, materialConfig.MaterialWalls);
             return go;
         }
-
     }
 }

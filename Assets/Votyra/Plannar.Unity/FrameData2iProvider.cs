@@ -1,25 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
-using Votyra.Core.Behaviours;
+using Votyra.Core;
 using Votyra.Core.Images;
-using Votyra.Core.Logging;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
-using Votyra.Core.Profiling;
-using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
-using Votyra.Core.GroupSelectors;
-using Votyra.Plannar.Images;
-using Votyra.Plannar.Images.Constraints;
-using Votyra.Core.ImageSamplers;
-using Votyra.Core.TerrainGenerators;
 using Zenject;
-using Votyra.Core;
 
 namespace Votyra.Plannar
 {
@@ -34,7 +21,6 @@ namespace Votyra.Plannar
 
         [Inject(Id = "root")]
         protected GameObject _root;
-
 
         public IFrameData2i GetCurrentFrameData()
         {
@@ -66,6 +52,5 @@ namespace Votyra.Plannar
                 (image as IImageInvalidatableImage2i)?.InvalidatedArea ?? Rect2i.All
             );
         }
-
     }
 }

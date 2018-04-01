@@ -1,5 +1,4 @@
 using System;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
@@ -17,7 +16,6 @@ namespace Votyra.Core.Models
             this.Z = z;
             this.W = w;
         }
-
 
         public static bool operator ==(Vector4f a, Vector4f b)
         {

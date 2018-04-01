@@ -2,14 +2,13 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using Votyra.Core;
 using Votyra.Core.Images;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
-using Votyra.Core.TerrainMeshes;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
-using Votyra.Core;
+using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 {

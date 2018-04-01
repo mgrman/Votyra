@@ -1,5 +1,4 @@
 using System;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
@@ -85,12 +84,16 @@ namespace Votyra.Core.Models
             {
                 case 0:
                     return new Vector4f(m00, m10, m20, m30);
+
                 case 1:
                     return new Vector4f(m01, m11, m21, m31);
+
                 case 2:
                     return new Vector4f(m02, m12, m22, m32);
+
                 case 3:
                     return new Vector4f(m03, m13, m23, m33);
+
                 default:
                     throw new InvalidOperationException($"Unsuported column '{i}'! Column must be between 0-3.");
             }

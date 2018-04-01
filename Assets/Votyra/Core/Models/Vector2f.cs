@@ -28,7 +28,6 @@ namespace Votyra.Core.Models
             return new Vector2f(value, value);
         }
 
-
         public static Vector2f operator +(Vector2f a, float b)
         {
             return new Vector2f(a.X + b, a.Y + b);
@@ -108,6 +107,7 @@ namespace Votyra.Core.Models
         {
             return new Vector2f(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
         }
+
         public Rect2f ToRect2f()
         {
             return Rect2f.FromMinAndSize(Vector2f.Zero, this);

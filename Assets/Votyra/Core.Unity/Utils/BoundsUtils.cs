@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Core.Models;
 
 namespace Votyra.Core.Utils
 {
     public static class BoundsUtils
     {
-
         public static List<Vector3> GetCorners(this Bounds obj, bool includePosition = true)
         {
             var halfSize = obj.size / 2;

@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using NUnit.Framework;
+using System.Collections.Generic;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.Models;
 

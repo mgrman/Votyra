@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
-using Votyra.Core.Models;
-using System;
-using UniRx;
 
 namespace Votyra.Core
 {
@@ -12,6 +8,7 @@ namespace Votyra.Core
     {
         [SerializeField]
         public string Name;
+
         [SerializeField]
         public GameObject Prefab;
 

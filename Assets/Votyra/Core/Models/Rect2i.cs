@@ -1,5 +1,4 @@
 using System;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {

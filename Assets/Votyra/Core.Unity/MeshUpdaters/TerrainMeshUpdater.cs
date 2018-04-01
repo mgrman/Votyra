@@ -160,6 +160,5 @@ namespace Votyra.Core.MeshUpdaters
 
             return meshFilter;
         }
-
     }
 }

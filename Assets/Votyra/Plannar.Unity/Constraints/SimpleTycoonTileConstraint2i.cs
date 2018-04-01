@@ -5,7 +5,6 @@ using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
 
 namespace Votyra.Plannar.Images.Constraints
 {
@@ -35,7 +34,6 @@ namespace Votyra.Plannar.Images.Constraints
             return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
         }
 
-
         public Rect2i Constrain(Direction direction, Rect2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<float> editableMatrix)
         {
             IComparer<float> comparer;
@@ -49,6 +47,7 @@ namespace Votyra.Plannar.Images.Constraints
                     getValue = cell => sampler.Sample(editableMatrix, cell).Max;
                     process = ProcessUp;
                     break;
+
                 case Direction.Down:
                 default:
                     direction = Direction.Down;
@@ -125,7 +124,6 @@ namespace Votyra.Plannar.Images.Constraints
                             }
                         }
                     }
-
                 }
             }
             return invalidatedCellArea;
@@ -141,7 +139,6 @@ namespace Votyra.Plannar.Images.Constraints
                 Position = pos;
                 Value = value;
             }
-
         };
 
         private SampledData2i ProcessUp(SampledData2i sampleData)
@@ -151,6 +148,7 @@ namespace Votyra.Plannar.Images.Constraints
             SampledData2i choosenTemplateTile = TileMap[normalizedHeightData];
             return choosenTemplateTile + height;
         }
+
         private SampledData2i ProcessDown(SampledData2i sampleData)
         {
             return -ProcessUp(-sampleData);

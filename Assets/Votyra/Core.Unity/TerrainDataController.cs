@@ -1,11 +1,11 @@
+using System;
+using System.Linq;
+using UniRx;
 using UnityEngine;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
 using Zenject;
-using System.Linq;
-using UniRx;
-using System;
 
 namespace Votyra.Core.Unity
 {
@@ -104,6 +104,7 @@ namespace Votyra.Core.Unity
         {
             UpdateModel();
         }
+
         protected void OnValidate()
         {
             UpdateModel();

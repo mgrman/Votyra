@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
@@ -17,7 +15,6 @@ namespace Votyra.Core.Models
         public Vector3f size => max - min;
 
         public Vector3f extents => size / 2f;
-
 
         private Rect3f(Vector3f min, Vector3f max)
         {

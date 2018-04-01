@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Votyra.Core.Models;
-using System;
+﻿using System.Collections.Generic;
 using UniRx;
 using Votyra.Core.Images;
 

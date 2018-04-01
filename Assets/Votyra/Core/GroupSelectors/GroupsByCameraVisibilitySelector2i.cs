@@ -55,7 +55,6 @@ namespace Votyra.Core.GroupSelectors
             int max_group_x = MathUtils.CeilToInt(localCameraBounds.max.X / cellInGroupCount_x);
             int max_group_y = MathUtils.CeilToInt(localCameraBounds.max.Y / cellInGroupCount_y);
 
-
             var groupsToRecompute = PooledSet<Vector2i>.Create();
             var groupsToKeep = PooledSet<Vector2i>.Create();
 

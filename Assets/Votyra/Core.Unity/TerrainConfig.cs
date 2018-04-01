@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using Votyra.Core.Models;
+﻿using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
@@ -17,7 +16,6 @@ namespace Votyra.Core.Images
         public bool FlipTriangles { get; }
         public bool DrawBounds { get; }
         public bool Async { get; }
-
 
         public static bool operator ==(TerrainConfig a, TerrainConfig b)
         {

@@ -1,7 +1,7 @@
 using UnityEngine;
-using Votyra.Core.Models;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
+using Votyra.Core.Models;
 using Zenject;
 
 namespace Votyra.Core
@@ -27,9 +27,6 @@ namespace Votyra.Core
         private Vector2i? lastCell;
 
         private float? _centerValueToReuse;
-
-
-
 
         public void Tick()
         {

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -32,11 +30,12 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
             }
         };
     }
+
     public void OnPreprocessBuild(BuildReport report, string path)
     {
-
         ConstrainNamespaces();
     }
+
     public void OnPreprocessBuild(BuildReport report)
     {
         ConstrainNamespaces();
@@ -79,5 +78,4 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
             }
         }
     }
-
 }

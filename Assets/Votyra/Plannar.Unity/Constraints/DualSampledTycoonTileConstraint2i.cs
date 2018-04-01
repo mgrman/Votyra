@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Votyra.Core.Images;
-using Votyra.Core.Models;
-using Votyra.Core.Utils;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Images.Constraints;
+using Votyra.Core.ImageSamplers;
+using Votyra.Core.Models;
 
 namespace Votyra.Plannar.Images.Constraints
 {
@@ -34,7 +33,6 @@ namespace Votyra.Plannar.Images.Constraints
 
             return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
         }
-
 
         public Rect2i Constrain(Direction direction, Rect2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<float> editableMatrix)
         {
@@ -80,7 +78,6 @@ namespace Votyra.Plannar.Images.Constraints
                 Position = pos;
                 Value = value;
             }
-
         };
 
         private SampledData2i Process(SampledData2i sampleData)

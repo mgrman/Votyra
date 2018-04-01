@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Votyra.Core.Models;
-using System;
-using UniRx;
+﻿using UnityEngine;
 
 namespace Votyra.Core
 {

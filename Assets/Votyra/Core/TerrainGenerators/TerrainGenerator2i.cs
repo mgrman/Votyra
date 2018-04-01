@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
-using Votyra.Core.TerrainMeshes;
-using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.Profiling;
-using Votyra.Core.Images;
+using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators
 {
@@ -13,6 +12,7 @@ namespace Votyra.Core.TerrainGenerators
         private readonly ITerrainMesher2i _mesher;
         private readonly IProfiler _profiler;
         private readonly Vector3i _cellInGroupCount;
+
         public TerrainGenerator2i(ITerrainMesher2i mesher, ITerrainConfig terrainConfig, IProfiler profiler)
         {
             _mesher = mesher;

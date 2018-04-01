@@ -15,7 +15,6 @@ namespace Votyra.Core.Images
             InvalidatedArea = invalidatedArea;
         }
 
-
         public bool Sample(Vector3i point)
         {
             if (point.X < 0 || point.Y < 0 || point.Z < 0 || point.X >= Image.size.X || point.Y >= Image.size.Y || point.Z >= Image.size.Z)

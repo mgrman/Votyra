@@ -1,4 +1,3 @@
-using Votyra.Core.Images;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.ImageSamplers
@@ -54,6 +53,5 @@ namespace Votyra.Core.ImageSamplers
         {
             return new Vector3i(pos.X * 2 + 1, pos.Y * 2 + 1, pos.Z * 2 + 1);
         }
-
     }
 }

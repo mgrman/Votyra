@@ -6,5 +6,4 @@ namespace Votyra.Core.Images
         Up = 1,
         Down = -1
     }
-
 }

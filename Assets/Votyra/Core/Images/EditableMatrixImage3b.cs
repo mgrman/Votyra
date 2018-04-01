@@ -1,13 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Votyra.Core.Images;
-using Votyra.Core.Models;
-using Votyra.Core.Utils;
 using Votyra.Core.Images.Constraints;
-using Votyra.Core.ImageSamplers;
-using Zenject;
 using Votyra.Core.Logging;
+using Votyra.Core.Models;
+using Zenject;
 
 namespace Votyra.Core.Images
 {
@@ -125,7 +121,10 @@ namespace Votyra.Core.Images
 
             public bool this[Vector3i pos]
             {
-                get { return _editableMatrix[pos.X, pos.Y, pos.Z]; }
+                get
+                {
+                    return _editableMatrix[pos.X, pos.Y, pos.Z];
+                }
                 set
                 {
                     if (value && !_editableMatrix[pos.X, pos.Y, pos.Z])

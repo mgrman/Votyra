@@ -1,5 +1,3 @@
-using System;
-
 namespace Votyra.Core.Models
 {
     public class LockableMatrix2<T> : IMatrix2<T>
@@ -85,5 +83,4 @@ namespace Votyra.Core.Models
             }
         }
     }
-
 }

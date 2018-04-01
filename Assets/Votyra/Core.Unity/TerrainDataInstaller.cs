@@ -1,6 +1,6 @@
-using Zenject;
-using Votyra.Core.Profiling;
 using Votyra.Core.Logging;
+using Votyra.Core.Profiling;
+using Zenject;
 
 namespace Votyra.Core.Unity
 {
@@ -17,7 +17,6 @@ namespace Votyra.Core.Unity
                 {
                     //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
                     return new UnityLogger(context.ObjectType.FullName, context.ObjectInstance as UnityEngine.Object);
-
                 }).AsTransient();
 
             Container.Bind<IProfiler>()
@@ -25,7 +24,6 @@ namespace Votyra.Core.Unity
                 {
                     //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
                     return CreateProfiler(context.ObjectInstance as UnityEngine.Object);
-
                 }).AsTransient();
         }
 

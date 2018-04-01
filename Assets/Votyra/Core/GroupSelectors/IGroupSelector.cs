@@ -1,5 +1,3 @@
-using Votyra.Core.Models;
-
 namespace Votyra.Core.GroupSelectors
 {
     public interface IGroupSelector<TFrameData, TKey>

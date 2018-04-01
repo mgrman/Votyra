@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Votyra.Core.Models;
 using Votyra.Core.Models.ObjectPool;
 
 namespace Votyra.Core.Pooling
@@ -11,7 +10,9 @@ namespace Votyra.Core.Pooling
 
         private static readonly ConcurentObjectPool<PooledSet<T>> Pool = new ConcurentObjectPool<PooledSet<T>>(5, () => new PooledSet<T>());
 
-        private PooledSet() { }
+        private PooledSet()
+        {
+        }
 
         public static PooledSet<T> Create()
         {

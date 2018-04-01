@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
@@ -13,7 +12,6 @@ namespace Votyra.Core.Images
 
         public Material Material { get; }
         public Material MaterialWalls { get; }
-
 
         public static bool operator ==(MaterialConfig a, MaterialConfig b)
         {

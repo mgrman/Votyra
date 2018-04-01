@@ -1,14 +1,10 @@
+using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.TestTools;
-using Votyra.Core.Models;
-using NUnit.Framework;
 using UniRx;
+using Votyra.Core.Models;
 
 namespace Votyra.Core
 {

@@ -1,4 +1,3 @@
-using Votyra.Core.Images;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.ImageSamplers

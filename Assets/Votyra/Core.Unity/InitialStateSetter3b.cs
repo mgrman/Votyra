@@ -1,6 +1,5 @@
 using System.Linq;
 using UnityEngine;
-using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
@@ -100,7 +99,6 @@ namespace Votyra.Core.Images
                                     return IsInside(collider, worldPos, maxSize);
                                 })
                                 .Any(o => o);
-
                         }
                     }
                 }
@@ -125,7 +123,6 @@ namespace Votyra.Core.Images
                 }
             }
             while (isHit);
-
 
             isHit = false;
             point = outsidePoint;

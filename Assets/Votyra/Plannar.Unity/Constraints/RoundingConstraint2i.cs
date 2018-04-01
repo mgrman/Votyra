@@ -1,17 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Votyra.Core.Images;
-using Votyra.Core.Models;
-using Votyra.Core.Utils;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Images.Constraints;
+using Votyra.Core.Models;
 
 namespace Votyra.Plannar.Images.Constraints
 {
     public class RoundingConstraint2i : IImageConstraint2i
     {
-
         public Rect2i FixImage(Matrix2<float> editableMatrix, Rect2i invalidatedImageArea, Direction direction)
         {
             invalidatedImageArea = (editableMatrix.size - Vector2i.One).ToRect2i().IntersectWith(invalidatedImageArea);

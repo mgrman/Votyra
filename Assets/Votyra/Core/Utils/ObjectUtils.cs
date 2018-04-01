@@ -11,6 +11,7 @@ namespace Votyra.Core.Utils
                 (obj as IDisposable).Dispose();
             }
         }
+
         public static void UpdateType<T, R>(ref R property)
             where T : R, new()
         {

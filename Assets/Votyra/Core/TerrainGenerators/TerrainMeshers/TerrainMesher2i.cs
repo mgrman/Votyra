@@ -1,16 +1,14 @@
 using System;
+using Votyra.Core.Images;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
-using Votyra.Core.ImageSamplers;
-using Votyra.Core.TerrainGenerators;
-using Votyra.Core.Images;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher2i : ITerrainMesher2i
     {
-
         protected readonly IImageSampler2i _imageSampler;
         protected readonly Vector2i _cellInGroupCount;
 

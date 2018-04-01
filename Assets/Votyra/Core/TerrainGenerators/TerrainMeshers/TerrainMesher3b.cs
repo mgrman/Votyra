@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Votyra.Core.Images;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
-using Votyra.Core.ImageSamplers;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
@@ -20,6 +20,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             _imageSampler = imageSampler;
             _cellInGroupCount = terrainConfig.CellInGroupCount;
         }
+
         protected IImage3b Image { get; private set; }
         protected Vector3i groupPosition;
         protected Vector3i groupSize;

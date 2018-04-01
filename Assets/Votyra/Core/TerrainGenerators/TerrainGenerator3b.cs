@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
-using Votyra.Core.TerrainMeshes;
-using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.Profiling;
-using Votyra.Core.Images;
+using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators
 {
@@ -13,6 +12,7 @@ namespace Votyra.Core.TerrainGenerators
         private readonly ITerrainMesher3b _mesher;
         private readonly IProfiler _profiler;
         private readonly Vector3i _cellInGroupCount;
+
         public TerrainGenerator3b(ITerrainMesher3b mesher, ITerrainConfig terrainConfig, IProfiler profiler)
         {
             _mesher = mesher;
@@ -27,7 +27,6 @@ namespace Votyra.Core.TerrainGenerators
             int cellInGroupCount_y = _cellInGroupCount.Y;
             int cellInGroupCount_z = _cellInGroupCount.Z;
             PooledDictionary<Vector3i, ITerrainMesh> meshes;
-
 
             using (_profiler.Start("init"))
             {

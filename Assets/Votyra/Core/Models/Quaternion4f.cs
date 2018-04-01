@@ -33,7 +33,6 @@ namespace Votyra.Core.Models
             float sinYawOver2 = (float)Math.Sin((double)yawOver2);
             float cosYawOver2 = (float)Math.Cos((double)yawOver2);
 
-
             float qw = cosYawOver2 * cosPitchOver2 * cosRollOver2 + sinYawOver2 * sinPitchOver2 * sinRollOver2;
             float qx = cosYawOver2 * sinPitchOver2 * cosRollOver2 + sinYawOver2 * cosPitchOver2 * sinRollOver2;
             float qy = sinYawOver2 * cosPitchOver2 * cosRollOver2 - cosYawOver2 * sinPitchOver2 * sinRollOver2;
@@ -41,7 +40,6 @@ namespace Votyra.Core.Models
 
             return new Quaternion4f(qx, qy, qz, qw);
         }
-
 
         public static bool operator ==(Quaternion4f a, Quaternion4f b)
         {
@@ -52,7 +50,6 @@ namespace Votyra.Core.Models
         {
             return a.x != b.x || a.y != b.y || a.z != b.z || a.w != b.w;
         }
-
 
         public bool Equals(Quaternion4f other)
         {

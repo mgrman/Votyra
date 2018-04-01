@@ -1,6 +1,4 @@
-﻿using Votyra.Core.Models;
-
-namespace Votyra.Core
+﻿namespace Votyra.Core
 {
     public class StateModel : IStateModel
     {

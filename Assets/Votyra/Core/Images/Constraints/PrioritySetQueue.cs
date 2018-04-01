@@ -79,7 +79,6 @@ namespace Votyra.Core.Images.Constraints
                 Value = pos;
                 Priority = value;
             }
-
         }
     }
 }

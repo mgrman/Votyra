@@ -1,5 +1,4 @@
 using System;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
@@ -81,7 +80,7 @@ namespace Votyra.Core.Models
                     else
                         b[j] = 0.0;
 
-                double[] x = Helper(lum, b); // 
+                double[] x = Helper(lum, b); //
                 for (int j = 0; j < n; ++j)
                     result[j][i] = x[j];
             }
@@ -106,13 +105,12 @@ namespace Votyra.Core.Models
                 for (int j = 0; j < n; ++j)
                     lum[i][j] = m[i][j];
 
-
             // make perm[]
             perm = new int[n];
             for (int i = 0; i < n; ++i)
                 perm[i] = i;
 
-            for (int j = 0; j < n - 1; ++j) // process by column. note n-1 
+            for (int j = 0; j < n - 1; ++j) // process by column. note n-1
             {
                 double max = Math.Abs(lum[j][j]);
                 int piv = j;
@@ -151,7 +149,6 @@ namespace Votyra.Core.Models
                             lum[i][k] -= xij * lum[j][k];
                     }
                 }
-
             } // j
 
             return toggle;

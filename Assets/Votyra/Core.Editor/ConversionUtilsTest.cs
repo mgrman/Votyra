@@ -1,22 +1,16 @@
+using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.TestTools;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
-using NUnit.Framework;
 
 namespace Votyra.Core.Editor
 {
     [TestFixture]
     public class ConversionUtilsTest
     {
-
         [Test]
         [TestCase(10)]
         [TestCase(13)]
@@ -52,7 +46,6 @@ namespace Votyra.Core.Editor
                     var vec = initialList[i];
                     newList.Add(new UnityEngine.Vector3(vec.X, vec.Y, vec.Z));
                 }
-
             }
             TimeSpan forLoop = DateTime.UtcNow - start - nothing;
 
@@ -112,7 +105,6 @@ namespace Votyra.Core.Editor
                     var vec = initialList[i];
                     newList[i] = new UnityEngine.Vector3(vec.X, vec.Y, vec.Z);
                 }
-
             }
             TimeSpan forLoop = DateTime.UtcNow - start - nothing;
 

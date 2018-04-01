@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {

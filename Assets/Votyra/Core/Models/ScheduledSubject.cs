@@ -5,7 +5,6 @@ namespace Votyra.Core.Models
 {
     public class ScheduledSubject<T> : IBehaviorSubject<T>
     {
-
         private readonly IScheduler _scheduler;
         private readonly IObservable<T> _observable;
         private readonly IObserver<T> _observer;
@@ -30,6 +29,7 @@ namespace Votyra.Core.Models
                 };
             }
         }
+
         public T Value => _getValue();
 
         public void OnCompleted()
@@ -74,6 +74,7 @@ namespace Votyra.Core.Models
         {
             return new ScheduledSubject<T>(subject, Scheduler.CurrentThread);
         }
+
         public static IBehaviorSubject<T> MakeScheduledOnMainThread<T>(this IBehaviorSubject<T> subject)
         {
             return new ScheduledSubject<T>(subject, Scheduler.MainThread);

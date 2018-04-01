@@ -1,11 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
-using Votyra.Core.Models;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
-using Zenject;
-using Votyra.Core.Utils;
-using System.Collections.Generic;
 using Votyra.Core.Logging;
+using Votyra.Core.Models;
+using Votyra.Core.Utils;
+using Zenject;
 
 namespace Votyra.Core
 {
@@ -50,15 +50,14 @@ namespace Votyra.Core
             OnCellClick(MouseImagePosition());
         }
 
-        Stack<Renderer> _usedDebugObjects = new Stack<Renderer>();
-        Stack<Renderer> _emptyDebugObjects = new Stack<Renderer>();
-        Material _trueMaterial;
-        Material _falseMaterial;
+        private Stack<Renderer> _usedDebugObjects = new Stack<Renderer>();
+        private Stack<Renderer> _emptyDebugObjects = new Stack<Renderer>();
+        private Material _trueMaterial;
+        private Material _falseMaterial;
 
         private void DebugMouse()
         {
             var imageMousePosition = MouseImagePosition();
-
 
             var temp = _emptyDebugObjects;
             _emptyDebugObjects = _usedDebugObjects;
@@ -68,7 +67,6 @@ namespace Votyra.Core
                 GameObject.Destroy(toDelete.gameObject);
             }
             _usedDebugObjects.Clear();
-
 
             var area = Rect3i.FromCenterAndExtents(imageMousePosition, new Vector3i(2, 2, 2));
             using (var image = _editableImage.RequestAccess(area))
@@ -127,7 +125,6 @@ namespace Votyra.Core
             var worldPosition = _root.transform.TransformPoint(localPosition.ToVector3());
             return worldPosition.ToVector3f();
         }
-
 
         private void OnCellClick(Vector3i cell)
         {

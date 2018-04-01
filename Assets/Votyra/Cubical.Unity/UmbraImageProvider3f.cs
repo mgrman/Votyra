@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Votyra.Core.Images;
-using UnityEngine;
-using Votyra.Core.Models;
+﻿using UnityEngine;
 using Votyra.Core;
+using Votyra.Core.Images;
+using Votyra.Core.Models;
 
 namespace Votyra.Cubical.Unity
 {

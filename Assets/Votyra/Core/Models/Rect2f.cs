@@ -1,5 +1,4 @@
 using System;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
@@ -19,7 +18,6 @@ namespace Votyra.Core.Models
             this.Min = min;
             this.Max = max;
         }
-
 
         public Rect2f FromCenterAndSize(Vector2f center, Vector2f size)
         {

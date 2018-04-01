@@ -1,5 +1,4 @@
 using System;
-using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 
 namespace Votyra.Core.GroupSelectors
@@ -13,7 +12,6 @@ namespace Votyra.Core.GroupSelectors
         {
             ToRecompute = toRecompute;
             ToKeep = toKeep;
-
         }
 
         public void Dispose()

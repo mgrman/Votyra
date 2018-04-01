@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using Votyra.Core.Logging;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {

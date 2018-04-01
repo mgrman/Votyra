@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Votyra.Core.Images;
-using Votyra.Core.Models;
-using Votyra.Core.Utils;
 using Votyra.Core.Images.Constraints;
-using Votyra.Core.ImageSamplers;
+using Votyra.Core.Models;
 using Zenject;
 
 namespace Votyra.Core.Images
@@ -118,7 +114,10 @@ namespace Votyra.Core.Images
 
             public float this[Vector2i pos]
             {
-                get { return _editableMatrix[pos.X, pos.Y]; }
+                get
+                {
+                    return _editableMatrix[pos.X, pos.Y];
+                }
                 set
                 {
                     _changeCounter += value - _editableMatrix[pos.X, pos.Y];
