@@ -16,10 +16,10 @@ namespace Votyra.Core.Utils
                 minZ = Mathf.Min(minZ, z);
                 maxZ = Mathf.Max(maxZ, z);
             }
-            mesh.UpdateBounds(xyBounds, new Range2(minZ, maxZ));
+            mesh.UpdateBounds(xyBounds, new Range2f(minZ, maxZ));
         }
 
-        public static void UpdateBounds(this Mesh mesh, Rect xyBounds, Range2 rangeZ)
+        public static void UpdateBounds(this Mesh mesh, Rect xyBounds, Range2f rangeZ)
         {
             Vector2 center = xyBounds.center;
             Vector2 size = xyBounds.size;

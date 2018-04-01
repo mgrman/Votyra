@@ -38,22 +38,22 @@ namespace Votyra.Core.GroupSelectors
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition);
 
-            var localCameraBounds = new Rect3f(cameraPositionLocal, new Vector3f());
+            var localCameraBounds = Rect3f.FromMinAndSize(cameraPositionLocal, new Vector3f());
             foreach (var frustumCorner in frustumCorners)
             {
                 var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner));
                 localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
 
-            var cellInGroupCount_x = cellInGroupCount.x;
-            var cellInGroupCount_y = cellInGroupCount.y;
-            var cellInGroupCount_z = cellInGroupCount.z;
-            int min_group_x = MathUtils.FloorToInt(localCameraBounds.min.x / cellInGroupCount_x);
-            int min_group_y = MathUtils.FloorToInt(localCameraBounds.min.y / cellInGroupCount_y);
-            int min_group_z = MathUtils.FloorToInt(localCameraBounds.min.z / cellInGroupCount_z);
-            int max_group_x = MathUtils.CeilToInt(localCameraBounds.max.x / cellInGroupCount_x);
-            int max_group_y = MathUtils.CeilToInt(localCameraBounds.max.y / cellInGroupCount_y);
-            int max_group_z = MathUtils.CeilToInt(localCameraBounds.max.z / cellInGroupCount_z);
+            var cellInGroupCount_x = cellInGroupCount.X;
+            var cellInGroupCount_y = cellInGroupCount.Y;
+            var cellInGroupCount_z = cellInGroupCount.Z;
+            int min_group_x = MathUtils.FloorToInt(localCameraBounds.min.X / cellInGroupCount_x);
+            int min_group_y = MathUtils.FloorToInt(localCameraBounds.min.Y / cellInGroupCount_y);
+            int min_group_z = MathUtils.FloorToInt(localCameraBounds.min.Z / cellInGroupCount_z);
+            int max_group_x = MathUtils.CeilToInt(localCameraBounds.max.X / cellInGroupCount_x);
+            int max_group_y = MathUtils.CeilToInt(localCameraBounds.max.Y / cellInGroupCount_y);
+            int max_group_z = MathUtils.CeilToInt(localCameraBounds.max.Z / cellInGroupCount_z);
 
             var groupsToRecompute = PooledSet<Vector3i>.Create();
             var groupsToKeep = PooledSet<Vector3i>.Create();
@@ -65,12 +65,12 @@ namespace Votyra.Core.GroupSelectors
                     for (int group_z = min_group_z; group_z <= max_group_z; group_z++)
                     {
                         var group = new Vector3i(group_x, group_y, group_z);
-                        var groupBounds = new Rect3i(group * cellInGroupCount, cellInGroupCount).ToBounds();
+                        var groupBounds = Rect3i.FromMinAndSize(group * cellInGroupCount, cellInGroupCount).ToBounds();
 
                         bool isInside = TestPlanesAABB(planes, groupBounds);
                         if (isInside)
                         {
-                            var groupArea = new Rect3i(group * cellInGroupCount, cellInGroupCount);
+                            var groupArea = Rect3i.FromMinAndSize(group * cellInGroupCount, cellInGroupCount);
                             if (groupArea.Overlaps(invalidatedArea))
                             {
                                 groupsToRecompute.Add(group);
@@ -109,14 +109,14 @@ namespace Votyra.Core.GroupSelectors
         private bool TestPlaneAABB(Plane3f plane, Vector3f boundsMin, Vector3f boundsMax)
         {
             return
-            TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMin.y, boundsMin.z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMin.y, boundsMax.z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMax.y, boundsMin.z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMin.x, boundsMax.y, boundsMax.z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.x, boundsMin.y, boundsMin.z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.x, boundsMin.y, boundsMax.z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.x, boundsMax.y, boundsMin.z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.x, boundsMax.y, boundsMax.z));
+            TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMin.Y, boundsMin.Z)) ||
+                TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMin.Y, boundsMax.Z)) ||
+                TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMax.Y, boundsMin.Z)) ||
+                TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMax.Y, boundsMax.Z)) ||
+                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMin.Y, boundsMin.Z)) ||
+                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMin.Y, boundsMax.Z)) ||
+                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMax.Y, boundsMin.Z)) ||
+                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMax.Y, boundsMax.Z));
         }
 
         private bool TestPlanePoint(Plane3f plane, Vector3f point)

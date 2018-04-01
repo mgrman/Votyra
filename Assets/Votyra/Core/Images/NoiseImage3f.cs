@@ -19,9 +19,9 @@ namespace Votyra.Core.Images
         {
             var pointf = (point / Scale + Offset);
 
-            float valueXY = MathUtils.PerlinNoise(pointf.x, pointf.y);
-            float valueYZ = MathUtils.PerlinNoise(pointf.y, pointf.z);
-            float valueZX = MathUtils.PerlinNoise(pointf.z, pointf.x);
+            float valueXY = MathUtils.PerlinNoise(pointf.X, pointf.Y);
+            float valueYZ = MathUtils.PerlinNoise(pointf.Y, pointf.Z);
+            float valueZX = MathUtils.PerlinNoise(pointf.Z, pointf.X);
 
             float value = (valueXY + valueYZ + valueZX) / 3;
 

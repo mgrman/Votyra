@@ -19,39 +19,47 @@ namespace Votyra.Core.Models
         public Vector3f extents => size / 2f;
 
 
-        public Rect3f(Vector3f min, Vector3f size)
+        private Rect3f(Vector3f min, Vector3f max)
         {
             this.min = min;
-            this.max = min + size;
+            this.max = max;
         }
 
-        public static Rect3f FromMinMax(Vector3f min, Vector3f max)
+        public static Rect3f FromMinAndMax(Vector3f min, Vector3f max)
         {
-            var size = max - min;
-            return new Rect3f(min, size);
+            return new Rect3f(min, max);
+        }
+
+        public static Rect3f FromMinAndSize(Vector3f min, Vector3f size)
+        {
+            if (size.AnyNegative)
+            {
+                throw new InvalidOperationException($"When creating {nameof(Rect3f)} using min '{min}' and size '{size}', size cannot have a negative coordinate!");
+            }
+            return new Rect3f(min, min + size);
         }
 
         public float DiagonalLength
         {
             get
             {
-                return (float)Math.Sqrt(size.x * size.x + size.y * size.y + size.z * size.z);
+                return (float)Math.Sqrt(size.X * size.X + size.Y * size.Y + size.Z * size.Z);
             }
         }
 
         public Rect3f Encapsulate(Vector3f point)
         {
-            return Rect3f.FromMinMax(Vector3f.Min(this.min, point), Vector3f.Max(this.max, point));
+            return Rect3f.FromMinAndMax(Vector3f.Min(this.min, point), Vector3f.Max(this.max, point));
         }
 
         public Rect3f Encapsulate(Rect3f bounds)
         {
-            return Rect3f.FromMinMax(Vector3f.Min(this.min, bounds.min), Vector3f.Max(this.max, bounds.max));
+            return Rect3f.FromMinAndMax(Vector3f.Min(this.min, bounds.min), Vector3f.Max(this.max, bounds.max));
         }
 
         public Rect3i RoundToContain()
         {
-            return Rect3i.MinMaxRect(this.min.FloorToVector3i(), this.max.CeilToVector3i());
+            return Rect3i.FromMinAndMax(this.min.FloorToVector3i(), this.max.CeilToVector3i());
         }
 
         public static bool operator ==(Rect3f a, Rect3f b)

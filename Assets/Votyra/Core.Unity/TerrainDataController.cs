@@ -131,9 +131,9 @@ namespace Votyra.Core.Unity
                 {
                     var image = oldImage2f.CreateImage();
                     var matrix = new Matrix2<float>(oldImageConfig.ImageSize.XY);
-                    for (int ix = 0; ix < matrix.size.x; ix++)
+                    for (int ix = 0; ix < matrix.size.X; ix++)
                     {
-                        for (int iy = 0; iy < matrix.size.y; iy++)
+                        for (int iy = 0; iy < matrix.size.Y; iy++)
                         {
                             var i = new Vector2i(ix, iy);
                             matrix[i] = image.Sample(i);
@@ -145,11 +145,11 @@ namespace Votyra.Core.Unity
                 {
                     var image = oldImage3b.CreateImage();
                     var matrix = new Matrix3<bool>(oldImageConfig.ImageSize);
-                    for (int ix = 0; ix < matrix.size.x; ix++)
+                    for (int ix = 0; ix < matrix.size.X; ix++)
                     {
-                        for (int iy = 0; iy < matrix.size.y; iy++)
+                        for (int iy = 0; iy < matrix.size.Y; iy++)
                         {
-                            for (int iz = 0; iz < matrix.size.z; iz++)
+                            for (int iz = 0; iz < matrix.size.Z; iz++)
                             {
                                 var i = new Vector3i(ix, iy, iz);
                                 matrix[i] = image.Sample(i);

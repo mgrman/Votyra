@@ -55,21 +55,9 @@ namespace Votyra.Core.Models
             }
         }
 
-        public int Max
-        {
-            get
-            {
-                return Math.Max(x0y0, Math.Max(x0y1, Math.Max(x1y0, x1y1)));
-            }
-        }
+        public int Max => Math.Max(x0y0, Math.Max(x0y1, Math.Max(x1y0, x1y1)));
 
-        public int Min
-        {
-            get
-            {
-                return Math.Min(x0y0, Math.Min(x0y1, Math.Min(x1y0, x1y1)));
-            }
-        }
+        public int Min => Math.Min(x0y0, Math.Min(x0y1, Math.Min(x1y0, x1y1)));
 
         public SampledData2i ClipMin(int clipValue)
         {
@@ -114,7 +102,7 @@ namespace Votyra.Core.Models
         {
             if (obj is SampledData2i)
             {
-                var that = (SampledData2i) obj;
+                var that = (SampledData2i)obj;
                 return this.Equals(that);
             }
             else
@@ -150,13 +138,13 @@ namespace Votyra.Core.Models
 
         public static IEnumerable<SampledData2i> GenerateAllValues(Range2i range)
         {
-            for (int x0y0 = range.min; x0y0 <= range.max; x0y0++)
+            for (int x0y0 = range.Min; x0y0 <= range.Max; x0y0++)
             {
-                for (int x0y1 = range.min; x0y1 <= range.max; x0y1++)
+                for (int x0y1 = range.Min; x0y1 <= range.Max; x0y1++)
                 {
-                    for (int x1y0 = range.min; x1y0 <= range.max; x1y0++)
+                    for (int x1y0 = range.Min; x1y0 <= range.Max; x1y0++)
                     {
-                        for (int x1y1 = range.min; x1y1 <= range.max; x1y1++)
+                        for (int x1y1 = range.Min; x1y1 <= range.Max; x1y1++)
                         {
                             yield return new SampledData2i(x0y0, x0y1, x1y0, x1y1);
                         }

@@ -18,9 +18,9 @@ namespace Votyra.Core.Images
 
         public bool Sample(Vector3i point)
         {
-            if (point.x < 0 || point.y < 0 || point.z < 0 || point.x >= Image.size.x || point.y >= Image.size.y || point.z >= Image.size.z)
+            if (point.X < 0 || point.Y < 0 || point.Z < 0 || point.X >= Image.size.X || point.Y >= Image.size.Y || point.Z >= Image.size.Z)
                 return false;
-            return Image[point.x, point.y, point.z];
+            return Image[point.X, point.Y, point.Z];
         }
 
         public void StartUsing()

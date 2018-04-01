@@ -38,7 +38,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
         {
-            var bounds = new Rect3i(group * _cellInGroupCount, _cellInGroupCount).ToBounds();
+            var bounds = Rect3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToBounds();
 
             this.groupPosition = _cellInGroupCount * group;
 
@@ -59,7 +59,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             foreach (var tri in finalTris)
             {
-                mesh.AddTriangle(cell + tri.a, cell + tri.b, cell + tri.c);
+                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
             }
 
             // TODO find a way to not generate thin planes
@@ -69,10 +69,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
 
-        private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3>> DataToTriangles = SampledData3b.AllValues
+        private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3f>> DataToTriangles = SampledData3b.AllValues
             .ToDictionary(o => o, o => ChooseTrianglesForCell(o), SampledData3b.NormallessComparer);
 
-        private static IReadOnlyCollection<Triangle3> ChooseTrianglesForCell(SampledData3b data)
+        private static IReadOnlyCollection<Triangle3f> ChooseTrianglesForCell(SampledData3b data)
         {
             var pos_x0y0z0 = new Vector3f(0, 0, 0);
             var pos_x0y0z1 = new Vector3f(0, 0, 1);
@@ -94,7 +94,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             Matrix4x4f matrix;
             if (data.Data == 0 || data.Data == byte.MaxValue)
             {
-                return Array.Empty<Triangle3>();
+                return Array.Empty<Triangle3f>();
             }
             else if (SampledData3b.ParseCube(@"
               0-----0
@@ -105,8 +105,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             1-----1
             ").EqualsRotationInvariant(data, out matrix))
             {
-                matrix = matrix.inverse;
-                var isInverted = matrix.determinant < 0;
+                matrix = matrix.Inverse;
+                var isInverted = matrix.Determinant < 0;
 
                 return TerrainMeshExtensions
                     .GetQuadTriangles(
@@ -126,8 +126,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             1-----1
             ").EqualsRotationInvariant(data, out matrix))
             {
-                matrix = matrix.inverse;
-                var isInverted = matrix.determinant < 0;
+                matrix = matrix.Inverse;
+                var isInverted = matrix.Determinant < 0;
                 return TerrainMeshExtensions
                     .GetQuadTriangles(
                         matrix.MultiplyPoint(pos_x0y0z1),
@@ -146,10 +146,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             1-----1
             ").EqualsRotationInvariant(data, out matrix))
             {
-                matrix = matrix.inverse;
-                var isInverted = matrix.determinant < 0;
+                matrix = matrix.Inverse;
+                var isInverted = matrix.Determinant < 0;
 
-                return new Triangle3(
+                return new Triangle3f(
                         matrix.MultiplyPoint(pos_x1y0z0),
                         matrix.MultiplyPoint(pos_x0y1z0),
                         matrix.MultiplyPoint(pos_x0y0z1))
@@ -166,15 +166,15 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             1-----1
             ").EqualsRotationInvariant(data, out matrix))
             {
-                matrix = matrix.inverse;
-                var isInverted = matrix.determinant < 0;
+                matrix = matrix.Inverse;
+                var isInverted = matrix.Determinant < 0;
 
-                return new Triangle3[]{
-                    new Triangle3(
+                return new Triangle3f[]{
+                    new Triangle3f(
                         matrix.MultiplyPoint(pos_x1y0z0),
                         matrix.MultiplyPoint(pos_x0y1z0),
                         matrix.MultiplyPoint(pos_x0y0z1)),
-                    new Triangle3(
+                    new Triangle3f(
                         matrix.MultiplyPoint(pos_x1y0z0),
                         matrix.MultiplyPoint(pos_x1y1z0),
                         matrix.MultiplyPoint(pos_x0y1z0))
@@ -190,11 +190,11 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             1-----1
             ").EqualsRotationInvariant(data, out matrix))
             {
-                matrix = matrix.inverse;
-                var isInverted = matrix.determinant < 0;
+                matrix = matrix.Inverse;
+                var isInverted = matrix.Determinant < 0;
 
-                return new Triangle3[]{
-                    new Triangle3(
+                return new Triangle3f[]{
+                    new Triangle3f(
                         matrix.MultiplyPoint(pos_x0y1z1),
                         matrix.MultiplyPoint(pos_x1y0z1),
                         matrix.MultiplyPoint(pos_x1y1z0))
@@ -211,15 +211,15 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             1-----1
             ").EqualsRotationInvariant(data, out matrix))
             {
-                matrix = matrix.inverse;
-                var isInverted = matrix.determinant < 0;
+                matrix = matrix.Inverse;
+                var isInverted = matrix.Determinant < 0;
 
-                return new Triangle3[]{
-                    new Triangle3(
+                return new Triangle3f[]{
+                    new Triangle3f(
                         matrix.MultiplyPoint(pos_x0y0z1),
                         matrix.MultiplyPoint(pos_x1y0z0),
                         matrix.MultiplyPoint(pos_x1y1z1)),
-                    new Triangle3(
+                    new Triangle3f(
                         matrix.MultiplyPoint(pos_x0y0z1),
                         matrix.MultiplyPoint(pos_x1y1z1),
                         matrix.MultiplyPoint(pos_x0y1z0)),
@@ -236,14 +236,14 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             1-----0
             ").EqualsRotationInvariant(data, out matrix))
             {
-                matrix = matrix.inverse;
-                var isInverted = matrix.determinant < 0;
-                return new Triangle3[]{
-                    new Triangle3(
+                matrix = matrix.Inverse;
+                var isInverted = matrix.Determinant < 0;
+                return new Triangle3f[]{
+                    new Triangle3f(
                         matrix.MultiplyPoint(pos_x0y0z0),
                         matrix.MultiplyPoint(pos_x1y1z0),
                         matrix.MultiplyPoint(pos_x0y0z1)),
-                    new Triangle3(
+                    new Triangle3f(
                         matrix.MultiplyPoint(pos_x1y1z0),
                         matrix.MultiplyPoint(pos_x0y1z0),
                         matrix.MultiplyPoint(pos_x0y0z1)),
@@ -260,19 +260,19 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             1-----0
             ").EqualsRotationInvariant(data, out matrix))
             {
-                matrix = matrix.inverse;
-                var isInverted = matrix.determinant < 0;
+                matrix = matrix.Inverse;
+                var isInverted = matrix.Determinant < 0;
 
-                return new Triangle3[]{
-                    new Triangle3(
+                return new Triangle3f[]{
+                    new Triangle3f(
                         matrix.MultiplyPoint(pos_x0y1z0),
                         matrix.MultiplyPoint(pos_x0y0z1),
                         matrix.MultiplyPoint(pos_x1y1z1)),
-                    new Triangle3(
+                    new Triangle3f(
                         matrix.MultiplyPoint(pos_x0y0z0),
                         matrix.MultiplyPoint(pos_x1y1z0),
                         matrix.MultiplyPoint(pos_x1y1z1)),
-                    new Triangle3(
+                    new Triangle3f(
                         matrix.MultiplyPoint(pos_x0y0z0),
                         matrix.MultiplyPoint(pos_x1y1z1),
                         matrix.MultiplyPoint(pos_x0y0z1)),
@@ -293,13 +293,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 var triangles = template.GetAllRotationSubsets(data)
                     .Select(m =>
                     {
-                        var mInv = m.inverse;
-                        return new Triangle3(
+                        var mInv = m.Inverse;
+                        return new Triangle3f(
                             mInv.MultiplyPoint(pos_x0y0z0),
                             mInv.MultiplyPoint(pos_x0y1z0),
                             mInv.MultiplyPoint(pos_x1y0z0));
                     })
-                    .Distinct(Triangle3.OrderInvariantComparer)
+                    .Distinct(Triangle3f.OrderInvariantComparer)
                     .Select(t => t.EnsureCCW(CenterZeroCell))
                     .ToArray();
 

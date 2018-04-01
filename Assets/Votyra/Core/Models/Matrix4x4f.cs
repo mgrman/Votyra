@@ -8,6 +8,10 @@ namespace Votyra.Core.Models
     /// </summary>
     public struct Matrix4x4f
     {
+        public static readonly Matrix4x4f zero = new Matrix4x4f(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+
+        public static readonly Matrix4x4f identity = new Matrix4x4f(1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f);
+
         public readonly float m00;
         public readonly float m10;
         public readonly float m20;
@@ -45,81 +49,6 @@ namespace Votyra.Core.Models
             this.m33 = m33;
         }
 
-        public float this[int row, int column]
-        {
-            get
-            {
-                return this[row + column * 4];
-            }
-        }
-
-        public float this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0:
-                        return this.m00;
-                    case 1:
-                        return this.m10;
-                    case 2:
-                        return this.m20;
-                    case 3:
-                        return this.m30;
-                    case 4:
-                        return this.m01;
-                    case 5:
-                        return this.m11;
-                    case 6:
-                        return this.m21;
-                    case 7:
-                        return this.m31;
-                    case 8:
-                        return this.m02;
-                    case 9:
-                        return this.m12;
-                    case 10:
-                        return this.m22;
-                    case 11:
-                        return this.m32;
-                    case 12:
-                        return this.m03;
-                    case 13:
-                        return this.m13;
-                    case 14:
-                        return this.m23;
-                    case 15:
-                        return this.m33;
-                    default:
-                        throw new IndexOutOfRangeException("Invalid matrix index!");
-                }
-            }
-
-        }
-
-        /// <summary>
-        ///   <para>Returns a matrix with all elements set to zero (Read Only).</para>
-        /// </summary>
-        public static Matrix4x4f zero
-        {
-            get
-            {
-                return new Matrix4x4f(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-            }
-        }
-
-        /// <summary>
-        ///   <para>Returns the identity matrix (Read Only).</para>
-        /// </summary>
-        public static Matrix4x4f identity
-        {
-            get
-            {
-                return new Matrix4x4f(1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f);
-            }
-        }
-
         public static Matrix4x4f operator *(Matrix4x4f lhs, Matrix4x4f rhs)
         {
             float m00 = lhs.m00 * rhs.m00 + lhs.m01 * rhs.m10 + lhs.m02 * rhs.m20 + lhs.m03 * rhs.m30;
@@ -143,99 +72,59 @@ namespace Votyra.Core.Models
 
         public static Vector4f operator *(Matrix4x4f lhs, Vector4f v)
         {
-            float x = (float)((double)lhs.m00 * (double)v.x + (double)lhs.m01 * (double)v.y + (double)lhs.m02 * (double)v.z + (double)lhs.m03 * (double)v.w);
-            float y = (float)((double)lhs.m10 * (double)v.x + (double)lhs.m11 * (double)v.y + (double)lhs.m12 * (double)v.z + (double)lhs.m13 * (double)v.w);
-            float z = (float)((double)lhs.m20 * (double)v.x + (double)lhs.m21 * (double)v.y + (double)lhs.m22 * (double)v.z + (double)lhs.m23 * (double)v.w);
-            float w = (float)((double)lhs.m30 * (double)v.x + (double)lhs.m31 * (double)v.y + (double)lhs.m32 * (double)v.z + (double)lhs.m33 * (double)v.w);
+            float x = (float)((double)lhs.m00 * (double)v.X + (double)lhs.m01 * (double)v.Y + (double)lhs.m02 * (double)v.Z + (double)lhs.m03 * (double)v.W);
+            float y = (float)((double)lhs.m10 * (double)v.X + (double)lhs.m11 * (double)v.Y + (double)lhs.m12 * (double)v.Z + (double)lhs.m13 * (double)v.W);
+            float z = (float)((double)lhs.m20 * (double)v.X + (double)lhs.m21 * (double)v.Y + (double)lhs.m22 * (double)v.Z + (double)lhs.m23 * (double)v.W);
+            float w = (float)((double)lhs.m30 * (double)v.X + (double)lhs.m31 * (double)v.Y + (double)lhs.m32 * (double)v.Z + (double)lhs.m33 * (double)v.W);
             return new Vector4f(x, y, z, w);
         }
 
-        public static bool operator ==(Matrix4x4f lhs, Matrix4x4f rhs)
-        {
-            if (lhs.GetColumn(0) == rhs.GetColumn(0) && lhs.GetColumn(1) == rhs.GetColumn(1) && lhs.GetColumn(2) == rhs.GetColumn(2))
-                return lhs.GetColumn(3) == rhs.GetColumn(3);
-            return false;
-        }
-
-        public static bool operator !=(Matrix4x4f lhs, Matrix4x4f rhs)
-        {
-            return !(lhs == rhs);
-        }
-
-        public override int GetHashCode()
-        {
-            return this.GetColumn(0).GetHashCode() ^ this.GetColumn(1).GetHashCode() << 2 ^ this.GetColumn(2).GetHashCode() >> 2 ^ this.GetColumn(3).GetHashCode() >> 1;
-        }
-
-        public override bool Equals(object other)
-        {
-            if (!(other is Matrix4x4f))
-                return false;
-            Matrix4x4f matrix4x4 = (Matrix4x4f)other;
-            if (this.GetColumn(0).Equals((object)matrix4x4.GetColumn(0)) && this.GetColumn(1).Equals((object)matrix4x4.GetColumn(1)) && this.GetColumn(2).Equals((object)matrix4x4.GetColumn(2)))
-                return this.GetColumn(3).Equals((object)matrix4x4.GetColumn(3));
-            return false;
-        }
-
-        /// <summary>
-        ///   <para>Get a column of the matrix.</para>
-        /// </summary>
-        /// <param name="i"></param>
         public Vector4f GetColumn(int i)
         {
-            return new Vector4f(this[0, i], this[1, i], this[2, i], this[3, i]);
+            switch (i)
+            {
+                case 0:
+                    return new Vector4f(m00, m10, m20, m30);
+                case 1:
+                    return new Vector4f(m01, m11, m21, m31);
+                case 2:
+                    return new Vector4f(m02, m12, m22, m32);
+                case 3:
+                    return new Vector4f(m03, m13, m23, m33);
+                default:
+                    throw new InvalidOperationException($"Unsuported column '{i}'! Column must be between 0-3.");
+            }
         }
 
-        /// <summary>
-        ///   <para>Returns a row of the matrix.</para>
-        /// </summary>
-        /// <param name="i"></param>
-        public Vector4f GetRow(int i)
-        {
-            return new Vector4f(this[i, 0], this[i, 1], this[i, 2], this[i, 3]);
-        }
-
-        /// <summary>
-        ///   <para>Transforms a position by this matrix (generic).</para>
-        /// </summary>
-        /// <param name="v"></param>
         public Vector3f MultiplyPoint(Vector3f v)
         {
-            float x = (float)((double)this.m00 * (double)v.x + (double)this.m01 * (double)v.y + (double)this.m02 * (double)v.z) + this.m03;
-            float y = (float)((double)this.m10 * (double)v.x + (double)this.m11 * (double)v.y + (double)this.m12 * (double)v.z) + this.m13;
-            float z = (float)((double)this.m20 * (double)v.x + (double)this.m21 * (double)v.y + (double)this.m22 * (double)v.z) + this.m23;
-            float num = 1f / ((float)((double)this.m30 * (double)v.x + (double)this.m31 * (double)v.y + (double)this.m32 * (double)v.z) + this.m33);
+            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z) + this.m03;
+            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z) + this.m13;
+            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z) + this.m23;
+            float num = 1f / ((float)((double)this.m30 * (double)v.X + (double)this.m31 * (double)v.Y + (double)this.m32 * (double)v.Z) + this.m33);
             x *= num;
             y *= num;
             z *= num;
             return new Vector3f(x, y, z);
         }
 
-        /// <summary>
-        ///   <para>Transforms a position by this matrix (fast).</para>
-        /// </summary>
-        /// <param name="v"></param>
         public Vector3f MultiplyPoint3x4(Vector3f v)
         {
-            float x = (float)((double)this.m00 * (double)v.x + (double)this.m01 * (double)v.y + (double)this.m02 * (double)v.z) + this.m03;
-            float y = (float)((double)this.m10 * (double)v.x + (double)this.m11 * (double)v.y + (double)this.m12 * (double)v.z) + this.m13;
-            float z = (float)((double)this.m20 * (double)v.x + (double)this.m21 * (double)v.y + (double)this.m22 * (double)v.z) + this.m23;
+            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z) + this.m03;
+            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z) + this.m13;
+            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z) + this.m23;
             return new Vector3f(x, y, z);
         }
 
-        /// <summary>
-        ///   <para>Transforms a direction by this matrix.</para>
-        /// </summary>
-        /// <param name="v"></param>
         public Vector3f MultiplyVector(Vector3f v)
         {
-            float x = (float)((double)this.m00 * (double)v.x + (double)this.m01 * (double)v.y + (double)this.m02 * (double)v.z);
-            float y = (float)((double)this.m10 * (double)v.x + (double)this.m11 * (double)v.y + (double)this.m12 * (double)v.z);
-            float z = (float)((double)this.m20 * (double)v.x + (double)this.m21 * (double)v.y + (double)this.m22 * (double)v.z);
+            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z);
+            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z);
+            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z);
             return new Vector3f(x, y, z);
         }
 
-        public float determinant
+        public float Determinant
         {
             get
             {
@@ -253,11 +142,10 @@ namespace Votyra.Core.Models
                     m02 * m11 * m20 * m33 + m01 * m12 * m20 * m33 +
                     m02 * m10 * m21 * m33 - m00 * m12 * m21 * m33 -
                     m01 * m10 * m22 * m33 + m00 * m11 * m22 * m33;
-
             }
         }
 
-        public Matrix4x4f inverse
+        public Matrix4x4f Inverse
         {
             get
             {
@@ -265,26 +153,21 @@ namespace Votyra.Core.Models
             }
         }
 
-
-        /// <summary>
-        ///   <para>Creates a scaling matrix.</para>
-        /// </summary>
-        /// <param name="v"></param>
         public static Matrix4x4f Scale(Vector3f v)
         {
             return new Matrix4x4f(
-                v.x, 0.0f, 0.0f, 0.0f,
-                0.0f, v.y, 0.0f, 0.0f,
-                0.0f, 0.0f, v.z, 0.0f,
+                v.X, 0.0f, 0.0f, 0.0f,
+                0.0f, v.Y, 0.0f, 0.0f,
+                0.0f, 0.0f, v.Z, 0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f);
         }
 
         public static Matrix4x4f Translate(Vector3f v)
         {
             return new Matrix4x4f(
-                1.0f, 0.0f, 0.0f, v.x,
-                0.0f, 1.0f, 0.0f, v.y,
-                0.0f, 0.0f, 1.0f, v.z,
+                1.0f, 0.0f, 0.0f, v.X,
+                0.0f, 1.0f, 0.0f, v.Y,
+                0.0f, 0.0f, 1.0f, v.Z,
                 0.0f, 0.0f, 0.0f, 1.0f);
         }
 
@@ -321,24 +204,32 @@ namespace Votyra.Core.Models
             return new Matrix4x4f(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
         }
 
+        public static bool operator ==(Matrix4x4f lhs, Matrix4x4f rhs)
+        {
+            return lhs.GetColumn(0) == rhs.GetColumn(0) && lhs.GetColumn(1) == rhs.GetColumn(1) && lhs.GetColumn(2) == rhs.GetColumn(2) && lhs.GetColumn(3) == rhs.GetColumn(3);
+        }
 
-        /// <summary>
-        ///   <para>Returns a nicely formatted string for this matrix.</para>
-        /// </summary>
-        /// <param name="format"></param>
+        public static bool operator !=(Matrix4x4f lhs, Matrix4x4f rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.GetColumn(0).GetHashCode() ^ this.GetColumn(1).GetHashCode() << 2 ^ this.GetColumn(2).GetHashCode() >> 2 ^ this.GetColumn(3).GetHashCode() >> 1;
+        }
+
+        public override bool Equals(object other)
+        {
+            if (!(other is Matrix4x4f))
+                return false;
+            Matrix4x4f that = (Matrix4x4f)other;
+            return this == that;
+        }
+
         public override string ToString()
         {
-            return string.Format("{0:F5}\t{1:F5}\t{2:F5}\t{3:F5}\n{4:F5}\t{5:F5}\t{6:F5}\t{7:F5}\n{8:F5}\t{9:F5}\t{10:F5}\t{11:F5}\n{12:F5}\t{13:F5}\t{14:F5}\t{15:F5}\n", (object)this.m00, (object)this.m01, (object)this.m02, (object)this.m03, (object)this.m10, (object)this.m11, (object)this.m12, (object)this.m13, (object)this.m20, (object)this.m21, (object)this.m22, (object)this.m23, (object)this.m30, (object)this.m31, (object)this.m32, (object)this.m33);
+            return string.Format("{0:F5}\t{1:F5}\t{2:F5}\t{3:F5}\n{4:F5}\t{5:F5}\t{6:F5}\t{7:F5}\n{8:F5}\t{9:F5}\t{10:F5}\t{11:F5}\n{12:F5}\t{13:F5}\t{14:F5}\t{15:F5}\n", this.m00, this.m01, this.m02, this.m03, this.m10, this.m11, this.m12, this.m13, this.m20, this.m21, this.m22, this.m23, this.m30, this.m31, this.m32, this.m33);
         }
-
-        /// <summary>
-        ///   <para>Returns a nicely formatted string for this matrix.</para>
-        /// </summary>
-        /// <param name="format"></param>
-        public string ToString(string format)
-        {
-            return string.Format("{0}\t{1}\t{2}\t{3}\n{4}\t{5}\t{6}\t{7}\n{8}\t{9}\t{10}\t{11}\n{12}\t{13}\t{14}\t{15}\n", (object)this.m00.ToString(format), (object)this.m01.ToString(format), (object)this.m02.ToString(format), (object)this.m03.ToString(format), (object)this.m10.ToString(format), (object)this.m11.ToString(format), (object)this.m12.ToString(format), (object)this.m13.ToString(format), (object)this.m20.ToString(format), (object)this.m21.ToString(format), (object)this.m22.ToString(format), (object)this.m23.ToString(format), (object)this.m30.ToString(format), (object)this.m31.ToString(format), (object)this.m32.ToString(format), (object)this.m33.ToString(format));
-        }
-
     }
 }

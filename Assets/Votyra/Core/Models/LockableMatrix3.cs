@@ -6,7 +6,6 @@ namespace Votyra.Core.Models
     {
         private T[,,] _points;
 
-        //public readonly Vector2i offset;
         public Vector3i size { get; }
 
         private readonly object _syncLock = new object();
@@ -45,15 +44,13 @@ namespace Votyra.Core.Models
 
         public LockableMatrix3(Vector3i matrixSize)
         {
-            _points = new T[matrixSize.x, matrixSize.y, matrixSize.z];
-            //_points = new T[matrixSize.x+indicesOffset.x, matrixSize.y + indicesOffset.y];
-            //offset = indicesOffset;
+            _points = new T[matrixSize.X, matrixSize.Y, matrixSize.Z];
             size = matrixSize;
         }
 
         public bool IsSameSize(Vector3i size)
         {
-            return this.size == size;//&& this.offset == offset;
+            return this.size == size;
         }
 
         public T this[int ix, int iy, int iz]
@@ -76,7 +73,7 @@ namespace Votyra.Core.Models
         {
             get
             {
-                return _points[i.x, i.y, i.z];
+                return _points[i.X, i.Y, i.Z];
             }
             set
             {
@@ -84,7 +81,7 @@ namespace Votyra.Core.Models
                 {
                     throw new MatrixLockedException();
                 }
-                _points[i.x, i.y, i.z] = value;
+                _points[i.X, i.Y, i.Z] = value;
             }
         }
     }

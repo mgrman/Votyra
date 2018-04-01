@@ -5,31 +5,31 @@ namespace Votyra.Core.Models
 {
     public struct Triangle3i
     {
-        public readonly Vector3i a;
-        public readonly Vector3i b;
-        public readonly Vector3i c;
+        public readonly Vector3i A;
+        public readonly Vector3i B;
+        public readonly Vector3i C;
 
         public Triangle3i(Vector3i a, Vector3i b, Vector3i c)
         {
-            this.a = a;
-            this.b = b;
-            this.c = c;
+            this.A = a;
+            this.B = b;
+            this.C = c;
         }
 
         public Triangle3i(Vector3f a, Vector3f b, Vector3f c)
         {
-            this.a = a.ToVector3i();
-            this.b = b.ToVector3i();
-            this.c = c.ToVector3i();
+            this.A = a.RoundToVector3i();
+            this.B = b.RoundToVector3i();
+            this.C = c.RoundToVector3i();
         }
 
         public IEnumerable<Vector3i> Points
         {
             get
             {
-                yield return a;
-                yield return b;
-                yield return c;
+                yield return A;
+                yield return B;
+                yield return C;
             }
         }
 
@@ -38,19 +38,19 @@ namespace Votyra.Core.Models
             if (obj is Triangle3i)
             {
                 var that = (Triangle3i)obj;
-                return this.a == that.a && this.b == that.b && this.c == that.c;
+                return this.A == that.A && this.B == that.B && this.C == that.C;
             }
             return false;
         }
 
         public override int GetHashCode()
         {
-            return a.GetHashCode() + b.GetHashCode() * 3 + c.GetHashCode() * 7;
+            return A.GetHashCode() + B.GetHashCode() * 3 + C.GetHashCode() * 7;
         }
 
         public override string ToString()
         {
-            return $"{a},{b},{c}";
+            return $"{A},{B},{C}";
         }
 
         public static readonly IEqualityComparer<Triangle3i> OrderInvariantComparer = new TriangleInvariantComparer();
@@ -75,7 +75,7 @@ namespace Votyra.Core.Models
 
             public int GetHashCode(Triangle3i obj)
             {
-                return (obj.a + obj.b + obj.c).GetHashCode();
+                return (obj.A + obj.B + obj.C).GetHashCode();
             }
         }
     }

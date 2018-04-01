@@ -70,7 +70,7 @@ namespace Votyra.Core
             _usedDebugObjects.Clear();
 
 
-            var area = Rect3i.CenterAndExtents(imageMousePosition, new Vector3i(2, 2, 2));
+            var area = Rect3i.FromCenterAndExtents(imageMousePosition, new Vector3i(2, 2, 2));
             using (var image = _editableImage.RequestAccess(area))
             {
                 area = area.IntersectWith(image.Area);
@@ -184,9 +184,9 @@ namespace Votyra.Core
                 else
                     maxDist = maxDistSmall;
 
-                var areaToChange = Rect3i.CenterAndExtents(cell, Vector3i.FromSame(maxDist));
+                var areaToChange = Rect3i.FromCenterAndExtents(cell, Vector3i.FromSame(maxDist));
 
-                var extendedSetArea = new Rect3i(areaToChange.min, areaToChange.size + new Vector3i(0, 0, 1));
+                var extendedSetArea = Rect3i.FromMinAndSize(areaToChange.Min, areaToChange.Size + new Vector3i(0, 0, 1));
                 using (var image = editableImage.RequestAccess(extendedSetArea))
                 {
                     _logger.LogMessage($"image.Area:{image.Area}");

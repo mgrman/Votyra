@@ -2,23 +2,19 @@ namespace Votyra.Core.Models
 {
     public class Matrix2<T> : IMatrix2<T>
     {
-
         public T[,] NativeMatrix;
 
-        //public readonly Vector2i offset;
         public Vector2i size { get; }
 
-        public Matrix2(Vector2i matrixSize) //, Vector2i indicesOffset)
+        public Matrix2(Vector2i matrixSize)
         {
-            NativeMatrix = new T[matrixSize.x, matrixSize.y];
-            //_points = new T[matrixSize.x+indicesOffset.x, matrixSize.y + indicesOffset.y];
-            //offset = indicesOffset;
+            NativeMatrix = new T[matrixSize.X, matrixSize.Y];
             size = matrixSize;
         }
 
         public bool IsSameSize(Vector2i size)
         {
-            return this.size == size; //&& this.offset == offset;
+            return this.size == size;
         }
 
         public T this[int ix, int iy]
@@ -37,17 +33,17 @@ namespace Votyra.Core.Models
         {
             get
             {
-                return NativeMatrix[i.x, i.y];
+                return NativeMatrix[i.X, i.Y];
             }
             set
             {
-                NativeMatrix[i.x, i.y] = value;
+                NativeMatrix[i.X, i.Y] = value;
             }
         }
 
         public T TryGet(Vector2i i, T defaultValue)
         {
-            return i.IsAsIndexContained(size) ? NativeMatrix[i.x, i.y] : defaultValue;
+            return size.ContainsIndex(i) ? NativeMatrix[i.X, i.Y] : defaultValue;
         }
     }
 }

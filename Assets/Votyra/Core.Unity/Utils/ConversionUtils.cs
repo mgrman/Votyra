@@ -46,12 +46,12 @@ namespace Votyra.Core.Utils
 
         public static UnityEngine.Vector2 ToVector2(this Vector2f vector)
         {
-            return new UnityEngine.Vector2(vector.x, vector.y);
+            return new UnityEngine.Vector2(vector.X, vector.Y);
         }
 
         public static UnityEngine.Vector3 ToVector3(this Vector3f vector)
         {
-            return new UnityEngine.Vector3(vector.x, vector.y, vector.z);
+            return new UnityEngine.Vector3(vector.X, vector.Y, vector.Z);
         }
 
         public static UnityEngine.Bounds ToBounds(this Rect3f bounds)

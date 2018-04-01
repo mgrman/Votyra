@@ -23,9 +23,9 @@ namespace Votyra.Core.TerrainGenerators
         public IReadOnlyPooledDictionary<Vector3i, ITerrainMesh> Generate(IFrameData3b data, IEnumerable<Vector3i> groupsToUpdate)
         {
             var image = data.Image;
-            int cellInGroupCount_x = _cellInGroupCount.x;
-            int cellInGroupCount_y = _cellInGroupCount.y;
-            int cellInGroupCount_z = _cellInGroupCount.z;
+            int cellInGroupCount_x = _cellInGroupCount.X;
+            int cellInGroupCount_y = _cellInGroupCount.Y;
+            int cellInGroupCount_z = _cellInGroupCount.Z;
             PooledDictionary<Vector3i, ITerrainMesh> meshes;
 
 

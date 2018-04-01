@@ -30,10 +30,10 @@ namespace Votyra.Core.Images
 
         public IImage2f CreateImage()
         {
-            if (_invalidatedArea == Rect2i.zero)
+            if (_invalidatedArea == Rect2i.Zero)
             {
                 _image?.Dispose();
-                _image = new MatrixImage2f(_image.Image, Rect2i.zero);
+                _image = new MatrixImage2f(_image.Image, Rect2i.Zero);
             }
             else if (_invalidatedArea.HasValue || _image == null)
             {
@@ -48,9 +48,9 @@ namespace Votyra.Core.Images
                 }
 
                 //sync
-                for (int x = 0; x < _editableMatrix.size.x; x++)
+                for (int x = 0; x < _editableMatrix.size.X; x++)
                 {
-                    for (int y = 0; y < _editableMatrix.size.y; y++)
+                    for (int y = 0; y < _editableMatrix.size.Y; y++)
                     {
                         readonlyMatrix[x, y] = _editableMatrix[x, y];
                     }
@@ -60,7 +60,7 @@ namespace Votyra.Core.Images
 
                 _image?.Dispose();
                 _image = new MatrixImage2f(readonlyMatrix, _invalidatedArea.Value);
-                _invalidatedArea = Rect2i.zero;
+                _invalidatedArea = Rect2i.Zero;
             }
             return _image;
         }
@@ -93,9 +93,9 @@ namespace Votyra.Core.Images
                 _editableMatrix = editableMatrix;
             }
 
-            public Rect2i InvalidatedArea => Rect2i.zero;
+            public Rect2i InvalidatedArea => Rect2i.Zero;
 
-            public Range2 RangeZ => new Range2(0, 0);
+            public Range2f RangeZ => new Range2f(0, 0);
 
             public float Sample(Vector2i point)
             {
@@ -118,11 +118,11 @@ namespace Votyra.Core.Images
 
             public float this[Vector2i pos]
             {
-                get { return _editableMatrix[pos.x, pos.y]; }
+                get { return _editableMatrix[pos.X, pos.Y]; }
                 set
                 {
-                    _changeCounter += value - _editableMatrix[pos.x, pos.y];
-                    _editableMatrix[pos.x, pos.y] = value;
+                    _changeCounter += value - _editableMatrix[pos.X, pos.Y];
+                    _editableMatrix[pos.X, pos.Y] = value;
                 }
             }
 

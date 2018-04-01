@@ -50,7 +50,7 @@ namespace Votyra.Core.Editor
                 for (int i = 0; i < initialList.Count; i++)
                 {
                     var vec = initialList[i];
-                    newList.Add(new UnityEngine.Vector3(vec.x, vec.y, vec.z));
+                    newList.Add(new UnityEngine.Vector3(vec.X, vec.Y, vec.Z));
                 }
 
             }
@@ -110,7 +110,7 @@ namespace Votyra.Core.Editor
                 for (int i = 0; i < initialList.Length; i++)
                 {
                     var vec = initialList[i];
-                    newList[i] = new UnityEngine.Vector3(vec.x, vec.y, vec.z);
+                    newList[i] = new UnityEngine.Vector3(vec.X, vec.Y, vec.Z);
                 }
 
             }

@@ -5,135 +5,107 @@ namespace Votyra.Core.Models
 {
     public struct Rect2i : IEquatable<Rect2i>
     {
-        public static readonly Rect2i All = new Rect2i(int.MinValue / 2, int.MinValue / 2, int.MaxValue, int.MaxValue);
+        public static readonly Rect2i All = new Rect2i(Vector2i.FromSame(int.MinValue / 2), Vector2i.FromSame(int.MaxValue) / 2);
+        public static Rect2i Zero { get; } = new Rect2i();
 
-        public readonly Vector2i min;
-        public readonly Vector2i max;
+        public readonly Vector2i Min;
+        public readonly Vector2i Max;
+        public Vector2i Size => Max - Min;
 
-        public Rect2i(int minX, int minY, int sizeX, int sizeY)
+        private Rect2i(Vector2i min, Vector2i size)
         {
-            this.min = new Vector2i(minX, minY);
-            this.max = new Vector2i(minX + sizeX, minY + sizeY);
+            this.Min = min;
+            this.Max = min + size;
         }
 
-        public Rect2i(Vector2i min, Vector2i size)
+        public static Rect2i FromCenterAndExtents(Vector2i center, Vector2i extents)
         {
-            this.min = min;
-            this.max = min + size;
+            if (extents.AnyNegative)
+            {
+                throw new InvalidOperationException($"When creating {nameof(Rect2i)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
+            }
+            return new Rect2i(center - extents + 1, center + extents);
+
+            //return new Rect2i(center - extents, center + Vector2i.One + extents);
         }
 
-        public Vector2i extents => (max - min) / 2;
-
-        public Vector2i center => min + extents;
-
-        public Vector2i size => max - min;
-
-        public static Rect2i zero { get; } = new Rect2i();
-
-        public int yMax => max.y;
-
-        public int xMax => max.x;
-
-        public int yMin => min.y;
-
-        public int xMin => min.x;
-
-        public int height => max.y - min.y;
-
-        public int width => max.x - min.x;
-
-        public static Rect2i CenterAndExtents(Vector2i center, Vector2i extents)
+        public static Rect2i FromMinAndSize(Vector2i min, Vector2i size)
         {
-            return new Rect2i(center - extents, Vector2i.One + extents + extents);
+            if (size.AnyNegative)
+            {
+                throw new InvalidOperationException($"When creating {nameof(Rect2i)} using min '{min}' and size '{size}', size cannot have a negative coordinate!");
+            }
+            return new Rect2i(min, min + size);
         }
 
-        public static Rect2i MinMaxRect(int xmin, int ymin, int xmax, int ymax)
-        {
-
-            return new Rect2i(new Vector2i(xmin, ymin), new Vector2i(xmax - xmin, ymax - ymin));
-        }
-
-        public static Rect2i MinMaxRect(Vector2i min, Vector2i max)
+        public static Rect2i FromMinAndMax(Vector2i min, Vector2i max)
         {
             return new Rect2i(min, max - min);
         }
 
-        public Vector2i Denormalize(Vector2f normalizedRectCoordinates)
-        {
-            return min + (size * normalizedRectCoordinates).ToVector2i();
-        }
-
-        public Vector2f Normalize(Vector2i point)
-        {
-            return (point - min) / size.ToVector2f();
-        }
-
         public bool Contains(Vector2i point)
         {
-            return point >= min && point <= max;
+            return point >= Min && point <= Max;
         }
 
         public bool Overlaps(Rect2i that)
         {
-            bool overlapX = this.xMin < that.xMax && that.xMin < this.xMax;
-            bool overlapY = this.yMin < that.yMax && that.yMin < this.yMax;
+            if (this.Size == Vector2i.Zero || that.Size == Vector2i.Zero)
+                return false;
+
+            bool overlapX = this.Min.X < that.Max.X && that.Min.X < this.Max.X;
+            bool overlapY = this.Min.Y < that.Max.Y && that.Min.Y < this.Max.Y;
             return overlapX && overlapY;
         }
 
-        public Rect2i CombineWith(Rect2i b)
+        public Rect2i CombineWith(Rect2i that)
         {
-            var bMin = b.min;
-            var bMax = b.max;
-            return Rect2i
-                .MinMaxRect(
-                    Math.Min(this.min.x, bMin.x),
-                    Math.Min(this.min.y, bMin.y),
-                    Math.Max(this.max.x, bMax.x),
-                    Math.Max(this.max.y, bMax.y));
-        }
+            if (this.Size == Vector2i.Zero)
+                return that;
 
-        public Rect2i IntersectWith(Rect2i b)
-        {
-            var bMin = b.min;
-            var bMax = b.max;
-            int minX = Math.Max(this.min.x, bMin.x);
-            int minY = Math.Max(this.min.y, bMin.y);
-            int maxX = Math.Min(this.max.x, bMax.x);
-            int maxY = Math.Min(this.max.y, bMax.y);
-
-            maxX = Math.Max(minX, maxX);
-            maxY = Math.Max(minY, maxY);
-            return Rect2i.MinMaxRect(minX, minY, maxX, maxY);
-        }
-
-        public Rect2i CombineWith(Vector2i b)
-        {
-            if (Contains(b))
+            if (that.Size == Vector2i.Zero)
                 return this;
 
-            var bMin = b;
-            var bMax = b;
-            return Rect2i
-                .MinMaxRect(
-                    Math.Min(this.min.x, bMin.x),
-                    Math.Min(this.min.y, bMin.y),
-                    Math.Max(this.max.x, bMax.x),
-                    Math.Max(this.max.y, bMax.y));
+            var min = Vector2i.Min(this.Min, that.Min);
+            var max = Vector2i.Max(this.Max, that.Max);
+            return Rect2i.FromMinAndMax(min, max);
         }
 
-        public Rect2f ToRect()
+        public Rect2i IntersectWith(Rect2i that)
         {
-            return new Rect2f(min.x, min.y, max.x - min.x, max.y - min.y);
+            if (this.Size == Vector2i.Zero || that.Size == Vector2i.Zero)
+                return Rect2i.Zero;
+
+            var min = Vector2i.Max(this.Min, that.Min);
+            var max = Vector2i.Max(Vector2i.Min(this.Max, that.Max), min);
+
+            return Rect2i.FromMinAndMax(min, max);
+        }
+
+        public Rect2i CombineWith(Vector2i point)
+        {
+            if (Contains(point))
+                return this;
+
+            var min = Vector2i.Min(this.Min, point);
+            var max = Vector2i.Max(this.Max, point);
+
+            return Rect2i.FromMinAndMax(min, max);
+        }
+
+        public Rect2f ToRect2f()
+        {
+            return Rect2f.FromMinAndMax(Min.ToVector2f(), Max.ToVector2f());
         }
 
         public static bool operator ==(Rect2i a, Rect2i b)
         {
-            return a.min == b.min && a.max == b.max;
+            return a.Min == b.Min && a.Max == b.Max;
         }
 
         public static bool operator !=(Rect2i a, Rect2i b)
         {
-            return a.min != b.min || a.max != b.max;
+            return a.Min != b.Min || a.Max != b.Max;
         }
 
         public bool Equals(Rect2i other)
@@ -151,12 +123,12 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return min.GetHashCode() + 7 * max.GetHashCode();
+            return Min.GetHashCode() + 7 * Max.GetHashCode();
         }
 
         public override string ToString()
         {
-            return $"min:{min} max:{max}";
+            return $"min:{Min} max:{Max}";
         }
     }
 }

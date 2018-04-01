@@ -21,20 +21,22 @@ namespace Votyra.Core.Images
 
         private MatrixImage3b _image = null;
 
-        private IImageConstraint3b _constraint;
+        private readonly IImageConstraint3b _constraint;
+        private readonly IThreadSafeLogger _logger;
 
-        public EditableMatrixImage3b([InjectOptional] IImageConstraint3b constraint, IImageConfig imageConfig)
+        public EditableMatrixImage3b([InjectOptional] IImageConstraint3b constraint, IImageConfig imageConfig, IThreadSafeLogger logger)
         {
             _constraint = constraint;
             _editableMatrix = new Matrix3<bool>(imageConfig.ImageSize);
+            _logger = logger;
         }
 
         public IImage3b CreateImage()
         {
-            if (_invalidatedArea == Rect3i.zero)
+            if (_invalidatedArea == Rect3i.Zero)
             {
                 _image?.Dispose();
-                _image = new MatrixImage3b(_image.Image, Rect3i.zero);
+                _image = new MatrixImage3b(_image.Image, Rect3i.Zero);
             }
             else if (_invalidatedArea.HasValue || _image == null)
             {
@@ -49,11 +51,11 @@ namespace Votyra.Core.Images
                 }
 
                 //sync
-                for (int x = 0; x < _editableMatrix.size.x; x++)
+                for (int x = 0; x < _editableMatrix.size.X; x++)
                 {
-                    for (int y = 0; y < _editableMatrix.size.y; y++)
+                    for (int y = 0; y < _editableMatrix.size.Y; y++)
                     {
-                        for (int z = 0; z < _editableMatrix.size.z; z++)
+                        for (int z = 0; z < _editableMatrix.size.Z; z++)
                         {
                             readonlyMatrix[x, y, z] = _editableMatrix[x, y, z];
                         }
@@ -64,7 +66,7 @@ namespace Votyra.Core.Images
 
                 _image?.Dispose();
                 _image = new MatrixImage3b(readonlyMatrix, _invalidatedArea.Value);
-                _invalidatedArea = Rect3i.zero;
+                _invalidatedArea = Rect3i.Zero;
             }
             return _image;
         }
@@ -84,10 +86,10 @@ namespace Votyra.Core.Images
             }
 
             var newInvalidatedImageArea = _constraint.FixImage(_editableMatrix, invalidatedImageArea, direction);
-            LoggerFactoryExtensions.factory.Create(this).LogMessage("newInvalidatedImageArea:" + newInvalidatedImageArea);
+            _logger.LogMessage("newInvalidatedImageArea:" + newInvalidatedImageArea);
 
             _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedImageArea) ?? newInvalidatedImageArea;
-            LoggerFactoryExtensions.factory.Create(this).LogMessage("_invalidatedArea:" + _invalidatedArea);
+            _logger.LogMessage("_invalidatedArea:" + _invalidatedArea);
         }
 
         private class EditableImageWrapper : IImage3b
@@ -99,7 +101,7 @@ namespace Votyra.Core.Images
                 _editableMatrix = editableMatrix;
             }
 
-            public Rect3i InvalidatedArea => Rect3i.zero;
+            public Rect3i InvalidatedArea => Rect3i.Zero;
 
             public bool Sample(Vector3i point)
             {
@@ -123,20 +125,20 @@ namespace Votyra.Core.Images
 
             public bool this[Vector3i pos]
             {
-                get { return _editableMatrix[pos.x, pos.y, pos.z]; }
+                get { return _editableMatrix[pos.X, pos.Y, pos.Z]; }
                 set
                 {
-                    if (value && !_editableMatrix[pos.x, pos.y, pos.z])
+                    if (value && !_editableMatrix[pos.X, pos.Y, pos.Z])
                     {
                         _changeCounter += 1;
                         _changed = true;
                     }
-                    if (!value && _editableMatrix[pos.x, pos.y, pos.z])
+                    if (!value && _editableMatrix[pos.X, pos.Y, pos.Z])
                     {
                         _changeCounter -= 1;
                         _changed = true;
                     }
-                    _editableMatrix[pos.x, pos.y, pos.z] = value;
+                    _editableMatrix[pos.X, pos.Y, pos.Z] = value;
                 }
             }
 

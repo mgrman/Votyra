@@ -146,14 +146,14 @@ namespace Votyra.Core.Models
             var dz_x1 = (dz_x1y0 + dz_x1y1) / 2;
             var dz = (dz_x0 + dz_x1) / 2;
 
-            return -new Vector3f(dx, dy, dz).normalized;
+            return -new Vector3f(dx, dy, dz).Normalized;
         }
 
         public bool this[Vector3i vec]
         {
             get
             {
-                return this[vec.x, vec.y, vec.z];
+                return this[vec.X, vec.Y, vec.Z];
             }
         }
 
@@ -161,7 +161,7 @@ namespace Votyra.Core.Models
         {
             get
             {
-                return this[vec.x.RoundToInt(), vec.y.RoundToInt(), vec.z.RoundToInt()];
+                return this[vec.X.RoundToInt(), vec.Y.RoundToInt(), vec.Z.RoundToInt()];
             }
         }
 
@@ -220,7 +220,7 @@ namespace Votyra.Core.Models
 
         public static Matrix4x4f GetRotationMatrix(Vector3i rotationSteps, bool invert)
         {
-            var rotationMatrix = Matrix4x4f.Rotate(Quaternion4f.Euler(rotationSteps.x * 90, rotationSteps.y * 90, rotationSteps.z * 90));
+            var rotationMatrix = Matrix4x4f.Rotate(Quaternion4f.Euler(rotationSteps.X * 90, rotationSteps.Y * 90, rotationSteps.Z * 90));
             var inversion = invert ? Matrix4x4f.Scale(new Vector3f(1, 1, -1)) : Matrix4x4f.identity;
 
             var offsetInverted = Matrix4x4f.Translate(new Vector3f(-0.5f, -0.5f, -0.5f));

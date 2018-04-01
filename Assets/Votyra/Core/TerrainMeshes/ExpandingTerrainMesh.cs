@@ -37,23 +37,23 @@ namespace Votyra.Core.TerrainMeshes
         {
             var side1 = posB - posA;
             var side2 = posC - posA;
-            var normal = Vector3f.Cross(side1, side2).normalized;
+            var normal = Vector3f.Cross(side1, side2).Normalized;
 
             Indices.Add(PointCount);
             Vertices.Add(posA);
-            UV.Add(new Vector2f(posA.x, posA.y));
+            UV.Add(new Vector2f(posA.X, posA.Y));
             Normals.Add(normal);
             PointCount++;
 
             Indices.Add(PointCount);
             Vertices.Add(posB);
-            UV.Add(new Vector2f(posB.x, posB.y));
+            UV.Add(new Vector2f(posB.X, posB.Y));
             Normals.Add(normal);
             PointCount++;
 
             Indices.Add(PointCount);
             Vertices.Add(posC);
-            UV.Add(new Vector2f(posC.x, posC.y));
+            UV.Add(new Vector2f(posC.X, posC.Y));
             Normals.Add(normal);
             PointCount++;
 

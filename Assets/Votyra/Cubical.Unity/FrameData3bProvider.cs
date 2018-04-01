@@ -61,7 +61,7 @@ namespace Votyra.Cubical
                 container.transform.worldToLocalMatrix.ToMatrix4x4f(),
                 existingGroups,
                 image,
-                (image as IImageInvalidatableImage3i)?.InvalidatedArea ?? Rect3i.zero
+                (image as IImageInvalidatableImage3i)?.InvalidatedArea ?? Rect3i.Zero
             );
         }
     }

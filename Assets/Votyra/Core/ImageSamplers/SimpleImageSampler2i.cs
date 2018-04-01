@@ -17,22 +17,22 @@ namespace Votyra.Core.ImageSamplers
 
         public Vector2i CellToX0Y0(Vector2i pos)
         {
-            return new Vector2i(pos.x, pos.y);
+            return new Vector2i(pos.X, pos.Y);
         }
 
         public Vector2i CellToX0Y1(Vector2i pos)
         {
-            return new Vector2i(pos.x, pos.y + 1);
+            return new Vector2i(pos.X, pos.Y + 1);
         }
 
         public Vector2i CellToX1Y0(Vector2i pos)
         {
-            return new Vector2i(pos.x + 1, pos.y);
+            return new Vector2i(pos.X + 1, pos.Y);
         }
 
         public Vector2i CellToX1Y1(Vector2i pos)
         {
-            return new Vector2i(pos.x + 1, pos.y + 1);
+            return new Vector2i(pos.X + 1, pos.Y + 1);
         }
     }
 }

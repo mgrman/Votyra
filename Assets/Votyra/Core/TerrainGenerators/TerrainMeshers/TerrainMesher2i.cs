@@ -32,15 +32,15 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             _image = image;
 
             this._minZ = _image.RangeZ.min;
-            this._bounds_size = new Vector3f(_cellInGroupCount.x, _cellInGroupCount.y, _image.RangeZ.Size);
+            this._bounds_size = new Vector3f(_cellInGroupCount.X, _cellInGroupCount.Y, _image.RangeZ.Size);
         }
 
         public void InitializeGroup(Vector2i group)
         {
-            var bounds = new Rect3f(new Vector3f
+            var bounds = Rect3f.FromMinAndSize(new Vector3f
              (
-                  (group.x * _cellInGroupCount.x),
-                  (group.y * _cellInGroupCount.y),
+                  (group.X * _cellInGroupCount.X),
+                  (group.Y * _cellInGroupCount.Y),
                  _minZ
              ), _bounds_size);
 
@@ -60,10 +60,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             SampledData2i data = _imageSampler.Sample(_image, cell);
 
             // Debug.Log($"{minusXres_x1y0} {minusXres_x1y1}");
-            var pos_x0y0 = new Vector3f(position.x, position.y, data.x0y0);
-            var pos_x0y1 = new Vector3f(position.x, position.y + 1, data.x0y1);
-            var pos_x1y0 = new Vector3f(position.x + 1, position.y, data.x1y0);
-            var pos_x1y1 = new Vector3f(position.x + 1, position.y + 1, data.x1y1);
+            var pos_x0y0 = new Vector3f(position.X, position.Y, data.x0y0);
+            var pos_x0y1 = new Vector3f(position.X, position.Y + 1, data.x0y1);
+            var pos_x1y0 = new Vector3f(position.X + 1, position.Y, data.x1y0);
+            var pos_x1y1 = new Vector3f(position.X + 1, position.Y + 1, data.x1y1);
 
             _mesh.AddQuad(pos_x0y0, pos_x0y1, pos_x1y0, pos_x1y1, IsFlipped(data));
         }

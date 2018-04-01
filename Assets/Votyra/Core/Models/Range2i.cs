@@ -5,67 +5,49 @@ namespace Votyra.Core.Models
     public struct Range2i : IEquatable<Range2i>
     {
         public static readonly Range2i Zero = new Range2i(0, 0);
-        public readonly int min;
-        public readonly int max;
+        public readonly int Min;
+        public readonly int Max;
 
         public Range2i(int min, int max)
         {
-            this.min = Math.Min(min, max);
-            this.max = Math.Max(min, max);
+            this.Min = Math.Min(min, max);
+            this.Max = Math.Max(min, max);
         }
 
-        public Range2i(Range2 range)
+        public Range2i(Range2f range)
             : this((int)Math.Floor(range.min), (int)Math.Floor(range.max))
         {
         }
 
-        public float Center
-        {
-            get
-            {
-                return (max + min) / 2.0f;
-            }
-        }
+        public float Center => (Max + Min) / 2.0f;
 
-        public int FlooredCenter
-        {
-            get
-            {
-                return (max + min) / 2;
-            }
-        }
+        public int FlooredCenter => (Max + Min) / 2;
 
-        public int Size
-        {
-            get
-            {
-                return max - min;
-            }
-        }
+        public int Size => Max - Min;
 
         public Range2i UnionWith(Range2i range)
         {
-            return new Range2i(Math.Min(this.min, range.min), Math.Min(this.max, range.max));
+            return new Range2i(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
         }
 
         public static Range2i operator +(Range2i a, Range2i b)
         {
-            return new Range2i(a.min + b.min, a.max + b.max);
+            return new Range2i(a.Min + b.Min, a.Max + b.Max);
         }
 
         public static Range2i operator -(Range2i a, Range2i b)
         {
-            return new Range2i(a.min - b.min, a.max - b.max);
+            return new Range2i(a.Min - b.Min, a.Max - b.Max);
         }
 
         public static bool operator ==(Range2i a, Range2i b)
         {
-            return a.min == b.min && a.max == b.max;
+            return a.Min == b.Min && a.Max == b.Max;
         }
 
         public static bool operator !=(Range2i a, Range2i b)
         {
-            return a.min != b.min || a.max != b.max;
+            return a.Min != b.Min || a.Max != b.Max;
         }
 
         public bool Equals(Range2i other)
@@ -83,12 +65,12 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return min.GetHashCode() + max.GetHashCode() * 7;
+            return Min.GetHashCode() + Max.GetHashCode() * 7;
         }
 
         public override string ToString()
         {
-            return string.Format("({0} , {1})", min, max);
+            return string.Format("({0} , {1})", Min, Max);
         }
     }
 }

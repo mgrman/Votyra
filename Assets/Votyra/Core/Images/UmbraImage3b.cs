@@ -13,7 +13,7 @@ namespace Votyra.Core.Images
 
         public bool Sample(Vector3i point)
         {
-            return Image.Sample(new Vector2i(point.x, point.y)) - point.z > 0;
+            return Image.Sample(new Vector2i(point.X, point.Y)) - point.Z > 0;
         }
     }
 }

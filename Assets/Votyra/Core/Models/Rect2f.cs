@@ -5,123 +5,73 @@ namespace Votyra.Core.Models
 {
     public struct Rect2f : IEquatable<Rect2f>
     {
-        public float x => center.x - size.x / 2;
-        public float y => center.y - size.y / 2;
-        public readonly Vector2f center;
-        public readonly Vector2f size;
+        public static readonly Rect2f Zero = new Rect2f();
+        public static readonly Rect2f All = new Rect2f(Vector2f.FromSame(float.MinValue / 2), Vector2f.FromSame(float.MaxValue / 2));
 
-        public Rect2f(float minX, float minY, float sizeX, float sizeY)
+        public readonly Vector2f Max;
+        public readonly Vector2f Min;
+        public Vector2f Center => (Max + Min) / 2f;
+        public Vector2f Size => Max - Min;
+        public Vector2f Extents => Size / 2;
+
+        private Rect2f(Vector2f min, Vector2f max)
         {
-            this.center = new Vector2f(minX + sizeX / 2, minY + sizeY / 2);
-            this.size = new Vector2f(sizeX, sizeY);
+            this.Min = min;
+            this.Max = max;
         }
 
-        public Rect2f(Vector2f min, Vector2f size)
-        {
-            this.center = min + size / 2;
-            this.size = size;
-        }
-
-        public Vector2f extents => size / 2;
-
-        public Vector2f max => center + extents;
-
-        public Vector2f min => center - extents;
-
-        public static Rect2f zero { get; } = new Rect2f();
-
-        public float yMax => center.y + size.y / 2f;
-
-        public float xMax => center.x + size.x / 2f;
-
-        public float yMin => center.y - size.y / 2f;
-
-        public float xMin => center.x - size.x / 2f;
-
-        public float height => size.y;
-
-        public float width => size.x;
-
-        public static Rect2f MinMaxRect(float xmin, float ymin, float xmax, float ymax)
-        {
-            float width = xmax - xmin;
-            float height = ymax - ymin;
-
-            return new Rect2f(new Vector2f(xmin, ymin), new Vector2f(width, height));
-        }
-
-        public Vector2f Denormalize(Vector2f normalizedRectCoordinates)
-        {
-            return min + size * normalizedRectCoordinates;
-        }
-
-        public Vector2f Normalize(Vector2f point)
-        {
-            return (point - min) / size;
-        }
-
-        public bool Contains(Vector2f point)
-        {
-            return point >= min && point <= max;
-        }
-
-        public static bool operator ==(Rect2f a, Rect2f b)
-        {
-            return a.center == b.center && a.size == b.size;
-        }
-
-        public static bool operator !=(Rect2f a, Rect2f b)
-        {
-            return a.center != b.center || a.size != b.size;
-        }
-
-        public static readonly Rect2f All = new Rect2f(float.MinValue / 2, float.MinValue / 2, float.MaxValue, float.MaxValue);
-
-        public Rect2f GetRectangle(Vector2i cellCount, Vector2i cell)
-        {
-            var step = this.size.DivideBy(cellCount);
-            var pos = this.min + step * cell;
-
-            return new Rect2f(pos, step);
-        }
 
         public Rect2f FromCenterAndSize(Vector2f center, Vector2f size)
         {
             return new Rect2f(center - size / 2, size);
         }
 
-        public Rect2f FromCenterAndSize(float centerX, float centerY, float sizeX, float sizeY)
+        public static Rect2f FromMinAndMax(Vector2f min, Vector2f max)
         {
-            return new Rect2f(new Vector2f(centerX - sizeX / 2, centerY - sizeY / 2), new Vector2f(sizeX, sizeY));
+            return new Rect2f(min, max);
         }
 
-        public Rect2f FromMinAndSize(float minX, float minY, float sizeX, float sizeY)
+        public static Rect2f FromMinAndSize(Vector2f min, Vector2f size)
         {
-            return new Rect2f(new Vector2f(minX, minY), new Vector2f(sizeX, sizeY));
+            return new Rect2f(min, min + size);
+        }
+
+        public bool Contains(Vector2f point)
+        {
+            return point >= Min && point <= Max;
+        }
+
+        public static bool operator ==(Rect2f a, Rect2f b)
+        {
+            return a.Center == b.Center && a.Size == b.Size;
+        }
+
+        public static bool operator !=(Rect2f a, Rect2f b)
+        {
+            return a.Center != b.Center || a.Size != b.Size;
         }
 
         public Rect2i RoundToInt()
         {
-            return new Rect2i(MathUtils.RoundToInt(this.x), MathUtils.RoundToInt(this.y), MathUtils.RoundToInt(this.width), MathUtils.RoundToInt(this.height));
+            return Rect2i.FromMinAndMax(this.Min.RoundToVector2i(), this.Max.RoundToVector2i());
         }
 
         public Rect2i RoundToContain()
         {
-            return Rect2i.MinMaxRect(MathUtils.FloorToInt(this.xMin), MathUtils.FloorToInt(this.yMin), MathUtils.CeilToInt(this.xMax), MathUtils.CeilToInt(this.yMax));
+            return Rect2i.FromMinAndMax(this.Min.FloorToVector2i(), this.Max.CeilToVector2i());
         }
 
         public Rect2f CombineWith(Rect2f that)
         {
-            var aMin = this.min;
-            var aMax = this.max;
-            var bMin = that.min;
-            var bMax = that.max;
-            return Rect2f
-                     .MinMaxRect(
-                         Math.Min(aMin.x, bMin.x),
-                         Math.Min(aMin.y, bMin.y),
-                         Math.Max(aMax.x, bMax.x),
-                         Math.Max(aMax.y, bMax.y));
+            if (this.Size == Vector2f.Zero)
+                return that;
+
+            if (that.Size == Vector2f.Zero)
+                return this;
+
+            var min = Vector2f.Min(this.Min, that.Min);
+            var max = Vector2f.Max(this.Max, that.Max);
+            return Rect2f.FromMinAndMax(min, max);
         }
 
         public bool Equals(Rect2f other)
@@ -139,12 +89,12 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return center.GetHashCode() + 7 * size.GetHashCode();
+            return Center.GetHashCode() + 7 * Size.GetHashCode();
         }
 
         public override string ToString()
         {
-            return $"center:{center} size:{size}";
+            return $"center:{Center} size:{Size}";
         }
     }
 }

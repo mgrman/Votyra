@@ -34,7 +34,7 @@ namespace Votyra.Core.Models
 
         public static implicit operator UI_Vector3f(Vector3f value)
         {
-            return new UI_Vector3f(value.x, value.y, value.z);
+            return new UI_Vector3f(value.X, value.Y, value.Z);
         }
 
         public static bool operator ==(UI_Vector3f a, UI_Vector3f b)

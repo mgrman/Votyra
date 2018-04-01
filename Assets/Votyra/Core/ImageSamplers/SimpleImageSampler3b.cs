@@ -17,42 +17,42 @@ namespace Votyra.Core.ImageSamplers
 
         public Vector3i CellToX0Y0Z0(Vector3i pos)
         {
-            return new Vector3i(pos.x + 0, pos.y + 0, pos.z + 0);
+            return new Vector3i(pos.X + 0, pos.Y + 0, pos.Z + 0);
         }
 
         public Vector3i CellToX0Y0Z1(Vector3i pos)
         {
-            return new Vector3i(pos.x + 0, pos.y + 0, pos.z + 1);
+            return new Vector3i(pos.X + 0, pos.Y + 0, pos.Z + 1);
         }
 
         public Vector3i CellToX0Y1Z0(Vector3i pos)
         {
-            return new Vector3i(pos.x + 0, pos.y + 1, pos.z + 0);
+            return new Vector3i(pos.X + 0, pos.Y + 1, pos.Z + 0);
         }
 
         public Vector3i CellToX0Y1Z1(Vector3i pos)
         {
-            return new Vector3i(pos.x + 0, pos.y + 1, pos.z + 1);
+            return new Vector3i(pos.X + 0, pos.Y + 1, pos.Z + 1);
         }
 
         public Vector3i CellToX1Y0Z0(Vector3i pos)
         {
-            return new Vector3i(pos.x + 1, pos.y + 0, pos.z + 0);
+            return new Vector3i(pos.X + 1, pos.Y + 0, pos.Z + 0);
         }
 
         public Vector3i CellToX1Y0Z1(Vector3i pos)
         {
-            return new Vector3i(pos.x + 1, pos.y + 0, pos.z + 1);
+            return new Vector3i(pos.X + 1, pos.Y + 0, pos.Z + 1);
         }
 
         public Vector3i CellToX1Y1Z0(Vector3i pos)
         {
-            return new Vector3i(pos.x + 1, pos.y + 1, pos.z + 0);
+            return new Vector3i(pos.X + 1, pos.Y + 1, pos.Z + 0);
         }
 
         public Vector3i CellToX1Y1Z1(Vector3i pos)
         {
-            return new Vector3i(pos.x + 1, pos.y + 1, pos.z + 1);
+            return new Vector3i(pos.X + 1, pos.Y + 1, pos.Z + 1);
         }
     }
 }

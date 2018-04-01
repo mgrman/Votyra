@@ -43,9 +43,9 @@ namespace Votyra.Plannar.Images.Constraints
                 direction = Direction.Down;
             }
 
-            for (int ix = invalidatedCellArea.min.x; ix <= invalidatedCellArea.max.x; ix++)
+            for (int ix = invalidatedCellArea.Min.X; ix <= invalidatedCellArea.Max.X; ix++)
             {
-                for (int iy = invalidatedCellArea.min.y; iy <= invalidatedCellArea.max.y; iy++)
+                for (int iy = invalidatedCellArea.Min.Y; iy <= invalidatedCellArea.Max.Y; iy++)
                 {
                     var cell = new Vector2i(ix, iy);
                     var sample = sampler.Sample(editableMatrix, cell);

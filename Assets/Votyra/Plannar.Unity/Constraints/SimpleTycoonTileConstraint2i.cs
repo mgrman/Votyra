@@ -58,9 +58,9 @@ namespace Votyra.Plannar.Images.Constraints
                     break;
             }
 
-            for (int cell_x = invalidatedCellArea.min.x; cell_x <= invalidatedCellArea.max.x; cell_x++)
+            for (int cell_x = invalidatedCellArea.Min.X; cell_x <= invalidatedCellArea.Max.X; cell_x++)
             {
-                for (int cell_y = invalidatedCellArea.min.y; cell_y <= invalidatedCellArea.max.y; cell_y++)
+                for (int cell_y = invalidatedCellArea.Min.Y; cell_y <= invalidatedCellArea.Max.Y; cell_y++)
                 {
                     var seedCell = new Vector2i(cell_x, cell_y);
                     var queue = new PrioritySetQueue<Vector2i, float>
@@ -113,8 +113,8 @@ namespace Votyra.Plannar.Images.Constraints
                                 {
                                     if (offsetX == 0 && offsetY == 0)
                                         continue;
-                                    int ix = cell.x + offsetX;
-                                    int iy = cell.y + offsetY;
+                                    int ix = cell.X + offsetX;
+                                    int iy = cell.Y + offsetY;
                                     Vector2i newCellToCheck = new Vector2i(ix, iy);
                                     var newCellToCheckValue = getValue(cell);
                                     if (newCellToCheck.IsAsIndexContained(editableMatrix.size))

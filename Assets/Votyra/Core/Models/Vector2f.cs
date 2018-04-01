@@ -5,192 +5,133 @@ namespace Votyra.Core.Models
 {
     public struct Vector2f : IEquatable<Vector2f>
     {
-        public readonly float x;
-        public readonly float y;
+        public static readonly Vector2f Zero = new Vector2f();
+
+        public static readonly Vector2f One = new Vector2f(1, 1);
+
+        public readonly float X;
+
+        public readonly float Y;
+
+        public bool AnyNegative => this.X < 0 || this.Y < 0;
+
+        public float AreaSum => X * Y;
 
         public Vector2f(float x, float y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
 
-        public Vector2f(Vector2f vec)
+        public static Vector2f FromSame(float value)
         {
-            this.x = vec.x;
-            this.y = vec.y;
+            return new Vector2f(value, value);
         }
 
-        public bool BothPositive
-        {
-            get
-            {
-                return this.x > 0 && this.y > 0;
-            }
-        }
-
-        public bool BothZeroOrPositive
-        {
-            get
-            {
-                return this.x >= 0 && this.y >= 0;
-            }
-        }
-
-        public bool AnyNegative
-        {
-            get
-            {
-                return this.x < 0 || this.y < 0;
-            }
-        }
-
-        public float AreaSum { get { return x * y; } }
-
-        public static readonly Vector2f Zero = new Vector2f();
-        public static readonly Vector2f One = new Vector2f(1, 1);
 
         public static Vector2f operator +(Vector2f a, float b)
         {
-            return new Vector2f(a.x + b, a.y + b);
+            return new Vector2f(a.X + b, a.Y + b);
         }
 
         public static Vector2f operator -(Vector2f a, int b)
         {
-            return new Vector2f(a.x - b, a.y - b);
+            return new Vector2f(a.X - b, a.Y - b);
         }
 
         public static Vector2f operator +(Vector2f a, Vector2f b)
         {
-            return new Vector2f(a.x + b.x, a.y + b.y);
+            return new Vector2f(a.X + b.X, a.Y + b.Y);
         }
 
         public static Vector2f operator -(Vector2f a, Vector2f b)
         {
-            return new Vector2f(a.x - b.x, a.y - b.y);
+            return new Vector2f(a.X - b.X, a.Y - b.Y);
         }
 
         public static Vector2f operator *(Vector2f a, Vector2f b)
         {
-            return new Vector2f(a.x * b.x, a.y * b.y);
+            return new Vector2f(a.X * b.X, a.Y * b.Y);
         }
 
         public static Vector2f operator /(Vector2f a, Vector2f b)
         {
-            return new Vector2f(a.x / b.x, a.y / b.y);
+            return new Vector2f(a.X / b.X, a.Y / b.Y);
         }
-
 
         public static Vector2f operator /(Vector2f a, float b)
         {
-            return new Vector2f(a.x / b, a.y / b);
+            return new Vector2f(a.X / b, a.Y / b);
         }
 
         public static Vector2f operator *(Vector2f a, float b)
         {
-            return new Vector2f(a.x * b, a.y * b);
-        }
-
-
-        public Rect2f ToRect2f()
-        {
-            return new Rect2f(Vector2f.Zero, this);
+            return new Vector2f(a.X * b, a.Y * b);
         }
 
         public static bool operator <(Vector2f a, Vector2f b)
         {
-            return a.x < b.x && a.y < b.y;
+            return a.X < b.X && a.Y < b.Y;
         }
 
         public static bool operator <=(Vector2f a, Vector2f b)
         {
-            return a.x < b.x && a.y < b.y;
+            return a.X < b.X && a.Y < b.Y;
         }
 
         public static bool operator >(Vector2f a, Vector2f b)
         {
-            return a.x > b.x && a.y > b.y;
+            return a.X > b.X && a.Y > b.Y;
         }
 
         public static bool operator >=(Vector2f a, Vector2f b)
         {
-            return a.x >= b.x && a.y >= b.y;
+            return a.X >= b.X && a.Y >= b.Y;
         }
 
         public static bool operator ==(Vector2f a, Vector2f b)
         {
-            return a.x == b.x && a.y == b.y;
+            return a.X == b.X && a.Y == b.Y;
         }
 
         public static bool operator !=(Vector2f a, Vector2f b)
         {
-            return a.x != b.x || a.y != b.y;
+            return a.X != b.X || a.Y != b.Y;
         }
 
         public static Vector2f Max(Vector2f a, Vector2f b)
         {
-            return new Vector2f(Math.Max(a.x, b.x), Math.Max(a.y, b.y));
+            return new Vector2f(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));
         }
 
         public static Vector2f Min(Vector2f a, Vector2f b)
         {
-            return new Vector2f(Math.Min(a.x, b.x), Math.Min(a.y, b.y));
+            return new Vector2f(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
         }
-
-        public Vector2i ToVector2i()
+        public Rect2f ToRect2f()
         {
-            return new Vector2i(this);
+            return Rect2f.FromMinAndSize(Vector2f.Zero, this);
         }
 
         public Vector2i RoundToVector2i()
         {
-            return new Vector2i(MathUtils.RoundToInt(this.x), MathUtils.RoundToInt(this.y));
+            return new Vector2i(MathUtils.RoundToInt(this.X), MathUtils.RoundToInt(this.Y));
         }
 
         public Vector2i FloorToVector2i()
         {
-            return new Vector2i(MathUtils.FloorToInt(this.x), MathUtils.FloorToInt(this.y));
+            return new Vector2i(MathUtils.FloorToInt(this.X), MathUtils.FloorToInt(this.Y));
         }
 
         public Vector2i CeilToVector2i()
         {
-            return new Vector2i(MathUtils.CeilToInt(this.x), MathUtils.CeilToInt(this.y));
-        }
-
-        public Vector2f ToAbs()
-        {
-            return new Vector2f(Math.Abs(this.x), Math.Abs(this.y));
-        }
-
-        public Vector2f DivideBy(Vector2f that)
-        {
-            return new Vector2f(this.x / that.x, this.y / that.y);
-        }
-
-        public Vector2f DivideBy(Vector2i that)
-        {
-            return new Vector2f(this.x / that.x, this.y / that.y);
-        }
-
-        public Vector2f MinBy(Vector2f that)
-        {
-            return new Vector2f(Math.Min(this.x, that.x), Math.Min(this.y, that.y));
-        }
-
-        public Vector2f MaxBy(Vector2f that)
-        {
-            return new Vector2f(Math.Max(this.x, that.x), Math.Max(this.y, that.y));
+            return new Vector2i(MathUtils.CeilToInt(this.X), MathUtils.CeilToInt(this.Y));
         }
 
         public Vector3f ToVector3(float z)
         {
-            return new Vector3f(x, y, z);
+            return new Vector3f(X, Y, z);
         }
-
-        public bool ZeroOrPositive => x >= 0 && y >= 0;
-
-
-        public bool Positive => x > 0 && y > 0;
-
 
         public bool Equals(Vector2f other)
         {
@@ -207,12 +148,12 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return x.GetHashCode() + y.GetHashCode() * 7;
+            return X.GetHashCode() + Y.GetHashCode() * 7;
         }
 
         public override string ToString()
         {
-            return string.Format("({0} , {1})", x, y);
+            return string.Format("({0} , {1})", X, Y);
         }
     }
 }

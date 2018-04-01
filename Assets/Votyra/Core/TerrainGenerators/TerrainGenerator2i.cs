@@ -23,8 +23,8 @@ namespace Votyra.Core.TerrainGenerators
         public IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> Generate(IFrameData2i data, IEnumerable<Vector2i> groupsToUpdate)
         {
             var image = data.Image;
-            int cellInGroupCount_x = _cellInGroupCount.x;
-            int cellInGroupCount_y = _cellInGroupCount.y;
+            int cellInGroupCount_x = _cellInGroupCount.X;
+            int cellInGroupCount_y = _cellInGroupCount.Y;
             PooledDictionary<Vector2i, ITerrainMesh> meshes;
 
             using (_profiler.Start("init"))

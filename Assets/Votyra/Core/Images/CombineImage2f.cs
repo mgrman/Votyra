@@ -24,28 +24,28 @@ namespace Votyra.Core.Images
             switch (Operation)
             {
                 case Operations.Add:
-                    RangeZ = new Range2(imageA.RangeZ.min + imageB.RangeZ.min, imageA.RangeZ.max + imageB.RangeZ.max);
+                    RangeZ = new Range2f(imageA.RangeZ.min + imageB.RangeZ.min, imageA.RangeZ.max + imageB.RangeZ.max);
                     break;
 
                 case Operations.Subtract:
-                    RangeZ = new Range2(imageA.RangeZ.min - imageB.RangeZ.min, imageA.RangeZ.max - imageB.RangeZ.max);
+                    RangeZ = new Range2f(imageA.RangeZ.min - imageB.RangeZ.min, imageA.RangeZ.max - imageB.RangeZ.max);
                     break;
 
                 case Operations.Multiply:
-                    RangeZ = new Range2(imageA.RangeZ.min * imageB.RangeZ.min, imageA.RangeZ.max * imageB.RangeZ.max);
+                    RangeZ = new Range2f(imageA.RangeZ.min * imageB.RangeZ.min, imageA.RangeZ.max * imageB.RangeZ.max);
                     break;
 
                 case Operations.Divide:
-                    RangeZ = new Range2(imageA.RangeZ.min / imageB.RangeZ.min, imageA.RangeZ.max / imageB.RangeZ.max);
+                    RangeZ = new Range2f(imageA.RangeZ.min / imageB.RangeZ.min, imageA.RangeZ.max / imageB.RangeZ.max);
                     break;
 
                 default:
-                    RangeZ = new Range2(0, 0);
+                    RangeZ = new Range2f(0, 0);
                     break;
             }
         }
 
-        public Range2 RangeZ { get; private set; }
+        public Range2f RangeZ { get; private set; }
 
         public float Sample(Vector2i point)
         {

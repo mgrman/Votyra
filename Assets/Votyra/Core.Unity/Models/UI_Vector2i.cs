@@ -21,7 +21,7 @@ namespace Votyra.Core.Models
 
         public static implicit operator UI_Vector2i(Vector2i value)
         {
-            return new UI_Vector2i(value.x, value.y);
+            return new UI_Vector2i(value.X, value.Y);
         }
 
         public static bool operator ==(UI_Vector2i a, UI_Vector2i b)

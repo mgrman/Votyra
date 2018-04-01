@@ -5,7 +5,7 @@ namespace Votyra.Core.Images
 {
     public class MatrixImage2f : IImage2f, IInitializableImage, IImageInvalidatableImage2i, IDisposable
     {
-        public Range2 RangeZ { get; }
+        public Range2f RangeZ { get; }
 
         public Rect2i InvalidatedArea { get; }
 
@@ -18,10 +18,10 @@ namespace Votyra.Core.Images
             RangeZ = CalculateRangeZ(values);
         }
 
-        private static Range2 CalculateRangeZ(LockableMatrix2<float> values)
+        private static Range2f CalculateRangeZ(LockableMatrix2<float> values)
         {
-            int countX = values.size.x;
-            int countY = values.size.y;
+            int countX = values.size.X;
+            int countY = values.size.Y;
 
             float min = float.MaxValue;
             float max = float.MinValue;
@@ -35,14 +35,14 @@ namespace Votyra.Core.Images
                     max = Math.Max(max, val);
                 }
             }
-            return new Range2(min, max);
+            return new Range2f(min, max);
         }
 
         public float Sample(Vector2i point)
         {
-            if (point.x < 0 || point.y < 0 || point.x >= Image.size.x || point.y >= Image.size.y)
+            if (point.X < 0 || point.Y < 0 || point.X >= Image.size.X || point.Y >= Image.size.Y)
                 return 0;
-            return Image[point.x, point.y];
+            return Image[point.X, point.Y];
         }
 
         public void StartUsing()

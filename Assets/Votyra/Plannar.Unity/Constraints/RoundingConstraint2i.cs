@@ -15,9 +15,9 @@ namespace Votyra.Plannar.Images.Constraints
         public Rect2i FixImage(Matrix2<float> editableMatrix, Rect2i invalidatedImageArea, Direction direction)
         {
             invalidatedImageArea = (editableMatrix.size - Vector2i.One).ToRect2i().IntersectWith(invalidatedImageArea);
-            for (int cell_x = invalidatedImageArea.min.x; cell_x <= invalidatedImageArea.max.x; cell_x++)
+            for (int cell_x = invalidatedImageArea.Min.X; cell_x <= invalidatedImageArea.Max.X; cell_x++)
             {
-                for (int cell_y = invalidatedImageArea.min.y; cell_y <= invalidatedImageArea.max.y; cell_y++)
+                for (int cell_y = invalidatedImageArea.Min.Y; cell_y <= invalidatedImageArea.Max.Y; cell_y++)
                 {
                     editableMatrix[cell_x, cell_y] = (float)Math.Round(editableMatrix[cell_x, cell_y]);
                 }
