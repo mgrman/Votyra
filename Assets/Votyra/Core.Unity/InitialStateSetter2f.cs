@@ -77,8 +77,6 @@ namespace Votyra.Core.Images
                 .DefaultIfEmpty(Rect3f.zero)
                 .Aggregate((a, b) => a.Encapsulate(b));
 
-            var boundsArea = new Rect2f(bounds.min.XY, bounds.size.XY);
-
             using (var imageAccessor = editableImage.RequestAccess(Rect2i.All))
             {
                 var area = imageAccessor.Area;

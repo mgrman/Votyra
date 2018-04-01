@@ -1,33 +1,50 @@
+using System;
 using System.Threading;
 
 using UnityEngine.Profiling;
 
 namespace Votyra.Core.Profiling
 {
-    public struct UnityProfiler : IProfiler
+    public class UnityProfiler : IProfiler
     {
         private readonly bool _calledProfiler;
 
-        public UnityProfiler(string name, object owner)
+        private readonly UnityEngine.Object _owner;
+
+        public UnityProfiler(UnityEngine.Object owner)
+        {
+            _owner = owner;
+        }
+
+        public IDisposable Start(string name)
         {
             if (Thread.CurrentThread == UnitySyncContext.UnityThread)
             {
-                if (owner is UnityEngine.Object)
-                    Profiler.BeginSample(name, owner as UnityEngine.Object);
+                if (_owner != null)
+                    Profiler.BeginSample(name, _owner);
                 else
                     Profiler.BeginSample(name);
-                _calledProfiler = true;
+                return new EndSampleDisposable();
             }
             else
             {
-                _calledProfiler = false;
+                return new EmptyDisposable();
             }
         }
 
-        public void Dispose()
+        private struct EmptyDisposable : IDisposable
         {
-            if (_calledProfiler)
+            public void Dispose()
+            {
+            }
+        }
+
+        private struct EndSampleDisposable : IDisposable
+        {
+            public void Dispose()
+            {
                 Profiler.EndSample();
+            }
         }
     }
 }

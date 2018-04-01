@@ -3,36 +3,42 @@ using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.Profiling;
+using Votyra.Core.Images;
 
 namespace Votyra.Core.TerrainGenerators
 {
-    public class TerrainGenerator3b : ITerrainGenerator3b
+    public class TerrainGenerator3b : ITerrainGenerator<IFrameData3b, Vector3i>
     {
-        ITerrainMesher3b _mesher;
-
-        public TerrainGenerator3b(ITerrainMesher3b mesher)
+        private readonly ITerrainMesher3b _mesher;
+        private readonly IProfiler _profiler;
+        private readonly Vector3i _cellInGroupCount;
+        public TerrainGenerator3b(ITerrainMesher3b mesher, ITerrainConfig terrainConfig, IProfiler profiler)
         {
             _mesher = mesher;
+            _profiler = profiler;
+            _cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        public IReadOnlyPooledDictionary<Vector3i, ITerrainMesh> Generate(ITerrainGeneratorContext3b options, IEnumerable<Vector3i> groupsToUpdate)
+        public IReadOnlyPooledDictionary<Vector3i, ITerrainMesh> Generate(IFrameData3b data, IEnumerable<Vector3i> groupsToUpdate)
         {
-            int cellInGroupCount_x = options.CellInGroupCount.x;
-            int cellInGroupCount_y = options.CellInGroupCount.y;
-            int cellInGroupCount_z = options.CellInGroupCount.z;
+            var image = data.Image;
+            int cellInGroupCount_x = _cellInGroupCount.x;
+            int cellInGroupCount_y = _cellInGroupCount.y;
+            int cellInGroupCount_z = _cellInGroupCount.z;
             PooledDictionary<Vector3i, ITerrainMesh> meshes;
 
 
-            using (options.ProfilerFactory("init", this))
+            using (_profiler.Start("init"))
             {
-                _mesher.Initialize(options);
+                _mesher.Initialize(image);
 
                 meshes = PooledDictionary<Vector3i, ITerrainMesh>.Create();
             }
 
             foreach (var group in groupsToUpdate)
             {
-                using (options.ProfilerFactory("Other", this))
+                using (_profiler.Start("Other"))
                 {
                     _mesher.InitializeGroup(group);
                 }
@@ -45,7 +51,7 @@ namespace Votyra.Core.TerrainGenerators
                         {
                             Vector3i cellInGroup = new Vector3i(cellInGroup_x, cellInGroup_y, cellInGroup_z);
 
-                            using (options.ProfilerFactory("TerrainMesher.AddCell()", this))
+                            using (_profiler.Start("TerrainMesher.AddCell()"))
                             {
                                 //process cell to mesh
                                 _mesher.AddCell(cellInGroup);
@@ -53,7 +59,7 @@ namespace Votyra.Core.TerrainGenerators
                         }
                     }
                 }
-                using (options.ProfilerFactory("Other", this))
+                using (_profiler.Start("Other"))
                 {
                     meshes[group] = _mesher.GetResultingMesh();
                 }

@@ -4,68 +4,68 @@ using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.TerrainGenerators;
+using Votyra.Core.Images;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher2i : ITerrainMesher2i
     {
-        protected ITerrainGeneratorContext2i options;
-        public Vector2i CellInGroupCount { get; private set; }
-        protected Vector2i groupPosition;
-        protected Vector3f bounds_center;
-        protected Vector3f bounds_size;
-        protected IPooledTerrainMesh2i pooledMesh;
-        protected ITerrainMesh2i mesh;
 
-        public void Initialize(ITerrainGeneratorContext2i terrainOptions)
+        protected readonly IImageSampler2i _imageSampler;
+        protected readonly Vector2i _cellInGroupCount;
+
+        public TerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
         {
-            options = terrainOptions;
-            this.CellInGroupCount = terrainOptions.CellInGroupCount;
-            this.bounds_center = terrainOptions.GroupBounds.center;
-            this.bounds_size = terrainOptions.GroupBounds.size;
+            _imageSampler = imageSampler;
+            _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+        }
+
+        protected IImage2f _image;
+        protected Vector2i _groupPosition;
+        protected Vector3f _bounds_center;
+        protected Vector3f _bounds_size;
+        protected IPooledTerrainMesh2i _pooledMesh;
+        protected ITerrainMesh2i _mesh;
+
+        public void Initialize(IImage2f image)
+        {
+            _image = image;
+
+            this._bounds_center = new Vector3f(_cellInGroupCount.x / 2.0f, _cellInGroupCount.y / 2.0f, _image.RangeZ.Center);
+            this._bounds_size = new Vector3f(_cellInGroupCount.x, _cellInGroupCount.y, _image.RangeZ.Size);
         }
 
         public void InitializeGroup(Vector2i group)
         {
             var bounds = new Rect3f(new Vector3f
              (
-                 bounds_center.x + (group.x * CellInGroupCount.x),
-                 bounds_center.y + (group.y * CellInGroupCount.y),
-                 bounds_center.z
-             ), bounds_size);
+                 _bounds_center.x + (group.x * _cellInGroupCount.x),
+                 _bounds_center.y + (group.y * _cellInGroupCount.y),
+                 _bounds_center.z
+             ), _bounds_size);
 
-            this.groupPosition = CellInGroupCount * group;
+            this._groupPosition = _cellInGroupCount * group;
 
-            this.pooledMesh = PooledTerrainMesh2iContainer<FixedTerrainMesh2i>.CreateDirty(CellInGroupCount);
-            this.mesh = this.pooledMesh.Mesh;
-            mesh.Clear(bounds);
+            this._pooledMesh = PooledTerrainMesh2iContainer<FixedTerrainMesh2i>.CreateDirty(_cellInGroupCount);
+            this._mesh = this._pooledMesh.Mesh;
+            _mesh.Clear(bounds);
         }
 
         public virtual void AddCell(Vector2i cellInGroup)
         {
-            Vector2i cell = cellInGroup + groupPosition;
+            Vector2i cell = cellInGroup + _groupPosition;
 
-            Vector2i position = groupPosition + cellInGroup;
+            Vector2i position = _groupPosition + cellInGroup;
 
-            SampledData2i data = options.ImageSampler.Sample(options.Image, cell);
+            SampledData2i data = _imageSampler.Sample(_image, cell);
 
-            int minusXres_x1y0 = options.ImageSampler.SampleX1Y0(options.Image, new Vector2i(cell.x - 1, cell.y - 0));
-            int minusXres_x1y1 = options.ImageSampler.SampleX1Y1(options.Image, new Vector2i(cell.x - 1, cell.y - 0));
-            int minusYres_x0y1 = options.ImageSampler.SampleX0Y1(options.Image, new Vector2i(cell.x - 0, cell.y - 1));
-            int minusYres_x1y1 = options.ImageSampler.SampleX1Y1(options.Image, new Vector2i(cell.x - 0, cell.y - 1));
             // Debug.Log($"{minusXres_x1y0} {minusXres_x1y1}");
             var pos_x0y0 = new Vector3f(position.x, position.y, data.x0y0);
             var pos_x0y1 = new Vector3f(position.x, position.y + 1, data.x0y1);
             var pos_x1y0 = new Vector3f(position.x + 1, position.y, data.x1y0);
             var pos_x1y1 = new Vector3f(position.x + 1, position.y + 1, data.x1y1);
 
-            var pos_x0y0_lowerY = new Vector3f(position.x, position.y, minusXres_x1y0);
-            var pos_x0y1_lowerY = new Vector3f(position.x, position.y + 1, minusXres_x1y1);
-
-            var pos_x0y0_lowerX = new Vector3f(position.x, position.y, minusYres_x0y1);
-            var pos_x1y0_lowerX = new Vector3f(position.x + 1, position.y, minusYres_x1y1);
-
-            mesh.AddQuad(pos_x0y0, pos_x0y1, pos_x1y0, pos_x1y1, IsFlipped(data));
+            _mesh.AddQuad(pos_x0y0, pos_x0y1, pos_x1y0, pos_x1y1, IsFlipped(data));
         }
 
         protected bool IsFlipped(SampledData2i sampleData)
@@ -88,7 +88,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public IPooledTerrainMesh2i GetResultingMesh()
         {
-            return pooledMesh;
+            return _pooledMesh;
         }
     }
 }

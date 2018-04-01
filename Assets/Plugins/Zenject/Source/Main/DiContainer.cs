@@ -326,39 +326,39 @@ namespace Zenject
             switch (sourceType)
             {
                 case InjectSources.Local:
-                {
-                    yield return this;
-                    break;
-                }
+                    {
+                        yield return this;
+                        break;
+                    }
                 case InjectSources.Parent:
-                {
-                    foreach (var parent in _parentContainers)
                     {
-                        yield return parent;
+                        foreach (var parent in _parentContainers)
+                        {
+                            yield return parent;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case InjectSources.Any:
-                {
-                    yield return this;
-                    foreach (var ancestor in _ancestorContainers)
                     {
-                        yield return ancestor;
+                        yield return this;
+                        foreach (var ancestor in _ancestorContainers)
+                        {
+                            yield return ancestor;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case InjectSources.AnyParent:
-                {
-                    foreach (var ancestor in _ancestorContainers)
                     {
-                        yield return ancestor;
+                        foreach (var ancestor in _ancestorContainers)
+                        {
+                            yield return ancestor;
+                        }
+                        break;
                     }
-                    break;
-                }
                 default:
-                {
-                    throw Assert.CreateException();
-                }
+                    {
+                        throw Assert.CreateException();
+                    }
             }
         }
 
@@ -474,7 +474,7 @@ namespace Zenject
                     "Could not find required dependency with type '{0}' \nObject graph:\n {1}", context.MemberType, context.GetObjectGraphString());
             }
 
-            return ReflectionUtil.CreateGenericList(context.MemberType, new object[] {});
+            return ReflectionUtil.CreateGenericList(context.MemberType, new object[] { });
         }
 
         void CheckForInstallWarning(InjectContext context)
@@ -585,14 +585,14 @@ namespace Zenject
             FlushBindings();
 
             var providers = GetProviderMatchesInternal(context).ToList();
-            if (providers.Count > 0 )
+            if (providers.Count > 0)
             {
                 return providers.Select(
                     x => x.ProviderInfo.Provider.GetInstanceType(context))
                     .Where(x => x != null).ToList();
             }
 
-            return new List<Type> {};
+            return new List<Type> { };
         }
 
         // Try looking up a single provider for a given context
@@ -867,7 +867,7 @@ namespace Zenject
 #if !NOT_UNITY3D
             if (concreteType.DerivesFrom<ScriptableObject>())
             {
-                Assert.That( typeInfo.ConstructorInjectables.IsEmpty(),
+                Assert.That(typeInfo.ConstructorInjectables.IsEmpty(),
                     "Found constructor parameters on ScriptableObject type '{0}'.  This is not allowed.  Use an [Inject] method or fields instead.");
 
                 if (!IsValidating || CanCreateOrInjectDuringValidation(concreteType))
@@ -1184,12 +1184,12 @@ namespace Zenject
                 if (gameObjectBindInfo.Position.HasValue && gameObjectBindInfo.Rotation.HasValue)
                 {
                     gameObj = (GameObject)GameObject.Instantiate(
-                        prefabAsGameObject, gameObjectBindInfo.Position.Value,gameObjectBindInfo.Rotation.Value, transformParent);
+                        prefabAsGameObject, gameObjectBindInfo.Position.Value, gameObjectBindInfo.Rotation.Value, transformParent);
                 }
                 else if (gameObjectBindInfo.Position.HasValue)
                 {
                     gameObj = (GameObject)GameObject.Instantiate(
-                        prefabAsGameObject, gameObjectBindInfo.Position.Value,prefabAsGameObject.transform.rotation, transformParent);
+                        prefabAsGameObject, gameObjectBindInfo.Position.Value, prefabAsGameObject.transform.rotation, transformParent);
                 }
                 else if (gameObjectBindInfo.Rotation.HasValue)
                 {

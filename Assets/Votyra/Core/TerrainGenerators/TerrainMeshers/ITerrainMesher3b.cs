@@ -1,3 +1,4 @@
+using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 
@@ -9,7 +10,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         IPooledTerrainMesh GetResultingMesh();
 
-        void Initialize(ITerrainGeneratorContext3b terrainOptions);
+        void Initialize(IImage3b image);
 
         void InitializeGroup(Vector3i group);
     }

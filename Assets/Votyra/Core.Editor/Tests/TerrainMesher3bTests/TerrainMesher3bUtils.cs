@@ -9,6 +9,7 @@ using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Core;
 
 namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 {
@@ -61,8 +62,13 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             pooledMeshMock.Setup(o => o.Mesh)
             .Returns(() => mesh);
 
-            var mesher = new TerrainMesher3b();
-            mesher.Initialize(sampler, imageMock.Object, new Vector3i(1, 1, 1));
+            var terrainConfig = new Mock<ITerrainConfig>();
+            terrainConfig
+                .Setup(o => o.CellInGroupCount)
+                .Returns(new Vector3i(1, 1, 1));
+
+            var mesher = new TerrainMesher3b(terrainConfig.Object, sampler);
+            mesher.Initialize(imageMock.Object);
             mesher.InitializeGroup(new Vector3i(0, 0, 0), pooledMeshMock.Object);
 
             mesher.AddCell(new Vector3i(0, 0, 0));

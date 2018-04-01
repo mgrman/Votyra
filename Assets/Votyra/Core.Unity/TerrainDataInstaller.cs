@@ -1,15 +1,6 @@
-using UnityEngine;
-using Votyra.Core.Images;
-using Votyra.Core.MeshUpdaters;
-using Votyra.Core.Models;
-using Votyra.Core.Utils;
-using Votyra.Core.GroupSelectors;
-using Votyra.Core.Images;
-using Votyra.Core.Images.Constraints;
-using Votyra.Core.ImageSamplers;
-using Votyra.Core.TerrainGenerators;
-using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Zenject;
+using Votyra.Core.Profiling;
+using Votyra.Core.Logging;
 
 namespace Votyra.Core.Unity
 {
@@ -18,6 +9,34 @@ namespace Votyra.Core.Unity
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<TerrainManagerModel>().AsSingle();
+
+            Container.BindInterfacesAndSelfTo<StateModel>().AsSingle();
+
+            Container.Bind<IThreadSafeLogger>()
+                .FromMethod(context =>
+                {
+                    //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
+                    return new UnityLogger(context.ObjectType.FullName, context.ObjectInstance as UnityEngine.Object);
+
+                }).AsTransient();
+
+            Container.Bind<IProfiler>()
+                .FromMethod(context =>
+                {
+                    //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
+                    return CreateProfiler(context.ObjectInstance as UnityEngine.Object);
+
+                }).AsTransient();
+        }
+
+        private static IThreadSafeLogger CreateLogger(string name, UnityEngine.Object owner)
+        {
+            return new UnityLogger(name, owner);
+        }
+
+        private IProfiler CreateProfiler(UnityEngine.Object owner)
+        {
+            return new UnityProfiler(owner);
         }
     }
 }

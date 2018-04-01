@@ -63,10 +63,10 @@ namespace Votyra.Core.Unity
             UpdateModel();
 
             UniRx.Observable
-                .CombineLatest(_terrainManagerModel.ActiveAlgorithm, _terrainManagerModel.ImageConfig, _terrainManagerModel.InitialImageConfig, _terrainManagerModel.TerrainConfig, (activeAlgorithm, imageConfig, initialImageConfig, terrainConfig) =>
-                {
-                    return new { activeAlgorithm, imageConfig, initialImageConfig, terrainConfig };
-                })
+                .CombineLatest(_terrainManagerModel.ActiveAlgorithm, _terrainManagerModel.ImageConfig, _terrainManagerModel.InitialImageConfig, _terrainManagerModel.TerrainConfig, _terrainManagerModel.MaterialConfig, (activeAlgorithm, imageConfig, initialImageConfig, terrainConfig, materialConfig) =>
+                 {
+                     return new { activeAlgorithm, imageConfig, initialImageConfig, terrainConfig, materialConfig };
+                 })
                 .Throttle(TimeSpan.FromMilliseconds(200))
                 .Synchronize()
                 .Subscribe(data =>
@@ -79,6 +79,7 @@ namespace Votyra.Core.Unity
                     container.Unbind<IImageConfig>();
                     container.Unbind<IInitialImageConfig>();
                     container.Unbind<ITerrainConfig>();
+                    container.Unbind<IMaterialConfig>();
                     if (data.activeAlgorithm == null || data.activeAlgorithm.Prefab == null)
                         return;
 
@@ -86,6 +87,7 @@ namespace Votyra.Core.Unity
                     container.Bind<IImageConfig>().FromInstance(data.imageConfig);
                     container.Bind<IInitialImageConfig>().FromInstance(data.initialImageConfig);
                     container.Bind<ITerrainConfig>().FromInstance(data.terrainConfig);
+                    container.Bind<IMaterialConfig>().FromInstance(data.materialConfig);
                     var instance = container.InstantiatePrefab(data.activeAlgorithm.Prefab, context.transform);
 
                     // TODO Not working, but there might be a way to inject directly into the child container
@@ -189,9 +191,13 @@ namespace Votyra.Core.Unity
             if (_terrainManagerModel.InitialImageConfig.Value != initialImageConfig)
                 _terrainManagerModel.InitialImageConfig.OnNext(initialImageConfig);
 
-            var terrainConfig = new TerrainConfig(_cellInGroupCount, _flipTriangles, _drawBounds, _async, _material, _materialWalls);
+            var terrainConfig = new TerrainConfig(_cellInGroupCount, _flipTriangles, _drawBounds, _async);
             if (_terrainManagerModel.TerrainConfig.Value != terrainConfig)
                 _terrainManagerModel.TerrainConfig.OnNext(terrainConfig);
+
+            var materialConfig = new MaterialConfig(_material, _materialWalls);
+            if (_terrainManagerModel.MaterialConfig.Value != materialConfig)
+                _terrainManagerModel.MaterialConfig.OnNext(materialConfig);
         }
     }
 }

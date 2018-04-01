@@ -1,13 +1,23 @@
 using System.Collections.Generic;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.GroupSelectors
 {
-    public class GroupsByCameraVisibilitySelector2i : IGroupSelector2i
+    public class GroupsByCameraVisibilitySelector2i : IGroupSelector<IFrameData2i, Vector2i>
     {
-        public GroupActions2i GetGroupsToUpdate(IGroupVisibilityContext2i options)
+        private readonly IImageSampler2i _imageSampler;
+        private readonly Vector2i _cellInGroupCount;
+
+        public GroupsByCameraVisibilitySelector2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
+        {
+            _imageSampler = imageSampler;
+            _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+        }
+
+        public GroupActions<Vector2i> GetGroupsToUpdate(IFrameData2i options)
         {
             if (options == null)
             {
@@ -20,9 +30,10 @@ namespace Votyra.Core.GroupSelectors
             var cameraPosition = options.CameraPosition;
             var cameraLocalToWorldMatrix = options.CameraLocalToWorldMatrix;
             var parentContainerWorldToLocalMatrix = options.ParentContainerWorldToLocalMatrix;
-            var groupBoundsTemplate = options.GroupBounds;
-            var cellInGroupCount = options.CellInGroupCount;
-            var invalidatedArea = options.InvalidatedArea_worldSpace;
+
+            var invalidatedArea = _imageSampler
+               .ImageToWorld(options.InvalidatedArea_imageSpace)
+               .RoundToContain();
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition);
 
@@ -33,15 +44,18 @@ namespace Votyra.Core.GroupSelectors
                 localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
 
-            var bounds_center = groupBoundsTemplate.center;
-            var bounds_size = groupBoundsTemplate.size;
+            var bounds_center = new Vector3f(_cellInGroupCount.x / 2.0f, _cellInGroupCount.y / 2.0f, options.Image.RangeZ.Center);
+            var bounds_size = new Vector3f(_cellInGroupCount.x, _cellInGroupCount.y, options.Image.RangeZ.Size);
 
-            var cellInGroupCount_x = cellInGroupCount.x;
-            var cellInGroupCount_y = cellInGroupCount.y;
+            var cellInGroupCount_x = _cellInGroupCount.x;
+            var cellInGroupCount_y = _cellInGroupCount.y;
+
             int min_group_x = MathUtils.FloorToInt(localCameraBounds.min.x / cellInGroupCount_x);
             int min_group_y = MathUtils.FloorToInt(localCameraBounds.min.y / cellInGroupCount_y);
+
             int max_group_x = MathUtils.CeilToInt(localCameraBounds.max.x / cellInGroupCount_x);
             int max_group_y = MathUtils.CeilToInt(localCameraBounds.max.y / cellInGroupCount_y);
+
 
             var groupsToRecompute = PooledSet<Vector2i>.Create();
             var groupsToKeep = PooledSet<Vector2i>.Create();
@@ -60,7 +74,7 @@ namespace Votyra.Core.GroupSelectors
                     bool isInside = TestPlanesAABB(planes, groupBounds);
                     if (isInside)
                     {
-                        var groupArea = new Rect2i(group * cellInGroupCount, cellInGroupCount);
+                        var groupArea = new Rect2i(group * _cellInGroupCount, _cellInGroupCount);
                         if (groupArea.Overlaps(invalidatedArea))
                         {
                             groupsToRecompute.Add(group);
@@ -79,7 +93,7 @@ namespace Votyra.Core.GroupSelectors
                     }
                 }
             }
-            return new GroupActions2i(groupsToRecompute, groupsToKeep);
+            return new GroupActions<Vector2i>(groupsToRecompute, groupsToKeep);
         }
 
         private bool TestPlanesAABB(IEnumerable<Plane3f> planes, Rect3f bounds)

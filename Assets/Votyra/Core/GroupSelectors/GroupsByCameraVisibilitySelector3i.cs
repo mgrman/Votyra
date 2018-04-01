@@ -1,13 +1,23 @@
 using System.Collections.Generic;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.GroupSelectors
 {
-    public class GroupsByCameraVisibilitySelector3i : IGroupSelector3i
+    public class GroupsByCameraVisibilitySelector3i : IGroupSelector<IFrameData3b, Vector3i>
     {
-        public GroupActions3i GetGroupsToUpdate(IGroupVisibilityContext3i options)
+        private readonly IImageSampler3 _imageSampler;
+        private readonly Vector3i _cellInGroupCount;
+
+        public GroupsByCameraVisibilitySelector3i(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
+        {
+            _imageSampler = imageSampler;
+            _cellInGroupCount = terrainConfig.CellInGroupCount;
+        }
+
+        public GroupActions<Vector3i> GetGroupsToUpdate(IFrameData3b options)
         {
             if (options == null)
             {
@@ -19,8 +29,10 @@ namespace Votyra.Core.GroupSelectors
             var cameraPosition = options.CameraPosition;
             var cameraLocalToWorldMatrix = options.CameraLocalToWorldMatrix;
             var parentContainerWorldToLocalMatrix = options.ParentContainerWorldToLocalMatrix;
-            var cellInGroupCount = options.CellInGroupCount;
-            var invalidatedArea = options.InvalidatedArea_worldSpace;
+            var cellInGroupCount = _cellInGroupCount;
+            var invalidatedArea = _imageSampler
+                .ImageToWorld(options.InvalidatedArea_imageSpace)
+               .RoundToContain();
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition);
 
@@ -76,7 +88,7 @@ namespace Votyra.Core.GroupSelectors
                     }
                 }
             }
-            return new GroupActions3i(groupsToRecompute, groupsToKeep);
+            return new GroupActions<Vector3i>(groupsToRecompute, groupsToKeep);
         }
 
         private bool TestPlanesAABB(IEnumerable<Plane3f> planes, Rect3f bounds)

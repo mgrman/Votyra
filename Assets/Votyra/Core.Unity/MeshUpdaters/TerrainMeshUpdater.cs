@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
+using Votyra.Core.Profiling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
 
@@ -13,12 +15,21 @@ namespace Votyra.Core.MeshUpdaters
         private SetDictionary<TKey, MeshFilter> _meshFilters = new SetDictionary<TKey, MeshFilter>();
 
         public IReadOnlySet<TKey> ExistingGroups => _meshFilters;
+        private readonly IProfiler _profiler;
 
-        public void UpdateMesh(IMeshContext options, IReadOnlyDictionary<TKey, ITerrainMesh> terrainMeshes, IReadOnlySet<TKey> toKeepGroups)
+        private readonly Func<GameObject> _gameObjectFactory;
+
+        public TerrainMeshUpdater(Func<GameObject> gameObjectFactory, IProfiler profiler)
+        {
+            _gameObjectFactory = gameObjectFactory;
+            _profiler = profiler;
+        }
+
+        public void UpdateMesh(IReadOnlyDictionary<TKey, ITerrainMesh> terrainMeshes, IReadOnlySet<TKey> toKeepGroups)
         {
             if (terrainMeshes != null)
             {
-                using (options.ProfilerFactory("Setting Mesh", this))
+                using (_profiler.Start("Setting Mesh"))
                 {
                     var toDeleteGroups = _meshFilters.Keys.Except(terrainMeshes.Keys).Except(toKeepGroups).ToList();
 
@@ -45,7 +56,7 @@ namespace Votyra.Core.MeshUpdaters
                             }
                             if (meshFilter == null)
                             {
-                                meshFilter = CreateMeshObject(options);
+                                meshFilter = CreateMeshObject();
                                 _meshFilters[terrainMesh.Key] = meshFilter;
                             }
                         }
@@ -125,10 +136,10 @@ namespace Votyra.Core.MeshUpdaters
             mesh.bounds = triangleMesh.MeshBounds.ToBounds();
         }
 
-        private MeshFilter CreateMeshObject(IMeshContext options)
+        private MeshFilter CreateMeshObject()
         {
             string name = string.Format("group_{0}", _meshFilters.Count);
-            var tile = options.GameObjectFactory != null ? options.GameObjectFactory() : new GameObject();
+            var tile = _gameObjectFactory();
             tile.name = name;
             tile.hideFlags = HideFlags.DontSave;
 

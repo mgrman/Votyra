@@ -4,12 +4,12 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core.GroupSelectors
 {
-    public class GroupActions2i : IDisposable
+    public class GroupActions<TKey> : IDisposable
     {
-        public IReadOnlyPooledSet<Vector2i> ToRecompute { get; }
-        public IReadOnlyPooledSet<Vector2i> ToKeep { get; }
+        public IReadOnlyPooledSet<TKey> ToRecompute { get; }
+        public IReadOnlyPooledSet<TKey> ToKeep { get; }
 
-        public GroupActions2i(IReadOnlyPooledSet<Vector2i> toRecompute, IReadOnlyPooledSet<Vector2i> toKeep)
+        public GroupActions(IReadOnlyPooledSet<TKey> toRecompute, IReadOnlyPooledSet<TKey> toKeep)
         {
             ToRecompute = toRecompute;
             ToKeep = toKeep;

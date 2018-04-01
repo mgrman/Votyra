@@ -28,14 +28,8 @@ namespace Votyra.Core
         private float _lastTime;
         private Vector3i? _lastCell;
 
-        private bool? _centerValueToReuse;
-
         public void Tick()
         {
-            if (Input.GetButtonUp("Modifier1"))
-            {
-                _centerValueToReuse = null;
-            }
             if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1))
             {
                 _lastCell = null;
@@ -44,7 +38,7 @@ namespace Votyra.Core
             {
                 ProcessMouseClick();
             }
-            // DebugMouse();
+            DebugMouse();
         }
 
         private void ProcessMouseClick()
@@ -93,6 +87,7 @@ namespace Votyra.Core
             {
                 var debugObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 debugObject.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                debugObject.GetComponent<Collider>().enabled = false;
                 debugObject.name = "Debug pointer";
                 debugRenderer = debugObject.GetComponent<Renderer>();
                 _trueMaterial = Resources.Load<Material>("PointerTrue");
@@ -110,7 +105,6 @@ namespace Votyra.Core
         }
         private Vector3i ScreenToImage(Vector3 screenPosition)
         {
-
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             // Casts the ray and get the first game object hit
@@ -184,7 +178,7 @@ namespace Votyra.Core
                     maxDist = maxDistBig;
                 else
                     maxDist = maxDistSmall;
-
+                maxDist++;
                 var area = Rect3i.CenterAndExtents(cell, new Vector3i(maxDist, maxDist, maxDist));
                 using (var image = editableImage.RequestAccess(area))
                 {

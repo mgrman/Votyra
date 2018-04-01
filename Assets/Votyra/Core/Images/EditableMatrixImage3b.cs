@@ -7,6 +7,7 @@ using Votyra.Core.Utils;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Zenject;
+using Votyra.Core.Logging;
 
 namespace Votyra.Core.Images
 {
@@ -83,8 +84,10 @@ namespace Votyra.Core.Images
             }
 
             var newInvalidatedImageArea = _constraint.FixImage(_editableMatrix, invalidatedImageArea, direction);
+            LoggerFactoryExtensions.factory.Create(this).LogMessage("newInvalidatedImageArea:" + newInvalidatedImageArea);
 
             _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedImageArea) ?? newInvalidatedImageArea;
+            LoggerFactoryExtensions.factory.Create(this).LogMessage("_invalidatedArea:" + _invalidatedArea);
         }
 
         private class EditableImageWrapper : IImage3b

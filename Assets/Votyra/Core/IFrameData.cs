@@ -1,19 +1,17 @@
+using System;
 using System.Collections.Generic;
-using Votyra.Core;
+using Votyra.Core.Images;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
+using Votyra.Core.Utils;
 
-namespace Votyra.Core.GroupSelectors
+namespace Votyra.Core
 {
-    public interface IGroupVisibilityContext3i : IContext
+    public interface IFrameData : IDisposable
     {
         Vector3f CameraPosition { get; }
         IEnumerable<Plane3f> CameraPlanes { get; }
         IEnumerable<Vector3f> CameraFrustumCorners { get; }
         Matrix4x4f CameraLocalToWorldMatrix { get; }
         Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
-        Rect3i InvalidatedArea_worldSpace { get; }
-        IReadOnlySet<Vector3i> ExistingGroups { get; }
-        Vector3i CellInGroupCount { get; }
     }
 }

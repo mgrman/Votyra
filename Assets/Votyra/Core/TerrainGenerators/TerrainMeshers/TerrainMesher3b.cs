@@ -12,24 +12,23 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher3b : ITerrainMesher3b
     {
-        protected IImageSampler3 ImageSampler { get; private set; }
+        private readonly IImageSampler3 _imageSampler;
+        private readonly Vector3i _cellInGroupCount;
+
+        public TerrainMesher3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
+        {
+            _imageSampler = imageSampler;
+            _cellInGroupCount = terrainConfig.CellInGroupCount;
+        }
         protected IImage3b Image { get; private set; }
-        public Vector3i CellInGroupCount { get; private set; }
         protected Vector3i groupPosition;
         protected Vector3i groupSize;
         protected IPooledTerrainMesh pooledMesh;
         protected ITerrainMesh mesh;
 
-        public void Initialize(ITerrainGeneratorContext3b terrainOptions)
+        public void Initialize(IImage3b image)
         {
-            this.Initialize(terrainOptions.ImageSampler, terrainOptions.Image, terrainOptions.CellInGroupCount);
-        }
-
-        public void Initialize(IImageSampler3 imageSampler, IImage3b image, Vector3i cellInGroupCount)
-        {
-            ImageSampler = imageSampler;
             Image = image;
-            this.CellInGroupCount = cellInGroupCount;
         }
 
         public void InitializeGroup(Vector3i group)
@@ -39,9 +38,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
         {
-            var bounds = new Rect3i(group * CellInGroupCount, CellInGroupCount).ToBounds();
+            var bounds = new Rect3i(group * _cellInGroupCount, _cellInGroupCount).ToBounds();
 
-            this.groupPosition = CellInGroupCount * group;
+            this.groupPosition = _cellInGroupCount * group;
 
             this.pooledMesh = cleanPooledMesh;
             this.mesh = this.pooledMesh.Mesh;
@@ -54,7 +53,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         {
             Vector3i cell = cellInGroup + groupPosition;
 
-            SampledData3b data = ImageSampler.Sample(Image, cell);
+            SampledData3b data = _imageSampler.Sample(Image, cell);
 
             var finalTris = DataToTriangles[data];
 

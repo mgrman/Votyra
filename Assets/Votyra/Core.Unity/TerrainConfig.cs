@@ -5,22 +5,18 @@ namespace Votyra.Core.Images
 {
     public class TerrainConfig : ITerrainConfig
     {
-        public TerrainConfig(Vector3i cellInGroupCount, bool flipTriangles, bool drawBounds, bool async, Material material, Material materialWalls)
+        public TerrainConfig(Vector3i cellInGroupCount, bool flipTriangles, bool drawBounds, bool async)
         {
             CellInGroupCount = cellInGroupCount;
             FlipTriangles = flipTriangles;
             DrawBounds = drawBounds;
             Async = async;
-            Material = material;
-            MaterialWalls = materialWalls;
         }
 
         public Vector3i CellInGroupCount { get; }
         public bool FlipTriangles { get; }
         public bool DrawBounds { get; }
         public bool Async { get; }
-        public Material Material { get; }
-        public Material MaterialWalls { get; }
 
 
         public static bool operator ==(TerrainConfig a, TerrainConfig b)
@@ -44,9 +40,7 @@ namespace Votyra.Core.Images
             return this.CellInGroupCount == that.CellInGroupCount
                 && this.FlipTriangles == that.FlipTriangles
                 && this.DrawBounds == that.DrawBounds
-                && this.Async == that.Async
-                && this.Material == that.Material
-                && this.MaterialWalls == that.MaterialWalls;
+                && this.Async == that.Async;
         }
 
         public override int GetHashCode()
@@ -54,9 +48,7 @@ namespace Votyra.Core.Images
             return this.CellInGroupCount.GetHashCode()
                 + this.FlipTriangles.GetHashCode() * 3
                 + this.DrawBounds.GetHashCode() * 7
-                + this.Async.GetHashCode() * 13
-                + this.Material.GetHashCode() * 23
-                + this.MaterialWalls.GetHashCode() - 3;
+                + this.Async.GetHashCode() * 13;
         }
     }
 }
