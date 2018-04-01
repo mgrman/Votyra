@@ -38,6 +38,10 @@ namespace Votyra.Core.MeshUpdaters
                     {
                         if (terrainMesh.Value.TriangleCount == 0)
                         {
+                            if (_meshFilters.ContainsKey(terrainMesh.Key))
+                            {
+                                _meshFilters[terrainMesh.Key]?.gameObject.Destroy();
+                            }
                             _meshFilters[terrainMesh.Key] = null;
                             continue;
                         }
