@@ -337,11 +337,11 @@ MonoBehaviour:
     x: 100
     y: 100
     z: 100
-  _initialData: {fileID: 781261616}
+  _initialData: {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
   _initialDataScale:
     x: 1
     y: 1
-    z: 1
+    z: 40
   _keepImageChanges: 1
   _cellInGroupCount:
     x: 10
@@ -352,7 +352,7 @@ MonoBehaviour:
   _async: 1
   _material: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
   _materialWalls: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
-  _activeTerrainAlgorithm: 3
+  _activeTerrainAlgorithm: 0
   _availableTerrainAlgorithms:
   - {fileID: 1101794731832008, guid: f4f93c13563af724e9805d1070d56d88, type: 2}
   - {fileID: 1101794731832008, guid: a3fa91a0e395d7643bf043b4c7bfd4fd, type: 2}

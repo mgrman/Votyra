@@ -17,8 +17,6 @@ namespace Votyra.Core.Models
 
         public Vector3i Size => Max - Min;
 
-        public Range2i XY => Range2i.FromMinAndMax(Min.XY, Max.XY);
-
         private Range3i(Vector3i min, Vector3i max)
         {
             this.Min = min;
@@ -50,17 +48,13 @@ namespace Votyra.Core.Models
 
         public void ForeachPointExlusive(Action<Vector3i> action)
         {
-            for (int ix = this.Min.X; ix < this.Max.X; ix++)
-            {
-                for (int iy = this.Min.Y; iy < this.Max.Y; iy++)
-                {
-                    for (int iz = this.Min.Z; iz < this.Max.Z; iz++)
-                    {
-                        var i = new Vector3i(ix, iy, iz);
-                        action(i);
-                    }
-                }
-            }
+            var min = Min;
+            Size.ForeachPointExlusive(i => action(i + min));
+        }
+
+        public bool Contains(Vector3i point)
+        {
+            return point >= Min && point < Max;
         }
 
         public bool Overlaps(Range3i that)
@@ -81,6 +75,17 @@ namespace Votyra.Core.Models
 
             var min = Vector3i.Min(this.Min, that.Min);
             var max = Vector3i.Max(this.Max, that.Max);
+            return Range3i.FromMinAndMax(min, max);
+        }
+
+        public Range3i CombineWith(Vector3i point)
+        {
+            if (Contains(point))
+                return this;
+
+            var min = Vector3i.Min(this.Min, point);
+            var max = Vector3i.Max(this.Max, point);
+
             return Range3i.FromMinAndMax(min, max);
         }
 

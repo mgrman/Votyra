@@ -22,7 +22,7 @@ namespace Votyra.Core.Models
 
         public static void ForeachPointExlusive<T>(this IMatrix2<T> matrix, Action<Vector2i> action)
         {
-            matrix.Size.ToRange2i().ForeachPointExlusive(action);
+            matrix.Size.ForeachPointExlusive(action);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Votyra.Core.Models
     {
         public static readonly Vector3f Zero = new Vector3f();
 
-        public static readonly Vector3f One = new Vector3f(1, 1, 1);
+        public static readonly Vector3f One = FromSame(1);
 
         public readonly float X;
 
@@ -36,6 +36,11 @@ namespace Votyra.Core.Models
             this.X = x;
             this.Y = y;
             this.Z = z;
+        }
+
+        public static Vector3f FromSame(float value)
+        {
+            return new Vector3f(value, value, value);
         }
 
         public Vector3i FloorToVector3i()

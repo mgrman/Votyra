@@ -16,8 +16,6 @@ namespace Votyra.Core.Models
 
         public Vector3f Extents => Size / 2f;
 
-        public Range2f XY => Range2f.FromMinAndMax(Min.XY, Max.XY);
-
         private Range3f(Vector3f min, Vector3f max)
         {
             this.Min = min;

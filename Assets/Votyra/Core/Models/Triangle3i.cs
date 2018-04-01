@@ -16,13 +16,6 @@ namespace Votyra.Core.Models
             this.C = c;
         }
 
-        public Triangle3i(Vector3f a, Vector3f b, Vector3f c)
-        {
-            this.A = a.RoundToVector3i();
-            this.B = b.RoundToVector3i();
-            this.C = c.RoundToVector3i();
-        }
-
         public IEnumerable<Vector3i> Points
         {
             get

@@ -32,6 +32,20 @@ namespace Votyra.Core.Models
             this.Z = z;
         }
 
+        public void ForeachPointExlusive(Action<Vector3i> action)
+        {
+            for (int ix = 0; ix < this.X; ix++)
+            {
+                for (int iy = 0; iy < this.Y; iy++)
+                {
+                    for (int iz = 0; iz < this.Z; iz++)
+                    {
+                        action(new Vector3i(ix, iy, iz));
+                    }
+                }
+            }
+        }
+
         public static Vector3i operator +(Vector3i a, int b)
         {
             return new Vector3i(a.X + b, a.Y + b, a.Z + b);

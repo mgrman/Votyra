@@ -53,7 +53,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             meshMock.Setup(o => o.AddTriangle(It.IsAny<Vector3f>(), It.IsAny<Vector3f>(), It.IsAny<Vector3f>()))
                 .Callback<Vector3f, Vector3f, Vector3f>((a, b, c) =>
                 {
-                    triangles.Add(new Triangle3i(a, b, c));
+                    triangles.Add(new Triangle3i(a.RoundToVector3i(), b.RoundToVector3i(), c.RoundToVector3i()));
                 });
             var mesh = meshMock.Object;
 
