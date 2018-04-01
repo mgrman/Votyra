@@ -57,12 +57,12 @@ namespace Votyra.Core.Images
                 var matrixSizeX = matrixAreaToFill.size.x;
                 var matrixSizeY = matrixAreaToFill.size.y;
 
-                for (int x = matrixAreaToFill.xMin; x < matrixAreaToFill.xMax; x++)
+                for (int x = matrixAreaToFill.min.x; x < matrixAreaToFill.max.x; x++)
                 {
-                    for (int y = matrixAreaToFill.yMin; y < matrixAreaToFill.yMax; y++)
+                    for (int y = matrixAreaToFill.min.y; y < matrixAreaToFill.max.y; y++)
                     {
                         var value = texture.GetPixelBilinear((float)x / matrixSizeX, (float)y / matrixSizeY).grayscale * scale;
-                        for (int z = matrixAreaToFill.zMin; z < matrixAreaToFill.zMax; z++)
+                        for (int z = matrixAreaToFill.min.z; z < matrixAreaToFill.max.z; z++)
                         {
                             var pos = new Vector3i(x, y, z);
                             imageAccessor[pos] = value - z > 0;
@@ -75,7 +75,7 @@ namespace Votyra.Core.Images
         private static void FillInitialState(IEditableImage3b editableImage, Collider[] colliders, float scale, IImageSampler3 sampler, GameObject root)
         {
             var bounds = colliders.Select(o => o.bounds)
-                .Select(o => new Rect3f(o.center.ToVector3f(), o.size.ToVector3f()))
+                .Select(o => new Rect3f(o.min.ToVector3f(), o.size.ToVector3f()))
                 .DefaultIfEmpty(Rect3f.zero)
                 .Aggregate((a, b) => a.Encapsulate(b));
 
@@ -84,11 +84,11 @@ namespace Votyra.Core.Images
             using (var imageAccessor = editableImage.RequestAccess(Rect3i.All))
             {
                 var area = imageAccessor.Area;
-                for (int ix = area.xMin; ix < area.xMax; ix++)
+                for (int ix = area.min.x; ix < area.max.x; ix++)
                 {
-                    for (int iy = area.yMin; iy < area.yMax; iy++)
+                    for (int iy = area.min.y; iy < area.max.y; iy++)
                     {
-                        for (int iz = area.zMin; iz < area.zMax; iz++)
+                        for (int iz = area.min.z; iz < area.max.z; iz++)
                         {
                             var i = new Vector3i(ix, iy, iz);
                             var localPos = sampler.ImageToWorld(i);
@@ -161,13 +161,13 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = imageAccessor.Area;
                 }
 
-                for (int x = matrixAreaToFill.xMin; x < matrixAreaToFill.xMax; x++)
+                for (int x = matrixAreaToFill.min.x; x < matrixAreaToFill.max.x; x++)
                 {
-                    for (int y = matrixAreaToFill.yMin; y < matrixAreaToFill.yMax; y++)
+                    for (int y = matrixAreaToFill.min.y; y < matrixAreaToFill.max.y; y++)
                     {
                         var value = texture[x, y] * scale;
 
-                        for (int z = matrixAreaToFill.zMin; z < matrixAreaToFill.zMax; z++)
+                        for (int z = matrixAreaToFill.min.z; z < matrixAreaToFill.max.z; z++)
                         {
                             var pos = new Vector3i(x, y, z);
                             imageAccessor[pos] = value - z > 0;
@@ -191,11 +191,11 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = imageAccessor.Area;
                 }
 
-                for (int x = matrixAreaToFill.xMin; x < matrixAreaToFill.xMax; x++)
+                for (int x = matrixAreaToFill.min.x; x < matrixAreaToFill.max.x; x++)
                 {
-                    for (int y = matrixAreaToFill.yMin; y < matrixAreaToFill.yMax; y++)
+                    for (int y = matrixAreaToFill.min.y; y < matrixAreaToFill.max.y; y++)
                     {
-                        for (int z = matrixAreaToFill.zMin; z < matrixAreaToFill.zMax; z++)
+                        for (int z = matrixAreaToFill.min.z; z < matrixAreaToFill.max.z; z++)
                         {
                             var pos = new Vector3i(x, y, z);
 

@@ -4,56 +4,46 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
+    /// <summary>
+    /// Max is exclusive
+    /// </summary>
     public struct Rect3i : IEquatable<Rect3i>
     {
-        public static readonly Rect3i All = new Rect3i(int.MinValue / 2, int.MinValue / 2, int.MinValue / 2, int.MaxValue, int.MaxValue, int.MaxValue);
+        public static readonly Rect3i All = new Rect3i(Vector3i.FromSame(int.MinValue / 2), Vector3i.FromSame(int.MaxValue));
+
+        public static readonly Rect3i zero = new Rect3i();
 
         public readonly Vector3i min;
-        public readonly Vector3i max;
 
-        public Rect3i(int minX, int minY, int minZ, int sizeX, int sizeY, int sizeZ)
-        {
-            this.min = new Vector3i(minX, minY, minZ);
-            this.max = new Vector3i(minX + sizeX, minY + sizeY, minZ + sizeZ);
-        }
+        public readonly Vector3i max;
 
         public Rect3i(Vector3i min, Vector3i size)
         {
+            if (size.AnyNegative)
+            {
+                throw new InvalidOperationException($"When creating {nameof(Rect3i)} using min '{min}' and size '{size}', size cannot have a negative coordinate!");
+            }
             this.min = min;
             this.max = min + size;
         }
 
-        public Vector3i extents => (max - min) / 2;
-
-        public Vector3i center => min + extents;
-
         public Vector3i size => max - min;
-
-        public static Rect3i zero { get; } = new Rect3i();
-
-        public int zMax => max.z;
-        public int yMax => max.y;
-        public int xMax => max.x;
-
-        public int zMin => min.z;
-        public int yMin => min.y;
-        public int xMin => min.x;
-
-        public int height => max.y - min.y;
-
-        public int width => max.x - min.x;
 
         public static Rect3i CenterAndExtents(Vector3i center, Vector3i extents)
         {
-            return new Rect3i(center - extents, Vector3i.One + extents + extents);
+            if (extents.AnyNegative)
+            {
+                throw new InvalidOperationException($"When creating {nameof(Rect3i)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
+            }
+            return new Rect3i(center - extents + 1, extents + extents - 1);
         }
 
-        public static Rect3i MinMaxRect(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax)
+        public static Rect3i MinMaxRect(Vector3i min, Vector3i max)
         {
-            return new Rect3i(new Vector3i(xmin, ymin, zmin), new Vector3i(xmax - xmin, ymax - ymin, zmax - zmin));
+            return new Rect3i(min, max - min);
         }
 
-        public void ForeachPoint(Action<Vector3i> action)
+        public void ForeachPointExlusive(Action<Vector3i> action)
         {
             for (int ix = this.min.x; ix < this.max.x; ix++)
             {
@@ -67,78 +57,59 @@ namespace Votyra.Core.Models
                 }
             }
         }
-        public IEnumerable<Vector3i> EnumeratePoints()
-        {
-            for (int ix = this.min.x; ix < this.max.x; ix++)
-            {
-                for (int iy = this.min.y; iy < this.max.y; iy++)
-                {
-                    for (int iz = this.min.z; iz < this.max.z; iz++)
-                    {
-                        yield return new Vector3i(ix, iy, iz);
-                    }
-                }
-            }
-        }
-
-        public Vector3i Denormalize(Vector3f normalizedRectCoordinates)
-        {
-            return min + (size * normalizedRectCoordinates).ToVector3i();
-        }
-
-        public Vector3f Normalize(Vector3i point)
-        {
-            return (point - min) / size.ToVector3f();
-        }
-
-        public bool Contains(Vector3i point)
-        {
-            return point >= min && point <= max;
-        }
 
         public bool Overlaps(Rect3i that)
         {
-            bool overlapX = this.xMin < that.xMax && that.xMin < this.xMax;
-            bool overlapY = this.yMin < that.yMax && that.yMin < this.yMax;
-            return overlapX && overlapY;
+            if (this.size == Vector3i.Zero || that.size == Vector3i.Zero)
+                return false;
+
+            bool overlapX = this.min.x <= that.max.x && that.min.x <= this.max.x;
+            bool overlapY = this.min.y <= that.max.y && that.min.y <= this.max.y;
+            bool overlapZ = this.min.z <= that.max.z && that.min.z <= this.max.z;
+            return overlapX && overlapY && overlapZ;
         }
 
-        public Rect3i CombineWith(Rect3i b)
+        public Rect3i CombineWith(Rect3i that)
         {
-            var bMin = b.min;
-            var bMax = b.max;
-            return Rect3i
-                     .MinMaxRect(
-                         Math.Min(this.min.x, bMin.x),
+            if (this.size == Vector3i.Zero)
+                return that;
+
+            if (that.size == Vector3i.Zero)
+                return this;
+
+            var bMin = that.min;
+            var bMax = that.max;
+
+            Vector3i min = new Vector3i(Math.Min(this.min.x, bMin.x),
                          Math.Min(this.min.y, bMin.y),
-                         Math.Min(this.min.z, bMin.z),
-                         Math.Max(this.max.x, bMax.x),
+                         Math.Min(this.min.z, bMin.z));
+            Vector3i max = new Vector3i(Math.Max(this.max.x, bMax.x),
                          Math.Max(this.max.y, bMax.y),
                          Math.Max(this.max.z, bMax.z));
+            return Rect3i.MinMaxRect(min, max);
         }
 
         public Rect3f ToBounds()
         {
-            return new Rect3f(center.ToVector3f(), size.ToVector3f());
+            return Rect3f.FromMinMax(min.ToVector3f(), max.ToVector3f());
         }
 
-        public Rect3i IntersectWith(Rect3i b)
+        public Rect3i IntersectWith(Rect3i that)
         {
-            var bMin = b.min;
-            var bMax = b.max;
-            int minX = Math.Max(this.min.x, bMin.x);
-            int minY = Math.Max(this.min.y, bMin.y);
-            int minZ = Math.Max(this.min.z, bMin.z);
-            int maxX = Math.Min(this.max.x, bMax.x);
-            int maxY = Math.Min(this.max.y, bMax.y);
-            int maxZ = Math.Min(this.max.z, bMax.z);
+            if (this.size == Vector3i.Zero || that.size == Vector3i.Zero)
+                return Rect3i.zero;
 
-            maxX = Math.Max(minX, maxX);
-            maxY = Math.Max(minY, maxY);
-            maxZ = Math.Max(minZ, maxZ);
-            return Rect3i.MinMaxRect(minX, minY, minZ, maxX, maxY, maxZ);
+            int minX = Math.Max(this.min.x, that.min.x);
+            int minY = Math.Max(this.min.y, that.min.y);
+            int minZ = Math.Max(this.min.z, that.min.z);
+            int maxX = Math.Max(Math.Min(this.max.x, that.max.x), minX);
+            int maxY = Math.Max(Math.Min(this.max.y, that.max.y), minY);
+            int maxZ = Math.Max(Math.Min(this.max.z, that.max.z), minZ);
+
+            Vector3i min = new Vector3i(minX, minY, minZ);
+            Vector3i max = new Vector3i(maxX, maxY, maxZ);
+            return Rect3i.MinMaxRect(min, max);
         }
-
 
         public static bool operator ==(Rect3i a, Rect3i b)
         {
@@ -170,7 +141,7 @@ namespace Votyra.Core.Models
 
         public override string ToString()
         {
-            return $"min:{min} max:{max}";
+            return $"min:{min} max:{max} size:{size}";
         }
     }
 }

@@ -18,9 +18,9 @@ namespace Votyra.Core.Models
 
         public Triangle3i(Vector3f a, Vector3f b, Vector3f c)
         {
-            this.a = new Vector3i(a);
-            this.b = new Vector3i(b);
-            this.c = new Vector3i(c);
+            this.a = a.ToVector3i();
+            this.b = b.ToVector3i();
+            this.c = c.ToVector3i();
         }
 
         public IEnumerable<Vector3i> Points

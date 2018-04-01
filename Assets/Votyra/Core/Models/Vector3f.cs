@@ -38,6 +38,11 @@ namespace Votyra.Core.Models
             }
         }
 
+        public Vector3i ToVector3i()
+        {
+            return RoundToVector3i();
+        }
+
         public Vector3i FloorToVector3i()
         {
             return new Vector3i(x.FloorToInt(), y.FloorToInt(), z.FloorToInt());
@@ -151,10 +156,6 @@ namespace Votyra.Core.Models
         }
         public static Vector3f Half { get { return new Vector3f(0.5f, 0.5f, 0.5f); } }
 
-        public Vector3i ToVector3i()
-        {
-            return new Vector3i(this);
-        }
 
         public Vector3f SetX(float x)
         {

@@ -73,7 +73,7 @@ namespace Votyra.Core.Images
         private static void FillInitialState(IEditableImage2f editableImage, Collider[] colliders, float scale, IImageSampler2i sampler, GameObject root)
         {
             var bounds = colliders.Select(o => o.bounds)
-                .Select(o => new Rect3f(o.center.ToVector3f(), o.size.ToVector3f()))
+                .Select(o => new Rect3f(o.min.ToVector3f(), o.size.ToVector3f()))
                 .DefaultIfEmpty(Rect3f.zero)
                 .Aggregate((a, b) => a.Encapsulate(b));
 

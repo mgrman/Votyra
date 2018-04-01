@@ -17,13 +17,6 @@ namespace Votyra.Core.Models
             this.z = z;
         }
 
-        public Vector3i(Vector3f vec)
-        {
-            this.x = vec.x.RoundToInt();
-            this.y = vec.y.RoundToInt();
-            this.z = vec.z.RoundToInt();
-        }
-
         public bool AllPositive
         {
             get
@@ -121,6 +114,11 @@ namespace Votyra.Core.Models
         public Vector3i DivideUp(Vector3i a, int b)
         {
             return new Vector3i(a.x.DivideUp(b), a.y.DivideUp(b), a.z.DivideUp(b));
+        }
+
+        public static Vector3i FromSame(int value)
+        {
+            return new Vector3i(value, value, value);
         }
 
         public Vector3f ToVector3f()

@@ -5,6 +5,7 @@ using Votyra.Core.ImageSamplers;
 using Zenject;
 using Votyra.Core.Utils;
 using System.Collections.Generic;
+using Votyra.Core.Logging;
 
 namespace Votyra.Core
 {
@@ -19,8 +20,11 @@ namespace Votyra.Core
         [Inject(Id = "root")]
         protected GameObject _root;
 
+        [Inject]
+        protected IThreadSafeLogger _logger;
+
         private const float Period = 0.1f;
-        private const int maxDistBig = 4;
+        private const int maxDistBig = 2;
         private const int maxDistSmall = 1;
         private const float smoothSpeedRelative = 0.2f;
         private const float smoothCutoff = smoothSpeedRelative / 2;
@@ -69,9 +73,9 @@ namespace Votyra.Core
             var area = Rect3i.CenterAndExtents(imageMousePosition, new Vector3i(2, 2, 2));
             using (var image = _editableImage.RequestAccess(area))
             {
-                area.ForeachPoint((imagePosition) =>
+                area = area.IntersectWith(image.Area);
+                area.ForeachPointExlusive((imagePosition) =>
                 {
-
                     var value = image[imagePosition];
                     var worldPosition = ImageToWorld(imagePosition);
                     CreateDebugObjectAt(worldPosition, value);
@@ -103,6 +107,7 @@ namespace Votyra.Core
         {
             return ScreenToImage(Input.mousePosition);
         }
+
         private Vector3i ScreenToImage(Vector3 screenPosition)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -178,21 +183,23 @@ namespace Votyra.Core
                     maxDist = maxDistBig;
                 else
                     maxDist = maxDistSmall;
-                maxDist++;
-                var area = Rect3i.CenterAndExtents(cell, new Vector3i(maxDist, maxDist, maxDist));
-                using (var image = editableImage.RequestAccess(area))
+
+                var areaToChange = Rect3i.CenterAndExtents(cell, Vector3i.FromSame(maxDist));
+
+                var extendedSetArea = new Rect3i(areaToChange.min, areaToChange.size + new Vector3i(0, 0, 1));
+                using (var image = editableImage.RequestAccess(extendedSetArea))
                 {
-                    area = area.IntersectWith(image.Area);
-                    if (value == true)
+                    _logger.LogMessage($"image.Area:{image.Area}");
+                    _logger.LogMessage($"areaToChange:{areaToChange}");
+                    var actualAreaToChange = areaToChange.IntersectWith(image.Area);
+                    _logger.LogMessage($"actualAreaToChange:{actualAreaToChange}");
+                    actualAreaToChange.ForeachPointExlusive(point =>
                     {
-                        image[cell] = true;
-                        image[cell + new Vector3i(0, 0, 1)] = true;
-                    }
-                    else if (value == false)
-                    {
-                        image[cell] = false;
-                        image[cell + new Vector3i(0, 0, 1)] = false;
-                    }
+                        _logger.LogMessage($"image[point] {image[point]} to {value}");
+                        _logger.LogMessage($"image[point+ new Vector3i(0, 0, 1)] {image[point + new Vector3i(0, 0, 1)]} to {value}");
+                        image[point] = value;
+                        image[point + new Vector3i(0, 0, 1)] = value;
+                    });
                 }
             }
         }

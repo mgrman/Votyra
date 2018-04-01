@@ -43,8 +43,7 @@ namespace Votyra.Core.GroupSelectors
                 var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner));
                 localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
-
-            var bounds_center = new Vector3f(_cellInGroupCount.x / 2.0f, _cellInGroupCount.y / 2.0f, options.Image.RangeZ.Center);
+            var minZ = options.Image.RangeZ.min;
             var bounds_size = new Vector3f(_cellInGroupCount.x, _cellInGroupCount.y, options.Image.RangeZ.Size);
 
             var cellInGroupCount_x = _cellInGroupCount.x;
@@ -66,9 +65,9 @@ namespace Votyra.Core.GroupSelectors
                 {
                     var group = new Vector2i(group_x, group_y);
                     var groupBounds = new Rect3f(new Vector3f(
-                        bounds_center.x + group_x * cellInGroupCount_x,
-                        bounds_center.y + group_y * cellInGroupCount_y,
-                        bounds_center.z
+                         group_x * cellInGroupCount_x,
+                         group_y * cellInGroupCount_y,
+                        minZ
                     ), bounds_size);
 
                     bool isInside = TestPlanesAABB(planes, groupBounds);

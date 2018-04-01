@@ -118,7 +118,7 @@ namespace Votyra.Core.Images
         {
             private readonly bool[,,] _editableMatrix;
             private int _changeCounter = 0;
-            private bool _changed = true;
+            private bool _changed = false;
             public Rect3i Area { get; }
 
             public bool this[Vector3i pos]

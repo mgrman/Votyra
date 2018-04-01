@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
+using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
@@ -10,11 +11,12 @@ namespace Votyra.Core.GroupSelectors
     {
         private readonly IImageSampler3 _imageSampler;
         private readonly Vector3i _cellInGroupCount;
-
-        public GroupsByCameraVisibilitySelector3i(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
+        private readonly IThreadSafeLogger _logger;
+        public GroupsByCameraVisibilitySelector3i(ITerrainConfig terrainConfig, IImageSampler3 imageSampler, IThreadSafeLogger logger)
         {
             _imageSampler = imageSampler;
             _cellInGroupCount = terrainConfig.CellInGroupCount;
+            _logger = logger;
         }
 
         public GroupActions<Vector3i> GetGroupsToUpdate(IFrameData3b options)
@@ -32,7 +34,7 @@ namespace Votyra.Core.GroupSelectors
             var cellInGroupCount = _cellInGroupCount;
             var invalidatedArea = _imageSampler
                 .ImageToWorld(options.InvalidatedArea_imageSpace)
-               .RoundToContain();
+                .RoundToContain();
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition);
 
