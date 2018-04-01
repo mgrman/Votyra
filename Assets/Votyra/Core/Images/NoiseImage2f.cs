@@ -15,7 +15,7 @@ namespace Votyra.Core.Images
             Scale = scale;
         }
 
-        public Range2f RangeZ { get { return new Range2f(Offset.Z, Offset.Z + Scale.Z); } }
+        public Range1f RangeZ { get { return new Range1f(Offset.Z, Offset.Z + Scale.Z); } }
 
         public float Sample(Vector2i point)
         {

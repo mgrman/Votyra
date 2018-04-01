@@ -123,6 +123,11 @@ namespace Votyra.Core.Models
             return new Vector3f(a.X / b, a.Y / b, a.Z / b);
         }
 
+        public static Vector3f operator /(Vector3f a, Vector3f b)
+        {
+            return new Vector3f(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+        }
+
         public static Vector3f Max(Vector3f a, Vector3f b)
         {
             return new Vector3f(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y), Math.Max(a.Z, b.Z));

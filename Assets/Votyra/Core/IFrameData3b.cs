@@ -8,6 +8,6 @@ namespace Votyra.Core
     {
         IReadOnlySet<Vector3i> ExistingGroups { get; }
         IImage3b Image { get; }
-        Rect3i InvalidatedArea_imageSpace { get; }
+        Range3i InvalidatedArea_imageSpace { get; }
     }
 }

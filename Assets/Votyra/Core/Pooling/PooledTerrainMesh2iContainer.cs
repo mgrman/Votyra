@@ -41,7 +41,7 @@ namespace Votyra.Core.Pooling
             Pool.ReturnObject(this, this.CellInGroupCount);
         }
 
-        public void Clear(Rect3f meshBounds)
+        public void Clear(Range3f meshBounds)
         {
             Mesh.Clear(meshBounds);
         }

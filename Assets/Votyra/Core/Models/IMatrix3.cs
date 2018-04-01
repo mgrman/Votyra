@@ -1,3 +1,5 @@
+using System;
+
 namespace Votyra.Core.Models
 {
     public interface IMatrix3<T>
@@ -16,6 +18,11 @@ namespace Votyra.Core.Models
         public static T TryGet<T>(this IMatrix3<T> matrix, Vector3i i, T defaultValue)
         {
             return matrix.ContainsIndex(i) ? matrix[i] : defaultValue;
+        }
+
+        public static void ForeachPointExlusive<T>(this IMatrix3<T> matrix, Action<Vector3i> action)
+        {
+            matrix.Size.ToRange3i().ForeachPointExlusive(action);
         }
     }
 }

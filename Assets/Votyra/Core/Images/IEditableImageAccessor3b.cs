@@ -5,7 +5,7 @@ namespace Votyra.Core.Images
 {
     public interface IEditableImageAccessor3b : IDisposable
     {
-        Rect3i Area { get; }
+        Range3i Area { get; }
 
         bool this[Vector3i pos] { get; set; }
     }

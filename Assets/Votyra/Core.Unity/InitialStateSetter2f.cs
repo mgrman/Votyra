@@ -42,12 +42,12 @@ namespace Votyra.Core.Images
 
         private static void FillInitialState(IEditableImage2f editableImage, Texture2D texture, float scale)
         {
-            using (var imageAccessor = editableImage.RequestAccess(Rect2i.All))
+            using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
-                Rect2i matrixAreaToFill;
-                if (imageAccessor.Area == Rect2i.All)
+                Range2i matrixAreaToFill;
+                if (imageAccessor.Area == Range2i.All)
                 {
-                    matrixAreaToFill = new Vector2i(texture.width, texture.height).ToRect2i();
+                    matrixAreaToFill = new Vector2i(texture.width, texture.height).ToRange2i();
                 }
                 else
                 {
@@ -57,111 +57,94 @@ namespace Votyra.Core.Images
                 var matrixSizeX = matrixAreaToFill.Size.X;
                 var matrixSizeY = matrixAreaToFill.Size.Y;
 
-                for (int x = matrixAreaToFill.Min.X; x < matrixAreaToFill.Max.X; x++)
+                matrixAreaToFill.ForeachPointExlusive(pos =>
                 {
-                    for (int y = matrixAreaToFill.Min.Y; y < matrixAreaToFill.Max.Y; y++)
-                    {
-                        var pos = new Vector2i(x, y);
-                        imageAccessor[pos] = texture.GetPixelBilinear((float)x / matrixSizeX, (float)y / matrixSizeY).grayscale * scale;
-                    }
-                }
+                    imageAccessor[pos] = texture.GetPixelBilinear((float)pos.X / matrixSizeX, (float)pos.Y / matrixSizeY).grayscale * scale;
+                });
             }
         }
 
         private static void FillInitialState(IEditableImage2f editableImage, Collider[] colliders, float scale, IImageSampler2i sampler, GameObject root)
         {
             var bounds = colliders.Select(o => o.bounds)
-                .Select(o => Rect3f.FromMinAndSize(o.min.ToVector3f(), o.size.ToVector3f()))
-                .DefaultIfEmpty(Rect3f.zero)
+                .Select(o => Range3f.FromMinAndSize(o.min.ToVector3f(), o.size.ToVector3f()))
+                .DefaultIfEmpty(Range3f.zero)
                 .Aggregate((a, b) => a.Encapsulate(b));
 
-            using (var imageAccessor = editableImage.RequestAccess(Rect2i.All))
+            using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
                 var area = imageAccessor.Area;
-                for (int ix = area.Min.X; ix < area.Max.X; ix++)
+                area.ForeachPointExlusive(i =>
                 {
-                    for (int iy = area.Min.Y; iy < area.Max.Y; iy++)
-                    {
-                        var i = new Vector2i(ix, iy);
-                        var localPos = sampler.ImageToWorld(i);
+                    var localPos = sampler.ImageToWorld(i);
 
-                        var ray = new Ray(root.transform.TransformPoint(new Vector3(localPos.X, localPos.Y, bounds.max.Z)), root.transform.TransformDirection(new Vector3(0, 0, -1)));
+                    var ray = new Ray(root.transform.TransformPoint(new Vector3(localPos.X, localPos.Y, bounds.Max.Z)), root.transform.TransformDirection(new Vector3(0, 0, -1)));
 
-                        imageAccessor[i] = colliders
-                            .Select(collider =>
+                    imageAccessor[i] = colliders
+                        .Select(collider =>
+                        {
+                            RaycastHit hit;
+                            if (collider.Raycast(ray, out hit, bounds.Size.Z))
                             {
-                                RaycastHit hit;
-                                if (collider.Raycast(ray, out hit, bounds.size.Z))
-                                {
-                                    return Mathf.Max(0, bounds.max.Z - hit.distance);
-                                }
-                                return 0;
-                            })
-                            .DefaultIfEmpty(0)
-                            .Max() * scale;
-                    }
-                }
+                                return Mathf.Max(0, bounds.Max.Z - hit.distance);
+                            }
+                            return 0;
+                        })
+                        .DefaultIfEmpty(0)
+                        .Max() * scale;
+                });
             }
         }
 
         private static void FillInitialState(IEditableImage2f editableImage, IMatrix2<float> texture, float scale)
         {
-            using (var imageAccessor = editableImage.RequestAccess(Rect2i.All))
+            using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
-                Rect2i matrixAreaToFill;
-                if (imageAccessor.Area == Rect2i.All)
+                Range2i matrixAreaToFill;
+                if (imageAccessor.Area == Range2i.All)
                 {
-                    matrixAreaToFill = texture.Size.ToRect2i();
+                    matrixAreaToFill = texture.Size.ToRange2i();
                 }
                 else
                 {
                     matrixAreaToFill = imageAccessor.Area;
                 }
-
-                for (int ix = matrixAreaToFill.Min.X; ix < matrixAreaToFill.Max.X; ix++)
+                matrixAreaToFill.ForeachPointExlusive(i =>
                 {
-                    for (int iy = matrixAreaToFill.Min.Y; iy < matrixAreaToFill.Max.Y; iy++)
-                    {
-                        var i = new Vector2i(ix, iy);
-                        imageAccessor[i] = texture[i] * scale;
-                    }
-                }
+                    imageAccessor[i] = texture[i] * scale;
+                });
             }
         }
 
         private static void FillInitialState(IEditableImage2f editableImage, IMatrix3<float> texture, float scale)
         {
-            using (var imageAccessor = editableImage.RequestAccess(Rect2i.All))
+            using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
-                Rect2i matrixAreaToFill;
-                if (imageAccessor.Area == Rect2i.All)
+                Range2i matrixAreaToFill;
+                if (imageAccessor.Area == Range2i.All)
                 {
-                    matrixAreaToFill = texture.Size.XY.ToRect2i();
+                    matrixAreaToFill = texture.Size.XY.ToRange2i();
                 }
                 else
                 {
                     matrixAreaToFill = imageAccessor.Area;
                 }
-
-                for (int ix = matrixAreaToFill.Min.X; ix < matrixAreaToFill.Max.X; ix++)
+                matrixAreaToFill.ForeachPointExlusive(i =>
                 {
-                    for (int iy = matrixAreaToFill.Min.Y; iy < matrixAreaToFill.Max.Y; iy++)
-                    {
-                        var iImage = new Vector2i(ix, iy);
-                        float value = 0;
+                    float value = 0;
 
-                        for (int iz = texture.Size.Z - 1; iz >= 0; iz--)
+                    for (int iz = texture.Size.Z - 1; iz >= 0; iz--)
+                    {
+                        var iTexture = new Vector3i(i.X, i.Y, iz);
+                        if (texture[iTexture] > 0)
                         {
-                            var iTexture = new Vector3i(ix, iy, iz);
-                            if (texture[iTexture] > 0)
-                            {
-                                value = iz;
-                                break;
-                            }
+                            value = iz;
+                            break;
                         }
-                        imageAccessor[iImage] = value * scale;
                     }
-                }
+                    imageAccessor[i] = value * scale;
+                });
+
             }
         }
     }

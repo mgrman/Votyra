@@ -5,7 +5,7 @@ namespace Votyra.Core.TerrainMeshes
 {
     public class FixedTerrainMesh2i : ITerrainMesh2i
     {
-        public Rect3f MeshBounds { get; private set; }
+        public Range3f MeshBounds { get; private set; }
         public Vector3f[] Vertices { get; private set; }
         public Vector3f[] Normals { get; private set; }
         public Vector2f[] UV { get; private set; }
@@ -33,7 +33,7 @@ namespace Votyra.Core.TerrainMeshes
             Normals = new Vector3f[PointCount];
         }
 
-        public void Clear(Rect3f meshBounds)
+        public void Clear(Range3f meshBounds)
         {
             MeshBounds = meshBounds;
             _counter = 0;

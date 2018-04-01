@@ -6,25 +6,25 @@ namespace Votyra.Core.ImageSamplers
 {
     public static class ImageSampler2iUtils
     {
-        public static Rect2f ImageToWorld(this IImageSampler2i sampler, Rect2i rect)
+        public static Range2f ImageToWorld(this IImageSampler2i sampler, Range2i rect)
         {
             var min = sampler.ImageToWorld(rect.Min);
             var max = sampler.ImageToWorld(rect.Max);
-            return Rect2f.FromMinAndMax(min, max);
+            return Range2f.FromMinAndMax(min, max);
         }
 
-        public static Rect2i WorldToImage(this IImageSampler2i sampler, Rect2f rect)
+        public static Range2i WorldToImage(this IImageSampler2i sampler, Range2f rect)
         {
             var min = sampler.WorldToImage(rect.Min);
             var max = sampler.WorldToImage(rect.Max);
-            return Rect2i.FromMinAndMax(min, max);
+            return Range2i.FromMinAndMax(min, max);
         }
 
-        public static Rect2i WorldToImage(this IImageSampler2i sampler, Rect2i rect)
+        public static Range2i WorldToImage(this IImageSampler2i sampler, Range2i rect)
         {
             var min = sampler.CellToX0Y0(rect.Min);
             var max = sampler.CellToX1Y1(rect.Max);
-            return Rect2i.FromMinAndMax(min, max);
+            return Range2i.FromMinAndMax(min, max);
         }
 
         public static SampledData2i Sample(this IImageSampler2i sampler, Matrix2<float> image, Vector2i pos)

@@ -122,9 +122,9 @@ namespace Votyra.Core.Models
             return new Vector3i(lhs.Y * rhs.Z - lhs.Z * rhs.Y, lhs.Z * rhs.X - lhs.X * rhs.Z, lhs.X * rhs.Y - lhs.Y * rhs.X);
         }
 
-        public Rect3i ToRect3i()
+        public Range3i ToRange3i()
         {
-            return Rect3i.FromMinAndSize(Vector3i.Zero, this);
+            return Range3i.FromMinAndSize(Vector3i.Zero, this);
         }
 
         public static bool operator <(Vector3i a, Vector3i b)

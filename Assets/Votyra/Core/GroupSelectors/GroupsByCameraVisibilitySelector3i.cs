@@ -30,72 +30,56 @@ namespace Votyra.Core.GroupSelectors
             var cameraPosition = options.CameraPosition;
             var cameraLocalToWorldMatrix = options.CameraLocalToWorldMatrix;
             var parentContainerWorldToLocalMatrix = options.ParentContainerWorldToLocalMatrix;
-            var cellInGroupCount = _cellInGroupCount;
             var invalidatedArea = _imageSampler
                 .ImageToWorld(options.InvalidatedArea_imageSpace)
                 .RoundToContain();
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition);
 
-            var localCameraBounds = Rect3f.FromMinAndSize(cameraPositionLocal, new Vector3f());
+            var localCameraBounds = Range3f.FromMinAndSize(cameraPositionLocal, new Vector3f());
             foreach (var frustumCorner in frustumCorners)
             {
                 var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner));
                 localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
-
-            var cellInGroupCount_x = cellInGroupCount.X;
-            var cellInGroupCount_y = cellInGroupCount.Y;
-            var cellInGroupCount_z = cellInGroupCount.Z;
-            int min_group_x = MathUtils.FloorToInt(localCameraBounds.min.X / cellInGroupCount_x);
-            int min_group_y = MathUtils.FloorToInt(localCameraBounds.min.Y / cellInGroupCount_y);
-            int min_group_z = MathUtils.FloorToInt(localCameraBounds.min.Z / cellInGroupCount_z);
-            int max_group_x = MathUtils.CeilToInt(localCameraBounds.max.X / cellInGroupCount_x);
-            int max_group_y = MathUtils.CeilToInt(localCameraBounds.max.Y / cellInGroupCount_y);
-            int max_group_z = MathUtils.CeilToInt(localCameraBounds.max.Z / cellInGroupCount_z);
+            var cameraBoundsGroups = (localCameraBounds / _cellInGroupCount.ToVector3f()).RoundToContain();
 
             var groupsToRecompute = PooledSet<Vector3i>.Create();
             var groupsToKeep = PooledSet<Vector3i>.Create();
 
-            for (int group_x = min_group_x; group_x <= max_group_x; group_x++)
+            cameraBoundsGroups.ForeachPointExlusive(group =>
             {
-                for (int group_y = min_group_y; group_y <= max_group_y; group_y++)
-                {
-                    for (int group_z = min_group_z; group_z <= max_group_z; group_z++)
-                    {
-                        var group = new Vector3i(group_x, group_y, group_z);
-                        var groupBounds = Rect3i.FromMinAndSize(group * cellInGroupCount, cellInGroupCount).ToBounds();
+                var groupBounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToBounds();
 
-                        bool isInside = TestPlanesAABB(planes, groupBounds);
-                        if (isInside)
+                bool isInside = TestPlanesAABB(planes, groupBounds);
+                if (isInside)
+                {
+                    var groupArea = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount);
+                    if (groupArea.Overlaps(invalidatedArea))
+                    {
+                        groupsToRecompute.Add(group);
+                    }
+                    else
+                    {
+                        if (!options.ExistingGroups.Contains(group))
                         {
-                            var groupArea = Rect3i.FromMinAndSize(group * cellInGroupCount, cellInGroupCount);
-                            if (groupArea.Overlaps(invalidatedArea))
-                            {
-                                groupsToRecompute.Add(group);
-                            }
-                            else
-                            {
-                                if (!options.ExistingGroups.Contains(group))
-                                {
-                                    groupsToRecompute.Add(group);
-                                }
-                                else
-                                {
-                                    groupsToKeep.Add(group);
-                                }
-                            }
+                            groupsToRecompute.Add(group);
+                        }
+                        else
+                        {
+                            groupsToKeep.Add(group);
                         }
                     }
                 }
-            }
+            });
+
             return new GroupActions<Vector3i>(groupsToRecompute, groupsToKeep);
         }
 
-        private bool TestPlanesAABB(IEnumerable<Plane3f> planes, Rect3f bounds)
+        private bool TestPlanesAABB(IEnumerable<Plane3f> planes, Range3f bounds)
         {
-            var min = bounds.min;
-            var max = bounds.max;
+            var min = bounds.Min;
+            var max = bounds.Max;
 
             bool isInside = true;
             foreach (var plane in planes)

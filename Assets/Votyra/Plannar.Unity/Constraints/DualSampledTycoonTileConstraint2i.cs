@@ -17,7 +17,7 @@ namespace Votyra.Plannar.Images.Constraints
             _sampler = sampler;
         }
 
-        public Rect2i FixImage(Matrix2<float> editableMatrix, Rect2i invalidatedImageArea, Direction direction)
+        public Range2i FixImage(Matrix2<float> editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
             if (_sampler == null)
             {
@@ -34,37 +34,33 @@ namespace Votyra.Plannar.Images.Constraints
             return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
         }
 
-        public Rect2i Constrain(Direction direction, Rect2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<float> editableMatrix)
+        public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<float> editableMatrix)
         {
             if (direction != Direction.Up && direction != Direction.Down)
             {
                 direction = Direction.Down;
             }
-
-            for (int ix = invalidatedCellArea.Min.X; ix <= invalidatedCellArea.Max.X; ix++)
+            invalidatedCellArea.ForeachPointExlusive(cell =>
             {
-                for (int iy = invalidatedCellArea.Min.Y; iy <= invalidatedCellArea.Max.Y; iy++)
-                {
-                    var cell = new Vector2i(ix, iy);
-                    var sample = sampler.Sample(editableMatrix, cell);
+                var sample = sampler.Sample(editableMatrix, cell);
 
-                    var processedSample = Process(sample);
+                var processedSample = Process(sample);
 
-                    Vector2i cell_x0y0 = sampler.CellToX0Y0(cell);
-                    Vector2i cell_x0y1 = sampler.CellToX0Y1(cell);
-                    Vector2i cell_x1y0 = sampler.CellToX1Y0(cell);
-                    Vector2i cell_x1y1 = sampler.CellToX1Y1(cell);
+                Vector2i cell_x0y0 = sampler.CellToX0Y0(cell);
+                Vector2i cell_x0y1 = sampler.CellToX0Y1(cell);
+                Vector2i cell_x1y0 = sampler.CellToX1Y0(cell);
+                Vector2i cell_x1y1 = sampler.CellToX1Y1(cell);
 
-                    if (editableMatrix.ContainsIndex(cell_x0y0))
-                        editableMatrix[cell_x0y0] = processedSample.x0y0;
-                    if (editableMatrix.ContainsIndex(cell_x0y1))
-                        editableMatrix[cell_x0y1] = processedSample.x0y1;
-                    if (editableMatrix.ContainsIndex(cell_x1y0))
-                        editableMatrix[cell_x1y0] = processedSample.x1y0;
-                    if (editableMatrix.ContainsIndex(cell_x1y1))
-                        editableMatrix[cell_x1y1] = processedSample.x1y1;
-                }
-            }
+                if (editableMatrix.ContainsIndex(cell_x0y0))
+                    editableMatrix[cell_x0y0] = processedSample.x0y0;
+                if (editableMatrix.ContainsIndex(cell_x0y1))
+                    editableMatrix[cell_x0y1] = processedSample.x0y1;
+                if (editableMatrix.ContainsIndex(cell_x1y0))
+                    editableMatrix[cell_x1y0] = processedSample.x1y0;
+                if (editableMatrix.ContainsIndex(cell_x1y1))
+                    editableMatrix[cell_x1y1] = processedSample.x1y1;
+            });
+
             return invalidatedCellArea;
         }
 
@@ -129,7 +125,7 @@ namespace Votyra.Plannar.Images.Constraints
             .Distinct()
             .ToArray();
 
-        private readonly static Dictionary<SampledData2i, SampledData2i> TileMap = SampledData2i.GenerateAllValues(new Range2i(-1, 1))
+        private readonly static Dictionary<SampledData2i, SampledData2i> TileMap = SampledData2i.GenerateAllValues(new Range1i(-1, 1))
             .ToDictionary(inputValue => inputValue, inputValue =>
             {
                 SampledData2i choosenTemplateTile = default(SampledData2i);

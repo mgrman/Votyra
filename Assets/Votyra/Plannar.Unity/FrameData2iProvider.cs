@@ -49,7 +49,7 @@ namespace Votyra.Plannar
                 container.transform.worldToLocalMatrix.ToMatrix4x4f(),
                 existingGroups,
                 image,
-                (image as IImageInvalidatableImage2i)?.InvalidatedArea ?? Rect2i.All
+                (image as IImageInvalidatableImage2i)?.InvalidatedArea ?? Range2i.All
             );
         }
     }

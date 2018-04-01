@@ -29,13 +29,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         {
             _image = image;
 
-            this._minZ = _image.RangeZ.min;
+            this._minZ = _image.RangeZ.Min;
             this._bounds_size = new Vector3f(_cellInGroupCount.X, _cellInGroupCount.Y, _image.RangeZ.Size);
         }
 
         public void InitializeGroup(Vector2i group)
         {
-            var bounds = Rect3f.FromMinAndSize(new Vector3f
+            var bounds = Range3f.FromMinAndSize(new Vector3f
              (
                   (group.X * _cellInGroupCount.X),
                   (group.Y * _cellInGroupCount.Y),

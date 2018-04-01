@@ -11,20 +11,18 @@ namespace Votyra.Core.TerrainGenerators
     {
         private readonly ITerrainMesher2i _mesher;
         private readonly IProfiler _profiler;
-        private readonly Vector3i _cellInGroupCount;
+        private readonly Vector2i _cellInGroupCount;
 
         public TerrainGenerator2i(ITerrainMesher2i mesher, ITerrainConfig terrainConfig, IProfiler profiler)
         {
             _mesher = mesher;
             _profiler = profiler;
-            _cellInGroupCount = terrainConfig.CellInGroupCount;
+            _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
         }
 
         public IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> Generate(IFrameData2i data, IEnumerable<Vector2i> groupsToUpdate)
         {
             var image = data.Image;
-            int cellInGroupCount_x = _cellInGroupCount.X;
-            int cellInGroupCount_y = _cellInGroupCount.Y;
             PooledDictionary<Vector2i, ITerrainMesh> meshes;
 
             using (_profiler.Start("init"))
@@ -40,19 +38,14 @@ namespace Votyra.Core.TerrainGenerators
                 {
                     _mesher.InitializeGroup(group);
                 }
-                for (int cellInGroup_x = 0; cellInGroup_x < cellInGroupCount_x; cellInGroup_x++)
+                _cellInGroupCount.ToRange2i().ForeachPointExlusive(cellInGroup =>
                 {
-                    for (int cellInGroup_y = 0; cellInGroup_y < cellInGroupCount_y; cellInGroup_y++)
+                    using (_profiler.Start("TerrainMesher.AddCell()"))
                     {
-                        Vector2i cellInGroup = new Vector2i(cellInGroup_x, cellInGroup_y);
-
-                        using (_profiler.Start("TerrainMesher.AddCell()"))
-                        {
-                            //process cell to mesh
-                            _mesher.AddCell(cellInGroup);
-                        }
+                        //process cell to mesh
+                        _mesher.AddCell(cellInGroup);
                     }
-                }
+                });
                 using (_profiler.Start("Other"))
                 {
                     meshes[group] = _mesher.GetResultingMesh();

@@ -132,31 +132,25 @@ namespace Votyra.Core.Unity
                 {
                     var image = oldImage2f.CreateImage();
                     var matrix = new Matrix2<float>(oldImageConfig.ImageSize.XY);
-                    for (int ix = 0; ix < matrix.Size.X; ix++)
-                    {
-                        for (int iy = 0; iy < matrix.Size.Y; iy++)
+                    matrix.Size
+                        .ToRange2i()
+                        .ForeachPointExlusive(i =>
                         {
-                            var i = new Vector2i(ix, iy);
                             matrix[i] = image.Sample(i);
-                        }
-                    }
+                        });
+
                     _initialDataFromPrevious = matrix;
                 }
                 else if (oldImage3b != null)
                 {
                     var image = oldImage3b.CreateImage();
                     var matrix = new Matrix3<bool>(oldImageConfig.ImageSize);
-                    for (int ix = 0; ix < matrix.Size.X; ix++)
-                    {
-                        for (int iy = 0; iy < matrix.Size.Y; iy++)
+                    matrix.Size
+                        .ToRange3i()
+                        .ForeachPointExlusive(i =>
                         {
-                            for (int iz = 0; iz < matrix.Size.Z; iz++)
-                            {
-                                var i = new Vector3i(ix, iy, iz);
-                                matrix[i] = image.Sample(i);
-                            }
-                        }
-                    }
+                            matrix[i] = image.Sample(i);
+                        });
                     _initialDataFromPrevious = matrix;
                 }
             }

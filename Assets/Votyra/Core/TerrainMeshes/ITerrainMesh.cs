@@ -6,7 +6,7 @@ namespace Votyra.Core.TerrainMeshes
     {
         int TriangleCount { get; }
 
-        void Clear(Rect3f meshBounds);
+        void Clear(Range3f meshBounds);
 
         void AddTriangle(Vector3f a, Vector3f b, Vector3f c);
     }

@@ -138,7 +138,7 @@ namespace Votyra.Core.Models
             return a.x0y0 != b.x0y0 && a.x0y1 != b.x0y1 && a.x1y0 != b.x1y0 && a.x1y1 != b.x1y1;
         }
 
-        public static IEnumerable<SampledData2i> GenerateAllValues(Range2i range)
+        public static IEnumerable<SampledData2i> GenerateAllValues(Range1i range)
         {
             for (int x0y0 = range.Min; x0y0 <= range.Max; x0y0++)
             {

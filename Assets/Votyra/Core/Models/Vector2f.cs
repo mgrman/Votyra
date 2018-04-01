@@ -108,9 +108,9 @@ namespace Votyra.Core.Models
             return new Vector2f(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
         }
 
-        public Rect2f ToRect2f()
+        public Range2f ToRange2f()
         {
-            return Rect2f.FromMinAndSize(Vector2f.Zero, this);
+            return Range2f.FromMinAndSize(Vector2f.Zero, this);
         }
 
         public Vector2i RoundToVector2i()
@@ -128,7 +128,7 @@ namespace Votyra.Core.Models
             return new Vector2i(MathUtils.CeilToInt(this.X), MathUtils.CeilToInt(this.Y));
         }
 
-        public Vector3f ToVector3(float z)
+        public Vector3f ToVector3f(float z)
         {
             return new Vector3f(X, Y, z);
         }

@@ -49,7 +49,7 @@ namespace Votyra.Cubical
                 container.transform.worldToLocalMatrix.ToMatrix4x4f(),
                 existingGroups,
                 image,
-                (image as IImageInvalidatableImage3i)?.InvalidatedArea ?? Rect3i.Zero
+                (image as IImageInvalidatableImage3i)?.InvalidatedArea ?? Range3i.Zero
             );
         }
     }

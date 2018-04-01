@@ -79,7 +79,7 @@ namespace Votyra.Core
             {
                 int maxDist = 4;
 
-                using (var image = editableImage.RequestAccess(Rect2i.FromCenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
+                using (var image = editableImage.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
                 {
                     float centerValue;
                     if (_centerValueToReuse.HasValue)
@@ -128,7 +128,7 @@ namespace Votyra.Core
                 else
                     maxDist = maxDistSmall;
 
-                using (var image = editableImage.RequestAccess(Rect2i.FromCenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
+                using (var image = editableImage.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(maxDist, maxDist))))
                 {
                     for (int ox = -maxDist; ox <= maxDist; ox++)
                     {

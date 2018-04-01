@@ -7,17 +7,13 @@ namespace Votyra.Plannar.Images.Constraints
 {
     public class RoundingConstraint2i : IImageConstraint2i
     {
-        public Rect2i FixImage(Matrix2<float> editableMatrix, Rect2i invalidatedImageArea, Direction direction)
+        public Range2i FixImage(Matrix2<float> editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
-            invalidatedImageArea = (editableMatrix.Size - Vector2i.One).ToRect2i().IntersectWith(invalidatedImageArea);
-            for (int ix = invalidatedImageArea.Min.X; ix <= invalidatedImageArea.Max.X; ix++)
+            invalidatedImageArea = (editableMatrix.Size - Vector2i.One).ToRange2i().IntersectWith(invalidatedImageArea);
+            invalidatedImageArea.ForeachPointExlusive(i =>
             {
-                for (int iy = invalidatedImageArea.Min.Y; iy <= invalidatedImageArea.Max.Y; iy++)
-                {
-                    var i = new Vector2i(ix, iy);
-                    editableMatrix[i] = (float)Math.Round(editableMatrix[i]);
-                }
-            }
+                editableMatrix[i] = (float)Math.Round(editableMatrix[i]);
+            });
             return invalidatedImageArea;
         }
     }

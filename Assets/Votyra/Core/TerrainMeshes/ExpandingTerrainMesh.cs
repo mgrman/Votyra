@@ -5,7 +5,7 @@ namespace Votyra.Core.TerrainMeshes
 {
     public class ExpandingTerrainMesh : ITerrainMesh
     {
-        public Rect3f MeshBounds { get; private set; }
+        public Range3f MeshBounds { get; private set; }
         public List<Vector3f> Vertices { get; }
         public List<Vector3f> Normals { get; }
         public List<Vector2f> UV { get; }
@@ -22,7 +22,7 @@ namespace Votyra.Core.TerrainMeshes
             Normals = new List<Vector3f>();
         }
 
-        public void Clear(Rect3f meshBounds)
+        public void Clear(Range3f meshBounds)
         {
             MeshBounds = meshBounds;
             TriangleCount = 0;

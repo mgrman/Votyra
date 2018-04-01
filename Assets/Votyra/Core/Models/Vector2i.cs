@@ -25,6 +25,11 @@ namespace Votyra.Core.Models
             return new Vector2i(value, value);
         }
 
+        public Vector3i ToVector3i(int z)
+        {
+            return new Vector3i(X, Y, z);
+        }
+
         public static Vector2i operator +(Vector2i a, int b)
         {
             return new Vector2i(a.X + b, a.Y + b);
@@ -95,9 +100,9 @@ namespace Votyra.Core.Models
             return new Vector2f(X, Y);
         }
 
-        public Rect2i ToRect2i()
+        public Range2i ToRange2i()
         {
-            return Rect2i.FromMinAndSize(Vector2i.Zero, this);
+            return Range2i.FromMinAndSize(Vector2i.Zero, this);
         }
 
         public static bool operator <(Vector2i a, Vector2i b)

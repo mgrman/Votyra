@@ -11,7 +11,7 @@ namespace Votyra.Core.Images
     {
         private readonly Matrix3<bool> _editableMatrix;
 
-        private Rect3i? _invalidatedArea;
+        private Range3i? _invalidatedArea;
 
         private readonly List<LockableMatrix3<bool>> _readonlyMatrices = new List<LockableMatrix3<bool>>();
 
@@ -29,14 +29,14 @@ namespace Votyra.Core.Images
 
         public IImage3b CreateImage()
         {
-            if (_invalidatedArea == Rect3i.Zero)
+            if (_invalidatedArea == Range3i.Zero)
             {
                 _image?.Dispose();
-                _image = new MatrixImage3b(_image.Image, Rect3i.Zero);
+                _image = new MatrixImage3b(_image.Image, Range3i.Zero);
             }
             else if (_invalidatedArea.HasValue || _image == null)
             {
-                _invalidatedArea = _invalidatedArea ?? _editableMatrix.Size.ToRect3i();
+                _invalidatedArea = _invalidatedArea ?? _editableMatrix.Size.ToRange3i();
                 // Debug.LogFormat("Update readonlyCount:{0}", _readonlyMatrices.Count);
 
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
@@ -47,33 +47,27 @@ namespace Votyra.Core.Images
                 }
 
                 //sync
-                for (int ix = 0; ix < _editableMatrix.Size.X; ix++)
-                {
-                    for (int iy = 0; iy < _editableMatrix.Size.Y; iy++)
+                _editableMatrix
+                    .ForeachPointExlusive(i =>
                     {
-                        for (int iz = 0; iz < _editableMatrix.Size.Z; iz++)
-                        {
-                            var i = new Vector3i(ix, iy, iz);
-                            readonlyMatrix[i] = _editableMatrix[i];
-                        }
-                    }
-                }
+                        readonlyMatrix[i] = _editableMatrix[i];
+                    });
 
                 // Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
 
                 _image?.Dispose();
                 _image = new MatrixImage3b(readonlyMatrix, _invalidatedArea.Value);
-                _invalidatedArea = Rect3i.Zero;
+                _invalidatedArea = Range3i.Zero;
             }
             return _image;
         }
 
-        public IEditableImageAccessor3b RequestAccess(Rect3i areaRequest)
+        public IEditableImageAccessor3b RequestAccess(Range3i areaRequest)
         {
             return new MatrixImageAccessor(this, areaRequest);
         }
 
-        private void FixImage(Rect3i invalidatedImageArea, Direction direction)
+        private void FixImage(Range3i invalidatedImageArea, Direction direction)
         {
             _invalidatedArea = _invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
 
@@ -98,7 +92,7 @@ namespace Votyra.Core.Images
                 _editableMatrix = editableMatrix;
             }
 
-            public Rect3i InvalidatedArea => Rect3i.Zero;
+            public Range3i InvalidatedArea => Range3i.Zero;
 
             public bool Sample(Vector3i point)
             {
@@ -118,7 +112,7 @@ namespace Votyra.Core.Images
             private readonly bool[,,] _editableMatrix;
             private int _changeCounter = 0;
             private bool _changed = false;
-            public Rect3i Area { get; }
+            public Range3i Area { get; }
 
             public bool this[Vector3i pos]
             {
@@ -144,11 +138,11 @@ namespace Votyra.Core.Images
 
             private readonly EditableMatrixImage3b _editableImage;
 
-            public MatrixImageAccessor(EditableMatrixImage3b editableImage, Rect3i area)
+            public MatrixImageAccessor(EditableMatrixImage3b editableImage, Range3i area)
             {
                 _editableMatrix = editableImage._editableMatrix.NativeMatrix;
                 _editableImage = editableImage;
-                Area = area.IntersectWith(editableImage._editableMatrix.Size.ToRect3i());
+                Area = area.IntersectWith(editableImage._editableMatrix.Size.ToRange3i());
             }
 
             public void Dispose()
