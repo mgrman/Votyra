@@ -21,6 +21,14 @@ namespace Votyra.Core.Models
         {
             this.Min = min;
             this.Max = max;
+            if (this.Size.AnyNegative)
+            {
+                throw new InvalidOperationException($"{nameof(Range2i)} '{this}' cannot have a size be zero or negative!");
+            }
+            if (this.Size.AnyZero)
+            {
+                this.Max = this.Min;
+            }
         }
 
         public static Range2i FromCenterAndExtents(Vector2i center, Vector2i extents)

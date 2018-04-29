@@ -24,5 +24,13 @@ namespace Votyra.Core.ImageSamplers
                 image.Sample(sampler.CellToX1Y1Z0(pos)),
                 image.Sample(sampler.CellToX1Y1Z1(pos)));
         }
+
+        public static Range3i WorldToImage(this IImageSampler3 sampler, Range3f rect)
+        {
+            var min = sampler.WorldToImage(rect.Min);
+            var max = sampler.WorldToImage(rect.Max);
+            return Range3i.FromMinAndMax(min, max);
+        }
+
     }
 }

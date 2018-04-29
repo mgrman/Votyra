@@ -22,6 +22,15 @@ namespace Votyra.Core.Models
             this.Max = max;
         }
 
+        public static Range3f FromCenterAndExtents(Vector3f center, Vector3f extents)
+        {
+            if (extents.AnyNegative)
+            {
+                throw new InvalidOperationException($"When creating {nameof(Range3f)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
+            }
+            return new Range3f(center - extents, center + extents);
+        }
+
         public static Range3f FromMinAndMax(Vector3f min, Vector3f max)
         {
             return new Range3f(min, max);
@@ -34,6 +43,17 @@ namespace Votyra.Core.Models
                 throw new InvalidOperationException($"When creating {nameof(Range3f)} using min '{min}' and size '{size}', size cannot have a negative coordinate!");
             }
             return new Range3f(min, min + size);
+        }
+
+        public Range3f IntersectWith(Range3f that)
+        {
+            if (this.Size == Vector3f.Zero || that.Size == Vector3f.Zero)
+                return Range3f.zero;
+
+            var min = Vector3f.Max(this.Min, that.Min);
+            var max = Vector3f.Max(Vector3f.Min(this.Max, that.Max), min);
+
+            return Range3f.FromMinAndMax(min, max);
         }
 
         public float DiagonalLength

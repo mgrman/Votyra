@@ -49,7 +49,7 @@ namespace Votyra.Core.GroupSelectors
 
             cameraBoundsGroups.ForeachPointExlusive(group =>
             {
-                var groupBounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToBounds();
+                var groupBounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
 
                 bool isInside = TestPlanesAABB(planes, groupBounds);
                 if (isInside)

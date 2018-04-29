@@ -9,9 +9,10 @@ namespace Votyra.Core.Models
         public static readonly Vector2i One = new Vector2i(1, 1);
         public readonly int X;
         public readonly int Y;
-        public bool BothPositive => this.X > 0 && this.Y > 0;
-        public bool BothZeroOrPositive => this.X >= 0 && this.Y >= 0;
         public bool AnyNegative => this.X < 0 || this.Y < 0;
+        public bool AnyZero => this.X == 0 || this.Y == 0;
+        public bool AnyZeroOrNegative => this.X <= 0 || this.Y <= 0;
+
         public int AreaSum => X * Y;
 
         public Vector2i(int x, int y)

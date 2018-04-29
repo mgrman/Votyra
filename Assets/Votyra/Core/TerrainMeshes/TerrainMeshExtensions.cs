@@ -10,6 +10,30 @@ namespace Votyra.Core.TerrainMeshes
             mesh.AddTriangle(triangle.A, triangle.B, triangle.C);
         }
 
+        public static void AddTriangle(this ITerrainMesh mesh, Vector3f a, Vector3f b, Vector3f c, bool inverted)
+        {
+            if (inverted)
+            {
+                mesh.AddTriangle(c, b, a);
+            }
+            else
+            {
+                mesh.AddTriangle(a, b, c);
+            }
+        }
+
+        public static void AddTriangle(this ICollection<Triangle3f> mesh, Vector3f a, Vector3f b, Vector3f c, bool inverted)
+        {
+            if (inverted)
+            {
+                mesh.Add(new Triangle3f(c, b, a));
+            }
+            else
+            {
+                mesh.Add(new Triangle3f(a, b, c));
+            }
+        }
+
         public static void AddQuad(this ITerrainMesh mesh, Vector3f x0y0, Vector3f x0y1, Vector3f x1y0, Vector3f x1y1, bool flipSides)
         {
             if (flipSides)

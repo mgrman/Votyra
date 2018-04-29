@@ -39,7 +39,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
         {
-            var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToBounds();
+            var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
 
             this.groupPosition = _cellInGroupCount * group;
 

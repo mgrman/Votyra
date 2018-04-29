@@ -115,6 +115,39 @@ namespace Votyra.Core.Models
                 (x1y1z1 > 0 ? Mask_x1y1z1 : 0));
         }
 
+        public SampledData3b(IEnumerable<Vector3i> samples)
+        {
+            bool x0y0z0 = false;
+            bool x0y0z1 = false;
+            bool x0y1z0 = false;
+            bool x0y1z1 = false;
+            bool x1y0z0 = false;
+            bool x1y0z1 = false;
+            bool x1y1z0 = false;
+            bool x1y1z1 = false;
+
+            foreach (var sample in samples)
+            {
+                x0y0z0 = x0y0z0 || sample == new Vector3i(0, 0, 0);
+                x0y0z1 = x0y0z1 || sample == new Vector3i(0, 0, 1);
+                x0y1z0 = x0y1z0 || sample == new Vector3i(0, 1, 0);
+                x0y1z1 = x0y1z1 || sample == new Vector3i(0, 1, 1);
+                x1y0z0 = x1y0z0 || sample == new Vector3i(1, 0, 0);
+                x1y0z1 = x1y0z1 || sample == new Vector3i(1, 0, 1);
+                x1y1z0 = x1y1z0 || sample == new Vector3i(1, 1, 0);
+                x1y1z1 = x1y1z1 || sample == new Vector3i(1, 1, 1);
+            }
+
+            Data = (byte)(
+                (x0y0z0 ? Mask_x0y0z0 : 0) |
+                (x0y0z1 ? Mask_x0y0z1 : 0) |
+                (x0y1z0 ? Mask_x0y1z0 : 0) |
+                (x0y1z1 ? Mask_x0y1z1 : 0) |
+                (x1y0z0 ? Mask_x1y0z0 : 0) |
+                (x1y0z1 ? Mask_x1y0z1 : 0) |
+                (x1y1z0 ? Mask_x1y1z0 : 0) |
+                (x1y1z1 ? Mask_x1y1z1 : 0));
+        }
         public SampledData3b(byte data)
         {
             Data = data;
@@ -314,7 +347,8 @@ namespace Votyra.Core.Models
 
         public override string ToString()
         {
-            return Convert.ToString(Data, 2).PadLeft(8, '0');
+            return ToCubeString();
+            //            return Convert.ToString(Data, 2).PadLeft(8, '0');
         }
 
         public bool Equals(SampledData3b that)
@@ -332,11 +366,40 @@ namespace Votyra.Core.Models
             return a.Data != b.Data;
         }
 
-        public bool EqualsRotationInvariant(SampledData3b that, out Matrix4x4f matrix)
+        public bool EqualsRotationInvariant(SampledData3b that, out Matrix4x4f matrix, bool x = true, bool y = true, bool z = true, bool invert = true)
         {
-            matrix = GetAllRotationEquivalencies(that).FirstOrDefault();
+            foreach (var tempMatrix in GetAllRotationMatrices(x, y, z, invert))
+            {
+                var rotatedThis = this.GetTransformed(tempMatrix);
 
-            return matrix != default(Matrix4x4f);
+                if (NormallessComparer.Equals(rotatedThis, that))
+                {
+                    matrix = tempMatrix;
+                    return true;
+                }
+            }
+
+            matrix = default(Matrix4x4f);
+            return false;
+        }
+
+        public bool IsContainedInRotationInvariant(SampledData3b that, out Matrix4x4f matrix, out SampledData3b rotatedData, bool x = true, bool y = true, bool z = true, bool invert = true)
+        {
+            foreach (var tempMatrix in GetAllRotationMatrices(x, y, z, invert))
+            {
+                var rotatedThis = this.GetTransformed(tempMatrix);
+
+                if ((rotatedThis.Data & that.Data) == rotatedThis.Data)
+                {
+                    matrix = tempMatrix;
+                    rotatedData = rotatedThis;
+                    return true;
+                }
+            }
+
+            matrix = default(Matrix4x4f);
+            rotatedData = default(SampledData3b);
+            return false;
         }
 
         public static readonly IEqualityComparer<SampledData3b> RotationInvariantNormallessComparer = new RotationInvariantNormallessSampledData3bComparer();
@@ -370,24 +433,18 @@ namespace Votyra.Core.Models
             }
         }
 
-        public IEnumerable<Matrix4x4f> GetAllRotationEquivalencies(SampledData3b that)
+
+        public IEnumerable<Matrix4x4f> GetAllRotationMatrices(bool useX = true, bool useY = true, bool useZ = true, bool useInvert = true)
         {
-            for (int x = 0; x < 4; x++)
+            for (int x = 0; x < (useX ? 4 : 1); x++)
             {
-                for (int y = 0; y < 4; y++)
+                for (int y = 0; y < (useY ? 4 : 1); y++)
                 {
-                    for (int z = 0; z < 4; z++)
+                    for (int z = 0; z < (useZ ? 4 : 1); z++)
                     {
-                        for (int invert = 0; invert < 2; invert++)
+                        for (int invert = 0; invert < (useInvert ? 2 : 1); invert++)
                         {
-                            var finalMatrix = GetRotationMatrix(new Vector3i(x, y, z), invert == 1);
-
-                            var rotatedThis = this.GetTransformed(finalMatrix);
-
-                            if (NormallessComparer.Equals(rotatedThis, that))
-                            {
-                                yield return finalMatrix;
-                            }
+                            yield return GetRotationMatrix(new Vector3i(x, y, z), invert == 1);
                         }
                     }
                 }

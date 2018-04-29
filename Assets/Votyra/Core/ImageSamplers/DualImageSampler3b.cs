@@ -1,4 +1,5 @@
 using Votyra.Core.Models;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.ImageSamplers
 {
@@ -6,12 +7,12 @@ namespace Votyra.Core.ImageSamplers
     {
         public Vector3i WorldToImage(Vector3f pos)
         {
-            return (pos * 2).FloorToVector3i();
+            return new Vector3i((pos.X * 2).FloorToInt(), (pos.Y * 2).FloorToInt(), (pos.Z * 2).FloorToInt());
         }
 
         public Vector3f ImageToWorld(Vector3i pos)
         {
-            return pos / 2.0f;
+            return new Vector3f(pos.X / 2f, pos.Y / 2f, pos.Z / 2f);
         }
 
         public Vector3i CellToX0Y0Z0(Vector3i pos)

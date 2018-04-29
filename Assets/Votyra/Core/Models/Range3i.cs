@@ -21,6 +21,14 @@ namespace Votyra.Core.Models
         {
             this.Min = min;
             this.Max = max;
+            if (this.Size.AnyNegative)
+            {
+                throw new InvalidOperationException($"{nameof(Range3i)} '{this}' cannot have a size be zero or negative!");
+            }
+            if (this.Size.AnyZero)
+            {
+                this.Max = this.Min;
+            }
         }
 
         public static Range3i FromCenterAndExtents(Vector3i center, Vector3i extents)
@@ -80,6 +88,9 @@ namespace Votyra.Core.Models
 
         public Range3i CombineWith(Vector3i point)
         {
+            if (this.Size == Vector3i.Zero)
+                return new Range3i(point, Vector3i.One);
+
             if (Contains(point))
                 return this;
 
@@ -89,7 +100,7 @@ namespace Votyra.Core.Models
             return Range3i.FromMinAndMax(min, max);
         }
 
-        public Range3f ToBounds()
+        public Range3f ToRange3f()
         {
             return Range3f.FromMinAndMax(Min.ToVector3f(), Max.ToVector3f());
         }
