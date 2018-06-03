@@ -78,32 +78,6 @@ namespace Votyra.Core.Images
             _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedImageArea) ?? newInvalidatedImageArea;
         }
 
-        private class EditableImageWrapper : IImage2f
-        {
-            private readonly Matrix2<float> _editableMatrix;
-
-            public EditableImageWrapper(Matrix2<float> editableMatrix)
-            {
-                _editableMatrix = editableMatrix;
-            }
-
-            public Range2i InvalidatedArea => Range2i.Zero;
-
-            public Range1f RangeZ => new Range1f(0, 0);
-
-            public float Sample(Vector2i point)
-            {
-                if (_editableMatrix.ContainsIndex(point))
-                {
-                    return _editableMatrix[point];
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
-
         private class MatrixImageAccessor : IEditableImageAccessor2f
         {
             private readonly float[,] _editableMatrix;

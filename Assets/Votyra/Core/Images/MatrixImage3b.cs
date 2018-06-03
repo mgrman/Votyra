@@ -37,5 +37,19 @@ namespace Votyra.Core.Images
                 Image.Unlock(this);
             }
         }
+
+        public bool AnyData(Range3i range)
+        {
+            bool allFalse = true;
+            bool allTrue = true;
+            range.ForeachPointExlusive(o =>
+            {
+                var value = Sample(o);
+                allFalse = allFalse && !value;
+                allTrue = allTrue && value;
+            });
+
+            return !allFalse && !allTrue;
+        }
     }
 }

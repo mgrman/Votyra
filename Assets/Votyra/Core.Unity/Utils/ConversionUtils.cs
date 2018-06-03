@@ -40,7 +40,12 @@ namespace Votyra.Core.Utils
         {
             var union = new UnionPlane();
             union.Unity = vector;
-            return union.Votyra;
+            var res = union.Votyra;
+            if (res.Length != vector.Length)
+            {
+                throw new InvalidOperationException("ToPlane3f conversion failed!");
+            }
+            return res;
         }
 
         public static UnityEngine.Vector2 ToVector2(this Vector2f vector)
@@ -72,7 +77,12 @@ namespace Votyra.Core.Utils
         {
             var union = new UnionVector3();
             union.Votyra = vector;
-            return union.Unity;
+            var res = union.Unity;
+            if (res.Length != vector.Length)
+            {
+                throw new InvalidOperationException("ToVector3 conversion failed!");
+            }
+            return res;
             //return vector.Select(o => o.ToVector3()).ToArray();
         }
 
@@ -80,7 +90,12 @@ namespace Votyra.Core.Utils
         {
             var union = new UnionVector3();
             union.Unity = vector;
-            return union.Votyra;
+            var res = union.Votyra;
+            if (res.Length != vector.Length)
+            {
+                throw new InvalidOperationException("ToVector3f conversion failed!");
+            }
+            return res;
             //return vector.Select(o => o.ToVector3()).ToArray();
         }
 
@@ -99,7 +114,12 @@ namespace Votyra.Core.Utils
         {
             source.TrimExcess();
             var itemsGet = ListInternals<T>.ItemsGet;
-            return itemsGet(source);
+            var res = itemsGet(source);
+            if (res.Length != source.Count)
+            {
+                throw new InvalidOperationException($"GetInnerArray<{typeof(T).Name}> conversion failed!");
+            }
+            return res;
         }
 
         private static List<TResult> ConvertListOfMatchingStructs<TSource, TResult>(this List<TSource> source, Func<TSource[], TResult[]> convert)
@@ -204,7 +224,12 @@ namespace Votyra.Core.Utils
         {
             var union = new UnionVector2();
             union.Votyra = vector;
-            return union.Unity;
+            var res = union.Unity;
+            if (res.Length != vector.Length)
+            {
+                throw new InvalidOperationException("ToVector2 conversion failed!");
+            }
+            return res;
             //return vector.Select(o => o.ToVector2()).ToArray();
         }
 

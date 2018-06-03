@@ -12,6 +12,8 @@ namespace Votyra.Core.GroupSelectors
         private readonly IImageSampler3 _imageSampler;
         private readonly Vector3i _cellInGroupCount;
 
+        private HashSet<Vector3i> _skippedAreas = new HashSet<Vector3i>();
+
         public GroupsByCameraVisibilitySelector3i(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
             _imageSampler = imageSampler;
@@ -51,19 +53,34 @@ namespace Votyra.Core.GroupSelectors
             {
                 var groupBounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
 
+
                 bool isInside = TestPlanesAABB(planes, groupBounds);
                 if (isInside)
                 {
+                    var groupBounds_image = _imageSampler.WorldToImage(groupBounds);
                     var groupArea = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount);
-                    if (groupArea.Overlaps(invalidatedArea))
+
+                    bool isInvalidated = groupArea.Overlaps(invalidatedArea);
+
+                    if (isInvalidated)
                     {
                         groupsToRecompute.Add(group);
+                        _skippedAreas.Remove(group);
                     }
                     else
                     {
                         if (!options.ExistingGroups.Contains(group))
                         {
-                            groupsToRecompute.Add(group);
+                            var noData = _skippedAreas.Contains(group) || !options.Image.AnyData(groupBounds_image);
+                            if (noData)
+                            {
+                                groupsToKeep.Add(group);
+                                _skippedAreas.Add(group);
+                            }
+                            else
+                            {
+                                groupsToRecompute.Add(group);
+                            }
                         }
                         else
                         {

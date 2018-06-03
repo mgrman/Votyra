@@ -29,7 +29,7 @@ namespace Votyra.Core.ImageSamplers
         {
             var min = sampler.WorldToImage(rect.Min);
             var max = sampler.WorldToImage(rect.Max);
-            return Range3i.FromMinAndMax(min, max);
+            return Range3i.FromMinAndMax(min, max + Vector3i.One);
         }
 
     }

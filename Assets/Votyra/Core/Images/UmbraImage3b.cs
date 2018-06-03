@@ -15,5 +15,10 @@ namespace Votyra.Core.Images
         {
             return Image.Sample(new Vector2i(point.X, point.Y)) - point.Z > 0;
         }
+
+        public bool AnyData(Range3i range)
+        {
+            return true;
+        }
     }
 }

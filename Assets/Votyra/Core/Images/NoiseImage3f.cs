@@ -27,5 +27,10 @@ namespace Votyra.Core.Images
 
             return value > 0.5f;
         }
+
+        public bool AnyData(Range3i range)
+        {
+            return true;
+        }
     }
 }

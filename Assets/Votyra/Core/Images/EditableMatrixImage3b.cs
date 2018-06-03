@@ -83,29 +83,6 @@ namespace Votyra.Core.Images
             _logger.LogMessage("_invalidatedArea:" + _invalidatedArea);
         }
 
-        private class EditableImageWrapper : IImage3b
-        {
-            private readonly Matrix3<bool> _editableMatrix;
-
-            public EditableImageWrapper(Matrix3<bool> editableMatrix)
-            {
-                _editableMatrix = editableMatrix;
-            }
-
-            public Range3i InvalidatedArea => Range3i.Zero;
-
-            public bool Sample(Vector3i point)
-            {
-                if (_editableMatrix.ContainsIndex(point))
-                {
-                    return _editableMatrix[point];
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
 
         private class MatrixImageAccessor : IEditableImageAccessor3b
         {

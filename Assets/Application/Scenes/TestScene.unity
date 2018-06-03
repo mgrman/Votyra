@@ -353,13 +353,14 @@ MonoBehaviour:
   _async: 1
   _material: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
   _materialWalls: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
-  _activeTerrainAlgorithm: 4
+  _activeTerrainAlgorithm: 3
   _availableTerrainAlgorithms:
   - {fileID: 1101794731832008, guid: f4f93c13563af724e9805d1070d56d88, type: 2}
   - {fileID: 1101794731832008, guid: a3fa91a0e395d7643bf043b4c7bfd4fd, type: 2}
   - {fileID: 1486076317952450, guid: 0841d94987abc0b4a8ba679f64d5e225, type: 2}
   - {fileID: 1116526748462952, guid: 4745140159b29fb48b5525d1c5f2b1c9, type: 2}
   - {fileID: 1196856220923246, guid: aceb0ac05c491864c81c036fe42468f2, type: 2}
+  - {fileID: 1196856220923246, guid: af727f8a56b1bb740a7f6c600fb6516f, type: 2}
 --- !u!1 &886990423
 GameObject:
   m_ObjectHideFlags: 0
