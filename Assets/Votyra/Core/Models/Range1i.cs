@@ -5,6 +5,8 @@ namespace Votyra.Core.Models
     public struct Range1i : IEquatable<Range1i>
     {
         public static readonly Range1i Zero = new Range1i(0, 0);
+        public static readonly Range1i PlusMinusOne = new Range1i(-1, 1);
+
         public readonly int Min;
         public readonly int Max;
 

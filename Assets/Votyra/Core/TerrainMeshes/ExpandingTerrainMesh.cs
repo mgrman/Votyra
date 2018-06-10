@@ -59,5 +59,10 @@ namespace Votyra.Core.TerrainMeshes
 
             TriangleCount++;
         }
+
+        public void FinalizeMesh()
+        {
+
+        }
     }
 }

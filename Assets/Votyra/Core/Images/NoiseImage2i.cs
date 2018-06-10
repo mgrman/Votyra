@@ -25,5 +25,10 @@ namespace Votyra.Core.Images
 
             return (int)(value * Scale.Z + Offset.Z);
         }
+
+        public bool AnyData(Range2i range)
+        {
+            return true;
+        }
     }
 }

@@ -5,27 +5,32 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {
-    public class PooledTerrainMeshContainer<T> : IPooledTerrainMesh
-        where T : ITerrainMesh, new()
+    public class PooledTerrainMeshWithFixedCapacityContainer<T> : IPooledTerrainMeshWithFixedCapacity
+        where T : ITerrainMeshWithFixedCapacity, new()
     {
         public T Mesh { get; }
 
         public int TriangleCount => Mesh.TriangleCount;
 
+        public int TriangleCapacity => Mesh.TriangleCapacity;
+
         ITerrainMesh IPooledTerrainMesh.Mesh => Mesh;
+
+        ITerrainMeshWithFixedCapacity IPooledTerrainMeshWithFixedCapacity.Mesh => Mesh;
 
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
 
-        private static readonly ConcurentObjectPool<PooledTerrainMeshContainer<T>> Pool = new ConcurentObjectPool<PooledTerrainMeshContainer<T>>(5, () => new PooledTerrainMeshContainer<T>());
+        private static readonly ConcurentObjectDictionaryPool<PooledTerrainMeshWithFixedCapacityContainer<T>, int> Pool = new ConcurentObjectDictionaryPool<PooledTerrainMeshWithFixedCapacityContainer<T>, int>(5, (triangleCount) => new PooledTerrainMeshWithFixedCapacityContainer<T>(triangleCount));
 
-        private PooledTerrainMeshContainer()
+        private PooledTerrainMeshWithFixedCapacityContainer(int triangleCount)
         {
             Mesh = new T();
+            Mesh.Initialize(triangleCount);
         }
 
-        public static PooledTerrainMeshContainer<T> CreateDirty()
+        public static PooledTerrainMeshWithFixedCapacityContainer<T> CreateDirty(int triangleCount)
         {
-            var obj = Pool.GetObject();
+            var obj = Pool.GetObject(triangleCount);
             return obj;
         }
 
@@ -35,7 +40,7 @@ namespace Votyra.Core.Pooling
             {
                 (Mesh as IDisposable)?.Dispose();
             }
-            Pool.ReturnObject(this);
+            Pool.ReturnObject(this, this.TriangleCount);
         }
 
         public void Clear(Range3f meshBounds)

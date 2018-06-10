@@ -69,5 +69,10 @@ namespace Votyra.Core.Images
                     return 0;
             }
         }
+
+        public bool AnyData(Range2i range)
+        {
+            return ImageA.AnyData(range) || ImageB.AnyData(range);
+        }
     }
 }

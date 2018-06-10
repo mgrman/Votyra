@@ -54,10 +54,9 @@ namespace Votyra.Core.GroupSelectors
                 var groupBounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
 
 
-                bool isInside = TestPlanesAABB(planes, groupBounds);
+                bool isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)
                 {
-                    var groupBounds_image = _imageSampler.WorldToImage(groupBounds);
                     var groupArea = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount);
 
                     bool isInvalidated = groupArea.Overlaps(invalidatedArea);
@@ -71,6 +70,7 @@ namespace Votyra.Core.GroupSelectors
                     {
                         if (!options.ExistingGroups.Contains(group))
                         {
+                            var groupBounds_image = _imageSampler.WorldToImage(groupBounds);
                             var noData = _skippedAreas.Contains(group) || !options.Image.AnyData(groupBounds_image);
                             if (noData)
                             {

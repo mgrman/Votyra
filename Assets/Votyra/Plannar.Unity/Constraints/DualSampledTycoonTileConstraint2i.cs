@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
@@ -80,10 +81,12 @@ namespace Votyra.Plannar.Images.Constraints
         {
             int height = sampleData.Max - 1;
 
-            SampledData2i normalizedHeightData = new SampledData2i(Math.Max(sampleData.x0y0 - height, -1),
-                Math.Max(sampleData.x0y1 - height, -1),
-                Math.Max(sampleData.x1y0 - height, -1),
-                Math.Max(sampleData.x1y1 - height, -1));
+            SampledData2i normalizedHeightData = sampleData.NormalizeFromTop(Range1i.PlusMinusOne);
+            if (!TileMap.ContainsKey(normalizedHeightData))
+            {
+                Debug.Log($"normalizedHeightData does not exing in TileMap: {normalizedHeightData} height:{height}");
+                return sampleData;
+            }
 
             SampledData2i choosenTemplateTile = TileMap[normalizedHeightData];
 

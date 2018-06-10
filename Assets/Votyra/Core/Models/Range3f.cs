@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Votyra.Core.Models
 {
@@ -15,6 +16,21 @@ namespace Votyra.Core.Models
         public Vector3f Size => Max - Min;
 
         public Vector3f Extents => Size / 2f;
+
+        public IEnumerable<Vector3f> Corners
+        {
+            get
+            {
+                yield return new Vector3f(Min.X, Min.Y, Min.Z);
+                yield return new Vector3f(Min.X, Min.Y, Max.Z);
+                yield return new Vector3f(Min.X, Max.Y, Min.Z);
+                yield return new Vector3f(Min.X, Max.Y, Max.Z);
+                yield return new Vector3f(Max.X, Min.Y, Min.Z);
+                yield return new Vector3f(Max.X, Min.Y, Max.Z);
+                yield return new Vector3f(Max.X, Max.Y, Min.Z);
+                yield return new Vector3f(Max.X, Max.Y, Max.Z);
+            }
+        }
 
         private Range3f(Vector3f min, Vector3f max)
         {

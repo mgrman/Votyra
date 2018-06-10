@@ -72,10 +72,10 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
                     }
                 }
             }
-            if (errorCount > 0)
-            {
-                throw new System.Exception($"Some files use code from not allowed namespace:{UnityEngineNamespace}!");
-            }
+            // if (errorCount > 0)
+            // {
+            //     throw new System.Exception($"Some files use code from not allowed namespace:{UnityEngineNamespace}!");
+            // }
         }
     }
 }

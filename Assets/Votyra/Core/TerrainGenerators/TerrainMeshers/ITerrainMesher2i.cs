@@ -8,7 +8,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
     {
         void AddCell(Vector2i cellInGroup);
 
-        IPooledTerrainMesh2i GetResultingMesh();
+        IPooledTerrainMesh GetResultingMesh();
 
         void Initialize(IImage2i image);
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
@@ -10,6 +11,7 @@ namespace Votyra.Core.GroupSelectors
     {
         private readonly IImageSampler2i _imageSampler;
         private readonly Vector2i _cellInGroupCount;
+        private HashSet<Vector2i> _skippedAreas = new HashSet<Vector2i>();
 
         public GroupsByCameraVisibilitySelector2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
         {
@@ -57,19 +59,33 @@ namespace Votyra.Core.GroupSelectors
                 var groupBoundsMin = (group * _cellInGroupCount).ToVector2f().ToVector3f(minZ);
                 var groupBounds = Range3f.FromMinAndSize(groupBoundsMin, bounds_size);
 
-                bool isInside = TestPlanesAABB(planes, groupBounds);
+                bool isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)
                 {
                     var groupArea = Range2i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount);
-                    if (groupArea.Overlaps(invalidatedArea))
+                    bool isInvalidated = groupArea.Overlaps(invalidatedArea);
+                    if (isInvalidated)
                     {
                         groupsToRecompute.Add(group);
+                        _skippedAreas.Remove(group);
                     }
                     else
                     {
                         if (!options.ExistingGroups.Contains(group))
                         {
-                            groupsToRecompute.Add(group);
+                            var groupBoundsXYMin = (group * _cellInGroupCount);
+                            var groupBoundsXY = Range2i.FromMinAndSize(groupBoundsXYMin, _cellInGroupCount);
+                            var groupBounds_image = _imageSampler.WorldToImage(groupBoundsXY);
+                            var noData = _skippedAreas.Contains(group) || !options.Image.AnyData(groupBounds_image);
+                            if (noData)
+                            {
+                                groupsToKeep.Add(group);
+                                _skippedAreas.Add(group);
+                            }
+                            else
+                            {
+                                groupsToRecompute.Add(group);
+                            }
                         }
                         else
                         {
@@ -79,37 +95,6 @@ namespace Votyra.Core.GroupSelectors
                 }
             });
             return new GroupActions<Vector2i>(groupsToRecompute, groupsToKeep);
-        }
-
-        private bool TestPlanesAABB(IEnumerable<Plane3f> planes, Range3f bounds)
-        {
-            var min = bounds.Min;
-            var max = bounds.Max;
-
-            bool isInside = true;
-            foreach (var plane in planes)
-            {
-                isInside = isInside && TestPlaneAABB(plane, min, max);
-            }
-            return isInside;
-        }
-
-        private bool TestPlaneAABB(Plane3f plane, Vector3f boundsMin, Vector3f boundsMax)
-        {
-            return
-            TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMin.Y, boundsMin.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMin.Y, boundsMax.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMax.Y, boundsMin.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMax.Y, boundsMax.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMin.Y, boundsMin.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMin.Y, boundsMax.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMax.Y, boundsMin.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMax.Y, boundsMax.Z));
-        }
-
-        private bool TestPlanePoint(Plane3f plane, Vector3f point)
-        {
-            return plane.GetDistanceToPoint(point) > 0;
         }
     }
 }

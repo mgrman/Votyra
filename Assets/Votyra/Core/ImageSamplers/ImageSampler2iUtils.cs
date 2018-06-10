@@ -13,18 +13,11 @@ namespace Votyra.Core.ImageSamplers
             return Range2f.FromMinAndMax(min, max);
         }
 
-        public static Range2i WorldToImage(this IImageSampler2i sampler, Range2f rect)
-        {
-            var min = sampler.WorldToImage(rect.Min);
-            var max = sampler.WorldToImage(rect.Max);
-            return Range2i.FromMinAndMax(min, max);
-        }
-
         public static Range2i WorldToImage(this IImageSampler2i sampler, Range2i rect)
         {
             var min = sampler.CellToX0Y0(rect.Min);
             var max = sampler.CellToX1Y1(rect.Max);
-            return Range2i.FromMinAndMax(min, max);
+            return Range2i.FromMinAndMax(min, max + Vector2i.One);
         }
 
         public static SampledData2i Sample(this IImageSampler2i sampler, Matrix2<int> image, Vector2i pos)

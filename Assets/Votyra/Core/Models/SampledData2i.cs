@@ -18,6 +18,10 @@ namespace Votyra.Core.Models
             this.x1y0 = x1y0;
             this.x1y1 = x1y1;
         }
+        public int GetHoleCount() => (x0y0 == int.MinValue ? 1 : 0)
+            + (x0y1 == int.MinValue ? 1 : 0)
+            + (x1y0 == int.MinValue ? 1 : 0)
+            + (x1y1 == int.MinValue ? 1 : 0);
 
         public SampledData2i GetRotated(int offset)
         {
@@ -141,6 +145,39 @@ namespace Votyra.Core.Models
                     }
                 }
             }
+        }
+
+    }
+    public static class SampledData2iExtensions
+    {
+        public static SampledData2i NormalizeFromTop(this SampledData2i sampledData, Range1i range)
+        {
+            int height = sampledData.Max - range.Max;
+
+            SampledData2i normalizedHeightData = new SampledData2i(sampledData.x0y0.LowerClip(height, range.Min),
+                sampledData.x0y1.LowerClip(height, range.Min),
+                sampledData.x1y0.LowerClip(height, range.Min),
+                sampledData.x1y1.LowerClip(height, range.Min));
+            return normalizedHeightData;
+        }
+
+        public static bool IsHole(this int value)
+        {
+            return value == int.MinValue;
+        }
+
+        public static bool IsNotHole(this int value)
+        {
+            return value != int.MinValue;
+        }
+
+        private static int LowerClip(this int value, int height, int min)
+        {
+            if (value == int.MinValue)
+            {
+                return int.MinValue;
+            }
+            return Math.Max(value - height, min);
         }
     }
 }

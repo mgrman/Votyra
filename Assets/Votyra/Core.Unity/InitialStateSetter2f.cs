@@ -59,7 +59,8 @@ namespace Votyra.Core.Images
 
                 matrixAreaToFill.ForeachPointExlusive(pos =>
                 {
-                    imageAccessor[pos] = (int)(texture.GetPixelBilinear((float)pos.X / matrixSizeX, (float)pos.Y / matrixSizeY).grayscale * scale);
+                    var value = (int)(texture.GetPixelBilinear((float)pos.X / matrixSizeX, (float)pos.Y / matrixSizeY).grayscale * scale);
+                    imageAccessor[pos] = value == 0 ? int.MinValue : value;
                 });
             }
         }
@@ -93,7 +94,7 @@ namespace Votyra.Core.Images
                         .DefaultIfEmpty(0)
                         .Max() * scale;
 
-                    imageAccessor[i]=(int)value;
+                    imageAccessor[i] = (int)value;
                 });
             }
         }
@@ -144,7 +145,7 @@ namespace Votyra.Core.Images
                             break;
                         }
                     }
-                    imageAccessor[i] =(int)(value * scale);
+                    imageAccessor[i] = (int)(value * scale);
                 });
 
             }

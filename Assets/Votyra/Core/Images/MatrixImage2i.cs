@@ -47,6 +47,18 @@ namespace Votyra.Core.Images
             Image.Unlock(this);
         }
 
+        public bool AnyData(Range2i range)
+        {
+            bool allHoles = true;
+            range.ForeachPointExlusive(o =>
+            {
+                var value = Sample(o);
+                allHoles = allHoles && value.IsHole();
+            });
+
+            return !allHoles;
+        }
+
         public void Dispose()
         {
             if (Image.IsLocked)
