@@ -2,10 +2,10 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class CombineImage2f : IImage2f
+    public class CombineImage2i : IImage2i
     {
-        public IImage2f ImageA { get; private set; }
-        public IImage2f ImageB { get; private set; }
+        public IImage2i ImageA { get; private set; }
+        public IImage2i ImageB { get; private set; }
         public Operations Operation { get; private set; }
 
         public enum Operations
@@ -16,7 +16,7 @@ namespace Votyra.Core.Images
             Divide
         }
 
-        public CombineImage2f(IImage2f imageA, IImage2f imageB, Operations operation)
+        public CombineImage2i(IImage2i imageA, IImage2i imageB, Operations operation)
         {
             ImageA = imageA;
             ImageB = imageB;
@@ -47,10 +47,10 @@ namespace Votyra.Core.Images
 
         public Range1f RangeZ { get; private set; }
 
-        public float Sample(Vector2i point)
+        public int Sample(Vector2i point)
         {
-            float a = ImageA.Sample(point);
-            float b = ImageB.Sample(point);
+            int a = ImageA.Sample(point);
+            int b = ImageB.Sample(point);
             switch (Operation)
             {
                 case Operations.Add:

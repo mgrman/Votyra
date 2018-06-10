@@ -3,13 +3,13 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Images
 {
-    public class NoiseImage2f : IImage2f
+    public class NoiseImage2i : IImage2i
     {
         public Vector3f Offset { get; private set; }
 
         public Vector3f Scale { get; private set; }
 
-        public NoiseImage2f(Vector3f offset, Vector3f scale)
+        public NoiseImage2i(Vector3f offset, Vector3f scale)
         {
             Offset = offset;
             Scale = scale;
@@ -17,13 +17,13 @@ namespace Votyra.Core.Images
 
         public Range1f RangeZ { get { return new Range1f(Offset.Z, Offset.Z + Scale.Z); } }
 
-        public float Sample(Vector2i point)
+        public int Sample(Vector2i point)
         {
             point = (point / Scale.XY + Offset.XY).RoundToVector2i();
 
-            float value = (float)MathUtils.PerlinNoise(point.X, point.Y);
+            var value = MathUtils.PerlinNoise(point.X, point.Y);
 
-            return value * Scale.Z + Offset.Z;
+            return (int)(value * Scale.Z + Offset.Z);
         }
     }
 }

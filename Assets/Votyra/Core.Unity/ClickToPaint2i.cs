@@ -9,7 +9,7 @@ namespace Votyra.Core
     public class ClickToPaint2i : ITickable
     {
         [Inject]
-        private IEditableImage2f _editableImage;
+        private IEditableImage2i _editableImage;
 
         [Inject]
         protected IImageSampler2i _sampler;

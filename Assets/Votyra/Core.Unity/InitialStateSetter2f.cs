@@ -9,12 +9,12 @@ namespace Votyra.Core.Images
 {
     public class InitialStateSetter2f
     {
-        public InitialStateSetter2f(IEditableImage2f editableImage, IInitialImageConfig imageConfig, IImageSampler2i sampler, [Inject(Id = "root")]GameObject root)
+        public InitialStateSetter2f(IEditableImage2i editableImage, IInitialImageConfig imageConfig, IImageSampler2i sampler, [Inject(Id = "root")]GameObject root)
         {
             FillInitialState(editableImage, imageConfig, sampler, root);
         }
 
-        public void FillInitialState(IEditableImage2f editableImage, IInitialImageConfig imageConfig, IImageSampler2i sampler, GameObject root)
+        public void FillInitialState(IEditableImage2i editableImage, IInitialImageConfig imageConfig, IImageSampler2i sampler, GameObject root)
         {
             if (editableImage == null)
                 return;
@@ -40,7 +40,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage2f editableImage, Texture2D texture, float scale)
+        private static void FillInitialState(IEditableImage2i editableImage, Texture2D texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
@@ -59,12 +59,12 @@ namespace Votyra.Core.Images
 
                 matrixAreaToFill.ForeachPointExlusive(pos =>
                 {
-                    imageAccessor[pos] = texture.GetPixelBilinear((float)pos.X / matrixSizeX, (float)pos.Y / matrixSizeY).grayscale * scale;
+                    imageAccessor[pos] = (int)(texture.GetPixelBilinear((float)pos.X / matrixSizeX, (float)pos.Y / matrixSizeY).grayscale * scale);
                 });
             }
         }
 
-        private static void FillInitialState(IEditableImage2f editableImage, Collider[] colliders, float scale, IImageSampler2i sampler, GameObject root)
+        private static void FillInitialState(IEditableImage2i editableImage, Collider[] colliders, float scale, IImageSampler2i sampler, GameObject root)
         {
             var bounds = colliders.Select(o => o.bounds)
                 .Select(o => Range3f.FromMinAndSize(o.min.ToVector3f(), o.size.ToVector3f()))
@@ -80,7 +80,7 @@ namespace Votyra.Core.Images
 
                     var ray = new Ray(root.transform.TransformPoint(new Vector3(localPos.X, localPos.Y, bounds.Max.Z)), root.transform.TransformDirection(new Vector3(0, 0, -1)));
 
-                    imageAccessor[i] = colliders
+                    var value = colliders
                         .Select(collider =>
                         {
                             RaycastHit hit;
@@ -92,11 +92,13 @@ namespace Votyra.Core.Images
                         })
                         .DefaultIfEmpty(0)
                         .Max() * scale;
+
+                    imageAccessor[i]=(int)value;
                 });
             }
         }
 
-        private static void FillInitialState(IEditableImage2f editableImage, IMatrix2<float> texture, float scale)
+        private static void FillInitialState(IEditableImage2i editableImage, IMatrix2<float> texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
@@ -111,12 +113,12 @@ namespace Votyra.Core.Images
                 }
                 matrixAreaToFill.ForeachPointExlusive(i =>
                 {
-                    imageAccessor[i] = texture[i] * scale;
+                    imageAccessor[i] = (int)(texture[i] * scale);
                 });
             }
         }
 
-        private static void FillInitialState(IEditableImage2f editableImage, IMatrix3<float> texture, float scale)
+        private static void FillInitialState(IEditableImage2i editableImage, IMatrix3<float> texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
@@ -142,7 +144,7 @@ namespace Votyra.Core.Images
                             break;
                         }
                     }
-                    imageAccessor[i] = value * scale;
+                    imageAccessor[i] =(int)(value * scale);
                 });
 
             }

@@ -17,7 +17,7 @@ namespace Votyra.Plannar.Images.Constraints
             _sampler = sampler;
         }
 
-        public Range2i FixImage(Matrix2<float> editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        public Range2i FixImage(Matrix2<int> editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
             if (_sampler == null)
             {
@@ -34,7 +34,7 @@ namespace Votyra.Plannar.Images.Constraints
             return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
         }
 
-        public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<float> editableMatrix)
+        public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<int> editableMatrix)
         {
             IComparer<float> comparer;
             Func<Vector2i, float> getValue;

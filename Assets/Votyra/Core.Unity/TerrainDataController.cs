@@ -121,16 +121,16 @@ namespace Votyra.Core.Unity
                 Debug.Log("Has old values");
                 var goContext = _activeTerrainRoot.GetComponentInChildren<GameObjectContext>();
                 var oldImageConfig = goContext.Container.Resolve<IImageConfig>();
-                var oldImage2f = goContext.Container.TryResolve<IImage2fProvider>();
+                var oldImage2i = goContext.Container.TryResolve<IImage2iProvider>();
                 var oldImage3b = goContext.Container.TryResolve<IImage3bProvider>();
-                if (oldImage2f != null && oldImage3b != null)
+                if (oldImage2i != null && oldImage3b != null)
                 {
                     Debug.LogWarning("Previous algorithm worked in 2d and 3d mode. Using 2D data to keep.");
                 }
 
-                if (oldImage2f != null)
+                if (oldImage2i != null)
                 {
-                    var image = oldImage2f.CreateImage();
+                    var image = oldImage2i.CreateImage();
                     var matrix = new Matrix2<float>(oldImageConfig.ImageSize.XY);
                     matrix.Size
                         .ToRange2i()

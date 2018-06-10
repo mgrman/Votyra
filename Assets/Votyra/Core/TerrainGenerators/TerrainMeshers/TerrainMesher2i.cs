@@ -18,14 +18,14 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
         }
 
-        protected IImage2f _image;
+        protected IImage2i _image;
         protected Vector2i _groupPosition;
         protected float _minZ;
         protected Vector3f _bounds_size;
         protected IPooledTerrainMesh2i _pooledMesh;
         protected ITerrainMesh2i _mesh;
 
-        public void Initialize(IImage2f image)
+        public void Initialize(IImage2i image)
         {
             _image = image;
 

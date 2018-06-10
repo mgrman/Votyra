@@ -3,22 +3,22 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class MatrixImage2f : IImage2f, IInitializableImage, IImageInvalidatableImage2i, IDisposable
+    public class MatrixImage2i : IImage2i, IInitializableImage, IImageInvalidatableImage2i, IDisposable
     {
         public Range1f RangeZ { get; }
 
         public Range2i InvalidatedArea { get; }
 
-        public LockableMatrix2<float> Image { get; }
+        public LockableMatrix2<int> Image { get; }
 
-        public MatrixImage2f(LockableMatrix2<float> values, Range2i invalidatedArea)
+        public MatrixImage2i(LockableMatrix2<int> values, Range2i invalidatedArea)
         {
             Image = values;
             InvalidatedArea = invalidatedArea;
             RangeZ = CalculateRangeZ(values);
         }
 
-        private static Range1f CalculateRangeZ(LockableMatrix2<float> values)
+        private static Range1f CalculateRangeZ(LockableMatrix2<int> values)
         {
             float min = float.MaxValue;
             float max = float.MinValue;
@@ -32,7 +32,7 @@ namespace Votyra.Core.Images
             return new Range1f(min, max);
         }
 
-        public float Sample(Vector2i point)
+        public int Sample(Vector2i point)
         {
             return Image.TryGet(point, 0);
         }

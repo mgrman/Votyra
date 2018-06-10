@@ -15,7 +15,7 @@ namespace Votyra.Core
             Matrix4x4f cameraLocalToWorldMatrix,
             Matrix4x4f parentContainerWorldToLocalMatrix,
             IReadOnlySet<Vector2i> existingGroups,
-            IImage2f image,
+            IImage2i image,
             Range2i invalidatedArea_imageSpace)
         {
             CameraPosition = cameraPosition;
@@ -40,7 +40,7 @@ namespace Votyra.Core
         public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
         public Range1f RangeZ { get; }
         public IReadOnlySet<Vector2i> ExistingGroups { get; }
-        public IImage2f Image { get; }
+        public IImage2i Image { get; }
         public Range2i InvalidatedArea_imageSpace { get; }
 
         public void Dispose()

@@ -14,7 +14,7 @@ namespace Votyra.Plannar
     public class FrameData2iProvider : IFrameDataProvider<IFrameData2i>
     {
         [Inject]
-        protected IImage2fProvider _imageProvider;
+        protected IImage2iProvider _imageProvider;
 
         [Inject]
         protected IMeshUpdater<Vector2i> _meshUpdater;

@@ -27,7 +27,7 @@ namespace Votyra.Core.ImageSamplers
             return Range2i.FromMinAndMax(min, max);
         }
 
-        public static SampledData2i Sample(this IImageSampler2i sampler, Matrix2<float> image, Vector2i pos)
+        public static SampledData2i Sample(this IImageSampler2i sampler, Matrix2<int> image, Vector2i pos)
         {
             var x0y0 = image.TryGet(sampler.CellToX0Y0(pos), 0);
             var x0y1 = image.TryGet(sampler.CellToX0Y1(pos), 0);
@@ -37,7 +37,7 @@ namespace Votyra.Core.ImageSamplers
             return new SampledData2i(x0y0, x0y1, x1y0, x1y1);
         }
 
-        public static SampledData2i Sample(this IImageSampler2i sampler, IImage2f image, Vector2i pos)
+        public static SampledData2i Sample(this IImageSampler2i sampler, IImage2i image, Vector2i pos)
         {
             var x0y0 = image.Sample(sampler.CellToX0Y0(pos));
             var x0y1 = image.Sample(sampler.CellToX0Y1(pos));
@@ -47,24 +47,24 @@ namespace Votyra.Core.ImageSamplers
             return new SampledData2i(x0y0, x0y1, x1y0, x1y1);
         }
 
-        public static int SampleX0Y0(this IImageSampler2i sampler, IImage2f image, Vector2i pos)
+        public static int SampleX0Y0(this IImageSampler2i sampler, IImage2i image, Vector2i pos)
         {
-            return image.Sample(sampler.CellToX0Y0(pos)).FloorToInt();
+            return image.Sample(sampler.CellToX0Y0(pos));
         }
 
-        public static int SampleX0Y1(this IImageSampler2i sampler, IImage2f image, Vector2i pos)
+        public static int SampleX0Y1(this IImageSampler2i sampler, IImage2i image, Vector2i pos)
         {
-            return image.Sample(sampler.CellToX0Y1(pos)).FloorToInt();
+            return image.Sample(sampler.CellToX0Y1(pos));
         }
 
-        public static int SampleX1Y0(this IImageSampler2i sampler, IImage2f image, Vector2i pos)
+        public static int SampleX1Y0(this IImageSampler2i sampler, IImage2i image, Vector2i pos)
         {
-            return image.Sample(sampler.CellToX1Y0(pos)).FloorToInt();
+            return image.Sample(sampler.CellToX1Y0(pos));
         }
 
-        public static int SampleX1Y1(this IImageSampler2i sampler, IImage2f image, Vector2i pos)
+        public static int SampleX1Y1(this IImageSampler2i sampler, IImage2i image, Vector2i pos)
         {
-            return image.Sample(sampler.CellToX1Y1(pos)).FloorToInt();
+            return image.Sample(sampler.CellToX1Y1(pos));
         }
     }
 }
