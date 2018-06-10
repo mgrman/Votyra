@@ -11,10 +11,6 @@ namespace Votyra.Core.Models
         public readonly int x1y0;
         public readonly int x1y1;
 
-        public SampledData2i(SampledData2i data, Func<int, int> transformation) : this(transformation(data.x0y0), transformation(data.x0y1), transformation(data.x1y0), transformation(data.x1y1))
-        {
-        }
-
         public SampledData2i(int x0y0, int x0y1, int x1y0, int x1y1)
         {
             this.x0y0 = x0y0;

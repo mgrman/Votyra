@@ -89,65 +89,6 @@ namespace Votyra.Core.Models
                 (x1y1z1 ? Mask_x1y1z1 : 0));
         }
 
-        public SampledData3b(int x0y0z0, int x0y0z1, int x0y1z0, int x0y1z1, int x1y0z0, int x1y0z1, int x1y1z0, int x1y1z1)
-        {
-            Data = (byte)(
-                (x0y0z0 > 0 ? Mask_x0y0z0 : 0) |
-                (x0y0z1 > 0 ? Mask_x0y0z1 : 0) |
-                (x0y1z0 > 0 ? Mask_x0y1z0 : 0) |
-                (x0y1z1 > 0 ? Mask_x0y1z1 : 0) |
-                (x1y0z0 > 0 ? Mask_x1y0z0 : 0) |
-                (x1y0z1 > 0 ? Mask_x1y0z1 : 0) |
-                (x1y1z0 > 0 ? Mask_x1y1z0 : 0) |
-                (x1y1z1 > 0 ? Mask_x1y1z1 : 0));
-        }
-
-        public SampledData3b(float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1, float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1)
-        {
-            Data = (byte)(
-                (x0y0z0 > 0 ? Mask_x0y0z0 : 0) |
-                (x0y0z1 > 0 ? Mask_x0y0z1 : 0) |
-                (x0y1z0 > 0 ? Mask_x0y1z0 : 0) |
-                (x0y1z1 > 0 ? Mask_x0y1z1 : 0) |
-                (x1y0z0 > 0 ? Mask_x1y0z0 : 0) |
-                (x1y0z1 > 0 ? Mask_x1y0z1 : 0) |
-                (x1y1z0 > 0 ? Mask_x1y1z0 : 0) |
-                (x1y1z1 > 0 ? Mask_x1y1z1 : 0));
-        }
-
-        public SampledData3b(IEnumerable<Vector3i> samples)
-        {
-            bool x0y0z0 = false;
-            bool x0y0z1 = false;
-            bool x0y1z0 = false;
-            bool x0y1z1 = false;
-            bool x1y0z0 = false;
-            bool x1y0z1 = false;
-            bool x1y1z0 = false;
-            bool x1y1z1 = false;
-
-            foreach (var sample in samples)
-            {
-                x0y0z0 = x0y0z0 || sample == new Vector3i(0, 0, 0);
-                x0y0z1 = x0y0z1 || sample == new Vector3i(0, 0, 1);
-                x0y1z0 = x0y1z0 || sample == new Vector3i(0, 1, 0);
-                x0y1z1 = x0y1z1 || sample == new Vector3i(0, 1, 1);
-                x1y0z0 = x1y0z0 || sample == new Vector3i(1, 0, 0);
-                x1y0z1 = x1y0z1 || sample == new Vector3i(1, 0, 1);
-                x1y1z0 = x1y1z0 || sample == new Vector3i(1, 1, 0);
-                x1y1z1 = x1y1z1 || sample == new Vector3i(1, 1, 1);
-            }
-
-            Data = (byte)(
-                (x0y0z0 ? Mask_x0y0z0 : 0) |
-                (x0y0z1 ? Mask_x0y0z1 : 0) |
-                (x0y1z0 ? Mask_x0y1z0 : 0) |
-                (x0y1z1 ? Mask_x0y1z1 : 0) |
-                (x1y0z0 ? Mask_x1y0z0 : 0) |
-                (x1y0z1 ? Mask_x1y0z1 : 0) |
-                (x1y1z0 ? Mask_x1y1z0 : 0) |
-                (x1y1z1 ? Mask_x1y1z1 : 0));
-        }
         public SampledData3b(byte data)
         {
             Data = data;
@@ -485,14 +426,14 @@ namespace Votyra.Core.Models
         public static SampledData3b ParseCube(string cube)
         {
             var match = Regex.Match(cube, CubeRegex);
-            float val_x0y0z0 = int.Parse(match.Groups[7].Value);
-            float val_x0y0z1 = int.Parse(match.Groups[3].Value);
-            float val_x0y1z0 = int.Parse(match.Groups[5].Value);
-            float val_x0y1z1 = int.Parse(match.Groups[1].Value);
-            float val_x1y0z0 = int.Parse(match.Groups[8].Value);
-            float val_x1y0z1 = int.Parse(match.Groups[4].Value);
-            float val_x1y1z0 = int.Parse(match.Groups[6].Value);
-            float val_x1y1z1 = int.Parse(match.Groups[2].Value);
+            bool val_x0y0z0 = int.Parse(match.Groups[7].Value) > 0;
+            bool val_x0y0z1 = int.Parse(match.Groups[3].Value) > 0;
+            bool val_x0y1z0 = int.Parse(match.Groups[5].Value) > 0;
+            bool val_x0y1z1 = int.Parse(match.Groups[1].Value) > 0;
+            bool val_x1y0z0 = int.Parse(match.Groups[8].Value) > 0;
+            bool val_x1y0z1 = int.Parse(match.Groups[4].Value) > 0;
+            bool val_x1y1z0 = int.Parse(match.Groups[6].Value) > 0;
+            bool val_x1y1z1 = int.Parse(match.Groups[2].Value) > 0;
             return new SampledData3b(val_x0y0z0, val_x0y0z1, val_x0y1z0, val_x0y1z1, val_x1y0z0, val_x1y0z1, val_x1y1z0, val_x1y1z1);
         }
 
