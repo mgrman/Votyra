@@ -36,7 +36,10 @@ namespace Votyra.Core.Images
 
         public override int GetHashCode()
         {
-            return this.InitialData?.GetHashCode() ?? 0 + this.InitialDataScale.GetHashCode() * 7;
+            unchecked
+            {
+                return this.InitialData?.GetHashCode() ?? 0 + this.InitialDataScale.GetHashCode() * 7;
+            }
         }
     }
 }
