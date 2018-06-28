@@ -21,10 +21,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             SampledData2i data = _imageSampler.Sample(_image, cell);
 
-            int minusXres_x1y0 = _imageSampler.SampleX1Y0(_image, new Vector2i(cell.X - 1, cell.Y - 0));
-            int minusXres_x1y1 = _imageSampler.SampleX1Y1(_image, new Vector2i(cell.X - 1, cell.Y - 0));
-            int minusYres_x0y1 = _imageSampler.SampleX0Y1(_image, new Vector2i(cell.X - 0, cell.Y - 1));
-            int minusYres_x1y1 = _imageSampler.SampleX1Y1(_image, new Vector2i(cell.X - 0, cell.Y - 1));
+            var minusXres_x1y0 = _imageSampler.SampleX1Y0(_image, new Vector2i(cell.X - 1, cell.Y - 0));
+            var minusXres_x1y1 = _imageSampler.SampleX1Y1(_image, new Vector2i(cell.X - 1, cell.Y - 0));
+            var minusYres_x0y1 = _imageSampler.SampleX0Y1(_image, new Vector2i(cell.X - 0, cell.Y - 1));
+            var minusYres_x1y1 = _imageSampler.SampleX1Y1(_image, new Vector2i(cell.X - 0, cell.Y - 1));
             // Debug.Log($"{minusXres_x1y0} {minusXres_x1y1}");
 
             _mesh.AddQuad(position, data);

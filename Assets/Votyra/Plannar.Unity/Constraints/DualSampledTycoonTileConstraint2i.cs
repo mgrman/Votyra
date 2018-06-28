@@ -18,7 +18,7 @@ namespace Votyra.Plannar.Images.Constraints
             _sampler = sampler;
         }
 
-        public Range2i FixImage(Matrix2<int> editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        public Range2i FixImage(Matrix2<int?> editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
             if (_sampler == null)
             {
@@ -35,7 +35,7 @@ namespace Votyra.Plannar.Images.Constraints
             return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
         }
 
-        public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<int> editableMatrix)
+        public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<int?> editableMatrix)
         {
             if (direction != Direction.Up && direction != Direction.Down)
             {
@@ -79,7 +79,7 @@ namespace Votyra.Plannar.Images.Constraints
 
         private SampledData2i Process(SampledData2i sampleData)
         {
-            int height = sampleData.Max - 1;
+            var height = sampleData.Max - 1;
 
             SampledData2i normalizedHeightData = sampleData.NormalizeFromTop(Range1i.PlusMinusOne);
             if (!TileMap.ContainsKey(normalizedHeightData))
@@ -128,7 +128,7 @@ namespace Votyra.Plannar.Images.Constraints
             .Distinct()
             .ToArray();
 
-        private readonly static Dictionary<SampledData2i, SampledData2i> TileMap = SampledData2i.GenerateAllValues(new Range1i(-1, 1))
+        private readonly static Dictionary<SampledData2i, SampledData2i> TileMap = SampledData2i.GenerateAllValues(new Range1i(-1, 1), true)
             .ToDictionary(inputValue => inputValue, inputValue =>
             {
                 SampledData2i choosenTemplateTile = default(SampledData2i);
@@ -143,7 +143,7 @@ namespace Votyra.Plannar.Images.Constraints
                         choosenTemplateTileDiff = value;
                     }
                 }
-                return choosenTemplateTile;
+                return choosenTemplateTile.SetHolesUsing(inputValue);
             });
     }
 }

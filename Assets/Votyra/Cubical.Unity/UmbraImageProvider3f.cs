@@ -20,7 +20,7 @@ namespace Votyra.Cubical.Unity
                 int height = initialTexture.height;
 
                 var size = new Vector2i(width, height);
-                var matrix = new LockableMatrix2<int>(size);
+                var matrix = new LockableMatrix2<int?>(size);
 
                 matrix.ForeachPointExlusive(i =>
                 {
@@ -37,7 +37,7 @@ namespace Votyra.Cubical.Unity
                 int height = initialMatrix.Size.Y;
 
                 var size = new Vector2i(width, height);
-                var matrix = new LockableMatrix2<int>(size);
+                var matrix = new LockableMatrix2<int?>(size);
 
                 matrix.ForeachPointExlusive(i =>
                 {

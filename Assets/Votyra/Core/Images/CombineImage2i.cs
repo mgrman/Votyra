@@ -47,10 +47,10 @@ namespace Votyra.Core.Images
 
         public Range1i RangeZ { get; private set; }
 
-        public int Sample(Vector2i point)
+        public int? Sample(Vector2i point)
         {
-            int a = ImageA.Sample(point);
-            int b = ImageB.Sample(point);
+            int? a = ImageA.Sample(point);
+            int? b = ImageB.Sample(point);
             switch (Operation)
             {
                 case Operations.Add:

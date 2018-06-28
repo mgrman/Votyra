@@ -81,7 +81,7 @@ namespace Votyra.Core
 
                 using (var image = editableImage.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(maxDist + 2, maxDist + 2))))
                 {
-                    int centerValue;
+                    int? centerValue;
                     if (_centerValueToReuse.HasValue)
                     {
                         centerValue = _centerValueToReuse.Value;
@@ -91,27 +91,29 @@ namespace Votyra.Core
                         centerValue = image[cell];
                         _centerValueToReuse = centerValue;
                     }
-
-                    for (int ox = -maxDist; ox <= maxDist; ox++)
+                    if (centerValue.IsNotHole())
                     {
-                        for (int oy = -maxDist; oy <= maxDist; oy++)
+                        for (int ox = -maxDist; ox <= maxDist; ox++)
                         {
-                            var index = cell + new Vector2i(ox, oy);
-                            var value = image[index];
+                            for (int oy = -maxDist; oy <= maxDist; oy++)
+                            {
+                                var index = cell + new Vector2i(ox, oy);
+                                var value = image[index];
 
-                            if (value.IsNotHole())
-                            {
-                                var offsetF = (centerValue - value) * smoothSpeedRelative;
-                                int offsetI = 0;
-                                if (offsetF > smoothCutoff)
-                                    offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
-                                else if (offsetF < -smoothCutoff)
-                                    offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
-                                image[index] = value + offsetI;
-                            }
-                            else
-                            {
-                                image[index] = centerValue;
+                                if (value.IsNotHole())
+                                {
+                                    var offsetF = (centerValue.Value - value.Value) * smoothSpeedRelative;
+                                    int offsetI = 0;
+                                    if (offsetF > smoothCutoff)
+                                        offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
+                                    else if (offsetF < -smoothCutoff)
+                                        offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
+                                    image[index] = value.Value + offsetI;
+                                }
+                                else
+                                {
+                                    image[index] = centerValue;
+                                }
                             }
                         }
                     }

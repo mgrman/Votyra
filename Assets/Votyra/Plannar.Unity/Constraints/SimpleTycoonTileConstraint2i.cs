@@ -5,6 +5,7 @@ using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
+using Votyra.Core.Utils;
 
 namespace Votyra.Plannar.Images.Constraints
 {
@@ -17,7 +18,7 @@ namespace Votyra.Plannar.Images.Constraints
             _sampler = sampler;
         }
 
-        public Range2i FixImage(Matrix2<int> editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        public Range2i FixImage(Matrix2<int?> editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
             if (_sampler == null)
             {
@@ -34,16 +35,18 @@ namespace Votyra.Plannar.Images.Constraints
             return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
         }
 
-        public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<int> editableMatrix)
+        private static readonly IComparer<int?> DefaultComparer = Comparer<int?>.Default;
+
+        public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<int?> editableMatrix)
         {
-            IComparer<float> comparer;
-            Func<Vector2i, float> getValue;
+            IComparer<int?> comparer;
+            Func<Vector2i, int?> getValue;
             Func<SampledData2i, SampledData2i> process;
             switch (direction)
             {
                 case Direction.Up:
                     direction = Direction.Up;
-                    comparer = Comparer<float>.Create((a, b) => -a.CompareTo(b));
+                    comparer = Comparer<int?>.Create((a, b) => -(DefaultComparer.Compare(a, b)));
                     getValue = cell => sampler.Sample(editableMatrix, cell).Max;
                     process = ProcessUp;
                     break;
@@ -51,14 +54,14 @@ namespace Votyra.Plannar.Images.Constraints
                 case Direction.Down:
                 default:
                     direction = Direction.Down;
-                    comparer = Comparer<float>.Create((a, b) => a.CompareTo(b));
+                    comparer = DefaultComparer;
                     getValue = cell => sampler.Sample(editableMatrix, cell).Min;
                     process = ProcessDown;
                     break;
             }
             invalidatedCellArea.ForeachPointExlusive(seedCell =>
             {
-                var queue = new PrioritySetQueue<Vector2i, float>(EqualityComparer<Vector2i>.Default, comparer);
+                var queue = new PrioritySetQueue<Vector2i, int?>(EqualityComparer<Vector2i>.Default, comparer);
                 queue.Add(seedCell, getValue(seedCell));
 
                 while (queue.Count > 0)
@@ -74,25 +77,25 @@ namespace Votyra.Plannar.Images.Constraints
                     Vector2i cell_x1y0 = sampler.CellToX1Y0(cell);
                     Vector2i cell_x1y1 = sampler.CellToX1Y1(cell);
 
-                    float change = 0;
+                    int change = 0;
                     if (editableMatrix.ContainsIndex(cell_x0y0))
                     {
-                        change += Math.Abs(editableMatrix[cell_x0y0] - processedSample.x0y0);
+                        change += MathUtils.Abs(editableMatrix[cell_x0y0] - processedSample.x0y0) ?? 0;
                         editableMatrix[cell_x0y0] = processedSample.x0y0;
                     }
                     if (editableMatrix.ContainsIndex(cell_x0y1))
                     {
-                        change += Math.Abs(editableMatrix[cell_x0y1] - processedSample.x0y1);
+                        change += MathUtils.Abs(editableMatrix[cell_x0y1] - processedSample.x0y1) ?? 0;
                         editableMatrix[cell_x0y1] = processedSample.x0y1;
                     }
                     if (editableMatrix.ContainsIndex(cell_x1y0))
                     {
-                        change += Math.Abs(editableMatrix[cell_x1y0] - processedSample.x1y0);
+                        change += MathUtils.Abs(editableMatrix[cell_x1y0] - processedSample.x1y0) ?? 0;
                         editableMatrix[cell_x1y0] = processedSample.x1y0;
                     }
                     if (editableMatrix.ContainsIndex(cell_x1y1))
                     {
-                        change += Math.Abs(editableMatrix[cell_x1y1] - processedSample.x1y1);
+                        change += MathUtils.Abs(editableMatrix[cell_x1y1] - processedSample.x1y1) ?? 0;
                         editableMatrix[cell_x1y1] = processedSample.x1y1;
                     }
                     if (change > 0.01)
@@ -135,7 +138,7 @@ namespace Votyra.Plannar.Images.Constraints
 
         private SampledData2i ProcessUp(SampledData2i sampleData)
         {
-            int height = sampleData.Max;
+            var height = sampleData.Max;
             SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2);
             SampledData2i choosenTemplateTile = TileMap[normalizedHeightData];
             return choosenTemplateTile + height;
@@ -172,17 +175,17 @@ namespace Votyra.Plannar.Images.Constraints
             {
                 return new[]
                 {
-                template,
-                template.GetRotated(1),
-                template.GetRotated(2),
-                template.GetRotated(3),
+                    template,
+                    template.GetRotated(1),
+                    template.GetRotated(2),
+                    template.GetRotated(3),
                 };
             })
             .Distinct()
             .ToArray();
 
         private readonly static Dictionary<SampledData2i, SampledData2i> TileMap = SampledData2i
-            .GenerateAllValues(new Range1i(-2, 0))
+            .GenerateAllValues(new Range1i(-2, 0), true)
             .ToDictionary(inputValue => inputValue, inputValue =>
             {
                 SampledData2i choosenTemplateTile = default(SampledData2i);
@@ -197,7 +200,7 @@ namespace Votyra.Plannar.Images.Constraints
                         choosenTemplateTileDiff = value;
                     }
                 }
-                return choosenTemplateTile;
+                return choosenTemplateTile.SetHolesUsing(inputValue);
             });
     }
 }

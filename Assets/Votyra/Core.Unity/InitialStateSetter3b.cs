@@ -29,13 +29,13 @@ namespace Votyra.Core.Images
                 FillInitialState(editableImage, new[] { collider }, initialImageConfig.InitialDataScale.Z, sampler, root);
                 collider.enabled = false;
             }
-            if (initialImageConfig.InitialData is IMatrix2<float>)
+            if (initialImageConfig.InitialData is IMatrix2<int?>)
             {
-                FillInitialState(editableImage, initialImageConfig.InitialData as IMatrix2<float>, initialImageConfig.InitialDataScale.Z, imageConfig.ImageSize.Z);
+                FillInitialState(editableImage, initialImageConfig.InitialData as IMatrix2<int?>, initialImageConfig.InitialDataScale.Z, imageConfig.ImageSize.Z);
             }
-            if (initialImageConfig.InitialData is IMatrix3<float>)
+            if (initialImageConfig.InitialData is IMatrix3<bool>)
             {
-                FillInitialState(editableImage, initialImageConfig.InitialData as IMatrix3<float>, initialImageConfig.InitialDataScale.Z);
+                FillInitialState(editableImage, initialImageConfig.InitialData as IMatrix3<bool>, initialImageConfig.InitialDataScale.Z);
             }
         }
 
@@ -128,7 +128,7 @@ namespace Votyra.Core.Images
             return counter % 2 == 1;
         }
 
-        private static void FillInitialState(IEditableImage3b editableImage, IMatrix2<float> texture, float scale, int fallbackMaxZ)
+        private static void FillInitialState(IEditableImage3b editableImage, IMatrix2<int?> texture, float scale, int fallbackMaxZ)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range3i.All))
             {
@@ -150,7 +150,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage3b editableImage, IMatrix3<float> texture, float scale)
+        private static void FillInitialState(IEditableImage3b editableImage, IMatrix3<bool> texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range3i.All))
             {
@@ -165,7 +165,7 @@ namespace Votyra.Core.Images
                 }
                 matrixAreaToFill.ForeachPointExlusive(i =>
                 {
-                    imageAccessor[i] = texture[i] * scale > 0;
+                    imageAccessor[i] = texture[i];
                 });
             }
         }

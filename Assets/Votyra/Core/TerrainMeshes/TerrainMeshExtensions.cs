@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Votyra.Core.Models;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainMeshes
 {
@@ -37,31 +38,43 @@ namespace Votyra.Core.TerrainMeshes
 
         public static void AddQuad(this ITerrainMesh mesh, Vector2i position, SampledData2i data)
         {
-            var x0y0 = new Vector3f(position.X, position.Y, data.x0y0);
-            var x0y1 = new Vector3f(position.X, position.Y + 1, data.x0y1);
-            var x1y0 = new Vector3f(position.X + 1, position.Y, data.x1y0);
-            var x1y1 = new Vector3f(position.X + 1, position.Y + 1, data.x1y1);
+            //var x0y0 = new Vector3f(position.X, position.Y, data.x0y0);
+            //var x0y1 = new Vector3f(position.X, position.Y + 1, data.x0y1);
+            //var x1y0 = new Vector3f(position.X + 1, position.Y, data.x1y0);
+            //var x1y1 = new Vector3f(position.X + 1, position.Y + 1, data.x1y1);
             var holeCount = data.GetHoleCount();
 
             if (holeCount == 1)
             {
                 if (data.x0y0.IsHole())
                 {
+                    var x1y0 = new Vector3f(position.X + 1, position.Y, data.x1y0.Value);
+                    var x1y1 = new Vector3f(position.X + 1, position.Y + 1, data.x1y1.Value);
+                    var x0y1 = new Vector3f(position.X, position.Y + 1, data.x0y1.Value);
                     mesh.AddTriangle(x1y0, x1y1, x0y1);
                     mesh.AddEmptyTriangle();
                 }
                 else if (data.x0y1.IsHole())
                 {
+                    var x0y0 = new Vector3f(position.X, position.Y, data.x0y0.Value);
+                    var x1y0 = new Vector3f(position.X + 1, position.Y, data.x1y0.Value);
+                    var x1y1 = new Vector3f(position.X + 1, position.Y + 1, data.x1y1.Value);
                     mesh.AddTriangle(x0y0, x1y0, x1y1);
                     mesh.AddEmptyTriangle();
                 }
                 else if (data.x1y0.IsHole())
                 {
+                    var x0y0 = new Vector3f(position.X, position.Y, data.x0y0.Value);
+                    var x0y1 = new Vector3f(position.X, position.Y + 1, data.x0y1.Value);
+                    var x1y1 = new Vector3f(position.X + 1, position.Y + 1, data.x1y1.Value);
                     mesh.AddTriangle(x1y1, x0y1, x0y0);
                     mesh.AddEmptyTriangle();
                 }
                 else if (data.x1y1.IsHole())
                 {
+                    var x0y0 = new Vector3f(position.X, position.Y, data.x0y0.Value);
+                    var x1y0 = new Vector3f(position.X + 1, position.Y, data.x1y0.Value);
+                    var x0y1 = new Vector3f(position.X, position.Y + 1, data.x0y1.Value);
                     mesh.AddTriangle(x0y0, x1y0, x0y1);
                     mesh.AddEmptyTriangle();
                 }
@@ -73,6 +86,10 @@ namespace Votyra.Core.TerrainMeshes
             }
             else if (holeCount == 0)
             {
+                var x0y0 = new Vector3f(position.X, position.Y, data.x0y0.Value);
+                var x0y1 = new Vector3f(position.X, position.Y + 1, data.x0y1.Value);
+                var x1y0 = new Vector3f(position.X + 1, position.Y, data.x1y0.Value);
+                var x1y1 = new Vector3f(position.X + 1, position.Y + 1, data.x1y1.Value);
                 if (IsFlipped(data.x0y0, data.x0y1, data.x1y0, data.x1y1))
                 {
                     mesh.AddTriangle(x0y0, x1y0, x1y1);
@@ -91,14 +108,14 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2i data, int minusYres_x0y1, int minusYres_x1y1)
+        public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2i data, int? minusYres_x0y1, int? minusYres_x1y1)
         {
             if (data.x1y0.IsNotHole() && data.x0y0.IsNotHole() && minusYres_x0y1.IsNotHole() && minusYres_x1y1.IsNotHole())
             {
-                var pos_x0y0 = new Vector3f(position.X, position.Y, data.x0y0);
-                var pos_x1y0 = new Vector3f(position.X + 1, position.Y, data.x1y0);
-                var pos_x0y0_lowerX = new Vector3f(position.X, position.Y, minusYres_x0y1);
-                var pos_x1y0_lowerX = new Vector3f(position.X + 1, position.Y, minusYres_x1y1);
+                var pos_x0y0 = new Vector3f(position.X, position.Y, data.x0y0.Value);
+                var pos_x1y0 = new Vector3f(position.X + 1, position.Y, data.x1y0.Value);
+                var pos_x0y0_lowerX = new Vector3f(position.X, position.Y, minusYres_x0y1.Value);
+                var pos_x1y0_lowerX = new Vector3f(position.X + 1, position.Y, minusYres_x1y1.Value);
                 mesh.AddWall(pos_x1y0, pos_x0y0, pos_x0y0_lowerX, pos_x1y0_lowerX);
             }
             else
@@ -108,14 +125,14 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddWallAlongY(this ITerrainMesh mesh, Vector2i position, SampledData2i data, int minusXres_x1y0, int minusXres_x1y1)
+        public static void AddWallAlongY(this ITerrainMesh mesh, Vector2i position, SampledData2i data, int? minusXres_x1y0, int? minusXres_x1y1)
         {
             if (data.x0y0.IsNotHole() && data.x0y1.IsNotHole() && minusXres_x1y0.IsNotHole() && minusXres_x1y1.IsNotHole())
             {
-                var pos_x0y0 = new Vector3f(position.X, position.Y, data.x0y0);
-                var pos_x0y1 = new Vector3f(position.X, position.Y + 1, data.x0y1);
-                var pos_x0y0_lowerY = new Vector3f(position.X, position.Y, minusXres_x1y0);
-                var pos_x0y1_lowerY = new Vector3f(position.X, position.Y + 1, minusXres_x1y1);
+                var pos_x0y0 = new Vector3f(position.X, position.Y, data.x0y0.Value);
+                var pos_x0y1 = new Vector3f(position.X, position.Y + 1, data.x0y1.Value);
+                var pos_x0y0_lowerY = new Vector3f(position.X, position.Y, minusXres_x1y0.Value);
+                var pos_x0y1_lowerY = new Vector3f(position.X, position.Y + 1, minusXres_x1y1.Value);
                 mesh.AddWall(pos_x0y0, pos_x0y1, pos_x0y1_lowerY, pos_x0y0_lowerY);
             }
             else
@@ -145,10 +162,10 @@ namespace Votyra.Core.TerrainMeshes
             mesh.AddTriangle(a, b_lower, a_lower);
         }
 
-        public static bool IsFlipped(int x0y0, int x0y1, int x1y0, int x1y1)
+        public static bool IsFlipped(int? x0y0, int? x0y1, int? x1y0, int? x1y1)
         {
-            var difMain = Math.Abs(x0y0 - x1y1);
-            var difMinor = Math.Abs(x1y0 - x0y1);
+            var difMain = MathUtils.Abs(x0y0 - x1y1);
+            var difMinor = MathUtils.Abs(x1y0 - x0y1);
             bool flip;
             if (difMain == difMinor)
             {

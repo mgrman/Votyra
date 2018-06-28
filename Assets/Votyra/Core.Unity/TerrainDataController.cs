@@ -131,7 +131,7 @@ namespace Votyra.Core.Unity
                 if (oldImage2i != null)
                 {
                     var image = oldImage2i.CreateImage();
-                    var matrix = new Matrix2<float>(oldImageConfig.ImageSize.XY);
+                    var matrix = new Matrix2<int?>(oldImageConfig.ImageSize.XY);
                     matrix.Size
                         .ToRange2i()
                         .ForeachPointExlusive(i =>

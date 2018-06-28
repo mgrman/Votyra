@@ -17,7 +17,7 @@ namespace Votyra.Core.Images
 
         public Range1i RangeZ { get { return new Range1i((int)Offset.Z, (int)(Offset.Z + Scale.Z)); } }
 
-        public int Sample(Vector2i point)
+        public int? Sample(Vector2i point)
         {
             point = (point / Scale.XY + Offset.XY).RoundToVector2i();
 

@@ -62,5 +62,40 @@ namespace Votyra.Core.Utils
         {
             return _noise.GetPerlin(x, y, z);
         }
+
+        public static int? Abs(this int? val)
+        {
+            return val.HasValue ? Math.Abs(val.Value) : val;
+        }
+
+        public static int? Min(this int? a, int? b)
+        {
+            return (a.HasValue && b.HasValue) ? Math.Min(a.Value, b.Value) : (a ?? b);
+        }
+
+        public static int? Max(this int? a, int? b)
+        {
+            return (a.HasValue && b.HasValue) ? Math.Max(a.Value, b.Value) : (a ?? b);
+        }
+
+        public static int Min(this int a, int? b)
+        {
+            return Math.Min(a, b ?? a);
+        }
+
+        public static int Max(this int a, int? b)
+        {
+            return Math.Max(a, b ?? a);
+        }
+
+        public static int Min(this int? a, int b)
+        {
+            return Math.Min(a ?? b, b);
+        }
+
+        public static int Max(this int? a, int b)
+        {
+            return Math.Max(a ?? b, b);
+        }
     }
 }
