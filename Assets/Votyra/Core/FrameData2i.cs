@@ -26,7 +26,7 @@ namespace Votyra.Core
             ExistingGroups = existingGroups;
             Image = image;
 
-            RangeZ = image?.RangeZ ?? Range1f.Zero;
+            RangeZ = image?.RangeZ ?? Range1i.Zero;
 
             InvalidatedArea_imageSpace = invalidatedArea_imageSpace;
 
@@ -38,7 +38,7 @@ namespace Votyra.Core
         public IEnumerable<Vector3f> CameraFrustumCorners { get; }
         public Matrix4x4f CameraLocalToWorldMatrix { get; }
         public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
-        public Range1f RangeZ { get; }
+        public Range1i RangeZ { get; }
         public IReadOnlySet<Vector2i> ExistingGroups { get; }
         public IImage2i Image { get; }
         public Range2i InvalidatedArea_imageSpace { get; }

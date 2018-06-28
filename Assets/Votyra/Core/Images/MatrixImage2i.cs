@@ -5,7 +5,7 @@ namespace Votyra.Core.Images
 {
     public class MatrixImage2i : IImage2i, IInitializableImage, IImageInvalidatableImage2i, IDisposable
     {
-        public Range1f RangeZ { get; }
+        public Range1i RangeZ { get; }
 
         public Range2i InvalidatedArea { get; }
 
@@ -18,18 +18,18 @@ namespace Votyra.Core.Images
             RangeZ = CalculateRangeZ(values);
         }
 
-        private static Range1f CalculateRangeZ(LockableMatrix2<int> values)
+        private static Range1i CalculateRangeZ(LockableMatrix2<int> values)
         {
-            float min = float.MaxValue;
-            float max = float.MinValue;
+            int min = int.MaxValue;
+            int max = int.MinValue;
             values.ForeachPointExlusive(i =>
             {
-                float val = values[i];
+                int val = values[i];
 
-                min = Math.Min(min, val);
-                max = Math.Max(max, val);
+                min = val.IsNotHole() ? Math.Min(min, val) : min;
+                max = val.IsNotHole() ? Math.Max(max, val) : max;
             });
-            return new Range1f(min, max);
+            return new Range1i(min, max);
         }
 
         public int Sample(Vector2i point)
