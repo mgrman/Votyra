@@ -42,7 +42,10 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return this.X.GetHashCode() ^ this.Y.GetHashCode() << 2 ^ this.Z.GetHashCode() >> 2 ^ this.W.GetHashCode() >> 1;
+            unchecked
+            {
+                return this.X.GetHashCode() ^ this.Y.GetHashCode() << 2 ^ this.Z.GetHashCode() >> 2 ^ this.W.GetHashCode() >> 1;
+            }
         }
 
         public override string ToString()

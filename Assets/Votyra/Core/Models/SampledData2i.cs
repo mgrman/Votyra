@@ -107,7 +107,10 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return this.x0y0 + this.x0y1 * 7 + this.x1y0 * 17 + this.x1y1 * 31;
+            unchecked
+            {
+                return this.x0y0.GetHashCode() + this.x0y1.GetHashCode() * 7 + this.x1y0.GetHashCode() * 17 + this.x1y1.GetHashCode() * 31;
+            }
         }
 
         public override string ToString()

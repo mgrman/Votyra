@@ -75,7 +75,10 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return Min.GetHashCode() + Max.GetHashCode() * 7;
+            unchecked
+            {
+                return Min.GetHashCode() + Max.GetHashCode() * 7;
+            }
         }
 
         public override string ToString()

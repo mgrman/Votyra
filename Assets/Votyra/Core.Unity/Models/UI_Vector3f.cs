@@ -60,7 +60,10 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return x.GetHashCode() + y.GetHashCode() * 7 + z.GetHashCode() * 13;
+            unchecked
+            {
+                return x.GetHashCode() + y.GetHashCode() * 7 + z.GetHashCode() * 13;
+            }
         }
     }
 }

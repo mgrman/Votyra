@@ -219,7 +219,10 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return this.GetColumn(0).GetHashCode() ^ this.GetColumn(1).GetHashCode() << 2 ^ this.GetColumn(2).GetHashCode() >> 2 ^ this.GetColumn(3).GetHashCode() >> 1;
+            unchecked
+            {
+                return this.GetColumn(0).GetHashCode() ^ this.GetColumn(1).GetHashCode() << 2 ^ this.GetColumn(2).GetHashCode() >> 2 ^ this.GetColumn(3).GetHashCode() >> 1;
+            }
         }
 
         public override bool Equals(object other)

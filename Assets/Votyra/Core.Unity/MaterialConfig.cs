@@ -37,8 +37,11 @@ namespace Votyra.Core.Images
 
         public override int GetHashCode()
         {
-            return this.Material.GetHashCode() * 23
-                + this.MaterialWalls.GetHashCode() - 3;
+            unchecked
+            {
+                return this.Material.GetHashCode() * 23
+                    + this.MaterialWalls.GetHashCode() - 3;
+            }
         }
     }
 }

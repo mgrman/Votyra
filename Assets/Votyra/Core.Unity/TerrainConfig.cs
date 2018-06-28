@@ -43,10 +43,13 @@ namespace Votyra.Core.Images
 
         public override int GetHashCode()
         {
-            return this.CellInGroupCount.GetHashCode()
-                + this.FlipTriangles.GetHashCode() * 3
-                + this.DrawBounds.GetHashCode() * 7
-                + this.Async.GetHashCode() * 13;
+            unchecked
+            {
+                return this.CellInGroupCount.GetHashCode()
+                    + this.FlipTriangles.GetHashCode() * 3
+                    + this.DrawBounds.GetHashCode() * 7
+                    + this.Async.GetHashCode() * 13;
+            }
         }
     }
 }

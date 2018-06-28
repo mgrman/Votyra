@@ -36,7 +36,10 @@ namespace Votyra.Core
 
         public override int GetHashCode()
         {
-            return this.Name.GetHashCode() + this.Prefab.GetHashCode() * 7;
+            unchecked
+            {
+                return this.Name.GetHashCode() + this.Prefab.GetHashCode() * 7;
+            }
         }
     }
 }

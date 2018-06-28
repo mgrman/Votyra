@@ -148,7 +148,10 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return X.GetHashCode() + Y.GetHashCode() * 7;
+            unchecked
+            {
+                return X.GetHashCode() + Y.GetHashCode() * 7;
+            }
         }
 
         public override string ToString()

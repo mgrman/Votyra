@@ -47,7 +47,10 @@ namespace Votyra.Core.Models
 
         public override int GetHashCode()
         {
-            return x + y * 7;
+            unchecked
+            {
+                return x + y * 7;
+            }
         }
     }
 }
