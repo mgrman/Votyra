@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
@@ -72,6 +73,17 @@ namespace Votyra.Core.Models
                 MathUtils.Max(this.x0y1, clipValue),
                 MathUtils.Max(this.x1y0, clipValue),
                 MathUtils.Max(this.x1y1, clipValue));
+        }
+
+        public SampledData2i NormalizeFromTop(Range1i range)
+        {
+            int? height = this.Max - range.Max;
+
+            SampledData2i normalizedHeightData = new SampledData2i(this.x0y0.LowerClip(height, range.Min),
+                this.x0y1.LowerClip(height, range.Min),
+                this.x1y0.LowerClip(height, range.Min),
+                this.x1y1.LowerClip(height, range.Min));
+            return normalizedHeightData;
         }
 
         public SampledData2i ClipMax(int? clipValue)
@@ -212,16 +224,6 @@ namespace Votyra.Core.Models
     }
     public static class SampledData2iExtensions
     {
-        public static SampledData2i NormalizeFromTop(this SampledData2i sampledData, Range1i range)
-        {
-            int? height = sampledData.Max - range.Max;
-
-            SampledData2i normalizedHeightData = new SampledData2i(sampledData.x0y0.LowerClip(height, range.Min),
-                sampledData.x0y1.LowerClip(height, range.Min),
-                sampledData.x1y0.LowerClip(height, range.Min),
-                sampledData.x1y1.LowerClip(height, range.Min));
-            return normalizedHeightData;
-        }
 
         public static bool IsHole(this int? value)
         {
@@ -233,9 +235,17 @@ namespace Votyra.Core.Models
             return value.HasValue;
         }
 
-        private static int? LowerClip(this int? value, int? height, int min)
+        public static int? LowerClip(this int? value, int? height, int min)
         {
             return (value.IsNotHole() && height.IsNotHole()) ? Math.Max(value.Value - height.Value, min) : value;
+        }
+
+        public static Range1i RangeUnion(this IEnumerable<SampledData2i> templates)
+        {
+            return templates
+                .Select(o => o.Range)
+                .Aggregate((Range1i?)null,
+                (a, b) => a?.UnionWith(b) ?? b) ?? Range1i.Zero;
         }
     }
 }

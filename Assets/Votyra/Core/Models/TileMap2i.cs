@@ -7,15 +7,22 @@ namespace Votyra.Core.Models
 {
     public class TileMap2i
     {
+        public IReadOnlyCollection<SampledData2i> Templates { get; }
+
+        public Range1i ValueRange { get; }
+
         private readonly IReadOnlyDictionary<SampledData2i, SampledData2i> _tileMap;
 
         public TileMap2i(SampledData2i[] templates)
-            : this(templates, GetRangeFromTemplates(templates), true)
+            : this(templates, templates.RangeUnion(), true)
         {
         }
 
         public TileMap2i(SampledData2i[] templates, Range1i valueRange, bool expandRotations)
         {
+            Templates = templates;
+            ValueRange = valueRange;
+
             if (expandRotations)
             {
                 templates = templates
@@ -55,12 +62,5 @@ namespace Votyra.Core.Models
 
         public SampledData2i GetTile(SampledData2i key) => _tileMap[key];
 
-        private static Range1i GetRangeFromTemplates(SampledData2i[] templates)
-        {
-            return templates
-                .Select(o => o.Range)
-                .Aggregate((Range1i?)null,
-                (a, b) => a?.UnionWith(b) ?? b) ?? Range1i.Zero;
-        }
     }
 }

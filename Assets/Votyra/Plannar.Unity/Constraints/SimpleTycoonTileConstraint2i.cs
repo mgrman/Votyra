@@ -139,6 +139,9 @@ namespace Votyra.Plannar.Images.Constraints
             SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2);
             SampledData2i choosenTemplateTile = TileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
+            // var normalizer = new SampledData2iNormalizer(sampleData, TileMap.ValueRange);
+            // SampledData2i choosenTemplateTile = TileMap.GetTile(normalizer.NormalizedValue);
+            // return normalizer.Denormalize(choosenTemplateTile);
         }
 
         private SampledData2i ProcessDown(SampledData2i sampleData)
