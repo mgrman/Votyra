@@ -89,45 +89,6 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static bool IsInside(Collider collider, Vector3 initialPoint, float maxSize)
-        {
-            var outsidePoint = initialPoint + new Vector3(0, maxSize, 0) * 2;
-
-            int counter = 0;
-            bool isHit = false;
-            var point = initialPoint;
-            do
-            {
-                RaycastHit hit;
-                isHit = collider.Raycast(new Ray(point, Vector3.up), out hit, maxSize * 3);
-                if (isHit)
-                {
-                    counter++;
-                    point = hit.point + Vector3.up * (maxSize / 1000f);
-                }
-            }
-            while (isHit);
-
-            isHit = false;
-            point = outsidePoint;
-            do
-            {
-                RaycastHit hit;
-                isHit = collider.Raycast(new Ray(point, Vector3.down), out hit, maxSize * 3);
-                if (hit.point.y < initialPoint.y)
-                {
-                    break;
-                }
-                if (isHit)
-                {
-                    counter++;
-                    point = hit.point + Vector3.down * (maxSize / 1000f);
-                }
-            }
-            while (isHit);
-            return counter % 2 == 1;
-        }
-
         private static void FillInitialState(IEditableImage3b editableImage, IMatrix2<int?> texture, float scale, int fallbackMaxZ)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range3i.All))
@@ -168,6 +129,45 @@ namespace Votyra.Core.Images
                     imageAccessor[i] = texture[i];
                 });
             }
+        }
+
+        private static bool IsInside(Collider collider, Vector3 initialPoint, float maxSize)
+        {
+            var outsidePoint = initialPoint + new Vector3(0, maxSize, 0) * 2;
+
+            int counter = 0;
+            bool isHit = false;
+            var point = initialPoint;
+            do
+            {
+                RaycastHit hit;
+                isHit = collider.Raycast(new Ray(point, Vector3.up), out hit, maxSize * 3);
+                if (isHit)
+                {
+                    counter++;
+                    point = hit.point + Vector3.up * (maxSize / 1000f);
+                }
+            }
+            while (isHit);
+
+            isHit = false;
+            point = outsidePoint;
+            do
+            {
+                RaycastHit hit;
+                isHit = collider.Raycast(new Ray(point, Vector3.down), out hit, maxSize * 3);
+                if (hit.point.y < initialPoint.y)
+                {
+                    break;
+                }
+                if (isHit)
+                {
+                    counter++;
+                    point = hit.point + Vector3.down * (maxSize / 1000f);
+                }
+            }
+            while (isHit);
+            return counter % 2 == 1;
         }
     }
 }

@@ -74,15 +74,6 @@ namespace Votyra.Core
             Debug.Log("Task completed.");
         }
 
-        private static void ValidateSyncContextType(SynchronizationContext unitySyncContext)
-        {
-            var syncContextName = unitySyncContext?.GetType().FullName ?? "<null>";
-            if (syncContextName != "UnityEngine.UnitySynchronizationContext")
-            {
-                throw new AssertionException($"Async task cannot be tested with {syncContextName} as SynchronizationContext! UnitySynchronizationContext is required!");
-            }
-        }
-
         private static Action GetExecSyncContextAction(SynchronizationContext syncContext)
         {
             var execMethod = syncContext.GetType().GetMethod("Exec", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -92,6 +83,15 @@ namespace Votyra.Core
             }
             var execAction = (Action)execMethod.CreateDelegate(typeof(Action), syncContext);
             return execAction;
+        }
+
+        private static void ValidateSyncContextType(SynchronizationContext unitySyncContext)
+        {
+            var syncContextName = unitySyncContext?.GetType().FullName ?? "<null>";
+            if (syncContextName != "UnityEngine.UnitySynchronizationContext")
+            {
+                throw new AssertionException($"Async task cannot be tested with {syncContextName} as SynchronizationContext! UnitySynchronizationContext is required!");
+            }
         }
     }
 }

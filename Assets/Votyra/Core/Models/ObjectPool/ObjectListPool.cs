@@ -6,8 +6,8 @@ namespace Votyra.Core.Models.ObjectPool
     public class ObjectListPool<T, TKey> : BaseKeyObjectPool<T, TKey>
         where TKey : struct
     {
-        private readonly List<Container> _containers = new List<Container>();
         private readonly Func<TKey, TKey, bool> _comparer;
+        private readonly List<Container> _containers = new List<Container>();
 
         public ObjectListPool(int limit, Func<TKey, T> objectGenerator, Func<TKey, TKey, bool> comparer)
             : base(limit, objectGenerator)

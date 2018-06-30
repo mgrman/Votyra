@@ -17,6 +17,55 @@ namespace Votyra.Core.Editor
         [TestCase(103)]
         [TestCase(1000)]
         [TestCase(10000)]
+        public void ArrayConversionTest(int count)
+        {
+            int tests = 10000;
+            Func<Vector3f[]> createNewArray = () =>
+            {
+                var list = Enumerable.Range(0, count).Select(o => new Vector3f(o, o, o)).ToArray();
+                return list;
+            };
+
+            DateTime start = DateTime.UtcNow;
+            for (int test = 0; test < tests; test++)
+            {
+                createNewArray();
+            }
+            TimeSpan nothing = DateTime.UtcNow - start;
+
+            start = DateTime.UtcNow;
+            for (int test = 0; test < tests; test++)
+            {
+                var initialList = createNewArray();
+
+                var newList = new UnityEngine.Vector3[initialList.Length];
+                for (int i = 0; i < initialList.Length; i++)
+                {
+                    var vec = initialList[i];
+                    newList[i] = new UnityEngine.Vector3(vec.X, vec.Y, vec.Z);
+                }
+            }
+            TimeSpan forLoop = DateTime.UtcNow - start - nothing;
+
+            start = DateTime.UtcNow;
+            for (int test = 0; test < tests; test++)
+            {
+                var initialList = createNewArray();
+
+                initialList.ToVector3();
+            }
+            TimeSpan structConversion = DateTime.UtcNow - start - nothing;
+
+            Debug.Log("forLoop: " + (int)forLoop.TotalMilliseconds);
+            Debug.Log("newListWithSameArray: " + (int)structConversion.TotalMilliseconds);
+        }
+
+        [Test]
+        [TestCase(10)]
+        [TestCase(13)]
+        [TestCase(103)]
+        [TestCase(1000)]
+        [TestCase(10000)]
         public void ListConversionTest(int count)
         {
             int tests = 10000;
@@ -70,55 +119,6 @@ namespace Votyra.Core.Editor
             Debug.Log("forLoop: " + (int)forLoop.TotalMilliseconds);
             Debug.Log("innerArray: " + (int)innerArray.TotalMilliseconds);
             Debug.Log("newListWithSameArray: " + (int)newListWithSameArray.TotalMilliseconds);
-        }
-
-        [Test]
-        [TestCase(10)]
-        [TestCase(13)]
-        [TestCase(103)]
-        [TestCase(1000)]
-        [TestCase(10000)]
-        public void ArrayConversionTest(int count)
-        {
-            int tests = 10000;
-            Func<Vector3f[]> createNewArray = () =>
-            {
-                var list = Enumerable.Range(0, count).Select(o => new Vector3f(o, o, o)).ToArray();
-                return list;
-            };
-
-            DateTime start = DateTime.UtcNow;
-            for (int test = 0; test < tests; test++)
-            {
-                createNewArray();
-            }
-            TimeSpan nothing = DateTime.UtcNow - start;
-
-            start = DateTime.UtcNow;
-            for (int test = 0; test < tests; test++)
-            {
-                var initialList = createNewArray();
-
-                var newList = new UnityEngine.Vector3[initialList.Length];
-                for (int i = 0; i < initialList.Length; i++)
-                {
-                    var vec = initialList[i];
-                    newList[i] = new UnityEngine.Vector3(vec.X, vec.Y, vec.Z);
-                }
-            }
-            TimeSpan forLoop = DateTime.UtcNow - start - nothing;
-
-            start = DateTime.UtcNow;
-            for (int test = 0; test < tests; test++)
-            {
-                var initialList = createNewArray();
-
-                initialList.ToVector3();
-            }
-            TimeSpan structConversion = DateTime.UtcNow - start - nothing;
-
-            Debug.Log("forLoop: " + (int)forLoop.TotalMilliseconds);
-            Debug.Log("newListWithSameArray: " + (int)structConversion.TotalMilliseconds);
         }
     }
 }

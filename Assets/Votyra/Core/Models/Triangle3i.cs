@@ -5,6 +5,7 @@ namespace Votyra.Core.Models
 {
     public struct Triangle3i
     {
+        public static readonly IEqualityComparer<Triangle3i> OrderInvariantComparer = new TriangleInvariantComparer();
         public readonly Vector3i A;
         public readonly Vector3i B;
         public readonly Vector3i C;
@@ -48,8 +49,6 @@ namespace Votyra.Core.Models
         {
             return $"{A},{B},{C}";
         }
-
-        public static readonly IEqualityComparer<Triangle3i> OrderInvariantComparer = new TriangleInvariantComparer();
 
         private class TriangleInvariantComparer : IEqualityComparer<Triangle3i>
         {

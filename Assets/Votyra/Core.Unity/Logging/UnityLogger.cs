@@ -14,11 +14,6 @@ namespace Votyra.Core.Logging
             _owner = owner;
         }
 
-        public void LogMessage(object message)
-        {
-            Debug.Log(Format(message), _owner);
-        }
-
         public void LogError(object message)
         {
             Debug.LogError(Format(message), _owner);
@@ -27,6 +22,11 @@ namespace Votyra.Core.Logging
         public void LogException(Exception exception)
         {
             Debug.LogException(exception, _owner);
+        }
+
+        public void LogMessage(object message)
+        {
+            Debug.Log(Format(message), _owner);
         }
 
         public void LogWarning(object message)

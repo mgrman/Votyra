@@ -12,8 +12,18 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher3b : ITerrainMesher3b
     {
-        private readonly IImageSampler3 _imageSampler;
+        public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
+        protected Vector3i groupPosition;
+        protected Vector3i groupSize;
+        protected ITerrainMesh mesh;
+        protected IPooledTerrainMesh pooledMesh;
+
+        private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3f>> DataToTriangles = SampledData3b.AllValues
+            .ToDictionary(o => o, o => ChooseTrianglesForCell(o), SampledData3b.NormallessComparer);
+
+        private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
         private readonly Vector3i _cellInGroupCount;
+        private readonly IImageSampler3 _imageSampler;
 
         public TerrainMesher3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
@@ -22,10 +32,29 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         }
 
         protected IImage3b Image { get; private set; }
-        protected Vector3i groupPosition;
-        protected Vector3i groupSize;
-        protected IPooledTerrainMesh pooledMesh;
-        protected ITerrainMesh mesh;
+
+        public void AddCell(Vector3i cellInGroup)
+        {
+            Vector3i cell = cellInGroup + groupPosition;
+
+            SampledData3b data = _imageSampler.Sample(Image, cell);
+
+            var finalTris = DataToTriangles[data];
+
+            foreach (var tri in finalTris)
+            {
+                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
+            }
+
+            // TODO find a way to not generate thin planes
+            // probablby has to check the other side if there is something?
+            // or maybe postProcessing?
+        }
+
+        public IPooledTerrainMesh GetResultingMesh()
+        {
+            return pooledMesh;
+        }
 
         public void Initialize(IImage3b image)
         {
@@ -47,31 +76,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             this.mesh = this.pooledMesh.Mesh;
             mesh.Clear(bounds);
         }
-
-        public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
-
-        public void AddCell(Vector3i cellInGroup)
-        {
-            Vector3i cell = cellInGroup + groupPosition;
-
-            SampledData3b data = _imageSampler.Sample(Image, cell);
-
-            var finalTris = DataToTriangles[data];
-
-            foreach (var tri in finalTris)
-            {
-                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
-            }
-
-            // TODO find a way to not generate thin planes
-            // probablby has to check the other side if there is something?
-            // or maybe postProcessing?
-        }
-
-        private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
-
-        private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3f>> DataToTriangles = SampledData3b.AllValues
-            .ToDictionary(o => o, o => ChooseTrianglesForCell(o), SampledData3b.NormallessComparer);
 
         private static IReadOnlyCollection<Triangle3f> ChooseTrianglesForCell(SampledData3b data)
         {
@@ -310,11 +314,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 }
                 return triangles.ToArray();
             }
-        }
-
-        public IPooledTerrainMesh GetResultingMesh()
-        {
-            return pooledMesh;
         }
     }
 }

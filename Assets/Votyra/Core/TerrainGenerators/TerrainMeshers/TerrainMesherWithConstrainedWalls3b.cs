@@ -12,8 +12,41 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesherWithConstrainedWalls3b : ITerrainMesher3b
     {
-        private readonly IImageSampler3 _imageSampler;
+        public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
+        protected Vector3i groupPosition;
+        protected Vector3i groupSize;
+        protected ITerrainMesh mesh;
+        protected IPooledTerrainMesh pooledMesh;
+        private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
+
+        private static readonly IReadOnlyCollection<Triangle3f>[] MainPlaneTriangles = SampledData3b.AllValues
+            .Select(o => ChooseTrianglesForCell(o).Item2).ToArray();
+
+        private static readonly SampledData3b[] NormalizedSamples = SampledData3b.AllValues
+            .Select(o => ChooseTrianglesForCell(o).Item1).ToArray();
+
+        private static readonly IReadOnlyCollection<Triangle3f>[] XWallTriangles = SampledDataWithWall.AllValues
+            .Select(o =>
+           {
+               // normalize data
+               var data = NormalizedSamples[o.Data.Data];
+               var dataXMinus = NormalizedSamples[o.Wall.Data];
+
+               return ChooseXWallTriangles(data, dataXMinus);
+           }).ToArray();
+
+        private static readonly IReadOnlyCollection<Triangle3f>[] YWallTriangles = SampledDataWithWall.AllValues
+            .Select(o =>
+            {
+                // normalize data
+                var data = NormalizedSamples[o.Data.Data];
+                var dataYMinus = NormalizedSamples[o.Wall.Data];
+
+                return ChooseYWallTriangles(data, dataYMinus);
+            }).ToArray();
+
         private readonly Vector3i _cellInGroupCount;
+        private readonly IImageSampler3 _imageSampler;
 
         public TerrainMesherWithConstrainedWalls3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
@@ -22,33 +55,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         }
 
         protected IImage3b Image { get; private set; }
-        protected Vector3i groupPosition;
-        protected Vector3i groupSize;
-        protected IPooledTerrainMesh pooledMesh;
-        protected ITerrainMesh mesh;
-
-        public void Initialize(IImage3b image)
-        {
-            Image = image;
-        }
-
-        public void InitializeGroup(Vector3i group)
-        {
-            InitializeGroup(group, PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty());
-        }
-
-        public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
-        {
-            var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
-
-            this.groupPosition = _cellInGroupCount * group;
-
-            this.pooledMesh = cleanPooledMesh;
-            this.mesh = this.pooledMesh.Mesh;
-            mesh.Clear(bounds);
-        }
-
-        public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
 
         public void AddCell(Vector3i cellInGroup)
         {
@@ -72,33 +78,31 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             }
         }
 
-        private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
+        public IPooledTerrainMesh GetResultingMesh()
+        {
+            return pooledMesh;
+        }
 
-        private static readonly SampledData3b[] NormalizedSamples = SampledData3b.AllValues
-            .Select(o => ChooseTrianglesForCell(o).Item1).ToArray();
+        public void Initialize(IImage3b image)
+        {
+            Image = image;
+        }
 
-        private static readonly IReadOnlyCollection<Triangle3f>[] MainPlaneTriangles = SampledData3b.AllValues
-            .Select(o => ChooseTrianglesForCell(o).Item2).ToArray();
+        public void InitializeGroup(Vector3i group)
+        {
+            InitializeGroup(group, PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty());
+        }
 
-        private static readonly IReadOnlyCollection<Triangle3f>[] XWallTriangles = SampledDataWithWall.AllValues
-            .Select(o =>
-           {
-               // normalize data
-               var data = NormalizedSamples[o.Data.Data];
-               var dataXMinus = NormalizedSamples[o.Wall.Data];
+        public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
+        {
+            var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
 
-               return ChooseXWallTriangles(data, dataXMinus);
-           }).ToArray();
+            this.groupPosition = _cellInGroupCount * group;
 
-        private static readonly IReadOnlyCollection<Triangle3f>[] YWallTriangles = SampledDataWithWall.AllValues
-            .Select(o =>
-            {
-                // normalize data
-                var data = NormalizedSamples[o.Data.Data];
-                var dataYMinus = NormalizedSamples[o.Wall.Data];
-
-                return ChooseYWallTriangles(data, dataYMinus);
-            }).ToArray();
+            this.pooledMesh = cleanPooledMesh;
+            this.mesh = this.pooledMesh.Mesh;
+            mesh.Clear(bounds);
+        }
 
         private static Tuple<SampledData3b, IReadOnlyCollection<Triangle3f>> ChooseTrianglesForCell(SampledData3b data)
         {
@@ -309,7 +313,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         private static IReadOnlyCollection<Triangle3f> ChooseXWallTriangles(SampledData3b data, SampledData3b dataXMinus)
         {
-
             var triangles = new List<Triangle3f>();
 
             bool centerXMinus = ((dataXMinus.Data_x1y0z0 ? 1 : 0)
@@ -395,11 +398,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return triangles;
         }
 
-        public IPooledTerrainMesh GetResultingMesh()
-        {
-            return pooledMesh;
-        }
-
         private struct SampledDataWithWall
         {
             public readonly SampledData3b Data;
@@ -422,7 +420,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                             yield return new SampledDataWithWall(data, wall);
                         }
                     }
-
                 }
             }
 

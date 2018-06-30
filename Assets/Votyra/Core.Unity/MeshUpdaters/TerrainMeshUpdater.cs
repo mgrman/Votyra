@@ -12,18 +12,17 @@ namespace Votyra.Core.MeshUpdaters
 {
     public class TerrainMeshUpdater<TKey> : IMeshUpdater<TKey>
     {
-        private SetDictionary<TKey, MeshFilter> _meshFilters = new SetDictionary<TKey, MeshFilter>();
-
-        public IReadOnlySet<TKey> ExistingGroups => _meshFilters;
-        private readonly IProfiler _profiler;
-
         private readonly Func<GameObject> _gameObjectFactory;
+        private readonly IProfiler _profiler;
+        private SetDictionary<TKey, MeshFilter> _meshFilters = new SetDictionary<TKey, MeshFilter>();
 
         public TerrainMeshUpdater(Func<GameObject> gameObjectFactory, IProfiler profiler)
         {
             _gameObjectFactory = gameObjectFactory;
             _profiler = profiler;
         }
+
+        public IReadOnlySet<TKey> ExistingGroups => _meshFilters;
 
         public void UpdateMesh(IReadOnlyDictionary<TKey, ITerrainMesh> terrainMeshes, IReadOnlySet<TKey> toKeepGroups)
         {
@@ -84,6 +83,27 @@ namespace Votyra.Core.MeshUpdaters
             }
         }
 
+        private MeshFilter CreateMeshObject()
+        {
+            string name = string.Format("group_{0}", _meshFilters.Count);
+            var tile = _gameObjectFactory();
+            tile.name = name;
+            tile.hideFlags = HideFlags.DontSave;
+
+            var meshFilter = tile.GetOrAddComponent<MeshFilter>();
+            tile.AddComponentIfMissing<MeshRenderer>();
+            tile.AddComponentIfMissing<MeshCollider>();
+
+            if (meshFilter.sharedMesh == null)
+            {
+                meshFilter.mesh = new Mesh();
+            }
+            var mesh = meshFilter.sharedMesh;
+            mesh.MarkDynamic();
+
+            return meshFilter;
+        }
+
         private void UpdateMesh(ITerrainMesh triangleMesh, Mesh mesh)
         {
             if (triangleMesh is IPooledTerrainMesh)
@@ -138,27 +158,6 @@ namespace Votyra.Core.MeshUpdaters
                 mesh.SetTriangles(triangleMesh.Indices, 0, false);
             }
             mesh.bounds = triangleMesh.MeshBounds.ToBounds();
-        }
-
-        private MeshFilter CreateMeshObject()
-        {
-            string name = string.Format("group_{0}", _meshFilters.Count);
-            var tile = _gameObjectFactory();
-            tile.name = name;
-            tile.hideFlags = HideFlags.DontSave;
-
-            var meshFilter = tile.GetOrAddComponent<MeshFilter>();
-            tile.AddComponentIfMissing<MeshRenderer>();
-            tile.AddComponentIfMissing<MeshCollider>();
-
-            if (meshFilter.sharedMesh == null)
-            {
-                meshFilter.mesh = new Mesh();
-            }
-            var mesh = meshFilter.sharedMesh;
-            mesh.MarkDynamic();
-
-            return meshFilter;
         }
     }
 }

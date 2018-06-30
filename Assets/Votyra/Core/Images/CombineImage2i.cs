@@ -4,18 +4,6 @@ namespace Votyra.Core.Images
 {
     public class CombineImage2i : IImage2i
     {
-        public IImage2i ImageA { get; private set; }
-        public IImage2i ImageB { get; private set; }
-        public Operations Operation { get; private set; }
-
-        public enum Operations
-        {
-            Add,
-            Subtract,
-            Multiply,
-            Divide
-        }
-
         public CombineImage2i(IImage2i imageA, IImage2i imageB, Operations operation)
         {
             ImageA = imageA;
@@ -45,7 +33,23 @@ namespace Votyra.Core.Images
             }
         }
 
+        public enum Operations
+        {
+            Add,
+            Subtract,
+            Multiply,
+            Divide
+        }
+
+        public IImage2i ImageA { get; private set; }
+        public IImage2i ImageB { get; private set; }
+        public Operations Operation { get; private set; }
         public Range1i RangeZ { get; private set; }
+
+        public bool AnyData(Range2i range)
+        {
+            return ImageA.AnyData(range) || ImageB.AnyData(range);
+        }
 
         public int? Sample(Vector2i point)
         {
@@ -68,11 +72,6 @@ namespace Votyra.Core.Images
                 default:
                     return 0;
             }
-        }
-
-        public bool AnyData(Range2i range)
-        {
-            return ImageA.AnyData(range) || ImageB.AnyData(range);
         }
     }
 }

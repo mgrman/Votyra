@@ -5,15 +5,6 @@ namespace Votyra.Core.TerrainMeshes
 {
     public class ExpandingTerrainMesh : ITerrainMesh
     {
-        public Range3f MeshBounds { get; private set; }
-        public List<Vector3f> Vertices { get; }
-        public List<Vector3f> Normals { get; }
-        public List<Vector2f> UV { get; }
-        public List<int> Indices { get; }
-
-        public int TriangleCount { get; private set; }
-        public int PointCount { get; private set; }
-
         public ExpandingTerrainMesh()
         {
             Vertices = new List<Vector3f>();
@@ -22,16 +13,13 @@ namespace Votyra.Core.TerrainMeshes
             Normals = new List<Vector3f>();
         }
 
-        public void Clear(Range3f meshBounds)
-        {
-            MeshBounds = meshBounds;
-            TriangleCount = 0;
-            PointCount = 0;
-            Vertices.Clear();
-            UV.Clear();
-            Indices.Clear();
-            Normals.Clear();
-        }
+        public List<int> Indices { get; }
+        public Range3f MeshBounds { get; private set; }
+        public List<Vector3f> Normals { get; }
+        public int PointCount { get; private set; }
+        public int TriangleCount { get; private set; }
+        public List<Vector2f> UV { get; }
+        public List<Vector3f> Vertices { get; }
 
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
         {
@@ -60,9 +48,19 @@ namespace Votyra.Core.TerrainMeshes
             TriangleCount++;
         }
 
+        public void Clear(Range3f meshBounds)
+        {
+            MeshBounds = meshBounds;
+            TriangleCount = 0;
+            PointCount = 0;
+            Vertices.Clear();
+            UV.Clear();
+            Indices.Clear();
+            Normals.Clear();
+        }
+
         public void FinalizeMesh()
         {
-
         }
     }
 }

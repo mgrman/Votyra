@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
@@ -7,33 +6,9 @@ namespace Votyra.Core.TerrainMeshes
 {
     public static class TerrainMeshExtensions
     {
-        public static void AddTriangle(this ITerrainMesh mesh, Triangle3f triangle)
+        public static void AddEmptyTriangle(this ITerrainMesh mesh)
         {
-            mesh.AddTriangle(triangle.A, triangle.B, triangle.C);
-        }
-
-        public static void AddTriangle(this ITerrainMesh mesh, Vector3f a, Vector3f b, Vector3f c, bool inverted)
-        {
-            if (inverted)
-            {
-                mesh.AddTriangle(c, b, a);
-            }
-            else
-            {
-                mesh.AddTriangle(a, b, c);
-            }
-        }
-
-        public static void AddTriangle(this ICollection<Triangle3f> mesh, Vector3f a, Vector3f b, Vector3f c, bool inverted)
-        {
-            if (inverted)
-            {
-                mesh.Add(new Triangle3f(c, b, a));
-            }
-            else
-            {
-                mesh.Add(new Triangle3f(a, b, c));
-            }
+            // mesh.AddTriangle(new Vector3f(0, 0, 0), new Vector3f(1, 0, 0), new Vector3f(0, 1, 0));
         }
 
         public static void AddQuad(this ITerrainMesh mesh, Vector2i position, SampledData2i data)
@@ -108,6 +83,41 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
+        public static void AddTriangle(this ITerrainMesh mesh, Triangle3f triangle)
+        {
+            mesh.AddTriangle(triangle.A, triangle.B, triangle.C);
+        }
+
+        public static void AddTriangle(this ITerrainMesh mesh, Vector3f a, Vector3f b, Vector3f c, bool inverted)
+        {
+            if (inverted)
+            {
+                mesh.AddTriangle(c, b, a);
+            }
+            else
+            {
+                mesh.AddTriangle(a, b, c);
+            }
+        }
+
+        public static void AddTriangle(this ICollection<Triangle3f> mesh, Vector3f a, Vector3f b, Vector3f c, bool inverted)
+        {
+            if (inverted)
+            {
+                mesh.Add(new Triangle3f(c, b, a));
+            }
+            else
+            {
+                mesh.Add(new Triangle3f(a, b, c));
+            }
+        }
+
+        public static void AddWall(this ITerrainMesh mesh, Vector3f a, Vector3f b, Vector3f b_lower, Vector3f a_lower)
+        {
+            mesh.AddTriangle(a, b, b_lower);
+            mesh.AddTriangle(a, b_lower, a_lower);
+        }
+
         public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2i data, int? minusYres_x0y1, int? minusYres_x1y1)
         {
             if (data.x1y0.IsNotHole() && data.x0y0.IsNotHole() && minusYres_x0y1.IsNotHole() && minusYres_x1y1.IsNotHole())
@@ -156,12 +166,6 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddWall(this ITerrainMesh mesh, Vector3f a, Vector3f b, Vector3f b_lower, Vector3f a_lower)
-        {
-            mesh.AddTriangle(a, b, b_lower);
-            mesh.AddTriangle(a, b_lower, a_lower);
-        }
-
         public static bool IsFlipped(int? x0y0, int? x0y1, int? x1y0, int? x1y1)
         {
             var difMain = MathUtils.Abs(x0y0 - x1y1);
@@ -178,11 +182,6 @@ namespace Votyra.Core.TerrainMeshes
                 flip = difMain < difMinor;
             }
             return flip;
-        }
-
-        public static void AddEmptyTriangle(this ITerrainMesh mesh)
-        {
-            // mesh.AddTriangle(new Vector3f(0, 0, 0), new Vector3f(1, 0, 0), new Vector3f(0, 1, 0));
         }
     }
 }

@@ -13,14 +13,14 @@ namespace Votyra.Core
         public string Name { get; }
         public GameObject Prefab { get; }
 
-        public static bool operator ==(TerrainAlgorithm a, TerrainAlgorithm b)
-        {
-            return a?.Equals(b) ?? b?.Equals(a) ?? true;
-        }
-
         public static bool operator !=(TerrainAlgorithm a, TerrainAlgorithm b)
         {
             return !(a == b);
+        }
+
+        public static bool operator ==(TerrainAlgorithm a, TerrainAlgorithm b)
+        {
+            return a?.Equals(b) ?? b?.Equals(a) ?? true;
         }
 
         public override bool Equals(object obj)

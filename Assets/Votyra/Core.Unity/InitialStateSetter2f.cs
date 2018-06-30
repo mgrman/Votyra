@@ -147,7 +147,6 @@ namespace Votyra.Core.Images
                     }
                     imageAccessor[i] = (int)(value * scale);
                 });
-
             }
         }
     }

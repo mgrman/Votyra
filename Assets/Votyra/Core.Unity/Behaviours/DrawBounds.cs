@@ -5,16 +5,6 @@ namespace Votyra.Core.Behaviours
 {
     public class DrawBounds : MonoBehaviour
     {
-        // Use this for initialization
-        private void Start()
-        {
-        }
-
-        // Update is called once per frame
-        private void Update()
-        {
-        }
-
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
@@ -23,6 +13,16 @@ namespace Votyra.Core.Behaviours
 
             bounds = this.transform.TransformBounds(bounds);
             Gizmos.DrawWireCube(bounds.center, bounds.size);
+        }
+
+        // Use this for initialization
+        private void Start()
+        {
+        }
+
+        // Update is called once per frame
+        private void Update()
+        {
         }
     }
 }

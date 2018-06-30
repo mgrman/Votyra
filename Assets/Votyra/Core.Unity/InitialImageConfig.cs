@@ -13,14 +13,14 @@ namespace Votyra.Core.Images
         public object InitialData { get; }
         public Vector3f InitialDataScale { get; }
 
-        public static bool operator ==(InitialImageConfig a, InitialImageConfig b)
-        {
-            return a?.Equals(b) ?? b?.Equals(a) ?? true;
-        }
-
         public static bool operator !=(InitialImageConfig a, InitialImageConfig b)
         {
             return !(a == b);
+        }
+
+        public static bool operator ==(InitialImageConfig a, InitialImageConfig b)
+        {
+            return a?.Equals(b) ?? b?.Equals(a) ?? true;
         }
 
         public override bool Equals(object obj)

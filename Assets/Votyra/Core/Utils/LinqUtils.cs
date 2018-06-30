@@ -6,16 +6,17 @@ namespace Votyra.Core.Utils
 {
     public static class LinqUtils
     {
-        public static T MaxByOrDefault<T, R>(this IEnumerable<T> items, Func<T, R> func)
-            where R : IComparable<R>
+        public static IEnumerable<IEnumerable<T>> Batch<T>(
+             this IEnumerable<T> source, int batchSize)
         {
-            return items.ExtremeByOrDefault(func, (currentValue, previousBestValue) => currentValue.CompareTo(previousBestValue) > 0);
+            using (var enumerator = source.GetEnumerator())
+                while (enumerator.MoveNext())
+                    yield return YieldBatchElements(enumerator, batchSize - 1);
         }
 
-        public static T MinByOrDefault<T, R>(this IEnumerable<T> items, Func<T, R> func)
-            where R : IComparable<R>
+        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> items)
         {
-            return items.ExtremeByOrDefault(func, (currentValue, previousBestValue) => currentValue.CompareTo(previousBestValue) < 0);
+            return items ?? Enumerable.Empty<T>();
         }
 
         public static T ExtremeByOrDefault<T, R>(this IEnumerable<T> items, Func<T, R> func, Func<R, R, bool> compareFunc)
@@ -38,12 +39,16 @@ namespace Votyra.Core.Utils
             return bestItem;
         }
 
-        public static IEnumerable<IEnumerable<T>> Batch<T>(
-             this IEnumerable<T> source, int batchSize)
+        public static T MaxByOrDefault<T, R>(this IEnumerable<T> items, Func<T, R> func)
+                                    where R : IComparable<R>
         {
-            using (var enumerator = source.GetEnumerator())
-                while (enumerator.MoveNext())
-                    yield return YieldBatchElements(enumerator, batchSize - 1);
+            return items.ExtremeByOrDefault(func, (currentValue, previousBestValue) => currentValue.CompareTo(previousBestValue) > 0);
+        }
+
+        public static T MinByOrDefault<T, R>(this IEnumerable<T> items, Func<T, R> func)
+            where R : IComparable<R>
+        {
+            return items.ExtremeByOrDefault(func, (currentValue, previousBestValue) => currentValue.CompareTo(previousBestValue) < 0);
         }
 
         private static IEnumerable<T> YieldBatchElements<T>(
@@ -52,11 +57,6 @@ namespace Votyra.Core.Utils
             yield return source.Current;
             for (int i = 0; i < batchSize && source.MoveNext(); i++)
                 yield return source.Current;
-        }
-
-        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> items)
-        {
-            return items ?? Enumerable.Empty<T>();
         }
     }
 }

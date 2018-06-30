@@ -8,25 +8,29 @@ namespace Votyra.Core
 {
     public class ClickToPaint2i : ITickable
     {
-        [Inject]
-        private IEditableImage2i _editableImage;
+        [Inject(Id = "root")]
+        protected GameObject _root;
 
         [Inject]
         protected IImageSampler2i _sampler;
 
-        [Inject(Id = "root")]
-        protected GameObject _root;
+        private const int maxDistBig = 4;
+
+        private const int maxDistSmall = 1;
 
         private const float Period = 0.1f;
-        private const int maxDistBig = 4;
-        private const int maxDistSmall = 1;
-        private const float smoothSpeedRelative = 0.2f;
+
         private const float smoothCutoff = smoothSpeedRelative / 2;
 
-        private float lastTime;
-        private Vector2i? lastCell;
+        private const float smoothSpeedRelative = 0.2f;
 
         private int? _centerValueToReuse;
+
+        [Inject]
+        private IEditableImage2i _editableImage;
+
+        private Vector2i? lastCell;
+        private float lastTime;
 
         public void Tick()
         {
@@ -42,21 +46,6 @@ namespace Votyra.Core
             {
                 ProcessMouseClick();
             }
-        }
-
-        private void ProcessMouseClick()
-        {
-            // Debug.LogFormat("OnMouseDown on tile.");
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            // Casts the ray and get the first game object hit
-            Physics.Raycast(ray, out hit);
-
-            var localPosition = _root.transform.worldToLocalMatrix.MultiplyPoint(hit.point);
-
-            var imagePosition = _sampler.WorldToImage(new Vector2f(localPosition.x, localPosition.y));
-            OnCellClick(imagePosition);
         }
 
         private void OnCellClick(Vector2i cell)
@@ -155,6 +144,21 @@ namespace Votyra.Core
                     }
                 }
             }
+        }
+
+        private void ProcessMouseClick()
+        {
+            // Debug.LogFormat("OnMouseDown on tile.");
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            // Casts the ray and get the first game object hit
+            Physics.Raycast(ray, out hit);
+
+            var localPosition = _root.transform.worldToLocalMatrix.MultiplyPoint(hit.point);
+
+            var imagePosition = _sampler.WorldToImage(new Vector2f(localPosition.x, localPosition.y));
+            OnCellClick(imagePosition);
         }
     }
 }

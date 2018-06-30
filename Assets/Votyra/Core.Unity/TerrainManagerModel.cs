@@ -17,11 +17,11 @@ namespace Votyra.Core
             ImageConfig = new BehaviorSubject<ImageConfig>(null);
         }
 
-        public IBehaviorSubject<IEnumerable<TerrainAlgorithm>> AvailableAlgorithms { get; }
         public IBehaviorSubject<TerrainAlgorithm> ActiveAlgorithm { get; }
-        public IBehaviorSubject<TerrainConfig> TerrainConfig { get; }
-        public IBehaviorSubject<MaterialConfig> MaterialConfig { get; }
-        public IBehaviorSubject<InitialImageConfig> InitialImageConfig { get; }
+        public IBehaviorSubject<IEnumerable<TerrainAlgorithm>> AvailableAlgorithms { get; }
         public IBehaviorSubject<ImageConfig> ImageConfig { get; }
+        public IBehaviorSubject<InitialImageConfig> InitialImageConfig { get; }
+        public IBehaviorSubject<MaterialConfig> MaterialConfig { get; }
+        public IBehaviorSubject<TerrainConfig> TerrainConfig { get; }
     }
 }

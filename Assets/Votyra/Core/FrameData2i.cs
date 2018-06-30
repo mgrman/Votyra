@@ -33,15 +33,15 @@ namespace Votyra.Core
             (Image as IInitializableImage)?.StartUsing();
         }
 
-        public Vector3f CameraPosition { get; }
-        public IEnumerable<Plane3f> CameraPlanes { get; }
         public IEnumerable<Vector3f> CameraFrustumCorners { get; }
         public Matrix4x4f CameraLocalToWorldMatrix { get; }
-        public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
-        public Range1i RangeZ { get; }
+        public IEnumerable<Plane3f> CameraPlanes { get; }
+        public Vector3f CameraPosition { get; }
         public IReadOnlySet<Vector2i> ExistingGroups { get; }
         public IImage2i Image { get; }
         public Range2i InvalidatedArea_imageSpace { get; }
+        public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
+        public Range1i RangeZ { get; }
 
         public void Dispose()
         {
