@@ -47,19 +47,16 @@ namespace Votyra.Core.TerrainMeshes
             Vertices[_counter] = posA;
             UV[_counter] = new Vector2f(posA.X, posA.Y);
             Normals[_counter] = normal;
-            Indices[_counter] = _counter;
             _counter++;
 
             Vertices[_counter] = posB;
             UV[_counter] = new Vector2f(posB.X, posB.Y);
             Normals[_counter] = normal;
-            Indices[_counter] = _counter;
             _counter++;
 
             Vertices[_counter] = posC;
             UV[_counter] = new Vector2f(posC.X, posC.Y);
             Normals[_counter] = normal;
-            Indices[_counter] = _counter;
             _counter++;
         }
 
@@ -69,10 +66,9 @@ namespace Votyra.Core.TerrainMeshes
             {
                 for (int i = _counter; i < PointCount; i++)
                 {
-                    Vertices[i] = Vertices[_counter % 3];
-                    UV[i] = UV[_counter % 3];
-                    Normals[i] = Normals[_counter % 3];
-                    Indices[_counter] = Indices[_counter % 3];
+                    Vertices[i] = Vector3f.Zero;
+                    UV[i] = Vector2f.Zero;
+                    Normals[i] = Vector3f.Zero;
                 }
                 Debug.LogWarning($"Mesh was not fully filled. Expected {PointCount} points, got {_counter} points!");
             }
