@@ -317,3 +317,6 @@ typings/
 
 # VSCode
 /.vscode
+
+# UserAddons
+/Assets/UserAddons
