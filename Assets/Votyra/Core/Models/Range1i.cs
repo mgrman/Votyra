@@ -40,6 +40,15 @@ namespace Votyra.Core.Models
             return new Range1i(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
         }
 
+        public Range1i? UnionWith(Range1i? range)
+        {
+            if (range == null)
+            {
+                return this;
+            }
+            return UnionWith(range.Value);
+        }
+
         public static Range1i operator +(Range1i a, Range1i b)
         {
             return new Range1i(a.Min + b.Min, a.Max + b.Max);

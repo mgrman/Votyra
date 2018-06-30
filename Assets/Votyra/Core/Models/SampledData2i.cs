@@ -82,6 +82,23 @@ namespace Votyra.Core.Models
                 MathUtils.Min(this.x1y1, clipValue));
         }
 
+        public Range1i? Range
+        {
+            get
+            {
+                var min = Min;
+                var max = Max;
+                if (min.IsHole() || max.IsHole())
+                {
+                    return null;
+                }
+                else
+                {
+                    return new Range1i(min.Value, max.Value);
+                }
+            }
+        }
+
         public static SampledData2i operator +(SampledData2i a, int b)
         {
             return new SampledData2i(a.x0y0 + b, a.x0y1 + b, a.x1y0 + b, a.x1y1 + b);
@@ -109,15 +126,22 @@ namespace Votyra.Core.Models
 
         public static int Dif(SampledData2i a, SampledData2i b)
         {
-            return Dif(a.x0y0, b.x0y0) +
-                Dif(a.x0y1, b.x0y1) +
-                Dif(a.x1y0, b.x1y0) +
-                Dif(a.x1y1, b.x1y1);
+            return CombineDifs(CombineDifs(CombineDifs(Dif(a.x0y0, b.x0y0), Dif(a.x0y1, b.x0y1)), Dif(a.x1y0, b.x1y0)), Dif(a.x1y1, b.x1y1));
         }
 
-        public static int Dif(int? a, int? b)
+        private static int Dif(int? a, int? b)
         {
-            return (a.IsNotHole() != b.IsNotHole()) ? int.MaxValue : ((a - b).Abs() ?? 0);
+            if (a.IsHole() && b.IsHole())
+                return 0;
+            else if (a.IsHole() || b.IsHole())
+                return int.MaxValue;
+            else
+                return (a.Value - b.Value).Abs();
+        }
+
+        private static int CombineDifs(int a, int b)
+        {
+            return a == int.MaxValue || b == int.MaxValue ? int.MaxValue : a + b;
         }
 
         public override bool Equals(object obj)

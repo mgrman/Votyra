@@ -66,10 +66,19 @@ namespace Votyra.Plannar.Images.Constraints
 
                 while (queue.Count > 0)
                 {
+#if UNITY_EDITOR
+                    if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+                    {
+                        return;
+                    }
+#endif
+
                     var cell = queue.GetFirst().Value;
                     invalidatedCellArea = invalidatedCellArea.CombineWith(cell);
 
                     var sample = sampler.Sample(editableMatrix, cell);
+                    if (sample.GetHoleCount() != 0)
+                        continue;
                     var processedSample = process(sample);
 
                     Vector2i cell_x0y0 = sampler.CellToX0Y0(cell);
@@ -124,23 +133,11 @@ namespace Votyra.Plannar.Images.Constraints
             return invalidatedCellArea;
         }
 
-        private struct PositionWithValue
-        {
-            public readonly Vector2i Position;
-            public readonly float Value;
-
-            public PositionWithValue(Vector2i pos, float value)
-            {
-                Position = pos;
-                Value = value;
-            }
-        };
-
         private SampledData2i ProcessUp(SampledData2i sampleData)
         {
             var height = sampleData.Max;
             SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2);
-            SampledData2i choosenTemplateTile = TileMap[normalizedHeightData];
+            SampledData2i choosenTemplateTile = TileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
         }
 
@@ -149,9 +146,8 @@ namespace Votyra.Plannar.Images.Constraints
             return -ProcessUp(-sampleData);
         }
 
-        private readonly static SampledData2i[] Templates = new SampledData2i[]
+        private readonly static TileMap2i TileMap = new TileMap2i(new[]
         {
-            //plane
             new SampledData2i(0, 0, 0, 0),
 
             //slope
@@ -167,40 +163,7 @@ namespace Votyra.Plannar.Images.Constraints
             new SampledData2i(-1, 0, 0, 0),
 
             //slopeDiagonal
-            new SampledData2i(0, -1, -1, 0),
-        };
-
-        private readonly static SampledData2i[] ExpandedTemplates = Templates
-            .SelectMany(template =>
-            {
-                return new[]
-                {
-                    template,
-                    template.GetRotated(1),
-                    template.GetRotated(2),
-                    template.GetRotated(3),
-                };
-            })
-            .Distinct()
-            .ToArray();
-
-        private readonly static Dictionary<SampledData2i, SampledData2i> TileMap = SampledData2i
-            .GenerateAllValues(new Range1i(-2, 0), true)
-            .ToDictionary(inputValue => inputValue, inputValue =>
-            {
-                SampledData2i choosenTemplateTile = default(SampledData2i);
-                float choosenTemplateTileDiff = float.MaxValue;
-                for (int it = 0; it < ExpandedTemplates.Length; it++)
-                {
-                    SampledData2i tile = ExpandedTemplates[it];
-                    var value = SampledData2i.Dif(tile, inputValue);
-                    if (value < choosenTemplateTileDiff)
-                    {
-                        choosenTemplateTile = tile;
-                        choosenTemplateTileDiff = value;
-                    }
-                }
-                return choosenTemplateTile.SetHolesUsing(inputValue);
-            });
+            new SampledData2i(0, -1, -1, 0)
+        });
     }
 }

@@ -6,6 +6,7 @@ using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
+using Votyra.Core.Utils;
 
 namespace Votyra.Plannar.Images.Constraints
 {
@@ -25,13 +26,9 @@ namespace Votyra.Plannar.Images.Constraints
                 return invalidatedImageArea;
             }
 
-            var invalidatedCellArea = _sampler.ImageToWorld(invalidatedImageArea)
-                .RoundToContain();
-
+            var invalidatedCellArea = _sampler.ImageToWorld(invalidatedImageArea).RoundToContain();
             var newInvalidatedCellArea = Constrain(direction, invalidatedCellArea, _sampler, editableMatrix);
-
             var newInvalidatedImageArea = _sampler.WorldToImage(newInvalidatedCellArea);
-
             return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
         }
 
@@ -65,35 +62,15 @@ namespace Votyra.Plannar.Images.Constraints
             return invalidatedCellArea;
         }
 
-        private struct PositionWithValue
-        {
-            public readonly Vector2i Position;
-            public readonly float Value;
-
-            public PositionWithValue(Vector2i pos, float value)
-            {
-                Position = pos;
-                Value = value;
-            }
-        };
-
         private SampledData2i Process(SampledData2i sampleData)
         {
             var height = sampleData.Max - 1;
-
             SampledData2i normalizedHeightData = sampleData.NormalizeFromTop(Range1i.PlusMinusOne);
-            if (!TileMap.ContainsKey(normalizedHeightData))
-            {
-                Debug.Log($"normalizedHeightData does not exing in TileMap: {normalizedHeightData} height:{height}");
-                return sampleData;
-            }
-
-            SampledData2i choosenTemplateTile = TileMap[normalizedHeightData];
-
+            SampledData2i choosenTemplateTile = TileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
         }
 
-        private readonly static SampledData2i[] Templates = new SampledData2i[]
+        private readonly static TileMap2i TileMap = new TileMap2i(new[]
         {
             //plane
             new SampledData2i(1, 1, 1, 1),
@@ -112,38 +89,27 @@ namespace Votyra.Plannar.Images.Constraints
 
             //slopeDiagonal
             new SampledData2i(1, 0, 0, 1),
-        };
 
-        private readonly static SampledData2i[] ExpandedTemplates = Templates
-            .SelectMany(template =>
-            {
-                return new[]
-                {
-                template,
-                template.GetRotated(1),
-                template.GetRotated(2),
-                template.GetRotated(3),
-                };
-            })
-            .Distinct()
-            .ToArray();
+            //plane with hole
+            new SampledData2i(1, 1, 1, null),
 
-        private readonly static Dictionary<SampledData2i, SampledData2i> TileMap = SampledData2i.GenerateAllValues(new Range1i(-1, 1), true)
-            .ToDictionary(inputValue => inputValue, inputValue =>
-            {
-                SampledData2i choosenTemplateTile = default(SampledData2i);
-                float choosenTemplateTileDiff = float.MaxValue;
-                for (int it = 0; it < ExpandedTemplates.Length; it++)
-                {
-                    SampledData2i tile = ExpandedTemplates[it];
-                    var value = SampledData2i.Dif(tile, inputValue);
-                    if (value < choosenTemplateTileDiff)
-                    {
-                        choosenTemplateTile = tile;
-                        choosenTemplateTileDiff = value;
-                    }
-                }
-                return choosenTemplateTile.SetHolesUsing(inputValue);
-            });
+            //slope with hole
+            new SampledData2i(0, 1, 0, null),
+
+            //slope with hole
+            new SampledData2i(0, 1, null, 1),
+
+            //slope with hole
+            new SampledData2i(0, null, 0, 1),
+
+            //slope with hole
+            new SampledData2i(null, 1, 0, 1),
+
+            //partialUpSlope with hole
+            new SampledData2i(null, 0, 0, 1),
+
+            //partialDownSlope with hole
+            new SampledData2i(0, 1, 1, null),
+        });
     }
 }

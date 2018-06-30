@@ -68,6 +68,11 @@ namespace Votyra.Core.Utils
             return val.HasValue ? Math.Abs(val.Value) : val;
         }
 
+        public static int Abs(this int val)
+        {
+            return Math.Abs(val);
+        }
+
         public static int? Min(this int? a, int? b)
         {
             return (a.HasValue && b.HasValue) ? Math.Min(a.Value, b.Value) : (a ?? b);

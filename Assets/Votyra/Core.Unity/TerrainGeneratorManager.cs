@@ -69,6 +69,7 @@ namespace Votyra.Core
                 catch (Exception ex)
                 {
                     _logger.LogException(ex);
+                    await Task.Delay(10);
                 }
             }
         }
@@ -141,6 +142,7 @@ namespace Votyra.Core
         public void Dispose()
         {
             _onDestroyCts.Cancel();
+            UnityEngine.Debug.LogWarning("Dispose!!!");
         }
     }
 }
