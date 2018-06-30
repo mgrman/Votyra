@@ -1,3 +1,4 @@
+using System;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
@@ -8,41 +9,24 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher2i : ITerrainMesher2i
     {
-        protected readonly Vector2i _cellInGroupCount;
         protected readonly IImageSampler2i _imageSampler;
+        protected readonly Vector2i _cellInGroupCount;
         protected readonly int _triangleCount;
 
-        protected Vector3f _bounds_size;
-        protected Vector2i _groupPosition;
+        protected virtual int TrianglesPerCell => 2;
+
         protected IImage2i _image;
-        protected ITerrainMesh _mesh;
+        protected Vector2i _groupPosition;
         protected float _minZ;
+        protected Vector3f _bounds_size;
         protected IPooledTerrainMesh _pooledMesh;
+        protected ITerrainMesh _mesh;
 
         public TerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
         {
             _imageSampler = imageSampler;
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
             _triangleCount = _cellInGroupCount.AreaSum * TrianglesPerCell;
-        }
-
-        protected virtual int TrianglesPerCell => 2;
-
-        public virtual void AddCell(Vector2i cellInGroup)
-        {
-            Vector2i cell = cellInGroup + _groupPosition;
-
-            Vector2i position = _groupPosition + cellInGroup;
-
-            SampledData2i data = _imageSampler.Sample(_image, cell);
-
-            _mesh.AddQuad(position, data);
-        }
-
-        public IPooledTerrainMesh GetResultingMesh()
-        {
-            _pooledMesh.FinalizeMesh();
-            return _pooledMesh;
         }
 
         public void Initialize(IImage2i image)
@@ -68,6 +52,23 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             // this._pooledMesh = PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty();
             this._mesh = this._pooledMesh.Mesh;
             _mesh.Clear(bounds);
+        }
+
+        public virtual void AddCell(Vector2i cellInGroup)
+        {
+            Vector2i cell = cellInGroup + _groupPosition;
+
+            Vector2i position = _groupPosition + cellInGroup;
+
+            SampledData2i data = _imageSampler.Sample(_image, cell);
+
+            _mesh.AddQuad(position, data);
+        }
+
+        public IPooledTerrainMesh GetResultingMesh()
+        {
+            _pooledMesh.FinalizeMesh();
+            return _pooledMesh;
         }
     }
 }

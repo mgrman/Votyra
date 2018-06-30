@@ -6,8 +6,8 @@ namespace Votyra.Core.Images
     {
         Range1i RangeZ { get; }
 
-        bool AnyData(Range2i range);
-
         int? Sample(Vector2i point);
+
+        bool AnyData(Range2i range);
     }
 }

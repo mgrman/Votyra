@@ -14,24 +14,24 @@ namespace Votyra.Core.Models
             this.y = y;
         }
 
-        public static implicit operator UI_Vector2i(Vector2i value)
-        {
-            return new UI_Vector2i(value.X, value.Y);
-        }
-
         public static implicit operator Vector2i(UI_Vector2i value)
         {
             return new Vector2i(value.x, value.y);
         }
 
-        public static bool operator !=(UI_Vector2i a, UI_Vector2i b)
+        public static implicit operator UI_Vector2i(Vector2i value)
         {
-            return a.x != b.x || a.y != b.y;
+            return new UI_Vector2i(value.X, value.Y);
         }
 
         public static bool operator ==(UI_Vector2i a, UI_Vector2i b)
         {
             return a.x == b.x && a.y == b.y;
+        }
+
+        public static bool operator !=(UI_Vector2i a, UI_Vector2i b)
+        {
+            return a.x != b.x || a.y != b.y;
         }
 
         public override bool Equals(object obj)

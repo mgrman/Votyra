@@ -11,68 +11,31 @@ namespace Votyra.Plannar.Images.Constraints
 {
     public class SimpleTycoonTileConstraint2i : IImageConstraint2i
     {
-        private static readonly IComparer<int?> DefaultComparer = Comparer<int?>.Default;
-
-        private readonly static SampledData2i[] ExpandedTemplates = Templates
-            .SelectMany(template =>
-            {
-                return new[]
-                {
-                    template,
-                    template.GetRotated(1),
-                    template.GetRotated(2),
-                    template.GetRotated(3),
-                };
-            })
-            .Distinct()
-            .ToArray();
-
-        private readonly static SampledData2i[] Templates = new SampledData2i[]
-        {
-            //plane
-            new SampledData2i(0, 0, 0, 0),
-
-            //slope
-            new SampledData2i(-1, 0, -1, 0),
-
-            //slopeDiagonal
-            new SampledData2i(-2, -1, -1, 0),
-
-            //partialUpSlope
-            new SampledData2i(-1, -1, -1, 0),
-
-            //partialDownSlope
-            new SampledData2i(-1, 0, 0, 0),
-
-            //slopeDiagonal
-            new SampledData2i(0, -1, -1, 0),
-        };
-
-        private readonly static Dictionary<SampledData2i, SampledData2i> TileMap = SampledData2i
-            .GenerateAllValues(new Range1i(-2, 0), true)
-            .ToDictionary(inputValue => inputValue, inputValue =>
-            {
-                SampledData2i choosenTemplateTile = default(SampledData2i);
-                float choosenTemplateTileDiff = float.MaxValue;
-                for (int it = 0; it < ExpandedTemplates.Length; it++)
-                {
-                    SampledData2i tile = ExpandedTemplates[it];
-                    var value = SampledData2i.Dif(tile, inputValue);
-                    if (value < choosenTemplateTileDiff)
-                    {
-                        choosenTemplateTile = tile;
-                        choosenTemplateTileDiff = value;
-                    }
-                }
-                return choosenTemplateTile.SetHolesUsing(inputValue);
-            });
-
         private IImageSampler2i _sampler;
 
         public SimpleTycoonTileConstraint2i(IImageSampler2i sampler)
         {
             _sampler = sampler;
         }
+
+        public Range2i FixImage(Matrix2<int?> editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        {
+            if (_sampler == null)
+            {
+                return invalidatedImageArea;
+            }
+
+            var invalidatedCellArea = _sampler.ImageToWorld(invalidatedImageArea)
+                .RoundToContain();
+
+            var newInvalidatedCellArea = Constrain(direction, invalidatedCellArea, _sampler, editableMatrix);
+
+            var newInvalidatedImageArea = _sampler.WorldToImage(newInvalidatedCellArea);
+
+            return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
+        }
+
+        private static readonly IComparer<int?> DefaultComparer = Comparer<int?>.Default;
 
         public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<int?> editableMatrix)
         {
@@ -161,36 +124,6 @@ namespace Votyra.Plannar.Images.Constraints
             return invalidatedCellArea;
         }
 
-        public Range2i FixImage(Matrix2<int?> editableMatrix, Range2i invalidatedImageArea, Direction direction)
-        {
-            if (_sampler == null)
-            {
-                return invalidatedImageArea;
-            }
-
-            var invalidatedCellArea = _sampler.ImageToWorld(invalidatedImageArea)
-                .RoundToContain();
-
-            var newInvalidatedCellArea = Constrain(direction, invalidatedCellArea, _sampler, editableMatrix);
-
-            var newInvalidatedImageArea = _sampler.WorldToImage(newInvalidatedCellArea);
-
-            return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
-        }
-
-        private SampledData2i ProcessDown(SampledData2i sampleData)
-        {
-            return -ProcessUp(-sampleData);
-        }
-
-        private SampledData2i ProcessUp(SampledData2i sampleData)
-        {
-            var height = sampleData.Max;
-            SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2);
-            SampledData2i choosenTemplateTile = TileMap[normalizedHeightData];
-            return choosenTemplateTile + height;
-        }
-
         private struct PositionWithValue
         {
             public readonly Vector2i Position;
@@ -202,5 +135,72 @@ namespace Votyra.Plannar.Images.Constraints
                 Value = value;
             }
         };
+
+        private SampledData2i ProcessUp(SampledData2i sampleData)
+        {
+            var height = sampleData.Max;
+            SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2);
+            SampledData2i choosenTemplateTile = TileMap[normalizedHeightData];
+            return choosenTemplateTile + height;
+        }
+
+        private SampledData2i ProcessDown(SampledData2i sampleData)
+        {
+            return -ProcessUp(-sampleData);
+        }
+
+        private readonly static SampledData2i[] Templates = new SampledData2i[]
+        {
+            //plane
+            new SampledData2i(0, 0, 0, 0),
+
+            //slope
+            new SampledData2i(-1, 0, -1, 0),
+
+            //slopeDiagonal
+            new SampledData2i(-2, -1, -1, 0),
+
+            //partialUpSlope
+            new SampledData2i(-1, -1, -1, 0),
+
+            //partialDownSlope
+            new SampledData2i(-1, 0, 0, 0),
+
+            //slopeDiagonal
+            new SampledData2i(0, -1, -1, 0),
+        };
+
+        private readonly static SampledData2i[] ExpandedTemplates = Templates
+            .SelectMany(template =>
+            {
+                return new[]
+                {
+                    template,
+                    template.GetRotated(1),
+                    template.GetRotated(2),
+                    template.GetRotated(3),
+                };
+            })
+            .Distinct()
+            .ToArray();
+
+        private readonly static Dictionary<SampledData2i, SampledData2i> TileMap = SampledData2i
+            .GenerateAllValues(new Range1i(-2, 0), true)
+            .ToDictionary(inputValue => inputValue, inputValue =>
+            {
+                SampledData2i choosenTemplateTile = default(SampledData2i);
+                float choosenTemplateTileDiff = float.MaxValue;
+                for (int it = 0; it < ExpandedTemplates.Length; it++)
+                {
+                    SampledData2i tile = ExpandedTemplates[it];
+                    var value = SampledData2i.Dif(tile, inputValue);
+                    if (value < choosenTemplateTileDiff)
+                    {
+                        choosenTemplateTile = tile;
+                        choosenTemplateTileDiff = value;
+                    }
+                }
+                return choosenTemplateTile.SetHolesUsing(inputValue);
+            });
     }
 }

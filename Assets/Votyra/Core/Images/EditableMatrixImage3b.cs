@@ -9,13 +9,16 @@ namespace Votyra.Core.Images
 {
     public class EditableMatrixImage3b : IImage3bProvider, IEditableImage3b
     {
-        private readonly IImageConstraint3b _constraint;
         private readonly Matrix3<bool> _editableMatrix;
 
-        private readonly IThreadSafeLogger _logger;
-        private readonly List<LockableMatrix3<bool>> _readonlyMatrices = new List<LockableMatrix3<bool>>();
-        private MatrixImage3b _image = null;
         private Range3i? _invalidatedArea;
+
+        private readonly List<LockableMatrix3<bool>> _readonlyMatrices = new List<LockableMatrix3<bool>>();
+
+        private MatrixImage3b _image = null;
+
+        private readonly IImageConstraint3b _constraint;
+        private readonly IThreadSafeLogger _logger;
 
         public EditableMatrixImage3b([InjectOptional] IImageConstraint3b constraint, IImageConfig imageConfig, IThreadSafeLogger logger)
         {
@@ -80,20 +83,12 @@ namespace Votyra.Core.Images
             _logger.LogMessage("_invalidatedArea:" + _invalidatedArea);
         }
 
+
         private class MatrixImageAccessor : IEditableImageAccessor3b
         {
-            private readonly EditableMatrixImage3b _editableImage;
             private readonly bool[,,] _editableMatrix;
             private int _changeCounter = 0;
             private bool _changed = false;
-
-            public MatrixImageAccessor(EditableMatrixImage3b editableImage, Range3i area)
-            {
-                _editableMatrix = editableImage._editableMatrix.NativeMatrix;
-                _editableImage = editableImage;
-                Area = area.IntersectWith(editableImage._editableMatrix.Size.ToRange3i());
-            }
-
             public Range3i Area { get; }
 
             public bool this[Vector3i pos]
@@ -116,6 +111,15 @@ namespace Votyra.Core.Images
                     }
                     _editableMatrix[pos.X, pos.Y, pos.Z] = value;
                 }
+            }
+
+            private readonly EditableMatrixImage3b _editableImage;
+
+            public MatrixImageAccessor(EditableMatrixImage3b editableImage, Range3i area)
+            {
+                _editableMatrix = editableImage._editableMatrix.NativeMatrix;
+                _editableImage = editableImage;
+                Area = area.IntersectWith(editableImage._editableMatrix.Size.ToRange3i());
             }
 
             public void Dispose()

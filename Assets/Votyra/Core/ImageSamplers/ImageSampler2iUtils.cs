@@ -1,5 +1,6 @@
 using Votyra.Core.Images;
 using Votyra.Core.Models;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.ImageSamplers
 {
@@ -10,6 +11,13 @@ namespace Votyra.Core.ImageSamplers
             var min = sampler.ImageToWorld(rect.Min);
             var max = sampler.ImageToWorld(rect.Max);
             return Range2f.FromMinAndMax(min, max);
+        }
+
+        public static Range2i WorldToImage(this IImageSampler2i sampler, Range2i rect)
+        {
+            var min = sampler.CellToX0Y0(rect.Min);
+            var max = sampler.CellToX1Y1(rect.Max);
+            return Range2i.FromMinAndMax(min, max + Vector2i.One);
         }
 
         public static SampledData2i Sample(this IImageSampler2i sampler, Matrix2<int?> image, Vector2i pos)
@@ -50,13 +58,6 @@ namespace Votyra.Core.ImageSamplers
         public static int? SampleX1Y1(this IImageSampler2i sampler, IImage2i image, Vector2i pos)
         {
             return image.Sample(sampler.CellToX1Y1(pos));
-        }
-
-        public static Range2i WorldToImage(this IImageSampler2i sampler, Range2i rect)
-        {
-            var min = sampler.CellToX0Y0(rect.Min);
-            var max = sampler.CellToX1Y1(rect.Max);
-            return Range2i.FromMinAndMax(min, max + Vector2i.One);
         }
     }
 }

@@ -13,14 +13,14 @@ namespace Votyra.Core.Images
         public Material Material { get; }
         public Material MaterialWalls { get; }
 
-        public static bool operator !=(MaterialConfig a, MaterialConfig b)
-        {
-            return !(a == b);
-        }
-
         public static bool operator ==(MaterialConfig a, MaterialConfig b)
         {
             return a?.Equals(b) ?? b?.Equals(a) ?? true;
+        }
+
+        public static bool operator !=(MaterialConfig a, MaterialConfig b)
+        {
+            return !(a == b);
         }
 
         public override bool Equals(object obj)

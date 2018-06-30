@@ -11,6 +11,8 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
     private const string UnityEngineNamespaceUsage1 = "using " + UnityEngineNamespace;
     private const string UnityEngineNamespaceUsage2 = UnityEngineNamespace + ".";
 
+    public int callbackOrder => int.MaxValue;
+
     static ConstrainNamespacesPrebuildCommnand()
     {
         EditorApplication.playModeStateChanged += (stateChange) =>
@@ -29,7 +31,15 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
         };
     }
 
-    public int callbackOrder => int.MaxValue;
+    public void OnPreprocessBuild(BuildReport report, string path)
+    {
+        ConstrainNamespaces();
+    }
+
+    public void OnPreprocessBuild(BuildReport report)
+    {
+        ConstrainNamespaces();
+    }
 
     public static void ConstrainNamespaces()
     {
@@ -67,15 +77,5 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
             //     throw new System.Exception($"Some files use code from not allowed namespace:{UnityEngineNamespace}!");
             // }
         }
-    }
-
-    public void OnPreprocessBuild(BuildReport report, string path)
-    {
-        ConstrainNamespaces();
-    }
-
-    public void OnPreprocessBuild(BuildReport report)
-    {
-        ConstrainNamespaces();
     }
 }

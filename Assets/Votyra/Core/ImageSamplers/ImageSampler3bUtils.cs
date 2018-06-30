@@ -31,5 +31,6 @@ namespace Votyra.Core.ImageSamplers
             var max = sampler.WorldToImage(rect.Max);
             return Range3i.FromMinAndMax(min, max + Vector3i.One);
         }
+
     }
 }

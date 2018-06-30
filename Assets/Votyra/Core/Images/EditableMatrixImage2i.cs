@@ -10,10 +10,13 @@ namespace Votyra.Core.Images
     {
         private readonly Matrix2<int?> _editableMatrix;
 
-        private readonly List<LockableMatrix2<int?>> _readonlyMatrices = new List<LockableMatrix2<int?>>();
-        private IImageConstraint2i _constraint;
-        private MatrixImage2i _image = null;
         private Range2i? _invalidatedArea;
+
+        private readonly List<LockableMatrix2<int?>> _readonlyMatrices = new List<LockableMatrix2<int?>>();
+
+        private MatrixImage2i _image = null;
+
+        private IImageConstraint2i _constraint;
 
         public EditableMatrixImage2i([InjectOptional] IImageConstraint2i constraint, IImageConfig imageConfig)
         {
@@ -77,17 +80,8 @@ namespace Votyra.Core.Images
 
         private class MatrixImageAccessor : IEditableImageAccessor2i
         {
-            private readonly EditableMatrixImage2i _editableImage;
             private readonly int?[,] _editableMatrix;
             private int _changeCounter = 0;
-
-            public MatrixImageAccessor(EditableMatrixImage2i editableImage, Range2i area)
-            {
-                _editableMatrix = editableImage._editableMatrix.NativeMatrix;
-                _editableImage = editableImage;
-                Area = area.IntersectWith(editableImage._editableMatrix.Size.ToRange2i());
-            }
-
             public Range2i Area { get; }
 
             public int? this[Vector2i pos]
@@ -105,6 +99,15 @@ namespace Votyra.Core.Images
                     }
                     _editableMatrix[pos.X, pos.Y] = value;
                 }
+            }
+
+            private readonly EditableMatrixImage2i _editableImage;
+
+            public MatrixImageAccessor(EditableMatrixImage2i editableImage, Range2i area)
+            {
+                _editableMatrix = editableImage._editableMatrix.NativeMatrix;
+                _editableImage = editableImage;
+                Area = area.IntersectWith(editableImage._editableMatrix.Size.ToRange2i());
             }
 
             public void Dispose()

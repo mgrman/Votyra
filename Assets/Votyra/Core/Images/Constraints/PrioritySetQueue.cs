@@ -6,8 +6,8 @@ namespace Votyra.Core.Images.Constraints
 {
     public class PrioritySetQueue<TValue, TPriority>
     {
-        private IComparer<TPriority> _priorityOrderComparer;
         private LinkedList<PrioritisedValue> _queue;
+        private IComparer<TPriority> _priorityOrderComparer;
         private IEqualityComparer<TValue> _valueEqualityComparer;
 
         public PrioritySetQueue(IEnumerable<TValue> values, IEqualityComparer<TValue> valueEqualityComparer, Func<TValue, TPriority> getPriority, IComparer<TPriority> priorityOrderComparer)
@@ -27,6 +27,14 @@ namespace Votyra.Core.Images.Constraints
         }
 
         public int Count => _queue.Count;
+
+        public PrioritisedValue GetFirst()
+        {
+            var cellWithValue = _queue.First.Value;
+            _queue.RemoveFirst();
+
+            return cellWithValue;
+        }
 
         public void Add(TValue newCellToCheck, TPriority newCellToCheckValue)
         {
@@ -61,18 +69,10 @@ namespace Votyra.Core.Images.Constraints
             }
         }
 
-        public PrioritisedValue GetFirst()
-        {
-            var cellWithValue = _queue.First.Value;
-            _queue.RemoveFirst();
-
-            return cellWithValue;
-        }
-
         public struct PrioritisedValue
         {
-            public readonly TPriority Priority;
             public readonly TValue Value;
+            public readonly TPriority Priority;
 
             public PrioritisedValue(TValue pos, TPriority value)
             {

@@ -5,10 +5,10 @@ namespace Votyra.Core.Models
 {
     public struct Quaternion4f : IEquatable<Quaternion4f>
     {
-        public readonly float w;
         public readonly float x;
         public readonly float y;
         public readonly float z;
+        public readonly float w;
 
         public Quaternion4f(float x, float y, float z, float w)
         {
@@ -41,14 +41,14 @@ namespace Votyra.Core.Models
             return new Quaternion4f(qx, qy, qz, qw);
         }
 
-        public static bool operator !=(Quaternion4f a, Quaternion4f b)
-        {
-            return a.x != b.x || a.y != b.y || a.z != b.z || a.w != b.w;
-        }
-
         public static bool operator ==(Quaternion4f a, Quaternion4f b)
         {
             return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
+        }
+
+        public static bool operator !=(Quaternion4f a, Quaternion4f b)
+        {
+            return a.x != b.x || a.y != b.y || a.z != b.z || a.w != b.w;
         }
 
         public bool Equals(Quaternion4f other)

@@ -1,6 +1,7 @@
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Plannar.Images.Constraints;
 using Zenject;
 
 namespace Votyra.Plannar.Unity

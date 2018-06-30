@@ -11,8 +11,11 @@ namespace Votyra.Core.Models
 
         public static readonly Range3i Zero = new Range3i();
 
-        public readonly Vector3i Max;
         public readonly Vector3i Min;
+
+        public readonly Vector3i Max;
+
+        public Vector3i Size => Max - Min;
 
         private Range3i(Vector3i min, Vector3i max)
         {
@@ -28,8 +31,6 @@ namespace Votyra.Core.Models
             }
         }
 
-        public Vector3i Size => Max - Min;
-
         public static Range3i FromCenterAndExtents(Vector3i center, Vector3i extents)
         {
             if (extents.AnyNegative)
@@ -37,11 +38,6 @@ namespace Votyra.Core.Models
                 throw new InvalidOperationException($"When creating {nameof(Range3i)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
             }
             return new Range3i(center - extents + 1, center + extents);
-        }
-
-        public static Range3i FromMinAndMax(Vector3i min, Vector3i max)
-        {
-            return new Range3i(min, max);
         }
 
         public static Range3i FromMinAndSize(Vector3i min, Vector3i size)
@@ -53,14 +49,28 @@ namespace Votyra.Core.Models
             return new Range3i(min, min + size);
         }
 
-        public static bool operator !=(Range3i a, Range3i b)
+        public static Range3i FromMinAndMax(Vector3i min, Vector3i max)
         {
-            return a.Min != b.Min || a.Max != b.Max;
+            return new Range3i(min, max);
         }
 
-        public static bool operator ==(Range3i a, Range3i b)
+        public void ForeachPointExlusive(Action<Vector3i> action)
         {
-            return a.Min == b.Min && a.Max == b.Max;
+            var min = Min;
+            Size.ForeachPointExlusive(i => action(i + min));
+        }
+
+        public bool Contains(Vector3i point)
+        {
+            return point >= Min && point < Max;
+        }
+
+        public bool Overlaps(Range3i that)
+        {
+            if (this.Size == Vector3i.Zero || that.Size == Vector3i.Zero)
+                return false;
+
+            return this.Min <= that.Max && that.Min <= this.Max;
         }
 
         public Range3i CombineWith(Range3i that)
@@ -90,9 +100,30 @@ namespace Votyra.Core.Models
             return Range3i.FromMinAndMax(min, max);
         }
 
-        public bool Contains(Vector3i point)
+        public Range3f ToRange3f()
         {
-            return point >= Min && point < Max;
+            return Range3f.FromMinAndMax(Min.ToVector3f(), Max.ToVector3f());
+        }
+
+        public Range3i IntersectWith(Range3i that)
+        {
+            if (this.Size == Vector3i.Zero || that.Size == Vector3i.Zero)
+                return Range3i.Zero;
+
+            var min = Vector3i.Max(this.Min, that.Min);
+            var max = Vector3i.Max(Vector3i.Min(this.Max, that.Max), min);
+
+            return Range3i.FromMinAndMax(min, max);
+        }
+
+        public static bool operator ==(Range3i a, Range3i b)
+        {
+            return a.Min == b.Min && a.Max == b.Max;
+        }
+
+        public static bool operator !=(Range3i a, Range3i b)
+        {
+            return a.Min != b.Min || a.Max != b.Max;
         }
 
         public bool Equals(Range3i other)
@@ -108,42 +139,12 @@ namespace Votyra.Core.Models
             return this.Equals((Range3i)obj);
         }
 
-        public void ForeachPointExlusive(Action<Vector3i> action)
-        {
-            var min = Min;
-            Size.ForeachPointExlusive(i => action(i + min));
-        }
-
         public override int GetHashCode()
         {
             unchecked
             {
                 return Min.GetHashCode() + 7 * Max.GetHashCode();
             }
-        }
-
-        public Range3i IntersectWith(Range3i that)
-        {
-            if (this.Size == Vector3i.Zero || that.Size == Vector3i.Zero)
-                return Range3i.Zero;
-
-            var min = Vector3i.Max(this.Min, that.Min);
-            var max = Vector3i.Max(Vector3i.Min(this.Max, that.Max), min);
-
-            return Range3i.FromMinAndMax(min, max);
-        }
-
-        public bool Overlaps(Range3i that)
-        {
-            if (this.Size == Vector3i.Zero || that.Size == Vector3i.Zero)
-                return false;
-
-            return this.Min <= that.Max && that.Min <= this.Max;
-        }
-
-        public Range3f ToRange3f()
-        {
-            return Range3f.FromMinAndMax(Min.ToVector3f(), Max.ToVector3f());
         }
 
         public override string ToString()

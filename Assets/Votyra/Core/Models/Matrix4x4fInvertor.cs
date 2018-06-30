@@ -49,32 +49,6 @@ namespace Votyra.Core.Models
                 );
         }
 
-        private static double[] Helper(double[][] luMatrix, double[] b) // helper
-        {
-            int n = luMatrix.Length;
-            double[] x = new double[n];
-            b.CopyTo(x, 0);
-
-            for (int i = 1; i < n; ++i)
-            {
-                double sum = x[i];
-                for (int j = 0; j < i; ++j)
-                    sum -= luMatrix[i][j] * x[j];
-                x[i] = sum;
-            }
-
-            x[n - 1] /= luMatrix[n - 1][n - 1];
-            for (int i = n - 2; i >= 0; --i)
-            {
-                double sum = x[i];
-                for (int j = i + 1; j < n; ++j)
-                    sum -= luMatrix[i][j] * x[j];
-                x[i] = sum / luMatrix[i][i];
-            }
-
-            return x;
-        }
-
         private static double[][] MatrixCreate(int rows, int cols)
         {
             double[][] result = new double[rows][];
@@ -82,6 +56,36 @@ namespace Votyra.Core.Models
                 result[i] = new double[cols];
             return result;
         }
+
+        private static double[][] MatrixInverse(double[][] matrix)
+        {
+            // assumes determinant is not 0
+            // that is, the matrix does have an inverse
+            int n = matrix.Length;
+            double[][] result = MatrixCreate(n, n); // make a copy of matrix
+            for (int i = 0; i < n; ++i)
+                for (int j = 0; j < n; ++j)
+                    result[i][j] = matrix[i][j];
+
+            double[][] lum; // combined lower & upper
+            int[] perm;
+            MatrixDecompose(matrix, out lum, out perm);
+
+            double[] b = new double[n];
+            for (int i = 0; i < n; ++i)
+            {
+                for (int j = 0; j < n; ++j)
+                    if (i == perm[j])
+                        b[j] = 1.0;
+                    else
+                        b[j] = 0.0;
+
+                double[] x = Helper(lum, b); //
+                for (int j = 0; j < n; ++j)
+                    result[j][i] = x[j];
+            }
+            return result;
+        } // MatrixInverse
 
         private static int MatrixDecompose(double[][] m, out double[][] lum, out int[] perm)
         {
@@ -150,36 +154,30 @@ namespace Votyra.Core.Models
             return toggle;
         }
 
-        private static double[][] MatrixInverse(double[][] matrix)
+        private static double[] Helper(double[][] luMatrix, double[] b) // helper
         {
-            // assumes determinant is not 0
-            // that is, the matrix does have an inverse
-            int n = matrix.Length;
-            double[][] result = MatrixCreate(n, n); // make a copy of matrix
-            for (int i = 0; i < n; ++i)
-                for (int j = 0; j < n; ++j)
-                    result[i][j] = matrix[i][j];
+            int n = luMatrix.Length;
+            double[] x = new double[n];
+            b.CopyTo(x, 0);
 
-            double[][] lum; // combined lower & upper
-            int[] perm;
-            MatrixDecompose(matrix, out lum, out perm);
-
-            double[] b = new double[n];
-            for (int i = 0; i < n; ++i)
+            for (int i = 1; i < n; ++i)
             {
-                for (int j = 0; j < n; ++j)
-                    if (i == perm[j])
-                        b[j] = 1.0;
-                    else
-                        b[j] = 0.0;
-
-                double[] x = Helper(lum, b); //
-                for (int j = 0; j < n; ++j)
-                    result[j][i] = x[j];
+                double sum = x[i];
+                for (int j = 0; j < i; ++j)
+                    sum -= luMatrix[i][j] * x[j];
+                x[i] = sum;
             }
-            return result;
-        } // MatrixInverse
 
-        // Helper
+            x[n - 1] /= luMatrix[n - 1][n - 1];
+            for (int i = n - 2; i >= 0; --i)
+            {
+                double sum = x[i];
+                for (int j = i + 1; j < n; ++j)
+                    sum -= luMatrix[i][j] * x[j];
+                x[i] = sum / luMatrix[i][i];
+            }
+
+            return x;
+        } // Helper
     }
 }

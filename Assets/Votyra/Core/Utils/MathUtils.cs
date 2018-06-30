@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Votyra.Core.Models;
 
 namespace Votyra.Core.Utils
 {
@@ -10,9 +12,14 @@ namespace Votyra.Core.Utils
 
         private static readonly FastNoise _noise = new FastNoise();
 
-        public static int? Abs(this int? val)
+        public static float Clip(this float i, float min, float max)
         {
-            return val.HasValue ? Math.Abs(val.Value) : val;
+            return i < min ? min : (i > max ? max : i);
+        }
+
+        public static float RoundToMultiple(this float val, float multiple)
+        {
+            return (float)(Math.Round(val / multiple) * multiple);
         }
 
         public static int CeilToInt(this float f)
@@ -20,19 +27,19 @@ namespace Votyra.Core.Utils
             return (int)Math.Ceiling(f);
         }
 
-        public static int CeilToInt(this double f)
-        {
-            return (int)Math.Ceiling(f);
-        }
-
-        public static float Clip(this float i, float min, float max)
-        {
-            return i < min ? min : (i > max ? max : i);
-        }
-
         public static int FloorToInt(this float f)
         {
             return (int)Math.Floor(f);
+        }
+
+        public static int RoundToInt(this float f)
+        {
+            return (int)Math.Round(f);
+        }
+
+        public static int CeilToInt(this double f)
+        {
+            return (int)Math.Ceiling(f);
         }
 
         public static int FloorToInt(this double f)
@@ -40,34 +47,9 @@ namespace Votyra.Core.Utils
             return (int)Math.Floor(f);
         }
 
-        public static int? Max(this int? a, int? b)
+        public static int RoundToInt(this double f)
         {
-            return (a.HasValue && b.HasValue) ? Math.Max(a.Value, b.Value) : (a ?? b);
-        }
-
-        public static int Max(this int a, int? b)
-        {
-            return Math.Max(a, b ?? a);
-        }
-
-        public static int Max(this int? a, int b)
-        {
-            return Math.Max(a ?? b, b);
-        }
-
-        public static int? Min(this int? a, int? b)
-        {
-            return (a.HasValue && b.HasValue) ? Math.Min(a.Value, b.Value) : (a ?? b);
-        }
-
-        public static int Min(this int a, int? b)
-        {
-            return Math.Min(a, b ?? a);
-        }
-
-        public static int Min(this int? a, int b)
-        {
-            return Math.Min(a ?? b, b);
+            return (int)Math.Round(f);
         }
 
         public static float PerlinNoise(float x, float y)
@@ -81,19 +63,39 @@ namespace Votyra.Core.Utils
             return _noise.GetPerlin(x, y, z);
         }
 
-        public static int RoundToInt(this float f)
+        public static int? Abs(this int? val)
         {
-            return (int)Math.Round(f);
+            return val.HasValue ? Math.Abs(val.Value) : val;
         }
 
-        public static int RoundToInt(this double f)
+        public static int? Min(this int? a, int? b)
         {
-            return (int)Math.Round(f);
+            return (a.HasValue && b.HasValue) ? Math.Min(a.Value, b.Value) : (a ?? b);
         }
 
-        public static float RoundToMultiple(this float val, float multiple)
+        public static int? Max(this int? a, int? b)
         {
-            return (float)(Math.Round(val / multiple) * multiple);
+            return (a.HasValue && b.HasValue) ? Math.Max(a.Value, b.Value) : (a ?? b);
+        }
+
+        public static int Min(this int a, int? b)
+        {
+            return Math.Min(a, b ?? a);
+        }
+
+        public static int Max(this int a, int? b)
+        {
+            return Math.Max(a, b ?? a);
+        }
+
+        public static int Min(this int? a, int b)
+        {
+            return Math.Min(a ?? b, b);
+        }
+
+        public static int Max(this int? a, int b)
+        {
+            return Math.Max(a ?? b, b);
         }
     }
 }

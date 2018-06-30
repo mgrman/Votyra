@@ -4,13 +4,18 @@ namespace Votyra.Core.Models
     {
         public T[,] NativeMatrix;
 
+        public Vector2i Size { get; }
+
         public Matrix2(Vector2i matrixSize)
         {
             NativeMatrix = new T[matrixSize.X, matrixSize.Y];
             Size = matrixSize;
         }
 
-        public Vector2i Size { get; }
+        public bool IsSameSize(Vector2i size)
+        {
+            return this.Size == size;
+        }
 
         public T this[Vector2i i]
         {
@@ -22,11 +27,6 @@ namespace Votyra.Core.Models
             {
                 NativeMatrix[i.X, i.Y] = value;
             }
-        }
-
-        public bool IsSameSize(Vector2i size)
-        {
-            return this.Size == size;
         }
     }
 }

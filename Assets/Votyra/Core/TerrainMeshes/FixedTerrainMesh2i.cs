@@ -6,15 +6,37 @@ namespace Votyra.Core.TerrainMeshes
 {
     public class FixedTerrainMesh2i : ITerrainMeshWithFixedCapacity
     {
-        private int _counter;
-        public int[] Indices { get; private set; }
         public Range3f MeshBounds { get; private set; }
-        public Vector3f[] Normals { get; private set; }
-        public int PointCount => Vertices.Length;
-        public int TriangleCapacity { get; private set; }
-        public int TriangleCount => _counter / 3;
-        public Vector2f[] UV { get; private set; }
         public Vector3f[] Vertices { get; private set; }
+        public Vector3f[] Normals { get; private set; }
+        public Vector2f[] UV { get; private set; }
+        public int[] Indices { get; private set; }
+
+        public int TriangleCount => _counter / 3;
+
+        public int PointCount => Vertices.Length;
+
+        public int TriangleCapacity { get; private set; }
+
+        private int _counter;
+
+        public virtual void Initialize(int triangleCapacity)
+        {
+            TriangleCapacity = triangleCapacity;
+
+            var pointCount = triangleCapacity * 3;
+
+            Vertices = new Vector3f[pointCount];
+            UV = new Vector2f[pointCount];
+            Indices = Enumerable.Range(0, pointCount).ToArray();
+            Normals = new Vector3f[pointCount];
+        }
+
+        public void Clear(Range3f meshBounds)
+        {
+            MeshBounds = meshBounds;
+            _counter = 0;
+        }
 
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
         {
@@ -41,12 +63,6 @@ namespace Votyra.Core.TerrainMeshes
             _counter++;
         }
 
-        public void Clear(Range3f meshBounds)
-        {
-            MeshBounds = meshBounds;
-            _counter = 0;
-        }
-
         public void FinalizeMesh()
         {
             if (_counter != PointCount)
@@ -60,18 +76,6 @@ namespace Votyra.Core.TerrainMeshes
                 }
                 Debug.LogWarning($"Mesh was not fully filled. Expected {PointCount} points, got {_counter} points!");
             }
-        }
-
-        public virtual void Initialize(int triangleCapacity)
-        {
-            TriangleCapacity = triangleCapacity;
-
-            var pointCount = triangleCapacity * 3;
-
-            Vertices = new Vector3f[pointCount];
-            UV = new Vector2f[pointCount];
-            Indices = Enumerable.Range(0, pointCount).ToArray();
-            Normals = new Vector3f[pointCount];
         }
     }
 }

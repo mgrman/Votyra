@@ -7,23 +7,25 @@ namespace Votyra.Core.Models
     /// </summary>
     public struct Matrix4x4f
     {
-        public static readonly Matrix4x4f identity = new Matrix4x4f(1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f);
         public static readonly Matrix4x4f zero = new Matrix4x4f(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+
+        public static readonly Matrix4x4f identity = new Matrix4x4f(1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f);
+
         public readonly float m00;
-        public readonly float m01;
-        public readonly float m02;
-        public readonly float m03;
         public readonly float m10;
-        public readonly float m11;
-        public readonly float m12;
-        public readonly float m13;
         public readonly float m20;
-        public readonly float m21;
-        public readonly float m22;
-        public readonly float m23;
         public readonly float m30;
+        public readonly float m01;
+        public readonly float m11;
+        public readonly float m21;
         public readonly float m31;
+        public readonly float m02;
+        public readonly float m12;
+        public readonly float m22;
         public readonly float m32;
+        public readonly float m03;
+        public readonly float m13;
+        public readonly float m23;
         public readonly float m33;
 
         public Matrix4x4f(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33)
@@ -44,40 +46,6 @@ namespace Votyra.Core.Models
             this.m13 = m13;
             this.m23 = m23;
             this.m33 = m33;
-        }
-
-        public float Determinant
-        {
-            get
-            {
-                //https://stackoverflow.com/questions/2937702/i-want-to-find-determinant-of-4x4-matrix-in-c-sharp
-                return
-                    m03 * m12 * m21 * m30 - m02 * m13 * m21 * m30 -
-                    m03 * m11 * m22 * m30 + m01 * m13 * m22 * m30 +
-                    m02 * m11 * m23 * m30 - m01 * m12 * m23 * m30 -
-                    m03 * m12 * m20 * m31 + m02 * m13 * m20 * m31 +
-                    m03 * m10 * m22 * m31 - m00 * m13 * m22 * m31 -
-                    m02 * m10 * m23 * m31 + m00 * m12 * m23 * m31 +
-                    m03 * m11 * m20 * m32 - m01 * m13 * m20 * m32 -
-                    m03 * m10 * m21 * m32 + m00 * m13 * m21 * m32 +
-                    m01 * m10 * m23 * m32 - m00 * m11 * m23 * m32 -
-                    m02 * m11 * m20 * m33 + m01 * m12 * m20 * m33 +
-                    m02 * m10 * m21 * m33 - m00 * m12 * m21 * m33 -
-                    m01 * m10 * m22 * m33 + m00 * m11 * m22 * m33;
-            }
-        }
-
-        public Matrix4x4f Inverse
-        {
-            get
-            {
-                return Matrix4x4fInvertor.Invert(this);
-            }
-        }
-
-        public static bool operator !=(Matrix4x4f lhs, Matrix4x4f rhs)
-        {
-            return !(lhs == rhs);
         }
 
         public static Matrix4x4f operator *(Matrix4x4f lhs, Matrix4x4f rhs)
@@ -110,9 +78,100 @@ namespace Votyra.Core.Models
             return new Vector4f(x, y, z, w);
         }
 
-        public static bool operator ==(Matrix4x4f lhs, Matrix4x4f rhs)
+        public Vector4f GetColumn(int i)
         {
-            return lhs.GetColumn(0) == rhs.GetColumn(0) && lhs.GetColumn(1) == rhs.GetColumn(1) && lhs.GetColumn(2) == rhs.GetColumn(2) && lhs.GetColumn(3) == rhs.GetColumn(3);
+            switch (i)
+            {
+                case 0:
+                    return new Vector4f(m00, m10, m20, m30);
+
+                case 1:
+                    return new Vector4f(m01, m11, m21, m31);
+
+                case 2:
+                    return new Vector4f(m02, m12, m22, m32);
+
+                case 3:
+                    return new Vector4f(m03, m13, m23, m33);
+
+                default:
+                    throw new InvalidOperationException($"Unsuported column '{i}'! Column must be between 0-3.");
+            }
+        }
+
+        public Vector3f MultiplyPoint(Vector3f v)
+        {
+            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z) + this.m03;
+            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z) + this.m13;
+            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z) + this.m23;
+            float num = 1f / ((float)((double)this.m30 * (double)v.X + (double)this.m31 * (double)v.Y + (double)this.m32 * (double)v.Z) + this.m33);
+            x *= num;
+            y *= num;
+            z *= num;
+            return new Vector3f(x, y, z);
+        }
+
+        public Vector3f MultiplyPoint3x4(Vector3f v)
+        {
+            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z) + this.m03;
+            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z) + this.m13;
+            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z) + this.m23;
+            return new Vector3f(x, y, z);
+        }
+
+        public Vector3f MultiplyVector(Vector3f v)
+        {
+            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z);
+            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z);
+            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z);
+            return new Vector3f(x, y, z);
+        }
+
+        public float Determinant
+        {
+            get
+            {
+                //https://stackoverflow.com/questions/2937702/i-want-to-find-determinant-of-4x4-matrix-in-c-sharp
+                return
+                    m03 * m12 * m21 * m30 - m02 * m13 * m21 * m30 -
+                    m03 * m11 * m22 * m30 + m01 * m13 * m22 * m30 +
+                    m02 * m11 * m23 * m30 - m01 * m12 * m23 * m30 -
+                    m03 * m12 * m20 * m31 + m02 * m13 * m20 * m31 +
+                    m03 * m10 * m22 * m31 - m00 * m13 * m22 * m31 -
+                    m02 * m10 * m23 * m31 + m00 * m12 * m23 * m31 +
+                    m03 * m11 * m20 * m32 - m01 * m13 * m20 * m32 -
+                    m03 * m10 * m21 * m32 + m00 * m13 * m21 * m32 +
+                    m01 * m10 * m23 * m32 - m00 * m11 * m23 * m32 -
+                    m02 * m11 * m20 * m33 + m01 * m12 * m20 * m33 +
+                    m02 * m10 * m21 * m33 - m00 * m12 * m21 * m33 -
+                    m01 * m10 * m22 * m33 + m00 * m11 * m22 * m33;
+            }
+        }
+
+        public Matrix4x4f Inverse
+        {
+            get
+            {
+                return Matrix4x4fInvertor.Invert(this);
+            }
+        }
+
+        public static Matrix4x4f Scale(Vector3f v)
+        {
+            return new Matrix4x4f(
+                v.X, 0.0f, 0.0f, 0.0f,
+                0.0f, v.Y, 0.0f, 0.0f,
+                0.0f, 0.0f, v.Z, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
+        }
+
+        public static Matrix4x4f Translate(Vector3f v)
+        {
+            return new Matrix4x4f(
+                1.0f, 0.0f, 0.0f, v.X,
+                0.0f, 1.0f, 0.0f, v.Y,
+                0.0f, 0.0f, 1.0f, v.Z,
+                0.0f, 0.0f, 0.0f, 1.0f);
         }
 
         public static Matrix4x4f Rotate(Quaternion4f q)
@@ -148,51 +207,14 @@ namespace Votyra.Core.Models
             return new Matrix4x4f(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
         }
 
-        public static Matrix4x4f Scale(Vector3f v)
+        public static bool operator ==(Matrix4x4f lhs, Matrix4x4f rhs)
         {
-            return new Matrix4x4f(
-                v.X, 0.0f, 0.0f, 0.0f,
-                0.0f, v.Y, 0.0f, 0.0f,
-                0.0f, 0.0f, v.Z, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f);
+            return lhs.GetColumn(0) == rhs.GetColumn(0) && lhs.GetColumn(1) == rhs.GetColumn(1) && lhs.GetColumn(2) == rhs.GetColumn(2) && lhs.GetColumn(3) == rhs.GetColumn(3);
         }
 
-        public static Matrix4x4f Translate(Vector3f v)
+        public static bool operator !=(Matrix4x4f lhs, Matrix4x4f rhs)
         {
-            return new Matrix4x4f(
-                1.0f, 0.0f, 0.0f, v.X,
-                0.0f, 1.0f, 0.0f, v.Y,
-                0.0f, 0.0f, 1.0f, v.Z,
-                0.0f, 0.0f, 0.0f, 1.0f);
-        }
-
-        public override bool Equals(object other)
-        {
-            if (!(other is Matrix4x4f))
-                return false;
-            Matrix4x4f that = (Matrix4x4f)other;
-            return this == that;
-        }
-
-        public Vector4f GetColumn(int i)
-        {
-            switch (i)
-            {
-                case 0:
-                    return new Vector4f(m00, m10, m20, m30);
-
-                case 1:
-                    return new Vector4f(m01, m11, m21, m31);
-
-                case 2:
-                    return new Vector4f(m02, m12, m22, m32);
-
-                case 3:
-                    return new Vector4f(m03, m13, m23, m33);
-
-                default:
-                    throw new InvalidOperationException($"Unsuported column '{i}'! Column must be between 0-3.");
-            }
+            return !(lhs == rhs);
         }
 
         public override int GetHashCode()
@@ -203,32 +225,12 @@ namespace Votyra.Core.Models
             }
         }
 
-        public Vector3f MultiplyPoint(Vector3f v)
+        public override bool Equals(object other)
         {
-            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z) + this.m03;
-            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z) + this.m13;
-            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z) + this.m23;
-            float num = 1f / ((float)((double)this.m30 * (double)v.X + (double)this.m31 * (double)v.Y + (double)this.m32 * (double)v.Z) + this.m33);
-            x *= num;
-            y *= num;
-            z *= num;
-            return new Vector3f(x, y, z);
-        }
-
-        public Vector3f MultiplyPoint3x4(Vector3f v)
-        {
-            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z) + this.m03;
-            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z) + this.m13;
-            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z) + this.m23;
-            return new Vector3f(x, y, z);
-        }
-
-        public Vector3f MultiplyVector(Vector3f v)
-        {
-            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z);
-            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z);
-            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z);
-            return new Vector3f(x, y, z);
+            if (!(other is Matrix4x4f))
+                return false;
+            Matrix4x4f that = (Matrix4x4f)other;
+            return this == that;
         }
 
         public override string ToString()

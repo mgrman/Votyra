@@ -6,8 +6,8 @@ namespace Votyra.Core.Models.ObjectPool
     public abstract class BaseKeyObjectPool<T, TKey> : IObjectDictionaryPool<T, TKey>
         where TKey : struct
     {
-        private readonly int _limit;
         private readonly Func<TKey, T> _objectGenerator;
+        private readonly int _limit;
 
         public BaseKeyObjectPool(int limit, Func<TKey, T> objectGenerator)
         {
@@ -33,6 +33,8 @@ namespace Votyra.Core.Models.ObjectPool
             return obj;
         }
 
+        protected abstract List<T> GetPool(TKey key);
+
         public virtual void ReturnObject(T obj, TKey key)
         {
             var objectPool = GetPool(key);
@@ -41,7 +43,5 @@ namespace Votyra.Core.Models.ObjectPool
                 objectPool.Add(obj);
             }
         }
-
-        protected abstract List<T> GetPool(TKey key);
     }
 }

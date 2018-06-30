@@ -3,6 +3,8 @@ namespace Votyra.Core.Models
     public class MatrixWithOffset2<T> : IMatrix2<T>
     {
         private readonly T[,] _points;
+        public Vector2i offset { get; }
+        public Vector2i Size { get; }
 
         public MatrixWithOffset2(Vector2i matrixSize, Vector2i indicesOffset)
         {
@@ -11,8 +13,10 @@ namespace Votyra.Core.Models
             Size = matrixSize;
         }
 
-        public Vector2i offset { get; }
-        public Vector2i Size { get; }
+        public bool IsSameSize(Vector2i size, Vector2i offset)
+        {
+            return this.Size == size && this.offset == offset;
+        }
 
         public T this[int ix, int iy]
         {
@@ -36,11 +40,6 @@ namespace Votyra.Core.Models
             {
                 _points[i.X + offset.X, i.Y + offset.Y] = value;
             }
-        }
-
-        public bool IsSameSize(Vector2i size, Vector2i offset)
-        {
-            return this.Size == size && this.offset == offset;
         }
     }
 }

@@ -4,6 +4,17 @@ namespace Votyra.Core.Utils
 {
     public static class GameObjectUtils
     {
+        public static T GetOrAddComponent<T>(this GameObject gameObject)
+            where T : Component
+        {
+            var component = gameObject.GetComponent<T>();
+            if (component == null)
+            {
+                component = gameObject.AddComponent<T>();
+            }
+            return component;
+        }
+
         public static void AddComponentIfMissing<T>(this GameObject gameObject)
             where T : Component
         {
@@ -12,11 +23,6 @@ namespace Votyra.Core.Utils
             {
                 gameObject.AddComponent<T>();
             }
-        }
-
-        public static void Destroy(this GameObject gameObject)
-        {
-            GameObject.Destroy(gameObject);
         }
 
         public static void DestroyAllChildren(this GameObject gameObject)
@@ -34,15 +40,9 @@ namespace Votyra.Core.Utils
             }
         }
 
-        public static T GetOrAddComponent<T>(this GameObject gameObject)
-                                            where T : Component
+        public static void Destroy(this GameObject gameObject)
         {
-            var component = gameObject.GetComponent<T>();
-            if (component == null)
-            {
-                component = gameObject.AddComponent<T>();
-            }
-            return component;
+            GameObject.Destroy(gameObject);
         }
     }
 }

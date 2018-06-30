@@ -5,8 +5,9 @@ namespace Votyra.Core.Models
 {
     public struct Plane3f
     {
-        public readonly float Distance;
         public readonly Vector3f Normal;
+
+        public readonly float Distance;
 
         public Plane3f(Vector3f inNormal, float d)
         {
@@ -22,6 +23,7 @@ namespace Votyra.Core.Models
 
     public static class Plane3fExtensions
     {
+
         public static bool TestPlanesAABB(this IEnumerable<Plane3f> planes, Range3f bounds)
         {
             Vector3f boundsCenter = bounds.Center;  // center of bounds

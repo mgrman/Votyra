@@ -4,10 +4,14 @@ namespace Votyra.Core.Models
 {
     public struct Range2f : IEquatable<Range2f>
     {
-        public static readonly Range2f All = new Range2f(Vector2f.FromSame(float.MinValue / 2), Vector2f.FromSame(float.MaxValue / 2));
         public static readonly Range2f Zero = new Range2f();
+        public static readonly Range2f All = new Range2f(Vector2f.FromSame(float.MinValue / 2), Vector2f.FromSame(float.MaxValue / 2));
+
         public readonly Vector2f Max;
         public readonly Vector2f Min;
+        public Vector2f Center => (Max + Min) / 2f;
+        public Vector2f Size => Max - Min;
+        public Vector2f Extents => Size / 2;
 
         private Range2f(Vector2f min, Vector2f max)
         {
@@ -15,9 +19,10 @@ namespace Votyra.Core.Models
             this.Max = max;
         }
 
-        public Vector2f Center => (Max + Min) / 2f;
-        public Vector2f Extents => Size / 2;
-        public Vector2f Size => Max - Min;
+        public Range2f FromCenterAndSize(Vector2f center, Vector2f size)
+        {
+            return new Range2f(center - size / 2, size);
+        }
 
         public static Range2f FromMinAndMax(Vector2f min, Vector2f max)
         {
@@ -27,6 +32,26 @@ namespace Votyra.Core.Models
         public static Range2f FromMinAndSize(Vector2f min, Vector2f size)
         {
             return new Range2f(min, min + size);
+        }
+
+        public Range2f Encapsulate(Vector2f point)
+        {
+            return Range2f.FromMinAndMax(Vector2f.Min(this.Min, point), Vector2f.Max(this.Max, point));
+        }
+
+        public Range2f Encapsulate(Range2f bounds)
+        {
+            return Range2f.FromMinAndMax(Vector2f.Min(this.Min, bounds.Min), Vector2f.Max(this.Max, bounds.Max));
+        }
+
+        public bool Contains(Vector2f point)
+        {
+            return point >= Min && point <= Max;
+        }
+
+        public static bool operator ==(Range2f a, Range2f b)
+        {
+            return a.Center == b.Center && a.Size == b.Size;
         }
 
         public static bool operator !=(Range2f a, Range2f b)
@@ -44,9 +69,14 @@ namespace Votyra.Core.Models
             return Range2f.FromMinAndMax(a.Min / b, a.Max / b);
         }
 
-        public static bool operator ==(Range2f a, Range2f b)
+        public Range2i RoundToInt()
         {
-            return a.Center == b.Center && a.Size == b.Size;
+            return Range2i.FromMinAndMax(this.Min.RoundToVector2i(), this.Max.RoundToVector2i());
+        }
+
+        public Range2i RoundToContain()
+        {
+            return Range2i.FromMinAndMax(this.Min.FloorToVector2i(), this.Max.CeilToVector2i());
         }
 
         public Range2f CombineWith(Range2f that)
@@ -62,21 +92,6 @@ namespace Votyra.Core.Models
             return Range2f.FromMinAndMax(min, max);
         }
 
-        public bool Contains(Vector2f point)
-        {
-            return point >= Min && point <= Max;
-        }
-
-        public Range2f Encapsulate(Vector2f point)
-        {
-            return Range2f.FromMinAndMax(Vector2f.Min(this.Min, point), Vector2f.Max(this.Max, point));
-        }
-
-        public Range2f Encapsulate(Range2f bounds)
-        {
-            return Range2f.FromMinAndMax(Vector2f.Min(this.Min, bounds.Min), Vector2f.Max(this.Max, bounds.Max));
-        }
-
         public bool Equals(Range2f other)
         {
             return this == other;
@@ -90,27 +105,12 @@ namespace Votyra.Core.Models
             return this.Equals((Range2f)obj);
         }
 
-        public Range2f FromCenterAndSize(Vector2f center, Vector2f size)
-        {
-            return new Range2f(center - size / 2, size);
-        }
-
         public override int GetHashCode()
         {
             unchecked
             {
                 return Center.GetHashCode() + 7 * Size.GetHashCode();
             }
-        }
-
-        public Range2i RoundToContain()
-        {
-            return Range2i.FromMinAndMax(this.Min.FloorToVector2i(), this.Max.CeilToVector2i());
-        }
-
-        public Range2i RoundToInt()
-        {
-            return Range2i.FromMinAndMax(this.Min.RoundToVector2i(), this.Max.RoundToVector2i());
         }
 
         public override string ToString()

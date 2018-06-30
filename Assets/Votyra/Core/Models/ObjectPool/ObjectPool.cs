@@ -6,8 +6,8 @@ namespace Votyra.Core.Models.ObjectPool
     public class ObjectPool<T> : IObjectPool<T>
     {
         private readonly int _limit;
-        private readonly Func<T> _objectGenerator;
         private readonly List<T> _objects;
+        private readonly Func<T> _objectGenerator;
 
         public ObjectPool(int limit, Func<T> objectGenerator)
         {

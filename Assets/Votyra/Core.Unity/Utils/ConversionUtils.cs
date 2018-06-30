@@ -11,37 +11,19 @@ namespace Votyra.Core.Utils
 {
     public static class ConversionUtils
     {
-        public static UnityEngine.Bounds ToBounds(this Range3f bounds)
+        public static Vector2f ToVector2f(this UnityEngine.Vector2 vector)
         {
-            return new UnityEngine.Bounds(bounds.Center.ToVector3(), bounds.Size.ToVector3());
+            return new Vector2f(vector.x, vector.y);
         }
 
-        public static UnityEngine.Matrix4x4 ToMatrix4x4(this Matrix4x4f mat)
+        public static Vector3f ToVector3f(this UnityEngine.Vector3 vector)
         {
-            var mat2 = new UnityEngine.Matrix4x4();
-
-            mat2.m00 = mat.m00;
-            mat2.m10 = mat.m10;
-            mat2.m20 = mat.m20;
-            mat2.m30 = mat.m30;
-            mat2.m01 = mat.m01;
-            mat2.m11 = mat.m11;
-            mat2.m21 = mat.m21;
-            mat2.m31 = mat.m31;
-            mat2.m02 = mat.m02;
-            mat2.m12 = mat.m12;
-            mat2.m22 = mat.m22;
-            mat2.m32 = mat.m32;
-            mat2.m03 = mat.m03;
-            mat2.m13 = mat.m13;
-            mat2.m23 = mat.m23;
-            mat2.m33 = mat.m33;
-            return mat2;
+            return new Vector3f(vector.x, vector.y, vector.z);
         }
 
-        public static Matrix4x4f ToMatrix4x4f(this UnityEngine.Matrix4x4 mat)
+        public static Vector3f[] ToVector3f(this PooledArrayContainer<UnityEngine.Vector3> planesUnity)
         {
-            return new Matrix4x4f(mat.m00, mat.m01, mat.m02, mat.m03, mat.m10, mat.m11, mat.m12, mat.m13, mat.m20, mat.m21, mat.m22, mat.m23, mat.m30, mat.m31, mat.m32, mat.m33);
+            return planesUnity.Array.ToVector3f();
         }
 
         public static Plane3f ToPlane3f(this UnityEngine.Plane plane)
@@ -71,38 +53,24 @@ namespace Votyra.Core.Utils
             return new UnityEngine.Vector2(vector.X, vector.Y);
         }
 
-        public static UnityEngine.Vector2[] ToVector2(this Vector2f[] vector)
-        {
-            var union = new UnionVector2();
-            union.Votyra = vector;
-            var res = union.Unity;
-            if (res.Length != vector.Length)
-            {
-                throw new InvalidOperationException("ToVector2 conversion failed!");
-            }
-            return res;
-            //return vector.Select(o => o.ToVector2()).ToArray();
-        }
-
-        public static UnityEngine.Vector2[] ToVector2Array(this List<Vector2f> vector)
-        {
-            return vector.GetInnerArray<Vector2f>().ToVector2();
-        }
-
-        public static Vector2f ToVector2f(this UnityEngine.Vector2 vector)
-        {
-            return new Vector2f(vector.x, vector.y);
-        }
-
-        public static List<UnityEngine.Vector2> ToVector2List(this List<Vector2f> vector)
-        {
-            // return vector.Select(ToVector2).ToList();
-            return vector.ConvertListOfMatchingStructs<Vector2f, UnityEngine.Vector2>(ToVector2);
-        }
-
         public static UnityEngine.Vector3 ToVector3(this Vector3f vector)
         {
             return new UnityEngine.Vector3(vector.X, vector.Y, vector.Z);
+        }
+
+        public static UnityEngine.Bounds ToBounds(this Range3f bounds)
+        {
+            return new UnityEngine.Bounds(bounds.Center.ToVector3(), bounds.Size.ToVector3());
+        }
+
+        public static UnityEngine.Vector3[] ToVector3Array(this List<Vector3f> vector)
+        {
+            return vector.GetInnerArray<Vector3f>().ToVector3();
+        }
+
+        public static List<UnityEngine.Vector3> ToVector3List(this List<Vector3f> vector)
+        {
+            return vector.ConvertListOfMatchingStructs<Vector3f, UnityEngine.Vector3>(ToVector3);
         }
 
         public static UnityEngine.Vector3[] ToVector3(this Vector3f[] vector)
@@ -118,21 +86,6 @@ namespace Votyra.Core.Utils
             //return vector.Select(o => o.ToVector3()).ToArray();
         }
 
-        public static UnityEngine.Vector3[] ToVector3Array(this List<Vector3f> vector)
-        {
-            return vector.GetInnerArray<Vector3f>().ToVector3();
-        }
-
-        public static Vector3f ToVector3f(this UnityEngine.Vector3 vector)
-        {
-            return new Vector3f(vector.x, vector.y, vector.z);
-        }
-
-        public static Vector3f[] ToVector3f(this PooledArrayContainer<UnityEngine.Vector3> planesUnity)
-        {
-            return planesUnity.Array.ToVector3f();
-        }
-
         public static Vector3f[] ToVector3f(this UnityEngine.Vector3[] vector)
         {
             var union = new UnionVector3();
@@ -146,9 +99,27 @@ namespace Votyra.Core.Utils
             //return vector.Select(o => o.ToVector3()).ToArray();
         }
 
-        public static List<UnityEngine.Vector3> ToVector3List(this List<Vector3f> vector)
+        public static UnityEngine.Vector2[] ToVector2Array(this List<Vector2f> vector)
         {
-            return vector.ConvertListOfMatchingStructs<Vector3f, UnityEngine.Vector3>(ToVector3);
+            return vector.GetInnerArray<Vector2f>().ToVector2();
+        }
+
+        public static List<UnityEngine.Vector2> ToVector2List(this List<Vector2f> vector)
+        {
+            // return vector.Select(ToVector2).ToList();
+            return vector.ConvertListOfMatchingStructs<Vector2f, UnityEngine.Vector2>(ToVector2);
+        }
+
+        private static T[] GetInnerArray<T>(this List<T> source)
+        {
+            source.TrimExcess();
+            var itemsGet = ListInternals<T>.ItemsGet;
+            var res = itemsGet(source);
+            if (res.Length != source.Count)
+            {
+                throw new InvalidOperationException($"GetInnerArray<{typeof(T).Name}> conversion failed!");
+            }
+            return res;
         }
 
         private static List<TResult> ConvertListOfMatchingStructs<TSource, TResult>(this List<TSource> source, Func<TSource[], TResult[]> convert)
@@ -165,39 +136,6 @@ namespace Votyra.Core.Utils
             // targetItemsSet.SetValue(target, targetItems, BindingFlags.SetField, new ArrayKeepBinder<TSource, TResult>(), null);
             targetSizeSet(target, source.Count);
             return target;
-        }
-
-        private static T[] GetInnerArray<T>(this List<T> source)
-        {
-            source.TrimExcess();
-            var itemsGet = ListInternals<T>.ItemsGet;
-            var res = itemsGet(source);
-            if (res.Length != source.Count)
-            {
-                throw new InvalidOperationException($"GetInnerArray<{typeof(T).Name}> conversion failed!");
-            }
-            return res;
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        private struct UnionPlane
-        {
-            [FieldOffset(0)] public UnityEngine.Plane[] Unity;
-            [FieldOffset(0)] public Plane3f[] Votyra;
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        private struct UnionVector2
-        {
-            [FieldOffset(0)] public UnityEngine.Vector2[] Unity;
-            [FieldOffset(0)] public Vector2f[] Votyra;
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        private struct UnionVector3
-        {
-            [FieldOffset(0)] public UnityEngine.Vector3[] Unity;
-            [FieldOffset(0)] public Vector3f[] Votyra;
         }
 
         private static class ListInternals<T>
@@ -280,6 +218,68 @@ namespace Votyra.Core.Utils
             {
                 return Type.DefaultBinder.SelectProperty(bindingAttr, match, returnType, indexes, modifiers);
             }
+        }
+
+        public static UnityEngine.Vector2[] ToVector2(this Vector2f[] vector)
+        {
+            var union = new UnionVector2();
+            union.Votyra = vector;
+            var res = union.Unity;
+            if (res.Length != vector.Length)
+            {
+                throw new InvalidOperationException("ToVector2 conversion failed!");
+            }
+            return res;
+            //return vector.Select(o => o.ToVector2()).ToArray();
+        }
+
+        public static Matrix4x4f ToMatrix4x4f(this UnityEngine.Matrix4x4 mat)
+        {
+            return new Matrix4x4f(mat.m00, mat.m01, mat.m02, mat.m03, mat.m10, mat.m11, mat.m12, mat.m13, mat.m20, mat.m21, mat.m22, mat.m23, mat.m30, mat.m31, mat.m32, mat.m33);
+        }
+
+        public static UnityEngine.Matrix4x4 ToMatrix4x4(this Matrix4x4f mat)
+        {
+            var mat2 = new UnityEngine.Matrix4x4();
+
+            mat2.m00 = mat.m00;
+            mat2.m10 = mat.m10;
+            mat2.m20 = mat.m20;
+            mat2.m30 = mat.m30;
+            mat2.m01 = mat.m01;
+            mat2.m11 = mat.m11;
+            mat2.m21 = mat.m21;
+            mat2.m31 = mat.m31;
+            mat2.m02 = mat.m02;
+            mat2.m12 = mat.m12;
+            mat2.m22 = mat.m22;
+            mat2.m32 = mat.m32;
+            mat2.m03 = mat.m03;
+            mat2.m13 = mat.m13;
+            mat2.m23 = mat.m23;
+            mat2.m33 = mat.m33;
+            return mat2;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionVector3
+        {
+            [FieldOffset(0)] public UnityEngine.Vector3[] Unity;
+            [FieldOffset(0)] public Vector3f[] Votyra;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionVector2
+        {
+            [FieldOffset(0)] public UnityEngine.Vector2[] Unity;
+            [FieldOffset(0)] public Vector2f[] Votyra;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionPlane
+        {
+            [FieldOffset(0)] public UnityEngine.Plane[] Unity;
+            [FieldOffset(0)] public Plane3f[] Votyra;
         }
     }
 }

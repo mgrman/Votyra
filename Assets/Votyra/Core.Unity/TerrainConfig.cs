@@ -12,19 +12,19 @@ namespace Votyra.Core.Images
             Async = async;
         }
 
-        public bool Async { get; }
         public Vector3i CellInGroupCount { get; }
-        public bool DrawBounds { get; }
         public bool FlipTriangles { get; }
-
-        public static bool operator !=(TerrainConfig a, TerrainConfig b)
-        {
-            return !(a == b);
-        }
+        public bool DrawBounds { get; }
+        public bool Async { get; }
 
         public static bool operator ==(TerrainConfig a, TerrainConfig b)
         {
             return a?.Equals(b) ?? b?.Equals(a) ?? true;
+        }
+
+        public static bool operator !=(TerrainConfig a, TerrainConfig b)
+        {
+            return !(a == b);
         }
 
         public override bool Equals(object obj)

@@ -12,39 +12,30 @@ namespace Votyra.Core.Unity
     public class TerrainDataController : MonoBehaviour
     {
         [SerializeField]
-        private int _activeTerrainAlgorithm = 0;
-
-        [NonSerialized]
-        private GameObject _activeTerrainRoot = null;
-
-        [SerializeField]
-        private bool _async = true;
-
-        [SerializeField]
-        private GameObject[] _availableTerrainAlgorithms;
-
-        [SerializeField]
-        private UI_Vector3i _cellInGroupCount = new UI_Vector3i(10, 10, 10);
-
-        [SerializeField]
-        private bool _drawBounds = false;
-
-        [SerializeField]
-        private bool _flipTriangles = false;
-
-        [SerializeField]
         private UI_Vector3i _imageSize = new UI_Vector3i(100, 100, 100);
 
         [SerializeField]
         private UnityEngine.Object _initialData = null;
 
-        private object _initialDataFromPrevious = null;
-
         [SerializeField]
         private UI_Vector3f _initialDataScale = new UI_Vector3f(1, 1, 1);
 
+        private object _initialDataFromPrevious = null;
+
         [SerializeField]
         private bool _keepImageChanges = true;
+
+        [SerializeField]
+        private UI_Vector3i _cellInGroupCount = new UI_Vector3i(10, 10, 10);
+
+        [SerializeField]
+        private bool _flipTriangles = false;
+
+        [SerializeField]
+        private bool _drawBounds = false;
+
+        [SerializeField]
+        private bool _async = true;
 
         [SerializeField]
         private Material _material = null;
@@ -52,7 +43,16 @@ namespace Votyra.Core.Unity
         [SerializeField]
         private Material _materialWalls = null;
 
+        [SerializeField]
+        private int _activeTerrainAlgorithm = 0;
+
+        [SerializeField]
+        private GameObject[] _availableTerrainAlgorithms;
+
         private ITerrainManagerModel _terrainManagerModel;
+
+        [NonSerialized]
+        private GameObject _activeTerrainRoot = null;
 
         [Inject]
         public void Initialize(ITerrainManagerModel terrainManagerModel, Context context)
@@ -100,12 +100,12 @@ namespace Votyra.Core.Unity
                 });
         }
 
-        protected void OnValidate()
+        protected void Start()
         {
             UpdateModel();
         }
 
-        protected void Start()
+        protected void OnValidate()
         {
             UpdateModel();
         }

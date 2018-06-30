@@ -6,12 +6,12 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesherWithWalls2i : TerrainMesher2i
     {
+        protected override int TrianglesPerCell => 6;
+
         public TerrainMesherWithWalls2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
             : base(terrainConfig, imageSampler)
         {
         }
-
-        protected override int TrianglesPerCell => 6;
 
         public override void AddCell(Vector2i cellInGroup)
         {

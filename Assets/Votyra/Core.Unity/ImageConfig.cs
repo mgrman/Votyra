@@ -11,14 +11,14 @@ namespace Votyra.Core.Images
 
         public Vector3i ImageSize { get; }
 
-        public static bool operator !=(ImageConfig a, ImageConfig b)
-        {
-            return !(a == b);
-        }
-
         public static bool operator ==(ImageConfig a, ImageConfig b)
         {
             return a?.Equals(b) ?? b?.Equals(a) ?? true;
+        }
+
+        public static bool operator !=(ImageConfig a, ImageConfig b)
+        {
+            return !(a == b);
         }
 
         public override bool Equals(object obj)

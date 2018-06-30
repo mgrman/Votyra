@@ -1,14 +1,16 @@
+using System;
 using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.GroupSelectors
 {
     public class GroupsByCameraVisibilitySelector2i : IGroupSelector<IFrameData2i, Vector2i>
     {
-        private readonly Vector2i _cellInGroupCount;
         private readonly IImageSampler2i _imageSampler;
+        private readonly Vector2i _cellInGroupCount;
         private HashSet<Vector2i> _skippedAreas = new HashSet<Vector2i>();
 
         public GroupsByCameraVisibilitySelector2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)

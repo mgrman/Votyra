@@ -12,34 +12,25 @@ namespace Votyra.Core
     public class ClickToPaint3b : ITickable
     {
         [Inject]
-        protected IThreadSafeLogger _logger;
+        private IEditableImage3b _editableImage;
+
+        [Inject]
+        protected IImageSampler3 _sampler;
 
         [Inject(Id = "root")]
         protected GameObject _root;
 
         [Inject]
-        protected IImageSampler3 _sampler;
-
-        private const int maxDistBig = 2;
-
-        private const int maxDistSmall = 1;
+        protected IThreadSafeLogger _logger;
 
         private const float Period = 0.1f;
-
+        private const int maxDistBig = 2;
+        private const int maxDistSmall = 1;
+        private const float smoothSpeedRelative = 0.2f;
         private const float smoothCutoff = smoothSpeedRelative / 2;
 
-        private const float smoothSpeedRelative = 0.2f;
-
-        [Inject]
-        private IEditableImage3b _editableImage;
-
-        private Stack<Renderer> _emptyDebugObjects = new Stack<Renderer>();
-        private Material _falseMaterial;
-        private Vector3i? _lastCell;
         private float _lastTime;
-        private Material _trueMaterial;
-
-        private Stack<Renderer> _usedDebugObjects = new Stack<Renderer>();
+        private Vector3i? _lastCell;
 
         public void Tick()
         {
@@ -54,28 +45,15 @@ namespace Votyra.Core
             DebugMouse();
         }
 
-        private void CreateDebugObjectAt(Vector3f worldPos, bool value)
+        private void ProcessMouseClick()
         {
-            if (!value)
-                return;
-
-            var debugRenderer = _emptyDebugObjects.Count > 0 ? _emptyDebugObjects.Pop() : null;
-
-            if (debugRenderer == null)
-            {
-                var debugObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                debugObject.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-                debugObject.GetComponent<Collider>().enabled = false;
-                debugObject.name = "Debug pointer";
-                debugRenderer = debugObject.GetComponent<Renderer>();
-                _trueMaterial = Resources.Load<Material>("PointerTrue");
-                _falseMaterial = Resources.Load<Material>("PointerFalse");
-            }
-            debugRenderer.transform.position = worldPos.ToVector3();
-            debugRenderer.material = value ? _trueMaterial : _falseMaterial;
-
-            _usedDebugObjects.Push(debugRenderer);
+            OnCellClick(MouseImagePosition());
         }
+
+        private Stack<Renderer> _usedDebugObjects = new Stack<Renderer>();
+        private Stack<Renderer> _emptyDebugObjects = new Stack<Renderer>();
+        private Material _trueMaterial;
+        private Material _falseMaterial;
 
         private void DebugMouse()
         {
@@ -116,6 +94,7 @@ namespace Votyra.Core
                     var x1y1z0 = image[imagePosition_x1y1z0];
                     var x1y1z1 = image[imagePosition_x1y1z1];
 
+
                     CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z0) + LocalToWorldVector(new Vector3f(0.1f, 0.1f, 0)), x0y0z0);
                     // CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z1) + new Vector3f(0.1f, 0.1f, -0.1f), x0y0z1);
                     CreateDebugObjectAt(ImageToWorld(imagePosition_x0y1z0) + LocalToWorldVector(new Vector3f(0.1f, 0.4f, 0)), x0y1z0);
@@ -128,23 +107,27 @@ namespace Votyra.Core
             }
         }
 
-        private Vector3f ImageToWorld(Vector3i imagePosition)
+        private void CreateDebugObjectAt(Vector3f worldPos, bool value)
         {
-            var localPosition = _sampler.ImageToWorld(imagePosition);
-            var worldPosition = _root.transform.TransformPoint(localPosition.ToVector3());
-            return worldPosition.ToVector3f();
-        }
+            if (!value)
+                return;
 
-        private Vector3i LocalToImage(Vector3f localPosition)
-        {
-            var imagePosition = _sampler.WorldToImage(localPosition);
-            return imagePosition;
-        }
+            var debugRenderer = _emptyDebugObjects.Count > 0 ? _emptyDebugObjects.Pop() : null;
 
-        private Vector3f LocalToWorldVector(Vector3f localPosition)
-        {
-            var worldPosition = _root.transform.TransformVector(localPosition.ToVector3());
-            return worldPosition.ToVector3f();
+            if (debugRenderer == null)
+            {
+                var debugObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                debugObject.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                debugObject.GetComponent<Collider>().enabled = false;
+                debugObject.name = "Debug pointer";
+                debugRenderer = debugObject.GetComponent<Renderer>();
+                _trueMaterial = Resources.Load<Material>("PointerTrue");
+                _falseMaterial = Resources.Load<Material>("PointerFalse");
+            }
+            debugRenderer.transform.position = worldPos.ToVector3();
+            debugRenderer.material = value ? _trueMaterial : _falseMaterial;
+
+            _usedDebugObjects.Push(debugRenderer);
         }
 
         private Vector3i MouseImagePosition()
@@ -155,6 +138,35 @@ namespace Votyra.Core
         private Vector3f MouseLocalPosition()
         {
             return ScreenToLocal(Input.mousePosition);
+        }
+
+        private Vector3f ScreenToLocal(Vector3 screenPosition)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            // Casts the ray and get the first game object hit
+            Physics.Raycast(ray, out hit);
+
+            var localPosition = _root.transform.InverseTransformPoint(hit.point);
+            return new Vector3f(localPosition.x, localPosition.y, localPosition.z);
+        }
+
+        private Vector3i LocalToImage(Vector3f localPosition)
+        {
+            var imagePosition = _sampler.WorldToImage(localPosition);
+            return imagePosition;
+        }
+
+        private Vector3f ImageToWorld(Vector3i imagePosition)
+        {
+            var localPosition = _sampler.ImageToWorld(imagePosition);
+            var worldPosition = _root.transform.TransformPoint(localPosition.ToVector3());
+            return worldPosition.ToVector3f();
+        }
+        private Vector3f LocalToWorldVector(Vector3f localPosition)
+        {
+            var worldPosition = _root.transform.TransformVector(localPosition.ToVector3());
+            return worldPosition.ToVector3f();
         }
 
         private void OnCellClick(Vector3i cell)
@@ -230,22 +242,6 @@ namespace Votyra.Core
                     });
                 }
             }
-        }
-
-        private void ProcessMouseClick()
-        {
-            OnCellClick(MouseImagePosition());
-        }
-
-        private Vector3f ScreenToLocal(Vector3 screenPosition)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            // Casts the ray and get the first game object hit
-            Physics.Raycast(ray, out hit);
-
-            var localPosition = _root.transform.InverseTransformPoint(hit.point);
-            return new Vector3f(localPosition.x, localPosition.y, localPosition.z);
         }
     }
 }

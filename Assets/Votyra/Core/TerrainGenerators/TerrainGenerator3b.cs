@@ -9,9 +9,9 @@ namespace Votyra.Core.TerrainGenerators
 {
     public class TerrainGenerator3b : ITerrainGenerator<IFrameData3b, Vector3i>
     {
-        private readonly Vector3i _cellInGroupCount;
         private readonly ITerrainMesher3b _mesher;
         private readonly IProfiler _profiler;
+        private readonly Vector3i _cellInGroupCount;
 
         public TerrainGenerator3b(ITerrainMesher3b mesher, ITerrainConfig terrainConfig, IProfiler profiler)
         {

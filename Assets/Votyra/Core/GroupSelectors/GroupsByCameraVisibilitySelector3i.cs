@@ -1,14 +1,17 @@
 using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
+using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.GroupSelectors
 {
     public class GroupsByCameraVisibilitySelector3i : IGroupSelector<IFrameData3b, Vector3i>
     {
-        private readonly Vector3i _cellInGroupCount;
         private readonly IImageSampler3 _imageSampler;
+        private readonly Vector3i _cellInGroupCount;
+
         private HashSet<Vector3i> _skippedAreas = new HashSet<Vector3i>();
 
         public GroupsByCameraVisibilitySelector3i(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
@@ -50,6 +53,7 @@ namespace Votyra.Core.GroupSelectors
             {
                 var groupBounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
 
+
                 bool isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)
                 {
@@ -89,6 +93,19 @@ namespace Votyra.Core.GroupSelectors
             return new GroupActions<Vector3i>(groupsToRecompute, groupsToKeep);
         }
 
+        private bool TestPlanesAABB(IEnumerable<Plane3f> planes, Range3f bounds)
+        {
+            var min = bounds.Min;
+            var max = bounds.Max;
+
+            bool isInside = true;
+            foreach (var plane in planes)
+            {
+                isInside = isInside && TestPlaneAABB(plane, min, max);
+            }
+            return isInside;
+        }
+
         private bool TestPlaneAABB(Plane3f plane, Vector3f boundsMin, Vector3f boundsMax)
         {
             return
@@ -105,19 +122,6 @@ namespace Votyra.Core.GroupSelectors
         private bool TestPlanePoint(Plane3f plane, Vector3f point)
         {
             return plane.GetDistanceToPoint(point) > 0;
-        }
-
-        private bool TestPlanesAABB(IEnumerable<Plane3f> planes, Range3f bounds)
-        {
-            var min = bounds.Min;
-            var max = bounds.Max;
-
-            bool isInside = true;
-            foreach (var plane in planes)
-            {
-                isInside = isInside && TestPlaneAABB(plane, min, max);
-            }
-            return isInside;
         }
     }
 }

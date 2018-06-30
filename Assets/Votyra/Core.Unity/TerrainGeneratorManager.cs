@@ -18,15 +18,22 @@ namespace Votyra.Core
     public class TerrainGeneratorManager<TFrameData, TGroupKey> : IDisposable
         where TFrameData : IFrameData
     {
-        protected readonly IFrameDataProvider<TFrameData> _frameDataProvider;
-        protected readonly IGroupSelector<TFrameData, TGroupKey> _groupsSelector;
         protected readonly IThreadSafeLogger _logger;
 
-        protected readonly IMeshUpdater<TGroupKey> _meshUpdater;
-        protected readonly IProfiler _profiler;
-        protected readonly IStateModel _stateModel;
         protected readonly ITerrainConfig _terrainConfig;
+
+        protected readonly IGroupSelector<TFrameData, TGroupKey> _groupsSelector;
+
         protected readonly ITerrainGenerator<TFrameData, TGroupKey> _terrainGenerator;
+
+        protected readonly IMeshUpdater<TGroupKey> _meshUpdater;
+
+        protected readonly IStateModel _stateModel;
+
+        protected readonly IProfiler _profiler;
+
+        protected readonly IFrameDataProvider<TFrameData> _frameDataProvider;
+
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
         public TerrainGeneratorManager(IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector<TFrameData, TGroupKey> groupsSelector, ITerrainGenerator<TFrameData, TGroupKey> terrainGenerator, IMeshUpdater<TGroupKey> meshUpdater, IStateModel stateModel, IProfiler profiler, IFrameDataProvider<TFrameData> frameDataProvider)
@@ -41,11 +48,6 @@ namespace Votyra.Core
             _frameDataProvider = frameDataProvider;
 
             StartUpdateing();
-        }
-
-        public void Dispose()
-        {
-            _onDestroyCts.Cancel();
         }
 
         private async void StartUpdateing()
@@ -134,6 +136,11 @@ namespace Votyra.Core
                 groupActions?.Dispose();
                 results?.Dispose();
             }
+        }
+
+        public void Dispose()
+        {
+            _onDestroyCts.Cancel();
         }
     }
 }
