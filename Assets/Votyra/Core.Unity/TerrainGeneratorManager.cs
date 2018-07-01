@@ -54,6 +54,10 @@ namespace Votyra.Core
         {
             while (!_onDestroyCts.IsCancellationRequested)
             {
+#if UNITY_EDITOR
+                if (!UnityEditor.EditorApplication.isPlaying)
+                    return;
+#endif
                 try
                 {
                     if (_stateModel.IsEnabled)

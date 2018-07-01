@@ -4,14 +4,16 @@ namespace Votyra.Core.Images
 {
     public class InitialImageConfig : IInitialImageConfig
     {
-        public InitialImageConfig(object initialData, Vector3f initialDataScale)
+        public InitialImageConfig(object initialData, Vector3f initialDataScale, bool zeroFromInitialStateIsNull)
         {
             InitialData = initialData;
             InitialDataScale = initialDataScale;
+            ZeroFromInitialStateIsNull = zeroFromInitialStateIsNull;
         }
 
         public object InitialData { get; }
         public Vector3f InitialDataScale { get; }
+        public bool ZeroFromInitialStateIsNull { get; }
 
         public static bool operator ==(InitialImageConfig a, InitialImageConfig b)
         {

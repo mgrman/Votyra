@@ -6,5 +6,6 @@ namespace Votyra.Core
     {
         object InitialData { get; }
         Vector3f InitialDataScale { get; }
+        bool ZeroFromInitialStateIsNull { get; }
     }
 }

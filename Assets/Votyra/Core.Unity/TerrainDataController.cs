@@ -20,6 +20,9 @@ namespace Votyra.Core.Unity
         [SerializeField]
         private UI_Vector3f _initialDataScale = new UI_Vector3f(1, 1, 1);
 
+        [SerializeField]
+        private bool _zeroFromInitialStateIsNull = true;
+
         private object _initialDataFromPrevious = null;
 
         [SerializeField]
@@ -182,7 +185,7 @@ namespace Votyra.Core.Unity
             {
                 Debug.Log("Using _initialDataFromPrevious");
             }
-            var initialImageConfig = new InitialImageConfig(_initialDataFromPrevious != null ? (object)_initialDataFromPrevious : _initialData, _initialDataFromPrevious != null ? Vector3f.One : (Vector3f)_initialDataScale);
+            var initialImageConfig = new InitialImageConfig(_initialDataFromPrevious != null ? (object)_initialDataFromPrevious : _initialData, _initialDataFromPrevious != null ? Vector3f.One : (Vector3f)_initialDataScale, _zeroFromInitialStateIsNull);
             if (_terrainManagerModel.InitialImageConfig.Value != initialImageConfig)
                 _terrainManagerModel.InitialImageConfig.OnNext(initialImageConfig);
 
