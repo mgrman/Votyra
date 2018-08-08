@@ -342,7 +342,8 @@ MonoBehaviour:
   _initialDataScale:
     x: 1
     y: 1
-    z: 10
+    z: 40
+  _zeroFromInitialStateIsNull: 1
   _keepImageChanges: 1
   _cellInGroupCount:
     x: 10
@@ -353,7 +354,7 @@ MonoBehaviour:
   _async: 1
   _material: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
   _materialWalls: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
-  _activeTerrainAlgorithm: 0
+  _activeTerrainAlgorithm: 1
   _availableTerrainAlgorithms:
   - {fileID: 1101794731832008, guid: f4f93c13563af724e9805d1070d56d88, type: 2}
   - {fileID: 1101794731832008, guid: a3fa91a0e395d7643bf043b4c7bfd4fd, type: 2}
@@ -708,7 +709,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1857217856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -729,6 +730,7 @@ MonoBehaviour:
     x: 1
     y: 1
     z: 1
+  _zeroFromInitialStateIsNull: 1
   _keepImageChanges: 1
   _cellInGroupCount:
     x: 10

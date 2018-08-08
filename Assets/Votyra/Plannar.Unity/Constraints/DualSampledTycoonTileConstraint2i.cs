@@ -12,6 +12,7 @@ namespace Votyra.Plannar.Images.Constraints
 {
     public class DualSampledTycoonTileConstraint2i : IImageConstraint2i
     {
+        public const int ScaleFactor = 2;
         private IImageSampler2i _sampler;
 
         public DualSampledTycoonTileConstraint2i(IImageSampler2i sampler)
@@ -64,52 +65,53 @@ namespace Votyra.Plannar.Images.Constraints
 
         private SampledData2i Process(SampledData2i sampleData)
         {
-            var height = sampleData.Max - 1;
-            SampledData2i normalizedHeightData = sampleData.NormalizeFromTop(Range1i.PlusMinusOne);
+            var height = sampleData.Max;
+            SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2 * ScaleFactor);
             SampledData2i choosenTemplateTile = TileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
         }
 
-        private readonly static TileMap2i TileMap = new TileMap2i(new[]
+        private readonly static TileMap2i TileMap = new[]
         {
             //plane
-            new SampledData2i(1, 1, 1, 1),
+            new SampledData2i(0, 0, 0, 0),
 
             //slope
-            new SampledData2i(0, 1, 0, 1),
+            new SampledData2i(-1, 0, -1, 0),
 
             //slopeDiagonal
-            new SampledData2i(-1, 0, 0, 1),
+            new SampledData2i(-2, -1, -1, 0),
 
             //partialUpSlope
-            new SampledData2i(0, 0, 0, 1),
+            new SampledData2i(-1, -1, -1, 0),
 
             //partialDownSlope
-            new SampledData2i(0, 1, 1, 1),
+            new SampledData2i(-1, 0, 0, 0),
 
             //slopeDiagonal
-            new SampledData2i(1, 0, 0, 1),
+            new SampledData2i(0, -1, -1, 0),
 
             //plane with hole
-            new SampledData2i(1, 1, 1, null),
+            new SampledData2i(0, 0, 0, null),
 
             //slope with hole
-            new SampledData2i(0, 1, 0, null),
+            new SampledData2i(-1, 0, -1, null),
 
             //slope with hole
-            new SampledData2i(0, 1, null, 1),
+            new SampledData2i(-1, 0, null, 0),
 
             //slope with hole
-            new SampledData2i(0, null, 0, 1),
+            new SampledData2i(-1, null, -1, 0),
 
             //slope with hole
-            new SampledData2i(null, 1, 0, 1),
+            new SampledData2i(null, 0, -1, 0),
 
             //partialUpSlope with hole
-            new SampledData2i(null, 0, 0, 1),
+            new SampledData2i(null, -1, -1, 0),
 
             //partialDownSlope with hole
-            new SampledData2i(0, 1, 1, null),
-        });
+            new SampledData2i(-1, 0, 0, null),
+        }
+        .CreateExpandedTileMap2i(ScaleFactor);
     }
 }

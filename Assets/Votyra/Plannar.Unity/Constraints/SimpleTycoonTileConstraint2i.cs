@@ -11,6 +11,8 @@ namespace Votyra.Plannar.Images.Constraints
 {
     public class SimpleTycoonTileConstraint2i : IImageConstraint2i
     {
+        public const int ScaleFactor = 2;
+
         private IImageSampler2i _sampler;
 
         public SimpleTycoonTileConstraint2i(IImageSampler2i sampler)
@@ -136,7 +138,7 @@ namespace Votyra.Plannar.Images.Constraints
         private SampledData2i ProcessUp(SampledData2i sampleData)
         {
             var height = sampleData.Max;
-            SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2);
+            SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2 * ScaleFactor);
             SampledData2i choosenTemplateTile = TileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
             // var normalizer = new SampledData2iNormalizer(sampleData, TileMap.ValueRange);
@@ -149,7 +151,7 @@ namespace Votyra.Plannar.Images.Constraints
             return -ProcessUp(-sampleData);
         }
 
-        private readonly static TileMap2i TileMap = new TileMap2i(new[]
+        private readonly static TileMap2i TileMap = new[]
         {
             new SampledData2i(0, 0, 0, 0),
 
@@ -167,6 +169,7 @@ namespace Votyra.Plannar.Images.Constraints
 
             //slopeDiagonal
             new SampledData2i(0, -1, -1, 0)
-        });
+        }
+        .CreateExpandedTileMap2i(ScaleFactor);
     }
 }

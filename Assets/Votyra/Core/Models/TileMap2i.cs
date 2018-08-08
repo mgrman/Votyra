@@ -2,53 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Votyra.Core.Models
 {
     public class TileMap2i
     {
-        public IReadOnlyCollection<SampledData2i> Templates { get; }
-
-        public Range1i ValueRange { get; }
-
         private readonly IReadOnlyDictionary<SampledData2i, SampledData2i> _tileMap;
 
-        public TileMap2i(SampledData2i[] templates)
-            : this(templates, templates.RangeUnion(), true)
-        {
-        }
-
-        public TileMap2i(SampledData2i[] templates, Range1i valueRange, bool expandRotations)
+        public TileMap2i(IEnumerable<SampledData2i> templates)
         {
             Templates = templates;
-            ValueRange = valueRange;
-
-            if (expandRotations)
-            {
-                templates = templates
-                    .SelectMany(template =>
-                    {
-                        return new[]
-                        {
-                            template,
-                            template.GetRotated(1),
-                            template.GetRotated(2),
-                            template.GetRotated(3),
-                        };
-                    })
-                    .Distinct()
-                    .ToArray();
-            }
+            ValueRange = Templates.RangeUnion();
 
             _tileMap = SampledData2i
-                .GenerateAllValues(new Range1i(valueRange.Min, valueRange.Max), true)
+                .GenerateAllValues(ValueRange, true)
                 .ToDictionary(inputValue => inputValue, inputValue =>
                 {
                     SampledData2i choosenTemplateTile = default(SampledData2i);
                     float choosenTemplateTileDiff = float.MaxValue;
-                    for (int it = 0; it < templates.Length; it++)
+                    foreach (SampledData2i tile in Templates)
                     {
-                        SampledData2i tile = templates[it];
                         var value = SampledData2i.Dif(tile, inputValue);
                         if (value < choosenTemplateTileDiff)
                         {
@@ -58,9 +32,33 @@ namespace Votyra.Core.Models
                     }
                     return choosenTemplateTile.SetHolesUsing(inputValue);
                 });
+
+#if VERBOSE
+            foreach (var pair in _tileMap)
+            {
+                Debug.Log($"{this.GetType().Name} {pair.Key} => {pair.Value}");
+            }
+#endif
         }
 
-        public SampledData2i GetTile(SampledData2i key) => _tileMap[key];
+        public IEnumerable<SampledData2i> Templates { get; }
 
+        public Range1i ValueRange { get; }
+
+        public SampledData2i GetTile(SampledData2i key)
+        {
+#if !VERBOSE
+            return _tileMap[key];
+#else
+            SampledData2i value;
+            if (_tileMap.TryGetValue(key, out value))
+            {
+                return value;
+            }
+
+            Debug.Log($"{this.GetType().Name} missing tile {key}");
+            return key;
+#endif
+        }
     }
 }
