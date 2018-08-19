@@ -17,7 +17,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         protected IImage2i _image;
         protected Vector2i _groupPosition;
-        protected float _minZ;
+        protected Height _minZ;
         protected Vector3f _bounds_size;
         protected IPooledTerrainMesh _pooledMesh;
         protected ITerrainMesh _mesh;
@@ -34,17 +34,16 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             _image = image;
 
             this._minZ = _image.RangeZ.Min;
-            this._bounds_size = new Vector3f(_cellInGroupCount.X, _cellInGroupCount.Y, _image.RangeZ.Size);
+            this._bounds_size = new Vector2f(_cellInGroupCount.X, _cellInGroupCount.Y)
+                .ToVector3f(_image.RangeZ.Size)
+                ?? Vector3f.Zero;
         }
 
         public void InitializeGroup(Vector2i group)
         {
-            var bounds = Range3f.FromMinAndSize(new Vector3f
-             (
-                  (group.X * _cellInGroupCount.X),
-                  (group.Y * _cellInGroupCount.Y),
-                 _minZ
-             ), _bounds_size);
+            var bounds = Range3f.FromMinAndSize(new Vector2f((group.X * _cellInGroupCount.X), (group.Y * _cellInGroupCount.Y))
+                .ToVector3f(_minZ) ?? Vector3f.Zero,
+                _bounds_size);
 
             this._groupPosition = _cellInGroupCount * group;
 

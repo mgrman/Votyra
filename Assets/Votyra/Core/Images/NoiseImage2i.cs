@@ -15,15 +15,15 @@ namespace Votyra.Core.Images
             Scale = scale;
         }
 
-        public Range1i RangeZ { get { return new Range1i((int)Offset.Z, (int)(Offset.Z + Scale.Z)); } }
+        public Range1h RangeZ { get { return new Range1h(((int)Offset.Z).CreateHeight(), ((int)(Offset.Z + Scale.Z)).CreateHeight()); } }
 
-        public int? Sample(Vector2i point)
+        public Height Sample(Vector2i point)
         {
             point = (point / Scale.XY + Offset.XY).RoundToVector2i();
 
             var value = MathUtils.PerlinNoise(point.X, point.Y);
 
-            return (int)(value * Scale.Z + Offset.Z);
+            return ((int)(value * Scale.Z + Offset.Z)).CreateHeight();
         }
 
         public bool AnyData(Range2i range)

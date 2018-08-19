@@ -32,20 +32,20 @@ namespace Votyra.Core.Models
 
         public static IEnumerable<SampledData2i> CreateVariantsOfUmbra(this SampledData2i tile)
         {
-            for (int x0y0 = 0; x0y0 <= Math.Abs(tile.x0y0 ?? 0); x0y0++)
+            for (Height x0y0 = Height.Default; x0y0 <= tile.x0y0.DefaultIfHole(Height.Default).Abs; x0y0 = x0y0.Above)
             {
-                for (int x0y1 = 0; x0y1 <= Math.Abs(tile.x0y1 ?? 0); x0y1++)
+                for (Height x0y1 = Height.Default; x0y1 <= tile.x0y1.DefaultIfHole(Height.Default).Abs; x0y1 = x0y1.Above)
                 {
-                    for (int x1y0 = 0; x1y0 <= Math.Abs(tile.x1y0 ?? 0); x1y0++)
+                    for (Height x1y0 = Height.Default; x1y0 <= tile.x1y0.DefaultIfHole(Height.Default).Abs; x1y0 = x1y0.Above)
                     {
-                        for (int x1y1 = 0; x1y1 <= Math.Abs(tile.x1y1 ?? 0); x1y1++)
+                        for (Height x1y1 = Height.Default; x1y1 <= tile.x1y1.DefaultIfHole(Height.Default).Abs; x1y1 = x1y1.Above)
                         {
                             yield return new SampledData2i
                               (
-                                  (x0y0 * Math.Sign(tile.x0y0 ?? 0)).ReturnHoleIfHole(tile.x0y0),
-                                  (x0y1 * Math.Sign(tile.x0y1 ?? 0)).ReturnHoleIfHole(tile.x0y1),
-                                  (x1y0 * Math.Sign(tile.x1y0 ?? 0)).ReturnHoleIfHole(tile.x1y0),
-                                  (x1y1 * Math.Sign(tile.x1y1 ?? 0)).ReturnHoleIfHole(tile.x1y1)
+                                  (x0y0 * (tile.x0y0.DefaultIfHole(Height.Default)).Sign).ReturnHoleIfHole(tile.x0y0),
+                                  (x0y1 * (tile.x0y1.DefaultIfHole(Height.Default)).Sign).ReturnHoleIfHole(tile.x0y1),
+                                  (x1y0 * (tile.x1y0.DefaultIfHole(Height.Default)).Sign).ReturnHoleIfHole(tile.x1y0),
+                                  (x1y1 * (tile.x1y1.DefaultIfHole(Height.Default)).Sign).ReturnHoleIfHole(tile.x1y1)
                               );
                         }
                     }
@@ -70,16 +70,16 @@ namespace Votyra.Core.Models
                 .ToArray();
         }
 
-        public static Range1i RangeUnion(this IEnumerable<SampledData2i> templates)
+        public static Range1h RangeUnion(this IEnumerable<SampledData2i> templates)
         {
             return templates
                 .Select(o => o.Range)
-                .Aggregate((Range1i?)null, (a, b) => a?.UnionWith(b) ?? b) ?? Range1i.Zero;
+                .Aggregate((Range1h?)null, (a, b) => a?.UnionWith(b) ?? b) ?? Range1h.Default;
         }
 
-        public static int? ReturnHoleIfHole(this int val, int? holeTest)
+        public static Height ReturnHoleIfHole(this Height val, Height holeTest)
         {
-            return holeTest.IsHole() ? holeTest : val;
+            return holeTest.IsHole ? Height.Hole : val;
         }
 
         public static IEnumerable<SampledData2i> ScaleTemplates(this IEnumerable<SampledData2i> templates, int scale)

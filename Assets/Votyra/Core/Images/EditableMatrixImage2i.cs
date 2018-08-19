@@ -8,11 +8,11 @@ namespace Votyra.Core.Images
 {
     public class EditableMatrixImage2i : IImage2iProvider, IEditableImage2i
     {
-        private readonly Matrix2<int?> _editableMatrix;
+        private readonly Matrix2<Height> _editableMatrix;
 
         private Range2i? _invalidatedArea;
 
-        private readonly List<LockableMatrix2<int?>> _readonlyMatrices = new List<LockableMatrix2<int?>>();
+        private readonly List<LockableMatrix2<Height>> _readonlyMatrices = new List<LockableMatrix2<Height>>();
 
         private MatrixImage2i _image = null;
 
@@ -21,7 +21,7 @@ namespace Votyra.Core.Images
         public EditableMatrixImage2i([InjectOptional] IImageConstraint2i constraint, IImageConfig imageConfig)
         {
             _constraint = constraint;
-            _editableMatrix = new Matrix2<int?>(imageConfig.ImageSize.XY);
+            _editableMatrix = new Matrix2<Height>(imageConfig.ImageSize.XY);
         }
 
         public IImage2i CreateImage()
@@ -39,7 +39,7 @@ namespace Votyra.Core.Images
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)
                 {
-                    readonlyMatrix = new LockableMatrix2<int?>(_editableMatrix.Size);
+                    readonlyMatrix = new LockableMatrix2<Height>(_editableMatrix.Size);
                     _readonlyMatrices.Add(readonlyMatrix);
                 }
 
@@ -80,11 +80,11 @@ namespace Votyra.Core.Images
 
         private class MatrixImageAccessor : IEditableImageAccessor2i
         {
-            private readonly int?[,] _editableMatrix;
-            private int _changeCounter = 0;
+            private readonly Height[,] _editableMatrix;
+            private Height.Difference _changeCounter = Height.Difference.Zero;
             public Range2i Area { get; }
 
-            public int? this[Vector2i pos]
+            public Height this[Vector2i pos]
             {
                 get
                 {
@@ -93,9 +93,9 @@ namespace Votyra.Core.Images
                 set
                 {
                     var existingValue = _editableMatrix[pos.X, pos.Y];
-                    if (value.IsNotHole() && existingValue.IsNotHole())
+                    if (value.IsNotHole && existingValue.IsNotHole)
                     {
-                        _changeCounter += value.Value - existingValue.Value;
+                        _changeCounter += value - existingValue;
                     }
                     _editableMatrix[pos.X, pos.Y] = value;
                 }
@@ -112,7 +112,7 @@ namespace Votyra.Core.Images
 
             public void Dispose()
             {
-                this._editableImage.FixImage(Area, _changeCounter > 0 ? Direction.Up : (_changeCounter < 0 ? Direction.Down : Direction.Unknown));
+                this._editableImage.FixImage(Area, _changeCounter > Height.Difference.Zero ? Direction.Up : (_changeCounter < Height.Difference.Zero ? Direction.Down : Direction.Unknown));
             }
         }
     }

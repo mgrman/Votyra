@@ -26,7 +26,7 @@ namespace Votyra.Core
         private float lastTime;
         private Vector2i? lastCell;
 
-        private int? _centerValueToReuse;
+        private Height? _centerValueToReuse;
 
         public void Tick()
         {
@@ -81,7 +81,7 @@ namespace Votyra.Core
 
                 using (var image = editableImage.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(maxDist + 2, maxDist + 2))))
                 {
-                    int? centerValue;
+                    Height centerValue;
                     if (_centerValueToReuse.HasValue)
                     {
                         centerValue = _centerValueToReuse.Value;
@@ -91,7 +91,7 @@ namespace Votyra.Core
                         centerValue = image[cell];
                         _centerValueToReuse = centerValue;
                     }
-                    if (centerValue.IsNotHole())
+                    if (centerValue.IsNotHole)
                     {
                         for (int ox = -maxDist; ox <= maxDist; ox++)
                         {
@@ -100,15 +100,16 @@ namespace Votyra.Core
                                 var index = cell + new Vector2i(ox, oy);
                                 var value = image[index];
 
-                                if (value.IsNotHole())
+                                if (value.IsNotHole)
                                 {
-                                    var offsetF = (centerValue.Value - value.Value) * smoothSpeedRelative;
-                                    int offsetI = 0;
-                                    if (offsetF > smoothCutoff)
-                                        offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
-                                    else if (offsetF < -smoothCutoff)
-                                        offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
-                                    image[index] = value.Value + offsetI;
+                                    // var offsetF = (centerValue - value) * smoothSpeedRelative;
+                                    // int offsetI = 0;
+                                    // if (offsetF > smoothCutoff)
+                                    //     offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
+                                    // else if (offsetF < -smoothCutoff)
+                                    //     offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
+                                    // image[index] = value + offsetI;
+                                    image[index] = value + (centerValue - value) * smoothSpeedRelative;
                                 }
                                 else
                                 {
@@ -147,9 +148,9 @@ namespace Votyra.Core
 
                             var dist = Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy));
                             var value = image[index];
-                            if (value.IsNotHole())
+                            if (value.IsNotHole)
                             {
-                                image[index] = value + multiplier * (maxDist - dist);
+                                image[index] = value + (multiplier * (maxDist - dist)).CreateHeightDifference();
                             }
                         }
                     }

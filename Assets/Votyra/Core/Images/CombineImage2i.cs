@@ -1,3 +1,4 @@
+using System;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
@@ -10,10 +11,10 @@ namespace Votyra.Core.Images
 
         public enum Operations
         {
-            Add,
-            Subtract,
-            Multiply,
-            Divide
+            // Add,
+            // Subtract,
+            // Multiply,
+            // Divide
         }
 
         public CombineImage2i(IImage2i imageA, IImage2i imageB, Operations operation)
@@ -23,50 +24,51 @@ namespace Votyra.Core.Images
             Operation = operation;
             switch (Operation)
             {
-                case Operations.Add:
-                    RangeZ = new Range1i(imageA.RangeZ.Min + imageB.RangeZ.Min, imageA.RangeZ.Max + imageB.RangeZ.Max);
-                    break;
+                // case Operations.Add:
+                //     RangeZ = new Range1h(imageA.RangeZ.Min + imageB.RangeZ.Min, imageA.RangeZ.Max + imageB.RangeZ.Max);
+                //     break;
 
-                case Operations.Subtract:
-                    RangeZ = new Range1i(imageA.RangeZ.Min - imageB.RangeZ.Min, imageA.RangeZ.Max - imageB.RangeZ.Max);
-                    break;
+                // case Operations.Subtract:
+                //     RangeZ = new Range1h(imageA.RangeZ.Min - imageB.RangeZ.Min, imageA.RangeZ.Max - imageB.RangeZ.Max);
+                //     break;
 
-                case Operations.Multiply:
-                    RangeZ = new Range1i(imageA.RangeZ.Min * imageB.RangeZ.Min, imageA.RangeZ.Max * imageB.RangeZ.Max);
-                    break;
+                // case Operations.Multiply:
+                //     RangeZ = new Range1i(imageA.RangeZ.Min * imageB.RangeZ.Min, imageA.RangeZ.Max * imageB.RangeZ.Max);
+                //     break;
 
-                case Operations.Divide:
-                    RangeZ = new Range1i(imageA.RangeZ.Min / imageB.RangeZ.Min, imageA.RangeZ.Max / imageB.RangeZ.Max);
-                    break;
+                // case Operations.Divide:
+                //     RangeZ = new Range1i(imageA.RangeZ.Min / imageB.RangeZ.Min, imageA.RangeZ.Max / imageB.RangeZ.Max);
+                //     break;
 
                 default:
-                    RangeZ = new Range1i(0, 0);
+                    RangeZ = Range1h.Default;
                     break;
             }
         }
 
-        public Range1i RangeZ { get; private set; }
+        public Range1h RangeZ { get; private set; }
 
-        public int? Sample(Vector2i point)
+        public Height Sample(Vector2i point)
         {
-            int? a = ImageA.Sample(point);
-            int? b = ImageB.Sample(point);
+            Height a = ImageA.Sample(point);
+            Height b = ImageB.Sample(point);
+            throw new NotImplementedException();
             switch (Operation)
             {
-                case Operations.Add:
-                    return a + b;
+                // case Operations.Add:
+                //     return a + (b - Height.Default);
 
-                case Operations.Subtract:
-                    return a - b;
+                // case Operations.Subtract:
+                //     return a + (Height.Default - b);
 
-                case Operations.Multiply:
-                    return a * b;
+                // case Operations.Multiply:
+                //     return a * b;
 
-                case Operations.Divide:
-                    return a / b;
+                // case Operations.Divide:
+                //     return a / b;
 
                 default:
-                    return 0;
+                    return Height.Default;
             }
         }
 

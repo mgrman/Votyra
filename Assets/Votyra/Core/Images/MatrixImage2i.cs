@@ -6,36 +6,36 @@ namespace Votyra.Core.Images
 {
     public class MatrixImage2i : IImage2i, IInitializableImage, IImageInvalidatableImage2i, IDisposable
     {
-        public Range1i RangeZ { get; }
+        public Range1h RangeZ { get; }
 
         public Range2i InvalidatedArea { get; }
 
-        public LockableMatrix2<int?> Image { get; }
+        public LockableMatrix2<Height> Image { get; }
 
-        public MatrixImage2i(LockableMatrix2<int?> values, Range2i invalidatedArea)
+        public MatrixImage2i(LockableMatrix2<Height> values, Range2i invalidatedArea)
         {
             Image = values;
             InvalidatedArea = invalidatedArea;
             RangeZ = CalculateRangeZ(values);
         }
 
-        private static Range1i CalculateRangeZ(LockableMatrix2<int?> values)
+        private static Range1h CalculateRangeZ(LockableMatrix2<Height> values)
         {
-            int? min = null;
-            int? max = null;
+            Height min = Height.Hole;
+            Height max = Height.Hole;
             values.ForeachPointExlusive(i =>
             {
-                int? val = values[i];
+                Height val = values[i];
 
-                min = MathUtils.Min(min, val);
-                max = MathUtils.Max(max, val);
+                min = Height.Min(min, val);
+                max = Height.Max(max, val);
             });
-            return new Range1i(min ?? 0, max ?? 0);
+            return Height.Range(min, max) ?? Range1h.Default;
         }
 
-        public int? Sample(Vector2i point)
+        public Height Sample(Vector2i point)
         {
-            return Image.TryGet(point, 0);
+            return Image.TryGet(point, Height.Default);
         }
 
         public void StartUsing()
@@ -54,7 +54,7 @@ namespace Votyra.Core.Images
             range.ForeachPointExlusive(o =>
             {
                 var value = Sample(o);
-                allHoles = allHoles && value.IsHole();
+                allHoles = allHoles && value.IsHole;
             });
 
             return !allHoles;

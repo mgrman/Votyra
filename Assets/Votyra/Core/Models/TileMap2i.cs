@@ -1,3 +1,5 @@
+#define VERBOSE
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,15 +14,24 @@ namespace Votyra.Core.Models
 
         public TileMap2i(IEnumerable<SampledData2i> templates)
         {
-            Templates = templates;
+#if VERBOSE
+            foreach (var template in templates)
+            {
+                Debug.Log($"{this.GetType().Name}-Template {template}");
+            }
+#endif
+            Templates = templates.ToArray();
             ValueRange = Templates.RangeUnion();
 
             _tileMap = SampledData2i
-                .GenerateAllValues(ValueRange, true)
+                .GenerateAllValuesWithHoles(ValueRange)
                 .ToDictionary(inputValue => inputValue, inputValue =>
                 {
+                    if (inputValue.GetHoleCount() == 0)
+                    {
+                    }
                     SampledData2i choosenTemplateTile = default(SampledData2i);
-                    float choosenTemplateTileDiff = float.MaxValue;
+                    Height.Difference choosenTemplateTileDiff = Height.Difference.Infinite;
                     foreach (SampledData2i tile in Templates)
                     {
                         var value = SampledData2i.Dif(tile, inputValue);
@@ -43,7 +54,7 @@ namespace Votyra.Core.Models
 
         public IEnumerable<SampledData2i> Templates { get; }
 
-        public Range1i ValueRange { get; }
+        public Range1h ValueRange { get; }
 
         public SampledData2i GetTile(SampledData2i key)
         {

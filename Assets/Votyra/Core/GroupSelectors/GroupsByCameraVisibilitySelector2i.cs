@@ -49,7 +49,7 @@ namespace Votyra.Core.GroupSelectors
             var cameraBoundsGroups = (localCameraBounds / _cellInGroupCount.ToVector2f()).RoundToContain();
 
             var minZ = options.Image.RangeZ.Min;
-            var bounds_size = new Vector3f(_cellInGroupCount.X, _cellInGroupCount.Y, options.Image.RangeZ.Size);
+            var bounds_size = new Vector2f(_cellInGroupCount.X, _cellInGroupCount.Y).ToVector3f(options.Image.RangeZ.Size);
 
             var groupsToRecompute = PooledSet<Vector2i>.Create();
             var groupsToKeep = PooledSet<Vector2i>.Create();
@@ -57,7 +57,7 @@ namespace Votyra.Core.GroupSelectors
             cameraBoundsGroups.ForeachPointExlusive(group =>
             {
                 var groupBoundsMin = (group * _cellInGroupCount).ToVector2f().ToVector3f(minZ);
-                var groupBounds = Range3f.FromMinAndSize(groupBoundsMin, bounds_size);
+                var groupBounds = Range3f.FromMinAndSize(groupBoundsMin ?? Vector3f.Zero, bounds_size ?? Vector3f.Zero);
 
                 bool isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)

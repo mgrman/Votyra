@@ -20,11 +20,11 @@ namespace Votyra.Cubical.Unity
                 int height = initialTexture.height;
 
                 var size = new Vector2i(width, height);
-                var matrix = new LockableMatrix2<int?>(size);
+                var matrix = new LockableMatrix2<Height>(size);
 
                 matrix.ForeachPointExlusive(i =>
                 {
-                    matrix[i] = (int)(initialTexture.GetPixel(i.X, i.Y).grayscale * scale.Z);
+                    matrix[i] = ((int)(initialTexture.GetPixel(i.X, i.Y).grayscale * scale.Z)).CreateHeight();
                 });
                 _image = new UmbraImage3b(new MatrixImage2i(matrix, Range2i.Zero));
             }
@@ -37,11 +37,11 @@ namespace Votyra.Cubical.Unity
                 int height = initialMatrix.Size.Y;
 
                 var size = new Vector2i(width, height);
-                var matrix = new LockableMatrix2<int?>(size);
+                var matrix = new LockableMatrix2<Height>(size);
 
                 matrix.ForeachPointExlusive(i =>
                 {
-                    matrix[i] = (int)(initialMatrix[i] * scale.Z);
+                    matrix[i] = ((int)(initialMatrix[i] * scale.Z)).CreateHeight();
                 });
                 _image = new UmbraImage3b(new MatrixImage2i(matrix, Range2i.Zero));
             }
