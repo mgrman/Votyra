@@ -24,20 +24,28 @@ namespace Votyra.Core.Profiling
         public IDisposable Start(string name)
         {
             _name = name;
-            _stopwatch.Start();
-            return Disposable.Create(Stop);
-            // if (Thread.CurrentThread == UnitySyncContext.UnityThread)
-            // {
-            //     if (_owner != null)
-            //         Profiler.BeginSample(name, _owner);
-            //     else
-            //         Profiler.BeginSample(name);
-            //     return new EndSampleDisposable();
-            // }
-            // else
-            // {
-            //     return Disposable.Empty;
-            // }
+            if (Thread.CurrentThread == UnitySyncContext.UnityThread)
+            {
+                if (_owner != null)
+                    Profiler.BeginSample(name, _owner);
+                else
+                    Profiler.BeginSample(name);
+
+                _stopwatch.Start();
+                return Disposable.Create(StopAndEndSample);
+            }
+            else
+            {
+                _stopwatch.Start();
+                return Disposable.Create(Stop);
+            }
+
+        }
+
+        private void StopAndEndSample()
+        {
+            Stop();
+            Profiler.EndSample();
         }
 
         private void Stop()
