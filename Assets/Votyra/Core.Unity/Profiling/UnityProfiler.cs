@@ -1,6 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
-
+using UniRx;
 using UnityEngine.Profiling;
 
 namespace Votyra.Core.Profiling
@@ -11,40 +12,40 @@ namespace Votyra.Core.Profiling
 
         private readonly UnityEngine.Object _owner;
 
+        private readonly Stopwatch _stopwatch;
+
+        private string _name;
         public UnityProfiler(UnityEngine.Object owner)
         {
             _owner = owner;
+            _stopwatch = new Stopwatch();
         }
 
         public IDisposable Start(string name)
         {
-            if (Thread.CurrentThread == UnitySyncContext.UnityThread)
-            {
-                if (_owner != null)
-                    Profiler.BeginSample(name, _owner);
-                else
-                    Profiler.BeginSample(name);
-                return new EndSampleDisposable();
-            }
-            else
-            {
-                return new EmptyDisposable();
-            }
+            _name = name;
+            _stopwatch.Start();
+            return Disposable.Create(Stop);
+            // if (Thread.CurrentThread == UnitySyncContext.UnityThread)
+            // {
+            //     if (_owner != null)
+            //         Profiler.BeginSample(name, _owner);
+            //     else
+            //         Profiler.BeginSample(name);
+            //     return new EndSampleDisposable();
+            // }
+            // else
+            // {
+            //     return Disposable.Empty;
+            // }
         }
 
-        private struct EmptyDisposable : IDisposable
+        private void Stop()
         {
-            public void Dispose()
-            {
-            }
-        }
-
-        private struct EndSampleDisposable : IDisposable
-        {
-            public void Dispose()
-            {
-                Profiler.EndSample();
-            }
+            _stopwatch.Stop();
+            UnityProfilerAggregator.Add(_owner, _name, (double)_stopwatch.ElapsedTicks / TimeSpan.TicksPerMillisecond);
+            _stopwatch.Reset();
+            // UnityEngine.Debug.Log(_namePrefix + _stopwatch.ElapsedMilliseconds);
         }
     }
 }
