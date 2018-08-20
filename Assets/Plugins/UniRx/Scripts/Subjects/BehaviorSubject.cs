@@ -23,7 +23,7 @@ namespace UniRx
             get
             {
                 ThrowIfDisposed();
-                if (lastError != null) throw lastError;
+                if (lastError != null) lastError.Throw();
                 return lastValue;
             }
         }
@@ -39,7 +39,7 @@ namespace UniRx
         public void OnCompleted()
         {
             IObserver<T> old;
-            lock(observerLock)
+            lock (observerLock)
             {
                 ThrowIfDisposed();
                 if (isStopped) return;
@@ -57,7 +57,7 @@ namespace UniRx
             if (error == null) throw new ArgumentNullException("error");
 
             IObserver<T> old;
-            lock(observerLock)
+            lock (observerLock)
             {
                 ThrowIfDisposed();
                 if (isStopped) return;
@@ -74,7 +74,7 @@ namespace UniRx
         public void OnNext(T value)
         {
             IObserver<T> current;
-            lock(observerLock)
+            lock (observerLock)
             {
                 if (isStopped) return;
 
@@ -93,7 +93,7 @@ namespace UniRx
             var v = default(T);
             var subscription = default(Subscription);
 
-            lock(observerLock)
+            lock (observerLock)
             {
                 ThrowIfDisposed();
                 if (!isStopped)
@@ -112,7 +112,7 @@ namespace UniRx
                         }
                         else
                         {
-                            outObserver = new ListObserver<T>(new ImmutableList<IObserver<T>>(new [] { current, observer }));
+                            outObserver = new ListObserver<T>(new ImmutableList<IObserver<T>>(new[] { current, observer }));
                         }
                     }
 
@@ -144,7 +144,7 @@ namespace UniRx
 
         public void Dispose()
         {
-            lock(observerLock)
+            lock (observerLock)
             {
                 isDisposed = true;
                 outObserver = DisposedObserver<T>.Instance;
@@ -177,11 +177,11 @@ namespace UniRx
 
             public void Dispose()
             {
-                lock(gate)
+                lock (gate)
                 {
                     if (parent != null)
                     {
-                        lock(parent.observerLock)
+                        lock (parent.observerLock)
                         {
                             var listObserver = parent.outObserver as ListObserver<T>;
                             if (listObserver != null)
