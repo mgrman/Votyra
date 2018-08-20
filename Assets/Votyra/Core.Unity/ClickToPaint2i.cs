@@ -21,7 +21,6 @@ namespace Votyra.Core
         private const int maxDistBig = 4;
         private const int maxDistSmall = 1;
         private const float smoothSpeedRelative = 0.2f;
-        private const float smoothCutoff = smoothSpeedRelative / 2;
 
         private float lastTime;
         private Vector2i? lastCell;
@@ -102,14 +101,7 @@ namespace Votyra.Core
 
                                 if (value.IsNotHole)
                                 {
-                                    // var offsetF = (centerValue - value) * smoothSpeedRelative;
-                                    // int offsetI = 0;
-                                    // if (offsetF > smoothCutoff)
-                                    //     offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
-                                    // else if (offsetF < -smoothCutoff)
-                                    //     offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
-                                    // image[index] = value + offsetI;
-                                    image[index] = value + (centerValue - value) * smoothSpeedRelative;
+                                    image[index] = Height.Lerp(centerValue, value, smoothSpeedRelative);
                                 }
                                 else
                                 {

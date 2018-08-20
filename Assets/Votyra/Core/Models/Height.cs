@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Votyra.Core.Models
 {
@@ -188,6 +189,22 @@ namespace Votyra.Core.Models
         public Vector3f ToVector3f(Vector2f vec, float holeValue)
         {
             return new Vector3f(vec.X, vec.Y, IsNotHole ? Value : holeValue);
+        }
+
+        public static Height Lerp(Height a, Height b, float param)
+        {
+            if (a.IsHole || b.IsHole)
+            {
+                return Height.Hole;
+            }
+
+            var offsetF = (a.Value - b.Value) * param;
+            int offsetI = 0;
+            if (offsetF > 0.1f)
+                offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
+            else if (offsetF < -0.1f)
+                offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
+            return (b.Value + offsetI).CreateHeight();
         }
 
         public struct Difference
