@@ -55,13 +55,13 @@ namespace Votyra.Core.Models
             // var minValue = generateWithHoles ?nu : range.Min;
 
             var results = new List<SampledData2i>();
-            for (Height x0y0 = range.Min; x0y0 <= range.Max; x0y0 = x0y0.Above)
+            foreach (Height x0y0 in GenerateValues(range))
             {
-                for (Height x0y1 = range.Min; x0y1 <= range.Max; x0y1 = x0y1.Above)
+                foreach (Height x0y1 in GenerateValues(range))
                 {
-                    for (Height x1y0 = range.Min; x1y0 <= range.Max; x1y0 = x1y0.Above)
+                    foreach (Height x1y0 in GenerateValues(range))
                     {
-                        for (Height x1y1 = range.Min; x1y1 <= range.Max; x1y1 = x1y1.Above)
+                        foreach (Height x1y1 in GenerateValues(range))
                         {
                             results.Add(new SampledData2i
                                 (
@@ -70,39 +70,20 @@ namespace Votyra.Core.Models
                                     x1y0,
                                     x1y1
                                 ));
-                            results.Add(new SampledData2i
-                                (
-                                    Height.Hole,
-                                    x0y1,
-                                    x1y0,
-                                    x1y1
-                                ));
-                            results.Add(new SampledData2i
-                                 (
-                                     x0y0,
-                                     Height.Hole,
-                                     x1y0,
-                                     x1y1
-                                 ));
-                            results.Add(new SampledData2i
-                                 (
-                                     x0y0,
-                                     x0y1,
-                                     Height.Hole,
-                                     x1y1
-                                 ));
-                            results.Add(new SampledData2i
-                                 (
-                                     x0y0,
-                                     x0y1,
-                                     x1y0,
-                                     Height.Hole
-                                 ));
                         }
                     }
                 }
             }
             return results.Distinct();
+        }
+
+        public static IEnumerable<Height> GenerateValues(Range1h range)
+        {
+            for (Height value = range.Min; value <= range.Max; value = value.Above)
+            {
+                yield return value;
+            }
+            yield return Height.Hole;
         }
 
         public static SampledData2i operator -(SampledData2i a)

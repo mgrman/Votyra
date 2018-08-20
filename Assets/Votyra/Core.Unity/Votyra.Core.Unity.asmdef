@@ -3,7 +3,8 @@
     "references": [
         "Votyra.Core",
         "UniRx",
-        "Zenject"
+        "Zenject",
+        "UniRx.Async"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
