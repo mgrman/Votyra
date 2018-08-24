@@ -38,44 +38,40 @@ namespace Votyra.Core.TerrainMeshes
 
         public static void AddQuad(this ITerrainMesh mesh, Vector2i position, SampledData2i data)
         {
-            //var x0y0 = new Vector3f(position.X, position.Y, data.x0y0);
-            //var x0y1 = new Vector3f(position.X, position.Y + 1, data.x0y1);
-            //var x1y0 = new Vector3f(position.X + 1, position.Y, data.x1y0);
-            //var x1y1 = new Vector3f(position.X + 1, position.Y + 1, data.x1y1);
-            var holeCount = data.GetHoleCount();
+            var x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0);
+            var x0y1 = new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1);
+            var x1y0 = new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0);
+            var x1y1 = new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1);
+            mesh.AddQuad(x0y0, x0y1, x1y0, x1y1);
+        }
+
+        public static void AddQuad(this ITerrainMesh mesh, Vector3f? x0y0, Vector3f? x0y1, Vector3f? x1y0, Vector3f? x1y1)
+        {
+            var holeCount = (x0y0.HasValue ? 0 : 1)
+                + (x0y1.HasValue ? 0 : 1)
+                + (x1y0.HasValue ? 0 : 1)
+                + (x1y1.HasValue ? 0 : 1);
 
             if (holeCount == 1)
             {
-                if (data.x0y0.IsHole)
+                if (!x0y0.HasValue)
                 {
-                    var x1y0 = new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0, 0);
-                    var x1y1 = new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1, 0);
-                    var x0y1 = new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1, 0);
-                    mesh.AddTriangle(x1y0, x1y1, x0y1);
+                    mesh.AddTriangle(x1y0.Value, x1y1.Value, x0y1.Value);
                     mesh.AddEmptyTriangle();
                 }
-                else if (data.x0y1.IsHole)
+                else if (!x0y1.HasValue)
                 {
-                    var x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0, 0);
-                    var x1y0 = new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0, 0);
-                    var x1y1 = new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1, 0);
-                    mesh.AddTriangle(x0y0, x1y0, x1y1);
+                    mesh.AddTriangle(x0y0.Value, x1y0.Value, x1y1.Value);
                     mesh.AddEmptyTriangle();
                 }
-                else if (data.x1y0.IsHole)
+                else if (!x1y0.HasValue)
                 {
-                    var x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0, 0);
-                    var x0y1 = new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1, 0);
-                    var x1y1 = new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1, 0);
-                    mesh.AddTriangle(x1y1, x0y1, x0y0);
+                    mesh.AddTriangle(x1y1.Value, x0y1.Value, x0y0.Value);
                     mesh.AddEmptyTriangle();
                 }
-                else if (data.x1y1.IsHole)
+                else if (!x1y1.HasValue)
                 {
-                    var x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0, 0);
-                    var x1y0 = new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0, 0);
-                    var x0y1 = new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1, 0);
-                    mesh.AddTriangle(x0y0, x1y0, x0y1);
+                    mesh.AddTriangle(x0y0.Value, x1y0.Value, x0y1.Value);
                     mesh.AddEmptyTriangle();
                 }
                 else
@@ -86,19 +82,15 @@ namespace Votyra.Core.TerrainMeshes
             }
             else if (holeCount == 0)
             {
-                var x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0, 0);
-                var x0y1 = new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1, 0);
-                var x1y0 = new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0, 0);
-                var x1y1 = new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1, 0);
-                if (IsFlipped(data.x0y0, data.x0y1, data.x1y0, data.x1y1))
+                if (IsFlipped(x0y0.Value, x0y1.Value, x1y0.Value, x1y1.Value))
                 {
-                    mesh.AddTriangle(x0y0, x1y0, x1y1);
-                    mesh.AddTriangle(x1y1, x0y1, x0y0);
+                    mesh.AddTriangle(x0y0.Value, x1y0.Value, x1y1.Value);
+                    mesh.AddTriangle(x1y1.Value, x0y1.Value, x0y0.Value);
                 }
                 else
                 {
-                    mesh.AddTriangle(x0y0, x1y0, x0y1);
-                    mesh.AddTriangle(x1y0, x1y1, x0y1);
+                    mesh.AddTriangle(x0y0.Value, x1y0.Value, x0y1.Value);
+                    mesh.AddTriangle(x1y0.Value, x1y1.Value, x0y1.Value);
                 }
             }
             else
@@ -107,6 +99,7 @@ namespace Votyra.Core.TerrainMeshes
                 mesh.AddEmptyTriangle();
             }
         }
+
 
         public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2i data, Height minusYres_x0y1, Height minusYres_x1y1)
         {
@@ -163,6 +156,26 @@ namespace Votyra.Core.TerrainMeshes
         }
 
         public static bool IsFlipped(Height x0y0, Height x0y1, Height x1y0, Height x1y1)
+        {
+            //TODO
+            return false;
+            // var difMain = MathUtils.Abs(x0y0 - x1y1);
+            // var difMinor = MathUtils.Abs(x1y0 - x0y1);
+            // bool flip;
+            // if (difMain == difMinor)
+            // {
+            //     var sumMain = x0y0 + x1y1;
+            //     var sumMinor = x1y0 + x0y1;
+            //     flip = sumMain < sumMinor;
+            // }
+            // else
+            // {
+            //     flip = difMain < difMinor;
+            // }
+            // return flip;
+        }
+
+        public static bool IsFlipped(Vector3f x0y0, Vector3f x0y1, Vector3f x1y0, Vector3f x1y1)
         {
             //TODO
             return false;
