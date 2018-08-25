@@ -68,7 +68,7 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
                     {
                         var relativePath = csFile.StartsWith(rootPath) ? csFile.Substring(rootPath.Length) : csFile;
                         errorCount++;
-                        Debug.LogError($"File {relativePath} at line {lineIndex} uses not allowed namespace!");
+                        Debug.LogWarning($"File {relativePath} at line {lineIndex} uses not allowed namespace!");
                     }
                 }
             }

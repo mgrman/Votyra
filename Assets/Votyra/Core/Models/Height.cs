@@ -73,6 +73,8 @@ namespace Votyra.Core.Models
             return Value.ToString().PadLeft(4) + " [h]";
         }
 
+        public int RawValue => Value;
+
         public Vector3f ToVector3f(Vector2f vec)
         {
             return new Vector3f(vec.X, vec.Y, Value);

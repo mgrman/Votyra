@@ -9,6 +9,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher2i : ITerrainMesher2i
     {
+        protected const int QuadToTriangles = 2;
         protected readonly Vector2i _cellInGroupCount;
         protected readonly IImageSampler2i _imageSampler;
         protected readonly int _triangleCount;
@@ -28,7 +29,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             _triangleCount = _cellInGroupCount.AreaSum * TrianglesPerCell;
         }
 
-        protected virtual int TrianglesPerCell => 2;
+        protected virtual int QuadsPerCell => 1;
+        protected virtual int TrianglesPerCell => QuadsPerCell * QuadToTriangles;
 
         public virtual void AddCell(Vector2i cellInGroup)
         {
