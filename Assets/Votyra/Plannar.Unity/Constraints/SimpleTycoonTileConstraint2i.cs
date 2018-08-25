@@ -83,8 +83,6 @@ namespace Votyra.Plannar.Images.Constraints
                     invalidatedCellArea = invalidatedCellArea.CombineWith(cell);
 
                     var sample = sampler.Sample(editableMatrix, cell);
-                    if (sample.GetHoleCount() != 0)
-                        continue;
                     var processedSample = process(sample);
 
                     Vector2i cell_x0y0 = sampler.CellToX0Y0(cell);
@@ -95,22 +93,22 @@ namespace Votyra.Plannar.Images.Constraints
                     Height.Difference change = Height.Difference.Zero;
                     if (editableMatrix.ContainsIndex(cell_x0y0))
                     {
-                        change += (editableMatrix[cell_x0y0] - processedSample.x0y0).Abs.DefaultIfHole(Height.Difference.Zero);
+                        change += (editableMatrix[cell_x0y0] - processedSample.x0y0).Abs;
                         editableMatrix[cell_x0y0] = processedSample.x0y0;
                     }
                     if (editableMatrix.ContainsIndex(cell_x0y1))
                     {
-                        change += (editableMatrix[cell_x0y1] - processedSample.x0y1).Abs.DefaultIfHole(Height.Difference.Zero);
+                        change += (editableMatrix[cell_x0y1] - processedSample.x0y1).Abs;
                         editableMatrix[cell_x0y1] = processedSample.x0y1;
                     }
                     if (editableMatrix.ContainsIndex(cell_x1y0))
                     {
-                        change += (editableMatrix[cell_x1y0] - processedSample.x1y0).Abs.DefaultIfHole(Height.Difference.Zero);
+                        change += (editableMatrix[cell_x1y0] - processedSample.x1y0).Abs;
                         editableMatrix[cell_x1y0] = processedSample.x1y0;
                     }
                     if (editableMatrix.ContainsIndex(cell_x1y1))
                     {
-                        change += (editableMatrix[cell_x1y1] - processedSample.x1y1).Abs.DefaultIfHole(Height.Difference.Zero);
+                        change += (editableMatrix[cell_x1y1] - processedSample.x1y1).Abs;
                         editableMatrix[cell_x1y1] = processedSample.x1y1;
                     }
                     if (change > Height.Difference.Zero)
@@ -167,9 +165,6 @@ namespace Votyra.Plannar.Images.Constraints
             SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2.CreateHeight() * ScaleFactor);
             SampledData2i choosenTemplateTile = TileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
-            // var normalizer = new SampledData2iNormalizer(sampleData, TileMap.ValueRange);
-            // SampledData2i choosenTemplateTile = TileMap.GetTile(normalizer.NormalizedValue);
-            // return normalizer.Denormalize(choosenTemplateTile);
         }
     }
 }

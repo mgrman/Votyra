@@ -8,24 +8,30 @@ namespace Votyra.Core
 {
     public class ClickToPaint2i : ITickable
     {
-        [Inject]
-        private IEditableImage2i _editableImage;
+        [Inject(Id = "root")]
+        protected GameObject _root;
 
         [Inject]
         protected IImageSampler2i _sampler;
 
-        [Inject(Id = "root")]
-        protected GameObject _root;
+        private const int maxDistBig = 4;
+
+        private const int maxDistSmall = 1;
 
         private const float Period = 0.1f;
-        private const int maxDistBig = 4;
-        private const int maxDistSmall = 1;
+
         private const float smoothSpeedRelative = 0.2f;
 
-        private float lastTime;
-        private Vector2i? lastCell;
-
         private Height? _centerValueToReuse;
+
+        [Inject]
+        private IEditableImage2i _editableImage;
+
+        [InjectOptional]
+        private IEditableMask2e _editableMask;
+
+        private Vector2i? lastCell;
+        private float lastTime;
 
         public void Tick()
         {
@@ -43,21 +49,6 @@ namespace Votyra.Core
             }
         }
 
-        private void ProcessMouseClick()
-        {
-            // Debug.LogFormat("OnMouseDown on tile.");
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            // Casts the ray and get the first game object hit
-            Physics.Raycast(ray, out hit);
-
-            var localPosition = _root.transform.worldToLocalMatrix.MultiplyPoint(hit.point);
-
-            var imagePosition = _sampler.WorldToImage(new Vector2f(localPosition.x, localPosition.y));
-            OnCellClick(imagePosition);
-        }
-
         private void OnCellClick(Vector2i cell)
         {
             //var cell = new Vector2i(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y));
@@ -69,6 +60,7 @@ namespace Votyra.Core
             lastTime = Time.time;
 
             var editableImage = _editableImage;
+            var editableMask = _editableMask;
             if (editableImage == null)
             {
                 return;
@@ -80,35 +72,44 @@ namespace Votyra.Core
 
                 using (var image = editableImage.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(maxDist + 2, maxDist + 2))))
                 {
-                    Height centerValue;
-                    if (_centerValueToReuse.HasValue)
+                    using (var mask = editableMask?.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(maxDist + 2, maxDist + 2))))
                     {
-                        centerValue = _centerValueToReuse.Value;
-                    }
-                    else
-                    {
-                        centerValue = image[cell];
-                        _centerValueToReuse = centerValue;
-                    }
-                    if (centerValue.IsNotHole)
-                    {
+                        Height centerValue;
+                        if (_centerValueToReuse.HasValue)
+                        {
+                            centerValue = _centerValueToReuse.Value;
+                        }
+                        else
+                        {
+                            centerValue = image[cell];
+                            _centerValueToReuse = centerValue;
+                        }
+
+                        bool fillHole = Input.GetMouseButton(0);
+
                         for (int ox = -maxDist; ox <= maxDist; ox++)
                         {
                             for (int oy = -maxDist; oy <= maxDist; oy++)
                             {
                                 var index = cell + new Vector2i(ox, oy);
                                 var value = image[index];
+                                image[index] = Height.Lerp(centerValue, value, smoothSpeedRelative);
 
-                                if (value.IsNotHole)
+                                if (mask != null)
                                 {
-                                    image[index] = Height.Lerp(centerValue, value, smoothSpeedRelative);
-                                }
-                                else
-                                {
-                                    image[index] = centerValue;
+                                    var maskValue = mask[index];
+                                    if (fillHole)
+                                    {
+                                        mask[index] = MaskValues.Terrain;
+                                    }
+                                    else
+                                    {
+                                        mask[index] = MaskValues.Hole;
+                                    }
                                 }
                             }
                         }
+
                     }
                 }
             }
@@ -140,14 +141,26 @@ namespace Votyra.Core
 
                             var dist = Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy));
                             var value = image[index];
-                            if (value.IsNotHole)
-                            {
-                                image[index] = value + (multiplier * (maxDist - dist)).CreateHeightDifference();
-                            }
+                            image[index] = value + (multiplier * (maxDist - dist)).CreateHeightDifference();
                         }
                     }
                 }
             }
+        }
+
+        private void ProcessMouseClick()
+        {
+            // Debug.LogFormat("OnMouseDown on tile.");
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            // Casts the ray and get the first game object hit
+            Physics.Raycast(ray, out hit);
+
+            var localPosition = _root.transform.worldToLocalMatrix.MultiplyPoint(hit.point);
+
+            var imagePosition = _sampler.WorldToImage(new Vector2f(localPosition.x, localPosition.y));
+            OnCellClick(imagePosition);
         }
     }
 }

@@ -32,28 +32,7 @@ namespace Votyra.Plannar.Images.Constraints
             new SampledData2i(-1, 0, 0, 0),
 
             //slopeDiagonal
-            new SampledData2i(0, -1, -1, 0),
-
-            //plane with hole
-            new SampledData2i(0, 0, 0, null),
-
-            //slope with hole
-            new SampledData2i(-1, 0, -1, null),
-
-            //slope with hole
-            new SampledData2i(-1, 0, null, 0),
-
-            //slope with hole
-            new SampledData2i(-1, null, -1, 0),
-
-            //slope with hole
-            new SampledData2i(null, 0, -1, 0),
-
-            //partialUpSlope with hole
-            new SampledData2i(null, -1, -1, 0),
-
-            //partialDownSlope with hole
-            new SampledData2i(-1, 0, 0, null),
+            new SampledData2i(0, -1, -1, 0)
         }
         .CreateExpandedTileMap2i(ScaleFactor);
 
@@ -73,10 +52,6 @@ namespace Votyra.Plannar.Images.Constraints
             invalidatedCellArea.ForeachPointExlusive(cell =>
             {
                 var sample = sampler.Sample(editableMatrix, cell);
-                if (sample.GetHoleCount() == 0)
-                {
-                }
-
                 var processedSample = Process(sample);
 
                 Vector2i cell_x0y0 = sampler.CellToX0Y0(cell);

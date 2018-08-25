@@ -27,11 +27,8 @@ namespace Votyra.Core.Models
                 .GenerateAllValuesWithHoles(ValueRange)
                 .ToDictionary(inputValue => inputValue, inputValue =>
                 {
-                    if (inputValue.GetHoleCount() == 0)
-                    {
-                    }
                     SampledData2i choosenTemplateTile = default(SampledData2i);
-                    Height.Difference choosenTemplateTileDiff = Height.Difference.Infinite;
+                    Height.Difference choosenTemplateTileDiff = Height.Difference.MaxValue;
                     foreach (SampledData2i tile in Templates)
                     {
                         var value = SampledData2i.Dif(tile, inputValue);
@@ -41,7 +38,7 @@ namespace Votyra.Core.Models
                             choosenTemplateTileDiff = value;
                         }
                     }
-                    return choosenTemplateTile.SetHolesUsing(inputValue);
+                    return choosenTemplateTile;
                 });
 
 #if VERBOSE

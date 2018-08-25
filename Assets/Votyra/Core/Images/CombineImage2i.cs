@@ -11,8 +11,8 @@ namespace Votyra.Core.Images
 
         public enum Operations
         {
-            // Add,
-            // Subtract,
+            Add,
+            Subtract,
             // Multiply,
             // Divide
         }
@@ -24,13 +24,13 @@ namespace Votyra.Core.Images
             Operation = operation;
             switch (Operation)
             {
-                // case Operations.Add:
-                //     RangeZ = new Range1h(imageA.RangeZ.Min + imageB.RangeZ.Min, imageA.RangeZ.Max + imageB.RangeZ.Max);
-                //     break;
+                case Operations.Add:
+                    RangeZ = new Range1h(imageA.RangeZ.Min + (imageB.RangeZ.Min - Height.Default), imageA.RangeZ.Max + (imageB.RangeZ.Max - Height.Default));
+                    break;
 
-                // case Operations.Subtract:
-                //     RangeZ = new Range1h(imageA.RangeZ.Min - imageB.RangeZ.Min, imageA.RangeZ.Max - imageB.RangeZ.Max);
-                //     break;
+                case Operations.Subtract:
+                    RangeZ = new Range1h(imageA.RangeZ.Min - (imageB.RangeZ.Min - Height.Default), imageA.RangeZ.Max - (imageB.RangeZ.Max - Height.Default));
+                    break;
 
                 // case Operations.Multiply:
                 //     RangeZ = new Range1i(imageA.RangeZ.Min * imageB.RangeZ.Min, imageA.RangeZ.Max * imageB.RangeZ.Max);
@@ -52,14 +52,13 @@ namespace Votyra.Core.Images
         {
             Height a = ImageA.Sample(point);
             Height b = ImageB.Sample(point);
-            throw new NotImplementedException();
             switch (Operation)
             {
-                // case Operations.Add:
-                //     return a + (b - Height.Default);
+                case Operations.Add:
+                    return a + (b - Height.Default);
 
-                // case Operations.Subtract:
-                //     return a + (Height.Default - b);
+                case Operations.Subtract:
+                    return a + (Height.Default - b);
 
                 // case Operations.Multiply:
                 //     return a * b;
@@ -72,9 +71,5 @@ namespace Votyra.Core.Images
             }
         }
 
-        public bool AnyData(Range2i range)
-        {
-            return ImageA.AnyData(range) || ImageB.AnyData(range);
-        }
     }
 }

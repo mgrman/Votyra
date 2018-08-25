@@ -7,7 +7,5 @@ namespace Votyra.Core.Images
         Range1h RangeZ { get; }
 
         Height Sample(Vector2i point);
-
-        bool AnyData(Range2i range);
     }
 }

@@ -9,18 +9,17 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher2i : ITerrainMesher2i
     {
-        protected readonly IImageSampler2i _imageSampler;
         protected readonly Vector2i _cellInGroupCount;
+        protected readonly IImageSampler2i _imageSampler;
         protected readonly int _triangleCount;
 
-        protected virtual int TrianglesPerCell => 2;
-
-        protected IImage2i _image;
-        protected Vector2i _groupPosition;
-        protected Height _minZ;
         protected Vector3f _bounds_size;
-        protected IPooledTerrainMesh _pooledMesh;
+        protected Vector2i _groupPosition;
+        protected IImage2i _image;
+        protected IMask2e _mask;
         protected ITerrainMesh _mesh;
+        protected Height _minZ;
+        protected IPooledTerrainMesh _pooledMesh;
 
         public TerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
         {
@@ -29,20 +28,40 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             _triangleCount = _cellInGroupCount.AreaSum * TrianglesPerCell;
         }
 
-        public void Initialize(IImage2i image)
+        protected virtual int TrianglesPerCell => 2;
+
+        public virtual void AddCell(Vector2i cellInGroup)
+        {
+            Vector2i cell = cellInGroup + _groupPosition;
+
+            Vector2i position = _groupPosition + cellInGroup;
+
+            var data = _imageSampler.Sample(_image, cell);
+            var mask = _imageSampler.Sample(_mask, cell);
+
+            _mesh.AddQuad(position, data, mask);
+        }
+
+        public IPooledTerrainMesh GetResultingMesh()
+        {
+            _pooledMesh.FinalizeMesh();
+            return _pooledMesh;
+        }
+
+        public void Initialize(IImage2i image, IMask2e mask)
         {
             _image = image;
+            _mask = mask;
 
             this._minZ = _image.RangeZ.Min;
             this._bounds_size = new Vector2f(_cellInGroupCount.X, _cellInGroupCount.Y)
-                .ToVector3f(_image.RangeZ.Size)
-                ?? Vector3f.Zero;
+                .ToVector3f(_image.RangeZ.Size);
         }
 
         public void InitializeGroup(Vector2i group)
         {
             var bounds = Range3f.FromMinAndSize(new Vector2f((group.X * _cellInGroupCount.X), (group.Y * _cellInGroupCount.Y))
-                .ToVector3f(_minZ) ?? Vector3f.Zero,
+                .ToVector3f(_minZ),
                 _bounds_size);
 
             this._groupPosition = _cellInGroupCount * group;
@@ -51,23 +70,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             // this._pooledMesh = PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty();
             this._mesh = this._pooledMesh.Mesh;
             _mesh.Clear(bounds);
-        }
-
-        public virtual void AddCell(Vector2i cellInGroup)
-        {
-            Vector2i cell = cellInGroup + _groupPosition;
-
-            Vector2i position = _groupPosition + cellInGroup;
-
-            SampledData2i data = _imageSampler.Sample(_image, cell);
-
-            _mesh.AddQuad(position, data);
-        }
-
-        public IPooledTerrainMesh GetResultingMesh()
-        {
-            _pooledMesh.FinalizeMesh();
-            return _pooledMesh;
         }
     }
 }

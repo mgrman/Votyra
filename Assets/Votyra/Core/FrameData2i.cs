@@ -16,6 +16,7 @@ namespace Votyra.Core
             Matrix4x4f parentContainerWorldToLocalMatrix,
             IReadOnlySet<Vector2i> existingGroups,
             IImage2i image,
+            IMask2e mask,
             Range2i invalidatedArea_imageSpace)
         {
             CameraPosition = cameraPosition;
@@ -25,6 +26,7 @@ namespace Votyra.Core
             ParentContainerWorldToLocalMatrix = parentContainerWorldToLocalMatrix;
             ExistingGroups = existingGroups;
             Image = image;
+            Mask = mask;
 
             RangeZ = image?.RangeZ ?? Range1h.Default;
 
@@ -41,6 +43,7 @@ namespace Votyra.Core
         public Range1h RangeZ { get; }
         public IReadOnlySet<Vector2i> ExistingGroups { get; }
         public IImage2i Image { get; }
+        public IMask2e Mask { get; }
         public Range2i InvalidatedArea_imageSpace { get; }
 
         public void Dispose()

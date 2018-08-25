@@ -16,6 +16,9 @@ namespace Votyra.Plannar
         [Inject]
         protected IImage2iProvider _imageProvider;
 
+        [InjectOptional]
+        protected IMask2eProvider _maskProvider;
+
         [Inject]
         protected IMeshUpdater<Vector2i> _meshUpdater;
 
@@ -30,6 +33,7 @@ namespace Votyra.Plannar
             var existingGroups = _meshUpdater.ExistingGroups;
 
             var image = _imageProvider.CreateImage();
+            var mask = _maskProvider?.CreateMask();
 
             var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
 
@@ -49,6 +53,7 @@ namespace Votyra.Plannar
                 container.transform.worldToLocalMatrix.ToMatrix4x4f(),
                 existingGroups,
                 image,
+                mask,
                 (image as IImageInvalidatableImage2i)?.InvalidatedArea ?? Range2i.All
             );
         }

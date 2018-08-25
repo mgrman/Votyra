@@ -40,6 +40,20 @@ namespace Votyra.Core.ImageSamplers
             return new SampledData2i(x0y0, x0y1, x1y0, x1y1);
         }
 
+        public static SampledMask2e Sample(this IImageSampler2i sampler, IMask2e mask, Vector2i pos)
+        {
+            if (mask == null)
+            {
+                return new SampledMask2e(MaskValues.Terrain, MaskValues.Terrain, MaskValues.Terrain, MaskValues.Terrain);
+            }
+            var x0y0 = mask.Sample(sampler.CellToX0Y0(pos));
+            var x0y1 = mask.Sample(sampler.CellToX0Y1(pos));
+            var x1y0 = mask.Sample(sampler.CellToX1Y0(pos));
+            var x1y1 = mask.Sample(sampler.CellToX1Y1(pos));
+
+            return new SampledMask2e(x0y0, x0y1, x1y0, x1y1);
+        }
+
         public static Height SampleX0Y0(this IImageSampler2i sampler, IImage2i image, Vector2i pos)
         {
             return image.Sample(sampler.CellToX0Y0(pos));

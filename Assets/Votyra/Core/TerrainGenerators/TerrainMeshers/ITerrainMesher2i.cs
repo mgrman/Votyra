@@ -10,7 +10,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         IPooledTerrainMesh GetResultingMesh();
 
-        void Initialize(IImage2i image);
+        void Initialize(IImage2i image, IMask2e mask);
 
         void InitializeGroup(Vector2i group);
     }

@@ -9,9 +9,9 @@ namespace Votyra.Core.TerrainGenerators
 {
     public class TerrainGenerator2i : ITerrainGenerator<IFrameData2i, Vector2i>
     {
+        private readonly Vector2i _cellInGroupCount;
         private readonly ITerrainMesher2i _mesher;
         private readonly IProfiler _profiler;
-        private readonly Vector2i _cellInGroupCount;
 
         public TerrainGenerator2i(ITerrainMesher2i mesher, ITerrainConfig terrainConfig, IProfiler profiler)
         {
@@ -23,11 +23,12 @@ namespace Votyra.Core.TerrainGenerators
         public IReadOnlyPooledDictionary<Vector2i, ITerrainMesh> Generate(IFrameData2i data, IEnumerable<Vector2i> groupsToUpdate)
         {
             var image = data.Image;
+            var mask = data.Mask;
             PooledDictionary<Vector2i, ITerrainMesh> meshes;
 
             using (_profiler.Start("init"))
             {
-                _mesher.Initialize(image);
+                _mesher.Initialize(image, mask);
 
                 meshes = PooledDictionary<Vector2i, ITerrainMesh>.Create();
             }

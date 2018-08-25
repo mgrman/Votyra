@@ -9,6 +9,7 @@ namespace Votyra.Core
         Range1h RangeZ { get; }
         IReadOnlySet<Vector2i> ExistingGroups { get; }
         IImage2i Image { get; }
+        IMask2e Mask { get; }
         Range2i InvalidatedArea_imageSpace { get; }
     }
 }

@@ -36,12 +36,12 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddQuad(this ITerrainMesh mesh, Vector2i position, SampledData2i data)
+        public static void AddQuad(this ITerrainMesh mesh, Vector2i position, SampledData2i data, SampledMask2e maskData)
         {
-            var x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0);
-            var x0y1 = new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1);
-            var x1y0 = new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0);
-            var x1y1 = new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1);
+            var x0y0 = maskData.x0y0.IsNotHole() ? new Vector2f(position.X, position.Y).ToVector3f(data.x0y0) : (Vector3f?)null;
+            var x0y1 = maskData.x0y1.IsNotHole() ? new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1) : (Vector3f?)null;
+            var x1y0 = maskData.x1y0.IsNotHole() ? new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0) : (Vector3f?)null;
+            var x1y1 = maskData.x1y1.IsNotHole() ? new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1) : (Vector3f?)null;
             mesh.AddQuad(x0y0, x0y1, x1y0, x1y1);
         }
 
@@ -101,14 +101,14 @@ namespace Votyra.Core.TerrainMeshes
         }
 
 
-        public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2i data, Height minusYres_x0y1, Height minusYres_x1y1)
+        public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2i data, SampledMask2e maskData, SampledData2i minusYres, SampledMask2e minusYresMaskData)
         {
-            if (data.x1y0.IsNotHole && data.x0y0.IsNotHole && minusYres_x0y1.IsNotHole && minusYres_x1y1.IsNotHole)
+            if (maskData.x1y0.IsNotHole() && maskData.x0y0.IsNotHole() && minusYresMaskData.x0y1.IsNotHole() && minusYresMaskData.x1y1.IsNotHole())
             {
-                var pos_x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0, 0);
-                var pos_x1y0 = new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0, 0);
-                var pos_x0y0_lowerX = new Vector2f(position.X, position.Y).ToVector3f(minusYres_x0y1, 0);
-                var pos_x1y0_lowerX = new Vector2f(position.X + 1, position.Y).ToVector3f(minusYres_x1y1, 0);
+                var pos_x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0);
+                var pos_x1y0 = new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0);
+                var pos_x0y0_lowerX = new Vector2f(position.X, position.Y).ToVector3f(minusYres.x0y1);
+                var pos_x1y0_lowerX = new Vector2f(position.X + 1, position.Y).ToVector3f(minusYres.x1y1);
                 mesh.AddWall(pos_x1y0, pos_x0y0, pos_x0y0_lowerX, pos_x1y0_lowerX);
             }
             else
@@ -118,14 +118,14 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddWallAlongY(this ITerrainMesh mesh, Vector2i position, SampledData2i data, Height minusXres_x1y0, Height minusXres_x1y1)
+        public static void AddWallAlongY(this ITerrainMesh mesh, Vector2i position, SampledData2i data, SampledMask2e maskData, SampledData2i minusXres, SampledMask2e minusXresMaskData)
         {
-            if (data.x0y0.IsNotHole && data.x0y1.IsNotHole && minusXres_x1y0.IsNotHole && minusXres_x1y1.IsNotHole)
+            if (maskData.x0y0.IsNotHole() && maskData.x0y1.IsNotHole() && minusXresMaskData.x1y0.IsNotHole() && minusXresMaskData.x1y1.IsNotHole())
             {
-                var pos_x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0, 0);
-                var pos_x0y1 = new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1, 0);
-                var pos_x0y0_lowerY = new Vector2f(position.X, position.Y).ToVector3f(minusXres_x1y0, 0);
-                var pos_x0y1_lowerY = new Vector2f(position.X, position.Y + 1).ToVector3f(minusXres_x1y1, 0);
+                var pos_x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0);
+                var pos_x0y1 = new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1);
+                var pos_x0y0_lowerY = new Vector2f(position.X, position.Y).ToVector3f(minusXres.x1y0);
+                var pos_x0y1_lowerY = new Vector2f(position.X, position.Y + 1).ToVector3f(minusXres.x1y1);
                 mesh.AddWall(pos_x0y0, pos_x0y1, pos_x0y1_lowerY, pos_x0y0_lowerY);
             }
             else

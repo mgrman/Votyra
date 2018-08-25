@@ -20,17 +20,18 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             Vector2i position = _groupPosition + cellInGroup;
 
             SampledData2i data = _imageSampler.Sample(_image, cell);
+            SampledMask2e maskData = _imageSampler.Sample(_mask, cell);
 
-            var minusXres_x1y0 = _imageSampler.SampleX1Y0(_image, new Vector2i(cell.X - 1, cell.Y - 0));
-            var minusXres_x1y1 = _imageSampler.SampleX1Y1(_image, new Vector2i(cell.X - 1, cell.Y - 0));
-            var minusYres_x0y1 = _imageSampler.SampleX0Y1(_image, new Vector2i(cell.X - 0, cell.Y - 1));
-            var minusYres_x1y1 = _imageSampler.SampleX1Y1(_image, new Vector2i(cell.X - 0, cell.Y - 1));
-            // Debug.Log($"{minusXres_x1y0} {minusXres_x1y1}");
 
-            _mesh.AddQuad(position, data);
+            SampledData2i minusXres = _imageSampler.Sample(_image, cell + new Vector2i(-1, 0));
+            SampledMask2e minusXresMaskData = _imageSampler.Sample(_mask, cell + new Vector2i(-1, 0));
+            SampledData2i minusYres = _imageSampler.Sample(_image, cell + new Vector2i(0, -1));
+            SampledMask2e minusYresMaskData = _imageSampler.Sample(_mask, cell + new Vector2i(0, -1));
 
-            _mesh.AddWallAlongX(position, data, minusYres_x0y1, minusYres_x1y1);
-            _mesh.AddWallAlongY(position, data, minusXres_x1y0, minusXres_x1y1);
+            _mesh.AddQuad(position, data, maskData);
+
+            _mesh.AddWallAlongX(position, data, maskData, minusYres, minusYresMaskData);
+            _mesh.AddWallAlongY(position, data, maskData, minusXres, minusXresMaskData);
         }
     }
 }

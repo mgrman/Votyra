@@ -21,8 +21,8 @@ namespace Votyra.Core.Images
 
         private static Range1h CalculateRangeZ(LockableMatrix2<Height> values)
         {
-            Height min = Height.Hole;
-            Height max = Height.Hole;
+            Height min = Height.MaxValue;
+            Height max = Height.MinValue;
             values.ForeachPointExlusive(i =>
             {
                 Height val = values[i];
@@ -30,7 +30,7 @@ namespace Votyra.Core.Images
                 min = Height.Min(min, val);
                 max = Height.Max(max, val);
             });
-            return Height.Range(min, max) ?? Range1h.Default;
+            return Height.Range(min, max);
         }
 
         public Height Sample(Vector2i point)
@@ -46,18 +46,6 @@ namespace Votyra.Core.Images
         public void FinishUsing()
         {
             Image.Unlock(this);
-        }
-
-        public bool AnyData(Range2i range)
-        {
-            bool allHoles = true;
-            range.ForeachPointExlusive(o =>
-            {
-                var value = Sample(o);
-                allHoles = allHoles && value.IsHole;
-            });
-
-            return !allHoles;
         }
 
         public void Dispose()

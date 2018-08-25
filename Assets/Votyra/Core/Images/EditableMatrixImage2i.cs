@@ -93,10 +93,7 @@ namespace Votyra.Core.Images
                 set
                 {
                     var existingValue = _editableMatrix[pos.X, pos.Y];
-                    if (value.IsNotHole && existingValue.IsNotHole)
-                    {
-                        _changeCounter += value - existingValue;
-                    }
+                    _changeCounter += value - existingValue;
                     _editableMatrix[pos.X, pos.Y] = value;
                 }
             }

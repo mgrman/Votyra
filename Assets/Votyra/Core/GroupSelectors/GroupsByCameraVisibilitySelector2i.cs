@@ -9,8 +9,8 @@ namespace Votyra.Core.GroupSelectors
 {
     public class GroupsByCameraVisibilitySelector2i : IGroupSelector<IFrameData2i, Vector2i>
     {
-        private readonly IImageSampler2i _imageSampler;
         private readonly Vector2i _cellInGroupCount;
+        private readonly IImageSampler2i _imageSampler;
         private HashSet<Vector2i> _skippedAreas = new HashSet<Vector2i>();
 
         public GroupsByCameraVisibilitySelector2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
@@ -57,7 +57,7 @@ namespace Votyra.Core.GroupSelectors
             cameraBoundsGroups.ForeachPointExlusive(group =>
             {
                 var groupBoundsMin = (group * _cellInGroupCount).ToVector2f().ToVector3f(minZ);
-                var groupBounds = Range3f.FromMinAndSize(groupBoundsMin ?? Vector3f.Zero, bounds_size ?? Vector3f.Zero);
+                var groupBounds = Range3f.FromMinAndSize(groupBoundsMin, bounds_size);
 
                 bool isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)
@@ -76,7 +76,7 @@ namespace Votyra.Core.GroupSelectors
                             var groupBoundsXYMin = (group * _cellInGroupCount);
                             var groupBoundsXY = Range2i.FromMinAndSize(groupBoundsXYMin, _cellInGroupCount);
                             var groupBounds_image = _imageSampler.WorldToImage(groupBoundsXY);
-                            var noData = _skippedAreas.Contains(group) || !options.Image.AnyData(groupBounds_image);
+                            var noData = _skippedAreas.Contains(group) || (options.Mask != null && (!options.Mask.AnyData(groupBounds_image)));
                             if (noData)
                             {
                                 groupsToKeep.Add(group);
