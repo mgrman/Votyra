@@ -12,7 +12,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
     {
         protected readonly float[,] values = new float[4, 4];
 
-        protected const int subdivision = 3;
+        protected const int subdivision = 2;
 
         public BicubicTerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
         : base(terrainConfig, imageSampler)
