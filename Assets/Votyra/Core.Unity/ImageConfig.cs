@@ -5,7 +5,7 @@ namespace Votyra.Core.Images
 {
     public class ImageConfig : IImageConfig
     {
-        public ImageConfig([Inject(Id = "imageSize")]Vector3i imageSize)
+        public ImageConfig([ConfigInject("imageSize")]Vector3i imageSize)
         {
             ImageSize = imageSize;
         }

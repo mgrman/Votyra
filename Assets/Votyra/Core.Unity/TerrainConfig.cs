@@ -5,7 +5,7 @@ namespace Votyra.Core.Images
 {
     public class TerrainConfig : ITerrainConfig
     {
-        public TerrainConfig([Inject(Id = "cellInGroupCount")]Vector3i cellInGroupCount, [Inject(Id = "flipTriangles")]bool flipTriangles, [Inject(Id = "drawBounds")]bool drawBounds, [Inject(Id = "async")] bool async)
+        public TerrainConfig([ConfigInject("cellInGroupCount")]Vector3i cellInGroupCount, [ConfigInject("flipTriangles")]bool flipTriangles, [ConfigInject("drawBounds")]bool drawBounds, [ConfigInject("async")] bool async)
         {
             CellInGroupCount = cellInGroupCount;
             FlipTriangles = flipTriangles;

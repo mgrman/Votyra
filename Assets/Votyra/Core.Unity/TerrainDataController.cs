@@ -45,26 +45,36 @@ namespace Votyra.Core.Unity
                 .Synchronize()
                 .Subscribe(data =>
                 {
-                    if (_activeTerrainRoot != null)
+                    try
                     {
-                        _activeTerrainRoot.Destroy();
-                        _activeTerrainRoot = null;
+                        if (_activeTerrainRoot != null)
+                        {
+                            _activeTerrainRoot.Destroy();
+                            _activeTerrainRoot = null;
+                        }
+
+                        if (data.activeAlgorithm == null || data.activeAlgorithm.Prefab == null)
+                            return;
+
+                        if (data.config != null)
+                        {
+                            foreach (var configItem in data.config)
+                            {
+                                var type = configItem.Type;
+                                var value = configItem.Value;
+
+                                container.UnbindId(type, configItem.Id);
+                                container.Bind(type).WithId(configItem.Id).FromInstance(value);
+                            }
+                        }
+
+                        var instance = container.InstantiatePrefab(data.activeAlgorithm.Prefab, context.transform);
+                        _activeTerrainRoot = instance;
                     }
-
-                    if (data.activeAlgorithm == null || data.activeAlgorithm.Prefab == null)
-                        return;
-
-                    foreach (var configItem in data.config)
+                    catch (Exception ex)
                     {
-                        var type = configItem.Type;
-                        var value = configItem.Value;
-
-                        container.UnbindId(type, configItem.Id);
-                        container.Bind(type).WithId(configItem.Id).FromInstance(value);
+                        Debug.LogException(ex);
                     }
-
-                    var instance = container.InstantiatePrefab(data.activeAlgorithm.Prefab, context.transform);
-                    _activeTerrainRoot = instance;
                 });
         }
 

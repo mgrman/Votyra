@@ -63,9 +63,9 @@ namespace Votyra.Core.Editor
 
                     var ctors = configType.GetConstructors();
 
-                    var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<InjectAttribute>() != null))
+                    var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null))
                         .SelectMany(o => o.GetParameters()
-                            .Select(p => new ConfigItem(p.GetCustomAttribute<InjectAttribute>()?.Id as string, p.ParameterType, null))
+                            .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()?.Id as string, p.ParameterType, null))
                             .Where(a => a.Id != null));
 
                     foreach (var configItem in configItems)
