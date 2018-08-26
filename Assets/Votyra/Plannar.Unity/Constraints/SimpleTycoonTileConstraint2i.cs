@@ -15,7 +15,9 @@ namespace Votyra.Plannar.Images.Constraints
         private static readonly IComparer<Height> DefaultComparer = Comparer<Height>.Default;
 
         private readonly int _scaleFactor;
-        private TileMap2i _tileMap;
+        private static TileMap2i _tileMap;
+        private static int? _tileMapScaleFactor;
+
 
         private IImageSampler2i _sampler;
 
@@ -23,26 +25,30 @@ namespace Votyra.Plannar.Images.Constraints
         {
             _sampler = sampler;
             _scaleFactor = scaleFactor;
-            _tileMap = new[]
-                {
-                    new SampledData2i(0, 0, 0, 0),
+            if (_scaleFactor != _tileMapScaleFactor)
+            {
+                _tileMap = new[]
+                    {
+                        new SampledData2i(0, 0, 0, 0),
 
-                    //slope
-                    new SampledData2i(-1, 0, -1, 0),
+                        //slope
+                        new SampledData2i(-1, 0, -1, 0),
 
-                    //slopeDiagonal
-                    new SampledData2i(-2, -1, -1, 0),
+                        //slopeDiagonal
+                        new SampledData2i(-2, -1, -1, 0),
 
-                    //partialUpSlope
-                    new SampledData2i(-1, -1, -1, 0),
+                        //partialUpSlope
+                        new SampledData2i(-1, -1, -1, 0),
 
-                    //partialDownSlope
-                    new SampledData2i(-1, 0, 0, 0),
+                        //partialDownSlope
+                        new SampledData2i(-1, 0, 0, 0),
 
-                    //slopeDiagonal
-                    new SampledData2i(0, -1, -1, 0)
-                }
-                .CreateExpandedTileMap2i(scaleFactor);
+                        //slopeDiagonal
+                        new SampledData2i(0, -1, -1, 0)
+                    }
+                    .CreateExpandedTileMap2i(scaleFactor);
+                _tileMapScaleFactor = scaleFactor;
+            }
         }
 
         public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<Height> editableMatrix)

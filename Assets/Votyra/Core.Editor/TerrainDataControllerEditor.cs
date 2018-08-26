@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
+using UnityEditorInternal;
 
 namespace Votyra.Core.Editor
 {
@@ -69,9 +70,30 @@ namespace Votyra.Core.Editor
         public override void OnInspectorGUI()
         {
             var controller = this.target as TerrainDataController;
-            this.DrawDefaultInspector();
+            var list = new ReorderableList(serializedObject, serializedObject.FindProperty(nameof(TerrainDataController._availableTerrainAlgorithms)), true, true, true, true);
+            list.drawHeaderCallback = (Rect rect) =>
+            {
+                EditorGUI.LabelField(rect, "Terrain algorithms");
+            };
+            list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+            {
+                var element = list.serializedProperty.GetArrayElementAtIndex(index);
+                rect.y += 2;
+                var isSelected = index == controller._activeTerrainAlgorithm;
 
-            var oldConfigValues = controller.Config;
+                isSelected = EditorGUI.Toggle(new Rect(rect.x, rect.y, 20, EditorGUIUtility.singleLineHeight), GUIContent.none, isSelected, EditorStyles.radioButton);
+                if (isSelected)
+                {
+                    controller._activeTerrainAlgorithm = index;
+                }
+
+                EditorGUI.PropertyField(new Rect(rect.x + 20, rect.y, rect.width - 20, EditorGUIUtility.singleLineHeight), element, GUIContent.none);
+            };
+            serializedObject.Update();
+            list.DoLayoutList();
+            serializedObject.ApplyModifiedProperties();
+
+            var oldConfigValues = controller.Config.ToList();
             var newConfigValues = new List<ConfigItem>();
 
             var activeAlgorith = controller._availableTerrainAlgorithms[controller._activeTerrainAlgorithm];
@@ -92,69 +114,108 @@ namespace Votyra.Core.Editor
                         continue;
                     }
 
-                    EditorGUILayout.LabelField($"{configType.Name}");
+                    EditorGUILayout.LabelField($"{configType.Name}", EditorStyles.boldLabel);
                     foreach (var configItem in configItems)
                     {
-                        EditorGUILayout.LabelField($"- {configItem.Id}[{configItem.Type.Name}]");
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
                         var oldConfigItem = oldConfigValues?.FirstOrDefault(o => o.Id == configItem.Id && o.Type == configItem.Type);
 
+                        if (oldConfigItem != null)
+                        {
+                            oldConfigValues.Remove(oldConfigItem);
+                        }
                         object oldValue = oldConfigItem?.Value;
-                        object newValue;
+                        var newValue = GetNewValue(configItem.Type, oldValue);
 
-                        if (typeof(UnityEngine.Object).IsAssignableFrom(configItem.Type))
-                        {
-                            newValue = EditorGUILayout.ObjectField(oldValue as UnityEngine.Object, configItem.Type, true);
-                        }
-                        else if (typeof(bool).IsAssignableFrom(configItem.Type))
-                        {
-                            var oldBoolValue = oldValue as bool? ?? false;
-                            newValue = EditorGUILayout.Toggle(oldBoolValue);
-                        }
-                        else if (typeof(int).IsAssignableFrom(configItem.Type))
-                        {
-                            var oldIntValue = oldValue as int? ?? 0;
-                            newValue = EditorGUILayout.IntField(oldIntValue);
-                        }
-                        else if (typeof(float).IsAssignableFrom(configItem.Type))
-                        {
-                            var oldFloatValue = oldValue as float? ?? 0;
-                            newValue = EditorGUILayout.FloatField(oldFloatValue);
-                        }
-                        else if (typeof(Vector3i).IsAssignableFrom(configItem.Type))
-                        {
-                            var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
-                            var newVector3Value = EditorGUILayout.Vector3Field("", oldVector3iValue.ToVector3f().ToVector3());
-                            newValue = newVector3Value.ToVector3f()
-                                .RoundToVector3i();
-                        }
-                        else if (typeof(Vector3f).IsAssignableFrom(configItem.Type))
-                        {
-                            var oldVector3fValue = oldValue as Vector3f? ?? Vector3f.Zero;
-                            newValue = EditorGUILayout.Vector3Field("", oldVector3fValue.ToVector3()).ToVector3f();
-                        }
-                        else
-                        {
-                            var oldValueJson = Newtonsoft.Json.JsonConvert.SerializeObject(oldValue);
-                            var newJsonValue = EditorGUILayout.TextArea(oldValueJson);
-                            try
-                            {
-                                newValue = Newtonsoft.Json.JsonConvert.DeserializeObject(newJsonValue, configItem.Type);
-                            }
-                            catch
-                            {
-                                newValue = null;
-                            }
-                            newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
-                        }
                         newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
+                        EditorGUILayout.EndHorizontal();
                     }
                 }
             }
+
+            if (oldConfigValues.Any())
+            {
+                EditorGUILayout.LabelField($"Unused", EditorStyles.boldLabel);
+                foreach (var configItem in oldConfigValues.ToArray())
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    var delete = GUILayout.Button("✘", GUILayout.Width(20));
+                    EditorGUILayout.LabelField($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
+                    var oldConfigItem = oldConfigValues?.FirstOrDefault(o => o.Id == configItem.Id && o.Type == configItem.Type);
+
+                    if (oldConfigItem != null)
+                    {
+                        oldConfigValues.Remove(oldConfigItem);
+                    }
+                    object oldValue = oldConfigItem?.Value;
+                    var newValue = GetNewValue(configItem.Type, oldValue);
+
+
+                    if (!delete)
+                    {
+                        newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+            }
+
             controller.Config = newConfigValues.ToArray();
             if (Application.isPlaying)
             {
                 controller.SendMessage("OnValidate", null, SendMessageOptions.DontRequireReceiver);
             }
+        }
+
+        private object GetNewValue(Type type, object oldValue)
+        {
+            object newValue;
+
+            if (typeof(UnityEngine.Object).IsAssignableFrom(type))
+            {
+                newValue = EditorGUILayout.ObjectField(oldValue as UnityEngine.Object, type, true, GUILayout.MaxWidth(200));
+            }
+            else if (typeof(bool).IsAssignableFrom(type))
+            {
+                var oldBoolValue = oldValue as bool? ?? false;
+                newValue = EditorGUILayout.Toggle(oldBoolValue, GUILayout.MaxWidth(200));
+            }
+            else if (typeof(int).IsAssignableFrom(type))
+            {
+                var oldIntValue = oldValue as int? ?? 0;
+                newValue = EditorGUILayout.IntField(oldIntValue, GUILayout.MaxWidth(200));
+            }
+            else if (typeof(float).IsAssignableFrom(type))
+            {
+                var oldFloatValue = oldValue as float? ?? 0;
+                newValue = EditorGUILayout.FloatField(oldFloatValue, GUILayout.MaxWidth(200));
+            }
+            else if (typeof(Vector3i).IsAssignableFrom(type))
+            {
+                var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
+                var newVector3Value = EditorGUILayout.Vector3Field("", oldVector3iValue.ToVector3f().ToVector3(), GUILayout.MaxWidth(200));
+                newValue = newVector3Value.ToVector3f()
+                    .RoundToVector3i();
+            }
+            else if (typeof(Vector3f).IsAssignableFrom(type))
+            {
+                var oldVector3fValue = oldValue as Vector3f? ?? Vector3f.Zero;
+                newValue = EditorGUILayout.Vector3Field("", oldVector3fValue.ToVector3(), GUILayout.MaxWidth(200)).ToVector3f();
+            }
+            else
+            {
+                var oldValueJson = Newtonsoft.Json.JsonConvert.SerializeObject(oldValue);
+                var newJsonValue = EditorGUILayout.TextArea(oldValueJson, GUILayout.MaxWidth(200));
+                try
+                {
+                    newValue = Newtonsoft.Json.JsonConvert.DeserializeObject(newJsonValue, type);
+                }
+                catch
+                {
+                    newValue = null;
+                }
+            }
+            return newValue;
         }
     }
 }

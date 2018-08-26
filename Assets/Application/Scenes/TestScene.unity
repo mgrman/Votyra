@@ -780,7 +780,57 @@ MonoBehaviour:
   - {fileID: 1116526748462952, guid: 4745140159b29fb48b5525d1c5f2b1c9, type: 2}
   - {fileID: 1196856220923246, guid: aceb0ac05c491864c81c036fe42468f2, type: 2}
   - {fileID: 1196856220923246, guid: af727f8a56b1bb740a7f6c600fb6516f, type: 2}
-  Config: []
+  Config:
+  - Id: imageSize
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValue: {fileID: 0}
+    JsonValue: '{"X":0,"Y":0,"Z":0}'
+  - Id: initialData
+    TypeAssemblyQualifiedName: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValue: {fileID: 0}
+    JsonValue: null
+  - Id: initialDataScale
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3f, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValue: {fileID: 0}
+    JsonValue: '{"X":0.0,"Y":0.0,"Z":0.0}'
+  - Id: zeroFromInitialStateIsNull
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
+    JsonValue: false
+  - Id: cellInGroupCount
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValue: {fileID: 0}
+    JsonValue: '{"X":0,"Y":0,"Z":0}'
+  - Id: flipTriangles
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
+    JsonValue: false
+  - Id: drawBounds
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
+    JsonValue: false
+  - Id: async
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
+    JsonValue: false
+  - Id: material
+    TypeAssemblyQualifiedName: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValue: {fileID: 0}
+    JsonValue: null
+  - Id: materialWalls
+    TypeAssemblyQualifiedName: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValue: {fileID: 0}
+    JsonValue: null
 --- !u!114 &1857217857
 MonoBehaviour:
   m_ObjectHideFlags: 0
