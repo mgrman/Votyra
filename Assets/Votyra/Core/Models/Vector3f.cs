@@ -5,8 +5,10 @@ namespace Votyra.Core.Models
 {
     public struct Vector3f : IEquatable<Vector3f>
     {
+        [Newtonsoft.Json.JsonIgnore]
         public static readonly Vector3f Zero = new Vector3f();
 
+        [Newtonsoft.Json.JsonIgnore]
         public static readonly Vector3f One = FromSame(1);
 
         public readonly float X;
@@ -15,20 +17,28 @@ namespace Votyra.Core.Models
 
         public readonly float Z;
 
+        [Newtonsoft.Json.JsonIgnore]
         public Vector3f Normalized => this / Magnitude;
 
+        [Newtonsoft.Json.JsonIgnore]
         public float Magnitude => (float)Math.Sqrt(SqrMagnitude);
 
+        [Newtonsoft.Json.JsonIgnore]
         public float SqrMagnitude => X * X + Y * Y + Z * Z;
 
+        [Newtonsoft.Json.JsonIgnore]
         public bool Positive => this.X > 0 && this.Y > 0 && this.Z > 0;
 
+        [Newtonsoft.Json.JsonIgnore]
         public bool ZeroOrPositive => this.X >= 0 && this.Y >= 0 && this.Z >= 0;
 
+        [Newtonsoft.Json.JsonIgnore]
         public float VolumeSum => X * Y * Z;
 
+        [Newtonsoft.Json.JsonIgnore]
         public Vector2f XY => new Vector2f(X, Y);
 
+        [Newtonsoft.Json.JsonIgnore]
         public bool AnyNegative => this.X < 0 || this.Y < 0 || this.Z < 0;
 
         public Vector3f(float x, float y, float z)

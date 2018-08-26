@@ -2,7 +2,7 @@
 
 namespace Votyra.Core
 {
-    public interface IImageConfig
+    public interface IImageConfig : IConfig
     {
         Vector3i ImageSize { get; }
     }

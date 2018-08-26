@@ -1,13 +1,17 @@
 using System;
 using System.Globalization;
 using Votyra.Core.Utils;
+using Newtonsoft.Json;
 
 namespace Votyra.Core.Models
 {
     public struct Vector3i : IEquatable<Vector3i>
     {
+
+        [Newtonsoft.Json.JsonIgnore]
         public static readonly Vector3i Zero = new Vector3i();
 
+        [Newtonsoft.Json.JsonIgnore]
         public static readonly Vector3i One = new Vector3i(1, 1, 1);
 
         public readonly int X;
@@ -16,18 +20,25 @@ namespace Votyra.Core.Models
 
         public readonly int Z;
 
+        [Newtonsoft.Json.JsonIgnore]
         public Vector2i XY => new Vector2i(X, Y);
 
+        [Newtonsoft.Json.JsonIgnore]
         public bool AllPositive => this.X > 0 && this.Y > 0 && this.Z > 0;
 
+        [Newtonsoft.Json.JsonIgnore]
         public bool AllZeroOrPositive => this.X >= 0 && this.Y >= 0 && this.Z >= 0;
 
+        [Newtonsoft.Json.JsonIgnore]
         public bool AnyNegative => this.X < 0 || this.Y < 0 || this.Z < 0;
 
+        [Newtonsoft.Json.JsonIgnore]
         public bool AnyZero => this.X == 0 || this.Y == 0 || this.Z == 0;
 
+        [Newtonsoft.Json.JsonIgnore]
         public bool AnyZeroOrNegative => this.X <= 0 || this.Y <= 0 || this.Z <= 0;
 
+        [Newtonsoft.Json.JsonIgnore]
         public int Volume => X * Y * Z;
 
         public Vector3i(int x, int y, int z)

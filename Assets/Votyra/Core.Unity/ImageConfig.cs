@@ -1,10 +1,11 @@
 ﻿using Votyra.Core.Models;
+using Zenject;
 
 namespace Votyra.Core.Images
 {
     public class ImageConfig : IImageConfig
     {
-        public ImageConfig(Vector3i imageSize)
+        public ImageConfig([Inject(Id = "imageSize")]Vector3i imageSize)
         {
             ImageSize = imageSize;
         }

@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using Zenject;
 
 namespace Votyra.Core.Images
 {
     public class MaterialConfig : IMaterialConfig
     {
-        public MaterialConfig(Material material, Material materialWalls)
+        public MaterialConfig([Inject(Id = "material")]Material material, [Inject(Id = "materialWalls")]Material materialWalls)
         {
             Material = material;
             MaterialWalls = materialWalls;

@@ -1,10 +1,11 @@
 ﻿using Votyra.Core.Models;
+using Zenject;
 
 namespace Votyra.Core.Images
 {
     public class TerrainConfig : ITerrainConfig
     {
-        public TerrainConfig(Vector3i cellInGroupCount, bool flipTriangles, bool drawBounds, bool async)
+        public TerrainConfig([Inject(Id = "cellInGroupCount")]Vector3i cellInGroupCount, [Inject(Id = "flipTriangles")]bool flipTriangles, [Inject(Id = "drawBounds")]bool drawBounds, [Inject(Id = "async")] bool async)
         {
             CellInGroupCount = cellInGroupCount;
             FlipTriangles = flipTriangles;

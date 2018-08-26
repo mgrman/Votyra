@@ -16,6 +16,11 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
+            Container.BindInterfacesAndSelfTo<ImageConfig>().AsSingle();
+            Container.BindInterfacesAndSelfTo<InitialImageConfig>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TerrainConfig>().AsSingle();
+            Container.BindInterfacesAndSelfTo<MaterialConfig>().AsSingle();
+
             Container.BindInterfacesAndSelfTo<TerrainGenerator2i>().AsSingle();
             Container.BindInterfacesAndSelfTo<TerrainMeshUpdater<Vector2i>>().AsSingle();
             Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2i>().AsSingle();

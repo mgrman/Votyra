@@ -16,6 +16,11 @@ namespace Votyra.Cubical.Unity
     {
         public override void InstallBindings()
         {
+            Container.BindInterfacesAndSelfTo<ImageConfig>().AsSingle();
+            Container.BindInterfacesAndSelfTo<InitialImageConfig>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TerrainConfig>().AsSingle();
+            Container.BindInterfacesAndSelfTo<MaterialConfig>().AsSingle();
+
             Container.BindInterfacesAndSelfTo<TerrainGenerator3b>().AsSingle();
             Container.BindInterfacesAndSelfTo<TerrainMeshUpdater<Vector3i>>().AsSingle();
             Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector3i>().AsSingle();

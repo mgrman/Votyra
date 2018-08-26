@@ -1,10 +1,20 @@
-﻿using Votyra.Core.Models;
+﻿using UnityEngine;
+using Votyra.Core.Models;
+using Zenject;
 
 namespace Votyra.Core.Images
 {
     public class InitialImageConfig : IInitialImageConfig
     {
-        public InitialImageConfig(object initialData, Vector3f initialDataScale, bool zeroFromInitialStateIsNull)
+        [Inject]
+        public InitialImageConfig([Inject(Id = "initialData")]Texture2D initialData, [Inject(Id = "initialDataScale")]Vector3f initialDataScale, [Inject(Id = "zeroFromInitialStateIsNull")]bool zeroFromInitialStateIsNull)
+        {
+            InitialData = initialData;
+            InitialDataScale = initialDataScale;
+            ZeroFromInitialStateIsNull = zeroFromInitialStateIsNull;
+        }
+
+        public InitialImageConfig([Inject(Id = "initialGenericData")]object initialData, [Inject(Id = "initialDataScale")]Vector3f initialDataScale, [Inject(Id = "zeroFromInitialStateIsNull")]bool zeroFromInitialStateIsNull)
         {
             InitialData = initialData;
             InitialDataScale = initialDataScale;

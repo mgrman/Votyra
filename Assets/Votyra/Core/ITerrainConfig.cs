@@ -2,7 +2,7 @@
 
 namespace Votyra.Core
 {
-    public interface ITerrainConfig
+    public interface ITerrainConfig : IConfig
     {
         Vector3i CellInGroupCount { get; }
         bool FlipTriangles { get; }
