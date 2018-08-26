@@ -12,7 +12,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected const int QuadToTriangles = 2;
         protected readonly Vector2i _cellInGroupCount;
         protected readonly IImageSampler2i _imageSampler;
-        protected readonly int _triangleCount;
 
         protected Vector3f _bounds_size;
         protected Vector2i _groupPosition;
@@ -26,11 +25,11 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         {
             _imageSampler = imageSampler;
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
-            _triangleCount = _cellInGroupCount.AreaSum * TrianglesPerCell;
         }
 
         protected virtual int QuadsPerCell => 1;
         protected virtual int TrianglesPerCell => QuadsPerCell * QuadToTriangles;
+        protected virtual int TriangleCount => _cellInGroupCount.AreaSum * TrianglesPerCell;
 
         public virtual void AddCell(Vector2i cellInGroup)
         {
@@ -68,7 +67,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             this._groupPosition = _cellInGroupCount * group;
 
-            this._pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedTerrainMesh2i>.CreateDirty(this._triangleCount);
+            this._pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedTerrainMesh2i>.CreateDirty(this.TriangleCount);
             // this._pooledMesh = PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty();
             this._mesh = this._pooledMesh.Mesh;
             _mesh.Clear(bounds);

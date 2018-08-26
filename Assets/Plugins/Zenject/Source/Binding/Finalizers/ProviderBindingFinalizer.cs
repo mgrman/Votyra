@@ -17,7 +17,7 @@ namespace Zenject
             get { return BindInfo.CopyIntoAllSubContainers; }
         }
 
-        protected BindInfo BindInfo
+        public BindInfo BindInfo
         {
             get;
             private set;

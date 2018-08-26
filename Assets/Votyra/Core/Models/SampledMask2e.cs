@@ -7,6 +7,7 @@ namespace Votyra.Core.Models
 {
     public struct SampledMask2e : IEquatable<SampledMask2e>
     {
+        public readonly static SampledMask2e AllTerain = new SampledMask2e(MaskValues.Terrain, MaskValues.Terrain, MaskValues.Terrain, MaskValues.Terrain);
         public readonly MaskValues x0y0;
         public readonly MaskValues x0y1;
         public readonly MaskValues x1y0;

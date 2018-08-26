@@ -20,6 +20,28 @@ namespace Votyra.Core.Editor
             var installers = algorithPrefab.GetComponentInChildren<GameObjectContext>().Installers;
 
             var container = new DiContainer(false);
+            var types = new List<Type>();
+            Action<IBindingFinalizer> handler = (finalizer) =>
+            {
+                if (finalizer is BindFinalizerWrapper)
+                {
+                    var bindFinalizer = finalizer as BindFinalizerWrapper;
+                    if (bindFinalizer.SubFinalizer is ProviderBindingFinalizer)
+                    {
+                        var providerBindingFinalizer = bindFinalizer.SubFinalizer as ProviderBindingFinalizer;
+                        if (providerBindingFinalizer != null)
+                        {
+                            types.AddRange(providerBindingFinalizer.BindInfo.ToTypes);
+                            return;
+                        }
+                    }
+
+                    Debug.Log($"bindFinalizer.SubFinalizer:" + bindFinalizer.SubFinalizer?.GetType().FullName);
+                }
+                Debug.Log($"finalizer:" + finalizer.GetType().FullName);
+
+            };
+            container.FinalizeBinding += handler;
             foreach (var installer in installers)
             {
                 var containerField = typeof(MonoInstallerBase).GetField("_container", BindingFlags.GetField | BindingFlags.SetField | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
@@ -39,10 +61,9 @@ namespace Votyra.Core.Editor
                     GameObject.DestroyImmediate(tempInstallerGo.gameObject);
                 }
             }
-            return container.AllContracts
-                .Select(o => o.Type)
-                .Where(o => typeof(IConfig).IsAssignableFrom(o) && !o.IsInterface)
-                .ToArray();
+            container.FlushBindings();
+            container.FinalizeBinding -= handler;
+            return types;
         }
 
         public override void OnInspectorGUI()
@@ -59,8 +80,6 @@ namespace Votyra.Core.Editor
                 var configTypes = GetConfigTypes(activeAlgorith);
                 foreach (var configType in configTypes)
                 {
-                    EditorGUILayout.LabelField($"{configType.Name}");
-
                     var ctors = configType.GetConstructors();
 
                     var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null))
@@ -68,6 +87,12 @@ namespace Votyra.Core.Editor
                             .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()?.Id as string, p.ParameterType, null))
                             .Where(a => a.Id != null));
 
+                    if (!configItems.Any())
+                    {
+                        continue;
+                    }
+
+                    EditorGUILayout.LabelField($"{configType.Name}");
                     foreach (var configItem in configItems)
                     {
                         EditorGUILayout.LabelField($"- {configItem.Id}[{configItem.Type.Name}]");
@@ -84,6 +109,16 @@ namespace Votyra.Core.Editor
                         {
                             var oldBoolValue = oldValue as bool? ?? false;
                             newValue = EditorGUILayout.Toggle(oldBoolValue);
+                        }
+                        else if (typeof(int).IsAssignableFrom(configItem.Type))
+                        {
+                            var oldIntValue = oldValue as int? ?? 0;
+                            newValue = EditorGUILayout.IntField(oldIntValue);
+                        }
+                        else if (typeof(float).IsAssignableFrom(configItem.Type))
+                        {
+                            var oldFloatValue = oldValue as float? ?? 0;
+                            newValue = EditorGUILayout.FloatField(oldFloatValue);
                         }
                         else if (typeof(Vector3i).IsAssignableFrom(configItem.Type))
                         {

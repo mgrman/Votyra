@@ -48,6 +48,8 @@ namespace Zenject
         bool _isInstalling;
         bool _hasDisplayedInstallWarning;
 
+        public event Action<IBindingFinalizer> FinalizeBinding;
+
         public DiContainer(bool isValidating)
         {
             _isValidating = isValidating;
@@ -1904,6 +1906,7 @@ namespace Zenject
 
                 try
                 {
+                    FinalizeBinding?.Invoke(binding);
                     binding.FinalizeBinding(this);
                 }
                 finally

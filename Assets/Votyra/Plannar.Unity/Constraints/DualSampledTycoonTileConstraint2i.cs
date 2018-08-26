@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Votyra.Core;
 using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
@@ -12,35 +13,37 @@ namespace Votyra.Plannar.Images.Constraints
 {
     public class DualSampledTycoonTileConstraint2i : IImageConstraint2i
     {
-        public const int ScaleFactor = 1;
+        private readonly int _scaleFactor;
 
-        private readonly static TileMap2i TileMap = new[]
-        {
-            //plane
-            new SampledData2i(0, 0, 0, 0),
-
-            //slope
-            new SampledData2i(-1, 0, -1, 0),
-
-            //slopeDiagonal
-            new SampledData2i(-2, -1, -1, 0),
-
-            //partialUpSlope
-            new SampledData2i(-1, -1, -1, 0),
-
-            //partialDownSlope
-            new SampledData2i(-1, 0, 0, 0),
-
-            //slopeDiagonal
-            new SampledData2i(0, -1, -1, 0)
-        }
-        .CreateExpandedTileMap2i(ScaleFactor);
+        private readonly TileMap2i TileMap;
 
         private IImageSampler2i _sampler;
 
-        public DualSampledTycoonTileConstraint2i(IImageSampler2i sampler)
+        public DualSampledTycoonTileConstraint2i(IImageSampler2i sampler, [ConfigInject("scaleFactor")] int scaleFactor)
         {
             _sampler = sampler;
+            _scaleFactor = scaleFactor;
+            TileMap = new[]
+                {
+                    //plane
+                    new SampledData2i(0, 0, 0, 0),
+
+                    //slope
+                    new SampledData2i(-1, 0, -1, 0),
+
+                    //slopeDiagonal
+                    new SampledData2i(-2, -1, -1, 0),
+
+                    //partialUpSlope
+                    new SampledData2i(-1, -1, -1, 0),
+
+                    //partialDownSlope
+                    new SampledData2i(-1, 0, 0, 0),
+
+                    //slopeDiagonal
+                    new SampledData2i(0, -1, -1, 0)
+                }
+                .CreateExpandedTileMap2i(scaleFactor);
         }
 
         public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<Height> editableMatrix)
@@ -88,7 +91,7 @@ namespace Votyra.Plannar.Images.Constraints
         private SampledData2i Process(SampledData2i sampleData)
         {
             var height = sampleData.Max - Height.Default;
-            SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2.CreateHeight() * ScaleFactor);
+            SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2.CreateHeight() * _scaleFactor);
             SampledData2i choosenTemplateTile = TileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
         }

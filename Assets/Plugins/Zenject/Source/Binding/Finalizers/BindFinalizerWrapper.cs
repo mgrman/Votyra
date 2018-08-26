@@ -8,6 +8,7 @@ namespace Zenject
 
         public IBindingFinalizer SubFinalizer
         {
+            get { return _subFinalizer; }
             set { _subFinalizer = value; }
         }
 
