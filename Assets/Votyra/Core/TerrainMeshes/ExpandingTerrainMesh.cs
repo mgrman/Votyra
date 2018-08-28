@@ -14,6 +14,7 @@ namespace Votyra.Core.TerrainMeshes
         public int TriangleCount { get; private set; }
         public int PointCount { get; private set; }
 
+        public Vector3f this[int point] => Vertices[point];
         public ExpandingTerrainMesh()
         {
             Vertices = new List<Vector3f>();

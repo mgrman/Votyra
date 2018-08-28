@@ -18,6 +18,8 @@ namespace Votyra.Core.Pooling
 
         ITerrainMeshWithFixedCapacity IPooledTerrainMeshWithFixedCapacity.Mesh => Mesh;
 
+        public Vector3f this[int point] => Mesh[point];
+
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
 
         private static readonly ConcurentObjectDictionaryPool<PooledTerrainMeshWithFixedCapacityContainer<T>, int> Pool = new ConcurentObjectDictionaryPool<PooledTerrainMeshWithFixedCapacityContainer<T>, int>(5, (triangleCount) => new PooledTerrainMeshWithFixedCapacityContainer<T>(triangleCount));

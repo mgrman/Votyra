@@ -14,6 +14,15 @@ namespace Votyra.Plannar.Unity
 {
     public class Terrain2iInstaller : MonoInstaller
     {
+        public void UsedOnlyForAOTCodeGeneration()
+        {
+            new TerrainMeshUpdater<Vector2i>(null, null);
+            new TerrainGeneratorManager<IFrameData2i, Vector2i>(null, null, null, null, null, null, null, null);
+
+            // Include an exception so we can be sure to know if this method is ever called.
+            throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
+        }
+
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<ImageConfig>().AsSingle();

@@ -49,7 +49,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return _pooledMesh;
         }
 
-        public void Initialize(IImage2i image, IMask2e mask)
+        public virtual void Initialize(IImage2i image, IMask2e mask)
         {
             _image = image;
             _mask = mask;

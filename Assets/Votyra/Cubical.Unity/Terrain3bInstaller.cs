@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Core;
 using Votyra.Core.Behaviours;
@@ -14,6 +15,15 @@ namespace Votyra.Cubical.Unity
 {
     public class Terrain3bInstaller : MonoInstaller
     {
+        public void UsedOnlyForAOTCodeGeneration()
+        {
+            new TerrainMeshUpdater<Vector3i>(null, null);
+            new TerrainGeneratorManager<IFrameData3b, Vector3i>(null, null, null, null, null, null, null, null);
+
+            // Include an exception so we can be sure to know if this method is ever called.
+            throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
+        }
+
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<ImageConfig>().AsSingle();

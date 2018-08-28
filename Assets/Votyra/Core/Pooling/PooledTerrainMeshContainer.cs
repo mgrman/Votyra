@@ -14,6 +14,8 @@ namespace Votyra.Core.Pooling
 
         ITerrainMesh IPooledTerrainMesh.Mesh => Mesh;
 
+        public Vector3f this[int index] => Mesh[index];
+
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
 
         private static readonly ConcurentObjectPool<PooledTerrainMeshContainer<T>> Pool = new ConcurentObjectPool<PooledTerrainMeshContainer<T>>(5, () => new PooledTerrainMeshContainer<T>());
