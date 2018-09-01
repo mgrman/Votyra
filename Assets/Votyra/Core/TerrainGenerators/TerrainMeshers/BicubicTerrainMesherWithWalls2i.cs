@@ -137,23 +137,23 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 var data_x2y2 = _sample(cell - Vector2i.One + new Vector2i(2, 2));
 
                 _interpolationMatrix[0, 0] = data_x0y0.x0y0.RawValue;
-                _interpolationMatrix[0, 1] = data_x0y1.x0y0.RawValue;
-                _interpolationMatrix[0, 2] = data_x0y1.x0y1.RawValue;
+                _interpolationMatrix[0, 1] = (data_x0y0.x0y1.RawValue + data_x0y1.x0y0.RawValue) / 2;
+                _interpolationMatrix[0, 2] = (data_x0y1.x0y1.RawValue + data_x0y2.x0y0.RawValue) / 2;
                 _interpolationMatrix[0, 3] = data_x0y2.x0y1.RawValue;
 
-                _interpolationMatrix[1, 0] = data_x1y0.x0y0.RawValue;
+                _interpolationMatrix[1, 0] = (data_x1y0.x0y0.RawValue + data_x0y0.x1y0.RawValue) / 2;
                 _interpolationMatrix[1, 1] = data_x1y1.x0y0.RawValue;
                 _interpolationMatrix[1, 2] = data_x1y1.x0y1.RawValue;
-                _interpolationMatrix[1, 3] = data_x1y2.x0y1.RawValue;
+                _interpolationMatrix[1, 3] = (data_x1y2.x0y1.RawValue + data_x0y2.x1y1.RawValue) / 2;
 
-                _interpolationMatrix[2, 0] = data_x1y0.x1y0.RawValue;
+                _interpolationMatrix[2, 0] = (data_x1y0.x1y0.RawValue + data_x2y0.x0y0.RawValue) / 2;
                 _interpolationMatrix[2, 1] = data_x1y1.x1y0.RawValue;
                 _interpolationMatrix[2, 2] = data_x1y1.x1y1.RawValue;
-                _interpolationMatrix[2, 3] = data_x1y2.x1y1.RawValue;
+                _interpolationMatrix[2, 3] = (data_x1y2.x1y1.RawValue + data_x2y2.x0y1.RawValue) / 2;
 
                 _interpolationMatrix[3, 0] = data_x2y0.x1y0.RawValue;
-                _interpolationMatrix[3, 1] = data_x2y1.x1y0.RawValue;
-                _interpolationMatrix[3, 2] = data_x2y1.x1y1.RawValue;
+                _interpolationMatrix[3, 1] = (data_x2y0.x0y1.RawValue + data_x2y1.x0y0.RawValue) / 2;
+                _interpolationMatrix[3, 2] = (data_x2y1.x0y1.RawValue + data_x2y2.x0y0.RawValue) / 2;
                 _interpolationMatrix[3, 3] = data_x2y2.x1y1.RawValue;
             }
         }
