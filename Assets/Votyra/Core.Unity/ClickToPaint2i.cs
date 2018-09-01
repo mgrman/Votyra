@@ -116,6 +116,7 @@ namespace Votyra.Core
             else
             {
                 int multiplier = 0;
+                bool isHole = Input.GetKey(KeyCode.H);
 
                 if (Input.GetMouseButton(0))
                 {
@@ -133,15 +134,29 @@ namespace Votyra.Core
 
                 using (var image = editableImage.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(maxDist + 2, maxDist + 2))))
                 {
-                    for (int ox = -maxDist; ox <= maxDist; ox++)
+                    using (var mask = editableMask?.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(maxDist + 2, maxDist + 2))))
                     {
-                        for (int oy = -maxDist; oy <= maxDist; oy++)
-                        {
-                            var index = cell + new Vector2i(ox, oy);
 
-                            var dist = Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy));
-                            var value = image[index];
-                            image[index] = value + (multiplier * (maxDist - dist)).CreateHeightDifference();
+                        if (isHole)
+                        {
+                            var index = cell;
+                            mask[index] = MaskValues.Hole;
+                        }
+                        else
+                        {
+
+                            for (int ox = -maxDist; ox <= maxDist; ox++)
+                            {
+                                for (int oy = -maxDist; oy <= maxDist; oy++)
+                                {
+                                    var index = cell + new Vector2i(ox, oy);
+
+                                    var dist = Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy));
+                                    var value = image[index];
+                                    image[index] = value + (multiplier * (maxDist - dist)).CreateHeightDifference();
+
+                                }
+                            }
                         }
                     }
                 }
