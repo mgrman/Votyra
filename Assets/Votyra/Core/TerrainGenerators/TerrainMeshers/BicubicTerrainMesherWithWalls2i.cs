@@ -7,6 +7,7 @@ using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
+using Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
@@ -14,41 +15,50 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
     {
         private const int PointsPerInnerCell = QuadToTriangles * 3;
 
-        protected readonly CellComputer _minusXcomputer;
-        protected readonly CellComputer _minusYcomputer;
+        protected readonly ICellComputer _minusXcomputer;
+        protected readonly ICellComputer _minusYcomputer;
 
         protected Vector3f[,] _minusXvalues;
         protected Vector3f[,] _minusYvalues;
 
+        protected bool _holeDetected;
+        protected override int QuadsPerCell => base.QuadsPerCell + _subdivision + _subdivision;
+
         public BicubicTerrainMesherWithWalls2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler, [ConfigInject("ensureFlat")]bool ensureFlat, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale)
             : base(terrainConfig, imageSampler, ensureFlat, subdivision, noiseScale)
         {
-            this._minusXcomputer = CreateCellComputer(_subdivision, _subdivision, 0, _subdivision);
-            this._minusYcomputer = CreateCellComputer(0, _subdivision, _subdivision, _subdivision);
+            this._minusXcomputer = CreateCellComputer(Range2i.FromMinAndMax(new Vector2i(_subdivision, 0), new Vector2i(_subdivision + 1, _subdivision + 1)), ImageSampleHandler);
+            this._minusYcomputer = CreateCellComputer(Range2i.FromMinAndMax(new Vector2i(0, _subdivision), new Vector2i(_subdivision + 1, _subdivision + 1)), ImageSampleHandler);
         }
 
-        protected override CellComputer CreateMainCellComputer()
+        protected override IInterpolator CreateInterpolator()
         {
-            return CreateCellComputer(0, _subdivision, 0, _subdivision);
+            IInterpolator interpolator = new BicubicDualSampleInterpolator();
+            if (_ensureFlat)
+            {
+                interpolator = new EnsureFlatInterpolatorDecorator(interpolator);
+            }
+
+            return interpolator;
         }
 
-        protected CellComputer CreateCellComputer(int minX, int maxX, int minY, int maxY)
+        public override void Initialize(IImage2i image, IMask2e mask)
         {
-            return new DualSampleCellComputer(minX, maxX, minY, maxY, _ensureFlat, _subdivision, pos => _imageSampler.Sample(_image, pos));
+            base.Initialize(image, mask);
+            _holeDetected = false;
         }
-
-        protected override int QuadsPerCell => base.QuadsPerCell + _subdivision + _subdivision;
 
         public override void AddCell(Vector2i cellInGroup)
         {
             base.AddCell(cellInGroup);
+            _holeDetected = _holeDetected || IsHoleDetected(cellInGroup);
 
             Vector2i cell = cellInGroup + _groupPosition;
-            if (cellInGroup.X == 0)
+            if (cellInGroup.X == 0 || _holeDetected)
             {
                 _minusXvalues = _minusXcomputer.PrepareCell(cell - new Vector2i(1, 0));
             }
-            if (cellInGroup.Y == 0)
+            if (cellInGroup.Y == 0 || _holeDetected)
             {
                 _minusYvalues = _minusYcomputer.PrepareCell(cell - new Vector2i(0, 1));
             }
@@ -56,31 +66,39 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             for (int ix = 0; ix < _subdivision; ix++)
             {
-                var x00y00 = GetInnerPointValue(cellInGroup, new Vector2i(ix, 0));
-                var x05y00 = GetInnerPointValue(cellInGroup, new Vector2i(ix + 1, 0));
-                var minusYx00y00 = GetInnerPointValue(cellInGroup - new Vector2i(0, 1), new Vector2i(ix, _subdivision));
-                var minusYx05y00 = GetInnerPointValue(cellInGroup - new Vector2i(0, 1), new Vector2i(ix + 1, _subdivision));
+                var x00y00 = GetInnerPointValueAlongX(cellInGroup, new Vector2i(ix, 0));
+                var x05y00 = GetInnerPointValueAlongX(cellInGroup, new Vector2i(ix + 1, 0));
+                var minusYx00y00 = GetInnerPointValueAlongX(cellInGroup - new Vector2i(0, 1), new Vector2i(ix, _subdivision));
+                var minusYx05y00 = GetInnerPointValueAlongX(cellInGroup - new Vector2i(0, 1), new Vector2i(ix + 1, _subdivision));
                 _mesh.AddWall(x05y00, x00y00, minusYx00y00, minusYx05y00);
             }
             for (int iy = 0; iy < _subdivision; iy++)
             {
-                var x00y00 = GetInnerPointValue(cellInGroup, new Vector2i(0, iy));
-                var x00y05 = GetInnerPointValue(cellInGroup, new Vector2i(0, iy + 1));
-                var minusYx00y00 = GetInnerPointValue(cellInGroup - new Vector2i(1, 0), new Vector2i(_subdivision, iy));
-                var minusYx00y05 = GetInnerPointValue(cellInGroup - new Vector2i(1, 0), new Vector2i(_subdivision, iy + 1));
+                var x00y00 = GetInnerPointValueAlongY(cellInGroup, new Vector2i(0, iy));
+                var x00y05 = GetInnerPointValueAlongY(cellInGroup, new Vector2i(0, iy + 1));
+                var minusYx00y00 = GetInnerPointValueAlongY(cellInGroup - new Vector2i(1, 0), new Vector2i(_subdivision, iy));
+                var minusYx00y05 = GetInnerPointValueAlongY(cellInGroup - new Vector2i(1, 0), new Vector2i(_subdivision, iy + 1));
                 _mesh.AddWall(x00y00, x00y05, minusYx00y05, minusYx00y00);
             }
         }
 
-        private Vector3f GetInnerPointValue(Vector2i cell, Vector2i innerPoint)
+        private Vector3f GetInnerPointValueAlongX(Vector2i cell, Vector2i innerPoint)
+        {
+            //TODO problem is here that when hole is in group the approach of getting previous values using mesh no longer works.
+            // possible solution is to use real values if hole is detected, therefore if no hole in group the faster approach is used.
+            // another solution is to keep a sliding buffer of potential values to use and remember the values used in previous cells (possible problem with the cellComputer returning cache matrix (it is always reused and the contents in not readonly))
+            if (cell.Y == -1)
+            {
+                return _minusYvalues[innerPoint.X, innerPoint.Y];
+            }
+            return _mesh[GetInnerPointMeshIndex(cell, innerPoint)];
+        }
+
+        private Vector3f GetInnerPointValueAlongY(Vector2i cell, Vector2i innerPoint)
         {
             if (cell.X == -1)
             {
                 return _minusXvalues[innerPoint.X, innerPoint.Y];
-            }
-            if (cell.Y == -1)
-            {
-                return _minusYvalues[innerPoint.X, innerPoint.Y];
             }
             return _mesh[GetInnerPointMeshIndex(cell, innerPoint)];
         }
@@ -117,45 +135,19 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return (innerPoint.X * _subdivision + innerPoint.Y);
         }
 
-        protected class DualSampleCellComputer : CellComputer
+        private bool IsHoleDetected(Vector2i cellInGroup)
         {
-            public DualSampleCellComputer(int minX, int maxX, int minY, int maxY, bool ensureFlat, int subdivision, Func<Vector2i, SampledData2i> sample)
-                : base(minX, maxX, minY, maxY, ensureFlat, subdivision, sample)
+            if (cellInGroup.Y == _subdivision - 1)
             {
+                cellInGroup = new Vector2i(cellInGroup.X + 1, 0);
             }
-
-            protected override void PrepareInterpolation(Vector2i cell)
+            else
             {
-                var data_x0y0 = _sample(cell - Vector2i.One + new Vector2i(0, 0));
-                var data_x0y1 = _sample(cell - Vector2i.One + new Vector2i(0, 1));
-                var data_x0y2 = _sample(cell - Vector2i.One + new Vector2i(0, 2));
-                var data_x1y0 = _sample(cell - Vector2i.One + new Vector2i(1, 0));
-                var data_x1y1 = _sample(cell - Vector2i.One + new Vector2i(1, 1));
-                var data_x1y2 = _sample(cell - Vector2i.One + new Vector2i(1, 2));
-                var data_x2y0 = _sample(cell - Vector2i.One + new Vector2i(2, 0));
-                var data_x2y1 = _sample(cell - Vector2i.One + new Vector2i(2, 1));
-                var data_x2y2 = _sample(cell - Vector2i.One + new Vector2i(2, 2));
-
-                _interpolationMatrix[0, 0] = data_x0y0.x0y0.RawValue;
-                _interpolationMatrix[0, 1] = (data_x0y0.x0y1.RawValue + data_x0y1.x0y0.RawValue) / 2;
-                _interpolationMatrix[0, 2] = (data_x0y1.x0y1.RawValue + data_x0y2.x0y0.RawValue) / 2;
-                _interpolationMatrix[0, 3] = data_x0y2.x0y1.RawValue;
-
-                _interpolationMatrix[1, 0] = (data_x1y0.x0y0.RawValue + data_x0y0.x1y0.RawValue) / 2;
-                _interpolationMatrix[1, 1] = data_x1y1.x0y0.RawValue;
-                _interpolationMatrix[1, 2] = data_x1y1.x0y1.RawValue;
-                _interpolationMatrix[1, 3] = (data_x1y2.x0y1.RawValue + data_x0y2.x1y1.RawValue) / 2;
-
-                _interpolationMatrix[2, 0] = (data_x1y0.x1y0.RawValue + data_x2y0.x0y0.RawValue) / 2;
-                _interpolationMatrix[2, 1] = data_x1y1.x1y0.RawValue;
-                _interpolationMatrix[2, 2] = data_x1y1.x1y1.RawValue;
-                _interpolationMatrix[2, 3] = (data_x1y2.x1y1.RawValue + data_x2y2.x0y1.RawValue) / 2;
-
-                _interpolationMatrix[3, 0] = data_x2y0.x1y0.RawValue;
-                _interpolationMatrix[3, 1] = (data_x2y0.x0y1.RawValue + data_x2y1.x0y0.RawValue) / 2;
-                _interpolationMatrix[3, 2] = (data_x2y1.x0y1.RawValue + data_x2y2.x0y0.RawValue) / 2;
-                _interpolationMatrix[3, 3] = data_x2y2.x1y1.RawValue;
+                cellInGroup = new Vector2i(cellInGroup.X, cellInGroup.Y + 1);
             }
+            var expectedTriangleCount = GetMeshIndex(cellInGroup) - (_subdivision + _subdivision) * PointsPerInnerCell;
+
+            return _mesh.TriangleCount != expectedTriangleCount / 3;
         }
     }
 }

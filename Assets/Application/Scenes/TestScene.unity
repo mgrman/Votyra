@@ -334,7 +334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 411b2da090ebf0f4b81c1510a2b4eed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activeTerrainAlgorithm: 0
+  _activeTerrainAlgorithm: 1
   _availableTerrainAlgorithms:
   - {fileID: 1101794731832008, guid: f4f93c13563af724e9805d1070d56d88, type: 2}
   - {fileID: 1101794731832008, guid: a3fa91a0e395d7643bf043b4c7bfd4fd, type: 2}
@@ -772,7 +772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 411b2da090ebf0f4b81c1510a2b4eed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activeTerrainAlgorithm: 3
+  _activeTerrainAlgorithm: 1
   _availableTerrainAlgorithms:
   - {fileID: 1101794731832008, guid: f4f93c13563af724e9805d1070d56d88, type: 2}
   - {fileID: 1101794731832008, guid: a3fa91a0e395d7643bf043b4c7bfd4fd, type: 2}
@@ -831,6 +831,11 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 0}
     JsonValue: null
+  - Id: scaleFactor
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
+    JsonValue: 1
 --- !u!114 &1857217857
 MonoBehaviour:
   m_ObjectHideFlags: 0
