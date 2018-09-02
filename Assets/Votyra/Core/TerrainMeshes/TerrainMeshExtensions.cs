@@ -36,7 +36,7 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddQuad(this ITerrainMesh mesh, Vector2i position, SampledData2i data, SampledMask2e maskData)
+        public static void AddQuad(this ITerrainMesh mesh, Vector2i position, SampledData2h data, SampledMask2e maskData)
         {
             var x0y0 = maskData.x0y0.IsNotHole() ? new Vector2f(position.X, position.Y).ToVector3f(data.x0y0) : (Vector3f?)null;
             var x0y1 = maskData.x0y1.IsNotHole() ? new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1) : (Vector3f?)null;
@@ -101,7 +101,7 @@ namespace Votyra.Core.TerrainMeshes
         }
 
 
-        public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2i data, SampledMask2e maskData, SampledData2i minusYres, SampledMask2e minusYresMaskData)
+        public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2h data, SampledMask2e maskData, SampledData2h minusYres, SampledMask2e minusYresMaskData)
         {
             if (maskData.x1y0.IsNotHole() && maskData.x0y0.IsNotHole() && minusYresMaskData.x0y1.IsNotHole() && minusYresMaskData.x1y1.IsNotHole())
             {
@@ -118,7 +118,7 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddWallAlongY(this ITerrainMesh mesh, Vector2i position, SampledData2i data, SampledMask2e maskData, SampledData2i minusXres, SampledMask2e minusXresMaskData)
+        public static void AddWallAlongY(this ITerrainMesh mesh, Vector2i position, SampledData2h data, SampledMask2e maskData, SampledData2h minusXres, SampledMask2e minusXresMaskData)
         {
             if (maskData.x0y0.IsNotHole() && maskData.x0y1.IsNotHole() && minusXresMaskData.x1y0.IsNotHole() && minusXresMaskData.x1y1.IsNotHole())
             {

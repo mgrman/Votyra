@@ -29,22 +29,22 @@ namespace Votyra.Plannar.Images.Constraints
                 _tileMap = new[]
                     {
                         //plane
-                        new SampledData2i(0, 0, 0, 0),
+                        new SampledData2h(0, 0, 0, 0),
 
                         //slope
-                        new SampledData2i(-1, 0, -1, 0),
+                        new SampledData2h(-1, 0, -1, 0),
 
                         //slopeDiagonal
-                        new SampledData2i(-2, -1, -1, 0),
+                        new SampledData2h(-2, -1, -1, 0),
 
                         //partialUpSlope
-                        new SampledData2i(-1, -1, -1, 0),
+                        new SampledData2h(-1, -1, -1, 0),
 
                         //partialDownSlope
-                        new SampledData2i(-1, 0, 0, 0),
+                        new SampledData2h(-1, 0, 0, 0),
 
                         //slopeDiagonal
-                        new SampledData2i(0, -1, -1, 0)
+                        new SampledData2h(0, -1, -1, 0)
                     }
                     .CreateExpandedTileMap2i(scaleFactor);
                 _tileMapScaleFactor = scaleFactor;
@@ -93,11 +93,11 @@ namespace Votyra.Plannar.Images.Constraints
             return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
         }
 
-        private SampledData2i Process(SampledData2i sampleData)
+        private SampledData2h Process(SampledData2h sampleData)
         {
             var height = sampleData.Max - Height.Default;
-            SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2.CreateHeight() * _scaleFactor);
-            SampledData2i choosenTemplateTile = _tileMap.GetTile(normalizedHeightData);
+            SampledData2h normalizedHeightData = (sampleData - height).ClipMin(-2.CreateHeight() * _scaleFactor);
+            SampledData2h choosenTemplateTile = _tileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
         }
     }

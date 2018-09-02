@@ -19,13 +19,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             Vector2i position = _groupPosition + cellInGroup;
 
-            SampledData2i data = _imageSampler.Sample(_image, cell);
+            SampledData2h data = _imageSampler.Sample(_image, cell);
             SampledMask2e maskData = _imageSampler.Sample(_mask, cell);
 
 
-            SampledData2i minusXres = _imageSampler.Sample(_image, cell + new Vector2i(-1, 0));
+            SampledData2h minusXres = _imageSampler.Sample(_image, cell + new Vector2i(-1, 0));
             SampledMask2e minusXresMaskData = _imageSampler.Sample(_mask, cell + new Vector2i(-1, 0));
-            SampledData2i minusYres = _imageSampler.Sample(_image, cell + new Vector2i(0, -1));
+            SampledData2h minusYres = _imageSampler.Sample(_image, cell + new Vector2i(0, -1));
             SampledMask2e minusYresMaskData = _imageSampler.Sample(_mask, cell + new Vector2i(0, -1));
 
             _mesh.AddQuad(position, data, maskData);
