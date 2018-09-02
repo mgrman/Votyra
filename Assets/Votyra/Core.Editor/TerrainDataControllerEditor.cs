@@ -93,6 +93,7 @@ namespace Votyra.Core.Editor
             list.DoLayoutList();
             serializedObject.ApplyModifiedProperties();
 
+            Undo.RecordObject(controller, "Test");
             var oldConfigValues = controller.Config.ToList();
             var newConfigValues = new List<ConfigItem>();
 
@@ -165,6 +166,7 @@ namespace Votyra.Core.Editor
             {
                 controller.SendMessage("OnValidate", null, SendMessageOptions.DontRequireReceiver);
             }
+            EditorUtility.SetDirty(controller);
         }
 
         private object GetNewValue(Type type, object oldValue)

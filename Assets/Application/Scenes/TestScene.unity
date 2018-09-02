@@ -397,17 +397,17 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-    JsonValue: 2
+    JsonValue: 1
   - Id: ensureFlat
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-    JsonValue: true
+    JsonValue: false
   - Id: subdivision
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-    JsonValue: 2
+    JsonValue: 4
   - Id: noiseScale
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3f, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -546,7 +546,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1196365546}
   m_LocalRotation: {x: 0.3655842, y: -0.27309948, z: 0.113121055, w: 0.88259196}
-  m_LocalPosition: {x: 0.6, y: 67.6, z: -63.4}
+  m_LocalPosition: {x: -1.7283816, y: 13.085089, z: -71.47144}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1002470551}
