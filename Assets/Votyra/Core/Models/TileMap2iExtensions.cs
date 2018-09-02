@@ -8,7 +8,7 @@ namespace Votyra.Core.Models
 {
     public static class TileMap2iExtensions
     {
-        public static TileMap2i CreateExpandedTileMap2i(this IEnumerable<SampledData2i> templates, int scaleFactor)
+        public static TileMap2i CreateExpandedTileMap2i(this IEnumerable<SampledData2h> templates, int scaleFactor)
         {
             return templates
                 .ScaleTemplates(scaleFactor)
@@ -17,12 +17,12 @@ namespace Votyra.Core.Models
                 .CreateTileMap2i();
         }
 
-        public static TileMap2i CreateTileMap2i(this IEnumerable<SampledData2i> templates)
+        public static TileMap2i CreateTileMap2i(this IEnumerable<SampledData2h> templates)
         {
             return new TileMap2i(templates);
         }
 
-        public static IEnumerable<SampledData2i> CreateVariantsOfUmbra(this IEnumerable<SampledData2i> templates)
+        public static IEnumerable<SampledData2h> CreateVariantsOfUmbra(this IEnumerable<SampledData2h> templates)
         {
             return templates
                 .SelectMany(CreateVariantsOfUmbra)
@@ -30,7 +30,7 @@ namespace Votyra.Core.Models
                 .ToArray();
         }
 
-        public static IEnumerable<SampledData2i> CreateVariantsOfUmbra(this SampledData2i tile)
+        public static IEnumerable<SampledData2h> CreateVariantsOfUmbra(this SampledData2h tile)
         {
             for (Height x0y0 = Height.Default; x0y0 <= tile.x0y0.Abs; x0y0 = x0y0.Above)
             {
@@ -40,7 +40,7 @@ namespace Votyra.Core.Models
                     {
                         for (Height x1y1 = Height.Default; x1y1 <= tile.x1y1.Abs; x1y1 = x1y1.Above)
                         {
-                            yield return new SampledData2i
+                            yield return new SampledData2h
                               (
                                   (x0y0 * (tile.x0y0).Sign),
                                   (x0y1 * (tile.x0y1).Sign),
@@ -53,7 +53,7 @@ namespace Votyra.Core.Models
             }
         }
 
-        public static IEnumerable<SampledData2i> ExpandRotations(this IEnumerable<SampledData2i> templates)
+        public static IEnumerable<SampledData2h> ExpandRotations(this IEnumerable<SampledData2h> templates)
         {
             return templates
                 .SelectMany(template =>
@@ -70,14 +70,14 @@ namespace Votyra.Core.Models
                 .ToArray();
         }
 
-        public static Range1h RangeUnion(this IEnumerable<SampledData2i> templates)
+        public static Range1h RangeUnion(this IEnumerable<SampledData2h> templates)
         {
             return templates
                 .Select(o => o.Range)
                 .Aggregate((Range1h?)null, (a, b) => a?.UnionWith(b) ?? b) ?? Range1h.Default;
         }
 
-        public static IEnumerable<SampledData2i> ScaleTemplates(this IEnumerable<SampledData2i> templates, int scale)
+        public static IEnumerable<SampledData2h> ScaleTemplates(this IEnumerable<SampledData2h> templates, int scale)
         {
             for (int i = 1; i <= scale; i += 1)
             {

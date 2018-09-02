@@ -74,6 +74,10 @@ namespace Votyra.Core.Models
         {
             return new Vector2f(a.X * b.X, a.Y * b.Y);
         }
+        public static Vector2f operator +(Vector2f a, Vector2i b)
+        {
+            return new Vector2f(a.X + b.X, a.Y + b.Y);
+        }
 
         public static Vector2f operator *(Vector2f a, float b)
         {

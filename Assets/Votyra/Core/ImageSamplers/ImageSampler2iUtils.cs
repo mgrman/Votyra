@@ -20,24 +20,24 @@ namespace Votyra.Core.ImageSamplers
             return Range2i.FromMinAndMax(min, max + Vector2i.One);
         }
 
-        public static SampledData2i Sample(this IImageSampler2i sampler, Matrix2<Height> image, Vector2i pos)
+        public static SampledData2h Sample(this IImageSampler2i sampler, Matrix2<Height> image, Vector2i pos)
         {
             var x0y0 = image.TryGet(sampler.CellToX0Y0(pos), Height.Default);
             var x0y1 = image.TryGet(sampler.CellToX0Y1(pos), Height.Default);
             var x1y0 = image.TryGet(sampler.CellToX1Y0(pos), Height.Default);
             var x1y1 = image.TryGet(sampler.CellToX1Y1(pos), Height.Default);
 
-            return new SampledData2i(x0y0, x0y1, x1y0, x1y1);
+            return new SampledData2h(x0y0, x0y1, x1y0, x1y1);
         }
 
-        public static SampledData2i Sample(this IImageSampler2i sampler, IImage2i image, Vector2i pos)
+        public static SampledData2h Sample(this IImageSampler2i sampler, IImage2i image, Vector2i pos)
         {
             var x0y0 = image.Sample(sampler.CellToX0Y0(pos));
             var x0y1 = image.Sample(sampler.CellToX0Y1(pos));
             var x1y0 = image.Sample(sampler.CellToX1Y0(pos));
             var x1y1 = image.Sample(sampler.CellToX1Y1(pos));
 
-            return new SampledData2i(x0y0, x0y1, x1y0, x1y1);
+            return new SampledData2h(x0y0, x0y1, x1y0, x1y1);
         }
 
         public static SampledMask2e Sample(this IImageSampler2i sampler, IMask2e mask, Vector2i pos)

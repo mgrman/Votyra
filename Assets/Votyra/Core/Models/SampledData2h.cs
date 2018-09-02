@@ -5,14 +5,14 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
-    public struct SampledData2i : IEquatable<SampledData2i>
+    public struct SampledData2h : IEquatable<SampledData2h>
     {
         public readonly Height x0y0;
         public readonly Height x0y1;
         public readonly Height x1y0;
         public readonly Height x1y1;
 
-        public SampledData2i(Height x0y0, Height x0y1, Height x1y0, Height x1y1)
+        public SampledData2h(Height x0y0, Height x0y1, Height x1y0, Height x1y1)
         {
             this.x0y0 = x0y0;
             this.x0y1 = x0y1;
@@ -20,7 +20,7 @@ namespace Votyra.Core.Models
             this.x1y1 = x1y1;
         }
 
-        public SampledData2i(int x0y0, int x0y1, int x1y0, int x1y1)
+        public SampledData2h(int x0y0, int x0y1, int x1y0, int x1y1)
         {
             this.x0y0 = x0y0.CreateHeight();
             this.x0y1 = x0y1.CreateHeight();
@@ -42,9 +42,9 @@ namespace Votyra.Core.Models
 
         public Height Min => Height.Min(x0y0, Height.Min(x0y1, Height.Min(x1y0, x1y1)));
 
-        public static IEnumerable<SampledData2i> GenerateAllValuesWithHoles(Range1h range)
+        public static IEnumerable<SampledData2h> GenerateAllValuesWithHoles(Range1h range)
         {
-            var results = new List<SampledData2i>();
+            var results = new List<SampledData2h>();
             foreach (Height x0y0 in GenerateValues(range))
             {
                 foreach (Height x0y1 in GenerateValues(range))
@@ -53,7 +53,7 @@ namespace Votyra.Core.Models
                     {
                         foreach (Height x1y1 in GenerateValues(range))
                         {
-                            results.Add(new SampledData2i
+                            results.Add(new SampledData2h
                                 (
                                     x0y0,
                                     x0y1,
@@ -75,17 +75,17 @@ namespace Votyra.Core.Models
             }
         }
 
-        public static SampledData2i operator -(SampledData2i a)
+        public static SampledData2h operator -(SampledData2h a)
         {
-            return new SampledData2i(-a.x0y0, -a.x0y1, -a.x1y0, -a.x1y1);
+            return new SampledData2h(-a.x0y0, -a.x0y1, -a.x1y0, -a.x1y1);
         }
 
-        public static SampledData2i operator -(SampledData2i a, Height.Difference b)
+        public static SampledData2h operator -(SampledData2h a, Height.Difference b)
         {
-            return new SampledData2i(a.x0y0 - b, a.x0y1 - b, a.x1y0 - b, a.x1y1 - b);
+            return new SampledData2h(a.x0y0 - b, a.x0y1 - b, a.x1y0 - b, a.x1y1 - b);
         }
 
-        public static bool operator !=(SampledData2i a, SampledData2i b)
+        public static bool operator !=(SampledData2h a, SampledData2h b)
         {
             return a.x0y0 != b.x0y0 && a.x0y1 != b.x0y1 && a.x1y0 != b.x1y0 && a.x1y1 != b.x1y1;
         }
@@ -94,24 +94,24 @@ namespace Votyra.Core.Models
         // {
         //     return new SampledData2i(a.x0y0 - b, a.x0y1 - b, a.x1y0 - b, a.x1y1 - b);
         // }
-        public static SampledData2i operator *(SampledData2i a, int b)
+        public static SampledData2h operator *(SampledData2h a, int b)
         {
-            return new SampledData2i(a.x0y0 * b, a.x0y1 * b, a.x1y0 * b, a.x1y1 * b);
+            return new SampledData2h(a.x0y0 * b, a.x0y1 * b, a.x1y0 * b, a.x1y1 * b);
         }
 
-        public static SampledData2i operator +(SampledData2i a, Height.Difference b)
+        public static SampledData2h operator +(SampledData2h a, Height.Difference b)
         {
-            return new SampledData2i(a.x0y0 + b, a.x0y1 + b, a.x1y0 + b, a.x1y1 + b);
+            return new SampledData2h(a.x0y0 + b, a.x0y1 + b, a.x1y0 + b, a.x1y1 + b);
         }
 
-        public static bool operator ==(SampledData2i a, SampledData2i b)
+        public static bool operator ==(SampledData2h a, SampledData2h b)
         {
             return a.x0y0 == b.x0y0 && a.x0y1 == b.x0y1 && a.x1y0 == b.x1y0 && a.x1y1 == b.x1y1;
         }
 
-        public SampledData2i ClipMin(Height clipValue)
+        public SampledData2h ClipMin(Height clipValue)
         {
-            return new SampledData2i(Height.Max(this.x0y0, clipValue),
+            return new SampledData2h(Height.Max(this.x0y0, clipValue),
                 Height.Max(this.x0y1, clipValue),
                 Height.Max(this.x1y0, clipValue),
                 Height.Max(this.x1y1, clipValue));
@@ -119,9 +119,9 @@ namespace Votyra.Core.Models
 
         public override bool Equals(object obj)
         {
-            if (obj is SampledData2i)
+            if (obj is SampledData2h)
             {
-                var that = (SampledData2i)obj;
+                var that = (SampledData2h)obj;
                 return this.Equals(that);
             }
             else
@@ -130,7 +130,7 @@ namespace Votyra.Core.Models
             }
         }
 
-        public bool Equals(SampledData2i that)
+        public bool Equals(SampledData2h that)
         {
             return this == that;
         }
@@ -165,9 +165,9 @@ namespace Votyra.Core.Models
             }
         }
 
-        public SampledData2i GetRotated(int offset)
+        public SampledData2h GetRotated(int offset)
         {
-            return new SampledData2i(GetIndexedValueCW(0 + offset), GetIndexedValueCW(1 + offset), GetIndexedValueCW(3 + offset), GetIndexedValueCW(2 + offset));
+            return new SampledData2h(GetIndexedValueCW(0 + offset), GetIndexedValueCW(1 + offset), GetIndexedValueCW(3 + offset), GetIndexedValueCW(2 + offset));
         }
 
         public override string ToString()
@@ -175,7 +175,7 @@ namespace Votyra.Core.Models
             return string.Format("x0y0:{0} , x0y1:{1} , x1y0:{2} , x1y1:{3}", x0y0, x0y1, x1y0, x1y1);
         }
 
-        public static Height.Difference Dif(SampledData2i a, SampledData2i b)
+        public static Height.Difference Dif(SampledData2h a, SampledData2h b)
         {
             return Height.Difference.AbsoluteDif(a.x0y0, b.x0y0)
                 + Height.Difference.AbsoluteDif(a.x0y1, b.x0y1)
