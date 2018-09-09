@@ -19,7 +19,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected readonly int _subdivision;
         protected readonly Range2i _subdivisionValueRange;
 
-        public BicubicTerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler, [ConfigInject("ensureFlat")]bool ensureFlat, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale)
+        protected readonly float _maskLimit;
+
+        public BicubicTerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler, [ConfigInject("ensureFlat")]bool ensureFlat, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
         : base(terrainConfig, imageSampler)
         {
             this._ensureFlat = ensureFlat;
@@ -28,6 +30,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             this._noiseScale = noiseScale;
             this._mainCellComputer = CreateMainCellComputer();
             this._maskCellComputer = CreateMaskCellComputer();
+            this._maskLimit = maskLimit;
         }
 
         protected override int QuadsPerCell => _subdivision * _subdivision;
@@ -67,10 +70,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     var x05y00Mask = maskValues[ix + 1, iy + 0];
                     var x05y05Mask = maskValues[ix + 1, iy + 1];
 
-                    x00y00 = x00y00Mask.Z < 0.5f ? x00y00 : (Vector3f?)null;
-                    x00y05 = x00y05Mask.Z < 0.5f ? x00y05 : (Vector3f?)null;
-                    x05y00 = x05y00Mask.Z < 0.5f ? x05y00 : (Vector3f?)null;
-                    x05y05 = x05y05Mask.Z < 0.5f ? x05y05 : (Vector3f?)null;
+                    x00y00 = x00y00Mask.Z < _maskLimit ? x00y00 : (Vector3f?)null;
+                    x00y05 = x00y05Mask.Z < _maskLimit ? x00y05 : (Vector3f?)null;
+                    x05y00 = x05y00Mask.Z < _maskLimit ? x05y00 : (Vector3f?)null;
+                    x05y05 = x05y05Mask.Z < _maskLimit ? x05y05 : (Vector3f?)null;
 
                     _mesh.AddQuad(x00y00, x00y05, x05y00, x05y05);
                 }

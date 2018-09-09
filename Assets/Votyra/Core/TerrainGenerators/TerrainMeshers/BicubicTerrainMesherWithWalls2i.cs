@@ -29,8 +29,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected bool _holeDetected;
         private const int PointsPerInnerCell = QuadToTriangles * 3;
 
-        public BicubicTerrainMesherWithWalls2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler, [ConfigInject("ensureFlat")]bool ensureFlat, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale)
-            : base(terrainConfig, imageSampler, ensureFlat, subdivision, noiseScale)
+        public BicubicTerrainMesherWithWalls2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler, [ConfigInject("ensureFlat")]bool ensureFlat, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
+            : base(terrainConfig, imageSampler, ensureFlat, subdivision, noiseScale, maskLimit)
         {
             this._minusXcomputer = CreateCellComputer(Range2i.FromMinAndMax(new Vector2i(_subdivision, 0), new Vector2i(_subdivision + 1, _subdivision + 1)), ImageSampleHandler);
             this._minusYcomputer = CreateCellComputer(Range2i.FromMinAndMax(new Vector2i(0, _subdivision), new Vector2i(_subdivision + 1, _subdivision + 1)), ImageSampleHandler);
@@ -109,23 +109,23 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             {
                 if (cellInGroup.Y == _cellInGroup.Y - 1)
                 {
-                    return _minusYmask[innerPoint.X, innerPoint.Y].Z < 0.5f ? _minusYvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
+                    return _minusYmask[innerPoint.X, innerPoint.Y].Z < _maskLimit ? _minusYvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
                 }
                 if (cellInGroup.X == _cellInGroup.X - 1)
                 {
-                    return _minusXmask[innerPoint.X, innerPoint.Y].Z < 0.5f ? _minusXvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
+                    return _minusXmask[innerPoint.X, innerPoint.Y].Z < _maskLimit ? _minusXvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
                 }
-                return _mask[innerPoint.X, innerPoint.Y].Z < 0.5f ? _values[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
+                return _mask[innerPoint.X, innerPoint.Y].Z < _maskLimit ? _values[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
             }
             else
             {
                 if (cellInGroup.Y == -1)
                 {
-                    return _minusYmask[innerPoint.X, innerPoint.Y].Z < 0.5f ? _minusYvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
+                    return _minusYmask[innerPoint.X, innerPoint.Y].Z < _maskLimit ? _minusYvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
                 }
                 if (cellInGroup.X == -1)
                 {
-                    return _minusXmask[innerPoint.X, innerPoint.Y].Z < 0.5f ? _minusXvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
+                    return _minusXmask[innerPoint.X, innerPoint.Y].Z < _maskLimit ? _minusXvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
                 }
                 return _mesh[GetInnerPointMeshIndex(cellInGroup, innerPoint)];
             }

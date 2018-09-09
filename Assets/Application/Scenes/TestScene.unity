@@ -334,7 +334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 411b2da090ebf0f4b81c1510a2b4eed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activeTerrainAlgorithm: 1
+  _activeTerrainAlgorithm: 0
   _availableTerrainAlgorithms:
   - {fileID: 1101794731832008, guid: f4f93c13563af724e9805d1070d56d88, type: 2}
   - {fileID: 1101794731832008, guid: a3fa91a0e395d7643bf043b4c7bfd4fd, type: 2}
@@ -413,6 +413,11 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 0}
     JsonValue: '{"X":0.0,"Y":0.0,"Z":0.0}'
+  - Id: maskLimit
+    TypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
+    JsonValue: 0.6
 --- !u!1 &886990423
 GameObject:
   m_ObjectHideFlags: 0
@@ -836,6 +841,21 @@ MonoBehaviour:
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
     JsonValue: 1
+  - Id: ensureFlat
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
+    JsonValue: false
+  - Id: subdivision
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
+    JsonValue: 0
+  - Id: noiseScale
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3f, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValue: {fileID: 0}
+    JsonValue: '{"X":0.0,"Y":0.0,"Z":0.0}'
 --- !u!114 &1857217857
 MonoBehaviour:
   m_ObjectHideFlags: 0
