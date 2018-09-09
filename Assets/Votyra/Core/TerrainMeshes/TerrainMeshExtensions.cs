@@ -149,6 +149,13 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
+        public static void AddWall(this ITerrainMesh mesh, Vector3f? a, Vector3f? b, Vector3f? b_lower, Vector3f? a_lower)
+        {
+            if (a.HasValue && b.HasValue && b_lower.HasValue && a_lower.HasValue)
+            {
+                mesh.AddWall(a.Value, b.Value, b_lower.Value, a_lower.Value);
+            }
+        }
         public static void AddWall(this ITerrainMesh mesh, Vector3f a, Vector3f b, Vector3f b_lower, Vector3f a_lower)
         {
             mesh.AddTriangle(a, b, b_lower);

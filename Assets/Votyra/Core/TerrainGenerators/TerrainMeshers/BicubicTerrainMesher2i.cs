@@ -43,31 +43,36 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             {
                 var values = _mainCellComputer.PrepareCell(cellInGroup + _groupPosition);
                 var maskValues = _maskCellComputer.PrepareCell(cellInGroup + _groupPosition);
-                float step = 1.0f / _subdivision;
-                for (int ix = 0; ix < _subdivision; ix++)
+                AddCellInner(cellInGroup, values, maskValues);
+            }
+        }
+
+        protected virtual void AddCellInner(Vector2i cellInGroup, Vector3f[,] values, Vector3f[,] maskValues)
+        {
+            float step = 1.0f / _subdivision;
+            for (int ix = 0; ix < _subdivision; ix++)
+            {
+                for (int iy = 0; iy < _subdivision; iy++)
                 {
-                    for (int iy = 0; iy < _subdivision; iy++)
-                    {
-                        var x00 = step * (ix);
-                        var y00 = step * (iy);
-                        var x05 = step * (ix + 1);
-                        var y05 = step * (iy + 1);
-                        Vector3f? x00y00 = values[ix + 0, iy + 0];
-                        Vector3f? x00y05 = values[ix + 0, iy + 1];
-                        Vector3f? x05y00 = values[ix + 1, iy + 0];
-                        Vector3f? x05y05 = values[ix + 1, iy + 1];
-                        var x00y00Mask = maskValues[ix + 0, iy + 0];
-                        var x00y05Mask = maskValues[ix + 0, iy + 1];
-                        var x05y00Mask = maskValues[ix + 1, iy + 0];
-                        var x05y05Mask = maskValues[ix + 1, iy + 1];
+                    var x00 = step * (ix);
+                    var y00 = step * (iy);
+                    var x05 = step * (ix + 1);
+                    var y05 = step * (iy + 1);
+                    Vector3f? x00y00 = values[ix + 0, iy + 0];
+                    Vector3f? x00y05 = values[ix + 0, iy + 1];
+                    Vector3f? x05y00 = values[ix + 1, iy + 0];
+                    Vector3f? x05y05 = values[ix + 1, iy + 1];
+                    var x00y00Mask = maskValues[ix + 0, iy + 0];
+                    var x00y05Mask = maskValues[ix + 0, iy + 1];
+                    var x05y00Mask = maskValues[ix + 1, iy + 0];
+                    var x05y05Mask = maskValues[ix + 1, iy + 1];
 
-                        x00y00 = x00y00Mask.Z <= 0.5f ? x00y00 : (Vector3f?)null;
-                        x00y05 = x00y05Mask.Z <= 0.5f ? x00y05 : (Vector3f?)null;
-                        x05y00 = x05y00Mask.Z <= 0.5f ? x05y00 : (Vector3f?)null;
-                        x05y05 = x05y05Mask.Z <= 0.5f ? x05y05 : (Vector3f?)null;
+                    x00y00 = x00y00Mask.Z < 0.5f ? x00y00 : (Vector3f?)null;
+                    x00y05 = x00y05Mask.Z < 0.5f ? x00y05 : (Vector3f?)null;
+                    x05y00 = x05y00Mask.Z < 0.5f ? x05y00 : (Vector3f?)null;
+                    x05y05 = x05y05Mask.Z < 0.5f ? x05y05 : (Vector3f?)null;
 
-                        _mesh.AddQuad(x00y00, x00y05, x05y00, x05y05);
-                    }
+                    _mesh.AddQuad(x00y00, x00y05, x05y00, x05y05);
                 }
             }
         }
