@@ -11,7 +11,6 @@ namespace Votyra.Core.Models
 
         public readonly float Y;
 
-
         public Vector2f(float x, float y)
         {
             this.X = x;
@@ -40,6 +39,7 @@ namespace Votyra.Core.Models
         {
             return (float)((double)lhs.X * (double)rhs.X + (double)lhs.Y * (double)rhs.Y);
         }
+
         public static Vector2f Max(Vector2f a, Vector2f b)
         {
             return new Vector2f(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));
@@ -74,6 +74,7 @@ namespace Votyra.Core.Models
         {
             return new Vector2f(a.X * b.X, a.Y * b.Y);
         }
+
         public static Vector2f operator +(Vector2f a, Vector2i b)
         {
             return new Vector2f(a.X + b.X, a.Y + b.Y);

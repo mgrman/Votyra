@@ -5,6 +5,14 @@ namespace Votyra.Core.TerrainMeshes
 {
     public class ExpandingTerrainMesh : ITerrainMesh
     {
+        public ExpandingTerrainMesh()
+        {
+            Vertices = new List<Vector3f>();
+            UV = new List<Vector2f>();
+            Indices = new List<int>();
+            Normals = new List<Vector3f>();
+        }
+
         public Range3f MeshBounds { get; private set; }
         public List<Vector3f> Vertices { get; }
         public List<Vector3f> Normals { get; }
@@ -15,13 +23,6 @@ namespace Votyra.Core.TerrainMeshes
         public int PointCount { get; private set; }
 
         public Vector3f this[int point] => Vertices[point];
-        public ExpandingTerrainMesh()
-        {
-            Vertices = new List<Vector3f>();
-            UV = new List<Vector2f>();
-            Indices = new List<int>();
-            Normals = new List<Vector3f>();
-        }
 
         public void Clear(Range3f meshBounds)
         {
@@ -63,7 +64,6 @@ namespace Votyra.Core.TerrainMeshes
 
         public void FinalizeMesh()
         {
-
         }
     }
 }

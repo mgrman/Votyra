@@ -48,6 +48,35 @@ namespace Votyra.Core.Models
             this.m33 = m33;
         }
 
+        public float Determinant
+        {
+            get
+            {
+                //https://stackoverflow.com/questions/2937702/i-want-to-find-determinant-of-4x4-matrix-in-c-sharp
+                return
+                    m03 * m12 * m21 * m30 - m02 * m13 * m21 * m30 -
+                    m03 * m11 * m22 * m30 + m01 * m13 * m22 * m30 +
+                    m02 * m11 * m23 * m30 - m01 * m12 * m23 * m30 -
+                    m03 * m12 * m20 * m31 + m02 * m13 * m20 * m31 +
+                    m03 * m10 * m22 * m31 - m00 * m13 * m22 * m31 -
+                    m02 * m10 * m23 * m31 + m00 * m12 * m23 * m31 +
+                    m03 * m11 * m20 * m32 - m01 * m13 * m20 * m32 -
+                    m03 * m10 * m21 * m32 + m00 * m13 * m21 * m32 +
+                    m01 * m10 * m23 * m32 - m00 * m11 * m23 * m32 -
+                    m02 * m11 * m20 * m33 + m01 * m12 * m20 * m33 +
+                    m02 * m10 * m21 * m33 - m00 * m12 * m21 * m33 -
+                    m01 * m10 * m22 * m33 + m00 * m11 * m22 * m33;
+            }
+        }
+
+        public Matrix4x4f Inverse
+        {
+            get
+            {
+                return Matrix4x4fInvertor.Invert(this);
+            }
+        }
+
         public static Matrix4x4f operator *(Matrix4x4f lhs, Matrix4x4f rhs)
         {
             float m00 = lhs.m00 * rhs.m00 + lhs.m01 * rhs.m10 + lhs.m02 * rhs.m20 + lhs.m03 * rhs.m30;
@@ -76,84 +105,6 @@ namespace Votyra.Core.Models
             float z = (float)((double)lhs.m20 * (double)v.X + (double)lhs.m21 * (double)v.Y + (double)lhs.m22 * (double)v.Z + (double)lhs.m23 * (double)v.W);
             float w = (float)((double)lhs.m30 * (double)v.X + (double)lhs.m31 * (double)v.Y + (double)lhs.m32 * (double)v.Z + (double)lhs.m33 * (double)v.W);
             return new Vector4f(x, y, z, w);
-        }
-
-        public Vector4f GetColumn(int i)
-        {
-            switch (i)
-            {
-                case 0:
-                    return new Vector4f(m00, m10, m20, m30);
-
-                case 1:
-                    return new Vector4f(m01, m11, m21, m31);
-
-                case 2:
-                    return new Vector4f(m02, m12, m22, m32);
-
-                case 3:
-                    return new Vector4f(m03, m13, m23, m33);
-
-                default:
-                    throw new InvalidOperationException($"Unsuported column '{i}'! Column must be between 0-3.");
-            }
-        }
-
-        public Vector3f MultiplyPoint(Vector3f v)
-        {
-            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z) + this.m03;
-            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z) + this.m13;
-            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z) + this.m23;
-            float num = 1f / ((float)((double)this.m30 * (double)v.X + (double)this.m31 * (double)v.Y + (double)this.m32 * (double)v.Z) + this.m33);
-            x *= num;
-            y *= num;
-            z *= num;
-            return new Vector3f(x, y, z);
-        }
-
-        public Vector3f MultiplyPoint3x4(Vector3f v)
-        {
-            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z) + this.m03;
-            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z) + this.m13;
-            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z) + this.m23;
-            return new Vector3f(x, y, z);
-        }
-
-        public Vector3f MultiplyVector(Vector3f v)
-        {
-            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z);
-            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z);
-            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z);
-            return new Vector3f(x, y, z);
-        }
-
-        public float Determinant
-        {
-            get
-            {
-                //https://stackoverflow.com/questions/2937702/i-want-to-find-determinant-of-4x4-matrix-in-c-sharp
-                return
-                    m03 * m12 * m21 * m30 - m02 * m13 * m21 * m30 -
-                    m03 * m11 * m22 * m30 + m01 * m13 * m22 * m30 +
-                    m02 * m11 * m23 * m30 - m01 * m12 * m23 * m30 -
-                    m03 * m12 * m20 * m31 + m02 * m13 * m20 * m31 +
-                    m03 * m10 * m22 * m31 - m00 * m13 * m22 * m31 -
-                    m02 * m10 * m23 * m31 + m00 * m12 * m23 * m31 +
-                    m03 * m11 * m20 * m32 - m01 * m13 * m20 * m32 -
-                    m03 * m10 * m21 * m32 + m00 * m13 * m21 * m32 +
-                    m01 * m10 * m23 * m32 - m00 * m11 * m23 * m32 -
-                    m02 * m11 * m20 * m33 + m01 * m12 * m20 * m33 +
-                    m02 * m10 * m21 * m33 - m00 * m12 * m21 * m33 -
-                    m01 * m10 * m22 * m33 + m00 * m11 * m22 * m33;
-            }
-        }
-
-        public Matrix4x4f Inverse
-        {
-            get
-            {
-                return Matrix4x4fInvertor.Invert(this);
-            }
         }
 
         public static Matrix4x4f Scale(Vector3f v)
@@ -215,6 +166,55 @@ namespace Votyra.Core.Models
         public static bool operator !=(Matrix4x4f lhs, Matrix4x4f rhs)
         {
             return !(lhs == rhs);
+        }
+
+        public Vector4f GetColumn(int i)
+        {
+            switch (i)
+            {
+                case 0:
+                    return new Vector4f(m00, m10, m20, m30);
+
+                case 1:
+                    return new Vector4f(m01, m11, m21, m31);
+
+                case 2:
+                    return new Vector4f(m02, m12, m22, m32);
+
+                case 3:
+                    return new Vector4f(m03, m13, m23, m33);
+
+                default:
+                    throw new InvalidOperationException($"Unsuported column '{i}'! Column must be between 0-3.");
+            }
+        }
+
+        public Vector3f MultiplyPoint(Vector3f v)
+        {
+            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z) + this.m03;
+            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z) + this.m13;
+            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z) + this.m23;
+            float num = 1f / ((float)((double)this.m30 * (double)v.X + (double)this.m31 * (double)v.Y + (double)this.m32 * (double)v.Z) + this.m33);
+            x *= num;
+            y *= num;
+            z *= num;
+            return new Vector3f(x, y, z);
+        }
+
+        public Vector3f MultiplyPoint3x4(Vector3f v)
+        {
+            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z) + this.m03;
+            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z) + this.m13;
+            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z) + this.m23;
+            return new Vector3f(x, y, z);
+        }
+
+        public Vector3f MultiplyVector(Vector3f v)
+        {
+            float x = (float)((double)this.m00 * (double)v.X + (double)this.m01 * (double)v.Y + (double)this.m02 * (double)v.Z);
+            float y = (float)((double)this.m10 * (double)v.X + (double)this.m11 * (double)v.Y + (double)this.m12 * (double)v.Z);
+            float z = (float)((double)this.m20 * (double)v.X + (double)this.m21 * (double)v.Y + (double)this.m22 * (double)v.Z);
+            return new Vector3f(x, y, z);
         }
 
         public override int GetHashCode()

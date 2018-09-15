@@ -5,15 +5,15 @@ namespace Votyra.Core.Images
 {
     public class NoiseImage3b : IImage3b
     {
-        public Vector3f Offset { get; private set; }
-
-        public Vector3f Scale { get; private set; }
-
         public NoiseImage3b(Vector3f offset, Vector3f scale)
         {
             Offset = offset;
             Scale = scale;
         }
+
+        public Vector3f Offset { get; private set; }
+
+        public Vector3f Scale { get; private set; }
 
         public bool Sample(Vector3i point)
         {

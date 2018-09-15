@@ -33,8 +33,6 @@ namespace Votyra.Core.Models.ObjectPool
             return obj;
         }
 
-        protected abstract List<T> GetPool(TKey key);
-
         public virtual void ReturnObject(T obj, TKey key)
         {
             var objectPool = GetPool(key);
@@ -43,5 +41,7 @@ namespace Votyra.Core.Models.ObjectPool
                 objectPool.Add(obj);
             }
         }
+
+        protected abstract List<T> GetPool(TKey key);
     }
 }

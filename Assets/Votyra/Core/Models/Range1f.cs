@@ -30,11 +30,6 @@ namespace Votyra.Core.Models
             }
         }
 
-        public Range1f UnionWith(Range1f range)
-        {
-            return new Range1f(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
-        }
-
         public static bool operator ==(Range1f a, Range1f b)
         {
             return a.Min == b.Min && a.Max == b.Max;
@@ -43,6 +38,11 @@ namespace Votyra.Core.Models
         public static bool operator !=(Range1f a, Range1f b)
         {
             return a.Min != b.Min || a.Max != b.Max;
+        }
+
+        public Range1f UnionWith(Range1f range)
+        {
+            return new Range1f(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
         }
 
         public bool Equals(Range1f other)

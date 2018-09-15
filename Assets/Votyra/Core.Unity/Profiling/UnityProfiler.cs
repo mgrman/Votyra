@@ -15,6 +15,7 @@ namespace Votyra.Core.Profiling
         private readonly Stopwatch _stopwatch;
 
         private string _name;
+
         public UnityProfiler(UnityEngine.Object owner)
         {
             _owner = owner;
@@ -39,7 +40,6 @@ namespace Votyra.Core.Profiling
                 _stopwatch.Start();
                 return Disposable.Create(Stop);
             }
-
         }
 
         private void StopAndEndSample()

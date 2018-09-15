@@ -3,11 +3,14 @@
     "references": [
         "Votyra.Core",
         "Votyra.Core.Unity",
-        "Votyra.Plannar",
         "Zenject"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }

@@ -12,6 +12,16 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher3b : ITerrainMesher3b
     {
+        public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
+        protected Vector3i groupPosition;
+        protected Vector3i groupSize;
+        protected IPooledTerrainMesh pooledMesh;
+        protected ITerrainMesh mesh;
+        private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
+
+        private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3f>> DataToTriangles = SampledData3b.AllValues
+            .ToDictionary(o => o, o => ChooseTrianglesForCell(o), SampledData3b.NormallessComparer);
+
         private readonly IImageSampler3 _imageSampler;
         private readonly Vector3i _cellInGroupCount;
 
@@ -22,10 +32,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         }
 
         protected IImage3b Image { get; private set; }
-        protected Vector3i groupPosition;
-        protected Vector3i groupSize;
-        protected IPooledTerrainMesh pooledMesh;
-        protected ITerrainMesh mesh;
 
         public void Initialize(IImage3b image)
         {
@@ -48,8 +54,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             mesh.Clear(bounds);
         }
 
-        public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
-
         public void AddCell(Vector3i cellInGroup)
         {
             Vector3i cell = cellInGroup + groupPosition;
@@ -68,10 +72,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             // or maybe postProcessing?
         }
 
-        private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
-
-        private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3f>> DataToTriangles = SampledData3b.AllValues
-            .ToDictionary(o => o, o => ChooseTrianglesForCell(o), SampledData3b.NormallessComparer);
+        public IPooledTerrainMesh GetResultingMesh()
+        {
+            return pooledMesh;
+        }
 
         private static IReadOnlyCollection<Triangle3f> ChooseTrianglesForCell(SampledData3b data)
         {
@@ -310,11 +314,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 }
                 return triangles.ToArray();
             }
-        }
-
-        public IPooledTerrainMesh GetResultingMesh()
-        {
-            return pooledMesh;
         }
     }
 }

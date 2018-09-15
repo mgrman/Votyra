@@ -1,26 +1,21 @@
 using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Votyra.Core.Images;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
-using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
 {
     public class EnsureFlatInterpolatorDecorator : IInterpolator
     {
-        public IInterpolator ChildInterpolator { get; }
-
-        public float[,] InterpolationMatrix => ChildInterpolator.InterpolationMatrix;
-
         private float? _flatValue;
 
         public EnsureFlatInterpolatorDecorator(IInterpolator interpolator)
         {
             this.ChildInterpolator = interpolator;
         }
+
+        public IInterpolator ChildInterpolator { get; }
+
+        public float[,] InterpolationMatrix => ChildInterpolator.InterpolationMatrix;
+
         public void PrepareInterpolation(Vector2i cell, Func<Vector2i, SampledData2f> sampleFunc)
         {
             _flatValue = CellFlatMode(cell, sampleFunc);
@@ -28,12 +23,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
             {
                 ChildInterpolator.PrepareInterpolation(cell, sampleFunc);
             }
-        }
-
-        private float? CellFlatMode(Vector2i cell, Func<Vector2i, SampledData2f> sampleFunc)
-        {
-            var data = sampleFunc(cell);
-            return ((data.x0y0 == data.x0y1) && (data.x0y1 == data.x1y0) && (data.x1y0 == data.x1y1)) ? data.x0y0 : (float?)null;
         }
 
         public float Sample(Vector2f pos)
@@ -60,6 +49,11 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
                 return ChildInterpolator.Sample(pos);
         }
 
+        private float? CellFlatMode(Vector2i cell, Func<Vector2i, SampledData2f> sampleFunc)
+        {
+            var data = sampleFunc(cell);
+            return ((data.x0y0 == data.x0y1) && (data.x0y1 == data.x1y0) && (data.x1y0 == data.x1y1)) ? data.x0y0 : (float?)null;
+        }
 
         private bool IsFlat(int ix, int iy)
         {
@@ -67,6 +61,5 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
                 && InterpolationMatrix[ix + 1, iy] == InterpolationMatrix[ix + 1, iy + 1]
                 && InterpolationMatrix[ix, iy] == InterpolationMatrix[ix + 1, iy + 1];
         }
-
     }
 }

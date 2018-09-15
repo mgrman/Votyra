@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
@@ -21,12 +18,6 @@ namespace Votyra.Core.Models
             this.x1y1 = x1y1;
         }
 
-        public int GetHoleCount() => (x0y0.IsHole() ? 1 : 0)
-            + (x0y1.IsHole() ? 1 : 0)
-            + (x1y0.IsHole() ? 1 : 0)
-            + (x1y1.IsHole() ? 1 : 0);
-
-
         public static bool operator ==(SampledMask2e a, SampledMask2e b)
         {
             return a.x0y0 == b.x0y0 && a.x0y1 == b.x0y1 && a.x1y0 == b.x1y0 && a.x1y1 == b.x1y1;
@@ -36,6 +27,11 @@ namespace Votyra.Core.Models
         {
             return a.x0y0 != b.x0y0 || a.x0y1 != b.x0y1 || a.x1y0 != b.x1y0 || a.x1y1 != b.x1y1;
         }
+
+        public int GetHoleCount() => (x0y0.IsHole() ? 1 : 0)
+                            + (x0y1.IsHole() ? 1 : 0)
+            + (x1y0.IsHole() ? 1 : 0)
+            + (x1y1.IsHole() ? 1 : 0);
 
         public override bool Equals(object obj)
         {
@@ -62,7 +58,6 @@ namespace Votyra.Core.Models
                 return this.x0y0.GetHashCode() + this.x0y1.GetHashCode() * 7 + this.x1y0.GetHashCode() * 17 + this.x1y1.GetHashCode() * 31;
             }
         }
-
 
         public override string ToString()
         {

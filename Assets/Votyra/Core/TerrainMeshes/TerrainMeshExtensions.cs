@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainMeshes
 {
@@ -100,7 +98,6 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-
         public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2h data, SampledMask2e maskData, SampledData2h minusYres, SampledMask2e minusYresMaskData)
         {
             if (maskData.x1y0.IsNotHole() && maskData.x0y0.IsNotHole() && minusYresMaskData.x0y1.IsNotHole() && minusYresMaskData.x1y1.IsNotHole())
@@ -156,6 +153,7 @@ namespace Votyra.Core.TerrainMeshes
                 mesh.AddWall(a.Value, b.Value, b_lower.Value, a_lower.Value);
             }
         }
+
         public static void AddWall(this ITerrainMesh mesh, Vector3f a, Vector3f b, Vector3f b_lower, Vector3f a_lower)
         {
             mesh.AddTriangle(a, b, b_lower);

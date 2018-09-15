@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Votyra.Core.Images.Constraints;
 using Votyra.Core.Models;
-using Zenject;
 
 namespace Votyra.Core.Images
 {
@@ -54,14 +52,14 @@ namespace Votyra.Core.Images
             return _image;
         }
 
-        private void UpdateImage(Range2i invalidatedImageArea)
-        {
-            _invalidatedArea = _invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
-        }
-
         public IEditableMaskAccessor2e RequestAccess(Range2i areaRequest)
         {
             return new MatrixImageAccessor(this, areaRequest);
+        }
+
+        private void UpdateImage(Range2i invalidatedImageArea)
+        {
+            _invalidatedArea = _invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
         }
 
         private class MatrixImageAccessor : IEditableMaskAccessor2e

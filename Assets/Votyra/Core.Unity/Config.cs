@@ -1,15 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using UniRx;
 using UnityEngine;
-using Votyra.Core.Images;
 
 namespace Votyra.Core
 {
-
     [Serializable]
     public class ConfigItem : IEquatable<ConfigItem>
     {
+        [SerializeField]
+        public string Id;
+
+        [SerializeField]
+        public string TypeAssemblyQualifiedName;
+
+        [SerializeField]
+        public UnityEngine.Object UnityValue;
+
+        [SerializeField]
+        public string JsonValue;
+
         public ConfigItem()
         {
         }
@@ -28,18 +36,6 @@ namespace Votyra.Core
             }
         }
 
-        [SerializeField]
-        public string Id;
-
-        [SerializeField]
-        public string TypeAssemblyQualifiedName;
-
-        [SerializeField]
-        public UnityEngine.Object UnityValue;
-
-        [SerializeField]
-        public string JsonValue;
-
         public Type Type
         {
             get
@@ -54,7 +50,6 @@ namespace Votyra.Core
                 }
             }
         }
-
 
         public object Value
         {

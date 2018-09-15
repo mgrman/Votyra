@@ -27,6 +27,26 @@ namespace Votyra.Core.Models
 
         public int Size => Max - Min;
 
+        public static Range1i operator +(Range1i a, Range1i b)
+        {
+            return new Range1i(a.Min + b.Min, a.Max + b.Max);
+        }
+
+        public static Range1i operator -(Range1i a, Range1i b)
+        {
+            return new Range1i(a.Min - b.Min, a.Max - b.Max);
+        }
+
+        public static bool operator ==(Range1i a, Range1i b)
+        {
+            return a.Min == b.Min && a.Max == b.Max;
+        }
+
+        public static bool operator !=(Range1i a, Range1i b)
+        {
+            return a.Min != b.Min || a.Max != b.Max;
+        }
+
         public void ForeachPointExlusive(Action<int> action)
         {
             for (int i = this.Min; i < this.Max; i++)
@@ -47,26 +67,6 @@ namespace Votyra.Core.Models
                 return this;
             }
             return UnionWith(range.Value);
-        }
-
-        public static Range1i operator +(Range1i a, Range1i b)
-        {
-            return new Range1i(a.Min + b.Min, a.Max + b.Max);
-        }
-
-        public static Range1i operator -(Range1i a, Range1i b)
-        {
-            return new Range1i(a.Min - b.Min, a.Max - b.Max);
-        }
-
-        public static bool operator ==(Range1i a, Range1i b)
-        {
-            return a.Min == b.Min && a.Max == b.Max;
-        }
-
-        public static bool operator !=(Range1i a, Range1i b)
-        {
-            return a.Min != b.Min || a.Max != b.Max;
         }
 
         public bool Equals(Range1i other)

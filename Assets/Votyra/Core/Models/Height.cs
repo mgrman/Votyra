@@ -17,11 +17,16 @@ namespace Votyra.Core.Models
 
         public Height Above => new Height(Value + 1);
         public Height Below => new Height(Value - 1);
+        public int RawValue => Value;
         public Height Abs => new Height(Math.Abs(Value));
         public int Sign => Math.Sign(Value);
+
         public static Height Max(Height a, Height b) => Math.Max(a.Value, b.Value).CreateHeight();
+
         public static Height Min(Height a, Height b) => Math.Min(a.Value, b.Value).CreateHeight();
+
         public static Difference operator -(Height a, Height b) => new Difference(a.Value - b.Value);
+
         public static Height operator -(Height a) => new Height(-a.Value);
 
         public static bool operator !=(Height a, Height b) => a.Value != b.Value;
@@ -40,6 +45,17 @@ namespace Votyra.Core.Models
         public static bool operator >=(Height a, Height b) => a == b || a > b;
 
         public static Range1h Range(Height min, Height max) => new Range1h(min, max);
+
+        public static Height Lerp(Height a, Height b, float param)
+        {
+            var offsetF = (a.Value - b.Value) * param;
+            int offsetI = 0;
+            if (offsetF > 0.1f)
+                offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
+            else if (offsetF < -0.1f)
+                offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
+            return (b.Value + offsetI).CreateHeight();
+        }
 
         public int CompareTo(Height other) => this.Value.CompareTo(other.Value);
 
@@ -73,22 +89,9 @@ namespace Votyra.Core.Models
             return Value.ToString().PadLeft(4) + " [h]";
         }
 
-        public int RawValue => Value;
-
         public Vector3f ToVector3f(Vector2f vec)
         {
             return new Vector3f(vec.X, vec.Y, Value);
-        }
-
-        public static Height Lerp(Height a, Height b, float param)
-        {
-            var offsetF = (a.Value - b.Value) * param;
-            int offsetI = 0;
-            if (offsetF > 0.1f)
-                offsetI = Mathf.Max(1, Mathf.RoundToInt(offsetF));
-            else if (offsetF < -0.1f)
-                offsetI = Mathf.Min(-1, Mathf.RoundToInt(offsetF));
-            return (b.Value + offsetI).CreateHeight();
         }
 
         public struct Difference
@@ -102,7 +105,6 @@ namespace Votyra.Core.Models
             {
                 Value = value;
             }
-
 
             public Difference Abs => new Difference(Math.Abs(Value));
 
@@ -124,7 +126,6 @@ namespace Votyra.Core.Models
 
             public override string ToString()
             {
-
                 return Value.ToString().PadLeft(4) + " [Δh]";
             }
 

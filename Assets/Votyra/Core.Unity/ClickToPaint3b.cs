@@ -12,9 +12,6 @@ namespace Votyra.Core
     public class ClickToPaint3b : ITickable
     {
         [Inject]
-        private IEditableImage3b _editableImage;
-
-        [Inject]
         protected IImageSampler3 _sampler;
 
         [Inject(Id = "root")]
@@ -24,13 +21,28 @@ namespace Votyra.Core
         protected IThreadSafeLogger _logger;
 
         private const float Period = 0.1f;
+
         private const int maxDistBig = 2;
+
         private const int maxDistSmall = 1;
+
         private const float smoothSpeedRelative = 0.2f;
+
         private const float smoothCutoff = smoothSpeedRelative / 2;
+
+        [Inject]
+        protected IEditableImage3b _editableImage;
 
         private float _lastTime;
         private Vector3i? _lastCell;
+
+        private Stack<Renderer> _usedDebugObjects = new Stack<Renderer>();
+
+        private Stack<Renderer> _emptyDebugObjects = new Stack<Renderer>();
+
+        private Material _trueMaterial;
+
+        private Material _falseMaterial;
 
         public void Tick()
         {
@@ -49,11 +61,6 @@ namespace Votyra.Core
         {
             OnCellClick(MouseImagePosition());
         }
-
-        private Stack<Renderer> _usedDebugObjects = new Stack<Renderer>();
-        private Stack<Renderer> _emptyDebugObjects = new Stack<Renderer>();
-        private Material _trueMaterial;
-        private Material _falseMaterial;
 
         private void DebugMouse()
         {
@@ -93,7 +100,6 @@ namespace Votyra.Core
                     var x1y0z1 = image[imagePosition_x1y0z1];
                     var x1y1z0 = image[imagePosition_x1y1z0];
                     var x1y1z1 = image[imagePosition_x1y1z1];
-
 
                     CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z0) + LocalToWorldVector(new Vector3f(0.1f, 0.1f, 0)), x0y0z0);
                     // CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z1) + new Vector3f(0.1f, 0.1f, -0.1f), x0y0z1);
@@ -163,6 +169,7 @@ namespace Votyra.Core
             var worldPosition = _root.transform.TransformPoint(localPosition.ToVector3());
             return worldPosition.ToVector3f();
         }
+
         private Vector3f LocalToWorldVector(Vector3f localPosition)
         {
             var worldPosition = _root.transform.TransformVector(localPosition.ToVector3());

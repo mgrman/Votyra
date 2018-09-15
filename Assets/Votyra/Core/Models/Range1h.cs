@@ -29,6 +29,20 @@ namespace Votyra.Core.Models
         //     }
         // }
 
+        public static bool operator ==(Range1h a, Range1h b)
+        {
+            return a.Min == b.Min && a.Max == b.Max;
+        }
+
+        // public static Range1i operator -(Range1i a, Range1i b)
+        // {
+        //     return new Range1i(a.Min - b.Min, a.Max - b.Max);
+        // }
+        public static bool operator !=(Range1h a, Range1h b)
+        {
+            return a.Min != b.Min || a.Max != b.Max;
+        }
+
         public Range1h UnionWith(Range1h range)
         {
             return new Range1h(Height.Min(this.Min, range.Min), Height.Min(this.Max, range.Max));
@@ -47,22 +61,6 @@ namespace Votyra.Core.Models
         // {
         //     return new Range1i(a.Min + b.Min, a.Max + b.Max);
         // }
-
-        // public static Range1i operator -(Range1i a, Range1i b)
-        // {
-        //     return new Range1i(a.Min - b.Min, a.Max - b.Max);
-        // }
-
-        public static bool operator ==(Range1h a, Range1h b)
-        {
-            return a.Min == b.Min && a.Max == b.Max;
-        }
-
-        public static bool operator !=(Range1h a, Range1h b)
-        {
-            return a.Min != b.Min || a.Max != b.Max;
-        }
-
         public bool Equals(Range1h other)
         {
             return this == other;

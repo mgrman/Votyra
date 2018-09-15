@@ -1,20 +1,19 @@
 using System;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Images
 {
     public class MatrixMask2e : IMask2e, IInitializableImage, IImageInvalidatableImage2i, IDisposable
     {
-        public Range2i InvalidatedArea { get; }
-
-        public LockableMatrix2<MaskValues> Image { get; }
-
         public MatrixMask2e(LockableMatrix2<MaskValues> values, Range2i invalidatedArea)
         {
             Image = values;
             InvalidatedArea = invalidatedArea;
         }
+
+        public Range2i InvalidatedArea { get; }
+
+        public LockableMatrix2<MaskValues> Image { get; }
 
         public bool AnyData(Range2i range)
         {

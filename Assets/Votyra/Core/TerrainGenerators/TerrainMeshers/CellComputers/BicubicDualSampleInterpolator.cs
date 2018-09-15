@@ -1,11 +1,5 @@
 using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Votyra.Core.Images;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
-using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
 {
@@ -43,6 +37,5 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
             InterpolationMatrix[3, 2] = (data_x2y1.x0y1 + data_x2y2.x0y0) / 2;
             InterpolationMatrix[3, 3] = data_x2y2.x1y1;
         }
-
     }
 }

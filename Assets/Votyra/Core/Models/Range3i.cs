@@ -15,8 +15,6 @@ namespace Votyra.Core.Models
 
         public readonly Vector3i Max;
 
-        public Vector3i Size => Max - Min;
-
         private Range3i(Vector3i min, Vector3i max)
         {
             this.Min = min;
@@ -30,6 +28,8 @@ namespace Votyra.Core.Models
                 this.Max = this.Min;
             }
         }
+
+        public Vector3i Size => Max - Min;
 
         public static Range3i FromCenterAndExtents(Vector3i center, Vector3i extents)
         {
@@ -52,6 +52,16 @@ namespace Votyra.Core.Models
         public static Range3i FromMinAndMax(Vector3i min, Vector3i max)
         {
             return new Range3i(min, max);
+        }
+
+        public static bool operator ==(Range3i a, Range3i b)
+        {
+            return a.Min == b.Min && a.Max == b.Max;
+        }
+
+        public static bool operator !=(Range3i a, Range3i b)
+        {
+            return a.Min != b.Min || a.Max != b.Max;
         }
 
         public void ForeachPointExlusive(Action<Vector3i> action)
@@ -114,16 +124,6 @@ namespace Votyra.Core.Models
             var max = Vector3i.Max(Vector3i.Min(this.Max, that.Max), min);
 
             return Range3i.FromMinAndMax(min, max);
-        }
-
-        public static bool operator ==(Range3i a, Range3i b)
-        {
-            return a.Min == b.Min && a.Max == b.Max;
-        }
-
-        public static bool operator !=(Range3i a, Range3i b)
-        {
-            return a.Min != b.Min || a.Max != b.Max;
         }
 
         public bool Equals(Range3i other)

@@ -47,7 +47,6 @@ namespace Votyra.Core
         public void Dispose()
         {
             _onDestroyCts.Cancel();
-            UnityEngine.Debug.LogWarning("Dispose!!!");
         }
 
         private async void StartUpdateing()

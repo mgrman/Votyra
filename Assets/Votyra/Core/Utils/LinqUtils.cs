@@ -46,17 +46,17 @@ namespace Votyra.Core.Utils
                     yield return YieldBatchElements(enumerator, batchSize - 1);
         }
 
+        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> items)
+        {
+            return items ?? Enumerable.Empty<T>();
+        }
+
         private static IEnumerable<T> YieldBatchElements<T>(
-              IEnumerator<T> source, int batchSize)
+                      IEnumerator<T> source, int batchSize)
         {
             yield return source.Current;
             for (int i = 0; i < batchSize && source.MoveNext(); i++)
                 yield return source.Current;
-        }
-
-        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> items)
-        {
-            return items ?? Enumerable.Empty<T>();
         }
     }
 }

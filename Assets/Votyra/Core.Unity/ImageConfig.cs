@@ -1,5 +1,4 @@
 ﻿using Votyra.Core.Models;
-using Zenject;
 
 namespace Votyra.Core.Images
 {

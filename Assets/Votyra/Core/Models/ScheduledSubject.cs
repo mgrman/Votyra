@@ -3,6 +3,39 @@ using UniRx;
 
 namespace Votyra.Core.Models
 {
+    public static class ScheduledSubjectUtils
+    {
+        public static IBehaviorSubject<T> MakeScheduledOnCurrentThread<T>(this IBehaviorSubject<T> subject)
+        {
+            return new ScheduledSubject<T>(subject, Scheduler.CurrentThread);
+        }
+
+        public static ISubject<T> MakeScheduledOnCurrentThread<T>(this ISubject<T> subject)
+        {
+            return new ScheduledSubject<T>(subject, Scheduler.CurrentThread);
+        }
+
+        public static IBehaviorSubject<T> MakeScheduledOnMainThread<T>(this IBehaviorSubject<T> subject)
+        {
+            return new ScheduledSubject<T>(subject, Scheduler.MainThread);
+        }
+
+        public static ISubject<T> MakeScheduledOnMainThread<T>(this ISubject<T> subject)
+        {
+            return new ScheduledSubject<T>(subject, Scheduler.MainThread);
+        }
+
+        public static IBehaviorSubject<T> MakeScheduled<T>(this IBehaviorSubject<T> subject, IScheduler scheduler)
+        {
+            return new ScheduledSubject<T>(subject, scheduler);
+        }
+
+        public static ISubject<T> MakeScheduled<T>(this ISubject<T> subject, IScheduler scheduler)
+        {
+            return new ScheduledSubject<T>(subject, scheduler);
+        }
+    }
+
     public class ScheduledSubject<T> : IBehaviorSubject<T>
     {
         private readonly IScheduler _scheduler;
@@ -60,39 +93,6 @@ namespace Votyra.Core.Models
         public IDisposable Subscribe(IObserver<T> observer)
         {
             return _observable.Subscribe(observer);
-        }
-    }
-
-    public static class ScheduledSubjectUtils
-    {
-        public static IBehaviorSubject<T> MakeScheduledOnCurrentThread<T>(this IBehaviorSubject<T> subject)
-        {
-            return new ScheduledSubject<T>(subject, Scheduler.CurrentThread);
-        }
-
-        public static ISubject<T> MakeScheduledOnCurrentThread<T>(this ISubject<T> subject)
-        {
-            return new ScheduledSubject<T>(subject, Scheduler.CurrentThread);
-        }
-
-        public static IBehaviorSubject<T> MakeScheduledOnMainThread<T>(this IBehaviorSubject<T> subject)
-        {
-            return new ScheduledSubject<T>(subject, Scheduler.MainThread);
-        }
-
-        public static ISubject<T> MakeScheduledOnMainThread<T>(this ISubject<T> subject)
-        {
-            return new ScheduledSubject<T>(subject, Scheduler.MainThread);
-        }
-
-        public static IBehaviorSubject<T> MakeScheduled<T>(this IBehaviorSubject<T> subject, IScheduler scheduler)
-        {
-            return new ScheduledSubject<T>(subject, scheduler);
-        }
-
-        public static ISubject<T> MakeScheduled<T>(this ISubject<T> subject, IScheduler scheduler)
-        {
-            return new ScheduledSubject<T>(subject, scheduler);
         }
     }
 }

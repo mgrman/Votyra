@@ -9,9 +9,6 @@ namespace Votyra.Core.Models
 
         public readonly Vector2f Max;
         public readonly Vector2f Min;
-        public Vector2f Center => (Max + Min) / 2f;
-        public Vector2f Size => Max - Min;
-        public Vector2f Extents => Size / 2;
 
         private Range2f(Vector2f min, Vector2f max)
         {
@@ -19,10 +16,9 @@ namespace Votyra.Core.Models
             this.Max = max;
         }
 
-        public Range2f FromCenterAndSize(Vector2f center, Vector2f size)
-        {
-            return new Range2f(center - size / 2, size);
-        }
+        public Vector2f Center => (Max + Min) / 2f;
+        public Vector2f Size => Max - Min;
+        public Vector2f Extents => Size / 2;
 
         public static Range2f FromMinAndMax(Vector2f min, Vector2f max)
         {
@@ -32,21 +28,6 @@ namespace Votyra.Core.Models
         public static Range2f FromMinAndSize(Vector2f min, Vector2f size)
         {
             return new Range2f(min, min + size);
-        }
-
-        public Range2f Encapsulate(Vector2f point)
-        {
-            return Range2f.FromMinAndMax(Vector2f.Min(this.Min, point), Vector2f.Max(this.Max, point));
-        }
-
-        public Range2f Encapsulate(Range2f bounds)
-        {
-            return Range2f.FromMinAndMax(Vector2f.Min(this.Min, bounds.Min), Vector2f.Max(this.Max, bounds.Max));
-        }
-
-        public bool Contains(Vector2f point)
-        {
-            return point >= Min && point <= Max;
         }
 
         public static bool operator ==(Range2f a, Range2f b)
@@ -67,6 +48,26 @@ namespace Votyra.Core.Models
         public static Range2f operator /(Range2f a, Vector2f b)
         {
             return Range2f.FromMinAndMax(a.Min / b, a.Max / b);
+        }
+
+        public Range2f FromCenterAndSize(Vector2f center, Vector2f size)
+        {
+            return new Range2f(center - size / 2, size);
+        }
+
+        public Range2f Encapsulate(Vector2f point)
+        {
+            return Range2f.FromMinAndMax(Vector2f.Min(this.Min, point), Vector2f.Max(this.Max, point));
+        }
+
+        public Range2f Encapsulate(Range2f bounds)
+        {
+            return Range2f.FromMinAndMax(Vector2f.Min(this.Min, bounds.Min), Vector2f.Max(this.Max, bounds.Max));
+        }
+
+        public bool Contains(Vector2f point)
+        {
+            return point >= Min && point <= Max;
         }
 
         public Range2i RoundToInt()

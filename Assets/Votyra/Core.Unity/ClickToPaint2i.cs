@@ -25,10 +25,10 @@ namespace Votyra.Core
         private Height? _centerValueToReuse;
 
         [Inject]
-        private IEditableImage2i _editableImage;
+        protected IEditableImage2i _editableImage;
 
         [InjectOptional]
-        private IEditableMask2e _editableMask;
+        protected IEditableMask2e _editableMask;
 
         private Vector2i? lastCell;
         private float lastTime;
@@ -109,7 +109,6 @@ namespace Votyra.Core
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -136,7 +135,6 @@ namespace Votyra.Core
                 {
                     using (var mask = editableMask?.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(maxDist + 2, maxDist + 2))))
                     {
-
                         if (isHole)
                         {
                             var index = cell;
@@ -144,7 +142,6 @@ namespace Votyra.Core
                         }
                         else
                         {
-
                             for (int ox = -maxDist; ox <= maxDist; ox++)
                             {
                                 for (int oy = -maxDist; oy <= maxDist; oy++)
@@ -154,7 +151,6 @@ namespace Votyra.Core
                                     var dist = Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy));
                                     var value = image[index];
                                     image[index] = value + (multiplier * (maxDist - dist)).CreateHeightDifference();
-
                                 }
                             }
                         }

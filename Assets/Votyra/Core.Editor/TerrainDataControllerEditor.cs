@@ -1,15 +1,15 @@
 //c# Example (LookAtPointEditor.cs)
-using UnityEngine;
-using UnityEditor;
-using Votyra.Core.Unity;
-using System.Linq;
-using Zenject;
-using System.Reflection;
-using System.Collections.Generic;
 using System;
-using Votyra.Core.Models;
-using Votyra.Core.Utils;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using UnityEditor;
 using UnityEditorInternal;
+using UnityEngine;
+using Votyra.Core.Models;
+using Votyra.Core.Unity;
+using Votyra.Core.Utils;
+using Zenject;
 
 namespace Votyra.Core.Editor
 {
@@ -40,7 +40,6 @@ namespace Votyra.Core.Editor
                     Debug.Log($"bindFinalizer.SubFinalizer:" + bindFinalizer.SubFinalizer?.GetType().FullName);
                 }
                 Debug.Log($"finalizer:" + finalizer.GetType().FullName);
-
             };
             container.FinalizeBinding += handler;
             foreach (var installer in installers)
@@ -151,7 +150,6 @@ namespace Votyra.Core.Editor
                     }
                     object oldValue = oldConfigItem?.Value;
                     var newValue = GetNewValue(configItem.Type, oldValue);
-
 
                     if (!delete)
                     {

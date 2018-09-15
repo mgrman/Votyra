@@ -12,18 +12,17 @@ namespace Votyra.Core.MeshUpdaters
 {
     public class TerrainMeshUpdater<TKey> : IMeshUpdater<TKey>
     {
-        private SetDictionary<TKey, MeshFilter> _meshFilters = new SetDictionary<TKey, MeshFilter>();
-
-        public IReadOnlySet<TKey> ExistingGroups => _meshFilters;
         private readonly IProfiler _profiler;
-
         private readonly Func<GameObject> _gameObjectFactory;
+        private SetDictionary<TKey, MeshFilter> _meshFilters = new SetDictionary<TKey, MeshFilter>();
 
         public TerrainMeshUpdater(Func<GameObject> gameObjectFactory, IProfiler profiler)
         {
             _gameObjectFactory = gameObjectFactory;
             _profiler = profiler;
         }
+
+        public IReadOnlySet<TKey> ExistingGroups => _meshFilters;
 
         public void UpdateMesh(IReadOnlyDictionary<TKey, ITerrainMesh> terrainMeshes, IReadOnlySet<TKey> toKeepGroups)
         {

@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
 using UnityEditor;
-using UnityEngine.Profiling;
 using Votyra.Core.Profiling;
 
 namespace Votyra.Core.Editor.Profiling
@@ -12,14 +7,14 @@ namespace Votyra.Core.Editor.Profiling
     {
         // Add menu named "My Window" to the Window menu
         [MenuItem("Window/Votyra - AsyncProfiler")]
-        static void Init()
+        private static void Init()
         {
             // Get existing open window or if none, make a new one:
             UnityProfilerWindow window = (UnityProfilerWindow)EditorWindow.GetWindow(typeof(UnityProfilerWindow));
             window.Show();
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
             var values = UnityProfilerAggregator.ValuesClone();
             foreach (var value in values)
@@ -28,7 +23,7 @@ namespace Votyra.Core.Editor.Profiling
             }
         }
 
-        void OnInspectorUpdate()
+        private void OnInspectorUpdate()
         {
             Repaint();
         }

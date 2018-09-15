@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Votyra.Core;
 using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
 
 namespace Votyra.Plannar.Images.Constraints
 {
@@ -14,11 +12,9 @@ namespace Votyra.Plannar.Images.Constraints
     {
         private static readonly IComparer<Height> DefaultComparer = Comparer<Height>.Default;
 
-        private readonly int _scaleFactor;
         private static TileMap2i _tileMap;
         private static int? _tileMapScaleFactor;
-
-
+        private readonly int _scaleFactor;
         private IImageSampler2i _sampler;
 
         public SimpleTycoonTileConstraint2i(IImageSampler2i sampler, [ConfigInject("scaleFactor")] int scaleFactor)

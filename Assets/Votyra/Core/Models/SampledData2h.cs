@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
@@ -142,7 +141,6 @@ namespace Votyra.Core.Models
                 return this.x0y0.GetHashCode() + this.x0y1.GetHashCode() * 7 + this.x1y0.GetHashCode() * 17 + this.x1y1.GetHashCode() * 31;
             }
         }
-
 
         public Height GetIndexedValueCW(int index)
         {

@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.GroupSelectors
 {

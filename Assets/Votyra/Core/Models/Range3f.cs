@@ -11,6 +11,12 @@ namespace Votyra.Core.Models
 
         public readonly Vector3f Max;
 
+        private Range3f(Vector3f min, Vector3f max)
+        {
+            this.Min = min;
+            this.Max = max;
+        }
+
         public Vector3f Center => (Min + Max) / 2f;
 
         public Vector3f Size => Max - Min;
@@ -32,10 +38,12 @@ namespace Votyra.Core.Models
             }
         }
 
-        private Range3f(Vector3f min, Vector3f max)
+        public float DiagonalLength
         {
-            this.Min = min;
-            this.Max = max;
+            get
+            {
+                return Size.Magnitude;
+            }
         }
 
         public static Range3f FromCenterAndExtents(Vector3f center, Vector3f extents)
@@ -61,6 +69,26 @@ namespace Votyra.Core.Models
             return new Range3f(min, min + size);
         }
 
+        public static Range3f operator /(Range3f a, float b)
+        {
+            return Range3f.FromMinAndMax(a.Min / b, a.Max / b);
+        }
+
+        public static Range3f operator /(Range3f a, Vector3f b)
+        {
+            return Range3f.FromMinAndMax(a.Min / b, a.Max / b);
+        }
+
+        public static bool operator ==(Range3f a, Range3f b)
+        {
+            return a.Min == b.Min && a.Max == b.Max;
+        }
+
+        public static bool operator !=(Range3f a, Range3f b)
+        {
+            return a.Min != b.Min || a.Max != b.Max;
+        }
+
         public Range3f IntersectWith(Range3f that)
         {
             if (this.Size == Vector3f.Zero || that.Size == Vector3f.Zero)
@@ -70,14 +98,6 @@ namespace Votyra.Core.Models
             var max = Vector3f.Max(Vector3f.Min(this.Max, that.Max), min);
 
             return Range3f.FromMinAndMax(min, max);
-        }
-
-        public float DiagonalLength
-        {
-            get
-            {
-                return Size.Magnitude;
-            }
         }
 
         public Range3f Encapsulate(Vector3f point)
@@ -93,27 +113,6 @@ namespace Votyra.Core.Models
         public Range3i RoundToContain()
         {
             return Range3i.FromMinAndMax(this.Min.FloorToVector3i(), this.Max.CeilToVector3i());
-        }
-
-        public static Range3f operator /(Range3f a, float b)
-        {
-            return Range3f.FromMinAndMax(a.Min / b, a.Max / b);
-        }
-
-        public static Range3f operator /(Range3f a, Vector3f b)
-        {
-            return Range3f.FromMinAndMax(a.Min / b, a.Max / b);
-        }
-
-
-        public static bool operator ==(Range3f a, Range3f b)
-        {
-            return a.Min == b.Min && a.Max == b.Max;
-        }
-
-        public static bool operator !=(Range3f a, Range3f b)
-        {
-            return a.Min != b.Min || a.Max != b.Max;
         }
 
         public bool Equals(Range3f other)

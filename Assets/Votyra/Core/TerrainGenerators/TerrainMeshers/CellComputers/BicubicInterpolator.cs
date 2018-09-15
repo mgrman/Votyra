@@ -1,22 +1,16 @@
 using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Votyra.Core.Images;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
-using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
 {
     public class BicubicInterpolator : IInterpolator
     {
-        public float[,] InterpolationMatrix { get; private set; }
-
         public BicubicInterpolator()
         {
             this.InterpolationMatrix = new float[4, 4];
         }
+
+        public float[,] InterpolationMatrix { get; private set; }
 
         public virtual void PrepareInterpolation(Vector2i cell, Func<Vector2i, SampledData2f> sampleFunc)
         {
@@ -52,6 +46,18 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
             InterpolationMatrix[3, 3] = data_x2y2.x1y1;
         }
 
+        public float Sample(Vector2f pos)
+        {
+            float xfract = pos.X;
+            float yfract = pos.Y;
+            float col0 = CubicHermite(InterpolationMatrix[0, 0], InterpolationMatrix[1, 0], InterpolationMatrix[2, 0], InterpolationMatrix[3, 0], xfract);
+            float col1 = CubicHermite(InterpolationMatrix[0, 1], InterpolationMatrix[1, 1], InterpolationMatrix[2, 1], InterpolationMatrix[3, 1], xfract);
+            float col2 = CubicHermite(InterpolationMatrix[0, 2], InterpolationMatrix[1, 2], InterpolationMatrix[2, 2], InterpolationMatrix[3, 2], xfract);
+            float col3 = CubicHermite(InterpolationMatrix[0, 3], InterpolationMatrix[1, 3], InterpolationMatrix[2, 3], InterpolationMatrix[3, 3], xfract);
+            float value = CubicHermite(col0, col1, col2, col3, yfract);
+            return value;
+        }
+
         // t is a value that goes from 0 to 1 to interpolate in a C1 continuous way across uniformly sampled data points.
         // when t is 0, this will return B.  When t is 1, this will return C.  Inbetween values will return an interpolation
         // between B and C.  A and B are used to calculate slopes at the edges.
@@ -63,18 +69,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
             float d = B;
 
             return a * t * t * t + b * t * t + c * t + d;
-        }
-
-        public float Sample(Vector2f pos)
-        {
-            float xfract = pos.X;
-            float yfract = pos.Y;
-            float col0 = CubicHermite(InterpolationMatrix[0, 0], InterpolationMatrix[1, 0], InterpolationMatrix[2, 0], InterpolationMatrix[3, 0], xfract);
-            float col1 = CubicHermite(InterpolationMatrix[0, 1], InterpolationMatrix[1, 1], InterpolationMatrix[2, 1], InterpolationMatrix[3, 1], xfract);
-            float col2 = CubicHermite(InterpolationMatrix[0, 2], InterpolationMatrix[1, 2], InterpolationMatrix[2, 2], InterpolationMatrix[3, 2], xfract);
-            float col3 = CubicHermite(InterpolationMatrix[0, 3], InterpolationMatrix[1, 3], InterpolationMatrix[2, 3], InterpolationMatrix[3, 3], xfract);
-            float value = CubicHermite(col0, col1, col2, col3, yfract);
-            return value;
         }
     }
 }

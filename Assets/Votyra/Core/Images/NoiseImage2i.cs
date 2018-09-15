@@ -5,16 +5,15 @@ namespace Votyra.Core.Images
 {
     public class NoiseImage2i : IImage2i
     {
-        public Vector3f Offset { get; private set; }
-
-        public Vector3f Scale { get; private set; }
-
         public NoiseImage2i(Vector3f offset, Vector3f scale)
         {
             Offset = offset;
             Scale = scale;
         }
 
+        public Vector3f Offset { get; private set; }
+
+        public Vector3f Scale { get; private set; }
         public Range1h RangeZ { get { return new Range1h(((int)Offset.Z).CreateHeight(), ((int)(Offset.Z + Scale.Z)).CreateHeight()); } }
 
         public Height Sample(Vector2i point)

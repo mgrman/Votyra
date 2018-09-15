@@ -8,6 +8,15 @@ namespace Votyra.Core.Pooling
     public class PooledTerrainMeshWithFixedCapacityContainer<T> : IPooledTerrainMeshWithFixedCapacity
         where T : ITerrainMeshWithFixedCapacity, new()
     {
+        private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
+        private static readonly ConcurentObjectDictionaryPool<PooledTerrainMeshWithFixedCapacityContainer<T>, int> Pool = new ConcurentObjectDictionaryPool<PooledTerrainMeshWithFixedCapacityContainer<T>, int>(5, (triangleCount) => new PooledTerrainMeshWithFixedCapacityContainer<T>(triangleCount));
+
+        private PooledTerrainMeshWithFixedCapacityContainer(int triangleCount)
+        {
+            Mesh = new T();
+            Mesh.Initialize(triangleCount);
+        }
+
         public T Mesh { get; }
 
         public int TriangleCount => Mesh.TriangleCount;
@@ -19,16 +28,6 @@ namespace Votyra.Core.Pooling
         ITerrainMeshWithFixedCapacity IPooledTerrainMeshWithFixedCapacity.Mesh => Mesh;
 
         public Vector3f this[int point] => Mesh[point];
-
-        private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
-
-        private static readonly ConcurentObjectDictionaryPool<PooledTerrainMeshWithFixedCapacityContainer<T>, int> Pool = new ConcurentObjectDictionaryPool<PooledTerrainMeshWithFixedCapacityContainer<T>, int>(5, (triangleCount) => new PooledTerrainMeshWithFixedCapacityContainer<T>(triangleCount));
-
-        private PooledTerrainMeshWithFixedCapacityContainer(int triangleCount)
-        {
-            Mesh = new T();
-            Mesh.Initialize(triangleCount);
-        }
 
         public static PooledTerrainMeshWithFixedCapacityContainer<T> CreateDirty(int triangleCount)
         {

@@ -5,15 +5,15 @@ namespace Votyra.Core.Images
 {
     public class MatrixImage3b : IImage3b, IInitializableImage, IImageInvalidatableImage3i, IDisposable
     {
-        public Range3i InvalidatedArea { get; }
-
-        public LockableMatrix3<bool> Image { get; }
-
         public MatrixImage3b(LockableMatrix3<bool> values, Range3i invalidatedArea)
         {
             Image = values;
             InvalidatedArea = invalidatedArea;
         }
+
+        public Range3i InvalidatedArea { get; }
+
+        public LockableMatrix3<bool> Image { get; }
 
         public bool Sample(Vector3i point)
         {

@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
-using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.GroupSelectors
 {
@@ -52,7 +50,6 @@ namespace Votyra.Core.GroupSelectors
             cameraBoundsGroups.ForeachPointExlusive(group =>
             {
                 var groupBounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
-
 
                 bool isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)

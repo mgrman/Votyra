@@ -6,12 +6,12 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesherWithWalls2i : TerrainMesher2i
     {
-        protected override int TrianglesPerCell => 6;
-
         public TerrainMesherWithWalls2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
             : base(terrainConfig, imageSampler)
         {
         }
+
+        protected override int TrianglesPerCell => 6;
 
         public override void AddCell(Vector2i cellInGroup)
         {
@@ -21,7 +21,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             SampledData2h data = _imageSampler.Sample(_image, cell);
             SampledMask2e maskData = _imageSampler.Sample(_mask, cell);
-
 
             SampledData2h minusXres = _imageSampler.Sample(_image, cell + new Vector2i(-1, 0));
             SampledMask2e minusXresMaskData = _imageSampler.Sample(_mask, cell + new Vector2i(-1, 0));

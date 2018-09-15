@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UniRx;
 using UnityEngine;
-using Votyra.Core.Images;
-using Votyra.Core.Models;
 using Votyra.Core.Utils;
 using Zenject;
 
@@ -26,7 +22,6 @@ namespace Votyra.Core.Unity
         private GameObject _activeTerrainRoot = null;
 
         private ITerrainManagerModel _terrainManagerModel;
-
 
         [Inject]
         public void Initialize(ITerrainManagerModel terrainManagerModel, Context context)

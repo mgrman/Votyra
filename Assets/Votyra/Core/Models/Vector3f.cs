@@ -17,6 +17,13 @@ namespace Votyra.Core.Models
 
         public readonly float Z;
 
+        public Vector3f(float x, float y, float z)
+        {
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+        }
+
         [Newtonsoft.Json.JsonIgnore]
         public Vector3f Normalized => this / Magnitude;
 
@@ -41,31 +48,9 @@ namespace Votyra.Core.Models
         [Newtonsoft.Json.JsonIgnore]
         public bool AnyNegative => this.X < 0 || this.Y < 0 || this.Z < 0;
 
-        public Vector3f(float x, float y, float z)
-        {
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
-        }
-
         public static Vector3f FromSame(float value)
         {
             return new Vector3f(value, value, value);
-        }
-
-        public Vector3i FloorToVector3i()
-        {
-            return new Vector3i(X.FloorToInt(), Y.FloorToInt(), Z.FloorToInt());
-        }
-
-        public Vector3i RoundToVector3i()
-        {
-            return new Vector3i(X.RoundToInt(), Y.RoundToInt(), Z.RoundToInt());
-        }
-
-        public Vector3i CeilToVector3i()
-        {
-            return new Vector3i(X.CeilToInt(), Y.CeilToInt(), Z.CeilToInt());
         }
 
         public static float Dot(Vector3f lhs, Vector3f rhs)
@@ -161,6 +146,21 @@ namespace Votyra.Core.Models
         public static bool operator !=(Vector3f a, Vector3f b)
         {
             return a.X != b.X || a.Y != b.Y || a.Z != b.Z;
+        }
+
+        public Vector3i FloorToVector3i()
+        {
+            return new Vector3i(X.FloorToInt(), Y.FloorToInt(), Z.FloorToInt());
+        }
+
+        public Vector3i RoundToVector3i()
+        {
+            return new Vector3i(X.RoundToInt(), Y.RoundToInt(), Z.RoundToInt());
+        }
+
+        public Vector3i CeilToVector3i()
+        {
+            return new Vector3i(X.CeilToInt(), Y.CeilToInt(), Z.CeilToInt());
         }
 
         public bool Equals(Vector3f other)

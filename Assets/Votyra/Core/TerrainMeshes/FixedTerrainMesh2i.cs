@@ -6,6 +6,7 @@ namespace Votyra.Core.TerrainMeshes
 {
     public class FixedTerrainMesh2i : ITerrainMeshWithFixedCapacity
     {
+        private int _counter;
         public Range3f MeshBounds { get; private set; }
         public Vector3f[] Vertices { get; private set; }
         public Vector3f[] Normals { get; private set; }
@@ -19,7 +20,6 @@ namespace Votyra.Core.TerrainMeshes
         public int TriangleCapacity { get; private set; }
 
         public Vector3f this[int point] => Vertices[point];
-        private int _counter;
 
         public virtual void Initialize(int triangleCapacity)
         {

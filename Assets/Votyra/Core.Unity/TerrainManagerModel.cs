@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UniRx;
-using Votyra.Core.Images;
 
 namespace Votyra.Core
 {

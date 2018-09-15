@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
@@ -64,7 +61,6 @@ namespace Votyra.Core.Models
 
     public static class SampledData2fExtensions
     {
-
         public static SampledData2f ToSampSampledData2F(this SampledData2h data)
         {
             return new SampledData2f(data.x0y0.RawValue, data.x0y1.RawValue, data.x1y0.RawValue, data.x1y1.RawValue);

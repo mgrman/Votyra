@@ -47,143 +47,32 @@ namespace Votyra.Core.Utils
         private const Int16 FN_INLINE = 256; //(Int16)MethodImplOptions.AggressiveInlining;
         private const int FN_CELLULAR_INDEX_MAX = 3;
 
-        public enum NoiseType { Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal };
+        // Hashing
+        private const int X_PRIME = 1619;
 
-        public enum Interp { Linear, Hermite, Quintic };
+        private const int Y_PRIME = 31337;
 
-        public enum FractalType { FBM, Billow, RigidMulti };
+        private const int Z_PRIME = 6971;
 
-        public enum CellularDistanceFunction { Euclidean, Manhattan, Natural };
+        private const int W_PRIME = 1013;
 
-        public enum CellularReturnType { CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div };
+        private const FN_DECIMAL F3 = (FN_DECIMAL)(1.0 / 3.0);
 
-        private int m_seed = 1337;
-        private FN_DECIMAL m_frequency = (FN_DECIMAL)0.01;
-        private Interp m_interp = Interp.Quintic;
-        private NoiseType m_noiseType = NoiseType.Simplex;
+        private const FN_DECIMAL G3 = (FN_DECIMAL)(1.0 / 6.0);
 
-        private int m_octaves = 3;
-        private FN_DECIMAL m_lacunarity = (FN_DECIMAL)2.0;
-        private FN_DECIMAL m_gain = (FN_DECIMAL)0.5;
-        private FractalType m_fractalType = FractalType.FBM;
+        private const FN_DECIMAL G33 = G3 * 3 - 1;
 
-        private FN_DECIMAL m_fractalBounding;
+        private const FN_DECIMAL F2 = (FN_DECIMAL)(1.0 / 2.0);
 
-        private CellularDistanceFunction m_cellularDistanceFunction = CellularDistanceFunction.Euclidean;
-        private CellularReturnType m_cellularReturnType = CellularReturnType.CellValue;
-        private FastNoise m_cellularNoiseLookup = null;
-        private int m_cellularDistanceIndex0 = 0;
-        private int m_cellularDistanceIndex1 = 1;
-        private float m_cellularJitter = 0.45f;
+        private const FN_DECIMAL G2 = (FN_DECIMAL)(1.0 / 4.0);
 
-        private FN_DECIMAL m_gradientPerturbAmp = (FN_DECIMAL)1.0;
+        private const FN_DECIMAL F4 = (FN_DECIMAL)((2.23606797 - 1.0) / 4.0);
 
-        public FastNoise(int seed = 1337)
-        {
-            m_seed = seed;
-            CalculateFractalBounding();
-        }
+        private const FN_DECIMAL G4 = (FN_DECIMAL)((5.0 - 2.23606797) / 20.0);
 
-        // Returns a 0 float/double
-        public static FN_DECIMAL GetDecimalType() { return 0; }
+        private const FN_DECIMAL CUBIC_3D_BOUNDING = 1 / (FN_DECIMAL)(1.5 * 1.5 * 1.5);
 
-        // Returns the seed used by this object
-        public int GetSeed() { return m_seed; }
-
-        // Sets seed used for all noise types
-        // Default: 1337
-        public void SetSeed(int seed) { m_seed = seed; }
-
-        // Sets frequency for all noise types
-        // Default: 0.01
-        public void SetFrequency(FN_DECIMAL frequency) { m_frequency = frequency; }
-
-        // Changes the interpolation method used to smooth between noise values
-        // Possible interpolation methods (lowest to highest quality) :
-        // - Linear
-        // - Hermite
-        // - Quintic
-        // Used in Value, Gradient Noise and Position Perturbing
-        // Default: Quintic
-        public void SetInterp(Interp interp) { m_interp = interp; }
-
-        // Sets noise return type of GetNoise(...)
-        // Default: Simplex
-        public void SetNoiseType(NoiseType noiseType) { m_noiseType = noiseType; }
-
-        // Sets octave count for all fractal noise types
-        // Default: 3
-        public void SetFractalOctaves(int octaves) { m_octaves = octaves; CalculateFractalBounding(); }
-
-        // Sets octave lacunarity for all fractal noise types
-        // Default: 2.0
-        public void SetFractalLacunarity(FN_DECIMAL lacunarity) { m_lacunarity = lacunarity; }
-
-        // Sets octave gain for all fractal noise types
-        // Default: 0.5
-        public void SetFractalGain(FN_DECIMAL gain) { m_gain = gain; CalculateFractalBounding(); }
-
-        // Sets method for combining octaves in all fractal noise types
-        // Default: FBM
-        public void SetFractalType(FractalType fractalType) { m_fractalType = fractalType; }
-
-        // Sets return type from cellular noise calculations
-        // Note: NoiseLookup requires another FastNoise object be set with SetCellularNoiseLookup() to function
-        // Default: CellValue
-        public void SetCellularDistanceFunction(CellularDistanceFunction cellularDistanceFunction) { m_cellularDistanceFunction = cellularDistanceFunction; }
-
-        // Sets distance function used in cellular noise calculations
-        // Default: Euclidean
-        public void SetCellularReturnType(CellularReturnType cellularReturnType) { m_cellularReturnType = cellularReturnType; }
-
-        // Sets the 2 distance indicies used for distance2 return types
-        // Default: 0, 1
-        // Note: index0 should be lower than index1
-        // Both indicies must be >= 0, index1 must be < 4
-        public void SetCellularDistance2Indicies(int cellularDistanceIndex0, int cellularDistanceIndex1)
-        {
-            m_cellularDistanceIndex0 = Math.Min(cellularDistanceIndex0, cellularDistanceIndex1);
-            m_cellularDistanceIndex1 = Math.Max(cellularDistanceIndex0, cellularDistanceIndex1);
-
-            m_cellularDistanceIndex0 = Math.Min(Math.Max(m_cellularDistanceIndex0, 0), FN_CELLULAR_INDEX_MAX);
-            m_cellularDistanceIndex1 = Math.Min(Math.Max(m_cellularDistanceIndex1, 0), FN_CELLULAR_INDEX_MAX);
-        }
-
-        // Sets the maximum distance a cellular point can move from it's grid position
-        // Setting this high will make artifacts more common
-        // Default: 0.45
-        public void SetCellularJitter(float cellularJitter) { m_cellularJitter = cellularJitter; }
-
-        // Noise used to calculate a cell value if cellular return type is NoiseLookup
-        // The lookup value is acquired through GetNoise() so ensure you SetNoiseType() on the noise lookup, value, gradient or simplex is recommended
-        public void SetCellularNoiseLookup(FastNoise noise) { m_cellularNoiseLookup = noise; }
-
-        // Sets the maximum perturb distance from original location when using GradientPerturb{Fractal}(...)
-        // Default: 1.0
-        public void SetGradientPerturbAmp(FN_DECIMAL gradientPerturbAmp) { m_gradientPerturbAmp = gradientPerturbAmp; }
-
-        private struct Float2
-        {
-            public readonly FN_DECIMAL x, y;
-
-            public Float2(FN_DECIMAL x, FN_DECIMAL y)
-            {
-                this.x = x;
-                this.y = y;
-            }
-        }
-
-        private struct Float3
-        {
-            public readonly FN_DECIMAL x, y, z;
-
-            public Float3(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
-            {
-                this.x = x;
-                this.y = y;
-                this.z = z;
-            }
-        }
+        private const FN_DECIMAL CUBIC_2D_BOUNDING = 1 / (FN_DECIMAL)(1.5 * 1.5);
 
         private static readonly Float2[] GRAD_2D = {
         new Float2(-1,-1), new Float2( 1,-1), new Float2(-1, 1), new Float2( 1, 1),
@@ -269,175 +158,143 @@ namespace Votyra.Core.Utils
         new Float3(-0.7870349638f, 0.03447489231f, 0.6159443543f), new Float3(-0.2015596421f, 0.6859872284f, 0.6991389226f), new Float3(-0.08581082512f, -0.10920836f, -0.9903080513f), new Float3(0.5532693395f, 0.7325250401f, -0.396610771f), new Float3(-0.1842489331f, -0.9777375055f, -0.1004076743f), new Float3(0.0775473789f, -0.9111505856f, 0.4047110257f), new Float3(0.1399838409f, 0.7601631212f, -0.6344734459f), new Float3(0.4484419361f, -0.845289248f, 0.2904925424f),
     };
 
-        [MethodImplAttribute(FN_INLINE)]
-        private static int FastFloor(FN_DECIMAL f) { return (f >= 0 ? (int)f : (int)f - 1); }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static int FastRound(FN_DECIMAL f) { return (f >= 0) ? (int)(f + (FN_DECIMAL)0.5) : (int)(f - (FN_DECIMAL)0.5); }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL Lerp(FN_DECIMAL a, FN_DECIMAL b, FN_DECIMAL t) { return a + t * (b - a); }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL InterpHermiteFunc(FN_DECIMAL t) { return t * t * (3 - 2 * t); }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL InterpQuinticFunc(FN_DECIMAL t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL CubicLerp(FN_DECIMAL a, FN_DECIMAL b, FN_DECIMAL c, FN_DECIMAL d, FN_DECIMAL t)
+        private static readonly byte[] SIMPLEX_4D =
         {
-            FN_DECIMAL p = (d - c) - (a - b);
-            return t * t * t * p + t * t * ((a - b) - p) + t * (c - a) + b;
+        0,1,2,3,0,1,3,2,0,0,0,0,0,2,3,1,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,0,
+        0,2,1,3,0,0,0,0,0,3,1,2,0,3,2,1,0,0,0,0,0,0,0,0,0,0,0,0,1,3,2,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        1,2,0,3,0,0,0,0,1,3,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2,3,0,1,2,3,1,0,
+        1,0,2,3,1,0,3,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,3,1,0,0,0,0,2,1,3,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        2,0,1,3,0,0,0,0,0,0,0,0,0,0,0,0,3,0,1,2,3,0,2,1,0,0,0,0,3,1,2,0,
+        2,1,0,3,0,0,0,0,0,0,0,0,0,0,0,0,3,1,0,2,0,0,0,0,3,2,0,1,3,2,1,0
+    };
+
+        private int m_seed = 1337;
+
+        private FN_DECIMAL m_frequency = (FN_DECIMAL)0.01;
+
+        private Interp m_interp = Interp.Quintic;
+
+        private NoiseType m_noiseType = NoiseType.Simplex;
+
+        private int m_octaves = 3;
+
+        private FN_DECIMAL m_lacunarity = (FN_DECIMAL)2.0;
+
+        private FN_DECIMAL m_gain = (FN_DECIMAL)0.5;
+
+        private FractalType m_fractalType = FractalType.FBM;
+
+        private FN_DECIMAL m_fractalBounding;
+
+        private CellularDistanceFunction m_cellularDistanceFunction = CellularDistanceFunction.Euclidean;
+
+        private CellularReturnType m_cellularReturnType = CellularReturnType.CellValue;
+
+        private FastNoise m_cellularNoiseLookup = null;
+
+        private int m_cellularDistanceIndex0 = 0;
+
+        private int m_cellularDistanceIndex1 = 1;
+
+        private float m_cellularJitter = 0.45f;
+
+        private FN_DECIMAL m_gradientPerturbAmp = (FN_DECIMAL)1.0;
+
+        public FastNoise(int seed = 1337)
+        {
+            m_seed = seed;
+            CalculateFractalBounding();
         }
 
-        private void CalculateFractalBounding()
+        public enum NoiseType { Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal };
+
+        public enum Interp { Linear, Hermite, Quintic };
+
+        public enum FractalType { FBM, Billow, RigidMulti };
+
+        public enum CellularDistanceFunction { Euclidean, Manhattan, Natural };
+
+        public enum CellularReturnType { CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div };
+
+        // Returns a 0 float/double
+        public static FN_DECIMAL GetDecimalType() { return 0; }
+
+        // Returns the seed used by this object
+        public int GetSeed() { return m_seed; }
+
+        // Sets seed used for all noise types
+        // Default: 1337
+        public void SetSeed(int seed) { m_seed = seed; }
+
+        // Sets frequency for all noise types
+        // Default: 0.01
+        public void SetFrequency(FN_DECIMAL frequency) { m_frequency = frequency; }
+
+        // Changes the interpolation method used to smooth between noise values
+        // Possible interpolation methods (lowest to highest quality) :
+        // - Linear
+        // - Hermite
+        // - Quintic
+        // Used in Value, Gradient Noise and Position Perturbing
+        // Default: Quintic
+        public void SetInterp(Interp interp) { m_interp = interp; }
+
+        // Sets noise return type of GetNoise(...)
+        // Default: Simplex
+        public void SetNoiseType(NoiseType noiseType) { m_noiseType = noiseType; }
+
+        // Sets octave count for all fractal noise types
+        // Default: 3
+        public void SetFractalOctaves(int octaves) { m_octaves = octaves; CalculateFractalBounding(); }
+
+        // Sets octave lacunarity for all fractal noise types
+        // Default: 2.0
+        public void SetFractalLacunarity(FN_DECIMAL lacunarity) { m_lacunarity = lacunarity; }
+
+        // Sets octave gain for all fractal noise types
+        // Default: 0.5
+        public void SetFractalGain(FN_DECIMAL gain) { m_gain = gain; CalculateFractalBounding(); }
+
+        // Sets method for combining octaves in all fractal noise types
+        // Default: FBM
+        public void SetFractalType(FractalType fractalType) { m_fractalType = fractalType; }
+
+        // Sets return type from cellular noise calculations
+        // Note: NoiseLookup requires another FastNoise object be set with SetCellularNoiseLookup() to function
+        // Default: CellValue
+        public void SetCellularDistanceFunction(CellularDistanceFunction cellularDistanceFunction) { m_cellularDistanceFunction = cellularDistanceFunction; }
+
+        // Sets distance function used in cellular noise calculations
+        // Default: Euclidean
+        public void SetCellularReturnType(CellularReturnType cellularReturnType) { m_cellularReturnType = cellularReturnType; }
+
+        // Sets the 2 distance indicies used for distance2 return types
+        // Default: 0, 1
+        // Note: index0 should be lower than index1
+        // Both indicies must be >= 0, index1 must be < 4
+        public void SetCellularDistance2Indicies(int cellularDistanceIndex0, int cellularDistanceIndex1)
         {
-            FN_DECIMAL amp = m_gain;
-            FN_DECIMAL ampFractal = 1;
-            for (int i = 1; i < m_octaves; i++)
-            {
-                ampFractal += amp;
-                amp *= m_gain;
-            }
-            m_fractalBounding = 1 / ampFractal;
+            m_cellularDistanceIndex0 = Math.Min(cellularDistanceIndex0, cellularDistanceIndex1);
+            m_cellularDistanceIndex1 = Math.Max(cellularDistanceIndex0, cellularDistanceIndex1);
+
+            m_cellularDistanceIndex0 = Math.Min(Math.Max(m_cellularDistanceIndex0, 0), FN_CELLULAR_INDEX_MAX);
+            m_cellularDistanceIndex1 = Math.Min(Math.Max(m_cellularDistanceIndex1, 0), FN_CELLULAR_INDEX_MAX);
         }
 
-        // Hashing
-        private const int X_PRIME = 1619;
+        // Sets the maximum distance a cellular point can move from it's grid position
+        // Setting this high will make artifacts more common
+        // Default: 0.45
+        public void SetCellularJitter(float cellularJitter) { m_cellularJitter = cellularJitter; }
 
-        private const int Y_PRIME = 31337;
-        private const int Z_PRIME = 6971;
-        private const int W_PRIME = 1013;
+        // Noise used to calculate a cell value if cellular return type is NoiseLookup
+        // The lookup value is acquired through GetNoise() so ensure you SetNoiseType() on the noise lookup, value, gradient or simplex is recommended
+        public void SetCellularNoiseLookup(FastNoise noise) { m_cellularNoiseLookup = noise; }
 
-        [MethodImplAttribute(FN_INLINE)]
-        private static int Hash2D(int seed, int x, int y)
-        {
-            int hash = seed;
-            hash ^= X_PRIME * x;
-            hash ^= Y_PRIME * y;
-
-            hash = hash * hash * hash * 60493;
-            hash = (hash >> 13) ^ hash;
-
-            return hash;
-        }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static int Hash3D(int seed, int x, int y, int z)
-        {
-            int hash = seed;
-            hash ^= X_PRIME * x;
-            hash ^= Y_PRIME * y;
-            hash ^= Z_PRIME * z;
-
-            hash = hash * hash * hash * 60493;
-            hash = (hash >> 13) ^ hash;
-
-            return hash;
-        }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static int Hash4D(int seed, int x, int y, int z, int w)
-        {
-            int hash = seed;
-            hash ^= X_PRIME * x;
-            hash ^= Y_PRIME * y;
-            hash ^= Z_PRIME * z;
-            hash ^= W_PRIME * w;
-
-            hash = hash * hash * hash * 60493;
-            hash = (hash >> 13) ^ hash;
-
-            return hash;
-        }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL ValCoord2D(int seed, int x, int y)
-        {
-            int n = seed;
-            n ^= X_PRIME * x;
-            n ^= Y_PRIME * y;
-
-            return (n * n * n * 60493) / (FN_DECIMAL)2147483648.0;
-        }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL ValCoord3D(int seed, int x, int y, int z)
-        {
-            int n = seed;
-            n ^= X_PRIME * x;
-            n ^= Y_PRIME * y;
-            n ^= Z_PRIME * z;
-
-            return (n * n * n * 60493) / (FN_DECIMAL)2147483648.0;
-        }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL ValCoord4D(int seed, int x, int y, int z, int w)
-        {
-            int n = seed;
-            n ^= X_PRIME * x;
-            n ^= Y_PRIME * y;
-            n ^= Z_PRIME * z;
-            n ^= W_PRIME * w;
-
-            return (n * n * n * 60493) / (FN_DECIMAL)2147483648.0;
-        }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL GradCoord2D(int seed, int x, int y, FN_DECIMAL xd, FN_DECIMAL yd)
-        {
-            int hash = seed;
-            hash ^= X_PRIME * x;
-            hash ^= Y_PRIME * y;
-
-            hash = hash * hash * hash * 60493;
-            hash = (hash >> 13) ^ hash;
-
-            Float2 g = GRAD_2D[hash & 7];
-
-            return xd * g.x + yd * g.y;
-        }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL GradCoord3D(int seed, int x, int y, int z, FN_DECIMAL xd, FN_DECIMAL yd, FN_DECIMAL zd)
-        {
-            int hash = seed;
-            hash ^= X_PRIME * x;
-            hash ^= Y_PRIME * y;
-            hash ^= Z_PRIME * z;
-
-            hash = hash * hash * hash * 60493;
-            hash = (hash >> 13) ^ hash;
-
-            Float3 g = GRAD_3D[hash & 15];
-
-            return xd * g.x + yd * g.y + zd * g.z;
-        }
-
-        [MethodImplAttribute(FN_INLINE)]
-        private static FN_DECIMAL GradCoord4D(int seed, int x, int y, int z, int w, FN_DECIMAL xd, FN_DECIMAL yd, FN_DECIMAL zd, FN_DECIMAL wd)
-        {
-            int hash = seed;
-            hash ^= X_PRIME * x;
-            hash ^= Y_PRIME * y;
-            hash ^= Z_PRIME * z;
-            hash ^= W_PRIME * w;
-
-            hash = hash * hash * hash * 60493;
-            hash = (hash >> 13) ^ hash;
-
-            hash &= 31;
-            FN_DECIMAL a = yd, b = zd, c = wd;            // X,Y,Z
-            switch (hash >> 3)
-            {          // OR, DEPENDING ON HIGH ORDER 2 BITS:
-                case 1: a = wd; b = xd; c = yd; break;     // W,X,Y
-                case 2: a = zd; b = wd; c = xd; break;     // Z,W,X
-                case 3: a = yd; b = zd; c = wd; break;     // Y,Z,W
-            }
-            return ((hash & 4) == 0 ? -a : a) + ((hash & 2) == 0 ? -b : b) + ((hash & 1) == 0 ? -c : c);
-        }
+        // Sets the maximum perturb distance from original location when using GradientPerturb{Fractal}(...)
+        // Default: 1.0
+        public void SetGradientPerturbAmp(FN_DECIMAL gradientPerturbAmp) { m_gradientPerturbAmp = gradientPerturbAmp; }
 
         public FN_DECIMAL GetNoise(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
@@ -636,15 +493,6 @@ namespace Votyra.Core.Utils
             }
         }
 
-        // White Noise
-        [MethodImplAttribute(FN_INLINE)]
-        private int FloatCast2Int(FN_DECIMAL f)
-        {
-            var i = BitConverter.DoubleToInt64Bits(f);
-
-            return (int)(i ^ (i >> 32));
-        }
-
         public FN_DECIMAL GetWhiteNoise(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z, FN_DECIMAL w)
         {
             int xi = FloatCast2Int(x);
@@ -710,6 +558,457 @@ namespace Votyra.Core.Utils
             }
         }
 
+        public FN_DECIMAL GetValue(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        {
+            return SingleValue(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+        }
+
+        public FN_DECIMAL GetValueFractal(FN_DECIMAL x, FN_DECIMAL y)
+        {
+            x *= m_frequency;
+            y *= m_frequency;
+
+            switch (m_fractalType)
+            {
+                case FractalType.FBM:
+                    return SingleValueFractalFBM(x, y);
+
+                case FractalType.Billow:
+                    return SingleValueFractalBillow(x, y);
+
+                case FractalType.RigidMulti:
+                    return SingleValueFractalRigidMulti(x, y);
+
+                default:
+                    return 0;
+            }
+        }
+
+        public FN_DECIMAL GetValue(FN_DECIMAL x, FN_DECIMAL y)
+        {
+            return SingleValue(m_seed, x * m_frequency, y * m_frequency);
+        }
+
+        // Gradient Noise
+        public FN_DECIMAL GetPerlinFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        {
+            x *= m_frequency;
+            y *= m_frequency;
+            z *= m_frequency;
+
+            switch (m_fractalType)
+            {
+                case FractalType.FBM:
+                    return SinglePerlinFractalFBM(x, y, z);
+
+                case FractalType.Billow:
+                    return SinglePerlinFractalBillow(x, y, z);
+
+                case FractalType.RigidMulti:
+                    return SinglePerlinFractalRigidMulti(x, y, z);
+
+                default:
+                    return 0;
+            }
+        }
+
+        public FN_DECIMAL GetPerlin(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        {
+            return SinglePerlin(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+        }
+
+        public FN_DECIMAL GetPerlinFractal(FN_DECIMAL x, FN_DECIMAL y)
+        {
+            x *= m_frequency;
+            y *= m_frequency;
+
+            switch (m_fractalType)
+            {
+                case FractalType.FBM:
+                    return SinglePerlinFractalFBM(x, y);
+
+                case FractalType.Billow:
+                    return SinglePerlinFractalBillow(x, y);
+
+                case FractalType.RigidMulti:
+                    return SinglePerlinFractalRigidMulti(x, y);
+
+                default:
+                    return 0;
+            }
+        }
+
+        public FN_DECIMAL GetPerlin(FN_DECIMAL x, FN_DECIMAL y)
+        {
+            return SinglePerlin(m_seed, x * m_frequency, y * m_frequency);
+        }
+
+        // Simplex Noise
+        public FN_DECIMAL GetSimplexFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        {
+            x *= m_frequency;
+            y *= m_frequency;
+            z *= m_frequency;
+
+            switch (m_fractalType)
+            {
+                case FractalType.FBM:
+                    return SingleSimplexFractalFBM(x, y, z);
+
+                case FractalType.Billow:
+                    return SingleSimplexFractalBillow(x, y, z);
+
+                case FractalType.RigidMulti:
+                    return SingleSimplexFractalRigidMulti(x, y, z);
+
+                default:
+                    return 0;
+            }
+        }
+
+        public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        {
+            return SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+        }
+
+        public FN_DECIMAL GetSimplexFractal(FN_DECIMAL x, FN_DECIMAL y)
+        {
+            x *= m_frequency;
+            y *= m_frequency;
+
+            switch (m_fractalType)
+            {
+                case FractalType.FBM:
+                    return SingleSimplexFractalFBM(x, y);
+
+                case FractalType.Billow:
+                    return SingleSimplexFractalBillow(x, y);
+
+                case FractalType.RigidMulti:
+                    return SingleSimplexFractalRigidMulti(x, y);
+
+                default:
+                    return 0;
+            }
+        }
+
+        public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y)
+        {
+            return SingleSimplex(m_seed, x * m_frequency, y * m_frequency);
+        }
+
+        public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z, FN_DECIMAL w)
+        {
+            return SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency, w * m_frequency);
+        }
+
+        // Cubic Noise
+        public FN_DECIMAL GetCubicFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        {
+            x *= m_frequency;
+            y *= m_frequency;
+            z *= m_frequency;
+
+            switch (m_fractalType)
+            {
+                case FractalType.FBM:
+                    return SingleCubicFractalFBM(x, y, z);
+
+                case FractalType.Billow:
+                    return SingleCubicFractalBillow(x, y, z);
+
+                case FractalType.RigidMulti:
+                    return SingleCubicFractalRigidMulti(x, y, z);
+
+                default:
+                    return 0;
+            }
+        }
+
+        public FN_DECIMAL GetCubic(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        {
+            return SingleCubic(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+        }
+
+        public FN_DECIMAL GetCubicFractal(FN_DECIMAL x, FN_DECIMAL y)
+        {
+            x *= m_frequency;
+            y *= m_frequency;
+
+            switch (m_fractalType)
+            {
+                case FractalType.FBM:
+                    return SingleCubicFractalFBM(x, y);
+
+                case FractalType.Billow:
+                    return SingleCubicFractalBillow(x, y);
+
+                case FractalType.RigidMulti:
+                    return SingleCubicFractalRigidMulti(x, y);
+
+                default:
+                    return 0;
+            }
+        }
+
+        public FN_DECIMAL GetCubic(FN_DECIMAL x, FN_DECIMAL y)
+        {
+            x *= m_frequency;
+            y *= m_frequency;
+
+            return SingleCubic(0, x, y);
+        }
+
+        // Cellular Noise
+        public FN_DECIMAL GetCellular(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+        {
+            x *= m_frequency;
+            y *= m_frequency;
+            z *= m_frequency;
+
+            switch (m_cellularReturnType)
+            {
+                case CellularReturnType.CellValue:
+                case CellularReturnType.NoiseLookup:
+                case CellularReturnType.Distance:
+                    return SingleCellular(x, y, z);
+
+                default:
+                    return SingleCellular2Edge(x, y, z);
+            }
+        }
+
+        public FN_DECIMAL GetCellular(FN_DECIMAL x, FN_DECIMAL y)
+        {
+            x *= m_frequency;
+            y *= m_frequency;
+
+            switch (m_cellularReturnType)
+            {
+                case CellularReturnType.CellValue:
+                case CellularReturnType.NoiseLookup:
+                case CellularReturnType.Distance:
+                    return SingleCellular(x, y);
+
+                default:
+                    return SingleCellular2Edge(x, y);
+            }
+        }
+
+        public void GradientPerturb(ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
+        {
+            SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, ref x, ref y, ref z);
+        }
+
+        public void GradientPerturbFractal(ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
+        {
+            int seed = m_seed;
+            FN_DECIMAL amp = m_gradientPerturbAmp * m_fractalBounding;
+            FN_DECIMAL freq = m_frequency;
+
+            SingleGradientPerturb(seed, amp, m_frequency, ref x, ref y, ref z);
+
+            for (int i = 1; i < m_octaves; i++)
+            {
+                freq *= m_lacunarity;
+                amp *= m_gain;
+                SingleGradientPerturb(++seed, amp, freq, ref x, ref y, ref z);
+            }
+        }
+
+        public void GradientPerturb(ref FN_DECIMAL x, ref FN_DECIMAL y)
+        {
+            SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, ref x, ref y);
+        }
+
+        public void GradientPerturbFractal(ref FN_DECIMAL x, ref FN_DECIMAL y)
+        {
+            int seed = m_seed;
+            FN_DECIMAL amp = m_gradientPerturbAmp * m_fractalBounding;
+            FN_DECIMAL freq = m_frequency;
+
+            SingleGradientPerturb(seed, amp, m_frequency, ref x, ref y);
+
+            for (int i = 1; i < m_octaves; i++)
+            {
+                freq *= m_lacunarity;
+                amp *= m_gain;
+                SingleGradientPerturb(++seed, amp, freq, ref x, ref y);
+            }
+        }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static int FastFloor(FN_DECIMAL f) { return (f >= 0 ? (int)f : (int)f - 1); }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static int FastRound(FN_DECIMAL f) { return (f >= 0) ? (int)(f + (FN_DECIMAL)0.5) : (int)(f - (FN_DECIMAL)0.5); }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static FN_DECIMAL Lerp(FN_DECIMAL a, FN_DECIMAL b, FN_DECIMAL t) { return a + t * (b - a); }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static FN_DECIMAL InterpHermiteFunc(FN_DECIMAL t) { return t * t * (3 - 2 * t); }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static FN_DECIMAL InterpQuinticFunc(FN_DECIMAL t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static FN_DECIMAL CubicLerp(FN_DECIMAL a, FN_DECIMAL b, FN_DECIMAL c, FN_DECIMAL d, FN_DECIMAL t)
+        {
+            FN_DECIMAL p = (d - c) - (a - b);
+            return t * t * t * p + t * t * ((a - b) - p) + t * (c - a) + b;
+        }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static int Hash2D(int seed, int x, int y)
+        {
+            int hash = seed;
+            hash ^= X_PRIME * x;
+            hash ^= Y_PRIME * y;
+
+            hash = hash * hash * hash * 60493;
+            hash = (hash >> 13) ^ hash;
+
+            return hash;
+        }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static int Hash3D(int seed, int x, int y, int z)
+        {
+            int hash = seed;
+            hash ^= X_PRIME * x;
+            hash ^= Y_PRIME * y;
+            hash ^= Z_PRIME * z;
+
+            hash = hash * hash * hash * 60493;
+            hash = (hash >> 13) ^ hash;
+
+            return hash;
+        }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static int Hash4D(int seed, int x, int y, int z, int w)
+        {
+            int hash = seed;
+            hash ^= X_PRIME * x;
+            hash ^= Y_PRIME * y;
+            hash ^= Z_PRIME * z;
+            hash ^= W_PRIME * w;
+
+            hash = hash * hash * hash * 60493;
+            hash = (hash >> 13) ^ hash;
+
+            return hash;
+        }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static FN_DECIMAL ValCoord2D(int seed, int x, int y)
+        {
+            int n = seed;
+            n ^= X_PRIME * x;
+            n ^= Y_PRIME * y;
+
+            return (n * n * n * 60493) / (FN_DECIMAL)2147483648.0;
+        }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static FN_DECIMAL ValCoord3D(int seed, int x, int y, int z)
+        {
+            int n = seed;
+            n ^= X_PRIME * x;
+            n ^= Y_PRIME * y;
+            n ^= Z_PRIME * z;
+
+            return (n * n * n * 60493) / (FN_DECIMAL)2147483648.0;
+        }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static FN_DECIMAL ValCoord4D(int seed, int x, int y, int z, int w)
+        {
+            int n = seed;
+            n ^= X_PRIME * x;
+            n ^= Y_PRIME * y;
+            n ^= Z_PRIME * z;
+            n ^= W_PRIME * w;
+
+            return (n * n * n * 60493) / (FN_DECIMAL)2147483648.0;
+        }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static FN_DECIMAL GradCoord2D(int seed, int x, int y, FN_DECIMAL xd, FN_DECIMAL yd)
+        {
+            int hash = seed;
+            hash ^= X_PRIME * x;
+            hash ^= Y_PRIME * y;
+
+            hash = hash * hash * hash * 60493;
+            hash = (hash >> 13) ^ hash;
+
+            Float2 g = GRAD_2D[hash & 7];
+
+            return xd * g.x + yd * g.y;
+        }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static FN_DECIMAL GradCoord3D(int seed, int x, int y, int z, FN_DECIMAL xd, FN_DECIMAL yd, FN_DECIMAL zd)
+        {
+            int hash = seed;
+            hash ^= X_PRIME * x;
+            hash ^= Y_PRIME * y;
+            hash ^= Z_PRIME * z;
+
+            hash = hash * hash * hash * 60493;
+            hash = (hash >> 13) ^ hash;
+
+            Float3 g = GRAD_3D[hash & 15];
+
+            return xd * g.x + yd * g.y + zd * g.z;
+        }
+
+        [MethodImplAttribute(FN_INLINE)]
+        private static FN_DECIMAL GradCoord4D(int seed, int x, int y, int z, int w, FN_DECIMAL xd, FN_DECIMAL yd, FN_DECIMAL zd, FN_DECIMAL wd)
+        {
+            int hash = seed;
+            hash ^= X_PRIME * x;
+            hash ^= Y_PRIME * y;
+            hash ^= Z_PRIME * z;
+            hash ^= W_PRIME * w;
+
+            hash = hash * hash * hash * 60493;
+            hash = (hash >> 13) ^ hash;
+
+            hash &= 31;
+            FN_DECIMAL a = yd, b = zd, c = wd;            // X,Y,Z
+            switch (hash >> 3)
+            {          // OR, DEPENDING ON HIGH ORDER 2 BITS:
+                case 1: a = wd; b = xd; c = yd; break;     // W,X,Y
+                case 2: a = zd; b = wd; c = xd; break;     // Z,W,X
+                case 3: a = yd; b = zd; c = wd; break;     // Y,Z,W
+            }
+            return ((hash & 4) == 0 ? -a : a) + ((hash & 2) == 0 ? -b : b) + ((hash & 1) == 0 ? -c : c);
+        }
+
+        private void CalculateFractalBounding()
+        {
+            FN_DECIMAL amp = m_gain;
+            FN_DECIMAL ampFractal = 1;
+            for (int i = 1; i < m_octaves; i++)
+            {
+                ampFractal += amp;
+                amp *= m_gain;
+            }
+            m_fractalBounding = 1 / ampFractal;
+        }
+
+        // White Noise
+        [MethodImplAttribute(FN_INLINE)]
+        private int FloatCast2Int(FN_DECIMAL f)
+        {
+            var i = BitConverter.DoubleToInt64Bits(f);
+
+            return (int)(i ^ (i >> 32));
+        }
+
         private FN_DECIMAL SingleValueFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int seed = m_seed;
@@ -767,11 +1066,6 @@ namespace Votyra.Core.Utils
             return sum;
         }
 
-        public FN_DECIMAL GetValue(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
-        {
-            return SingleValue(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
-        }
-
         private FN_DECIMAL SingleValue(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int x0 = FastFloor(x);
@@ -813,27 +1107,6 @@ namespace Votyra.Core.Utils
             FN_DECIMAL yf1 = Lerp(xf01, xf11, ys);
 
             return Lerp(yf0, yf1, zs);
-        }
-
-        public FN_DECIMAL GetValueFractal(FN_DECIMAL x, FN_DECIMAL y)
-        {
-            x *= m_frequency;
-            y *= m_frequency;
-
-            switch (m_fractalType)
-            {
-                case FractalType.FBM:
-                    return SingleValueFractalFBM(x, y);
-
-                case FractalType.Billow:
-                    return SingleValueFractalBillow(x, y);
-
-                case FractalType.RigidMulti:
-                    return SingleValueFractalRigidMulti(x, y);
-
-                default:
-                    return 0;
-            }
         }
 
         private FN_DECIMAL SingleValueFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
@@ -889,11 +1162,6 @@ namespace Votyra.Core.Utils
             return sum;
         }
 
-        public FN_DECIMAL GetValue(FN_DECIMAL x, FN_DECIMAL y)
-        {
-            return SingleValue(m_seed, x * m_frequency, y * m_frequency);
-        }
-
         private FN_DECIMAL SingleValue(int seed, FN_DECIMAL x, FN_DECIMAL y)
         {
             int x0 = FastFloor(x);
@@ -925,29 +1193,6 @@ namespace Votyra.Core.Utils
             FN_DECIMAL xf1 = Lerp(ValCoord2D(seed, x0, y1), ValCoord2D(seed, x1, y1), xs);
 
             return Lerp(xf0, xf1, ys);
-        }
-
-        // Gradient Noise
-        public FN_DECIMAL GetPerlinFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
-        {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
-
-            switch (m_fractalType)
-            {
-                case FractalType.FBM:
-                    return SinglePerlinFractalFBM(x, y, z);
-
-                case FractalType.Billow:
-                    return SinglePerlinFractalBillow(x, y, z);
-
-                case FractalType.RigidMulti:
-                    return SinglePerlinFractalRigidMulti(x, y, z);
-
-                default:
-                    return 0;
-            }
         }
 
         private FN_DECIMAL SinglePerlinFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
@@ -1007,11 +1252,6 @@ namespace Votyra.Core.Utils
             return sum;
         }
 
-        public FN_DECIMAL GetPerlin(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
-        {
-            return SinglePerlin(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
-        }
-
         private FN_DECIMAL SinglePerlin(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int x0 = FastFloor(x);
@@ -1060,27 +1300,6 @@ namespace Votyra.Core.Utils
             FN_DECIMAL yf1 = Lerp(xf01, xf11, ys);
 
             return Lerp(yf0, yf1, zs);
-        }
-
-        public FN_DECIMAL GetPerlinFractal(FN_DECIMAL x, FN_DECIMAL y)
-        {
-            x *= m_frequency;
-            y *= m_frequency;
-
-            switch (m_fractalType)
-            {
-                case FractalType.FBM:
-                    return SinglePerlinFractalFBM(x, y);
-
-                case FractalType.Billow:
-                    return SinglePerlinFractalBillow(x, y);
-
-                case FractalType.RigidMulti:
-                    return SinglePerlinFractalRigidMulti(x, y);
-
-                default:
-                    return 0;
-            }
         }
 
         private FN_DECIMAL SinglePerlinFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
@@ -1137,11 +1356,6 @@ namespace Votyra.Core.Utils
             return sum;
         }
 
-        public FN_DECIMAL GetPerlin(FN_DECIMAL x, FN_DECIMAL y)
-        {
-            return SinglePerlin(m_seed, x * m_frequency, y * m_frequency);
-        }
-
         private FN_DECIMAL SinglePerlin(int seed, FN_DECIMAL x, FN_DECIMAL y)
         {
             int x0 = FastFloor(x);
@@ -1178,29 +1392,6 @@ namespace Votyra.Core.Utils
             FN_DECIMAL xf1 = Lerp(GradCoord2D(seed, x0, y1, xd0, yd1), GradCoord2D(seed, x1, y1, xd1, yd1), xs);
 
             return Lerp(xf0, xf1, ys);
-        }
-
-        // Simplex Noise
-        public FN_DECIMAL GetSimplexFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
-        {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
-
-            switch (m_fractalType)
-            {
-                case FractalType.FBM:
-                    return SingleSimplexFractalFBM(x, y, z);
-
-                case FractalType.Billow:
-                    return SingleSimplexFractalBillow(x, y, z);
-
-                case FractalType.RigidMulti:
-                    return SingleSimplexFractalRigidMulti(x, y, z);
-
-                default:
-                    return 0;
-            }
         }
 
         private FN_DECIMAL SingleSimplexFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
@@ -1259,15 +1450,6 @@ namespace Votyra.Core.Utils
 
             return sum;
         }
-
-        public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
-        {
-            return SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
-        }
-
-        private const FN_DECIMAL F3 = (FN_DECIMAL)(1.0 / 3.0);
-        private const FN_DECIMAL G3 = (FN_DECIMAL)(1.0 / 6.0);
-        private const FN_DECIMAL G33 = G3 * 3 - 1;
 
         private FN_DECIMAL SingleSimplex(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
@@ -1362,27 +1544,6 @@ namespace Votyra.Core.Utils
             return 32 * (n0 + n1 + n2 + n3);
         }
 
-        public FN_DECIMAL GetSimplexFractal(FN_DECIMAL x, FN_DECIMAL y)
-        {
-            x *= m_frequency;
-            y *= m_frequency;
-
-            switch (m_fractalType)
-            {
-                case FractalType.FBM:
-                    return SingleSimplexFractalFBM(x, y);
-
-                case FractalType.Billow:
-                    return SingleSimplexFractalBillow(x, y);
-
-                case FractalType.RigidMulti:
-                    return SingleSimplexFractalRigidMulti(x, y);
-
-                default:
-                    return 0;
-            }
-        }
-
         private FN_DECIMAL SingleSimplexFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
         {
             int seed = m_seed;
@@ -1436,14 +1597,6 @@ namespace Votyra.Core.Utils
 
             return sum;
         }
-
-        public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y)
-        {
-            return SingleSimplex(m_seed, x * m_frequency, y * m_frequency);
-        }
-
-        private const FN_DECIMAL F2 = (FN_DECIMAL)(1.0 / 2.0);
-        private const FN_DECIMAL G2 = (FN_DECIMAL)(1.0 / 4.0);
 
         private FN_DECIMAL SingleSimplex(int seed, FN_DECIMAL x, FN_DECIMAL y)
         {
@@ -1501,26 +1654,6 @@ namespace Votyra.Core.Utils
 
             return 50 * (n0 + n1 + n2);
         }
-
-        public FN_DECIMAL GetSimplex(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z, FN_DECIMAL w)
-        {
-            return SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency, w * m_frequency);
-        }
-
-        private static readonly byte[] SIMPLEX_4D =
-        {
-        0,1,2,3,0,1,3,2,0,0,0,0,0,2,3,1,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,0,
-        0,2,1,3,0,0,0,0,0,3,1,2,0,3,2,1,0,0,0,0,0,0,0,0,0,0,0,0,1,3,2,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        1,2,0,3,0,0,0,0,1,3,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2,3,0,1,2,3,1,0,
-        1,0,2,3,1,0,3,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,3,1,0,0,0,0,2,1,3,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        2,0,1,3,0,0,0,0,0,0,0,0,0,0,0,0,3,0,1,2,3,0,2,1,0,0,0,0,3,1,2,0,
-        2,1,0,3,0,0,0,0,0,0,0,0,0,0,0,0,3,1,0,2,0,0,0,0,3,2,0,1,3,2,1,0
-    };
-
-        private const FN_DECIMAL F4 = (FN_DECIMAL)((2.23606797 - 1.0) / 4.0);
-        private const FN_DECIMAL G4 = (FN_DECIMAL)((5.0 - 2.23606797) / 20.0);
 
         private FN_DECIMAL SingleSimplex(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z, FN_DECIMAL w)
         {
@@ -1617,29 +1750,6 @@ namespace Votyra.Core.Utils
             return 27 * (n0 + n1 + n2 + n3 + n4);
         }
 
-        // Cubic Noise
-        public FN_DECIMAL GetCubicFractal(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
-        {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
-
-            switch (m_fractalType)
-            {
-                case FractalType.FBM:
-                    return SingleCubicFractalFBM(x, y, z);
-
-                case FractalType.Billow:
-                    return SingleCubicFractalBillow(x, y, z);
-
-                case FractalType.RigidMulti:
-                    return SingleCubicFractalRigidMulti(x, y, z);
-
-                default:
-                    return 0;
-            }
-        }
-
         private FN_DECIMAL SingleCubicFractalFBM(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int seed = m_seed;
@@ -1700,13 +1810,6 @@ namespace Votyra.Core.Utils
             return sum;
         }
 
-        public FN_DECIMAL GetCubic(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
-        {
-            return SingleCubic(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
-        }
-
-        private const FN_DECIMAL CUBIC_3D_BOUNDING = 1 / (FN_DECIMAL)(1.5 * 1.5 * 1.5);
-
         private FN_DECIMAL SingleCubic(int seed, FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
         {
             int x1 = FastFloor(x);
@@ -1753,27 +1856,6 @@ namespace Votyra.Core.Utils
                 CubicLerp(ValCoord3D(seed, x0, y3, z3), ValCoord3D(seed, x1, y3, z3), ValCoord3D(seed, x2, y3, z3), ValCoord3D(seed, x3, y3, z3), xs),
                 ys),
                 zs) * CUBIC_3D_BOUNDING;
-        }
-
-        public FN_DECIMAL GetCubicFractal(FN_DECIMAL x, FN_DECIMAL y)
-        {
-            x *= m_frequency;
-            y *= m_frequency;
-
-            switch (m_fractalType)
-            {
-                case FractalType.FBM:
-                    return SingleCubicFractalFBM(x, y);
-
-                case FractalType.Billow:
-                    return SingleCubicFractalBillow(x, y);
-
-                case FractalType.RigidMulti:
-                    return SingleCubicFractalRigidMulti(x, y);
-
-                default:
-                    return 0;
-            }
         }
 
         private FN_DECIMAL SingleCubicFractalFBM(FN_DECIMAL x, FN_DECIMAL y)
@@ -1833,16 +1915,6 @@ namespace Votyra.Core.Utils
             return sum;
         }
 
-        public FN_DECIMAL GetCubic(FN_DECIMAL x, FN_DECIMAL y)
-        {
-            x *= m_frequency;
-            y *= m_frequency;
-
-            return SingleCubic(0, x, y);
-        }
-
-        private const FN_DECIMAL CUBIC_2D_BOUNDING = 1 / (FN_DECIMAL)(1.5 * 1.5);
-
         private FN_DECIMAL SingleCubic(int seed, FN_DECIMAL x, FN_DECIMAL y)
         {
             int x1 = FastFloor(x);
@@ -1868,25 +1940,6 @@ namespace Votyra.Core.Utils
                        CubicLerp(ValCoord2D(seed, x0, y3), ValCoord2D(seed, x1, y3), ValCoord2D(seed, x2, y3), ValCoord2D(seed, x3, y3),
                            xs),
                        ys) * CUBIC_2D_BOUNDING;
-        }
-
-        // Cellular Noise
-        public FN_DECIMAL GetCellular(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
-        {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
-
-            switch (m_cellularReturnType)
-            {
-                case CellularReturnType.CellValue:
-                case CellularReturnType.NoiseLookup:
-                case CellularReturnType.Distance:
-                    return SingleCellular(x, y, z);
-
-                default:
-                    return SingleCellular2Edge(x, y, z);
-            }
         }
 
         private FN_DECIMAL SingleCellular(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
@@ -2104,23 +2157,6 @@ namespace Votyra.Core.Utils
             }
         }
 
-        public FN_DECIMAL GetCellular(FN_DECIMAL x, FN_DECIMAL y)
-        {
-            x *= m_frequency;
-            y *= m_frequency;
-
-            switch (m_cellularReturnType)
-            {
-                case CellularReturnType.CellValue:
-                case CellularReturnType.NoiseLookup:
-                case CellularReturnType.Distance:
-                    return SingleCellular(x, y);
-
-                default:
-                    return SingleCellular2Edge(x, y);
-            }
-        }
-
         private FN_DECIMAL SingleCellular(FN_DECIMAL x, FN_DECIMAL y)
         {
             int xr = FastRound(x);
@@ -2306,27 +2342,6 @@ namespace Votyra.Core.Utils
             }
         }
 
-        public void GradientPerturb(ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
-        {
-            SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, ref x, ref y, ref z);
-        }
-
-        public void GradientPerturbFractal(ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
-        {
-            int seed = m_seed;
-            FN_DECIMAL amp = m_gradientPerturbAmp * m_fractalBounding;
-            FN_DECIMAL freq = m_frequency;
-
-            SingleGradientPerturb(seed, amp, m_frequency, ref x, ref y, ref z);
-
-            for (int i = 1; i < m_octaves; i++)
-            {
-                freq *= m_lacunarity;
-                amp *= m_gain;
-                SingleGradientPerturb(++seed, amp, freq, ref x, ref y, ref z);
-            }
-        }
-
         private void SingleGradientPerturb(int seed, FN_DECIMAL perturbAmp, FN_DECIMAL frequency, ref FN_DECIMAL x, ref FN_DECIMAL y, ref FN_DECIMAL z)
         {
             FN_DECIMAL xf = x * frequency;
@@ -2400,27 +2415,6 @@ namespace Votyra.Core.Utils
             z += Lerp(lz0y, Lerp(lz0x, lz1x, ys), zs) * perturbAmp;
         }
 
-        public void GradientPerturb(ref FN_DECIMAL x, ref FN_DECIMAL y)
-        {
-            SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, ref x, ref y);
-        }
-
-        public void GradientPerturbFractal(ref FN_DECIMAL x, ref FN_DECIMAL y)
-        {
-            int seed = m_seed;
-            FN_DECIMAL amp = m_gradientPerturbAmp * m_fractalBounding;
-            FN_DECIMAL freq = m_frequency;
-
-            SingleGradientPerturb(seed, amp, m_frequency, ref x, ref y);
-
-            for (int i = 1; i < m_octaves; i++)
-            {
-                freq *= m_lacunarity;
-                amp *= m_gain;
-                SingleGradientPerturb(++seed, amp, freq, ref x, ref y);
-            }
-        }
-
         private void SingleGradientPerturb(int seed, FN_DECIMAL perturbAmp, FN_DECIMAL frequency, ref FN_DECIMAL x, ref FN_DECIMAL y)
         {
             FN_DECIMAL xf = x * frequency;
@@ -2465,6 +2459,29 @@ namespace Votyra.Core.Utils
 
             x += Lerp(lx0x, lx1x, ys) * perturbAmp;
             y += Lerp(ly0x, ly1x, ys) * perturbAmp;
+        }
+
+        private struct Float2
+        {
+            public readonly FN_DECIMAL x, y;
+
+            public Float2(FN_DECIMAL x, FN_DECIMAL y)
+            {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+        private struct Float3
+        {
+            public readonly FN_DECIMAL x, y, z;
+
+            public Float3(FN_DECIMAL x, FN_DECIMAL y, FN_DECIMAL z)
+            {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+            }
         }
     }
 }

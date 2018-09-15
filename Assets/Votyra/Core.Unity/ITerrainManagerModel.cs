@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UniRx;
-using UnityEngine;
-using Votyra.Core.Images;
 
 namespace Votyra.Core
 {
@@ -12,5 +9,4 @@ namespace Votyra.Core
         IBehaviorSubject<TerrainAlgorithm> ActiveAlgorithm { get; }
         IBehaviorSubject<IReadOnlyCollection<ConfigItem>> Config { get; }
     }
-
 }
