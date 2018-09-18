@@ -117,6 +117,7 @@ namespace Votyra.Core.Models
             public static Difference operator *(Difference a, float b) => new Difference((int)(a.Value * b));
 
             public static Height operator +(Height a, Difference b) => new Height(a.Value + b.Value);
+            public static Height operator +(Difference a, Height b) => new Height(a.Value + b.Value);
 
             public static Difference operator +(Difference a, Difference b) => new Difference(a.Value + b.Value);
 

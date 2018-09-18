@@ -4,14 +4,6 @@ namespace Votyra.Core.Utils
 {
     public static class ObjectUtils
     {
-        public static void TryDispose(this object obj)
-        {
-            if (obj is IDisposable)
-            {
-                (obj as IDisposable).Dispose();
-            }
-        }
-
         public static void UpdateType<T, R>(ref R property)
             where T : R, new()
         {

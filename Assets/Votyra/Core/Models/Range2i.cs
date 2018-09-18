@@ -123,6 +123,21 @@ namespace Votyra.Core.Models
             return Range2i.FromMinAndMax(min, max);
         }
 
+        public Range2i UnionWith(Range2i? that)
+        {
+            return this;
+        }
+        public Range2i UnionWith(Range2i that)
+        {
+            if (this.Size == Vector2i.Zero || that.Size == Vector2i.Zero)
+                return Range2i.Zero;
+
+            var min = Vector2i.Min(this.Min, that.Min);
+            var max = Vector2i.Max(this.Max, that.Max);
+
+            return Range2i.FromMinAndMax(min, max);
+        }
+
         public bool Equals(Range2i other)
         {
             return this == other;

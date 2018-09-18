@@ -54,7 +54,7 @@ namespace Votyra.Plannar
                 existingGroups,
                 image,
                 mask,
-                (image as IImageInvalidatableImage2i)?.InvalidatedArea ?? Range2i.All
+                ((image as IImageInvalidatableImage2i)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2i)?.InvalidatedArea) ?? Range2i.All
             );
         }
     }

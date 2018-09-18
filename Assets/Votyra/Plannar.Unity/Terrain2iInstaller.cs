@@ -6,6 +6,9 @@ using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
+using Votyra.Core.Painting;
+using Votyra.Core.Painting.Commands;
+using Votyra.Core.Painting.UI;
 using Votyra.Core.TerrainGenerators;
 using Votyra.Core.Utils;
 using Zenject;
@@ -37,7 +40,15 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<EditableMatrixImage2i>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditableMatrixMask2e>().AsSingle();
             Container.BindInstance<GameObject>(this.gameObject).WithId("root").AsSingle();
-            Container.BindInterfacesAndSelfTo<ClickToPaint2i>().AsSingle().NonLazy();
+
+            Container.BindInterfacesAndSelfTo<PaintingInvocationManager>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<PaintingSelectionManager>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<PaintingModel>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<Flatten>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<IncreaseOrDecrease>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<MakeOrRemoveHole>().AsSingle().NonLazy();
+            // Container.BindInterfacesAndSelfTo<PaintCommandsCollection>().FromComponentInNewPrefabResource("PaintingUI").AsSingle().NonLazy();
+
             Container.BindInterfacesAndSelfTo<TerrainGeneratorManager<IFrameData2i, Vector2i>>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<FrameData2iProvider>().AsSingle();
 
