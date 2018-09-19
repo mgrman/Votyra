@@ -27,17 +27,8 @@ namespace Votyra.Core.Painting
                 });
 
             var activePaintCommand = _paintingModel.SelectedPaintCommand
-                .CombineLatest(_paintingModel.Active, (cmd, active) => active ? cmd : null);
-
-            activePaintCommand
-                .PairWithPrevious()
-                .Subscribe(o =>
-                {
-                    if (o.OldValue != o.NewValue)
-                    {
-                        o.OldValue?.InvokeReset();
-                    }
-                });
+                .CombineLatest(_paintingModel.Active, (cmd, active) => active ? cmd : null)
+                .MakeLogExceptions();
 
             activePaintCommand
                 .CombineLatest(_paintingModel.Strength, _paintingModel.ImagePosition, (cmd, strength, imagePosition) => new { cmd, strength, imagePosition })

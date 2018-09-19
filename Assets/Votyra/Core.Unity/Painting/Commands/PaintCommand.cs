@@ -44,6 +44,7 @@ namespace Votyra.Core.Painting.Commands
         private async Task CombineAsync(Task a, Func<Task> b)
         {
             await a;
+            InvokeReset();
             await b();
         }
 

@@ -47,7 +47,7 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<Flatten>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<IncreaseOrDecrease>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<MakeOrRemoveHole>().AsSingle().NonLazy();
-            // Container.BindInterfacesAndSelfTo<PaintCommandsCollection>().FromComponentInNewPrefabResource("PaintingUI").AsSingle().NonLazy();
+            Container.Bind<Canvas>().FromComponentInNewPrefabResource("PaintingUI").AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<TerrainGeneratorManager<IFrameData2i, Vector2i>>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<FrameData2iProvider>().AsSingle();

@@ -15,6 +15,11 @@ namespace Votyra.Core.Models
         {
             return new LogExceptionsSubject<T>(subject);
         }
+
+        public static IObservable<T> MakeLogExceptions<T>(this IObservable<T> observable)
+        {
+            return new LogExceptionsSubject<T>(observable);
+        }
     }
 
     public class LogExceptionsSubject<T> : IBehaviorSubject<T>
@@ -24,11 +29,11 @@ namespace Votyra.Core.Models
 
         private readonly Func<T> _getValue;
 
-        public LogExceptionsSubject(ISubject<T> subject)
+        public LogExceptionsSubject(IObservable<T> subject)
         {
             _observable = subject;
 
-            _observer = subject;
+            _observer = subject as IObserver<T>;
             if (subject is IBehaviorSubject<T>)
             {
                 _getValue = () => (subject as IBehaviorSubject<T>).Value;
@@ -44,11 +49,11 @@ namespace Votyra.Core.Models
 
         public T Value => _getValue();
 
-        public void OnCompleted() => _observer.OnCompleted();
+        public void OnCompleted() => _observer?.OnCompleted();
 
-        public void OnError(Exception error) => _observer.OnError(error);
+        public void OnError(Exception error) => _observer?.OnError(error);
 
-        public void OnNext(T value) => _observer.OnNext(value);
+        public void OnNext(T value) => _observer?.OnNext(value);
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
