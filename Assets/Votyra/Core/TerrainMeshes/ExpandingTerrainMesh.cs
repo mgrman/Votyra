@@ -20,7 +20,7 @@ namespace Votyra.Core.TerrainMeshes
         public List<int> Indices { get; }
 
         public int TriangleCount { get; private set; }
-        public int PointCount { get; private set; }
+        public int VertexCount { get; private set; }
 
         public Vector3f this[int point] => Vertices[point];
 
@@ -28,7 +28,7 @@ namespace Votyra.Core.TerrainMeshes
         {
             MeshBounds = meshBounds;
             TriangleCount = 0;
-            PointCount = 0;
+            VertexCount = 0;
             Vertices.Clear();
             UV.Clear();
             Indices.Clear();
@@ -41,23 +41,23 @@ namespace Votyra.Core.TerrainMeshes
             var side2 = posC - posA;
             var normal = Vector3f.Cross(side1, side2).Normalized;
 
-            Indices.Add(PointCount);
+            Indices.Add(VertexCount);
             Vertices.Add(posA);
             UV.Add(new Vector2f(posA.X, posA.Y));
             Normals.Add(normal);
-            PointCount++;
+            VertexCount++;
 
-            Indices.Add(PointCount);
+            Indices.Add(VertexCount);
             Vertices.Add(posB);
             UV.Add(new Vector2f(posB.X, posB.Y));
             Normals.Add(normal);
-            PointCount++;
+            VertexCount++;
 
-            Indices.Add(PointCount);
+            Indices.Add(VertexCount);
             Vertices.Add(posC);
             UV.Add(new Vector2f(posC.X, posC.Y));
             Normals.Add(normal);
-            PointCount++;
+            VertexCount++;
 
             TriangleCount++;
         }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
@@ -85,6 +86,8 @@ namespace Votyra.Core.MeshUpdaters
 
         private void UpdateMesh(ITerrainMesh triangleMesh, Mesh mesh)
         {
+            SetMeshFormat(mesh, triangleMesh.VertexCount);
+
             if (triangleMesh is IPooledTerrainMesh)
             {
                 UpdateMesh((triangleMesh as IPooledTerrainMesh).Mesh, mesh);
@@ -103,9 +106,21 @@ namespace Votyra.Core.MeshUpdaters
             }
         }
 
+        private void SetMeshFormat(Mesh mesh, int vertexCount)
+        {
+            if (vertexCount > 65000 && mesh.indexFormat != IndexFormat.UInt32)
+            {
+                mesh.indexFormat = IndexFormat.UInt32;
+            }
+            else if (vertexCount < 65000 && mesh.indexFormat != IndexFormat.UInt16)
+            {
+                mesh.indexFormat = IndexFormat.UInt16;
+            }
+        }
+
         private void UpdateMesh(ExpandingTerrainMesh triangleMesh, Mesh mesh)
         {
-            bool recomputeTriangles = mesh.vertexCount != triangleMesh.PointCount;
+            bool recomputeTriangles = mesh.vertexCount != triangleMesh.VertexCount;
             if (recomputeTriangles)
             {
                 mesh.Clear();
@@ -123,7 +138,7 @@ namespace Votyra.Core.MeshUpdaters
 
         private void UpdateMesh(FixedTerrainMesh2i triangleMesh, Mesh mesh)
         {
-            bool recomputeTriangles = mesh.vertexCount != triangleMesh.PointCount;
+            bool recomputeTriangles = mesh.vertexCount != triangleMesh.VertexCount;
             if (recomputeTriangles)
             {
                 mesh.Clear();

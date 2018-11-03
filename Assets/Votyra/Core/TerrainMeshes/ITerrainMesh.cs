@@ -4,6 +4,7 @@ namespace Votyra.Core.TerrainMeshes
 {
     public interface ITerrainMesh
     {
+        int VertexCount { get; }
         int TriangleCount { get; }
         Vector3f this[int index] { get; }
 

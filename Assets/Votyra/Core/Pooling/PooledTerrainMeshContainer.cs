@@ -18,6 +18,8 @@ namespace Votyra.Core.Pooling
 
         public T Mesh { get; }
 
+        public int VertexCount => Mesh.VertexCount;
+
         public int TriangleCount => Mesh.TriangleCount;
 
         ITerrainMesh IPooledTerrainMesh.Mesh => Mesh;

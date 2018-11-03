@@ -15,7 +15,7 @@ namespace Votyra.Core.TerrainMeshes
 
         public int TriangleCount => _counter / 3;
 
-        public int PointCount => Vertices.Length;
+        public int VertexCount => Vertices.Length;
 
         public int TriangleCapacity { get; private set; }
 
@@ -63,15 +63,15 @@ namespace Votyra.Core.TerrainMeshes
 
         public void FinalizeMesh()
         {
-            if (_counter != PointCount)
+            if (_counter != VertexCount)
             {
-                for (int i = _counter; i < PointCount; i++)
+                for (int i = _counter; i < VertexCount; i++)
                 {
                     Vertices[i] = Vector3f.Zero;
                     UV[i] = Vector2f.Zero;
                     Normals[i] = Vector3f.Zero;
                 }
-                Debug.LogWarning($"Mesh was not fully filled. Expected {PointCount} points, got {_counter} points!");
+                Debug.LogWarning($"Mesh was not fully filled. Expected {VertexCount} points, got {_counter} points!");
             }
         }
     }
