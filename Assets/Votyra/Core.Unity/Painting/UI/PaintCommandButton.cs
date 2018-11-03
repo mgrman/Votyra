@@ -11,7 +11,7 @@ namespace Votyra.Core.Painting.UI
     public class PaintCommandButton : MonoBehaviour, IPointerClickHandler
     {
         [Inject]
-        private IPaintingModel _paintingModel;
+        protected IPaintingModel _paintingModel;
 
         public IPaintCommand PaintCommand { get; set; }
 

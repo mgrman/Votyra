@@ -13,10 +13,10 @@ namespace Votyra.Core.Painting.UI
         public string PaintCommands;
 
         [Inject]
-        private IPaintingModel _paintingModel;
+        protected IPaintingModel _paintingModel;
 
         [Inject]
-        private IInstantiator _instantiator;
+        protected IInstantiator _instantiator;
 
         // Start is called before the first frame update
         private void Start()

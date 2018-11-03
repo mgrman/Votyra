@@ -15,10 +15,10 @@ namespace Votyra.Core.Painting.UI
         public string PropertyName;
 
         [Inject]
-        private IInstantiator _instantiator;
+        protected IInstantiator _instantiator;
 
         [Inject]
-        private DiContainer _diContainer;
+        protected DiContainer _diContainer;
 
         // Start is called before the first frame update
         private void Start()

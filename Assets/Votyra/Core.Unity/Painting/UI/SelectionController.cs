@@ -20,10 +20,10 @@ namespace Votyra.Core.Painting.UI
         public object Context => gameObject.GetComponentInParent<Context>()?.Value;
 
         [Inject]
-        private IInstantiator _instantiator;
+        protected IInstantiator _instantiator;
 
         [Inject]
-        private DiContainer _diContainer;
+        protected DiContainer _diContainer;
 
         public void OnPointerClick(PointerEventData eventData)
         {
