@@ -16,7 +16,7 @@ namespace Votyra.Core.Painting.Commands
         protected Task _lastInvocation = Task.CompletedTask;
         protected CancellationTokenSource _lastInvocationCts = new CancellationTokenSource();
 
-        protected virtual float Period { get; } = 0.1f;
+        protected virtual int PeriodMs { get; } = 100;
 
         [InjectOptional]
         protected IEditableMask2e _editableMask;
@@ -26,26 +26,31 @@ namespace Votyra.Core.Painting.Commands
 
         private readonly object _invokeLock = new object();
 
-        public virtual void Invoke(Vector2i cell, int maxStrength)
+        public virtual void StartInvocation(Vector2i cell, int maxStrength)
         {
             lock (_invokeLock)
             {
+                if (_lastInvocation.IsCompleted)
+                {
+                    OnInvocationStarting();
+                }
+                var newInvocationCts = new CancellationTokenSource();
                 _lastInvocationCts.Cancel();
-                var invocationCts = new CancellationTokenSource();
-                _lastInvocation = CombineAsync(_lastInvocation, () => InvokeRepeatAsync(invocationCts.Token));
-                _lastInvocationCts = invocationCts;
+                _lastInvocationCts = newInvocationCts;
+                _lastInvocation = CombineAsync(_lastInvocation, cell, maxStrength, newInvocationCts.Token);
             }
-
-            _maxStrength = maxStrength;
-            _cell = cell;
         }
 
 
-        private async Task CombineAsync(Task a, Func<Task> b)
+        private async Task CombineAsync(Task lastInvocation, Vector2i cell, int maxStrength, CancellationToken cancellationToken)
         {
-            await a;
-            InvokeReset();
-            await b();
+            await lastInvocation;
+
+            _maxStrength = maxStrength;
+            _cell = cell;
+            OnNewInvocationData();
+
+            await InvokeRepeatAsync(cancellationToken);
         }
 
         protected async Task InvokeRepeatAsync(CancellationToken cancellationToken)
@@ -53,7 +58,7 @@ namespace Votyra.Core.Painting.Commands
             while (!cancellationToken.IsCancellationRequested)
             {
                 Invoke(cancellationToken);
-                await Task.Delay(TimeSpan.FromSeconds(Period));
+                await Task.Delay(PeriodMs);
             }
         }
 
@@ -93,12 +98,25 @@ namespace Votyra.Core.Painting.Commands
         {
         }
 
-        public virtual void InvokeReset()
+        public void StopInvocation()
         {
+            OnInvocationStopping();
             lock (_invokeLock)
             {
                 _lastInvocationCts.Cancel();
             }
+        }
+
+        protected virtual void OnNewInvocationData()
+        {
+        }
+
+        protected virtual void OnInvocationStarting()
+        {
+        }
+
+        protected virtual void OnInvocationStopping()
+        {
         }
 
         protected virtual void PrepareWithClickedValue(Height clickedValue)

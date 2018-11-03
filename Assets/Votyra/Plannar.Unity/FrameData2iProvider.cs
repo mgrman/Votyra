@@ -39,11 +39,11 @@ namespace Votyra.Plannar
 
             var planesUnity = PooledArrayContainer<Plane>.CreateDirty(6);
             GeometryUtility.CalculateFrustumPlanes(localToProjection, planesUnity.Array);
-            IEnumerable<Plane3f> planes = planesUnity.ToPlane3f();
+            var planes = planesUnity.ToPlane3f();
 
             var frustumCornersUnity = PooledArrayContainer<Vector3>.CreateDirty(4);
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);
-            IEnumerable<Vector3f> frustumCorners = frustumCornersUnity.ToVector3f();
+            var frustumCorners = frustumCornersUnity.ToVector3f();
 
             return new FrameData2i(
                 camera.transform.position.ToVector3f(),

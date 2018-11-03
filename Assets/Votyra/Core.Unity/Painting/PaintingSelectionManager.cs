@@ -50,10 +50,18 @@ namespace Votyra.Core.Painting
 
         public void Tick()
         {
-            // _paintingModel.SelectedPaintCommand.OnNext(GetCommandToExecute());
-            _paintingModel.ImagePosition.OnNext(GetImagePosition());
-            _paintingModel.Strength.OnNext(GetMultiplier() * GetDistance());
-            _paintingModel.Active.OnNext(IsCommandActive());
+            var isActive = IsCommandActive();
+            if (isActive)
+            {
+                var imagePosition = GetImagePosition();
+                var strength = GetMultiplier() * GetDistance();
+
+                _paintingModel.PaintInvocationData.OnNext(new PaintInvocationData(strength, imagePosition));
+            }
+            else
+            {
+                _paintingModel.PaintInvocationData.OnNext(null);
+            }
         }
 
         private bool IsCommandActive()

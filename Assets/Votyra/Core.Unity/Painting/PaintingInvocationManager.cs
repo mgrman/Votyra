@@ -26,15 +26,20 @@ namespace Votyra.Core.Painting
                     o.NewValue?.Selected();
                 });
 
-            var activePaintCommand = _paintingModel.SelectedPaintCommand
-                .CombineLatest(_paintingModel.Active, (cmd, active) => active ? cmd : null)
-                .MakeLogExceptions();
-
-            activePaintCommand
-                .CombineLatest(_paintingModel.Strength, _paintingModel.ImagePosition, (cmd, strength, imagePosition) => new { cmd, strength, imagePosition })
+            _paintingModel.SelectedPaintCommand
+                .CombineLatest(_paintingModel.PaintInvocationData, (cmd, data) => new { cmd, data })
                 .Subscribe(o =>
                 {
-                    o.cmd?.Invoke(o.imagePosition, o.strength);
+                    if (o.cmd != null && o.data != null)
+                    {
+                        Debug.Log($"Starting invocation of {o.cmd.GetType().Name} at {o.data.Value.ImagePosition} {o.data.Value.Strength}");
+                        o.cmd.StartInvocation(o.data.Value.ImagePosition, o.data.Value.Strength);
+                    }
+                    else if (o.cmd != null)
+                    {
+                        Debug.Log($"Stoping invocation of {o.cmd.GetType().Name}");
+                        o.cmd.StopInvocation();
+                    }
                 });
         }
     }

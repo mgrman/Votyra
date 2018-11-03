@@ -36,18 +36,6 @@ namespace Votyra.Core.Utils
             return planesUnity.Array.ToPlane3f();
         }
 
-        public static Plane3f[] ToPlane3f(this UnityEngine.Plane[] vector)
-        {
-            var union = new UnionPlane();
-            union.Unity = vector;
-            var res = union.Votyra;
-            if (res.Length != vector.Length)
-            {
-                throw new InvalidOperationException("ToPlane3f conversion failed!");
-            }
-            return res;
-        }
-
         public static UnityEngine.Vector2 ToVector2(this Vector2f vector)
         {
             return new UnityEngine.Vector2(vector.X, vector.Y);
@@ -73,30 +61,64 @@ namespace Votyra.Core.Utils
             return vector.ConvertListOfMatchingStructs<Vector3f, UnityEngine.Vector3>(ToVector3);
         }
 
+        public static Plane3f[] ToPlane3f(this UnityEngine.Plane[] vector)
+        {
+            return Array.ConvertAll(vector, item => item.ToPlane3f());
+
+            // var union = new UnionPlane();
+            // union.Unity = vector;
+            // var res = union.Votyra;
+            // if (res.Length != vector.Length)
+            // {
+            //     throw new InvalidOperationException("ToPlane3f conversion failed!");
+            // }
+            // return res;
+        }
+
         public static UnityEngine.Vector3[] ToVector3(this Vector3f[] vector)
         {
-            var union = new UnionVector3();
-            union.Votyra = vector;
-            var res = union.Unity;
-            if (res.Length != vector.Length)
-            {
-                throw new InvalidOperationException("ToVector3 conversion failed!");
-            }
-            return res;
-            //return vector.Select(o => o.ToVector3()).ToArray();
+            return Array.ConvertAll(vector, item => item.ToVector3());
+
+
+            // var union = new UnionVector3();
+            // union.Votyra = vector;
+            // var res = union.Unity;
+            // if (res.Length != vector.Length)
+            // {
+            //     throw new InvalidOperationException("ToVector3 conversion failed!");
+            // }
+            // return res;
+            // //return vector.Select(o => o.ToVector3()).ToArray();
         }
 
         public static Vector3f[] ToVector3f(this UnityEngine.Vector3[] vector)
         {
-            var union = new UnionVector3();
-            union.Unity = vector;
-            var res = union.Votyra;
-            if (res.Length != vector.Length)
-            {
-                throw new InvalidOperationException("ToVector3f conversion failed!");
-            }
-            return res;
-            //return vector.Select(o => o.ToVector3()).ToArray();
+            return Array.ConvertAll(vector, item => item.ToVector3f());
+
+            // var union = new UnionVector3();
+            // union.Unity = vector;
+            // var res = union.Votyra;
+            // if (res.Length != vector.Length)
+            // {
+            //     throw new InvalidOperationException("ToVector3f conversion failed!");
+            // }
+            // return res;
+            // //return vector.Select(o => o.ToVector3()).ToArray();
+        }
+
+        public static UnityEngine.Vector2[] ToVector2(this Vector2f[] vector)
+        {
+            return Array.ConvertAll(vector, item => item.ToVector2());
+
+            // var union = new UnionVector2();
+            // union.Votyra = vector;
+            // var res = union.Unity;
+            // if (res.Length != vector.Length)
+            // {
+            //     throw new InvalidOperationException("ToVector2 conversion failed!");
+            // }
+            // return res;
+            // //return vector.Select(o => o.ToVector2()).ToArray();
         }
 
         public static UnityEngine.Vector2[] ToVector2Array(this List<Vector2f> vector)
@@ -108,19 +130,6 @@ namespace Votyra.Core.Utils
         {
             // return vector.Select(ToVector2).ToList();
             return vector.ConvertListOfMatchingStructs<Vector2f, UnityEngine.Vector2>(ToVector2);
-        }
-
-        public static UnityEngine.Vector2[] ToVector2(this Vector2f[] vector)
-        {
-            var union = new UnionVector2();
-            union.Votyra = vector;
-            var res = union.Unity;
-            if (res.Length != vector.Length)
-            {
-                throw new InvalidOperationException("ToVector2 conversion failed!");
-            }
-            return res;
-            //return vector.Select(o => o.ToVector2()).ToArray();
         }
 
         public static Matrix4x4f ToMatrix4x4f(this UnityEngine.Matrix4x4 mat)

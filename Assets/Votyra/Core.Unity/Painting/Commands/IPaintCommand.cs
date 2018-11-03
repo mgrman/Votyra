@@ -13,8 +13,8 @@ namespace Votyra.Core.Painting.Commands
 
         void Unselected();
 
-        void InvokeReset();
+        void StopInvocation();
 
-        void Invoke(Vector2i cell, int strength);
+        void StartInvocation(Vector2i cell, int strength);
     }
 }

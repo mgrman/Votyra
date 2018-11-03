@@ -12,9 +12,9 @@ namespace Votyra.Core.Painting.Commands
         private const float smoothSpeedRelative = 0.2f;
         private Height? _centerValue;
 
-        public override void InvokeReset()
+        protected override void OnInvocationStopping()
         {
-            base.InvokeReset();
+            base.OnInvocationStopping();
             _centerValue = null;
         }
 

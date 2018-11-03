@@ -22,17 +22,7 @@ namespace Votyra.Core.Painting
             .MakeScheduledOnMainThread()
             .MakeLogExceptions();
 
-        public IBehaviorSubject<bool> Active { get; } = new BehaviorSubject<bool>(false)
-            .MakeDistinct()
-            .MakeScheduledOnMainThread()
-            .MakeLogExceptions();
-
-        public IBehaviorSubject<int> Strength { get; } = new BehaviorSubject<int>(0)
-            .MakeDistinct()
-            .MakeScheduledOnMainThread()
-            .MakeLogExceptions();
-
-        public IBehaviorSubject<Vector2i> ImagePosition { get; } = new BehaviorSubject<Vector2i>(Vector2i.Zero)
+        public IBehaviorSubject<PaintInvocationData?> PaintInvocationData { get; } = new BehaviorSubject<PaintInvocationData?>(null)
             .MakeDistinct()
             .MakeScheduledOnMainThread()
             .MakeLogExceptions();
@@ -40,8 +30,7 @@ namespace Votyra.Core.Painting
         public void Dispose()
         {
             SelectedPaintCommand.TryDispose();
-            Active.TryDispose();
-            Strength.TryDispose();
+            PaintInvocationData.TryDispose();
         }
     }
 }
