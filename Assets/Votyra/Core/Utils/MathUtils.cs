@@ -22,11 +22,35 @@ namespace Votyra.Core.Utils
 
         public static int CeilToInt(this float f)
         {
+            if (float.IsPositiveInfinity(f))
+            {
+                return int.MaxValue;
+            }
+            if (float.IsNegativeInfinity(f))
+            {
+                return int.MinValue;
+            }
+            if (float.IsNaN(f))
+            {
+                return 0;
+            }
             return (int)Math.Ceiling(f);
         }
 
         public static int CeilToInt(this double f)
         {
+            if (double.IsPositiveInfinity(f))
+            {
+                return int.MaxValue;
+            }
+            if (double.IsNegativeInfinity(f))
+            {
+                return int.MinValue;
+            }
+            if (double.IsNaN(f))
+            {
+                return 0;
+            }
             return (int)Math.Ceiling(f);
         }
 
@@ -37,11 +61,35 @@ namespace Votyra.Core.Utils
 
         public static int FloorToInt(this float f)
         {
+            if (float.IsPositiveInfinity(f))
+            {
+                return int.MaxValue;
+            }
+            if (float.IsNegativeInfinity(f))
+            {
+                return int.MinValue;
+            }
+            if (float.IsNaN(f))
+            {
+                return 0;
+            }
             return (int)Math.Floor(f);
         }
 
         public static int FloorToInt(this double f)
         {
+            if (double.IsPositiveInfinity(f))
+            {
+                return int.MaxValue;
+            }
+            if (double.IsNegativeInfinity(f))
+            {
+                return int.MinValue;
+            }
+            if (double.IsNaN(f))
+            {
+                return 0;
+            }
             return (int)Math.Floor(f);
         }
 
@@ -76,7 +124,6 @@ namespace Votyra.Core.Utils
         }
 
         public static float PerlinNoise(float x, float y)
-
         {
             return _noise.GetPerlin(x, y);
         }
@@ -88,11 +135,35 @@ namespace Votyra.Core.Utils
 
         public static int RoundToInt(this float f)
         {
+            if (float.IsPositiveInfinity(f))
+            {
+                return int.MaxValue;
+            }
+            if (float.IsNegativeInfinity(f))
+            {
+                return int.MinValue;
+            }
+            if (float.IsNaN(f))
+            {
+                return 0;
+            }
             return (int)Math.Round(f);
         }
 
         public static int RoundToInt(this double f)
         {
+            if (double.IsPositiveInfinity(f))
+            {
+                return int.MaxValue;
+            }
+            if (double.IsNegativeInfinity(f))
+            {
+                return int.MinValue;
+            }
+            if (double.IsNaN(f))
+            {
+                return 0;
+            }
             return (int)Math.Round(f);
         }
 
