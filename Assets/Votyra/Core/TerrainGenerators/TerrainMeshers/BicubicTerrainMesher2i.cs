@@ -61,15 +61,15 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     Vector3f? x00y05 = values[ix + 0, iy + 1];
                     Vector3f? x05y00 = values[ix + 1, iy + 0];
                     Vector3f? x05y05 = values[ix + 1, iy + 1];
-                    var x00y00Mask = maskValues[ix + 0, iy + 0];
-                    var x00y05Mask = maskValues[ix + 0, iy + 1];
-                    var x05y00Mask = maskValues[ix + 1, iy + 0];
-                    var x05y05Mask = maskValues[ix + 1, iy + 1];
+                    var x00y00Mask = maskValues[ix + 0, iy + 0].Z >= _maskLimit;
+                    var x00y05Mask = maskValues[ix + 0, iy + 1].Z >= _maskLimit;
+                    var x05y00Mask = maskValues[ix + 1, iy + 0].Z >= _maskLimit;
+                    var x05y05Mask = maskValues[ix + 1, iy + 1].Z >= _maskLimit;
 
-                    x00y00 = x00y00Mask.Z < _maskLimit ? x00y00 : (Vector3f?)null;
-                    x00y05 = x00y05Mask.Z < _maskLimit ? x00y05 : (Vector3f?)null;
-                    x05y00 = x05y00Mask.Z < _maskLimit ? x05y00 : (Vector3f?)null;
-                    x05y05 = x05y05Mask.Z < _maskLimit ? x05y05 : (Vector3f?)null;
+                    x00y00 = x00y00Mask ? x00y00 : (Vector3f?)null;
+                    x00y05 = x00y05Mask ? x00y05 : (Vector3f?)null;
+                    x05y00 = x05y00Mask ? x05y00 : (Vector3f?)null;
+                    x05y05 = x05y05Mask ? x05y05 : (Vector3f?)null;
 
                     _mesh.AddQuad(x00y00, x00y05, x05y00, x05y05);
                 }
@@ -102,8 +102,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return new CellComputer(range, _subdivision, sample, CreateInterpolator());
         }
 
-        protected SampledData2f ImageSampleHandler(Vector2i pos) => _imageSampler.Sample(_image, pos).ToSampSampledData2F();
+        protected SampledData2f ImageSampleHandler(Vector2i pos) => _imageSampler.Sample(_image, pos).ToSampledData2F();
 
-        protected SampledData2f MaskSampleHandler(Vector2i pos) => _imageSampler.Sample(_mask, pos).ToSampSampledData2F();
+        protected SampledData2f MaskSampleHandler(Vector2i pos) => _imageSampler.Sample(_mask, pos).ToSampledData2F();
     }
 }

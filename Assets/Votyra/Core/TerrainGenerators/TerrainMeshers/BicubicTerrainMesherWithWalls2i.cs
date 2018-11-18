@@ -109,23 +109,23 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             {
                 if (cellInGroup.Y == _cellInGroup.Y - 1)
                 {
-                    return _minusYmaskValues[innerPoint.X, innerPoint.Y].Z < _maskLimit ? _minusYvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
+                    return _minusYmaskValues[innerPoint.X, innerPoint.Y].Z >= _maskLimit ? _minusYvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
                 }
                 if (cellInGroup.X == _cellInGroup.X - 1)
                 {
-                    return _minusXmaskValues[innerPoint.X, innerPoint.Y].Z < _maskLimit ? _minusXvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
+                    return _minusXmaskValues[innerPoint.X, innerPoint.Y].Z >= _maskLimit ? _minusXvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
                 }
-                return _maskValues[innerPoint.X, innerPoint.Y].Z < _maskLimit ? _values[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
+                return _maskValues[innerPoint.X, innerPoint.Y].Z >= _maskLimit ? _values[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
             }
             else
             {
                 if (cellInGroup.Y == -1)
                 {
-                    return _minusYmaskValues[innerPoint.X, innerPoint.Y].Z < _maskLimit ? _minusYvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
+                    return _minusYmaskValues[innerPoint.X, innerPoint.Y].Z >= _maskLimit ? _minusYvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
                 }
                 if (cellInGroup.X == -1)
                 {
-                    return _minusXmaskValues[innerPoint.X, innerPoint.Y].Z < _maskLimit ? _minusXvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
+                    return _minusXmaskValues[innerPoint.X, innerPoint.Y].Z >= _maskLimit ? _minusXvalues[innerPoint.X, innerPoint.Y] : (Vector3f?)null;
                 }
                 return _mesh[GetInnerPointMeshIndex(cellInGroup, innerPoint)];
             }
