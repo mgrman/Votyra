@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using UniRx.Async;
 using UnityEngine;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
@@ -58,7 +59,7 @@ namespace Votyra.Core.Painting.Commands
             while (!cancellationToken.IsCancellationRequested)
             {
                 Invoke(cancellationToken);
-                await Task.Delay(PeriodMs);
+                await UniTask.Delay(PeriodMs);
             }
         }
 

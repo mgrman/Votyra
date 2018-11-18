@@ -9,7 +9,11 @@ namespace Votyra.Core.Images
             CellInGroupCount = cellInGroupCount;
             FlipTriangles = flipTriangles;
             DrawBounds = drawBounds;
+#if UNITY_WEBGL
+            Async = false;
+#else
             Async = async;
+#endif
         }
 
         public Vector3i CellInGroupCount { get; }

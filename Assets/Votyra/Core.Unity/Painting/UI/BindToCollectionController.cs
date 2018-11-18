@@ -20,6 +20,8 @@ namespace Votyra.Core.Painting.UI
         [Inject]
         protected DiContainer _diContainer;
 
+        private IDisposable _subscription;
+
         // Start is called before the first frame update
         private void Start()
         {
@@ -28,7 +30,7 @@ namespace Votyra.Core.Painting.UI
             var model = _diContainer.Resolve(type);
             var observableProperty = propertyInfo.GetValue(model) as IObservable<object>;
 
-            observableProperty.Subscribe(o =>
+            _subscription = observableProperty.Subscribe(o =>
             {
                 var enumeration = o as IEnumerable<object>;
 
@@ -52,6 +54,14 @@ namespace Votyra.Core.Painting.UI
                     contextScript.Value = cmd;
                 }
             });
+        }
+
+        /// <summary>
+        /// This function is called when the MonoBehaviour will be destroyed.
+        /// </summary>
+        void OnDestroy()
+        {
+            _subscription?.Dispose();
         }
     }
 }

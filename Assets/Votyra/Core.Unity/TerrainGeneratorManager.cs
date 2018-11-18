@@ -66,13 +66,13 @@ namespace Votyra.Core
                     }
                     else
                     {
-                        await Task.Delay(10);
+                        await UniTask.Delay(10);
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogException(ex);
-                    await Task.Delay(10);
+                    await UniTask.Delay(10);
                 }
             }
         }

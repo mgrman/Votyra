@@ -85,5 +85,10 @@ namespace Votyra.Core
         {
             return this.Id.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return $"CONFIG {Id}({Type.Name}): {JsonValue}{UnityValue}";
+        }
     }
 }

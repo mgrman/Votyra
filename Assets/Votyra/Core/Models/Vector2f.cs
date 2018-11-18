@@ -11,6 +11,7 @@ namespace Votyra.Core.Models
 
         public readonly float Y;
 
+        [Newtonsoft.Json.JsonConstructor]
         public Vector2f(float x, float y)
         {
             this.X = x;
