@@ -1,0 +1,12 @@
+{
+"companyName": "Martin Grman",
+"productName": "Votyra",
+"dataUrl": "WebGL-release.data.unityweb",
+"wasmCodeUrl": "WebGL-release.wasm.code.unityweb",
+"wasmFrameworkUrl": "WebGL-release.wasm.framework.unityweb",
+"TOTAL_MEMORY": 268435456,
+"graphicsAPI": ["WebGL 2.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#231F20"
+}
