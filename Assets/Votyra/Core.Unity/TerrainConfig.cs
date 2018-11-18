@@ -9,7 +9,7 @@ namespace Votyra.Core.Images
             CellInGroupCount = cellInGroupCount;
             FlipTriangles = flipTriangles;
             DrawBounds = drawBounds;
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
             Async = false;
 #else
             Async = async;
