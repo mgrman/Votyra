@@ -339,7 +339,7 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-    JsonValue: 0.6
+    JsonValue: 0.0
 --- !u!1 &886990423
 GameObject:
   m_ObjectHideFlags: 0
