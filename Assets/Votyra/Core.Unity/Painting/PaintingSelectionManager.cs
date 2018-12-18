@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
@@ -10,12 +11,13 @@ using Zenject;
 
 namespace Votyra.Core.Painting
 {
-    public class PaintingSelectionManager : ITickable
+    public class PaintingSelectionManager : MonoBehaviour, IPointerUpHandler, IPointerDownHandler, IPointerExitHandler
     {
         protected const int maxDistBig = 3;
 
         protected const int maxDistSmall = 1;
 
+        [Inject(Id = "root")]
         protected GameObject _root;
 
         [Inject]
@@ -36,37 +38,45 @@ namespace Votyra.Core.Painting
         [Inject]
         protected IncreaseOrDecrease _increaseOrDecrease;
 
-        public PaintingSelectionManager([Inject(Id = "root")]GameObject root, List<IPaintCommand> commands, IImageSampler2i sampler, IPaintingModel paintingModel, Flatten flatten, MakeOrRemoveHole makeOrRemoveHole, IncreaseOrDecrease increaseOrDecrease)
+        private bool _isActive;
+
+        [Inject]
+        public void Initialize()
         {
-            _root = root;
-            _commands = commands;
-            _sampler = sampler;
-            _paintingModel = paintingModel;
-            _flatten = flatten;
-            _makeOrRemoveHole = makeOrRemoveHole;
-            _increaseOrDecrease = increaseOrDecrease;
-            _paintingModel.PaintCommands.OnNext(_commands);
         }
 
-        public void Tick()
+        public void Update()
         {
             var isActive = IsCommandActive();
             if (isActive)
             {
-                var imagePosition = GetImagePosition();
-                var strength = GetMultiplier() * GetDistance();
-
-                _paintingModel.PaintInvocationData.OnNext(new PaintInvocationData(strength, imagePosition));
             }
             else
             {
-                _paintingModel.PaintInvocationData.OnNext(null);
             }
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            var imagePosition = GetImagePosition();
+            var strength = GetMultiplier() * GetDistance();
+
+            _paintingModel.PaintInvocationData.OnNext(new PaintInvocationData(strength, imagePosition));
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            _paintingModel.PaintInvocationData.OnNext(null);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            _paintingModel.PaintInvocationData.OnNext(null);
         }
 
         private bool IsCommandActive()
         {
-            return Input.GetMouseButton(0) || Input.GetMouseButton(1);
+            return _isActive;
         }
 
         private Vector2i GetImagePosition()
@@ -83,38 +93,22 @@ namespace Votyra.Core.Painting
 
         private int GetMultiplier()
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetButton("InverseModifier"))
             {
-                return 1;
+                return -1;
             }
             else
             {
-                return -1;
+                return 1;
             }
         }
 
         private int GetDistance()
         {
-            if (Input.GetKey(KeyCode.LeftControl))
+            if (Input.GetButton("ExtendedModifier"))
                 return maxDistBig;
             else
                 return maxDistSmall;
-        }
-
-        private IPaintCommand GetCommandToExecute()
-        {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                return _flatten;
-            }
-            else if (Input.GetKey(KeyCode.H))
-            {
-                return _makeOrRemoveHole;
-            }
-            else
-            {
-                return _increaseOrDecrease;
-            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class RtsCamera : MonoBehaviour
 {
@@ -8,9 +9,9 @@ public class RtsCamera : MonoBehaviour
 
     private void Update()
     {
-        var moveX = Input.GetAxis("Horizontal1") * Time.deltaTime * SpeedTranslation.x;
-        var moveY = Input.GetAxis("Vertical") * Time.deltaTime * SpeedTranslation.y;
-        var moveZ = Input.GetAxis("Horizontal2") * Time.deltaTime * SpeedTranslation.z;
+        var moveX = Input.GetAxis("LeftRight") * Time.deltaTime * SpeedTranslation.x;
+        var moveY = Input.GetAxis("UpDown") * Time.deltaTime * SpeedTranslation.y;
+        var moveZ = Input.GetAxis("ForwardBackward") * Time.deltaTime * SpeedTranslation.z;
         var move = new Vector3(moveX, moveY, moveZ);
 
         var currentRotationXZ = transform.rotation.eulerAngles.y;
@@ -18,7 +19,7 @@ public class RtsCamera : MonoBehaviour
 
         move = currentRotationPlane * move;
 
-        var rotationXZ = Input.GetAxis("RotationHorizontal") * Time.deltaTime * SpeedRotation.y;
+        var rotationXZ = Input.GetAxis("Rotate") * Time.deltaTime * SpeedRotation.y;
 
         transform.Translate(move, Space.World);
         transform.Rotate(Vector3.up, rotationXZ, Space.World);

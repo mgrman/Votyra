@@ -7,6 +7,7 @@ using UniRx;
 using Votyra.Core.Models;
 using Votyra.Core.Painting.Commands;
 using Votyra.Core.Utils;
+using Zenject;
 
 namespace Votyra.Core.Painting
 {
@@ -26,6 +27,12 @@ namespace Votyra.Core.Painting
             .MakeDistinct()
             .MakeScheduledOnMainThread()
             .MakeLogExceptions();
+
+        [Inject]
+        public PaintingModel([InjectOptional]List<IPaintCommand> commands)
+        {
+            this.PaintCommands.OnNext(commands);
+        }
 
         public void Dispose()
         {

@@ -39,10 +39,13 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<InitialStateSetter2f>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<EditableMatrixImage2i>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditableMatrixMask2e>().AsSingle();
-            Container.BindInstance<GameObject>(this.gameObject).WithId("root").AsSingle();
+
+            var meshRoot = new GameObject("MeshRoot");
+            meshRoot.transform.SetParent(this.transform, false);
+            Container.BindInstance<GameObject>(meshRoot).WithId("root").AsSingle();
 
             Container.BindInterfacesAndSelfTo<PaintingInvocationManager>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<PaintingSelectionManager>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<PaintingSelectionManager>().FromNewComponentOnGameObjectWithID("root").AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PaintingModel>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<Flatten>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<IncreaseOrDecrease>().AsSingle().NonLazy();
