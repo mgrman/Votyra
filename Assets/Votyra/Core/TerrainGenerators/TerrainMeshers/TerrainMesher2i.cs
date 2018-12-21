@@ -34,12 +34,12 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         {
             Vector2i cell = cellInGroup + _groupPosition;
 
-            var position = cellInGroup.ToVector2f();
+            Vector2i position = _groupPosition + cellInGroup;
 
             var data = _imageSampler.Sample(_image, cell);
             var mask = _imageSampler.Sample(_mask, cell);
 
-            _mesh.AddQuad(position, data, mask);
+            _mesh.AddQuad(position.ToVector2f(), data, mask);
         }
 
         public IPooledTerrainMesh GetResultingMesh()
@@ -60,15 +60,16 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void InitializeGroup(Vector2i group)
         {
-            var bounds = Range3f.FromMinAndSize(_cellInGroupCount.ToVector3f(_minZ), _bounds_size);
-            var offset = _cellInGroupCount * group;
+            var bounds = Range3f.FromMinAndSize(new Vector2f((group.X * _cellInGroupCount.X), (group.Y * _cellInGroupCount.Y))
+                .ToVector3f(_minZ),
+                _bounds_size);
 
-            this._groupPosition = offset;
+            this._groupPosition = _cellInGroupCount * group;
 
             this._pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedTerrainMesh2i>.CreateDirty(this.TriangleCount);
             // this._pooledMesh = PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty();
             this._mesh = this._pooledMesh.Mesh;
-            _mesh.Clear(bounds, offset.ToVector3f(0));
+            _mesh.Clear(bounds);
         }
     }
 }

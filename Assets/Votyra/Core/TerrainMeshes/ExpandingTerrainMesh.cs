@@ -13,7 +13,6 @@ namespace Votyra.Core.TerrainMeshes
             Normals = new List<Vector3f>();
         }
 
-        public Vector3f Offset { get; private set; }
         public Range3f MeshBounds { get; private set; }
         public List<Vector3f> Vertices { get; }
         public List<Vector3f> Normals { get; }
@@ -25,10 +24,9 @@ namespace Votyra.Core.TerrainMeshes
 
         public Vector3f this[int point] => Vertices[point];
 
-        public void Clear(Range3f meshBounds, Vector3f offset)
+        public void Clear(Range3f meshBounds)
         {
             MeshBounds = meshBounds;
-            Offset = offset;
             TriangleCount = 0;
             VertexCount = 0;
             Vertices.Clear();

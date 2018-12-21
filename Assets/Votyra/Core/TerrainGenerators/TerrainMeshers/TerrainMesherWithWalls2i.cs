@@ -17,15 +17,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         {
             Vector2i cell = cellInGroup + _groupPosition;
 
-            var position = cellInGroup;
-
             var data = _imageSampler.Sample(_image, cell);
             var maskData = _imageSampler.Sample(_mask, cell);
 
-            var x0y0 = maskData.x0y0.IsNotHole() ? new Vector2f(position.X, position.Y).ToVector3f(data.x0y0) : (Vector3f?)null;
-            var x0y1 = maskData.x0y1.IsNotHole() ? new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1) : (Vector3f?)null;
-            var x1y0 = maskData.x1y0.IsNotHole() ? new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0) : (Vector3f?)null;
-            var x1y1 = maskData.x1y1.IsNotHole() ? new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1) : (Vector3f?)null;
+            var x0y0 = maskData.x0y0.IsNotHole() ? new Vector2f(cell.X, cell.Y).ToVector3f(data.x0y0) : (Vector3f?)null;
+            var x0y1 = maskData.x0y1.IsNotHole() ? new Vector2f(cell.X, cell.Y + 1).ToVector3f(data.x0y1) : (Vector3f?)null;
+            var x1y0 = maskData.x1y0.IsNotHole() ? new Vector2f(cell.X + 1, cell.Y).ToVector3f(data.x1y0) : (Vector3f?)null;
+            var x1y1 = maskData.x1y1.IsNotHole() ? new Vector2f(cell.X + 1, cell.Y + 1).ToVector3f(data.x1y1) : (Vector3f?)null;
             _mesh.AddQuad(MoveToCreateWalls(x0y0), MoveToCreateWalls(x0y1), MoveToCreateWalls(x1y0), MoveToCreateWalls(x1y1));
         }
 

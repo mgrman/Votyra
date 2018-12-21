@@ -64,7 +64,6 @@ namespace Votyra.Core.MeshUpdaters
                                 _meshFilters[terrainMesh.Key] = unityData;
                             }
                         }
-                        unityData.Transform.localPosition = terrainMesh.Value.Offset.ToVector3();
 
                         ITerrainMesh triangleMesh = terrainMesh.Value;
                         UpdateMesh(triangleMesh, unityData.MeshFilter.sharedMesh);
@@ -182,13 +181,11 @@ namespace Votyra.Core.MeshUpdaters
                 MeshFilter = gameObject.GetComponent<MeshFilter>();
                 MeshCollider = gameObject.GetComponent<MeshCollider>();
                 GameObject = gameObject;
-                Transform = gameObject.transform;
             }
 
             public MeshFilter MeshFilter { get; }
             public MeshCollider MeshCollider { get; }
             public GameObject GameObject { get; }
-            public Transform Transform { get; }
 
             public void Dispose()
             {

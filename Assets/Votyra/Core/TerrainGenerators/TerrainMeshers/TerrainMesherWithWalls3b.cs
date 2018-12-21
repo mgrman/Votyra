@@ -78,20 +78,18 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
         {
-            var bounds = Range3i.FromMinAndSize(Vector3i.Zero, _cellInGroupCount).ToRange3f();
-            var offset = (group * _cellInGroupCount).ToVector3f();
+            var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
 
             this.groupPosition = _cellInGroupCount * group;
 
             this.pooledMesh = cleanPooledMesh;
             this.mesh = this.pooledMesh.Mesh;
-            mesh.Clear(bounds, offset);
+            mesh.Clear(bounds);
         }
 
         public void AddCell(Vector3i cellInGroup)
         {
             Vector3i cell = cellInGroup + groupPosition;
-            Vector3i position = cellInGroup;
 
             SampledData3b data = _imageSampler.Sample(Image, cell);
             SampledData3b dataXMinus = _imageSampler.Sample(Image, cell + new Vector3i(-1, 0, 0));
@@ -100,19 +98,19 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             foreach (var tri in MainPlaneTriangles[data.Data])
             {
-                mesh.AddTriangle(position + tri.A, position + tri.B, position + tri.C);
+                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
             }
             foreach (var tri in XWallTriangles[SampledDataWithWall.GetIndexInAllValues(data, dataXMinus)])
             {
-                mesh.AddTriangle(position + tri.A, position + tri.B, position + tri.C);
+                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
             }
             foreach (var tri in YWallTriangles[SampledDataWithWall.GetIndexInAllValues(data, dataYMinus)])
             {
-                mesh.AddTriangle(position + tri.A, position + tri.B, position + tri.C);
+                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
             }
             foreach (var tri in ZWallTriangles[SampledDataWithWall.GetIndexInAllValues(data, dataZMinus)])
             {
-                mesh.AddTriangle(position + tri.A, position + tri.B, position + tri.C);
+                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
             }
         }
 

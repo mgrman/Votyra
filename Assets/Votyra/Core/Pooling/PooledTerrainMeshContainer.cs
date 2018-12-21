@@ -16,8 +16,6 @@ namespace Votyra.Core.Pooling
             Mesh = new T();
         }
 
-        public Vector3f Offset => Mesh.Offset;
-
         public T Mesh { get; }
 
         public int VertexCount => Mesh.VertexCount;
@@ -43,9 +41,9 @@ namespace Votyra.Core.Pooling
             Pool.ReturnObject(this);
         }
 
-        public void Clear(Range3f meshBounds, Vector3f offset)
+        public void Clear(Range3f meshBounds)
         {
-            Mesh.Clear(meshBounds, offset);
+            Mesh.Clear(meshBounds);
         }
 
         public void AddTriangle(Vector3f a, Vector3f b, Vector3f c)
