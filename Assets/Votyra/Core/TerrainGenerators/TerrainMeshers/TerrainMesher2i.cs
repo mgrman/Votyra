@@ -34,7 +34,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         {
             Vector2i cell = cellInGroup + _groupPosition;
 
-            Vector2i position = cellInGroup;
+            var position = cellInGroup.ToVector2f();
 
             var data = _imageSampler.Sample(_image, cell);
             var mask = _imageSampler.Sample(_mask, cell);

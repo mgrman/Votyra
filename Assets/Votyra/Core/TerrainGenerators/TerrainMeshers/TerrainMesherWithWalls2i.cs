@@ -17,20 +17,29 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         {
             Vector2i cell = cellInGroup + _groupPosition;
 
-            Vector2i position = _groupPosition + cellInGroup;
+            var position = cellInGroup;
 
-            SampledData2h data = _imageSampler.Sample(_image, cell);
-            SampledMask2e maskData = _imageSampler.Sample(_mask, cell);
+            var data = _imageSampler.Sample(_image, cell);
+            var maskData = _imageSampler.Sample(_mask, cell);
 
-            SampledData2h minusXres = _imageSampler.Sample(_image, cell + new Vector2i(-1, 0));
-            SampledMask2e minusXresMaskData = _imageSampler.Sample(_mask, cell + new Vector2i(-1, 0));
-            SampledData2h minusYres = _imageSampler.Sample(_image, cell + new Vector2i(0, -1));
-            SampledMask2e minusYresMaskData = _imageSampler.Sample(_mask, cell + new Vector2i(0, -1));
+            var x0y0 = maskData.x0y0.IsNotHole() ? new Vector2f(position.X, position.Y).ToVector3f(data.x0y0) : (Vector3f?)null;
+            var x0y1 = maskData.x0y1.IsNotHole() ? new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1) : (Vector3f?)null;
+            var x1y0 = maskData.x1y0.IsNotHole() ? new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0) : (Vector3f?)null;
+            var x1y1 = maskData.x1y1.IsNotHole() ? new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1) : (Vector3f?)null;
+            _mesh.AddQuad(MoveToCreateWalls(x0y0), MoveToCreateWalls(x0y1), MoveToCreateWalls(x1y0), MoveToCreateWalls(x1y1));
+        }
 
-            _mesh.AddQuad(position, data, maskData);
+        private Vector3f? MoveToCreateWalls(Vector3f? data)
+        {
+            if (data == null)
+            {
+                return null;
+            }
+            var position = data.Value;
 
-            _mesh.AddWallAlongX(position, data, maskData, minusYres, minusYresMaskData);
-            _mesh.AddWallAlongY(position, data, maskData, minusXres, minusXresMaskData);
+            var x = position.X + (position.X % 2 < 0.5f ? 0.5f : -0.5f);
+            var y = position.Y + (position.Y % 2 < 0.5f ? 0.5f : -0.5f);
+            return new Vector3f(x, y, position.Z);
         }
     }
 }
