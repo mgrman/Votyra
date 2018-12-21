@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
@@ -20,16 +21,13 @@ namespace Votyra.Core.TerrainGenerators
             _cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        public IReadOnlyPooledDictionary<Vector3i, ITerrainMesh> Generate(IFrameData3b data, IEnumerable<Vector3i> groupsToUpdate)
+        public void Generate(IFrameData3b data, IEnumerable<Vector3i> groupsToUpdate, Action<Vector3i, IPooledTerrainMesh> onMeshCreated)
         {
             var image = data.Image;
-            PooledDictionary<Vector3i, ITerrainMesh> meshes;
 
             using (_profiler.Start("init"))
             {
                 _mesher.Initialize(image);
-
-                meshes = PooledDictionary<Vector3i, ITerrainMesh>.Create();
             }
 
             foreach (var group in groupsToUpdate)
@@ -47,11 +45,9 @@ namespace Votyra.Core.TerrainGenerators
                 });
                 using (_profiler.Start("Other"))
                 {
-                    meshes[group] = _mesher.GetResultingMesh();
+                    onMeshCreated(group, _mesher.GetResultingMesh());
                 }
             }
-
-            return meshes;
         }
     }
 }

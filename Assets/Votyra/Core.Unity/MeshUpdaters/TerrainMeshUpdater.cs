@@ -25,7 +25,7 @@ namespace Votyra.Core.MeshUpdaters
 
         public IReadOnlySet<TKey> ExistingGroups => _meshFilters;
 
-        public void UpdateMesh(IReadOnlyDictionary<TKey, ITerrainMesh> terrainMeshes, IReadOnlySet<TKey> toKeepGroups)
+        public void UpdateMesh(IReadOnlyDictionary<TKey, UnityMesh> terrainMeshes, IReadOnlySet<TKey> toKeepGroups)
         {
             if (terrainMeshes != null)
             {
@@ -36,7 +36,7 @@ namespace Votyra.Core.MeshUpdaters
                     int meshIndex = 0;
                     foreach (var terrainMesh in terrainMeshes)
                     {
-                        if (terrainMesh.Value.TriangleCount == 0)
+                        if (terrainMesh.Value == null || terrainMesh.Value.VertexCount == 0)
                         {
                             if (_meshFilters.ContainsKey(terrainMesh.Key))
                             {
@@ -65,7 +65,7 @@ namespace Votyra.Core.MeshUpdaters
                             }
                         }
 
-                        ITerrainMesh triangleMesh = terrainMesh.Value;
+                        var triangleMesh = terrainMesh.Value;
                         UpdateMesh(triangleMesh, unityData.MeshFilter.sharedMesh);
 
                         unityData.MeshCollider.sharedMesh = null;
@@ -83,25 +83,24 @@ namespace Votyra.Core.MeshUpdaters
             }
         }
 
-        private void UpdateMesh(ITerrainMesh triangleMesh, Mesh mesh)
+        private void UpdateMesh(UnityMesh triangleMesh, Mesh mesh)
         {
             SetMeshFormat(mesh, triangleMesh.VertexCount);
 
-            if (triangleMesh is IPooledTerrainMesh)
+            bool reinitializeMesh = mesh.vertexCount != triangleMesh.VertexCount;
+            if (reinitializeMesh)
             {
-                UpdateMesh((triangleMesh as IPooledTerrainMesh).Mesh, mesh);
+                mesh.Clear();
             }
-            else if (triangleMesh is FixedTerrainMesh2i)
+
+            mesh.vertices = triangleMesh.Vertices;
+            mesh.normals = triangleMesh.Normals;
+
+            if (reinitializeMesh)
             {
-                UpdateMesh(triangleMesh as FixedTerrainMesh2i, mesh);
-            }
-            else if (triangleMesh is ExpandingTerrainMesh)
-            {
-                UpdateMesh(triangleMesh as ExpandingTerrainMesh, mesh);
-            }
-            else if (triangleMesh != null)
-            {
-                Debug.LogError($"Unsuported ITriangleMesh implementation '{triangleMesh.GetType().Name}'");
+                mesh.uv = triangleMesh.UV;
+                mesh.SetTriangles(triangleMesh.Indices, 0, false);
+                mesh.bounds = triangleMesh.MeshBounds;
             }
         }
 
@@ -115,42 +114,6 @@ namespace Votyra.Core.MeshUpdaters
             {
                 mesh.indexFormat = IndexFormat.UInt16;
             }
-        }
-
-        private void UpdateMesh(ExpandingTerrainMesh triangleMesh, Mesh mesh)
-        {
-            bool recomputeTriangles = mesh.vertexCount != triangleMesh.VertexCount;
-            if (recomputeTriangles)
-            {
-                mesh.Clear();
-            }
-
-            mesh.SetVertices(triangleMesh.Vertices.ToVector3List());
-            mesh.SetNormalsOrRecompute(triangleMesh.Normals.ToVector3List());
-            mesh.SetUVs(0, triangleMesh.UV.ToVector2List());
-            if (recomputeTriangles)
-            {
-                mesh.SetTriangles(triangleMesh.Indices, 0, false);
-            }
-            mesh.bounds = triangleMesh.MeshBounds.ToBounds();
-        }
-
-        private void UpdateMesh(FixedTerrainMesh2i triangleMesh, Mesh mesh)
-        {
-            bool recomputeTriangles = mesh.vertexCount != triangleMesh.VertexCount;
-            if (recomputeTriangles)
-            {
-                mesh.Clear();
-            }
-
-            mesh.vertices = triangleMesh.Vertices.ToVector3();
-            mesh.SetNormalsOrRecompute(triangleMesh.Normals.ToVector3());
-            mesh.uv = triangleMesh.UV.ToVector2();
-            if (recomputeTriangles)
-            {
-                mesh.SetTriangles(triangleMesh.Indices, 0, false);
-            }
-            mesh.bounds = triangleMesh.MeshBounds.ToBounds();
         }
 
         private MeshUnityData CreateMeshObject()

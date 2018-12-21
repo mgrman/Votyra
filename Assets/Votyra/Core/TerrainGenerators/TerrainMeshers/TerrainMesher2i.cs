@@ -1,3 +1,4 @@
+using System;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
@@ -30,6 +31,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected virtual int TrianglesPerCell => QuadsPerCell * QuadToTriangles;
         protected virtual int TriangleCount => _cellInGroupCount.AreaSum * TrianglesPerCell;
 
+        protected virtual Func<Vector3f?, Vector3f?> PostProcessVertices { get; } = null;
         public virtual void AddCell(Vector2i cellInGroup)
         {
             Vector2i cell = cellInGroup + _groupPosition;
@@ -39,7 +41,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             var data = _imageSampler.Sample(_image, cell);
             var mask = _imageSampler.Sample(_mask, cell);
 
-            _mesh.AddQuad(position.ToVector2f(), data, mask);
+            _mesh.AddQuad(position.ToVector2f(), data, mask, PostProcessVertices);
         }
 
         public IPooledTerrainMesh GetResultingMesh()

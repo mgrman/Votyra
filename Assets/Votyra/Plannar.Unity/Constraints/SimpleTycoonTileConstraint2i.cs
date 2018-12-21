@@ -8,43 +8,14 @@ using Votyra.Core.Models;
 
 namespace Votyra.Plannar.Images.Constraints
 {
-    public class SimpleTycoonTileConstraint2i : IImageConstraint2i
+    public class SimpleTycoonTileConstraint2i : TycoonTileConstraint2i
     {
         private static readonly IComparer<Height> DefaultComparer = Comparer<Height>.Default;
 
-        private static TileMap2i _tileMap;
-        private static int? _tileMapScaleFactor;
-        private readonly int _scaleFactor;
-        private IImageSampler2i _sampler;
 
         public SimpleTycoonTileConstraint2i(IImageSampler2i sampler, [ConfigInject("scaleFactor")] int scaleFactor)
+            : base(sampler, scaleFactor)
         {
-            _sampler = sampler;
-            _scaleFactor = scaleFactor;
-            if (_scaleFactor != _tileMapScaleFactor)
-            {
-                _tileMap = new[]
-                    {
-                        new SampledData2h(0, 0, 0, 0),
-
-                        //slope
-                        new SampledData2h(-1, 0, -1, 0),
-
-                        //slopeDiagonal
-                        new SampledData2h(-2, -1, -1, 0),
-
-                        //partialUpSlope
-                        new SampledData2h(-1, -1, -1, 0),
-
-                        //partialDownSlope
-                        new SampledData2h(-1, 0, 0, 0),
-
-                        //slopeDiagonal
-                        new SampledData2h(0, -1, -1, 0)
-                    }
-                    .CreateExpandedTileMap2i(scaleFactor);
-                _tileMapScaleFactor = scaleFactor;
-            }
         }
 
         public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, IImageSampler2i sampler, Matrix2<Height> editableMatrix)
@@ -141,34 +112,8 @@ namespace Votyra.Plannar.Images.Constraints
             return invalidatedCellArea;
         }
 
-        public Range2i FixImage(Matrix2<Height> editableMatrix, Range2i invalidatedImageArea, Direction direction)
-        {
-            if (_sampler == null)
-            {
-                return invalidatedImageArea;
-            }
+        private SampledData2h ProcessDown(SampledData2h sampleData) => -Process(-sampleData);
 
-            var invalidatedCellArea = _sampler.ImageToWorld(invalidatedImageArea)
-                .RoundToContain();
-
-            var newInvalidatedCellArea = Constrain(direction, invalidatedCellArea, _sampler, editableMatrix);
-
-            var newInvalidatedImageArea = _sampler.WorldToImage(newInvalidatedCellArea);
-
-            return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
-        }
-
-        private SampledData2h ProcessDown(SampledData2h sampleData)
-        {
-            return -ProcessUp(-sampleData);
-        }
-
-        private SampledData2h ProcessUp(SampledData2h sampleData)
-        {
-            var height = sampleData.Max - Height.Default;
-            SampledData2h normalizedHeightData = (sampleData - height).ClipMin(-2.CreateHeight() * _scaleFactor);
-            SampledData2h choosenTemplateTile = _tileMap.GetTile(normalizedHeightData);
-            return choosenTemplateTile + height;
-        }
+        private SampledData2h ProcessUp(SampledData2h sampleData) => Process(sampleData);
     }
 }

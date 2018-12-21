@@ -1,17 +1,19 @@
 using System;
 using System.Collections.Generic;
 using UniRx;
+using UniRx.Async;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Painting.Commands;
+using Votyra.Core.Utils;
 using Zenject;
 
 namespace Votyra.Core.Painting
 {
-    public class PaintingSelectionManager : MonoBehaviour, IPointerUpHandler, IPointerDownHandler, IPointerExitHandler
+    public class PaintingSelectionManager : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         protected const int maxDistBig = 3;
 
@@ -21,79 +23,80 @@ namespace Votyra.Core.Painting
         protected GameObject _root;
 
         [Inject]
-        protected List<IPaintCommand> _commands;
-
-        [Inject]
         protected IImageSampler2i _sampler;
 
         [Inject]
         protected IPaintingModel _paintingModel;
 
-        [Inject]
-        protected Flatten _flatten;
-
-        [Inject]
-        protected MakeOrRemoveHole _makeOrRemoveHole;
-
-        [Inject]
-        protected IncreaseOrDecrease _increaseOrDecrease;
-
-        private bool _isActive;
+        private PointerEventData _activePointerData;
 
         [Inject]
         public void Initialize()
         {
         }
 
-        public void Update()
+        /// <summary>
+        /// Update is called every frame, if the MonoBehaviour is enabled.
+        /// </summary>
+        void Update()
         {
-            var isActive = IsCommandActive();
-            if (isActive)
-            {
-            }
-            else
-            {
-            }
+            var invocationData = GetInvocationDataFromPointer(_activePointerData);
+            _paintingModel.PaintInvocationData
+                .OnNext(invocationData);
         }
+
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            var imagePosition = GetImagePosition();
-            var strength = GetMultiplier() * GetDistance();
-
-            _paintingModel.PaintInvocationData.OnNext(new PaintInvocationData(strength, imagePosition));
+            if (_activePointerData != null)
+            {
+                // already active pointer
+                return;
+            }
+            _activePointerData = eventData;
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            _paintingModel.PaintInvocationData.OnNext(null);
+            if (_activePointerData != eventData)
+            {
+                // other pointer than active one is in "up" mode
+                return;
+            }
+            _activePointerData = null;
         }
 
-        public void OnPointerExit(PointerEventData eventData)
+        private static Vector2i GetImagePosition(PointerEventData eventData)
         {
-            _paintingModel.PaintInvocationData.OnNext(null);
+            var cameraPosition = eventData.pressEventCamera.transform.position;
+            Vector3 worldPosition = eventData.pointerCurrentRaycast.worldPosition;
+
+            var ray = new Ray(cameraPosition, worldPosition - cameraPosition);
+            var gameObject = eventData.pointerCurrentRaycast.gameObject;
+            var collider = gameObject.GetComponent<Collider>();
+
+            RaycastHit hitInfo;
+            collider.Raycast(ray, out hitInfo, eventData.pointerCurrentRaycast.distance * 1.1f);
+
+            var imagePosition = hitInfo.textureCoord;
+            return imagePosition.ToVector2f().RoundToVector2i();
         }
 
-        private bool IsCommandActive()
+        private PaintInvocationData? GetInvocationDataFromPointer(PointerEventData eventData)
         {
-            return _isActive;
-        }
+            if (eventData == null)
+            {
+                return null;
+            }
+            var imagePosition = GetImagePosition(eventData);
+            var strength = GetMultiplier() * GetDistance();
 
-        private Vector2i GetImagePosition()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            // Casts the ray and get the first game object hit
-            Physics.Raycast(ray, out hit);
-
-            var localPosition = _root.transform.worldToLocalMatrix.MultiplyPoint(hit.point);
-
-            return _sampler.WorldToImage(new Vector2f(localPosition.x, localPosition.y));
+            return new PaintInvocationData(strength, imagePosition);
         }
 
         private int GetMultiplier()
         {
-            if (Input.GetButton("InverseModifier"))
+            if (Input.GetButton("InverseModifier") || Input.GetButton("InverseAction"))
             {
                 return -1;
             }

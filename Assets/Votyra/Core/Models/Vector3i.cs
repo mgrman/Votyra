@@ -87,6 +87,16 @@ namespace Votyra.Core.Models
             return new Vector3i(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
         }
 
+        public static Vector3i operator %(Vector3i a, Vector3i b)
+        {
+            return new Vector3i(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
+        }
+
+        public static Vector3i operator %(Vector3i a, int b)
+        {
+            return new Vector3i(a.X % b, a.Y % b, a.Z % b);
+        }
+
         public static Vector3i operator /(Vector3i a, Vector3i b)
         {
             return new Vector3i(a.X / b.X, a.Y / b.Y, a.Z / b.Z);

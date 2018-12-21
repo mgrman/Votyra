@@ -17,7 +17,7 @@ namespace Votyra.Core.Painting.Commands
         protected Task _lastInvocation = Task.CompletedTask;
         protected CancellationTokenSource _lastInvocationCts = new CancellationTokenSource();
 
-        protected virtual int PeriodMs { get; } = 100;
+        protected virtual int PeriodMs { get; } = 200;
 
         [InjectOptional]
         protected IEditableMask2e _editableMask;

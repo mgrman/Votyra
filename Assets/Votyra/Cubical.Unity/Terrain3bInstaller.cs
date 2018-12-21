@@ -32,12 +32,14 @@ namespace Votyra.Cubical.Unity
 
             Container.BindInterfacesAndSelfTo<TerrainGenerator3b>().AsSingle();
             Container.BindInterfacesAndSelfTo<TerrainMeshUpdater<Vector3i>>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TerrainMeshConverter>().AsSingle();
             Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector3i>().AsSingle();
             Container.BindInterfacesAndSelfTo<InitialStateSetter3b>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<EditableMatrixImage3b>().AsSingle();
             Container.BindInstance<GameObject>(this.gameObject).WithId("root").AsSingle();
             Container.BindInterfacesAndSelfTo<ClickToPaint3b>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<TerrainGeneratorManager<IFrameData3b, Vector3i>>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<UnityTerrainGenerator<IFrameData3b, Vector3i>>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<FrameData3bProvider>().AsSingle();
 
             Container.Bind<Func<GameObject>>()

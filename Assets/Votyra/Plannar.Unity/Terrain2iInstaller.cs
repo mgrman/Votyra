@@ -35,6 +35,7 @@ namespace Votyra.Plannar.Unity
 
             Container.BindInterfacesAndSelfTo<TerrainGenerator2i>().AsSingle();
             Container.BindInterfacesAndSelfTo<TerrainMeshUpdater<Vector2i>>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TerrainMeshConverter>().AsSingle();
             Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2i>().AsSingle();
             Container.BindInterfacesAndSelfTo<InitialStateSetter2f>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<EditableMatrixImage2i>().AsSingle();
@@ -53,6 +54,7 @@ namespace Votyra.Plannar.Unity
             Container.Bind<Canvas>().FromComponentInNewPrefabResource("PaintingUI").AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<TerrainGeneratorManager<IFrameData2i, Vector2i>>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<UnityTerrainGenerator<IFrameData2i, Vector2i>>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<FrameData2iProvider>().AsSingle();
 
             Container.Bind<Func<GameObject>>()

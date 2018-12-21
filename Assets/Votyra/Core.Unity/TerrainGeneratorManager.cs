@@ -27,10 +27,10 @@ namespace Votyra.Core
         protected readonly IProfiler _profiler;
         protected readonly IStateModel _stateModel;
         protected readonly ITerrainConfig _terrainConfig;
-        protected readonly ITerrainGenerator<TFrameData, TGroupKey> _terrainGenerator;
+        protected readonly IUnityTerrainGenerator<TFrameData, TGroupKey> _terrainGenerator;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
-        public TerrainGeneratorManager(IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector<TFrameData, TGroupKey> groupsSelector, ITerrainGenerator<TFrameData, TGroupKey> terrainGenerator, IMeshUpdater<TGroupKey> meshUpdater, IStateModel stateModel, IProfiler profiler, IFrameDataProvider<TFrameData> frameDataProvider)
+        public TerrainGeneratorManager(IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector<TFrameData, TGroupKey> groupsSelector, IUnityTerrainGenerator<TFrameData, TGroupKey> terrainGenerator, IMeshUpdater<TGroupKey> meshUpdater, IStateModel stateModel, IProfiler profiler, IFrameDataProvider<TFrameData> frameDataProvider)
         {
             _logger = logger;
             _terrainConfig = terrainConfig;
@@ -80,10 +80,10 @@ namespace Votyra.Core
         private async Task UpdateTerrain(TFrameData context, bool async, CancellationToken token)
         {
             GroupActions<TGroupKey> groupActions = null;
-            IReadOnlyPooledDictionary<TGroupKey, ITerrainMesh> results = null;
+            IReadOnlyPooledDictionary<TGroupKey, UnityMesh> results = null;
             try
             {
-                Func<IReadOnlyPooledDictionary<TGroupKey, ITerrainMesh>> computeAction = () =>
+                Func<IReadOnlyPooledDictionary<TGroupKey, UnityMesh>> computeAction = () =>
                 {
                     using (_profiler.Start("Creating visible groups"))
                     {
@@ -99,6 +99,7 @@ namespace Votyra.Core
                         using (_profiler.Start("TerrainMeshGenerator"))
                         {
                             return _terrainGenerator.Generate(context, toRecompute);
+
                         }
                     }
                     else

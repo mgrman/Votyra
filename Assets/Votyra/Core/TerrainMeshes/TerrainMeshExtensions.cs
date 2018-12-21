@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Votyra.Core.Models;
 
@@ -34,12 +35,19 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddQuad(this ITerrainMesh mesh, Vector2f position, SampledData2h data, SampledMask2e maskData)
+        public static void AddQuad(this ITerrainMesh mesh, Vector2f position, SampledData2h data, SampledMask2e maskData, Func<Vector3f?, Vector3f?> postProcess = null)
         {
             var x0y0 = maskData.x0y0.IsNotHole() ? new Vector2f(position.X, position.Y).ToVector3f(data.x0y0) : (Vector3f?)null;
             var x0y1 = maskData.x0y1.IsNotHole() ? new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1) : (Vector3f?)null;
             var x1y0 = maskData.x1y0.IsNotHole() ? new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0) : (Vector3f?)null;
             var x1y1 = maskData.x1y1.IsNotHole() ? new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1) : (Vector3f?)null;
+            if (postProcess != null)
+            {
+                x0y0 = postProcess(x0y0);
+                x0y1 = postProcess(x0y1);
+                x1y0 = postProcess(x1y0);
+                x1y1 = postProcess(x1y1);
+            }
             mesh.AddQuad(x0y0, x0y1, x1y0, x1y1);
         }
 

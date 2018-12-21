@@ -8,6 +8,6 @@ namespace Votyra.Core.MeshUpdaters
     {
         IReadOnlySet<TKey> ExistingGroups { get; }
 
-        void UpdateMesh(IReadOnlyDictionary<TKey, ITerrainMesh> terrainMeshes, IReadOnlySet<TKey> toKeepGroups);
+        void UpdateMesh(IReadOnlyDictionary<TKey, UnityMesh> terrainMeshes, IReadOnlySet<TKey> toKeepGroups);
     }
 }
