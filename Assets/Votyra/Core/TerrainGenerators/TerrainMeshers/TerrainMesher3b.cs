@@ -45,18 +45,20 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
         {
-            var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
+            var bounds = Range3i.FromMinAndSize(Vector3i.Zero, _cellInGroupCount).ToRange3f();
+            var offset = (group * _cellInGroupCount).ToVector3f();
 
             this.groupPosition = _cellInGroupCount * group;
 
             this.pooledMesh = cleanPooledMesh;
             this.mesh = this.pooledMesh.Mesh;
-            mesh.Clear(bounds);
+            mesh.Clear(bounds, offset);
         }
 
         public void AddCell(Vector3i cellInGroup)
         {
             Vector3i cell = cellInGroup + groupPosition;
+            Vector3i position = cellInGroup;
 
             SampledData3b data = _imageSampler.Sample(Image, cell);
 
@@ -64,7 +66,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             foreach (var tri in finalTris)
             {
-                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
+                mesh.AddTriangle(position + tri.A, position + tri.B, position + tri.C);
             }
 
             // TODO find a way to not generate thin planes

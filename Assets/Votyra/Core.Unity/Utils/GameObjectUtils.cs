@@ -42,7 +42,11 @@ namespace Votyra.Core.Utils
 
         public static void Destroy(this GameObject gameObject)
         {
+#if UNITY_EDITOR
+            GameObject.DestroyImmediate(gameObject);
+#else
             GameObject.Destroy(gameObject);
+#endif
         }
     }
 }

@@ -153,6 +153,11 @@ namespace Votyra.Core.Models
             return new Vector2f(X, Y);
         }
 
+        public Vector3f ToVector3f(float z)
+        {
+            return new Vector3f(X, Y, z);
+        }
+
         public Range2i ToRange2i()
         {
             return Range2i.FromMinAndSize(Vector2i.Zero, this);

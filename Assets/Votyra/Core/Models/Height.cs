@@ -94,6 +94,11 @@ namespace Votyra.Core.Models
             return new Vector3f(vec.X, vec.Y, Value);
         }
 
+        public Vector3f ToVector3f(Vector2i vec)
+        {
+            return new Vector3f(vec.X, vec.Y, Value);
+        }
+
         public struct Difference
         {
             public static readonly Difference Zero = new Difference();
@@ -144,6 +149,11 @@ namespace Votyra.Core.Models
         public static Height.Difference CreateHeightDifference(this int val)
         {
             return new Height.Difference(val);
+        }
+
+        public static Vector3f ToVector3f(this Vector2i vec, Height z)
+        {
+            return z.ToVector3f(vec);
         }
 
         public static Vector3f ToVector3f(this Vector2f vec, Height z)

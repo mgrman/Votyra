@@ -15,7 +15,7 @@ namespace Votyra.Core.MeshUpdaters
     {
         private readonly IProfiler _profiler;
         private readonly Func<GameObject> _gameObjectFactory;
-        private SetDictionary<TKey, MeshFilter> _meshFilters = new SetDictionary<TKey, MeshFilter>();
+        private SetDictionary<TKey, MeshUnityData> _meshFilters = new SetDictionary<TKey, MeshUnityData>();
 
         public TerrainMeshUpdater(Func<GameObject> gameObjectFactory, IProfiler profiler)
         {
@@ -40,44 +40,44 @@ namespace Votyra.Core.MeshUpdaters
                         {
                             if (_meshFilters.ContainsKey(terrainMesh.Key))
                             {
-                                _meshFilters[terrainMesh.Key]?.gameObject.Destroy();
+                                _meshFilters[terrainMesh.Key]?.Dispose();
                             }
                             _meshFilters[terrainMesh.Key] = null;
                             continue;
                         }
-                        MeshFilter meshFilter = _meshFilters.TryGetValue(terrainMesh.Key);
-                        if (meshFilter == null)
+                        var unityData = _meshFilters.TryGetValue(terrainMesh.Key);
+                        if (unityData == null)
                         {
                             if (toDeleteGroups.Count > 0)
                             {
                                 int toDeleteIndex = toDeleteGroups.Count - 1;
                                 var toDeleteKey = toDeleteGroups[toDeleteIndex];
-                                meshFilter = _meshFilters[toDeleteKey];
+                                unityData = _meshFilters[toDeleteKey];
                                 _meshFilters.Remove(toDeleteKey);
-                                _meshFilters[terrainMesh.Key] = meshFilter;
+                                _meshFilters[terrainMesh.Key] = unityData;
 
                                 toDeleteGroups.RemoveAt(toDeleteIndex);
                             }
-                            if (meshFilter == null)
+                            if (unityData == null)
                             {
-                                meshFilter = CreateMeshObject();
-                                _meshFilters[terrainMesh.Key] = meshFilter;
+                                unityData = CreateMeshObject();
+                                _meshFilters[terrainMesh.Key] = unityData;
                             }
                         }
+                        unityData.Transform.localPosition = terrainMesh.Value.Offset.ToVector3();
 
                         ITerrainMesh triangleMesh = terrainMesh.Value;
-                        UpdateMesh(triangleMesh, meshFilter.sharedMesh);
+                        UpdateMesh(triangleMesh, unityData.MeshFilter.sharedMesh);
 
-                        var collider = meshFilter.gameObject.GetComponent<MeshCollider>();
-                        collider.sharedMesh = null;
-                        collider.sharedMesh = meshFilter.sharedMesh;
+                        unityData.MeshCollider.sharedMesh = null;
+                        unityData.MeshCollider.sharedMesh = unityData.MeshFilter.sharedMesh;
 
                         meshIndex++;
                     }
 
                     foreach (var toDeleteGroup in toDeleteGroups)
                     {
-                        _meshFilters[toDeleteGroup]?.gameObject.Destroy();
+                        _meshFilters[toDeleteGroup]?.Dispose();
                         _meshFilters.Remove(toDeleteGroup);
                     }
                 }
@@ -154,16 +154,16 @@ namespace Votyra.Core.MeshUpdaters
             mesh.bounds = triangleMesh.MeshBounds.ToBounds();
         }
 
-        private MeshFilter CreateMeshObject()
+        private MeshUnityData CreateMeshObject()
         {
             string name = string.Format("group_{0}", _meshFilters.Count);
-            var tile = _gameObjectFactory();
-            tile.name = name;
-            tile.hideFlags = HideFlags.DontSave;
+            var gameObject = _gameObjectFactory();
+            gameObject.name = name;
+            gameObject.hideFlags = HideFlags.DontSave;
 
-            var meshFilter = tile.GetOrAddComponent<MeshFilter>();
-            tile.AddComponentIfMissing<MeshRenderer>();
-            tile.AddComponentIfMissing<MeshCollider>();
+            var meshFilter = gameObject.GetOrAddComponent<MeshFilter>();
+            gameObject.AddComponentIfMissing<MeshRenderer>();
+            gameObject.AddComponentIfMissing<MeshCollider>();
 
             if (meshFilter.sharedMesh == null)
             {
@@ -172,7 +172,28 @@ namespace Votyra.Core.MeshUpdaters
             var mesh = meshFilter.sharedMesh;
             mesh.MarkDynamic();
 
-            return meshFilter;
+            return new MeshUnityData(gameObject);
+        }
+
+        private class MeshUnityData : IDisposable
+        {
+            public MeshUnityData(GameObject gameObject)
+            {
+                MeshFilter = gameObject.GetComponent<MeshFilter>();
+                MeshCollider = gameObject.GetComponent<MeshCollider>();
+                GameObject = gameObject;
+                Transform = gameObject.transform;
+            }
+
+            public MeshFilter MeshFilter { get; }
+            public MeshCollider MeshCollider { get; }
+            public GameObject GameObject { get; }
+            public Transform Transform { get; }
+
+            public void Dispose()
+            {
+                GameObject.Destroy();
+            }
         }
     }
 }
