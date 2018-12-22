@@ -96,7 +96,7 @@ namespace Votyra.Core.Painting
 
         private int GetMultiplier()
         {
-            if (Input.GetButton("InverseModifier") || Input.GetButton("InverseAction"))
+            if (Input.GetButton("InverseModifier"))
             {
                 return -1;
             }

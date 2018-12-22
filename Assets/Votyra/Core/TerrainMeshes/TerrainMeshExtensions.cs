@@ -41,6 +41,12 @@ namespace Votyra.Core.TerrainMeshes
             var x0y1 = maskData.x0y1.IsNotHole() ? new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1) : (Vector3f?)null;
             var x1y0 = maskData.x1y0.IsNotHole() ? new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0) : (Vector3f?)null;
             var x1y1 = maskData.x1y1.IsNotHole() ? new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1) : (Vector3f?)null;
+
+            mesh.AddQuad(x0y0, x0y1, x1y0, x1y1, postProcess);
+        }
+
+        public static void AddQuad(this ITerrainMesh mesh, Vector3f? x0y0, Vector3f? x0y1, Vector3f? x1y0, Vector3f? x1y1, Func<Vector3f?, Vector3f?> postProcess = null)
+        {
             if (postProcess != null)
             {
                 x0y0 = postProcess(x0y0);
@@ -48,11 +54,6 @@ namespace Votyra.Core.TerrainMeshes
                 x1y0 = postProcess(x1y0);
                 x1y1 = postProcess(x1y1);
             }
-            mesh.AddQuad(x0y0, x0y1, x1y0, x1y1);
-        }
-
-        public static void AddQuad(this ITerrainMesh mesh, Vector3f? x0y0, Vector3f? x0y1, Vector3f? x1y0, Vector3f? x1y1)
-        {
             var holeCount = (x0y0.HasValue ? 0 : 1)
                 + (x0y1.HasValue ? 0 : 1)
                 + (x1y0.HasValue ? 0 : 1)

@@ -71,7 +71,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     x05y00 = x05y00Mask ? x05y00 : (Vector3f?)null;
                     x05y05 = x05y05Mask ? x05y05 : (Vector3f?)null;
 
-                    _mesh.AddQuad(x00y00, x00y05, x05y00, x05y05);
+                    _mesh.AddQuad(x00y00, x00y05, x05y00, x05y05, PostProcessVertices);
                 }
             }
         }
