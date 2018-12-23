@@ -41,9 +41,9 @@ namespace Votyra.Core.Pooling
             Pool.ReturnObject(this);
         }
 
-        public void Clear(Range3f meshBounds)
+        public void Clear(Range3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor)
         {
-            Mesh.Clear(meshBounds);
+            Mesh.Clear(meshBounds, vertexPostProcessor);
         }
 
         public void AddTriangle(Vector3f a, Vector3f b, Vector3f c)

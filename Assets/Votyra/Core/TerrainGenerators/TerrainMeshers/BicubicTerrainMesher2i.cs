@@ -3,6 +3,7 @@ using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers;
 using Votyra.Core.TerrainMeshes;
+using Zenject;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
@@ -17,10 +18,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         protected readonly float _maskLimit;
 
-        public BicubicTerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler, [ConfigInject("ensureFlat")]bool ensureFlat, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
-        : base(terrainConfig, imageSampler)
+        public BicubicTerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler, [InjectOptional] ITerrainVertexPostProcessor postProcessor, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
+        : base(terrainConfig, imageSampler, postProcessor)
         {
-            this._ensureFlat = ensureFlat;
             this._subdivision = subdivision;
             this._subdivisionValueRange = Range2i.FromMinAndMax(Vector2i.Zero, new Vector2i(_subdivision + 1, _subdivision + 1));
             this._noiseScale = noiseScale;

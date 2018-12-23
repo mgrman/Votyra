@@ -160,6 +160,11 @@ namespace Votyra.Core.Models
             return this.Equals((Vector2f)obj);
         }
 
+        public Vector2f Floor()
+        {
+            return new Vector2f(MathUtils.FloorToInt(this.X), MathUtils.FloorToInt(this.Y));
+        }
+
         public Vector2i FloorToVector2i()
         {
             return new Vector2i(MathUtils.FloorToInt(this.X), MathUtils.FloorToInt(this.Y));

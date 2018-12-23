@@ -4,6 +4,7 @@ using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
+using Zenject;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
@@ -12,6 +13,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected const int QuadToTriangles = 2;
         protected readonly Vector2i _cellInGroupCount;
         protected readonly IImageSampler2i _imageSampler;
+        protected readonly ITerrainVertexPostProcessor _postProcessor;
 
         protected Vector3f _bounds_size;
         protected Vector2i _groupPosition;
@@ -21,9 +23,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected Height _minZ;
         protected IPooledTerrainMesh _pooledMesh;
 
-        public TerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
+        public TerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler, [InjectOptional] ITerrainVertexPostProcessor postProcessor)
         {
             _imageSampler = imageSampler;
+            _postProcessor = postProcessor;
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
         }
 
@@ -32,6 +35,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected virtual int TriangleCount => _cellInGroupCount.AreaSum * TrianglesPerCell;
 
         protected virtual Func<Vector3f?, Vector3f?> PostProcessVertices { get; } = null;
+
         public virtual void AddCell(Vector2i cellInGroup)
         {
             Vector2i cell = cellInGroup + _groupPosition;
@@ -71,7 +75,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             this._pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedTerrainMesh2i>.CreateDirty(this.TriangleCount);
             // this._pooledMesh = PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty();
             this._mesh = this._pooledMesh.Mesh;
-            _mesh.Clear(bounds);
+            _mesh.Clear(bounds, _postProcessor == null ? (Func<Vector3f, Vector3f>)null : _postProcessor.PostProcessVertex);
         }
     }
 }

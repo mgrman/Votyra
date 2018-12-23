@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
@@ -50,25 +52,51 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
         {
             float xfract = pos.X;
             float yfract = pos.Y;
-            float col0 = CubicHermite(InterpolationMatrix[0, 0], InterpolationMatrix[1, 0], InterpolationMatrix[2, 0], InterpolationMatrix[3, 0], xfract);
-            float col1 = CubicHermite(InterpolationMatrix[0, 1], InterpolationMatrix[1, 1], InterpolationMatrix[2, 1], InterpolationMatrix[3, 1], xfract);
-            float col2 = CubicHermite(InterpolationMatrix[0, 2], InterpolationMatrix[1, 2], InterpolationMatrix[2, 2], InterpolationMatrix[3, 2], xfract);
-            float col3 = CubicHermite(InterpolationMatrix[0, 3], InterpolationMatrix[1, 3], InterpolationMatrix[2, 3], InterpolationMatrix[3, 3], xfract);
-            float value = CubicHermite(col0, col1, col2, col3, yfract);
+            float col0 = Intepolate(InterpolationMatrix[0, 0], InterpolationMatrix[1, 0], InterpolationMatrix[2, 0], InterpolationMatrix[3, 0], xfract);
+            float col1 = Intepolate(InterpolationMatrix[0, 1], InterpolationMatrix[1, 1], InterpolationMatrix[2, 1], InterpolationMatrix[3, 1], xfract);
+            float col2 = Intepolate(InterpolationMatrix[0, 2], InterpolationMatrix[1, 2], InterpolationMatrix[2, 2], InterpolationMatrix[3, 2], xfract);
+            float col3 = Intepolate(InterpolationMatrix[0, 3], InterpolationMatrix[1, 3], InterpolationMatrix[2, 3], InterpolationMatrix[3, 3], xfract);
+            float value = Intepolate(col0, col1, col2, col3, yfract);
             return value;
         }
 
-        // t is a value that goes from 0 to 1 to interpolate in a C1 continuous way across uniformly sampled data points.
-        // when t is 0, this will return B.  When t is 1, this will return C.  Inbetween values will return an interpolation
-        // between B and C.  A and B are used to calculate slopes at the edges.
-        private float CubicHermite(float A, float B, float C, float D, float t)
+        // Monotone cubic interpolation
+        // https://en.wikipedia.org/wiki/Monotone_cubic_interpolation
+        private float Intepolate(float y0, float y1, float y2, float y3, float x12Rel)
         {
-            float a = -A / 2.0f + (3.0f * B) / 2.0f - (3.0f * C) / 2.0f + D / 2.0f;
-            float b = A - (5.0f * B) / 2.0f + 2.0f * C - D / 2.0f;
-            float c = -A / 2.0f + C / 2.0f;
-            float d = B;
+            // Get consecutive differences and slopes
+            float dys0 = y1 - y0;
+            float dys1 = y2 - y1;
+            float dys2 = y3 - y2;
 
-            return a * t * t * t + b * t * t + c * t + d;
+            // Get degree-1 coefficients
+            float c1s1;
+            if (dys0 * dys1 <= 0)
+            {
+                c1s1 = 0;
+            }
+            else
+            {
+                c1s1 = 6f / (3f / dys0 + 3f / dys1);
+            }
+            float c1s2;
+            if (dys1 * dys2 <= 0)
+            {
+                c1s2 = 0;
+            }
+            else
+            {
+                c1s2 = 6f / (3f / dys1 + 3f / dys2);
+            }
+
+            // Get degree-2 and degree-3 coefficients
+            float c3s1 = c1s1 + c1s2 - dys1 - dys1;
+            float c2s1 = (dys1 - c1s1 - c3s1);
+
+            // Interpolate
+            var diff = x12Rel;
+            var diffSq = diff * diff;
+            return y1 + c1s1 * diff + c2s1 * diffSq + c3s1 * diff * diffSq;
         }
     }
 }

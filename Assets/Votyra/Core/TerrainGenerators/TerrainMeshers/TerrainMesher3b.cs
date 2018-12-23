@@ -51,7 +51,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             this.pooledMesh = cleanPooledMesh;
             this.mesh = this.pooledMesh.Mesh;
-            mesh.Clear(bounds);
+            mesh.Clear(bounds, null);
         }
 
         public void AddCell(Vector3i cellInGroup)
