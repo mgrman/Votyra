@@ -29,9 +29,14 @@ namespace Votyra.Core.Models
             }
         }
 
+        public Range2i ExtendBothDirections(int distance)
+        {
+            return Range2i.FromMinAndMax(Min - distance, Max + distance);
+        }
+
         public Range2i CeilTo2()
         {
-            return Range2i.FromMinAndMax(Min, Max + Max % 2);
+            return Range2i.FromMinAndSize(Min, Size + Size % 2);
         }
 
         public Vector2i Size => Max - Min;

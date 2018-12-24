@@ -5,6 +5,7 @@ using Votyra.Core.Images;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
+using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.Utils;
 using Zenject;
 
@@ -18,6 +19,9 @@ namespace Votyra.Plannar
 
         [InjectOptional]
         protected IMask2eProvider _maskProvider;
+
+        [Inject]
+        protected ITerrainMesher2i _terrainMesher;
 
         [Inject]
         protected IMeshUpdater<Vector2i> _meshUpdater;
@@ -45,6 +49,9 @@ namespace Votyra.Plannar
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);
             var frustumCorners = frustumCornersUnity.ToVector3f();
 
+            var invalidatedArea = ((image as IImageInvalidatableImage2i)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2i)?.InvalidatedArea) ?? Range2i.All;
+            invalidatedArea = _terrainMesher.AdjustAreaOfInfluenceOfInvalidatedArea(invalidatedArea);
+
             return new FrameData2i(
                 camera.transform.position.ToVector3f(),
                 planes,
@@ -54,7 +61,7 @@ namespace Votyra.Plannar
                 existingGroups,
                 image,
                 mask,
-                ((image as IImageInvalidatableImage2i)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2i)?.InvalidatedArea) ?? Range2i.All
+                invalidatedArea
             );
         }
     }

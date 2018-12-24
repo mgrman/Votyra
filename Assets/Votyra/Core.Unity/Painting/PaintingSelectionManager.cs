@@ -22,7 +22,7 @@ namespace Votyra.Core.Painting
         [Inject]
         protected IPaintingModel _paintingModel;
 
-        [Inject]
+        [InjectOptional]
         protected ITerrainUVPostProcessor _uvToImage;
 
         private PointerEventData _activePointerData;

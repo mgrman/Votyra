@@ -320,11 +320,6 @@ MonoBehaviour:
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
     JsonValue: 1
-  - Id: ensureFlat
-    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    UnityValue: {fileID: 0}
-    JsonValue: false
   - Id: subdivision
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
@@ -340,6 +335,16 @@ MonoBehaviour:
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
     JsonValue: 0.0
+  - Id: wallSquishFactor
+    TypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
+    JsonValue: 0.8
+  - Id: ensureFlat
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
+    JsonValue: false
 --- !u!1 &886990423
 GameObject:
   m_ObjectHideFlags: 0
@@ -463,7 +468,6 @@ GameObject:
   - component: {fileID: 1196365547}
   - component: {fileID: 1196365551}
   - component: {fileID: 1196365550}
-  - component: {fileID: 1196365549}
   - component: {fileID: 1196365548}
   - component: {fileID: 1196365552}
   - component: {fileID: 1196365553}
@@ -493,14 +497,6 @@ Transform:
   m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!81 &1196365548
 AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1196365546}
-  m_Enabled: 1
---- !u!92 &1196365549
-Behaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -551,7 +547,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1

@@ -36,6 +36,11 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         protected virtual Func<Vector3f?, Vector3f?> PostProcessVertices { get; } = null;
 
+        public virtual Range2i AdjustAreaOfInfluenceOfInvalidatedArea(Range2i invalidatedArea)
+        {
+            return invalidatedArea.ExtendBothDirections(1);
+        }
+
         public virtual void AddCell(Vector2i cellInGroup)
         {
             Vector2i cell = cellInGroup + _groupPosition;
@@ -47,6 +52,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             _mesh.AddQuad(position.ToVector2f(), data, mask, PostProcessVertices);
         }
+
 
         public IPooledTerrainMesh GetResultingMesh()
         {

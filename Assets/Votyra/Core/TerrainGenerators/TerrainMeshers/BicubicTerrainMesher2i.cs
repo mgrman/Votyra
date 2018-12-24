@@ -29,6 +29,11 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             this._maskLimit = maskLimit;
         }
 
+        public override Range2i AdjustAreaOfInfluenceOfInvalidatedArea(Range2i invalidatedArea)
+        {
+            return invalidatedArea.ExtendBothDirections(2);
+        }
+
         protected override int QuadsPerCell => _subdivision * _subdivision;
 
         public override void AddCell(Vector2i cellInGroup)

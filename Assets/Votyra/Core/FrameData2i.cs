@@ -17,7 +17,7 @@ namespace Votyra.Core
             IReadOnlySet<Vector2i> existingGroups,
             IImage2i image,
             IMask2e mask,
-            Range2i invalidatedArea_imageSpace)
+            Range2i invalidatedArea)
         {
             CameraPosition = cameraPosition;
             CameraPlanes = cameraPlanes;
@@ -30,7 +30,7 @@ namespace Votyra.Core
 
             RangeZ = image?.RangeZ ?? Range1h.Default;
 
-            InvalidatedArea = invalidatedArea_imageSpace;
+            InvalidatedArea = invalidatedArea;
 
             (Image as IInitializableImage)?.StartUsing();
         }

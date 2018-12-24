@@ -15,6 +15,6 @@ namespace Votyra.Core.Painting.Commands
 
         void StopInvocation();
 
-        void StartInvocation(Vector2i cell, int strength);
+        void UpdateInvocationValues(Vector2i cell, int strength);
     }
 }

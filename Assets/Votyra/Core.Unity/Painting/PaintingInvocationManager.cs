@@ -33,7 +33,7 @@ namespace Votyra.Core.Painting
                     if (o.cmd != null && o.data != null)
                     {
                         Debug.Log($"Starting invocation of {o.cmd.GetType().Name} at {o.data.Value.ImagePosition} {o.data.Value.Strength}");
-                        o.cmd.StartInvocation(o.data.Value.ImagePosition, o.data.Value.Strength);
+                        o.cmd.UpdateInvocationValues(o.data.Value.ImagePosition, o.data.Value.Strength);
                     }
                     else if (o.cmd != null)
                     {
