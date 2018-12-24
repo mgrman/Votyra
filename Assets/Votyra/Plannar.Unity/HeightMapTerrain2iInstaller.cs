@@ -9,7 +9,6 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
-            Container.Rebind<IImageSampler2i>().To<SimpleImageSampler2i>().AsSingle();
             Container.Unbind<IImageConstraint2i>();
             Container.Rebind<ITerrainMesher2i>().To<BicubicTerrainMesher2i>().AsSingle();
         }

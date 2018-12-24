@@ -29,7 +29,17 @@ namespace Votyra.Core.Models
             }
         }
 
+        public Range2i CeilTo2()
+        {
+            return Range2i.FromMinAndMax(Min, Max + Max % 2);
+        }
+
         public Vector2i Size => Max - Min;
+
+        public Range2f ToRange2f()
+        {
+            return Range2f.FromMinAndMax(Min.ToVector2f(), Max.ToVector2f());
+        }
 
         public static Range2i FromCenterAndExtents(Vector2i center, Vector2i extents)
         {

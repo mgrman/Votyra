@@ -11,11 +11,11 @@ namespace Votyra.Plannar.Images.Constraints
         private static TileMap2i _tileMap;
         private static int? _tileMapScaleFactor;
         private readonly int _scaleFactor;
-        private IImageSampler2i _sampler;
-
-        public TycoonTileConstraint2i(IImageSampler2i sampler, [ConfigInject("scaleFactor")] int scaleFactor)
+        protected Range2i _invalidatedCellArea;
+        protected Direction _direction;
+        protected Matrix2<Height> _editableMatrix;
+        public TycoonTileConstraint2i([ConfigInject("scaleFactor")] int scaleFactor)
         {
-            _sampler = sampler;
             _scaleFactor = scaleFactor;
             if (_scaleFactor != _tileMapScaleFactor)
             {
@@ -46,52 +46,61 @@ namespace Votyra.Plannar.Images.Constraints
 
         public Range2i FixImage(Matrix2<Height> editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
-            if (_sampler == null)
-            {
-                return invalidatedImageArea;
-            }
-
-            var invalidatedCellArea = _sampler.ImageToWorld(invalidatedImageArea).RoundToContain();
-            var newInvalidatedCellArea = Constrain(direction, invalidatedCellArea, editableMatrix);
-            var newInvalidatedImageArea = _sampler.WorldToImage(newInvalidatedCellArea);
-            return invalidatedImageArea.CombineWith(newInvalidatedImageArea);
-        }
-
-        public Range2i Constrain(Direction direction, Range2i invalidatedCellArea, Matrix2<Height> editableMatrix)
-        {
+            _invalidatedCellArea = invalidatedImageArea;
             if (direction != Direction.Up && direction != Direction.Down)
             {
                 direction = Direction.Down;
             }
-            invalidatedCellArea.ForeachPointExlusive(cell =>
-            {
-                ConstrainCell(editableMatrix, cell);
-            });
-
-            return invalidatedCellArea;
+            _direction = direction;
+            _editableMatrix = editableMatrix;
+            Constrain();
+            return _invalidatedCellArea.CeilTo2();
         }
 
-        protected virtual void ConstrainCell(Matrix2<Height> editableMatrix, Vector2i cell)
+        public virtual void Constrain()
         {
-            var sample = _sampler.Sample(editableMatrix, cell);
-            var processedSample = Process(sample);
+            _invalidatedCellArea.ForeachPointExlusive(cell =>
+            {
+                ConstrainCell(cell);
+            });
+        }
 
-            Vector2i cell_x0y0 = _sampler.CellToX0Y0(cell);
-            Vector2i cell_x0y1 = _sampler.CellToX0Y1(cell);
-            Vector2i cell_x1y0 = _sampler.CellToX1Y0(cell);
-            Vector2i cell_x1y1 = _sampler.CellToX1Y1(cell);
+        protected virtual void ConstrainCell(Vector2i cell)
+        {
+            Vector2i cell_x0y0 = ImageSampler2iUtils.CellToX0Y0(cell);
+            Vector2i cell_x1y1 = ImageSampler2iUtils.CellToX1Y1(cell);
+            if (_editableMatrix.ContainsIndex(cell_x0y0) && _editableMatrix.ContainsIndex(cell_x1y1))
+            {
+                var sample = _editableMatrix.SampleCell(cell);
+                var processedSample = Process(sample);
 
-            if (editableMatrix.ContainsIndex(cell_x0y0))
-                editableMatrix[cell_x0y0] = processedSample.x0y0;
-            if (editableMatrix.ContainsIndex(cell_x0y1))
-                editableMatrix[cell_x0y1] = processedSample.x0y1;
-            if (editableMatrix.ContainsIndex(cell_x1y0))
-                editableMatrix[cell_x1y0] = processedSample.x1y0;
-            if (editableMatrix.ContainsIndex(cell_x1y1))
-                editableMatrix[cell_x1y1] = processedSample.x1y1;
+                Vector2i cell_x0y1 = ImageSampler2iUtils.CellToX0Y1(cell);
+                Vector2i cell_x1y0 = ImageSampler2iUtils.CellToX1Y0(cell);
+
+                _editableMatrix[cell_x0y0] = processedSample.x0y0;
+                _editableMatrix[cell_x0y1] = processedSample.x0y1;
+                _editableMatrix[cell_x1y0] = processedSample.x1y0;
+                _editableMatrix[cell_x1y1] = processedSample.x1y1;
+            }
         }
 
         protected SampledData2h Process(SampledData2h sampleData)
+        {
+            switch (_direction)
+            {
+                case Direction.Up:
+                    return ProcessUp(sampleData);
+
+                case Direction.Down:
+                default:
+                    return ProcessDown(sampleData);
+            }
+        }
+        protected SampledData2h ProcessDown(SampledData2h sampleData) => -ProcessInner(-sampleData);
+
+        protected SampledData2h ProcessUp(SampledData2h sampleData) => ProcessInner(sampleData);
+
+        private SampledData2h ProcessInner(SampledData2h sampleData)
         {
             var height = sampleData.Max - Height.Default;
             SampledData2h normalizedHeightData = (sampleData - height).ClipMin(-2.CreateHeight() * _scaleFactor);

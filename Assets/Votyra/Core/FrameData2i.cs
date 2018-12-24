@@ -30,7 +30,7 @@ namespace Votyra.Core
 
             RangeZ = image?.RangeZ ?? Range1h.Default;
 
-            InvalidatedArea_imageSpace = invalidatedArea_imageSpace;
+            InvalidatedArea = invalidatedArea_imageSpace;
 
             (Image as IInitializableImage)?.StartUsing();
         }
@@ -44,7 +44,7 @@ namespace Votyra.Core
         public IReadOnlySet<Vector2i> ExistingGroups { get; }
         public IImage2i Image { get; }
         public IMask2e Mask { get; }
-        public Range2i InvalidatedArea_imageSpace { get; }
+        public Range2i InvalidatedArea { get; }
 
         public void Dispose()
         {

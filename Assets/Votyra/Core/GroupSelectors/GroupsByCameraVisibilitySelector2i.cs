@@ -8,12 +8,10 @@ namespace Votyra.Core.GroupSelectors
     public class GroupsByCameraVisibilitySelector2i : IGroupSelector<IFrameData2i, Vector2i>
     {
         private readonly Vector2i _cellInGroupCount;
-        private readonly IImageSampler2i _imageSampler;
         private HashSet<Vector2i> _skippedAreas = new HashSet<Vector2i>();
 
-        public GroupsByCameraVisibilitySelector2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler)
+        public GroupsByCameraVisibilitySelector2i(ITerrainConfig terrainConfig)
         {
-            _imageSampler = imageSampler;
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
         }
 
@@ -30,9 +28,7 @@ namespace Votyra.Core.GroupSelectors
             var cameraPosition = options.CameraPosition;
             var cameraLocalToWorldMatrix = options.CameraLocalToWorldMatrix;
             var parentContainerWorldToLocalMatrix = options.ParentContainerWorldToLocalMatrix;
-            var invalidatedArea = _imageSampler
-               .ImageToWorld(options.InvalidatedArea_imageSpace)
-               .RoundToContain();
+            var invalidatedArea = options.InvalidatedArea;
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition).XY;
 
@@ -73,8 +69,7 @@ namespace Votyra.Core.GroupSelectors
                         {
                             var groupBoundsXYMin = (group * _cellInGroupCount);
                             var groupBoundsXY = Range2i.FromMinAndSize(groupBoundsXYMin, _cellInGroupCount);
-                            var groupBounds_image = _imageSampler.WorldToImage(groupBoundsXY);
-                            var noData = _skippedAreas.Contains(group) || (options.Mask != null && (!options.Mask.AnyData(groupBounds_image)));
+                            var noData = _skippedAreas.Contains(group) || (options.Mask != null && (!options.Mask.AnyData(groupBoundsXY)));
                             if (noData)
                             {
                                 groupsToKeep.Add(group);

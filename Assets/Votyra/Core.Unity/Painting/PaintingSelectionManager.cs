@@ -19,12 +19,6 @@ namespace Votyra.Core.Painting
 
         protected const int maxDistSmall = 1;
 
-        [Inject(Id = "root")]
-        protected GameObject _root;
-
-        [Inject]
-        protected IImageSampler2i _sampler;
-
         [Inject]
         protected IPaintingModel _paintingModel;
 
@@ -44,7 +38,6 @@ namespace Votyra.Core.Painting
             _paintingModel.PaintInvocationData
                 .OnNext(invocationData);
         }
-
 
         public void OnPointerDown(PointerEventData eventData)
         {

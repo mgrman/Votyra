@@ -12,7 +12,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
     {
         protected const int QuadToTriangles = 2;
         protected readonly Vector2i _cellInGroupCount;
-        protected readonly IImageSampler2i _imageSampler;
         protected readonly ITerrainVertexPostProcessor _postProcessor;
 
         protected Vector3f _bounds_size;
@@ -23,9 +22,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected Height _minZ;
         protected IPooledTerrainMesh _pooledMesh;
 
-        public TerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler, [InjectOptional] ITerrainVertexPostProcessor postProcessor)
+        public TerrainMesher2i(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor postProcessor)
         {
-            _imageSampler = imageSampler;
             _postProcessor = postProcessor;
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
         }
@@ -42,8 +40,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             Vector2i position = _groupPosition + cellInGroup;
 
-            var data = _imageSampler.Sample(_image, cell);
-            var mask = _imageSampler.Sample(_mask, cell);
+            var data = _image.SampleCell(cell);
+            var mask = _mask.SampleCell(cell);
 
             _mesh.AddQuad(position.ToVector2f(), data, mask, PostProcessVertices);
         }

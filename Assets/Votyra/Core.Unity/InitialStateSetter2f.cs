@@ -9,12 +9,12 @@ namespace Votyra.Core.Images
 {
     public class InitialStateSetter2f
     {
-        public InitialStateSetter2f(IEditableImage2i editableImage, [InjectOptional] IEditableMask2e editableMask, IInitialImageConfig imageConfig, IImageSampler2i sampler, [Inject(Id = "root")]GameObject root)
+        public InitialStateSetter2f(IEditableImage2i editableImage, [InjectOptional] IEditableMask2e editableMask, IInitialImageConfig imageConfig, [Inject(Id = "root")]GameObject root)
         {
-            FillInitialState(editableImage, editableMask, imageConfig, sampler, root);
+            FillInitialState(editableImage, editableMask, imageConfig, root);
         }
 
-        public void FillInitialState(IEditableImage2i editableImage, IEditableMask2e editableMask, IInitialImageConfig imageConfig, IImageSampler2i sampler, GameObject root)
+        public void FillInitialState(IEditableImage2i editableImage, IEditableMask2e editableMask, IInitialImageConfig imageConfig, GameObject root)
         {
             if (editableImage == null)
                 return;
@@ -24,11 +24,11 @@ namespace Votyra.Core.Images
             }
             if (imageConfig.InitialData is GameObject)
             {
-                FillInitialState(editableImage, (imageConfig.InitialData as GameObject).GetComponentsInChildren<Collider>(), imageConfig.InitialDataScale.Z, sampler, root);
+                FillInitialState(editableImage, (imageConfig.InitialData as GameObject).GetComponentsInChildren<Collider>(), imageConfig.InitialDataScale.Z, root);
             }
             if (imageConfig.InitialData is Collider)
             {
-                FillInitialState(editableImage, new[] { imageConfig.InitialData as Collider }, imageConfig.InitialDataScale.Z, sampler, root);
+                FillInitialState(editableImage, new[] { imageConfig.InitialData as Collider }, imageConfig.InitialDataScale.Z, root);
             }
             if (imageConfig.InitialData is IMatrix2<Height>)
             {
@@ -73,7 +73,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage2i editableImage, Collider[] colliders, float scale, IImageSampler2i sampler, GameObject root)
+        private static void FillInitialState(IEditableImage2i editableImage, Collider[] colliders, float scale, GameObject root)
         {
             var bounds = colliders.Select(o => o.bounds)
                 .Select(o => Range3f.FromMinAndSize(o.min.ToVector3f(), o.size.ToVector3f()))
@@ -83,10 +83,8 @@ namespace Votyra.Core.Images
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
                 var area = imageAccessor.Area;
-                area.ForeachPointExlusive(i =>
+                area.ForeachPointExlusive(localPos =>
                 {
-                    var localPos = sampler.ImageToWorld(i);
-
                     var ray = new Ray(root.transform.TransformPoint(new Vector3(localPos.X, localPos.Y, bounds.Max.Z)), root.transform.TransformDirection(new Vector3(0, 0, -1)));
 
                     var value = colliders
@@ -102,7 +100,7 @@ namespace Votyra.Core.Images
                         .DefaultIfEmpty(0)
                         .Max() * scale;
 
-                    imageAccessor[i] = ((int)value).CreateHeight();
+                    imageAccessor[localPos] = ((int)value).CreateHeight();
                 });
             }
         }

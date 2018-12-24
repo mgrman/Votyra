@@ -8,16 +8,16 @@ namespace Votyra.Plannar.Images.Constraints
 {
     public class DualSampledTycoonTileConstraint2i : TycoonTileConstraint2i
     {
-        public DualSampledTycoonTileConstraint2i(IImageSampler2i sampler, [ConfigInject("scaleFactor")] int scaleFactor)
-        : base(sampler, scaleFactor)
+        public DualSampledTycoonTileConstraint2i([ConfigInject("scaleFactor")] int scaleFactor)
+        : base(scaleFactor)
         {
         }
 
-        protected override void ConstrainCell(Matrix2<Height> editableMatrix, Vector2i cell)
+        protected override void ConstrainCell(Vector2i cell)
         {
             if (cell % 2 == Vector2i.One)
             {
-                base.ConstrainCell(editableMatrix, cell);
+                base.ConstrainCell(cell);
             }
         }
     }

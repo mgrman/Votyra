@@ -18,8 +18,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         protected readonly float _maskLimit;
 
-        public BicubicTerrainMesher2i(ITerrainConfig terrainConfig, IImageSampler2i imageSampler, [InjectOptional] ITerrainVertexPostProcessor postProcessor, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
-        : base(terrainConfig, imageSampler, postProcessor)
+        public BicubicTerrainMesher2i(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor postProcessor, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
+        : base(terrainConfig, postProcessor)
         {
             this._subdivision = subdivision;
             this._subdivisionValueRange = Range2i.FromMinAndMax(Vector2i.Zero, new Vector2i(_subdivision + 1, _subdivision + 1));
@@ -33,7 +33,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public override void AddCell(Vector2i cellInGroup)
         {
-            var mask = _imageSampler.Sample(_mask, cellInGroup + _groupPosition);
+            var mask = ImageSampler2iUtils.SampleCell(_mask, cellInGroup + _groupPosition);
             if (mask.GetHoleCount() == 4)
             {
                 return;
@@ -102,8 +102,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return new CellComputer(range, _subdivision, sample, CreateInterpolator());
         }
 
-        protected SampledData2f ImageSampleHandler(Vector2i pos) => _imageSampler.Sample(_image, pos).ToSampledData2F();
+        protected SampledData2f ImageSampleHandler(Vector2i pos) => _image.SampleCell(pos).ToSampledData2F();
 
-        protected SampledData2f MaskSampleHandler(Vector2i pos) => _imageSampler.Sample(_mask, pos).ToSampledData2F();
+        protected SampledData2f MaskSampleHandler(Vector2i pos) => _mask.SampleCell(pos).ToSampledData2F();
     }
 }
