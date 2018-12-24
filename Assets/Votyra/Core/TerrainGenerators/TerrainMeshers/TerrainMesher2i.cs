@@ -12,7 +12,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
     {
         protected const int QuadToTriangles = 2;
         protected readonly Vector2i _cellInGroupCount;
-        protected readonly ITerrainVertexPostProcessor _postProcessor;
+        protected readonly ITerrainVertexPostProcessor _vertexPostProcessor;
+        protected readonly ITerrainUVPostProcessor _uvPostProcessor;
 
         protected Vector3f _bounds_size;
         protected Vector2i _groupPosition;
@@ -22,9 +23,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected Height _minZ;
         protected IPooledTerrainMesh _pooledMesh;
 
-        public TerrainMesher2i(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor postProcessor)
+        public TerrainMesher2i(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor)
         {
-            _postProcessor = postProcessor;
+            _vertexPostProcessor = vertexPostProcessor;
+            _uvPostProcessor = uvPostProcessor;
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
         }
 
@@ -73,7 +75,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             this._pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedTerrainMesh2i>.CreateDirty(this.TriangleCount);
             // this._pooledMesh = PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty();
             this._mesh = this._pooledMesh.Mesh;
-            _mesh.Clear(bounds, _postProcessor == null ? (Func<Vector3f, Vector3f>)null : _postProcessor.PostProcessVertex);
+            _mesh.Clear(bounds, _vertexPostProcessor == null ? (Func<Vector3f, Vector3f>)null : _vertexPostProcessor.PostProcessVertex, _uvPostProcessor == null ? (Func<Vector2f, Vector2f>)null : _uvPostProcessor.ProcessUV);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Votyra.Core.TerrainMeshes
         private int _counter;
         public Range3f MeshBounds { get; private set; }
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
+        public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
         public Vector3f[] Vertices { get; private set; }
         public Vector3f[] Normals { get; private set; }
         public Vector2f[] UV { get; private set; }
@@ -35,10 +36,11 @@ namespace Votyra.Core.TerrainMeshes
             Normals = new Vector3f[pointCount];
         }
 
-        public void Clear(Range3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor)
+        public void Clear(Range3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
             MeshBounds = meshBounds;
             VertexPostProcessor = vertexPostProcessor;
+            UVAdjustor = uvAdjustor;
             _counter = 0;
         }
 
@@ -55,17 +57,17 @@ namespace Votyra.Core.TerrainMeshes
             var normal = Vector3f.Cross(side1, side2).Normalized;
 
             Vertices[_counter] = posA;
-            UV[_counter] = new Vector2f(posA.X, posA.Y);
+            UV[_counter] = UVAdjustor?.Invoke(posA.XY) ?? posA.XY;
             Normals[_counter] = normal;
             _counter++;
 
             Vertices[_counter] = posB;
-            UV[_counter] = new Vector2f(posB.X, posB.Y);
+            UV[_counter] = UVAdjustor?.Invoke(posB.XY) ?? posB.XY;
             Normals[_counter] = normal;
             _counter++;
 
             Vertices[_counter] = posC;
-            UV[_counter] = new Vector2f(posC.X, posC.Y);
+            UV[_counter] = UVAdjustor?.Invoke(posC.XY) ?? posC.XY;
             Normals[_counter] = normal;
             _counter++;
         }

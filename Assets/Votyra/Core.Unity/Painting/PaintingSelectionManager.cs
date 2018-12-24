@@ -22,6 +22,9 @@ namespace Votyra.Core.Painting
         [Inject]
         protected IPaintingModel _paintingModel;
 
+        [Inject]
+        protected ITerrainUVPostProcessor _uvToImage;
+
         private PointerEventData _activePointerData;
 
         [Inject]
@@ -59,7 +62,7 @@ namespace Votyra.Core.Painting
             _activePointerData = null;
         }
 
-        private static Vector2i GetImagePosition(PointerEventData eventData)
+        private Vector2i GetImagePosition(PointerEventData eventData)
         {
             var cameraPosition = eventData.pressEventCamera.transform.position;
             Vector3 worldPosition = eventData.pointerCurrentRaycast.worldPosition;
@@ -71,8 +74,8 @@ namespace Votyra.Core.Painting
             RaycastHit hitInfo;
             collider.Raycast(ray, out hitInfo, eventData.pointerCurrentRaycast.distance * 1.1f);
 
-            var imagePosition = hitInfo.textureCoord;
-            return imagePosition.ToVector2f().RoundToVector2i();
+            var textureCoord = hitInfo.textureCoord.ToVector2f();
+            return (_uvToImage?.ReverseUV(textureCoord) ?? textureCoord).RoundToVector2i();
         }
 
         private PaintInvocationData? GetInvocationDataFromPointer(PointerEventData eventData)

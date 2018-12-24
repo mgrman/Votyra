@@ -18,8 +18,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         protected readonly float _maskLimit;
 
-        public BicubicTerrainMesher2i(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor postProcessor, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
-        : base(terrainConfig, postProcessor)
+        public BicubicTerrainMesher2i(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor postProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
+        : base(terrainConfig, postProcessor, uvPostProcessor)
         {
             this._subdivision = subdivision;
             this._subdivisionValueRange = Range2i.FromMinAndMax(Vector2i.Zero, new Vector2i(_subdivision + 1, _subdivision + 1));

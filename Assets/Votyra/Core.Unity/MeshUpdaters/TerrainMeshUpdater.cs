@@ -97,11 +97,8 @@ namespace Votyra.Core.MeshUpdaters
             mesh.normals = triangleMesh.Normals;
             mesh.bounds = triangleMesh.MeshBounds;
 
-            if (reinitializeMesh)
-            {
-                mesh.uv = triangleMesh.UV;
-                mesh.SetTriangles(triangleMesh.Indices, 0, false);
-            }
+            mesh.uv = triangleMesh.UV;
+            mesh.SetTriangles(triangleMesh.Indices, 0, false);
         }
 
         private void SetMeshFormat(Mesh mesh, int vertexCount)

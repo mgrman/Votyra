@@ -13,6 +13,7 @@ namespace Votyra.Plannar.Unity
             Container.Rebind<IImageConstraint2i>().To<DualSampledTycoonTileConstraint2i>().AsSingle();
             Container.Rebind<ITerrainMesher2i>().To<BicubicTerrainMesher2i>().AsSingle();
             Container.Rebind<ITerrainVertexPostProcessor>().To<WallsVertexPostProcessor>().AsSingle();
+            Container.Rebind<ITerrainUVPostProcessor>().To<DualSampleTerrainUVPostProcessor>().AsSingle();
         }
     }
 }

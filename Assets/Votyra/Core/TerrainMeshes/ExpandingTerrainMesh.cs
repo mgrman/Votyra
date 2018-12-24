@@ -16,6 +16,7 @@ namespace Votyra.Core.TerrainMeshes
 
         public Range3f MeshBounds { get; private set; }
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
+        public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
         public List<Vector3f> Vertices { get; }
         public List<Vector3f> Normals { get; }
         public List<Vector2f> UV { get; }
@@ -26,10 +27,11 @@ namespace Votyra.Core.TerrainMeshes
 
         public Vector3f this[int point] => Vertices[point];
 
-        public void Clear(Range3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor)
+        public void Clear(Range3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
             MeshBounds = meshBounds;
             VertexPostProcessor = vertexPostProcessor;
+            UVAdjustor = uvAdjustor;
             TriangleCount = 0;
             VertexCount = 0;
             Vertices.Clear();
@@ -52,19 +54,19 @@ namespace Votyra.Core.TerrainMeshes
 
             Indices.Add(VertexCount);
             Vertices.Add(posA);
-            UV.Add(new Vector2f(posA.X, posA.Y));
+            UV.Add(UVAdjustor?.Invoke(posA.XY) ?? posA.XY);
             Normals.Add(normal);
             VertexCount++;
 
             Indices.Add(VertexCount);
             Vertices.Add(posB);
-            UV.Add(new Vector2f(posB.X, posB.Y));
+            UV.Add(UVAdjustor?.Invoke(posB.XY) ?? posB.XY);
             Normals.Add(normal);
             VertexCount++;
 
             Indices.Add(VertexCount);
             Vertices.Add(posC);
-            UV.Add(new Vector2f(posC.X, posC.Y));
+            UV.Add(UVAdjustor?.Invoke(posC.XY) ?? posC.XY);
             Normals.Add(normal);
             VertexCount++;
 
