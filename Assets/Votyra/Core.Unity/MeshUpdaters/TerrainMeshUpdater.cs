@@ -95,12 +95,12 @@ namespace Votyra.Core.MeshUpdaters
 
             mesh.vertices = triangleMesh.Vertices;
             mesh.normals = triangleMesh.Normals;
+            mesh.bounds = triangleMesh.MeshBounds;
 
             if (reinitializeMesh)
             {
                 mesh.uv = triangleMesh.UV;
                 mesh.SetTriangles(triangleMesh.Indices, 0, false);
-                mesh.bounds = triangleMesh.MeshBounds;
             }
         }
 
