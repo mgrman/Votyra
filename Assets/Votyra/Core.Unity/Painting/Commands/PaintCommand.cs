@@ -125,22 +125,18 @@ namespace Votyra.Core.Painting.Commands
             var absStrength = Math.Abs(maxStrength);
             var absExtents = absStrength - 1;
 
-            var requestedArea = Range2i.FromMinAndMax(cell - absStrength + 1, cell + absStrength);
+            var requestedArea = Range2i.FromMinAndMax(cell - (absStrength - 1), cell + (absStrength - 1) + 1);
             using (var image = _editableImage.RequestAccess(requestedArea))
             {
                 using (var mask = _editableMask?.RequestAccess(requestedArea))
                 {
                     var givenArea = image.Area
-                        .IntersectWith(mask.Area)
-                        .ToArea2i();
-                    if (givenArea == null)
-                        return;
-                    var workableArea = givenArea.Value;
-                    if (!workableArea.Contains(cell))
+                        .IntersectWith(mask.Area);
+                    if (!givenArea.Contains(cell))
                         return;
 
                     PrepareWithClickedValue(image[cell]);
-                    workableArea.ForeachPointInclusive(index =>
+                    givenArea.ForeachPointExlusive(index =>
                     {
                         int ox = index.X - cell.X;
                         int oy = index.Y - cell.Y;
