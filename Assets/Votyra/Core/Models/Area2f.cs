@@ -2,15 +2,15 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    public struct Range2f : IEquatable<Range2f>
+    public struct Area2f : IEquatable<Area2f>
     {
-        public static readonly Range2f Zero = new Range2f();
-        public static readonly Range2f All = new Range2f(Vector2f.FromSame(float.MinValue / 2), Vector2f.FromSame(float.MaxValue / 2));
+        public static readonly Area2f Zero = new Area2f();
+        public static readonly Area2f All = new Area2f(Vector2f.FromSame(float.MinValue / 2), Vector2f.FromSame(float.MaxValue / 2));
 
         public readonly Vector2f Max;
         public readonly Vector2f Min;
 
-        private Range2f(Vector2f min, Vector2f max)
+        private Area2f(Vector2f min, Vector2f max)
         {
             this.Min = min;
             this.Max = max;
@@ -20,49 +20,49 @@ namespace Votyra.Core.Models
         public Vector2f Size => Max - Min;
         public Vector2f Extents => Size / 2;
 
-        public static Range2f FromMinAndMax(Vector2f min, Vector2f max)
+        public static Area2f FromMinAndMax(Vector2f min, Vector2f max)
         {
-            return new Range2f(min, max);
+            return new Area2f(min, max);
         }
 
-        public static Range2f FromMinAndSize(Vector2f min, Vector2f size)
+        public static Area2f FromMinAndSize(Vector2f min, Vector2f size)
         {
-            return new Range2f(min, min + size);
+            return new Area2f(min, min + size);
         }
 
-        public static bool operator ==(Range2f a, Range2f b)
+        public static bool operator ==(Area2f a, Area2f b)
         {
             return a.Center == b.Center && a.Size == b.Size;
         }
 
-        public static bool operator !=(Range2f a, Range2f b)
+        public static bool operator !=(Area2f a, Area2f b)
         {
             return a.Center != b.Center || a.Size != b.Size;
         }
 
-        public static Range2f operator /(Range2f a, float b)
+        public static Area2f operator /(Area2f a, float b)
         {
-            return Range2f.FromMinAndMax(a.Min / b, a.Max / b);
+            return Area2f.FromMinAndMax(a.Min / b, a.Max / b);
         }
 
-        public static Range2f operator /(Range2f a, Vector2f b)
+        public static Area2f operator /(Area2f a, Vector2f b)
         {
-            return Range2f.FromMinAndMax(a.Min / b, a.Max / b);
+            return Area2f.FromMinAndMax(a.Min / b, a.Max / b);
         }
 
-        public Range2f FromCenterAndSize(Vector2f center, Vector2f size)
+        public Area2f FromCenterAndSize(Vector2f center, Vector2f size)
         {
-            return new Range2f(center - size / 2, size);
+            return new Area2f(center - size / 2, size);
         }
 
-        public Range2f Encapsulate(Vector2f point)
+        public Area2f Encapsulate(Vector2f point)
         {
-            return Range2f.FromMinAndMax(Vector2f.Min(this.Min, point), Vector2f.Max(this.Max, point));
+            return Area2f.FromMinAndMax(Vector2f.Min(this.Min, point), Vector2f.Max(this.Max, point));
         }
 
-        public Range2f Encapsulate(Range2f bounds)
+        public Area2f Encapsulate(Area2f bounds)
         {
-            return Range2f.FromMinAndMax(Vector2f.Min(this.Min, bounds.Min), Vector2f.Max(this.Max, bounds.Max));
+            return Area2f.FromMinAndMax(Vector2f.Min(this.Min, bounds.Min), Vector2f.Max(this.Max, bounds.Max));
         }
 
         public bool Contains(Vector2f point)
@@ -80,7 +80,7 @@ namespace Votyra.Core.Models
             return Range2i.FromMinAndMax(this.Min.FloorToVector2i(), this.Max.CeilToVector2i());
         }
 
-        public Range2f CombineWith(Range2f that)
+        public Area2f CombineWith(Area2f that)
         {
             if (this.Size == Vector2f.Zero)
                 return that;
@@ -90,20 +90,20 @@ namespace Votyra.Core.Models
 
             var min = Vector2f.Min(this.Min, that.Min);
             var max = Vector2f.Max(this.Max, that.Max);
-            return Range2f.FromMinAndMax(min, max);
+            return Area2f.FromMinAndMax(min, max);
         }
 
-        public bool Equals(Range2f other)
+        public bool Equals(Area2f other)
         {
             return this == other;
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Range2f))
+            if (!(obj is Area2f))
                 return false;
 
-            return this.Equals((Range2f)obj);
+            return this.Equals((Area2f)obj);
         }
 
         public override int GetHashCode()
@@ -116,7 +116,7 @@ namespace Votyra.Core.Models
 
         public override string ToString()
         {
-            return $"center:{Center} size:{Size}";
+            return $"Area2f: min={Min} max={Max} size={Size}";
         }
     }
 }

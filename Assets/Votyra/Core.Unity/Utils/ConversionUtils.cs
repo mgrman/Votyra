@@ -46,7 +46,7 @@ namespace Votyra.Core.Utils
             return new UnityEngine.Vector3(vector.X, vector.Y, vector.Z);
         }
 
-        public static UnityEngine.Bounds ToBounds(this Range3f bounds)
+        public static UnityEngine.Bounds ToBounds(this Area3f bounds)
         {
             return new UnityEngine.Bounds(bounds.Center.ToVector3(), bounds.Size.ToVector3());
         }

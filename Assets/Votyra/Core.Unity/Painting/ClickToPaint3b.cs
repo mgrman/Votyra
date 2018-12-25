@@ -76,7 +76,7 @@ namespace Votyra.Core
             }
             _usedDebugObjects.Clear();
 
-            var localArea = Range3f.FromCenterAndExtents(mouseLocalPosition, new Vector3f(1, 1, 1));
+            var localArea = Area3f.FromCenterAndExtents(mouseLocalPosition, new Vector3f(1, 1, 1));
             var imageArea = _sampler.WorldToImage(localArea);
             using (var image = _editableImage.RequestAccess(imageArea))
             {

@@ -23,7 +23,7 @@ namespace Votyra.Core.Models
 
     public static class Plane3fExtensions
     {
-        public static bool TestPlanesAABB(this IEnumerable<Plane3f> planes, Range3f bounds)
+        public static bool TestPlanesAABB(this IEnumerable<Plane3f> planes, Area3f bounds)
         {
             Vector3f boundsCenter = bounds.Center;  // center of bounds
             Vector3f boundsExtent = bounds.Extents; // half diagonal

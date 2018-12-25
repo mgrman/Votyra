@@ -65,8 +65,8 @@ namespace Votyra.Core.Images
         private static void FillInitialState(IEditableImage3b editableImage, Collider[] colliders, float scale, IImageSampler3 sampler, GameObject root)
         {
             var bounds = colliders.Select(o => o.bounds)
-                .Select(o => Range3f.FromMinAndSize(o.min.ToVector3f(), o.size.ToVector3f()))
-                .DefaultIfEmpty(Range3f.zero)
+                .Select(o => Area3f.FromMinAndSize(o.min.ToVector3f(), o.size.ToVector3f()))
+                .DefaultIfEmpty(Area3f.zero)
                 .Aggregate((a, b) => a.Encapsulate(b));
 
             float maxSize = bounds.DiagonalLength;

@@ -8,7 +8,7 @@ namespace Votyra.Core.TerrainMeshes
     public class FixedTerrainMesh2i : ITerrainMeshWithFixedCapacity
     {
         private int _counter;
-        public Range3f MeshBounds { get; private set; }
+        public Area3f MeshBounds { get; private set; }
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
         public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
         public Vector3f[] Vertices { get; private set; }
@@ -36,7 +36,7 @@ namespace Votyra.Core.TerrainMeshes
             Normals = new Vector3f[pointCount];
         }
 
-        public void Clear(Range3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
+        public void Clear(Area3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
             MeshBounds = meshBounds;
             VertexPostProcessor = vertexPostProcessor;

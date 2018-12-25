@@ -2,13 +2,13 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    public struct Range1f : IEquatable<Range1f>
+    public struct Area1f : IEquatable<Area1f>
     {
-        public static readonly Range1f Zero = new Range1f(0, 0);
+        public static readonly Area1f Zero = new Area1f(0, 0);
         public readonly float Min;
         public readonly float Max;
 
-        public Range1f(float min, float max)
+        public Area1f(float min, float max)
         {
             this.Min = Math.Min(min, max);
             this.Max = Math.Max(min, max);
@@ -30,32 +30,32 @@ namespace Votyra.Core.Models
             }
         }
 
-        public static bool operator ==(Range1f a, Range1f b)
+        public static bool operator ==(Area1f a, Area1f b)
         {
             return a.Min == b.Min && a.Max == b.Max;
         }
 
-        public static bool operator !=(Range1f a, Range1f b)
+        public static bool operator !=(Area1f a, Area1f b)
         {
             return a.Min != b.Min || a.Max != b.Max;
         }
 
-        public Range1f UnionWith(Range1f range)
+        public Area1f UnionWith(Area1f range)
         {
-            return new Range1f(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
+            return new Area1f(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
         }
 
-        public bool Equals(Range1f other)
+        public bool Equals(Area1f other)
         {
             return this == other;
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Range1f))
+            if (!(obj is Area1f))
                 return false;
 
-            return this.Equals((Range1f)obj);
+            return this.Equals((Area1f)obj);
         }
 
         public override int GetHashCode()
@@ -68,7 +68,7 @@ namespace Votyra.Core.Models
 
         public override string ToString()
         {
-            return string.Format("({0} , {1})", Min, Max);
+            return $"Area1i: min={Min} max={Max} size={Size}";
         }
     }
 }

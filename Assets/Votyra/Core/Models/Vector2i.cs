@@ -104,7 +104,7 @@ namespace Votyra.Core.Models
 
         public static bool operator <=(Vector2i a, Vector2i b)
         {
-            return a.X < b.X && a.Y < b.Y;
+            return a.X <= b.X && a.Y <= b.Y;
         }
 
         public static bool operator >(Vector2i a, Vector2i b)
@@ -147,6 +147,17 @@ namespace Votyra.Core.Models
             for (int ix = 0; ix < this.X; ix++)
             {
                 for (int iy = 0; iy < this.Y; iy++)
+                {
+                    action(new Vector2i(ix, iy));
+                }
+            }
+        }
+
+        public void ForeachPointInclusive(Action<Vector2i> action)
+        {
+            for (int ix = 0; ix <= this.X; ix++)
+            {
+                for (int iy = 0; iy <= this.Y; iy++)
                 {
                     action(new Vector2i(ix, iy));
                 }

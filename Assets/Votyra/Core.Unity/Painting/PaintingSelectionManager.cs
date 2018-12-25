@@ -32,16 +32,6 @@ namespace Votyra.Core.Painting
         {
         }
 
-        /// <summary>
-        /// Update is called every frame, if the MonoBehaviour is enabled.
-        /// </summary>
-        void Update()
-        {
-            var invocationData = GetInvocationDataFromPointer(_activePointerData);
-            _paintingModel.PaintInvocationData
-                .OnNext(invocationData);
-        }
-
         public void OnPointerDown(PointerEventData eventData)
         {
             if (_activePointerData != null)
@@ -62,17 +52,38 @@ namespace Votyra.Core.Painting
             _activePointerData = null;
         }
 
-        private Vector2i GetImagePosition(PointerEventData eventData)
+        /// <summary>
+        /// Update is called every frame, if the MonoBehaviour is enabled.
+        /// </summary>
+        private void Update()
+        {
+            var invocationData = GetInvocationDataFromPointer(_activePointerData);
+            _paintingModel.PaintInvocationData
+                .OnNext(invocationData);
+        }
+
+        private Vector2i? GetImagePosition(PointerEventData eventData)
         {
             var cameraPosition = eventData.pressEventCamera.transform.position;
             Vector3 worldPosition = eventData.pointerCurrentRaycast.worldPosition;
 
             var ray = new Ray(cameraPosition, worldPosition - cameraPosition);
             var gameObject = eventData.pointerCurrentRaycast.gameObject;
+            if (gameObject == null)
+            {
+                return null;
+            }
             var collider = gameObject.GetComponent<Collider>();
+            if (collider == null)
+            {
+                return null;
+            }
 
             RaycastHit hitInfo;
-            collider.Raycast(ray, out hitInfo, eventData.pointerCurrentRaycast.distance * 1.1f);
+            if (!collider.Raycast(ray, out hitInfo, eventData.pointerCurrentRaycast.distance * 1.1f))
+            {
+                return null;
+            }
 
             var textureCoord = hitInfo.textureCoord.ToVector2f();
             return (_uvToImage?.ReverseUV(textureCoord) ?? textureCoord).RoundToVector2i();
@@ -85,9 +96,12 @@ namespace Votyra.Core.Painting
                 return null;
             }
             var imagePosition = GetImagePosition(eventData);
+            if (imagePosition == null)
+            {
+                return null;
+            }
             var strength = GetMultiplier() * GetDistance();
-
-            return new PaintInvocationData(strength, imagePosition);
+            return new PaintInvocationData(strength, imagePosition.Value);
         }
 
         private int GetMultiplier()

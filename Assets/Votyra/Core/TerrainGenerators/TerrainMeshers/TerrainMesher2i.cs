@@ -72,7 +72,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void InitializeGroup(Vector2i group)
         {
-            var bounds = Range3f.FromMinAndSize(new Vector2f((group.X * _cellInGroupCount.X), (group.Y * _cellInGroupCount.Y))
+            var bounds = Area3f.FromMinAndSize(new Vector2f((group.X * _cellInGroupCount.X), (group.Y * _cellInGroupCount.Y))
                 .ToVector3f(_minZ),
                 _bounds_size);
 

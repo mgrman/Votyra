@@ -183,9 +183,9 @@ namespace Votyra.Core.Models
             return new Vector2i(MathUtils.RoundToInt(this.X), MathUtils.RoundToInt(this.Y));
         }
 
-        public Range2f ToRange2f()
+        public Area2f ToRange2f()
         {
-            return Range2f.FromMinAndSize(Vector2f.Zero, this);
+            return Area2f.FromMinAndSize(Vector2f.Zero, this);
         }
 
         public override string ToString()

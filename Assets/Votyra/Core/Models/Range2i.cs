@@ -41,20 +41,6 @@ namespace Votyra.Core.Models
 
         public Vector2i Size => Max - Min;
 
-        public Range2f ToRange2f()
-        {
-            return Range2f.FromMinAndMax(Min.ToVector2f(), Max.ToVector2f());
-        }
-
-        public static Range2i FromCenterAndExtents(Vector2i center, Vector2i extents)
-        {
-            if (extents.AnyNegative)
-            {
-                throw new InvalidOperationException($"When creating {nameof(Range2i)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
-            }
-            return new Range2i(center - extents + 1, center + extents);
-        }
-
         public static Range2i FromMinAndSize(Vector2i min, Vector2i size)
         {
             if (size.AnyNegative)
@@ -67,6 +53,15 @@ namespace Votyra.Core.Models
         public static Range2i FromMinAndMax(Vector2i min, Vector2i max)
         {
             return new Range2i(min, max);
+        }
+
+        public Area2i? ToArea2i()
+        {
+            if (Size == Vector2i.Zero)
+            {
+                return null;
+            }
+            return Area2i.FromMinAndMax(Min, Max - Vector2i.One);
         }
 
         public static bool operator ==(Range2i a, Range2i b)
@@ -95,7 +90,7 @@ namespace Votyra.Core.Models
             if (this.Size == Vector2i.Zero || that.Size == Vector2i.Zero)
                 return false;
 
-            return this.Min <= that.Max && that.Min <= this.Max;
+            return this.Min < that.Max && that.Min < this.Max;
         }
 
         public Range2i CombineWith(Range2i that)
@@ -122,11 +117,6 @@ namespace Votyra.Core.Models
             return Range2i.FromMinAndMax(min, max);
         }
 
-        public Range2f ToBounds()
-        {
-            return Range2f.FromMinAndMax(Min.ToVector2f(), Max.ToVector2f());
-        }
-
         public Range2i IntersectWith(Range2i that)
         {
             if (this.Size == Vector2i.Zero || that.Size == Vector2i.Zero)
@@ -140,8 +130,12 @@ namespace Votyra.Core.Models
 
         public Range2i UnionWith(Range2i? that)
         {
-            return this;
+            if (that == null)
+                return this;
+            else
+                return UnionWith(that.Value);
         }
+
         public Range2i UnionWith(Range2i that)
         {
             if (this.Size == Vector2i.Zero || that.Size == Vector2i.Zero)
@@ -176,7 +170,7 @@ namespace Votyra.Core.Models
 
         public override string ToString()
         {
-            return $"min:{Min} max:{Max} size:{Size}";
+            return $"Range2i: min={Min} max={Max} size={Size}";
         }
     }
 }

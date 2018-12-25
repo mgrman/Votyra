@@ -14,22 +14,20 @@ namespace Votyra.Core.Painting.Commands
 {
     public abstract class PaintCommand : IPaintCommand, ITickable
     {
+        [Inject]
+        protected readonly IEditableImage2i _editableImage;
+
         protected int _maxStrength;
         protected Vector2i _cell;
-
-        protected virtual int PeriodMs { get; } = 200;
 
         [InjectOptional]
         protected IEditableMask2e _editableMask;
 
-        [Inject]
-        protected readonly IEditableImage2i _editableImage;
-
         private readonly object _invokeLock = new object();
-
         private LinkedList<(Vector2i cell, int maxStrength)> _invocationPath = new LinkedList<(Vector2i cell, int maxStrength)>();
-
         private (Vector2i cell, int maxStrength)? _lastInvocation;
+        protected virtual int PeriodMs { get; } = 200;
+
         public virtual void Selected()
         {
         }
@@ -58,6 +56,13 @@ namespace Votyra.Core.Painting.Commands
 
                 InvokeOnPath(previous, next);
             }
+        }
+
+        public void StopInvocation()
+        {
+            OnInvocationStopping();
+            _invocationPath.Clear();
+            _lastInvocation = null;
         }
 
         protected void InvokeOnPath((Vector2i cell, int maxStrength) from, (Vector2i cell, int maxStrength) to)
@@ -120,30 +125,33 @@ namespace Votyra.Core.Painting.Commands
             var absStrength = Math.Abs(maxStrength);
             var absExtents = absStrength - 1;
 
-            using (var image = _editableImage.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(absStrength, absStrength))))
+            var requestedArea = Range2i.FromMinAndMax(cell - absStrength + 1, cell + absStrength);
+            using (var image = _editableImage.RequestAccess(requestedArea))
             {
-                using (var mask = _editableMask?.RequestAccess(Range2i.FromCenterAndExtents(cell, new Vector2i(absStrength, absStrength))))
+                using (var mask = _editableMask?.RequestAccess(requestedArea))
                 {
+                    var givenArea = image.Area
+                        .IntersectWith(mask.Area)
+                        .ToArea2i();
+                    if (givenArea == null)
+                        return;
+                    var workableArea = givenArea.Value;
+                    if (!workableArea.Contains(cell))
+                        return;
+
                     PrepareWithClickedValue(image[cell]);
-                    for (int ox = -absExtents; ox <= absExtents; ox++)
+                    workableArea.ForeachPointInclusive(index =>
                     {
-                        for (int oy = -absExtents; oy <= absExtents; oy++)
-                        {
-                            var index = cell + new Vector2i(ox, oy);
-                            var cellStrength = (absStrength - Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy))) * Math.Sign(maxStrength);
-                            image[index] = Invoke(image[index], cellStrength);
-                            mask[index] = Invoke(mask[index], cellStrength);
-                        }
-                    }
+                        int ox = index.X - cell.X;
+                        int oy = index.Y - cell.Y;
+
+                        var cellStrength = (absStrength - Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy))) * Math.Sign(maxStrength);
+                        image[index] = Invoke(image[index], cellStrength);
+                        mask[index] = Invoke(mask[index], cellStrength);
+                    });
+
                 }
             }
-        }
-
-        public void StopInvocation()
-        {
-            OnInvocationStopping();
-            _invocationPath.Clear();
-            _lastInvocation = null;
         }
 
         protected virtual void OnNewInvocationData()

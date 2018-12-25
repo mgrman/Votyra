@@ -2,21 +2,21 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    public struct Range1i : IEquatable<Range1i>
+    public struct Area1i : IEquatable<Area1i>
     {
-        public static readonly Range1i Zero = new Range1i(0, 0);
-        public static readonly Range1i PlusMinusOne = new Range1i(-1, 1);
+        public static readonly Area1i Zero = new Area1i(0, 0);
+        public static readonly Area1i PlusMinusOne = new Area1i(-1, 1);
 
         public readonly int Min;
         public readonly int Max;
 
-        public Range1i(int min, int max)
+        public Area1i(int min, int max)
         {
             this.Min = Math.Min(min, max);
             this.Max = Math.Max(min, max);
         }
 
-        public Range1i(Area1f range)
+        public Area1i(Area1f range)
             : this((int)Math.Floor(range.Min), (int)Math.Floor(range.Max))
         {
         }
@@ -25,42 +25,42 @@ namespace Votyra.Core.Models
 
         public int FlooredCenter => (Max + Min) / 2;
 
-        public int Size => Max - Min;
+        public int Size => Max - Min + 1;
 
-        public static Range1i operator +(Range1i a, Range1i b)
+        public static Area1i operator +(Area1i a, Area1i b)
         {
-            return new Range1i(a.Min + b.Min, a.Max + b.Max);
+            return new Area1i(a.Min + b.Min, a.Max + b.Max);
         }
 
-        public static Range1i operator -(Range1i a, Range1i b)
+        public static Area1i operator -(Area1i a, Area1i b)
         {
-            return new Range1i(a.Min - b.Min, a.Max - b.Max);
+            return new Area1i(a.Min - b.Min, a.Max - b.Max);
         }
 
-        public static bool operator ==(Range1i a, Range1i b)
+        public static bool operator ==(Area1i a, Area1i b)
         {
             return a.Min == b.Min && a.Max == b.Max;
         }
 
-        public static bool operator !=(Range1i a, Range1i b)
+        public static bool operator !=(Area1i a, Area1i b)
         {
             return a.Min != b.Min || a.Max != b.Max;
         }
 
-        public void ForeachPointExlusive(Action<int> action)
+        public void ForeachPointInclusive(Action<int> action)
         {
-            for (int i = this.Min; i < this.Max; i++)
+            for (int i = this.Min; i <= this.Max; i++)
             {
                 action(i);
             }
         }
 
-        public Range1i UnionWith(Range1i range)
+        public Area1i UnionWith(Area1i range)
         {
-            return new Range1i(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
+            return new Area1i(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
         }
 
-        public Range1i? UnionWith(Range1i? range)
+        public Area1i? UnionWith(Area1i? range)
         {
             if (range == null)
             {
@@ -69,17 +69,17 @@ namespace Votyra.Core.Models
             return UnionWith(range.Value);
         }
 
-        public bool Equals(Range1i other)
+        public bool Equals(Area1i other)
         {
             return this == other;
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Range1i))
+            if (!(obj is Area1i))
                 return false;
 
-            return this.Equals((Range1i)obj);
+            return this.Equals((Area1i)obj);
         }
 
         public override int GetHashCode()

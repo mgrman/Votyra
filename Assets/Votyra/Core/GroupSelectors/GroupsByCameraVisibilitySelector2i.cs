@@ -32,7 +32,7 @@ namespace Votyra.Core.GroupSelectors
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition).XY;
 
-            var localCameraBounds = Range2f.FromMinAndSize(cameraPositionLocal, new Vector2f());
+            var localCameraBounds = Area2f.FromMinAndSize(cameraPositionLocal, new Vector2f());
             foreach (var frustumCorner in frustumCorners)
             {
                 var vector = parentContainerWorldToLocalMatrix
@@ -52,7 +52,7 @@ namespace Votyra.Core.GroupSelectors
             cameraBoundsGroups.ForeachPointExlusive(group =>
             {
                 var groupBoundsMin = (group * _cellInGroupCount).ToVector2f().ToVector3f(minZ);
-                var groupBounds = Range3f.FromMinAndSize(groupBoundsMin, bounds_size);
+                var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, bounds_size);
 
                 bool isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)

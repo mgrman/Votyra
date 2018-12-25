@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace Votyra.Core.Models
 {
-    public struct Range3f : IEquatable<Range3f>
+    public struct Area3f : IEquatable<Area3f>
     {
-        public static readonly Range3f zero = new Range3f();
+        public static readonly Area3f zero = new Area3f();
 
         public readonly Vector3f Min;
 
         public readonly Vector3f Max;
 
-        private Range3f(Vector3f min, Vector3f max)
+        private Area3f(Vector3f min, Vector3f max)
         {
             this.Min = min;
             this.Max = max;
@@ -46,68 +46,68 @@ namespace Votyra.Core.Models
             }
         }
 
-        public static Range3f FromCenterAndExtents(Vector3f center, Vector3f extents)
+        public static Area3f FromCenterAndExtents(Vector3f center, Vector3f extents)
         {
             if (extents.AnyNegative)
             {
-                throw new InvalidOperationException($"When creating {nameof(Range3f)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
+                throw new InvalidOperationException($"When creating {nameof(Area3f)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
             }
-            return new Range3f(center - extents, center + extents);
+            return new Area3f(center - extents, center + extents);
         }
 
-        public static Range3f FromMinAndMax(Vector3f min, Vector3f max)
+        public static Area3f FromMinAndMax(Vector3f min, Vector3f max)
         {
-            return new Range3f(min, max);
+            return new Area3f(min, max);
         }
 
-        public static Range3f FromMinAndSize(Vector3f min, Vector3f size)
+        public static Area3f FromMinAndSize(Vector3f min, Vector3f size)
         {
             if (size.AnyNegative)
             {
-                throw new InvalidOperationException($"When creating {nameof(Range3f)} using min '{min}' and size '{size}', size cannot have a negative coordinate!");
+                throw new InvalidOperationException($"When creating {nameof(Area3f)} using min '{min}' and size '{size}', size cannot have a negative coordinate!");
             }
-            return new Range3f(min, min + size);
+            return new Area3f(min, min + size);
         }
 
-        public static Range3f operator /(Range3f a, float b)
+        public static Area3f operator /(Area3f a, float b)
         {
-            return Range3f.FromMinAndMax(a.Min / b, a.Max / b);
+            return Area3f.FromMinAndMax(a.Min / b, a.Max / b);
         }
 
-        public static Range3f operator /(Range3f a, Vector3f b)
+        public static Area3f operator /(Area3f a, Vector3f b)
         {
-            return Range3f.FromMinAndMax(a.Min / b, a.Max / b);
+            return Area3f.FromMinAndMax(a.Min / b, a.Max / b);
         }
 
-        public static bool operator ==(Range3f a, Range3f b)
+        public static bool operator ==(Area3f a, Area3f b)
         {
             return a.Min == b.Min && a.Max == b.Max;
         }
 
-        public static bool operator !=(Range3f a, Range3f b)
+        public static bool operator !=(Area3f a, Area3f b)
         {
             return a.Min != b.Min || a.Max != b.Max;
         }
 
-        public Range3f IntersectWith(Range3f that)
+        public Area3f IntersectWith(Area3f that)
         {
             if (this.Size == Vector3f.Zero || that.Size == Vector3f.Zero)
-                return Range3f.zero;
+                return Area3f.zero;
 
             var min = Vector3f.Max(this.Min, that.Min);
             var max = Vector3f.Max(Vector3f.Min(this.Max, that.Max), min);
 
-            return Range3f.FromMinAndMax(min, max);
+            return Area3f.FromMinAndMax(min, max);
         }
 
-        public Range3f Encapsulate(Vector3f point)
+        public Area3f Encapsulate(Vector3f point)
         {
-            return Range3f.FromMinAndMax(Vector3f.Min(this.Min, point), Vector3f.Max(this.Max, point));
+            return Area3f.FromMinAndMax(Vector3f.Min(this.Min, point), Vector3f.Max(this.Max, point));
         }
 
-        public Range3f Encapsulate(Range3f bounds)
+        public Area3f Encapsulate(Area3f bounds)
         {
-            return Range3f.FromMinAndMax(Vector3f.Min(this.Min, bounds.Min), Vector3f.Max(this.Max, bounds.Max));
+            return Area3f.FromMinAndMax(Vector3f.Min(this.Min, bounds.Min), Vector3f.Max(this.Max, bounds.Max));
         }
 
         public Range3i RoundToContain()
@@ -115,17 +115,17 @@ namespace Votyra.Core.Models
             return Range3i.FromMinAndMax(this.Min.FloorToVector3i(), this.Max.CeilToVector3i());
         }
 
-        public bool Equals(Range3f other)
+        public bool Equals(Area3f other)
         {
             return this == other;
         }
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Range3f))
+            if (!(obj is Area3f))
                 return false;
 
-            return this.Equals((Range3f)obj);
+            return this.Equals((Area3f)obj);
         }
 
         public override int GetHashCode()
@@ -138,7 +138,7 @@ namespace Votyra.Core.Models
 
         public override string ToString()
         {
-            return $"center:{Center} size:{Size}";
+            return $"Area3f: min={Min} max={Max} size={Size}";
         }
     }
 }

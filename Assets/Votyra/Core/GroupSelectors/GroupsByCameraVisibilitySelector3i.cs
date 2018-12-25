@@ -36,7 +36,7 @@ namespace Votyra.Core.GroupSelectors
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition);
 
-            var localCameraBounds = Range3f.FromMinAndSize(cameraPositionLocal, new Vector3f());
+            var localCameraBounds = Area3f.FromMinAndSize(cameraPositionLocal, new Vector3f());
             foreach (var frustumCorner in frustumCorners)
             {
                 var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner));
@@ -90,7 +90,7 @@ namespace Votyra.Core.GroupSelectors
             return new GroupActions<Vector3i>(groupsToRecompute, groupsToKeep);
         }
 
-        private bool TestPlanesAABB(IEnumerable<Plane3f> planes, Range3f bounds)
+        private bool TestPlanesAABB(IEnumerable<Plane3f> planes, Area3f bounds)
         {
             var min = bounds.Min;
             var max = bounds.Max;

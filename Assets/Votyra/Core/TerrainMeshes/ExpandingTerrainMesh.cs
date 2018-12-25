@@ -14,7 +14,7 @@ namespace Votyra.Core.TerrainMeshes
             Normals = new List<Vector3f>();
         }
 
-        public Range3f MeshBounds { get; private set; }
+        public Area3f MeshBounds { get; private set; }
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
         public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
         public List<Vector3f> Vertices { get; }
@@ -27,7 +27,7 @@ namespace Votyra.Core.TerrainMeshes
 
         public Vector3f this[int point] => Vertices[point];
 
-        public void Clear(Range3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
+        public void Clear(Area3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
             MeshBounds = meshBounds;
             VertexPostProcessor = vertexPostProcessor;

@@ -46,7 +46,7 @@ namespace Votyra.Core.Pooling
             Pool.ReturnObject(this, this.TriangleCount);
         }
 
-        public void Clear(Range3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
+        public void Clear(Area3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
             Mesh.Clear(meshBounds, vertexPostProcessor, uvAdjustor);
         }
