@@ -34,11 +34,6 @@ namespace Votyra.Core.Models
             return Range2i.FromMinAndMax(Min - distance, Max + distance);
         }
 
-        public Range2i CeilTo2()
-        {
-            return Range2i.FromMinAndSize(Min, Size + Size % 2);
-        }
-
         public Vector2i Size => Max - Min;
 
         public static Range2i FromMinAndSize(Vector2i min, Vector2i size)

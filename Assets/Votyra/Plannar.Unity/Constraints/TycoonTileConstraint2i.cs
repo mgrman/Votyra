@@ -54,7 +54,7 @@ namespace Votyra.Plannar.Images.Constraints
             _direction = direction;
             _editableMatrix = editableMatrix;
             Constrain();
-            return _invalidatedCellArea.CeilTo2();
+            return _invalidatedCellArea;
         }
 
         public virtual void Constrain()
