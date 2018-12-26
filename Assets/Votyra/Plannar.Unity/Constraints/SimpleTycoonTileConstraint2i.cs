@@ -14,6 +14,7 @@ namespace Votyra.Plannar.Images.Constraints
 
         private IComparer<Height> _comparer;
         private Func<Vector2i, Height> _getValue;
+        
         public SimpleTycoonTileConstraint2i([ConfigInject("scaleFactor")] int scaleFactor)
             : base(scaleFactor)
         {
