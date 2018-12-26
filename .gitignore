@@ -306,3 +306,7 @@ typings/
 
 # UserAddons
 /Assets/UserAddons
+
+# Rider
+/.idea
+
