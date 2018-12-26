@@ -10,7 +10,7 @@ namespace Votyra.Core.Painting.Commands
 
     public class IncreaseOrDecrease : PaintCommand
     {
-        protected override Height Invoke(Height value, int strength)
+        protected override Height1i Invoke(Height1i value, int strength)
         {
             return value + strength.CreateHeightDifference();
         }

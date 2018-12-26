@@ -7,9 +7,8 @@ using Zenject;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class BicubicTerrainMesher2i : TerrainMesher2i
+    public class BicubicTerrainMesher2i : TerrainMesher2f
     {
-        protected readonly bool _ensureFlat;
         protected readonly ICellComputer _mainCellComputer;
         protected readonly ICellComputer _maskCellComputer;
         protected readonly Vector3f _noiseScale;
@@ -84,10 +83,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected virtual IInterpolator CreateInterpolator()
         {
             IInterpolator interpolator = new BicubicInterpolator();
-            if (_ensureFlat)
-            {
-                interpolator = new EnsureFlatInterpolatorDecorator(interpolator);
-            }
+            //            if (_ensureFlat)
+            //            {
+            //                interpolator = new EnsureFlatInterpolatorDecorator(interpolator);
+            //            }
 
             return interpolator;
         }
@@ -102,13 +101,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return CreateCellComputer(_subdivisionValueRange, MaskSampleHandler);
         }
 
-        protected virtual ICellComputer CreateCellComputer(Range2i range, Func<Vector2i, SampledData2f> sample)
+        protected virtual ICellComputer CreateCellComputer(Range2i range, Func<Vector2i, SampledData2hf> sample)
         {
             return new CellComputer(range, _subdivision, sample, CreateInterpolator());
         }
 
-        protected SampledData2f ImageSampleHandler(Vector2i pos) => _image.SampleCell(pos).ToSampledData2F();
+        protected SampledData2hf ImageSampleHandler(Vector2i pos) => _image.SampleCell(pos).ToSampledData2hf();
 
-        protected SampledData2f MaskSampleHandler(Vector2i pos) => _mask.SampleCell(pos).ToSampledData2F();
+        protected SampledData2hf MaskSampleHandler(Vector2i pos) => _mask.SampleCell(pos).ToSampledData2hf();
     }
 }

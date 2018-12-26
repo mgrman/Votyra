@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class TerrainMesher2i : ITerrainMesher2i
+    public class TerrainMesher2f : ITerrainMesher2f
     {
         protected const int QuadToTriangles = 2;
         protected readonly Vector2i _cellInGroupCount;
@@ -17,13 +17,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         protected Vector3f _bounds_size;
         protected Vector2i _groupPosition;
-        protected IImage2i _image;
+        protected IImage2f _image;
         protected IMask2e _mask;
         protected ITerrainMesh _mesh;
-        protected Height _minZ;
+        protected Height1f _minZ;
         protected IPooledTerrainMesh _pooledMesh;
 
-        public TerrainMesher2i(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor)
+        public TerrainMesher2f(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor)
         {
             _vertexPostProcessor = vertexPostProcessor;
             _uvPostProcessor = uvPostProcessor;
@@ -60,7 +60,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return _pooledMesh;
         }
 
-        public virtual void Initialize(IImage2i image, IMask2e mask)
+        public virtual void Initialize(IImage2f image, IMask2e mask)
         {
             _image = image;
             _mask = mask;

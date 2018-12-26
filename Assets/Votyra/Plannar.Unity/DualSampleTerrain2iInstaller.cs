@@ -11,9 +11,9 @@ namespace Votyra.Plannar.Unity
         public override void InstallBindings()
         {
             Container.Rebind<IImageConstraint2i>().To<DualSampledTycoonTileConstraint2i>().AsSingle();
-            Container.Rebind<ITerrainMesher2i>().To<BicubicTerrainMesher2i>().AsSingle();
+            Container.Rebind<ITerrainMesher2f>().To<BicubicTerrainMesher2i>().AsSingle();
             Container.Rebind<ITerrainVertexPostProcessor>().To<WallsVertexPostProcessor>().AsSingle();
-            Container.Rebind<ITerrainUVPostProcessor>().To<DualSampleTerrainUVPostProcessor>().AsSingle();
+            Container.BindInterfacesAndSelfTo<DualSampleTerrainUVPostProcessor>().AsSingle();
         }
     }
 }

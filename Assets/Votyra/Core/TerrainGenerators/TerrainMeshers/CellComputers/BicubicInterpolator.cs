@@ -14,7 +14,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
 
         public float[,] InterpolationMatrix { get; private set; }
 
-        public virtual void PrepareInterpolation(Vector2i cell, Func<Vector2i, SampledData2f> sampleFunc)
+        public virtual void PrepareInterpolation(Vector2i cell, Func<Vector2i, SampledData2hf> sampleFunc)
         {
             var data_x0y0 = sampleFunc(cell - Vector2i.One + new Vector2i(0, 0));
             // var data_x0y1 = _imageSampler.Sample(_image, cell - Vector2i.One + new Vector2i(0, 1));
@@ -27,28 +27,28 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
             // var data_x2y1 = _imageSampler.Sample(_image, cell - Vector2i.One + new Vector2i(2, 1));
             var data_x2y2 = sampleFunc(cell - Vector2i.One + new Vector2i(2, 2));
 
-            InterpolationMatrix[0, 0] = data_x0y0.x0y0;
-            InterpolationMatrix[0, 1] = data_x0y0.x0y1;
-            InterpolationMatrix[0, 2] = data_x0y2.x0y0;
-            InterpolationMatrix[0, 3] = data_x0y2.x0y1;
+            InterpolationMatrix[0, 0] = data_x0y0.x0y0.RawValue;
+            InterpolationMatrix[0, 1] = data_x0y0.x0y1.RawValue;
+            InterpolationMatrix[0, 2] = data_x0y2.x0y0.RawValue;
+            InterpolationMatrix[0, 3] = data_x0y2.x0y1.RawValue;
 
-            InterpolationMatrix[1, 0] = data_x0y0.x1y0;
-            InterpolationMatrix[1, 1] = data_x0y0.x1y1;
-            InterpolationMatrix[1, 2] = data_x0y2.x1y0;
-            InterpolationMatrix[1, 3] = data_x0y2.x1y1;
+            InterpolationMatrix[1, 0] = data_x0y0.x1y0.RawValue;
+            InterpolationMatrix[1, 1] = data_x0y0.x1y1.RawValue;
+            InterpolationMatrix[1, 2] = data_x0y2.x1y0.RawValue;
+            InterpolationMatrix[1, 3] = data_x0y2.x1y1.RawValue;
 
-            InterpolationMatrix[2, 0] = data_x2y0.x0y0;
-            InterpolationMatrix[2, 1] = data_x2y0.x0y1;
-            InterpolationMatrix[2, 2] = data_x2y2.x0y0;
-            InterpolationMatrix[2, 3] = data_x2y2.x0y1;
+            InterpolationMatrix[2, 0] = data_x2y0.x0y0.RawValue;
+            InterpolationMatrix[2, 1] = data_x2y0.x0y1.RawValue;
+            InterpolationMatrix[2, 2] = data_x2y2.x0y0.RawValue;
+            InterpolationMatrix[2, 3] = data_x2y2.x0y1.RawValue;
 
-            InterpolationMatrix[3, 0] = data_x2y0.x1y0;
-            InterpolationMatrix[3, 1] = data_x2y0.x1y1;
-            InterpolationMatrix[3, 2] = data_x2y2.x1y0;
-            InterpolationMatrix[3, 3] = data_x2y2.x1y1;
+            InterpolationMatrix[3, 0] = data_x2y0.x1y0.RawValue;
+            InterpolationMatrix[3, 1] = data_x2y0.x1y1.RawValue;
+            InterpolationMatrix[3, 2] = data_x2y2.x1y0.RawValue;
+            InterpolationMatrix[3, 3] = data_x2y2.x1y1.RawValue;
         }
 
-        public float Sample(Vector2f pos)
+        public Height1f Sample(Vector2f pos)
         {
             float xfract = pos.X;
             float yfract = pos.Y;
@@ -57,7 +57,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
             float col2 = Intepolate(InterpolationMatrix[0, 2], InterpolationMatrix[1, 2], InterpolationMatrix[2, 2], InterpolationMatrix[3, 2], xfract);
             float col3 = Intepolate(InterpolationMatrix[0, 3], InterpolationMatrix[1, 3], InterpolationMatrix[2, 3], InterpolationMatrix[3, 3], xfract);
             float value = Intepolate(col0, col1, col2, col3, yfract);
-            return value;
+            return new Height1f(value);
         }
 
         // Monotone cubic interpolation

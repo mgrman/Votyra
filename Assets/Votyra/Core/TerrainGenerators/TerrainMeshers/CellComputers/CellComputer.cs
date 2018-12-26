@@ -8,10 +8,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
         protected readonly IInterpolator _interpolator;
         protected readonly Vector3f[,] _matrixToFill;
         protected readonly Range2i _range;
-        protected readonly Func<Vector2i, SampledData2f> _sample;
+        protected readonly Func<Vector2i, SampledData2hf> _sample;
         protected readonly int _subdivision;
 
-        public CellComputer(Range2i range, int subdivision, Func<Vector2i, SampledData2f> sample, IInterpolator interpolator)
+        public CellComputer(Range2i range, int subdivision, Func<Vector2i, SampledData2hf> sample, IInterpolator interpolator)
         {
             this._range = range;
             this._subdivision = subdivision;

@@ -10,7 +10,7 @@ namespace Votyra.Core.Painting.Commands
     public class Flatten : PaintCommand
     {
         private const float smoothSpeedRelative = 0.2f;
-        private Height? _centerValue;
+        private Height1i? _centerValue;
 
         protected override void OnInvocationStopping()
         {
@@ -18,15 +18,15 @@ namespace Votyra.Core.Painting.Commands
             _centerValue = null;
         }
 
-        protected override void PrepareWithClickedValue(Height clickedValue)
+        protected override void PrepareWithClickedValue(Height1i clickedValue)
         {
             _centerValue = _centerValue ?? clickedValue;
             base.PrepareWithClickedValue(clickedValue);
         }
 
-        protected override Height Invoke(Height value, int strength)
+        protected override Height1i Invoke(Height1i value, int strength)
         {
-            return (Height.Lerp(_centerValue ?? Height.Default, value, smoothSpeedRelative) - value) * Math.Sign(strength) + value;
+            return (Height1i.Lerp(_centerValue ?? Height1i.Default, value, smoothSpeedRelative) - value) * Math.Sign(strength) + value;
         }
     }
 }

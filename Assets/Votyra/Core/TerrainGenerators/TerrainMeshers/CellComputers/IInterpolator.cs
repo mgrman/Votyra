@@ -7,8 +7,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
     {
         float[,] InterpolationMatrix { get; }
 
-        void PrepareInterpolation(Vector2i cell, Func<Vector2i, SampledData2f> sampleFunc);
+        void PrepareInterpolation(Vector2i cell, Func<Vector2i, SampledData2hf> sampleFunc);
 
-        float Sample(Vector2f pos);
+        Height1f Sample(Vector2f pos);
     }
 }

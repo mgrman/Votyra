@@ -162,11 +162,11 @@ namespace Votyra.Core.Painting.Commands
         {
         }
 
-        protected virtual void PrepareWithClickedValue(Height clickedValue)
+        protected virtual void PrepareWithClickedValue(Height1i clickedValue)
         {
         }
 
-        protected virtual Height Invoke(Height value, int localStrength) => value;
+        protected virtual Height1i Invoke(Height1i value, int localStrength) => value;
 
         protected virtual MaskValues Invoke(MaskValues value, int localStrength) => value;
     }

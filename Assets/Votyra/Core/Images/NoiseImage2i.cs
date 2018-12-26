@@ -14,9 +14,9 @@ namespace Votyra.Core.Images
         public Vector3f Offset { get; private set; }
 
         public Vector3f Scale { get; private set; }
-        public Range1h RangeZ { get { return new Range1h(((int)Offset.Z).CreateHeight(), ((int)(Offset.Z + Scale.Z)).CreateHeight()); } }
+        public Range1hi RangeZ { get { return new Range1hi(((int)Offset.Z).CreateHeight(), ((int)(Offset.Z + Scale.Z)).CreateHeight()); } }
 
-        public Height Sample(Vector2i point)
+        public Height1i Sample(Vector2i point)
         {
             point = (point / Scale.XY + Offset.XY).RoundToVector2i();
 

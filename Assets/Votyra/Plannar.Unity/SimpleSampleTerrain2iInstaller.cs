@@ -1,3 +1,4 @@
+using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
@@ -11,7 +12,7 @@ namespace Votyra.Plannar.Unity
         public override void InstallBindings()
         {
             Container.Rebind<IImageConstraint2i>().To<SimpleTycoonTileConstraint2i>().AsSingle();
-            Container.Rebind<ITerrainMesher2i>().To<BicubicTerrainMesher2i>().AsSingle();
+            Container.Rebind<ITerrainMesher2f>().To<BicubicTerrainMesher2i>().AsSingle();
         }
     }
 }

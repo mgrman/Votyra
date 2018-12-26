@@ -12,11 +12,11 @@ namespace Votyra.Core.Images
             switch (Operation)
             {
                 case Operations.Add:
-                    RangeZ = new Range1h(imageA.RangeZ.Min + (imageB.RangeZ.Min - Height.Default), imageA.RangeZ.Max + (imageB.RangeZ.Max - Height.Default));
+                    RangeZ = new Range1hi(imageA.RangeZ.Min + (imageB.RangeZ.Min - Height1i.Default), imageA.RangeZ.Max + (imageB.RangeZ.Max - Height1i.Default));
                     break;
 
                 case Operations.Subtract:
-                    RangeZ = new Range1h(imageA.RangeZ.Min - (imageB.RangeZ.Min - Height.Default), imageA.RangeZ.Max - (imageB.RangeZ.Max - Height.Default));
+                    RangeZ = new Range1hi(imageA.RangeZ.Min - (imageB.RangeZ.Min - Height1i.Default), imageA.RangeZ.Max - (imageB.RangeZ.Max - Height1i.Default));
                     break;
 
                 // case Operations.Multiply:
@@ -28,7 +28,7 @@ namespace Votyra.Core.Images
                 //     break;
 
                 default:
-                    RangeZ = Range1h.Default;
+                    RangeZ = Range1hi.Default;
                     break;
             }
         }
@@ -44,19 +44,19 @@ namespace Votyra.Core.Images
         public IImage2i ImageA { get; private set; }
         public IImage2i ImageB { get; private set; }
         public Operations Operation { get; private set; }
-        public Range1h RangeZ { get; private set; }
+        public Range1hi RangeZ { get; private set; }
 
-        public Height Sample(Vector2i point)
+        public Height1i Sample(Vector2i point)
         {
-            Height a = ImageA.Sample(point);
-            Height b = ImageB.Sample(point);
+            Height1i a = ImageA.Sample(point);
+            Height1i b = ImageB.Sample(point);
             switch (Operation)
             {
                 case Operations.Add:
-                    return a + (b - Height.Default);
+                    return a + (b - Height1i.Default);
 
                 case Operations.Subtract:
-                    return a + (Height.Default - b);
+                    return a + (Height1i.Default - b);
 
                 // case Operations.Multiply:
                 //     return a * b;
@@ -65,7 +65,7 @@ namespace Votyra.Core.Images
                 //     return a / b;
 
                 default:
-                    return Height.Default;
+                    return Height1i.Default;
             }
         }
     }

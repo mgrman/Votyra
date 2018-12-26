@@ -13,7 +13,7 @@ namespace Votyra.Core.Images
 
         public bool Sample(Vector3i point)
         {
-            return Image.Sample(new Vector2i(point.X, point.Y)) - point.Z.CreateHeight() > Height.Difference.Zero;
+            return Image.Sample(new Vector2i(point.X, point.Y)) - point.Z.CreateHeight() > Height1i.Difference.Zero;
         }
 
         public bool AnyData(Range3i range)

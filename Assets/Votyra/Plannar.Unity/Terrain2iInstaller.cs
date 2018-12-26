@@ -4,6 +4,7 @@ using Votyra.Core;
 using Votyra.Core.Behaviours;
 using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Painting;
@@ -32,6 +33,7 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<InitialImageConfig>().AsSingle();
             Container.BindInterfacesAndSelfTo<TerrainConfig>().AsSingle();
             Container.BindInterfacesAndSelfTo<MaterialConfig>().AsSingle();
+            Container.BindInterfacesAndSelfTo<InterpolationConfig>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<TerrainGenerator2i>().AsSingle();
             Container.BindInterfacesAndSelfTo<TerrainMeshUpdater<Vector2i>>().AsSingle();
@@ -40,6 +42,8 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<InitialStateSetter2f>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<EditableMatrixImage2i>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditableMatrixMask2e>().AsSingle();
+            Container.BindInterfacesAndSelfTo<Image2iTo2fProvider>().AsSingle();
+            Container.BindInterfacesAndSelfTo<CompositeUVPostProcessor>().AsSingle();
 
             var meshRoot = new GameObject("MeshRoot");
             meshRoot.transform.SetParent(this.transform, false);

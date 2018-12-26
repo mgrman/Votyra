@@ -13,7 +13,7 @@ namespace Votyra.Plannar.Images.Constraints
         private readonly int _scaleFactor;
         protected Range2i _invalidatedCellArea;
         protected Direction _direction;
-        protected Matrix2<Height> _editableMatrix;
+        protected Matrix2<Height1i> _editableMatrix;
         public TycoonTileConstraint2i([ConfigInject("scaleFactor")] int scaleFactor)
         {
             _scaleFactor = scaleFactor;
@@ -22,29 +22,29 @@ namespace Votyra.Plannar.Images.Constraints
                 _tileMap = new[]
                     {
                         //plane
-                        new SampledData2h(0, 0, 0, 0),
+                        new SampledData2hi(0, 0, 0, 0),
 
                         //slope
-                        new SampledData2h(-1, 0, -1, 0),
+                        new SampledData2hi(-1, 0, -1, 0),
 
                         //slopeDiagonal
-                        new SampledData2h(-2, -1, -1, 0),
+                        new SampledData2hi(-2, -1, -1, 0),
 
                         //partialUpSlope
-                        new SampledData2h(-1, -1, -1, 0),
+                        new SampledData2hi(-1, -1, -1, 0),
 
                         //partialDownSlope
-                        new SampledData2h(-1, 0, 0, 0),
+                        new SampledData2hi(-1, 0, 0, 0),
 
                         //slopeDiagonal
-                        new SampledData2h(0, -1, -1, 0)
+                        new SampledData2hi(0, -1, -1, 0)
                     }
                     .CreateExpandedTileMap2i(scaleFactor);
                 _tileMapScaleFactor = scaleFactor;
             }
         }
 
-        public Range2i FixImage(Matrix2<Height> editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        public Range2i FixImage(Matrix2<Height1i> editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
             _invalidatedCellArea = invalidatedImageArea;
             if (direction != Direction.Up && direction != Direction.Down)
@@ -84,7 +84,7 @@ namespace Votyra.Plannar.Images.Constraints
             }
         }
 
-        protected SampledData2h Process(SampledData2h sampleData)
+        protected SampledData2hi Process(SampledData2hi sampleData)
         {
             switch (_direction)
             {
@@ -96,15 +96,15 @@ namespace Votyra.Plannar.Images.Constraints
                     return ProcessDown(sampleData);
             }
         }
-        protected SampledData2h ProcessDown(SampledData2h sampleData) => -ProcessInner(-sampleData);
+        protected SampledData2hi ProcessDown(SampledData2hi sampleData) => -ProcessInner(-sampleData);
 
-        protected SampledData2h ProcessUp(SampledData2h sampleData) => ProcessInner(sampleData);
+        protected SampledData2hi ProcessUp(SampledData2hi sampleData) => ProcessInner(sampleData);
 
-        private SampledData2h ProcessInner(SampledData2h sampleData)
+        private SampledData2hi ProcessInner(SampledData2hi sampleData)
         {
-            var height = sampleData.Max - Height.Default;
-            SampledData2h normalizedHeightData = (sampleData - height).ClipMin(-2.CreateHeight() * _scaleFactor);
-            SampledData2h choosenTemplateTile = _tileMap.GetTile(normalizedHeightData);
+            var height = sampleData.Max - Height1i.Default;
+            SampledData2hi normalizedHeightData = (sampleData - height).ClipMin(-2.CreateHeight() * _scaleFactor);
+            SampledData2hi choosenTemplateTile = _tileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
         }
     }

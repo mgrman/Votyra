@@ -35,7 +35,7 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddQuad(this ITerrainMesh mesh, Vector2f position, SampledData2h data, SampledMask2e maskData, Func<Vector3f?, Vector3f?> postProcess = null)
+        public static void AddQuad(this ITerrainMesh mesh, Vector2f position, SampledData2hf data, SampledMask2e maskData, Func<Vector3f?, Vector3f?> postProcess = null)
         {
             var x0y0 = maskData.x0y0.IsNotHole() ? new Vector2f(position.X, position.Y).ToVector3f(data.x0y0) : (Vector3f?)null;
             var x0y1 = maskData.x0y1.IsNotHole() ? new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1) : (Vector3f?)null;
@@ -107,7 +107,7 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2h data, SampledMask2e maskData, SampledData2h minusYres, SampledMask2e minusYresMaskData)
+        public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2hi data, SampledMask2e maskData, SampledData2hi minusYres, SampledMask2e minusYresMaskData)
         {
             if (maskData.x1y0.IsNotHole() && maskData.x0y0.IsNotHole() && minusYresMaskData.x0y1.IsNotHole() && minusYresMaskData.x1y1.IsNotHole())
             {
@@ -124,7 +124,7 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public static void AddWallAlongY(this ITerrainMesh mesh, Vector2i position, SampledData2h data, SampledMask2e maskData, SampledData2h minusXres, SampledMask2e minusXresMaskData)
+        public static void AddWallAlongY(this ITerrainMesh mesh, Vector2i position, SampledData2hi data, SampledMask2e maskData, SampledData2hi minusXres, SampledMask2e minusXresMaskData)
         {
             if (maskData.x0y0.IsNotHole() && maskData.x0y1.IsNotHole() && minusXresMaskData.x1y0.IsNotHole() && minusXresMaskData.x1y1.IsNotHole())
             {
@@ -169,7 +169,7 @@ namespace Votyra.Core.TerrainMeshes
             mesh.AddTriangle(a, b_lower, a_lower);
         }
 
-        public static bool IsFlipped(Height x0y0, Height x0y1, Height x1y0, Height x1y1)
+        public static bool IsFlipped(Height1i x0y0, Height1i x0y1, Height1i x1y0, Height1i x1y1)
         {
             //TODO
             return false;

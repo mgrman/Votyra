@@ -15,7 +15,7 @@ namespace Votyra.Core
             Matrix4x4f cameraLocalToWorldMatrix,
             Matrix4x4f parentContainerWorldToLocalMatrix,
             IReadOnlySet<Vector2i> existingGroups,
-            IImage2i image,
+            IImage2f image,
             IMask2e mask,
             Range2i invalidatedArea)
         {
@@ -28,7 +28,7 @@ namespace Votyra.Core
             Image = image;
             Mask = mask;
 
-            RangeZ = image?.RangeZ ?? Range1h.Default;
+            RangeZ = image?.RangeZ ?? Range1hf.Default;
 
             InvalidatedArea = invalidatedArea;
 
@@ -40,9 +40,9 @@ namespace Votyra.Core
         public IEnumerable<Vector3f> CameraFrustumCorners { get; }
         public Matrix4x4f CameraLocalToWorldMatrix { get; }
         public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
-        public Range1h RangeZ { get; }
+        public Range1hf RangeZ { get; }
         public IReadOnlySet<Vector2i> ExistingGroups { get; }
-        public IImage2i Image { get; }
+        public IImage2f Image { get; }
         public IMask2e Mask { get; }
         public Range2i InvalidatedArea { get; }
 

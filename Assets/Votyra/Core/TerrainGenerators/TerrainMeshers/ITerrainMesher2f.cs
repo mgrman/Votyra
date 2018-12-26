@@ -4,10 +4,11 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public interface ITerrainMesher2i
+    public interface ITerrainMesher2f
     {
         Range2i AdjustAreaOfInfluenceOfInvalidatedArea(Range2i invalidatedArea);
-        void Initialize(IImage2i image, IMask2e mask);
+        
+        void Initialize(IImage2f image, IMask2e mask);
 
         void InitializeGroup(Vector2i group);
 

@@ -7,7 +7,10 @@ namespace Votyra.Core.Models
     /// </summary>
     public struct Range2i : IEquatable<Range2i>
     {
-        public static readonly Range2i All = new Range2i(Vector2i.FromSame(int.MinValue / 2), Vector2i.FromSame(int.MaxValue) / 2);
+        public static readonly Vector2i MinValue = Vector2i.FromSame(int.MinValue / 2);
+        public static readonly Vector2i MaxValue = Vector2i.FromSame(int.MaxValue / 2);
+        
+        public static readonly Range2i All = new Range2i(MinValue, MaxValue);
 
         public static readonly Range2i Zero = new Range2i();
 
@@ -17,8 +20,8 @@ namespace Votyra.Core.Models
 
         private Range2i(Vector2i min, Vector2i max)
         {
-            this.Min = min;
-            this.Max = max;
+            this.Min = Vector2i.Max(min, MinValue);
+            this.Max = Vector2i.Min(max, MaxValue);
             if (this.Size.AnyNegative)
             {
                 throw new InvalidOperationException($"{nameof(Range2i)} '{this}' cannot have a size be zero or negative!");

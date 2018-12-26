@@ -10,7 +10,7 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.ImageSamplers
 {
-    public class DualSampleTerrainUVPostProcessor : ITerrainUVPostProcessor
+    public class DualSampleTerrainUVPostProcessor : ITerrainUVPostProcessorStep
     {
         public static readonly Vector2f Offset = new Vector2f(0.25f, 0.25f);
         public Vector2f ProcessUV(Vector2f vertex) => vertex / 2.0f + Offset;

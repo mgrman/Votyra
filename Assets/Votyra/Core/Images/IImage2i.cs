@@ -4,8 +4,8 @@ namespace Votyra.Core.Images
 {
     public interface IImage2i
     {
-        Range1h RangeZ { get; }
+        Range1hi RangeZ { get; }
 
-        Height Sample(Vector2i point);
+        Height1i Sample(Vector2i point);
     }
 }

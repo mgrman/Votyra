@@ -10,7 +10,7 @@ namespace Votyra.Plannar.Unity
         public override void InstallBindings()
         {
             Container.Unbind<IImageConstraint2i>();
-            Container.Rebind<ITerrainMesher2i>().To<BicubicTerrainMesher2i>().AsSingle();
+            Container.Rebind<ITerrainMesher2f>().To<BicubicTerrainMesher2i>().AsSingle();
         }
     }
 }

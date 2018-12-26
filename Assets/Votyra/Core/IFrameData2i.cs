@@ -6,9 +6,9 @@ namespace Votyra.Core
 {
     public interface IFrameData2i : IFrameData, IDisposable
     {
-        Range1h RangeZ { get; }
+        Range1hf RangeZ { get; }
         IReadOnlySet<Vector2i> ExistingGroups { get; }
-        IImage2i Image { get; }
+        IImage2f Image { get; }
         IMask2e Mask { get; }
         Range2i InvalidatedArea { get; }
     }

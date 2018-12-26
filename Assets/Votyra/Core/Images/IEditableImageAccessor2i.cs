@@ -7,6 +7,6 @@ namespace Votyra.Core.Images
     {
         Range2i Area { get; }
 
-        Height this[Vector2i pos] { get; set; }
+        Height1i this[Vector2i pos] { get; set; }
     }
 }

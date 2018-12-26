@@ -30,9 +30,9 @@ namespace Votyra.Core.Images
             {
                 FillInitialState(editableImage, new[] { imageConfig.InitialData as Collider }, imageConfig.InitialDataScale.Z, root);
             }
-            if (imageConfig.InitialData is IMatrix2<Height>)
+            if (imageConfig.InitialData is IMatrix2<Height1i>)
             {
-                FillInitialState(editableImage, imageConfig.InitialData as IMatrix2<Height>, imageConfig.InitialDataScale.Z);
+                FillInitialState(editableImage, imageConfig.InitialData as IMatrix2<Height1i>, imageConfig.InitialDataScale.Z);
             }
             if (imageConfig.InitialData is IMatrix3<bool>)
             {
@@ -62,11 +62,11 @@ namespace Votyra.Core.Images
                     matrixAreaToFill.ForeachPointExlusive(pos =>
                     {
                         var value = (int)(texture.GetPixelBilinear((float)pos.X / matrixSizeX, (float)pos.Y / matrixSizeY).grayscale * scale);
-                        Height height = value.CreateHeight();
+                        Height1i height = value.CreateHeight();
                         imageAccessor[pos] = height;
                         if (maskAccessor != null)
                         {
-                            maskAccessor[pos] = (zeroIsNull && height == Height.Default) ? MaskValues.Hole : MaskValues.Terrain;
+                            maskAccessor[pos] = (zeroIsNull && height == Height1i.Default) ? MaskValues.Hole : MaskValues.Terrain;
                         }
                     });
                 }
@@ -105,7 +105,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage2i editableImage, IMatrix2<Height> texture, float scale)
+        private static void FillInitialState(IEditableImage2i editableImage, IMatrix2<Height1i> texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {

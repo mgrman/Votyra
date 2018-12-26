@@ -8,9 +8,9 @@ namespace Votyra.Core.Models
 {
     public class TileMap2i
     {
-        private readonly IReadOnlyDictionary<SampledData2h, SampledData2h> _tileMap;
+        private readonly IReadOnlyDictionary<SampledData2hi, SampledData2hi> _tileMap;
 
-        public TileMap2i(IEnumerable<SampledData2h> templates)
+        public TileMap2i(IEnumerable<SampledData2hi> templates)
         {
 #if VERBOSE
             foreach (var template in templates)
@@ -21,15 +21,15 @@ namespace Votyra.Core.Models
             Templates = templates.ToArray();
             ValueRange = Templates.RangeUnion();
 
-            _tileMap = SampledData2h
+            _tileMap = SampledData2hi
                 .GenerateAllValuesWithHoles(ValueRange)
                 .ToDictionary(inputValue => inputValue, inputValue =>
                 {
-                    SampledData2h choosenTemplateTile = default(SampledData2h);
-                    Height.Difference choosenTemplateTileDiff = Height.Difference.MaxValue;
-                    foreach (SampledData2h tile in Templates)
+                    SampledData2hi choosenTemplateTile = default(SampledData2hi);
+                    Height1i.Difference choosenTemplateTileDiff = Height1i.Difference.MaxValue;
+                    foreach (SampledData2hi tile in Templates)
                     {
-                        var value = SampledData2h.Dif(tile, inputValue);
+                        var value = SampledData2hi.Dif(tile, inputValue);
                         if (value < choosenTemplateTileDiff)
                         {
                             choosenTemplateTile = tile;
@@ -47,16 +47,16 @@ namespace Votyra.Core.Models
 #endif
         }
 
-        public IEnumerable<SampledData2h> Templates { get; }
+        public IEnumerable<SampledData2hi> Templates { get; }
 
-        public Range1h ValueRange { get; }
+        public Range1hi ValueRange { get; }
 
-        public SampledData2h GetTile(SampledData2h key)
+        public SampledData2hi GetTile(SampledData2hi key)
         {
 #if !VERBOSE
             return _tileMap[key];
 #else
-            SampledData2h value;
+            SampledData2hi value;
             if (_tileMap.TryGetValue(key, out value))
             {
                 return value;
