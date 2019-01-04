@@ -6,8 +6,8 @@ namespace Votyra.Core.TerrainMeshes
     public interface ITerrainMesh
     {
         int VertexCount { get; }
+        
         int TriangleCount { get; }
-        Vector3f this[int index] { get; }
 
         void Clear(Area3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor);
 

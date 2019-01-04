@@ -18,6 +18,8 @@ namespace Votyra.Core.Models
 
         public readonly Vector2i Max;
 
+        public bool IsEmpty => Size == Vector2i.Zero;
+
         private Range2i(Vector2i min, Vector2i max)
         {
             this.Min = Vector2i.Max(min, MinValue);
@@ -34,6 +36,10 @@ namespace Votyra.Core.Models
 
         public Range2i ExtendBothDirections(int distance)
         {
+            if (IsEmpty)
+            {
+                return this;
+            }
             return Range2i.FromMinAndMax(Min - distance, Max + distance);
         }
 

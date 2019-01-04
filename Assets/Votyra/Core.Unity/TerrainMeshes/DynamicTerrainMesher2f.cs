@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class TerrainMesher2f : ITerrainMesher2f
+    public class DynamicTerrainMesher2f : ITerrainMesher2f
     {
         protected const int QuadToTriangles = 2;
         protected readonly Vector2i _cellInGroupCount;
@@ -23,7 +23,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected Height1f _minZ;
         protected IPooledTerrainMesh _pooledMesh;
 
-        public TerrainMesher2f(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor)
+        public DynamicTerrainMesher2f(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor)
         {
             _vertexPostProcessor = vertexPostProcessor;
             _uvPostProcessor = uvPostProcessor;
@@ -39,16 +39,27 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return invalidatedArea.ExtendBothDirections(1);
         }
 
-        public virtual void AddCell(Vector2i cellInGroup)
+        public void AddGroup()
         {
-            Vector2i cell = cellInGroup + _groupPosition;
+            var samples = _image.SampleArea(Range2i.FromMinAndSize(_groupPosition, _cellInGroupCount+Vector2i.One));
 
-            Vector2i position = _groupPosition + cellInGroup;
+            for (int ix = 0; ix < _cellInGroupCount.X; ix++)
+            {
+                for (int iy = 0; iy < _cellInGroupCount.Y; iy++)
+                {
+                    var localCell = new Vector2i(ix, iy);
+                    Vector2i cell = localCell+ _groupPosition;
 
-            var data = _image.SampleCell(cell);
-            var mask = _mask.SampleCell(cell);
+                    var x0y0 = new Vector3f(cell.X + 0, cell.Y + 0, samples[ix+ 0, iy+ 0].RawValue);
+                    var x0y1 = new Vector3f(cell.X + 0, cell.Y + 1, samples[ix+ 0, iy+ 1].RawValue);
+                    var x1y0 = new Vector3f(cell.X + 1, cell.Y + 0, samples[ix+ 1, iy+ 0].RawValue);
+                    var x1y1 = new Vector3f(cell.X + 1, cell.Y + 1, samples[ix+ 1, iy+ 1].RawValue);
 
-            _mesh.AddQuad(position.ToVector2f(), data, mask);
+                    _mesh.AddQuad(x0y0,x0y1,x1y0,x1y1);
+                }
+            }
+            
+            samples.Dispose();
         }
 
 
@@ -76,13 +87,12 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             this._groupPosition = _cellInGroupCount * group;
 
-            this._pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedTerrainMesh2i>.CreateDirty(this.TriangleCount);
+            this._pooledMesh = PooledTerrainMeshContainer<ExpandingUnityTerrainMesh>.CreateDirty();
             // this._pooledMesh = PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty();
             this._mesh = this._pooledMesh.Mesh;
             _mesh.Clear(bounds, _vertexPostProcessor == null ? (Func<Vector3f, Vector3f>)null : _vertexPostProcessor.PostProcessVertex, _uvPostProcessor == null ? (Func<Vector2f, Vector2f>)null : _uvPostProcessor.ProcessUV);
 
-
-            _cellInGroupCount.ToRange2i().ForeachPointExlusive(AddCell);
+            AddGroup();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Votyra.Plannar.Unity
         public override void InstallBindings()
         {
             Container.Rebind<IImageConstraint2i>().To<SimpleTycoonTileConstraint2i>().AsSingle();
-            Container.Rebind<ITerrainMesher2f>().To<TerrainMesher2f>().AsSingle();
+            Container.Rebind<ITerrainMesher2f>().To<DynamicTerrainMesher2f>().AsSingle();
             Container.Rebind<IImage2fProvider>().To<InterpolatedImage2iTo2fProvider>().AsSingle();
             Container.BindInterfacesAndSelfTo<InterpolatedUVPostProcessorStep>().AsSingle();
             Container.Bind<ScaleAdjustor>().ToSelf().AsSingle().NonLazy();
@@ -29,8 +29,6 @@ namespace Votyra.Plannar.Unity
                 
                 root.transform.localScale=new Vector3(root.transform.localScale.x*scale, root.transform.localScale.y*scale,
                     root.transform.localScale.z);
-                
-
             }
         }
     }

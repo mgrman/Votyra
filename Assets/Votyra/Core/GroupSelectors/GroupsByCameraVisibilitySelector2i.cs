@@ -28,7 +28,7 @@ namespace Votyra.Core.GroupSelectors
             var cameraPosition = options.CameraPosition;
             var cameraLocalToWorldMatrix = options.CameraLocalToWorldMatrix;
             var parentContainerWorldToLocalMatrix = options.ParentContainerWorldToLocalMatrix;
-            var invalidatedArea = Range2i.FromMinAndMax(options.InvalidatedArea.Min - 1, options.InvalidatedArea.Max + 1); //TODO some mesh topology from image class should do this adjustment
+            var invalidatedArea = options.InvalidatedArea;
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition).XY;
 

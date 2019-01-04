@@ -2,9 +2,14 @@ using System;
 
 namespace Votyra.Core.Models
 {
+    public interface IPoolableMatrix2<T> : IMatrix2<T>, IDisposable
+    {
+        
+    }
     public interface IMatrix2<T>
     {
         Vector2i Size { get; }
+        T this[int ix,int iy] { get; set; }
         T this[Vector2i i] { get; set; }
     }
 

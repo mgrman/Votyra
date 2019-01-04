@@ -14,7 +14,23 @@ namespace Votyra.Core.Models
             Size = matrixSize;
         }
 
+        public T[,] RawData => _points;
+        
         public Vector2i Size { get; }
+
+        public T this[int ix, int iy]
+        {
+            get { return _points[ix, iy]; }
+            set
+            {
+                if (IsLocked)
+                {
+                    throw new MatrixLockedException();
+                }
+
+                _points[ix, iy] = value;
+            }
+        }
 
         public bool IsLocked => _accessLock != null;
 

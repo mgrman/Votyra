@@ -37,14 +37,6 @@ namespace Votyra.Core.TerrainGenerators
                 {
                     _mesher.InitializeGroup(group);
                 }
-                _cellInGroupCount.ToRange2i().ForeachPointExlusive(cellInGroup =>
-                {
-                    using (_profiler.Start("TerrainMesher.AddCell()"))
-                    {
-                        //process cell to mesh
-                        _mesher.AddCell(cellInGroup);
-                    }
-                });
                 using (_profiler.Start("Other"))
                 {
                     onMeshCreated(group, _mesher.GetResultingMesh());

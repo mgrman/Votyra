@@ -31,17 +31,14 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers
             InterpolationMatrix[0, 1] = data_x0y0.x0y1.RawValue;
             InterpolationMatrix[0, 2] = data_x0y2.x0y0.RawValue;
             InterpolationMatrix[0, 3] = data_x0y2.x0y1.RawValue;
-
             InterpolationMatrix[1, 0] = data_x0y0.x1y0.RawValue;
             InterpolationMatrix[1, 1] = data_x0y0.x1y1.RawValue;
             InterpolationMatrix[1, 2] = data_x0y2.x1y0.RawValue;
             InterpolationMatrix[1, 3] = data_x0y2.x1y1.RawValue;
-
             InterpolationMatrix[2, 0] = data_x2y0.x0y0.RawValue;
             InterpolationMatrix[2, 1] = data_x2y0.x0y1.RawValue;
             InterpolationMatrix[2, 2] = data_x2y2.x0y0.RawValue;
             InterpolationMatrix[2, 3] = data_x2y2.x0y1.RawValue;
-
             InterpolationMatrix[3, 0] = data_x2y0.x1y0.RawValue;
             InterpolationMatrix[3, 1] = data_x2y0.x1y1.RawValue;
             InterpolationMatrix[3, 2] = data_x2y2.x1y0.RawValue;

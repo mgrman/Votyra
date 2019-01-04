@@ -190,6 +190,11 @@ namespace Votyra.Core.Editor
                 var oldFloatValue = oldValue as float? ?? 0;
                 newValue = EditorGUILayout.FloatField(oldFloatValue, GUILayout.MaxWidth(200));
             }
+            else if (type.IsEnum)
+            {
+                var oldEnumValue = oldValue!=null && Enum.IsDefined(type, oldValue) ? oldValue as Enum:Enum.GetValues(type).GetValue(0) as Enum;
+                newValue = EditorGUILayout.EnumPopup(oldEnumValue, GUILayout.MaxWidth(200));
+            }
             else if (typeof(Vector3i).IsAssignableFrom(type))
             {
                 var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;

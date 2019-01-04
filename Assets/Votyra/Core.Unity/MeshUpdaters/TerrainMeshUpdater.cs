@@ -68,7 +68,6 @@ namespace Votyra.Core.MeshUpdaters
                         var triangleMesh = terrainMesh.Value;
                         UpdateMesh(triangleMesh, unityData.MeshFilter.sharedMesh);
 
-                        unityData.MeshCollider.sharedMesh = null;
                         unityData.MeshCollider.sharedMesh = unityData.MeshFilter.sharedMesh;
 
                         meshIndex++;
@@ -93,12 +92,60 @@ namespace Votyra.Core.MeshUpdaters
                 mesh.Clear();
             }
 
-            mesh.vertices = triangleMesh.Vertices;
-            mesh.normals = triangleMesh.Normals;
-            mesh.bounds = triangleMesh.MeshBounds;
+            switch (triangleMesh.Vertices)
+            {
+                case Vector3[] array:
+                    mesh.vertices = array;
+                    break;
+                case List<Vector3> list:
+                    mesh.SetVertices(list);
+                    break;
+                default:
+                    mesh.vertices = triangleMesh.Vertices.ToArray();
+                    break;
+            }
 
-            mesh.uv = triangleMesh.UV;
-            mesh.SetTriangles(triangleMesh.Indices, 0, false);
+            switch (triangleMesh.Normals)
+            {
+                case Vector3[] array:
+                    mesh.normals =array;
+                    break;
+                case List<Vector3> list:
+                    mesh.SetNormals(list);
+                    break;
+                default:
+                    mesh.normals = triangleMesh.Normals.ToArray();
+                    break;
+            }
+
+            switch (triangleMesh.UV)
+            {
+                case Vector2[] array:
+                    mesh.uv = array;
+                    break;
+                case List<Vector2> list:
+                    mesh.SetUVs(0, list);
+                    break;
+                default:
+                    mesh.uv = triangleMesh.UV.ToArray();
+                    break;
+            }
+
+            switch (triangleMesh.Indices)
+            {
+                case int[] array:
+                    mesh.SetTriangles(array, 0, false);
+                    break;
+                case List<int> list:
+                    mesh.SetTriangles(list, 0, false);
+                    break;
+                default:
+                    mesh.SetTriangles(triangleMesh.Indices.ToArray(), 0, false);
+                    break;
+            }
+
+            mesh.bounds = triangleMesh.MeshBounds;
+            
         }
 
         private void SetMeshFormat(Mesh mesh, int vertexCount)

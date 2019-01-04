@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class BicubicTerrainMesher2i : TerrainMesher2f
+    public class BicubicTerrainMesher2f : TerrainMesher2f
     {
         protected readonly ICellComputer _mainCellComputer;
         protected readonly ICellComputer _maskCellComputer;
@@ -17,7 +17,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         protected readonly float _maskLimit;
 
-        public BicubicTerrainMesher2i(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor postProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
+        public BicubicTerrainMesher2f(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor postProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
         : base(terrainConfig, postProcessor, uvPostProcessor)
         {
             this._subdivision = subdivision;
@@ -75,7 +75,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     x05y00 = x05y00Mask ? x05y00 : (Vector3f?)null;
                     x05y05 = x05y05Mask ? x05y05 : (Vector3f?)null;
 
-                    _mesh.AddQuad(x00y00, x00y05, x05y00, x05y05, PostProcessVertices);
+                    _mesh.AddQuad(x00y00, x00y05, x05y00, x05y05);
                 }
             }
         }

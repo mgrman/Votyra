@@ -29,8 +29,6 @@ namespace Votyra.Core.Pooling
 
         ITerrainMeshWithFixedCapacity IPooledTerrainMeshWithFixedCapacity.Mesh => Mesh;
 
-        public Vector3f this[int point] => Mesh[point];
-
         public static PooledTerrainMeshWithFixedCapacityContainer<T> CreateDirty(int triangleCount)
         {
             var obj = Pool.GetObject(triangleCount);

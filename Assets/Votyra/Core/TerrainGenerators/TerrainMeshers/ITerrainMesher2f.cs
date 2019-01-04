@@ -12,8 +12,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         void InitializeGroup(Vector2i group);
 
-        void AddCell(Vector2i cellInGroup);
-
         IPooledTerrainMesh GetResultingMesh();
     }
 }

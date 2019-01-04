@@ -12,6 +12,12 @@ namespace Votyra.Core.Models
 
         public Vector2i Size { get; }
 
+        public T this[int ix, int iy]
+        {
+            get { return NativeMatrix[ix, iy]; }
+            set { NativeMatrix[ix, iy] = value; }
+        }
+
         public T this[Vector2i i]
         {
             get

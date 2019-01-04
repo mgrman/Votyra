@@ -24,7 +24,6 @@ namespace Votyra.Core.Pooling
 
         ITerrainMesh IPooledTerrainMesh.Mesh => Mesh;
 
-        public Vector3f this[int index] => Mesh[index];
 
         public static PooledTerrainMeshContainer<T> CreateDirty()
         {
