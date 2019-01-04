@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
@@ -8,7 +9,7 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators
 {
-    public class TerrainGenerator3b : ITerrainGenerator<IFrameData3b, Vector3i>
+    public class TerrainGenerator3b : ITerrainGenerator3b
     {
         private readonly ITerrainMesher3b _mesher;
         private readonly IProfiler _profiler;
@@ -21,32 +22,28 @@ namespace Votyra.Core.TerrainGenerators
             _cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        public void Generate(IFrameData3b data, IEnumerable<Vector3i> groupsToUpdate, Action<Vector3i, IPooledTerrainMesh> onMeshCreated)
+        public IPooledTerrainMesh Generate(Vector3i group, IImage3b image)
         {
-            var image = data.Image;
-
             using (_profiler.Start("init"))
             {
                 _mesher.Initialize(image);
             }
 
-            foreach (var group in groupsToUpdate)
+            using (_profiler.Start("Other"))
             {
-                using (_profiler.Start("Other"))
+                _mesher.InitializeGroup(group);
+            }
+
+            _cellInGroupCount.ToRange3i().ForeachPointExlusive(cellInGroup =>
+            {
+                using (_profiler.Start("TerrainMesher.AddCell()"))
                 {
-                    _mesher.InitializeGroup(group);
+                    _mesher.AddCell(cellInGroup);
                 }
-                _cellInGroupCount.ToRange3i().ForeachPointExlusive(cellInGroup =>
-                {
-                    using (_profiler.Start("TerrainMesher.AddCell()"))
-                    {
-                        _mesher.AddCell(cellInGroup);
-                    }
-                });
-                using (_profiler.Start("Other"))
-                {
-                    onMeshCreated(group, _mesher.GetResultingMesh());
-                }
+            });
+            using (_profiler.Start("Other"))
+            {
+                return _mesher.GetResultingMesh();
             }
         }
     }

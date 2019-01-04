@@ -11,23 +11,19 @@ using Zenject;
 namespace Votyra.Cubical
 {
     //TODO: move to floats
-    public class FrameData3bProvider : IFrameDataProvider<IFrameData3b>
+    public class FrameData3bProvider : IFrameDataProvider3b
     {
         [Inject]
         protected IImage3bProvider _imageProvider;
 
-        [Inject]
-        protected IMeshUpdater<Vector3i> _meshUpdater;
-
         [Inject(Id = "root")]
         protected GameObject _root;
 
-        public IFrameData3b GetCurrentFrameData()
+        public IFrameData3b GetCurrentFrameData(IReadOnlySet<Vector3i> existingGroups)
         {
             var camera = Camera.main;
             var container = _root.gameObject;
 
-            var existingGroups = _meshUpdater.ExistingGroups;
 
             var image = _imageProvider.CreateImage();
 

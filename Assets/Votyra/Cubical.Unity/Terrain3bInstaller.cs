@@ -16,8 +16,8 @@ namespace Votyra.Cubical.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainMeshUpdater<Vector3i>(null, null);
-            new TerrainGeneratorManager<IFrameData3b, Vector3i>(null, null, null, null, null, null, null, null);
+            new TerrainMeshUpdater(null, null);
+            new TerrainGeneratorManager3b(null, null, null, null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -31,15 +31,15 @@ namespace Votyra.Cubical.Unity
             Container.BindInterfacesAndSelfTo<MaterialConfig>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<TerrainGenerator3b>().AsSingle();
-            Container.BindInterfacesAndSelfTo<TerrainMeshUpdater<Vector3i>>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TerrainMeshUpdater>().AsSingle();
             Container.BindInterfacesAndSelfTo<TerrainMeshConverter>().AsSingle();
-            Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector3i>().AsSingle();
+            Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector3B>().AsSingle();
             Container.BindInterfacesAndSelfTo<InitialStateSetter3b>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<EditableMatrixImage3b>().AsSingle();
             Container.BindInstance<GameObject>(this.gameObject).WithId("root").AsSingle();
             Container.BindInterfacesAndSelfTo<ClickToPaint3b>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<TerrainGeneratorManager<IFrameData3b, Vector3i>>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<UnityTerrainGenerator<IFrameData3b, Vector3i>>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<TerrainGeneratorManager3b>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<UnityTerrainGenerator3b>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<FrameData3bProvider>().AsSingle();
 
             Container.Bind<Func<GameObject>>()

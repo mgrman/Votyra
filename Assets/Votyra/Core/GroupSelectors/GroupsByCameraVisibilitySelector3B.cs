@@ -5,14 +5,14 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core.GroupSelectors
 {
-    public class GroupsByCameraVisibilitySelector3i : IGroupSelector<IFrameData3b, Vector3i>
+    public class GroupsByCameraVisibilitySelector3B : IGroupSelector3b
     {
         private readonly IImageSampler3 _imageSampler;
         private readonly Vector3i _cellInGroupCount;
 
         private HashSet<Vector3i> _skippedAreas = new HashSet<Vector3i>();
 
-        public GroupsByCameraVisibilitySelector3i(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
+        public GroupsByCameraVisibilitySelector3B(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
             _imageSampler = imageSampler;
             _cellInGroupCount = terrainConfig.CellInGroupCount;
