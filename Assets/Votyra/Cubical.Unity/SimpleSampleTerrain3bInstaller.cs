@@ -9,7 +9,6 @@ namespace Votyra.Cubical.Unity
         public override void InstallBindings()
         {
             Container.Rebind<IImageSampler3>().To<SimpleImageSampler3b>().AsSingle();
-            // Container.Rebind<IImageConstraint3i>().To<BooleanConstraint3i>().AsSingle();
             Container.Rebind<ITerrainMesher3b>().To<TerrainMesher3b>().AsSingle();
         }
     }
