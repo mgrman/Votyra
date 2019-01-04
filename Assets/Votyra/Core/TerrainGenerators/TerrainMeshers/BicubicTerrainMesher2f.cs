@@ -83,11 +83,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         protected virtual IInterpolator CreateInterpolator()
         {
             IInterpolator interpolator = new BicubicInterpolator();
-            //            if (_ensureFlat)
-            //            {
-            //                interpolator = new EnsureFlatInterpolatorDecorator(interpolator);
-            //            }
-
             return interpolator;
         }
 

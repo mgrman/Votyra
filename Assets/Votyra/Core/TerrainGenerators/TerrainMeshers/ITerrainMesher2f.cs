@@ -8,10 +8,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
     {
         Range2i AdjustAreaOfInfluenceOfInvalidatedArea(Range2i invalidatedArea);
         
-        void Initialize(IImage2f image, IMask2e mask);
-
-        void InitializeGroup(Vector2i group);
-
-        IPooledTerrainMesh GetResultingMesh();
+        IPooledTerrainMesh GetResultingMesh(Vector2i group, IImage2f image, IMask2e mask);
     }
 }

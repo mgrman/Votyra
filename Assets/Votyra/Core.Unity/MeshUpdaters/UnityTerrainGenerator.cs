@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Votyra.Core.Images;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
@@ -8,29 +9,23 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators
 {
-    public class UnityTerrainGenerator<TFrameData, TGroupKey> : IUnityTerrainGenerator<TFrameData, TGroupKey>
-        where TFrameData : IFrameData
+    public class UnityTerrainGenerator2i : IUnityTerrainGenerator2i
     {
-        private readonly ITerrainGenerator<TFrameData, TGroupKey> _terrainGenerator;
+        private readonly ITerrainGenerator2i _terrainGenerator;
         private readonly ITerrainMeshConverter _meshConverter;
-        private readonly IProfiler _profiler;
 
-        public UnityTerrainGenerator(ITerrainGenerator<TFrameData, TGroupKey> terrainGenerator, ITerrainMeshConverter meshConverter, IProfiler profiler)
+        public UnityTerrainGenerator2i(ITerrainGenerator2i terrainGenerator, ITerrainMeshConverter meshConverter, IProfiler profiler)
         {
             _terrainGenerator = terrainGenerator;
             _meshConverter = meshConverter;
-            _profiler = profiler;
         }
 
-        public IReadOnlyPooledDictionary<TGroupKey, UnityMesh> Generate(TFrameData data, IEnumerable<TGroupKey> groupsToUpdate)
+        public UnityMesh Generate(Vector2i group, IImage2f image, IMask2e mask)
         {
-            PooledDictionary<TGroupKey, UnityMesh> meshes;
-            using (_profiler.Start("init"))
-            {
-                meshes = PooledDictionary<TGroupKey, UnityMesh>.Create();
-            }
-            _terrainGenerator.Generate(data, groupsToUpdate, (group, mesh) => meshes[group] = _meshConverter.GetUnityMesh(mesh, null));
-            return meshes;
+            var mesh = _terrainGenerator.Generate(group, image, mask);
+            var convertedMesh = _meshConverter.GetUnityMesh(mesh, null);
+
+            return convertedMesh;
         }
     }
 }

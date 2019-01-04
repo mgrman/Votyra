@@ -5,7 +5,7 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core.GroupSelectors
 {
-    public class GroupsByCameraVisibilitySelector2i : IGroupSelector<IFrameData2i, Vector2i>
+    public class GroupsByCameraVisibilitySelector2i : IGroupSelector2i
     {
         private readonly Vector2i _cellInGroupCount;
         private HashSet<Vector2i> _skippedAreas = new HashSet<Vector2i>();
@@ -42,9 +42,8 @@ namespace Votyra.Core.GroupSelectors
             }
             var cameraBoundsGroups = (localCameraBounds / _cellInGroupCount.ToVector2f()).RoundToContain();
 
-            var minZ = options.Image.RangeZ.Min;
-            var bounds_size = new Vector2f(_cellInGroupCount.X, _cellInGroupCount.Y)
-                .ToVector3f(options.Image.RangeZ.Size);
+            var minZ = options.RangeZ.Min;
+            var bounds_size = new Vector2f(_cellInGroupCount.X, _cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
 
             var groupsToRecompute = PooledSet<Vector2i>.Create();
             var groupsToKeep = PooledSet<Vector2i>.Create();

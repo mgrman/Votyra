@@ -25,7 +25,7 @@ namespace Votyra.Core.MeshUpdaters
             return unityMesh;
         }
 
-        public UnityMesh GetUnityMeshInner(ITerrainMesh votyraMesh, UnityMesh existingUnityMesh,Action onDispose)
+        public UnityMesh GetUnityMeshInner(ITerrainMesh votyraMesh, UnityMesh existingUnityMesh, Action onDispose)
         {
             if (votyraMesh is IPooledTerrainMesh)
             {

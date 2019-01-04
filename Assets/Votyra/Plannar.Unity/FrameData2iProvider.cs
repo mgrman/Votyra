@@ -12,7 +12,7 @@ using Zenject;
 namespace Votyra.Plannar
 {
     //TODO: move to floats
-    public class FrameData2iProvider : IFrameDataProvider<IFrameData2i>
+    public class FrameData2iProvider : IFrameDataProvider2i
     {
         [Inject]
         protected IImage2fProvider _imageProvider;
@@ -24,17 +24,16 @@ namespace Votyra.Plannar
         protected ITerrainMesher2f _terrainMesher;
 
         [Inject]
-        protected IMeshUpdater<Vector2i> _meshUpdater;
+        protected IMeshUpdater _meshUpdater;
 
         [Inject(Id = "root")]
         protected GameObject _root;
 
-        public IFrameData2i GetCurrentFrameData()
+        public IFrameData2i GetCurrentFrameData(IReadOnlySet<Vector2i> existingGroups)
         {
             var camera = Camera.main;
             var container = _root.gameObject;
 
-            var existingGroups = _meshUpdater.ExistingGroups;
 
             var image = _imageProvider.CreateImage();
             var mask = _maskProvider?.CreateMask();

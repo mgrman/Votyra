@@ -20,8 +20,8 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainMeshUpdater<Vector2i>(null, null);
-            new TerrainGeneratorManager<IFrameData2i, Vector2i>(null, null, null, null, null, null, null, null);
+            new TerrainMeshUpdater(null, null);
+            new TerrainGeneratorManager2i(null, null, null, null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -36,7 +36,7 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<InterpolationConfig>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<TerrainGenerator2i>().AsSingle();
-            Container.BindInterfacesAndSelfTo<TerrainMeshUpdater<Vector2i>>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TerrainMeshUpdater>().AsSingle();
             Container.BindInterfacesAndSelfTo<TerrainMeshConverter>().AsSingle();
             Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2i>().AsSingle();
             Container.BindInterfacesAndSelfTo<InitialStateSetter2f>().AsSingle().NonLazy();
@@ -57,8 +57,8 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<MakeOrRemoveHole>().AsSingle().NonLazy();
             Container.Bind<Canvas>().FromComponentInNewPrefabResource("PaintingUI").AsSingle().NonLazy();
 
-            Container.BindInterfacesAndSelfTo<TerrainGeneratorManager<IFrameData2i, Vector2i>>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<UnityTerrainGenerator<IFrameData2i, Vector2i>>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<TerrainGeneratorManager2i>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<UnityTerrainGenerator2i>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<FrameData2iProvider>().AsSingle();
 
             Container.Bind<Func<GameObject>>()

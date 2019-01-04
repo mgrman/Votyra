@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
@@ -8,7 +9,7 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators
 {
-    public class TerrainGenerator2i : ITerrainGenerator<IFrameData2i, Vector2i>
+    public class TerrainGenerator2i : ITerrainGenerator2i
     {
         private readonly Vector2i _cellInGroupCount;
         private readonly ITerrainMesher2f _mesher;
@@ -21,26 +22,11 @@ namespace Votyra.Core.TerrainGenerators
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
         }
 
-        public void Generate(IFrameData2i data, IEnumerable<Vector2i> groupsToUpdate, Action<Vector2i, IPooledTerrainMesh> onMeshCreated)
+        public IPooledTerrainMesh Generate(Vector2i group, IImage2f image, IMask2e mask)
         {
-            var image = data.Image;
-            var mask = data.Mask;
-
-            using (_profiler.Start("init"))
+            using (_profiler.Start("Other"))
             {
-                _mesher.Initialize(image, mask);
-            }
-
-            foreach (var group in groupsToUpdate)
-            {
-                using (_profiler.Start("Other"))
-                {
-                    _mesher.InitializeGroup(group);
-                }
-                using (_profiler.Start("Other"))
-                {
-                    onMeshCreated(group, _mesher.GetResultingMesh());
-                }
+                return _mesher.GetResultingMesh(group,image, mask);
             }
         }
     }

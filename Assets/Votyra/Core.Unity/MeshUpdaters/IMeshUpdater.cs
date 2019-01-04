@@ -1,13 +1,12 @@
 using System.Collections.Generic;
+using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.MeshUpdaters
 {
-    public interface IMeshUpdater<TKey>
+    public interface IMeshUpdater
     {
-        IReadOnlySet<TKey> ExistingGroups { get; }
-
-        void UpdateMesh(IReadOnlyDictionary<TKey, UnityMesh> terrainMeshes, IReadOnlySet<TKey> toKeepGroups);
+        GameObject UpdateMesh(UnityMesh triangleMesh, GameObject unityData);
     }
 }
