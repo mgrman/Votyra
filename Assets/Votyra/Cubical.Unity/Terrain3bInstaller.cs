@@ -16,7 +16,6 @@ namespace Votyra.Cubical.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainMeshUpdater(null, null);
             new TerrainGeneratorManager3b(null, null, null, null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
@@ -31,15 +30,12 @@ namespace Votyra.Cubical.Unity
             Container.BindInterfacesAndSelfTo<MaterialConfig>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<TerrainGenerator3b>().AsSingle();
-            Container.BindInterfacesAndSelfTo<TerrainMeshUpdater>().AsSingle();
-            Container.BindInterfacesAndSelfTo<TerrainMeshConverter>().AsSingle();
             Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector3B>().AsSingle();
             Container.BindInterfacesAndSelfTo<InitialStateSetter3b>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<EditableMatrixImage3b>().AsSingle();
             Container.BindInstance<GameObject>(this.gameObject).WithId("root").AsSingle();
             Container.BindInterfacesAndSelfTo<ClickToPaint3b>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<TerrainGeneratorManager3b>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<UnityTerrainGenerator3b>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<FrameData3bProvider>().AsSingle();
 
             Container.Bind<Func<GameObject>>()
@@ -63,6 +59,23 @@ namespace Votyra.Cubical.Unity
             }
             var meshRenderer = go.GetOrAddComponent<MeshRenderer>();
             meshRenderer.materials = ArrayUtils.CreateNonNull(materialConfig.Material, materialConfig.MaterialWalls);
+
+            string name = string.Format("group_{0}", Guid.NewGuid());
+            go.name = name;
+            go.hideFlags = HideFlags.DontSave;
+
+            var meshFilter = go.GetOrAddComponent<MeshFilter>();
+            go.AddComponentIfMissing<MeshRenderer>();
+            go.AddComponentIfMissing<MeshCollider>();
+
+            if (meshFilter.sharedMesh == null)
+            {
+                meshFilter.mesh = new Mesh();
+            }
+
+            var mesh = meshFilter.sharedMesh;
+            mesh.MarkDynamic();
+
             return go;
         }
     }

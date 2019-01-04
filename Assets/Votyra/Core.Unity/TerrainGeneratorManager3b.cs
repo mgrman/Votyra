@@ -24,22 +24,22 @@ namespace Votyra.Core
         protected readonly IGroupSelector3b _groupsSelector;
         protected readonly IThreadSafeLogger _logger;
 
-        protected readonly IMeshUpdater _meshUpdater;
         protected readonly IProfiler _profiler;
         protected readonly IStateModel _stateModel;
         protected readonly ITerrainConfig _terrainConfig;
-        protected readonly IUnityTerrainGenerator3b _terrainGenerator;
+        protected readonly ITerrainGenerator3b _terrainGenerator;
+        protected readonly Func<GameObject> _gameObjectFactory;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
         private SetDictionary<Vector3i, GameObject> _meshFilters = new SetDictionary<Vector3i, GameObject>();
 
-        public TerrainGeneratorManager3b(IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector3b groupsSelector, IUnityTerrainGenerator3b terrainGenerator, IMeshUpdater meshUpdater, IStateModel stateModel, IProfiler profiler, IFrameDataProvider3b frameDataProvider)
+        public TerrainGeneratorManager3b(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector3b groupsSelector, ITerrainGenerator3b terrainGenerator,  IStateModel stateModel, IProfiler profiler, IFrameDataProvider3b frameDataProvider)
         {
+            _gameObjectFactory = gameObjectFactory;
             _logger = logger;
             _terrainConfig = terrainConfig;
             _groupsSelector = groupsSelector;
             _terrainGenerator = terrainGenerator;
-            _meshUpdater = meshUpdater;
             _stateModel = stateModel;
             _profiler = profiler;
             _frameDataProvider = frameDataProvider;
@@ -110,7 +110,9 @@ namespace Votyra.Core
                             }
                             foreach (var group in toRecompute)
                             {
-                                meshes[group]= _terrainGenerator.Generate(group, context.Image);
+
+                                var mesh = _terrainGenerator.Generate(group, context.Image);
+                                meshes[group] = mesh.GetUnityMesh( null);
                             }
 
                             return meshes;
@@ -165,9 +167,14 @@ namespace Votyra.Core
                                     }
 
                                     var unityData = _meshFilters.TryGetValue(group);
+                                    if (unityData == null)
+                                    {
+                                        unityData = _gameObjectFactory();
+                                    }
 
-                                    var go=_meshUpdater.UpdateMesh(triangleMesh, unityData);
-                                    _meshFilters[group] = go;
+
+                                    triangleMesh.SetUnityMesh(unityData);
+                                    _meshFilters[group] = unityData;
                                 }
 
                                 foreach (var toDeleteGroup in toDeleteGroups)

@@ -11,33 +11,18 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.MeshUpdaters
 {
-    public class TerrainMeshUpdater : IMeshUpdater
+    public static class TerrainMeshUpdater 
     {
-        private readonly IProfiler _profiler;
-        private readonly Func<GameObject> _gameObjectFactory;
-
-        public TerrainMeshUpdater(Func<GameObject> gameObjectFactory, IProfiler profiler)
+        public static void SetUnityMesh(this UnityMesh triangleMesh,GameObject unityData)
         {
-            _gameObjectFactory = gameObjectFactory;
-            _profiler = profiler;
+            var meshFilter = unityData.GetComponent<MeshFilter>();
+            SetUnityMesh(triangleMesh, meshFilter.sharedMesh);
+
+            var meshCollider = unityData.GetComponent<MeshCollider>();
+            meshCollider.sharedMesh = meshFilter.sharedMesh;
         }
 
-        public GameObject UpdateMesh(UnityMesh triangleMesh,GameObject unityData)
-        {
-            if (unityData == null)
-            {
-
-                    unityData = CreateMeshObject();
-            }
-
-            UpdateMesh(triangleMesh, unityData.GetComponent<MeshFilter>().sharedMesh);
-
-            unityData.GetComponent<MeshCollider>().sharedMesh = unityData.GetComponent<MeshFilter>().sharedMesh;
-
-            return unityData;
-        }
-
-        private void UpdateMesh(UnityMesh triangleMesh, Mesh mesh)
+        private static void SetUnityMesh(UnityMesh triangleMesh, Mesh mesh)
         {
             SetMeshFormat(mesh, triangleMesh.VertexCount);
 
@@ -100,10 +85,9 @@ namespace Votyra.Core.MeshUpdaters
             }
 
             mesh.bounds = triangleMesh.MeshBounds;
-            
         }
 
-        private void SetMeshFormat(Mesh mesh, int vertexCount)
+        private static void SetMeshFormat(Mesh mesh, int vertexCount)
         {
             if (vertexCount > 65000 && mesh.indexFormat != IndexFormat.UInt32)
             {
@@ -113,28 +97,6 @@ namespace Votyra.Core.MeshUpdaters
             {
                 mesh.indexFormat = IndexFormat.UInt16;
             }
-        }
-
-        private GameObject CreateMeshObject()
-        {
-            string name = string.Format("group_{0}", Guid.NewGuid());
-            var gameObject = _gameObjectFactory();
-            gameObject.name = name;
-            gameObject.hideFlags = HideFlags.DontSave;
-
-            var meshFilter = gameObject.GetOrAddComponent<MeshFilter>();
-            gameObject.AddComponentIfMissing<MeshRenderer>();
-            gameObject.AddComponentIfMissing<MeshCollider>();
-
-            if (meshFilter.sharedMesh == null)
-            {
-                meshFilter.mesh = new Mesh();
-            }
-
-            var mesh = meshFilter.sharedMesh;
-            mesh.MarkDynamic();
-
-            return gameObject;
         }
     }
 }

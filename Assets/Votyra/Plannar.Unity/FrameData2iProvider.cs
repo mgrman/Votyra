@@ -15,6 +15,9 @@ namespace Votyra.Plannar
     public class FrameData2iProvider : IFrameDataProvider2i
     {
         [Inject]
+        protected ITerrainConfig _terrainConfig;
+
+        [Inject]
         protected IImage2fProvider _imageProvider;
 
         [InjectOptional]
@@ -23,13 +26,10 @@ namespace Votyra.Plannar
         [Inject]
         protected ITerrainMesher2f _terrainMesher;
 
-        [Inject]
-        protected IMeshUpdater _meshUpdater;
-
         [Inject(Id = "root")]
         protected GameObject _root;
 
-        public IFrameData2i GetCurrentFrameData(IReadOnlySet<Vector2i> existingGroups)
+        public IFrameData2i GetCurrentFrameData(IReadOnlySet<Vector2i> existingGroups,HashSet<Vector2i> skippedAreas)
         {
             var camera = Camera.main;
             var container = _root.gameObject;
@@ -60,7 +60,9 @@ namespace Votyra.Plannar
                 existingGroups,
                 image,
                 mask,
-                invalidatedArea
+                invalidatedArea, 
+                _terrainConfig.CellInGroupCount.XY, 
+                skippedAreas
             );
         }
     }

@@ -17,7 +17,8 @@ namespace Votyra.Core
             IReadOnlySet<Vector2i> existingGroups,
             IImage2f image,
             IMask2e mask,
-            Range2i invalidatedArea)
+            Range2i invalidatedArea,
+            Vector2i cellInGroupCount, HashSet<Vector2i> skippedAreas)
         {
             CameraPosition = cameraPosition;
             CameraPlanes = cameraPlanes;
@@ -31,6 +32,8 @@ namespace Votyra.Core
             RangeZ = image?.RangeZ ?? Range1hf.Default;
 
             InvalidatedArea = invalidatedArea;
+            CellInGroupCount = cellInGroupCount;
+            SkippedAreas = skippedAreas;
 
             (Image as IInitializableImage)?.StartUsing();
         }
@@ -42,9 +45,11 @@ namespace Votyra.Core
         public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
         public Range1hf RangeZ { get; }
         public IReadOnlySet<Vector2i> ExistingGroups { get; }
+        public Vector2i CellInGroupCount { get; }
         public IImage2f Image { get; }
         public IMask2e Mask { get; }
         public Range2i InvalidatedArea { get; }
+        public HashSet<Vector2i> SkippedAreas { get; }
 
         public void Dispose()
         {

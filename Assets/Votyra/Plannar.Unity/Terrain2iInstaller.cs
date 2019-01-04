@@ -20,8 +20,7 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainMeshUpdater(null, null);
-            new TerrainGeneratorManager2i(null, null, null, null, null, null, null, null);
+            new TerrainGeneratorManager2i(null, null,  null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -35,10 +34,6 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<MaterialConfig>().AsSingle();
             Container.BindInterfacesAndSelfTo<InterpolationConfig>().AsSingle();
 
-            Container.BindInterfacesAndSelfTo<TerrainGenerator2i>().AsSingle();
-            Container.BindInterfacesAndSelfTo<TerrainMeshUpdater>().AsSingle();
-            Container.BindInterfacesAndSelfTo<TerrainMeshConverter>().AsSingle();
-            Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2i>().AsSingle();
             Container.BindInterfacesAndSelfTo<InitialStateSetter2f>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<EditableMatrixImage2i>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditableMatrixMask2e>().AsSingle();
@@ -58,7 +53,6 @@ namespace Votyra.Plannar.Unity
             Container.Bind<Canvas>().FromComponentInNewPrefabResource("PaintingUI").AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<TerrainGeneratorManager2i>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<UnityTerrainGenerator2i>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<FrameData2iProvider>().AsSingle();
 
             Container.Bind<Func<GameObject>>()
@@ -82,6 +76,23 @@ namespace Votyra.Plannar.Unity
             }
             var meshRenderer = go.GetOrAddComponent<MeshRenderer>();
             meshRenderer.materials = ArrayUtils.CreateNonNull(materialConfig.Material, materialConfig.MaterialWalls);
+
+            string name = string.Format("group_{0}", Guid.NewGuid());
+            go.name = name;
+            go.hideFlags = HideFlags.DontSave;
+
+            var meshFilter = go.GetOrAddComponent<MeshFilter>();
+            go.AddComponentIfMissing<MeshRenderer>();
+            go.AddComponentIfMissing<MeshCollider>();
+
+            if (meshFilter.sharedMesh == null)
+            {
+                meshFilter.mesh = new Mesh();
+            }
+
+            var mesh = meshFilter.sharedMesh;
+            mesh.MarkDynamic();
+
             return go;
         }
     }

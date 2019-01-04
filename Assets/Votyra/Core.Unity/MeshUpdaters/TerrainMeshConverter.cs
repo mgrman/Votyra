@@ -11,9 +11,9 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.MeshUpdaters
 {
-    public class TerrainMeshConverter : ITerrainMeshConverter
+    public static class TerrainMeshConverter
     {
-        public UnityMesh GetUnityMesh(ITerrainMesh votyraMesh, UnityMesh existingUnityMesh)
+        public static UnityMesh GetUnityMesh(this ITerrainMesh votyraMesh, UnityMesh existingUnityMesh)
         {
             var unityMesh = GetUnityMeshInner(votyraMesh, existingUnityMesh, () =>
             {
@@ -25,7 +25,7 @@ namespace Votyra.Core.MeshUpdaters
             return unityMesh;
         }
 
-        public UnityMesh GetUnityMeshInner(ITerrainMesh votyraMesh, UnityMesh existingUnityMesh, Action onDispose)
+        private static UnityMesh GetUnityMeshInner(ITerrainMesh votyraMesh, UnityMesh existingUnityMesh, Action onDispose)
         {
             if (votyraMesh is IPooledTerrainMesh)
             {
@@ -54,7 +54,7 @@ namespace Votyra.Core.MeshUpdaters
             }
         }
 
-        private UnityMesh GetUnityMeshInner(ExpandingTerrainMesh triangleMesh, UnityMesh existingUnityMesh,Action onDispose)
+        private static UnityMesh GetUnityMeshInner(ExpandingTerrainMesh triangleMesh, UnityMesh existingUnityMesh,Action onDispose)
         {
             bool recomputeTriangles = existingUnityMesh?.VertexCount != triangleMesh.VertexCount;
             if (recomputeTriangles)
@@ -71,7 +71,7 @@ namespace Votyra.Core.MeshUpdaters
             return new UnityMesh(bounds, vertices, normals, uvs, indices,  onDispose);
         }
 
-        private UnityMesh GetUnityMeshInner(FixedTerrainMesh2i triangleMesh, UnityMesh existingUnityMesh, Action onDispose)
+        private static UnityMesh GetUnityMeshInner(FixedTerrainMesh2i triangleMesh, UnityMesh existingUnityMesh, Action onDispose)
         {
             bool recomputeTriangles = existingUnityMesh?.VertexCount != triangleMesh.VertexCount;
             if (recomputeTriangles)
@@ -87,7 +87,7 @@ namespace Votyra.Core.MeshUpdaters
             return new UnityMesh(bounds, vertices, normals, uvs, indices,  onDispose);
         }
 
-        private UnityMesh GetUnityMeshInner(ExpandingUnityTerrainMesh triangleMesh, UnityMesh existingUnityMesh,
+        private static UnityMesh GetUnityMeshInner(ExpandingUnityTerrainMesh triangleMesh, UnityMesh existingUnityMesh,
             Action onDispose)
         {
             bool recomputeTriangles = existingUnityMesh?.VertexCount != triangleMesh.VertexCount;

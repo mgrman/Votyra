@@ -4,6 +4,11 @@ namespace Votyra.Core.Utils
 {
     public static class GameObjectUtils
     {
+        public static GameObject NullIfDestroyed(this GameObject gameObject)
+        {
+            return gameObject == null ? null : gameObject;
+        }
+        
         public static T GetOrAddComponent<T>(this GameObject gameObject)
             where T : Component
         {

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
 using Votyra.Core.TerrainGenerators;
+using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
 
@@ -21,27 +23,27 @@ namespace Votyra.Core
     public class TerrainGeneratorManager2i : IDisposable
     {
         protected readonly IFrameDataProvider2i _frameDataProvider;
-        protected readonly IGroupSelector2i _groupsSelector;
         protected readonly IThreadSafeLogger _logger;
 
-        protected readonly IMeshUpdater _meshUpdater;
         protected readonly IProfiler _profiler;
         protected readonly IStateModel _stateModel;
         protected readonly ITerrainConfig _terrainConfig;
-        protected readonly IUnityTerrainGenerator2i _terrainGenerator;
+        protected readonly ITerrainMesher2f _terrainMesher;
+
+        protected readonly Func<GameObject> _gameObjectFactory;
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
 
         private SetDictionary<Vector2i, GameObject> _meshFilters = new SetDictionary<Vector2i, GameObject>();
+        private HashSet<Vector2i> _skippedAreas = new HashSet<Vector2i>();
 
-        public TerrainGeneratorManager2i(IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector2i groupsSelector, IUnityTerrainGenerator2i terrainGenerator, IMeshUpdater meshUpdater, IStateModel stateModel, IProfiler profiler, IFrameDataProvider2i frameDataProvider)
+        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IStateModel stateModel, ITerrainMesher2f terrainMesher, IProfiler profiler, IFrameDataProvider2i frameDataProvider)
         {
+            _gameObjectFactory = gameObjectFactory;
             _logger = logger;
             _terrainConfig = terrainConfig;
-            _groupsSelector = groupsSelector;
-            _terrainGenerator = terrainGenerator;
-            _meshUpdater = meshUpdater;
             _stateModel = stateModel;
+            _terrainMesher = terrainMesher;
             _profiler = profiler;
             _frameDataProvider = frameDataProvider;
 
@@ -65,8 +67,8 @@ namespace Votyra.Core
                 {
                     if (_stateModel.IsEnabled)
                     {
-                        var context = _frameDataProvider.GetCurrentFrameData(_meshFilters);
-                        await UpdateTerrain(context,_terrainConfig.Async, _onDestroyCts.Token);
+                        var context = _frameDataProvider.GetCurrentFrameData(_meshFilters, _skippedAreas);
+                        await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
                     }
                     else
                     {
@@ -83,7 +85,6 @@ namespace Votyra.Core
 
         private async Task UpdateTerrain(IFrameData2i context, bool async, CancellationToken token)
         {
-            
             GroupActions<Vector2i> groupActions = null;
             IReadOnlyPooledDictionary<Vector2i, UnityMesh> results = null;
             try
@@ -92,7 +93,7 @@ namespace Votyra.Core
                 {
                     using (_profiler.Start("Creating visible groups"))
                     {
-                        groupActions = _groupsSelector.GetGroupsToUpdate(context);
+                        groupActions = context.GetGroupsToUpdate();
                         if (groupActions.ToRecompute.Any())
                         {
                             _logger.LogMessage($"Groups to recompute {groupActions.ToRecompute.Count()}. Groups to keep {groupActions.ToKeep.Count()}.\r\nRecomputed:\r\n{groupActions.ToRecompute.StringJoin("\r\n")}");
@@ -109,9 +110,12 @@ namespace Votyra.Core
                             {
                                 meshes = PooledDictionary<Vector2i, UnityMesh>.Create();
                             }
+
                             foreach (var group in toRecompute)
                             {
-                                meshes[group]= _terrainGenerator.Generate(group, context.Image, context.Mask);
+                                var mesh = _terrainMesher.GetResultingMesh(group, context.Image, context.Mask);
+                                
+                                meshes[group] = mesh.GetUnityMesh(null);
                             }
 
                             return meshes;
@@ -152,7 +156,6 @@ namespace Votyra.Core
                                 foreach (var terrainMesh in results)
                                 {
                                     var group = terrainMesh.Key;
-                                    var offset = (group * _terrainConfig.CellInGroupCount.XY).ToVector2f();
                                     var triangleMesh = terrainMesh.Value;
 
                                     if (terrainMesh.Value == null || triangleMesh.VertexCount == 0)
@@ -166,10 +169,10 @@ namespace Votyra.Core
                                         continue;
                                     }
 
-                                    var unityData = _meshFilters.TryGetValue(group);
+                                    var unityData = _meshFilters.TryGetValue(group).NullIfDestroyed() ?? _gameObjectFactory();
 
-                                    var go=_meshUpdater.UpdateMesh(triangleMesh, unityData);
-                                    _meshFilters[group] = go;
+                                     triangleMesh.SetUnityMesh(unityData);
+                                    _meshFilters[group] = unityData;
                                 }
 
                                 foreach (var toDeleteGroup in toDeleteGroups)
