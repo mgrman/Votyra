@@ -141,6 +141,7 @@ namespace Votyra.Core.Models
             }
 
             public Vector3f ToVector3f(Vector2f vec) => new Vector3f(vec.X, vec.Y, Value);
+            public Vector3f ToVector3f(Vector2i vec) => new Vector3f(vec.X, vec.Y, Value);
         }
     }
 
@@ -162,6 +163,11 @@ namespace Votyra.Core.Models
         }
 
         public static Vector3f ToVector3f(this Vector2f vec, Height1i z)
+        {
+            return z.ToVector3f(vec);
+        }
+
+        public static Vector3f ToVector3f(this Vector2i vec, Height1i.Difference z)
         {
             return z.ToVector3f(vec);
         }

@@ -16,7 +16,7 @@ namespace Votyra.Core.ImageSamplers
 
         public InterpolatedUVPostProcessorStep(IInterpolationConfig interpolationConfig)
         {
-            _subdivision = interpolationConfig.Subdivision;
+            _subdivision = interpolationConfig.ImageSubdivision;
         }
 
         public Vector2f ProcessUV(Vector2f vertex) => vertex / _subdivision;

@@ -1,108 +1,158 @@
 using System;
+using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.TerrainGenerators.TerrainMeshers.CellComputers;
 using Votyra.Core.TerrainMeshes;
 using Zenject;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class BicubicTerrainMesher2f : TerrainMesher2f
+    public static class BicubicTerrainMesher2f 
     {
-        protected readonly ICellComputer _mainCellComputer;
-        protected readonly ICellComputer _maskCellComputer;
-        protected readonly Vector3f _noiseScale;
-        protected readonly int _subdivision;
-        protected readonly Range2i _subdivisionValueRange;
+        private const float MaskLimit = 0f;
 
-        protected readonly float _maskLimit;
-
-        public BicubicTerrainMesher2f(ITerrainConfig terrainConfig, [InjectOptional] ITerrainVertexPostProcessor postProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, [ConfigInject("subdivision")] int subdivision, [ConfigInject("noiseScale")]Vector3f noiseScale, [ConfigInject("maskLimit")] float maskLimit)
-        : base(terrainConfig, postProcessor, uvPostProcessor)
+        public static void GetResultingMesh(ITerrainMesh mesh, Vector2i group, Vector2i cellInGroupCount, IImage2f image, IMask2e mask,int subdivision)
         {
-            this._subdivision = subdivision;
-            this._subdivisionValueRange = Range2i.FromMinAndMax(Vector2i.Zero, new Vector2i(_subdivision + 1, _subdivision + 1));
-            this._noiseScale = noiseScale;
-            this._mainCellComputer = CreateMainCellComputer();
-            this._maskCellComputer = CreateMaskCellComputer();
-            this._maskLimit = maskLimit;
-        }
-
-        public override Range2i AdjustAreaOfInfluenceOfInvalidatedArea(Range2i invalidatedArea)
-        {
-            return invalidatedArea.ExtendBothDirections(2);
-        }
-
-        protected override int QuadsPerCell => _subdivision * _subdivision;
-
-        public override void AddCell(Vector2i cellInGroup)
-        {
-            var mask = ImageSampler2iUtils.SampleCell(_mask, cellInGroup + _groupPosition);
-            if (mask.GetHoleCount() == 4)
+            var poolableValuesToFill = PoolableMatrix<Vector3f>.CreateDirty(new Vector2i(subdivision+1, subdivision + 1));
+            var valuesToFill = poolableValuesToFill.RawMatrix;
+            var poolableMaskToFill = PoolableMatrix<float>.CreateDirty(new Vector2i(subdivision + 1, subdivision + 1));
+            var maskToFill = poolableMaskToFill.RawMatrix;
+            
+            var groupPosition = cellInGroupCount * group;
+            cellInGroupCount.ToRange2i().ForeachPointExlusive(cellInGroup =>
             {
-                return;
+                var cell = cellInGroup + groupPosition;
+                var maskData = ImageSampler2iUtils.SampleCell(mask, cell);
+                if (maskData.GetHoleCount() == 4)
+                {
+                    return;
+                }
+
+                float step = 1.0f / subdivision;
+
+                var data_x0y0 = image.SampleCell(cell - Vector2i.One + new Vector2i(0, 0));
+                var data_x0y2 = image.SampleCell(cell - Vector2i.One + new Vector2i(0, 2));
+                var data_x2y0 = image.SampleCell(cell - Vector2i.One + new Vector2i(2, 0));
+                var data_x2y2 = image.SampleCell(cell - Vector2i.One + new Vector2i(2, 2));
+
+                var valuesInterMat_x0y0 = data_x0y0.x0y0.RawValue;
+                var valuesInterMat_x0y1 = data_x0y0.x0y1.RawValue;
+                var valuesInterMat_x0y2 = data_x0y2.x0y0.RawValue;
+                var valuesInterMat_x0y3 = data_x0y2.x0y1.RawValue;
+                var valuesInterMat_x1y0 = data_x0y0.x1y0.RawValue;
+                var valuesInterMat_x1y1 = data_x0y0.x1y1.RawValue;
+                var valuesInterMat_x1y2 = data_x0y2.x1y0.RawValue;
+                var valuesInterMat_x1y3 = data_x0y2.x1y1.RawValue;
+                var valuesInterMat_x2y0 = data_x2y0.x0y0.RawValue;
+                var valuesInterMat_x2y1 = data_x2y0.x0y1.RawValue;
+                var valuesInterMat_x2y2 = data_x2y2.x0y0.RawValue;
+                var valuesInterMat_x2y3 = data_x2y2.x0y1.RawValue;
+                var valuesInterMat_x3y0 = data_x2y0.x1y0.RawValue;
+                var valuesInterMat_x3y1 = data_x2y0.x1y1.RawValue;
+                var valuesInterMat_x3y2 = data_x2y2.x1y0.RawValue;
+                var valuesInterMat_x3y3 = data_x2y2.x1y1.RawValue;
+
+                var mask_x0y0 = mask.SampleCell(cell - Vector2i.One + new Vector2i(0, 0));
+                var mask_x0y2 = mask.SampleCell(cell - Vector2i.One + new Vector2i(0, 2));
+                var mask_x2y0 = mask.SampleCell(cell - Vector2i.One + new Vector2i(2, 0));
+                var mask_x2y2 = mask.SampleCell(cell - Vector2i.One + new Vector2i(2, 2));
+
+                var maskInterMat_x0y0 = mask_x0y0.x0y0.IsHole() ? -1 : 1;
+                var maskInterMat_x0y1 = mask_x0y0.x0y1.IsHole() ? -1 : 1;
+                var maskInterMat_x0y2 = mask_x0y2.x0y0.IsHole() ? -1 : 1;
+                var maskInterMat_x0y3 = mask_x0y2.x0y1.IsHole() ? -1 : 1;
+                var maskInterMat_x1y0 = mask_x0y0.x1y0.IsHole() ? -1 : 1;
+                var maskInterMat_x1y1 = mask_x0y0.x1y1.IsHole() ? -1 : 1;
+                var maskInterMat_x1y2 = mask_x0y2.x1y0.IsHole() ? -1 : 1;
+                var maskInterMat_x1y3 = mask_x0y2.x1y1.IsHole() ? -1 : 1;
+                var maskInterMat_x2y0 = mask_x2y0.x0y0.IsHole() ? -1 : 1;
+                var maskInterMat_x2y1 = mask_x2y0.x0y1.IsHole() ? -1 : 1;
+                var maskInterMat_x2y2 = mask_x2y2.x0y0.IsHole() ? -1 : 1;
+                var maskInterMat_x2y3 = mask_x2y2.x0y1.IsHole() ? -1 : 1;
+                var maskInterMat_x3y0 = mask_x2y0.x1y0.IsHole() ? -1 : 1;
+                var maskInterMat_x3y1 = mask_x2y0.x1y1.IsHole() ? -1 : 1;
+                var maskInterMat_x3y2 = mask_x2y2.x1y0.IsHole() ? -1 : 1;
+                var maskInterMat_x3y3 = mask_x2y2.x1y1.IsHole() ? -1 : 1;
+
+                for (int ix = 0; ix < subdivision + 1; ix++)
+                {
+                    for (int iy = 0; iy < subdivision + 1; iy++)
+                    {
+                        var pos = new Vector2f(step * ix, step * iy);
+                        
+                        var maskCol0 = Intepolate(maskInterMat_x0y0, maskInterMat_x1y0, maskInterMat_x2y0, maskInterMat_x3y0, pos.X);
+                        var maskCol1 = Intepolate(maskInterMat_x0y1, maskInterMat_x1y1, maskInterMat_x2y1, maskInterMat_x3y1, pos.X);
+                        var maskCol2 = Intepolate(maskInterMat_x0y2, maskInterMat_x1y2, maskInterMat_x2y2, maskInterMat_x3y2, pos.X);
+                        var maskCol3 = Intepolate(maskInterMat_x0y3, maskInterMat_x1y3, maskInterMat_x2y3, maskInterMat_x3y3, pos.X);
+                        var maskValue = Intepolate(maskCol0, maskCol1, maskCol2, maskCol3, pos.Y);
+                        maskToFill[ix, iy] = maskValue;
+
+                        var valueCol0 = Intepolate(valuesInterMat_x0y0, valuesInterMat_x1y0, valuesInterMat_x2y0, valuesInterMat_x3y0, pos.X);
+                        var valueCol1 = Intepolate(valuesInterMat_x0y1, valuesInterMat_x1y1, valuesInterMat_x2y1, valuesInterMat_x3y1, pos.X);
+                        var valueCol2 = Intepolate(valuesInterMat_x0y2, valuesInterMat_x1y2, valuesInterMat_x2y2, valuesInterMat_x3y2, pos.X);
+                        var valueCol3 = Intepolate(valuesInterMat_x0y3, valuesInterMat_x1y3, valuesInterMat_x2y3, valuesInterMat_x3y3, pos.X);
+                        var value = Intepolate(valueCol0, valueCol1, valueCol2, valueCol3, pos.Y);
+                        valuesToFill[ix, iy] = (pos + cell).ToVector3f(new Height1f(value));
+
+                        if (ix > 0 && iy > 0)
+                        {
+                            var x00y00 = valuesToFill[ix - 1 + 0, iy - 1 + 0];
+                            var x00y05 = valuesToFill[ix - 1 + 0, iy - 1 + 1];
+                            var x05y00 = valuesToFill[ix - 1 + 1, iy - 1 + 0];
+                            var x05y05 = valuesToFill[ix - 1 + 1, iy - 1 + 1];
+                            var x00y00Mask = maskToFill[ix - 1 + 0, iy - 1 + 0] >= MaskLimit;
+                            var x00y05Mask = maskToFill[ix - 1 + 0, iy - 1 + 1] >= MaskLimit;
+                            var x05y00Mask = maskToFill[ix - 1 + 1, iy - 1 + 0] >= MaskLimit;
+                            var x05y05Mask = maskToFill[ix - 1 + 1, iy - 1 + 1] >= MaskLimit;
+
+                            mesh.AddQuad(x00y00Mask ? x00y00 : (Vector3f?) null, x00y05Mask ? x00y05 : (Vector3f?) null, x05y00Mask ? x05y00 : (Vector3f?) null, x05y05Mask ? x05y05 : (Vector3f?) null);
+                        }
+                    }
+                }
+            });
+
+            poolableValuesToFill.Dispose();
+            poolableMaskToFill.Dispose();
+        }
+
+        // Monotone cubic interpolation
+        // https://en.wikipedia.org/wiki/Monotone_cubic_interpolation
+        private static float Intepolate(float y0, float y1, float y2, float y3, float x12Rel)
+        {
+            // Get consecutive differences and slopes
+            float dys0 = y1 - y0;
+            float dys1 = y2 - y1;
+            float dys2 = y3 - y2;
+
+            // Get degree-1 coefficients
+            float c1s1;
+            if (dys0 * dys1 <= 0)
+            {
+                c1s1 = 0;
             }
             else
             {
-                var values = _mainCellComputer.PrepareCell(cellInGroup + _groupPosition);
-                var maskValues = _maskCellComputer.PrepareCell(cellInGroup + _groupPosition);
-                AddCellInner(cellInGroup, values, maskValues);
+                c1s1 = 6f / (3f / dys0 + 3f / dys1);
             }
-        }
 
-        protected virtual void AddCellInner(Vector2i cellInGroup, Vector3f[,] values, Vector3f[,] maskValues)
-        {
-            float step = 1.0f / _subdivision;
-            for (int ix = 0; ix < _subdivision; ix++)
+            float c1s2;
+            if (dys1 * dys2 <= 0)
             {
-                for (int iy = 0; iy < _subdivision; iy++)
-                {
-                    var x00 = step * (ix);
-                    var y00 = step * (iy);
-                    var x05 = step * (ix + 1);
-                    var y05 = step * (iy + 1);
-                    Vector3f? x00y00 = values[ix + 0, iy + 0];
-                    Vector3f? x00y05 = values[ix + 0, iy + 1];
-                    Vector3f? x05y00 = values[ix + 1, iy + 0];
-                    Vector3f? x05y05 = values[ix + 1, iy + 1];
-                    var x00y00Mask = maskValues[ix + 0, iy + 0].Z >= _maskLimit;
-                    var x00y05Mask = maskValues[ix + 0, iy + 1].Z >= _maskLimit;
-                    var x05y00Mask = maskValues[ix + 1, iy + 0].Z >= _maskLimit;
-                    var x05y05Mask = maskValues[ix + 1, iy + 1].Z >= _maskLimit;
-
-                    x00y00 = x00y00Mask ? x00y00 : (Vector3f?)null;
-                    x00y05 = x00y05Mask ? x00y05 : (Vector3f?)null;
-                    x05y00 = x05y00Mask ? x05y00 : (Vector3f?)null;
-                    x05y05 = x05y05Mask ? x05y05 : (Vector3f?)null;
-
-                    _mesh.AddQuad(x00y00, x00y05, x05y00, x05y05);
-                }
+                c1s2 = 0;
             }
+            else
+            {
+                c1s2 = 6f / (3f / dys1 + 3f / dys2);
+            }
+
+            // Get degree-2 and degree-3 coefficients
+            float c3s1 = c1s1 + c1s2 - dys1 - dys1;
+            float c2s1 = (dys1 - c1s1 - c3s1);
+
+            // Interpolate
+            var diff = x12Rel;
+            var diffSq = diff * diff;
+            return y1 + c1s1 * diff + c2s1 * diffSq + c3s1 * diff * diffSq;
         }
-
-        protected virtual IInterpolator CreateInterpolator()
-        {
-            IInterpolator interpolator = new BicubicInterpolator();
-            return interpolator;
-        }
-
-        protected virtual ICellComputer CreateMainCellComputer()
-        {
-            return CreateCellComputer(_subdivisionValueRange, ImageSampleHandler);
-        }
-
-        protected virtual ICellComputer CreateMaskCellComputer()
-        {
-            return CreateCellComputer(_subdivisionValueRange, MaskSampleHandler);
-        }
-
-        protected virtual ICellComputer CreateCellComputer(Range2i range, Func<Vector2i, SampledData2hf> sample)
-        {
-            return new CellComputer(range, _subdivision, sample, CreateInterpolator());
-        }
-
-        protected SampledData2hf ImageSampleHandler(Vector2i pos) => _image.SampleCell(pos).ToSampledData2hf();
-
-        protected SampledData2hf MaskSampleHandler(Vector2i pos) => _mask.SampleCell(pos).ToSampledData2hf();
     }
 }

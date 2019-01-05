@@ -11,12 +11,12 @@ namespace Votyra.Core.Models
             = new ConcurentObjectDictionaryPool<PoolableMatrix<T>, Vector2i>(5,
                 (matrixSize) => new PoolableMatrix<T>(matrixSize));
 
-        
-        private readonly T[,] _points;
+
+        public readonly T[,] RawMatrix;
 
         private PoolableMatrix(Vector2i matrixSize)
         {
-            _points = new T[matrixSize.X, matrixSize.Y];
+            RawMatrix = new T[matrixSize.X, matrixSize.Y];
             Size = matrixSize;
         }
 
@@ -35,14 +35,14 @@ namespace Votyra.Core.Models
 
         public T this[int ix, int iy]
         {
-            get => _points[ix, iy];
-            set => _points[ix, iy] = value;
+            get => RawMatrix[ix, iy];
+            set => RawMatrix[ix, iy] = value;
         }
 
         public T this[Vector2i i]
         {
-            get => _points[i.X, i.Y];
-            set => _points[i.X, i.Y] = value;
+            get => RawMatrix[i.X, i.Y];
+            set => RawMatrix[i.X, i.Y] = value;
         }
     }
 }

@@ -23,13 +23,10 @@ namespace Votyra.Plannar
         [InjectOptional]
         protected IMask2eProvider _maskProvider;
 
-        [Inject]
-        protected ITerrainMesher2f _terrainMesher;
-
         [Inject(Id = "root")]
         protected GameObject _root;
 
-        public IFrameData2i GetCurrentFrameData(IReadOnlySet<Vector2i> existingGroups,HashSet<Vector2i> skippedAreas)
+        public IFrameData2i GetCurrentFrameData(IReadOnlySet<Vector2i> existingGroups,HashSet<Vector2i> skippedAreas,int meshTopologyDistance)
         {
             var camera = Camera.main;
             var container = _root.gameObject;
@@ -49,7 +46,7 @@ namespace Votyra.Plannar
             var frustumCorners = frustumCornersUnity.ToVector3f();
 
             var invalidatedArea = ((image as IImageInvalidatableImage2i)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2i)?.InvalidatedArea) ?? Range2i.All;
-            invalidatedArea = _terrainMesher.AdjustAreaOfInfluenceOfInvalidatedArea(invalidatedArea);
+            invalidatedArea = invalidatedArea.ExtendBothDirections(meshTopologyDistance);
 
             return new FrameData2i(
                 camera.transform.position.ToVector3f(),

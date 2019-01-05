@@ -20,7 +20,7 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager2i(null, null,  null, null, null, null, null);
+            new TerrainGeneratorManager2i(null, null,  null, null, null, null, null,null,null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -39,6 +39,10 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<EditableMatrixMask2e>().AsSingle();
             Container.BindInterfacesAndSelfTo<Image2iTo2fProvider>().AsSingle();
             Container.BindInterfacesAndSelfTo<CompositeUVPostProcessor>().AsSingle();
+            
+            Container.Rebind<IImage2fProvider>().To<InterpolatedImage2iTo2fProvider>().AsSingle();
+            Container.BindInterfacesAndSelfTo<InterpolatedUVPostProcessorStep>().AsSingle();
+            Container.Bind<ScaleAdjustor>().ToSelf().AsSingle().NonLazy();
 
             var meshRoot = new GameObject("MeshRoot");
             meshRoot.transform.SetParent(this.transform, false);
@@ -66,6 +70,17 @@ namespace Votyra.Plannar.Unity
                 }).AsSingle();
         }
 
+        private class ScaleAdjustor
+        {
+
+            public ScaleAdjustor(IInterpolationConfig interpolationConfig, [Inject(Id = "root")] GameObject root)
+            {
+                var scale = 1f / interpolationConfig.ImageSubdivision;
+
+                root.transform.localScale = new Vector3(root.transform.localScale.x * scale, root.transform.localScale.y * scale, root.transform.localScale.z);
+            }
+        }
+        
         private GameObject CreateNewGameObject(GameObject root, ITerrainConfig terrainConfig, IMaterialConfig materialConfig)
         {
             var go = new GameObject();

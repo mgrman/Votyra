@@ -7,6 +7,7 @@ using UniRx.Async;
 using UnityEngine;
 using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
+using Votyra.Core.ImageSamplers;
 using Votyra.Core.Logging;
 using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
@@ -16,36 +17,38 @@ using Votyra.Core.TerrainGenerators;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
+using Zenject;
 
 namespace Votyra.Core
 {
     //TODO: move to floats
     public class TerrainGeneratorManager2i : IDisposable
     {
-        protected readonly IFrameDataProvider2i _frameDataProvider;
-        protected readonly IThreadSafeLogger _logger;
-
-        protected readonly IProfiler _profiler;
-        protected readonly IStateModel _stateModel;
-        protected readonly ITerrainConfig _terrainConfig;
-        protected readonly ITerrainMesher2f _terrainMesher;
-
-        protected readonly Func<GameObject> _gameObjectFactory;
+        private readonly IFrameDataProvider2i _frameDataProvider;
+        private readonly IThreadSafeLogger _logger;
+        private readonly IProfiler _profiler;
+        private readonly IStateModel _stateModel;
+        private readonly ITerrainConfig _terrainConfig;
+        private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
+        private readonly ITerrainUVPostProcessor _uvPostProcessor;
+        private readonly IInterpolationConfig _interpolationConfig;
+        private readonly Func<GameObject> _gameObjectFactory;
+        
         private CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
-
-
         private SetDictionary<Vector2i, GameObject> _meshFilters = new SetDictionary<Vector2i, GameObject>();
         private HashSet<Vector2i> _skippedAreas = new HashSet<Vector2i>();
 
-        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IStateModel stateModel, ITerrainMesher2f terrainMesher, IProfiler profiler, IFrameDataProvider2i frameDataProvider)
+        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IStateModel stateModel, IProfiler profiler, IFrameDataProvider2i frameDataProvider, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, IInterpolationConfig interpolationConfig)
         {
             _gameObjectFactory = gameObjectFactory;
             _logger = logger;
             _terrainConfig = terrainConfig;
             _stateModel = stateModel;
-            _terrainMesher = terrainMesher;
             _profiler = profiler;
             _frameDataProvider = frameDataProvider;
+            _vertexPostProcessor = vertexPostProcessor;
+            _uvPostProcessor = uvPostProcessor;
+            _interpolationConfig = interpolationConfig;
 
             StartUpdateing();
         }
@@ -67,7 +70,7 @@ namespace Votyra.Core
                 {
                     if (_stateModel.IsEnabled)
                     {
-                        var context = _frameDataProvider.GetCurrentFrameData(_meshFilters, _skippedAreas);
+                        var context = _frameDataProvider.GetCurrentFrameData(_meshFilters, _skippedAreas, (_interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1) ? 2 : 1);
                         await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
                     }
                     else
@@ -113,9 +116,36 @@ namespace Votyra.Core
 
                             foreach (var group in toRecompute)
                             {
-                                var mesh = _terrainMesher.GetResultingMesh(group, context.Image, context.Mask);
-                                
-                                meshes[group] = mesh.GetUnityMesh(null);
+                                var bounds = Area3f.FromMinAndSize((group * context.CellInGroupCount).ToVector3f(context.RangeZ.Min), context.CellInGroupCount.ToVector3f(context.RangeZ.Size));
+
+                                IPooledTerrainMesh pooledMesh;
+                                if (_interpolationConfig.DynamicMeshes)
+                                {
+                                    pooledMesh = PooledTerrainMeshContainer<ExpandingUnityTerrainMesh>.CreateDirty();
+                                    pooledMesh.Mesh.Clear(bounds, _vertexPostProcessor == null ? (Func<Vector3f, Vector3f>) null : _vertexPostProcessor.PostProcessVertex, _uvPostProcessor == null ? (Func<Vector2f, Vector2f>) null : _uvPostProcessor.ProcessUV);
+                                }
+                                else
+                                {
+                                    var triangleCount = context.CellInGroupCount.AreaSum * 2 * _interpolationConfig.MeshSubdivision * _interpolationConfig.MeshSubdivision;
+                                    pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedTerrainMesh2i>.CreateDirty(triangleCount);
+                                    pooledMesh.Mesh.Clear(bounds, _vertexPostProcessor == null ? (Func<Vector3f, Vector3f>) null : _vertexPostProcessor.PostProcessVertex, _uvPostProcessor == null ? (Func<Vector2f, Vector2f>) null : _uvPostProcessor.ProcessUV);
+                                }
+
+                                if (_interpolationConfig.MeshSubdivision > 1 && _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && !_interpolationConfig.DynamicMeshes)
+                                {
+                                    BicubicTerrainMesher2f.GetResultingMesh(pooledMesh.Mesh, group, context.CellInGroupCount, context.Image, context.Mask, _interpolationConfig.MeshSubdivision);
+                                }
+                                else if (_interpolationConfig.ImageSubdivision > 1 && _interpolationConfig.MeshSubdivision == 1)
+                                {
+                                    DynamicTerrainMesher2f.GetResultingMesh(pooledMesh.Mesh, group, context.CellInGroupCount, context.Image, context.Mask);
+                                }
+                                else if (_interpolationConfig.MeshSubdivision == 1)
+                                {
+                                    TerrainMesher2f.GetResultingMesh(pooledMesh.Mesh, group, context.CellInGroupCount, context.Image, context.Mask);
+                                }
+
+                                pooledMesh.FinalizeMesh();
+                                meshes[group] = pooledMesh.Mesh.GetUnityMesh(null);
                             }
 
                             return meshes;
@@ -171,7 +201,7 @@ namespace Votyra.Core
 
                                     var unityData = _meshFilters.TryGetValue(group).NullIfDestroyed() ?? _gameObjectFactory();
 
-                                     triangleMesh.SetUnityMesh(unityData);
+                                    triangleMesh.SetUnityMesh(unityData);
                                     _meshFilters[group] = unityData;
                                 }
 
