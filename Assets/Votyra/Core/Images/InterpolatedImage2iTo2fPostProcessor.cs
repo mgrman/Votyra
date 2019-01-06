@@ -57,7 +57,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private class CubicImage2fWrapper : IImage2f
+        private class CubicImage2fWrapper : IImage2f, IInitializableImage
         {
             protected readonly IImage2f _image;
             protected readonly int _subdivision;
@@ -186,6 +186,17 @@ namespace Votyra.Core.Images
                 var diffSq = diff * diff;
                 return y1 + c1s1 * diff + c2s1 * diffSq + c3s1 * diff * diffSq;
             }
+
+
+            public void StartUsing()
+            {
+                (_image as IInitializableImage)?.StartUsing();
+            }
+
+            public void FinishUsing()
+            {
+                (_image as IInitializableImage)?.FinishUsing();
+            }
         }
 
         private class CubicImage2fInvalidatableWrapper : CubicImage2fWrapper, IImageInvalidatableImage2
@@ -200,7 +211,7 @@ namespace Votyra.Core.Images
         }
 
         
-        private class LinearImage2fWrapper : IImage2f
+        private class LinearImage2fWrapper : IImage2f, IInitializableImage
         {
             protected readonly IImage2f _image;
             protected readonly int _subdivision;
@@ -271,6 +282,16 @@ namespace Votyra.Core.Images
                 else
                     return 0;
             }
+
+            public void StartUsing()
+            {
+                (_image as IInitializableImage)?.StartUsing();
+            }
+
+            public void FinishUsing()
+            {
+                (_image as IInitializableImage)?.FinishUsing();
+            }
         }
         
         private class LinearImage2fInvalidatableWrapper : LinearImage2fWrapper,IImageInvalidatableImage2
@@ -285,7 +306,7 @@ namespace Votyra.Core.Images
             public Range2i InvalidatedArea { get; }
         }
         
-        private class NNImage2fWrapper : IImage2f
+        private class NNImage2fWrapper : IImage2f, IInitializableImage
         {
             protected readonly IImage2f _image;
             protected readonly int _subdivision;
@@ -346,6 +367,16 @@ namespace Votyra.Core.Images
                     return point / _subdivision + (point % _subdivision == 0 ? 0 : -1);
                 else
                     return 0;
+            }
+
+            public void StartUsing()
+            {
+                (_image as IInitializableImage)?.StartUsing();
+            }
+
+            public void FinishUsing()
+            {
+                (_image as IInitializableImage)?.FinishUsing();
             }
         }
         
