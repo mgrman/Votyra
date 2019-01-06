@@ -7,21 +7,17 @@ using Zenject;
 
 namespace Votyra.Core.Images
 {
-    public class InterpolatedImage2iTo2fProvider : IImage2fProvider
+    public class InterpolatedImage2iTo2fPostProcessor : IImage2fPostProcessor
     {
-        private readonly IImage2fProvider _provider;
         private readonly IInterpolationConfig _interpolationConfig;
 
-        public InterpolatedImage2iTo2fProvider(IImage2fProvider provider, IInterpolationConfig interpolationConfig)
+        public InterpolatedImage2iTo2fPostProcessor(IInterpolationConfig interpolationConfig)
         {
-            _provider = provider;
             _interpolationConfig = interpolationConfig;
         }
 
-        public IImage2f CreateImage()
+        public IImage2f PostProcess(IImage2f image)
         {
-            var image = _provider.CreateImage();
-
             if (_interpolationConfig.ImageSubdivision == 1)
             {
                 return image;
