@@ -15,7 +15,7 @@ namespace Votyra.Core.Painting.Commands
     public abstract class PaintCommand : IPaintCommand, ITickable
     {
         [Inject]
-        protected readonly IEditableImage2i _editableImage;
+        protected readonly IEditableImage2f _editableImage;
 
         protected int _maxStrength;
         protected Vector2i _cell;

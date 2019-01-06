@@ -20,6 +20,9 @@ namespace Votyra.Plannar
         [InjectOptional]
         protected IMask2eProvider _maskProvider;
 
+        [InjectOptional]
+        private readonly IImage2fPostProcessor _image2fPostProcessor;
+
         [Inject(Id = "root")]
         protected GameObject _root;
 
@@ -30,6 +33,8 @@ namespace Votyra.Plannar
 
 
             var image = _imageProvider.CreateImage();
+            image = _image2fPostProcessor?.PostProcess(image) ?? image;
+            
             var mask = _maskProvider?.CreateMask();
 
             var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
@@ -44,7 +49,7 @@ namespace Votyra.Plannar
             var frustumCorners = frustumCornersUnity.ToVector3f();
             frustumCornersUnity.Dispose();
 
-            var invalidatedArea = ((image as IImageInvalidatableImage2i)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2i)?.InvalidatedArea) ?? Range2i.All;
+            var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
             invalidatedArea = invalidatedArea.ExtendBothDirections(meshTopologyDistance);
 
             return new FrameData2i(camera.transform.position.ToVector3f(), planes, frustumCorners, camera.transform.localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), image, mask, invalidatedArea);

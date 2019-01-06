@@ -3,7 +3,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class MatrixMask2e : IMask2e, IInitializableImage, IImageInvalidatableImage2i, IDisposable
+    public class MatrixMask2e : IMask2e, IInitializableImage, IImageInvalidatableImage2, IDisposable
     {
         public MatrixMask2e(LockableMatrix2<MaskValues> values, Range2i invalidatedArea)
         {

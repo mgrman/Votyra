@@ -9,12 +9,12 @@ namespace Votyra.Core.Images
 {
     public class InitialStateSetter2f
     {
-        public InitialStateSetter2f(IEditableImage2i editableImage, [InjectOptional] IEditableMask2e editableMask, IInitialImageConfig imageConfig, [Inject(Id = "root")]GameObject root)
+        public InitialStateSetter2f(IEditableImage2f editableImage, [InjectOptional] IEditableMask2e editableMask, IInitialImageConfig imageConfig, [Inject(Id = "root")]GameObject root)
         {
             FillInitialState(editableImage, editableMask, imageConfig, root);
         }
 
-        public void FillInitialState(IEditableImage2i editableImage, IEditableMask2e editableMask, IInitialImageConfig imageConfig, GameObject root)
+        public void FillInitialState(IEditableImage2f editableImage, IEditableMask2e editableMask, IInitialImageConfig imageConfig, GameObject root)
         {
             if (editableImage == null)
                 return;
@@ -40,7 +40,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage2i editableImage, IEditableMask2e editableMask, Texture2D texture, float scale, bool zeroIsNull)
+        private static void FillInitialState(IEditableImage2f editableImage, IEditableMask2e editableMask, Texture2D texture, float scale, bool zeroIsNull)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
@@ -73,7 +73,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage2i editableImage, Collider[] colliders, float scale, GameObject root)
+        private static void FillInitialState(IEditableImage2f editableImage, Collider[] colliders, float scale, GameObject root)
         {
             var bounds = colliders.Select(o => o.bounds)
                 .Select(o => Area3f.FromMinAndSize(o.min.ToVector3f(), o.size.ToVector3f()))
@@ -105,7 +105,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage2i editableImage, IMatrix2<float> texture, float scale)
+        private static void FillInitialState(IEditableImage2f editableImage, IMatrix2<float> texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
@@ -125,7 +125,7 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage2i editableImage, IMatrix3<bool> texture, float scale)
+        private static void FillInitialState(IEditableImage2f editableImage, IMatrix3<bool> texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {

@@ -3,9 +3,9 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class MatrixImage2i : IImage2f, IInitializableImage, IImageInvalidatableImage2i, IDisposable
+    public class MatrixImage2f : IImage2f, IInitializableImage, IImageInvalidatableImage2, IDisposable
     {
-        public MatrixImage2i(LockableMatrix2<float> values, Range2i invalidatedArea,Area1f rangeZ)
+        public MatrixImage2f(LockableMatrix2<float> values, Range2i invalidatedArea,Area1f rangeZ)
         {
             Image = values;
             InvalidatedArea = invalidatedArea;

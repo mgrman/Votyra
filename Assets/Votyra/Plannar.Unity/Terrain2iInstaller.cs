@@ -36,7 +36,7 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<InterpolationConfig>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<InitialStateSetter2f>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<EditableMatrixImage2i>().AsSingle();
+            Container.BindInterfacesAndSelfTo<EditableMatrixImage2f>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditableMatrixMask2e>().AsSingle();
             Container.BindInterfacesAndSelfTo<InterpolatedImage2iTo2fPostProcessor>().AsSingle();
             Container.BindInterfacesAndSelfTo<CompositeUVPostProcessor>().AsSingle();
