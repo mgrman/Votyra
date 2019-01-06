@@ -1,80 +1,64 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
     public static class TileMap2iExtensions
     {
-        public static TileMap2i CreateExpandedTileMap2i(this IEnumerable<SampledData2hi> templates, int scaleFactor)
+        public static TileMap2i CreateExpandedTileMap2i(this IEnumerable<SampledData2i> templates,float scaleFactor)
         {
-            return templates
-                .ScaleTemplates(scaleFactor)
-                .CreateVariantsOfUmbra()
-                .ExpandRotations()
-                .CreateTileMap2i();
+            return templates.ScaleTemplates(scaleFactor).CreateVariantsOfUmbra().ExpandRotations().CreateTileMap2i();
         }
 
-        public static TileMap2i CreateTileMap2i(this IEnumerable<SampledData2hi> templates)
+        public static TileMap2i CreateTileMap2i(this IEnumerable<SampledData2i> templates)
         {
             return new TileMap2i(templates);
         }
 
-        public static IEnumerable<SampledData2hi> CreateVariantsOfUmbra(this IEnumerable<SampledData2hi> templates)
+        public static IEnumerable<SampledData2i> CreateVariantsOfUmbra(this IEnumerable<SampledData2i> templates)
         {
-            return templates
-                .SelectMany(CreateVariantsOfUmbra)
-                .Distinct()
-                .ToArray();
+            return templates.SelectMany(t => CreateVariantsOfUmbra(t)).Distinct().ToArray();
         }
 
-        public static IEnumerable<SampledData2hi> CreateVariantsOfUmbra(this SampledData2hi tile)
+        public static IEnumerable<SampledData2i> CreateVariantsOfUmbra(this SampledData2i tile)
         {
-            for (Height1i x0y0 = Height1i.Default; x0y0 <= tile.x0y0.Abs; x0y0 = x0y0.Above)
+            var stepCount_x0y0 = tile.x0y0.Abs();
+            var stepCount_x0y1 = tile.x0y1.Abs();
+            var stepCount_x1y0 = tile.x1y0.Abs();
+            var stepCount_x1y1 = tile.x1y1.Abs();
+            var sign_x0y0 = tile.x0y0.Sign();
+            var sign_x0y1 = tile.x0y1.Sign();
+            var sign_x1y0 = tile.x1y0.Sign();
+            var sign_x1y1 = tile.x1y1.Sign();
+
+            for (int x0y0 = 0; x0y0 <= stepCount_x0y0; x0y0++)
             {
-                for (Height1i x0y1 = Height1i.Default; x0y1 <= tile.x0y1.Abs; x0y1 = x0y1.Above)
+                for (int x0y1 = 0; x0y1 <= stepCount_x0y1; x0y1++)
                 {
-                    for (Height1i x1y0 = Height1i.Default; x1y0 <= tile.x1y0.Abs; x1y0 = x1y0.Above)
+                    for (int x1y0 = 0; x1y0 <= stepCount_x1y0; x1y0++)
                     {
-                        for (Height1i x1y1 = Height1i.Default; x1y1 <= tile.x1y1.Abs; x1y1 = x1y1.Above)
+                        for (int x1y1 = 0; x1y1 <= stepCount_x1y1; x1y1++)
                         {
-                            yield return new SampledData2hi
-                              (
-                                  (x0y0 * (tile.x0y0).Sign),
-                                  (x0y1 * (tile.x0y1).Sign),
-                                  (x1y0 * (tile.x1y0).Sign),
-                                  (x1y1 * (tile.x1y1).Sign)
-                              );
+                            yield return new SampledData2i(x0y0  * sign_x0y0, x0y1 *sign_x0y1, x1y0  * sign_x1y0, x1y1  * sign_x1y1);
                         }
                     }
                 }
             }
         }
 
-        public static IEnumerable<SampledData2hi> ExpandRotations(this IEnumerable<SampledData2hi> templates)
+        public static IEnumerable<SampledData2i> ExpandRotations(this IEnumerable<SampledData2i> templates)
         {
-            return templates
-                .SelectMany(template =>
-                {
-                    return new[]
-                    {
-                        template,
-                        template.GetRotated(1),
-                        template.GetRotated(2),
-                        template.GetRotated(3),
-                    };
-                })
-                .Distinct()
-                .ToArray();
+            return templates.SelectMany(template => { return new[] {template, template.GetRotated(1), template.GetRotated(2), template.GetRotated(3),}; }).Distinct().ToArray();
         }
 
-        public static Range1hi RangeUnion(this IEnumerable<SampledData2hi> templates)
+        public static Area1i RangeUnion(this IEnumerable<SampledData2i> templates)
         {
-            return templates
-                .Select(o => o.Range)
-                .Aggregate((Range1hi?)null, (a, b) => a?.UnionWith(b) ?? b) ?? Range1hi.Default;
+            return templates.Select(o => o.Range).Aggregate((Area1i?) null, (a, b) => a?.UnionWith(b) ?? b) ?? Area1i.Zero;
         }
 
-        public static IEnumerable<SampledData2hi> ScaleTemplates(this IEnumerable<SampledData2hi> templates, int scale)
+        public static IEnumerable<SampledData2i> ScaleTemplates(this IEnumerable<SampledData2i> templates, float scale)
         {
             for (int i = 1; i <= scale; i += 1)
             {

@@ -35,22 +35,22 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 var data_x2y0 = image.SampleCell(cell - Vector2i.One + new Vector2i(2, 0));
                 var data_x2y2 = image.SampleCell(cell - Vector2i.One + new Vector2i(2, 2));
 
-                var valuesInterMat_x0y0 = data_x0y0.x0y0.RawValue;
-                var valuesInterMat_x0y1 = data_x0y0.x0y1.RawValue;
-                var valuesInterMat_x0y2 = data_x0y2.x0y0.RawValue;
-                var valuesInterMat_x0y3 = data_x0y2.x0y1.RawValue;
-                var valuesInterMat_x1y0 = data_x0y0.x1y0.RawValue;
-                var valuesInterMat_x1y1 = data_x0y0.x1y1.RawValue;
-                var valuesInterMat_x1y2 = data_x0y2.x1y0.RawValue;
-                var valuesInterMat_x1y3 = data_x0y2.x1y1.RawValue;
-                var valuesInterMat_x2y0 = data_x2y0.x0y0.RawValue;
-                var valuesInterMat_x2y1 = data_x2y0.x0y1.RawValue;
-                var valuesInterMat_x2y2 = data_x2y2.x0y0.RawValue;
-                var valuesInterMat_x2y3 = data_x2y2.x0y1.RawValue;
-                var valuesInterMat_x3y0 = data_x2y0.x1y0.RawValue;
-                var valuesInterMat_x3y1 = data_x2y0.x1y1.RawValue;
-                var valuesInterMat_x3y2 = data_x2y2.x1y0.RawValue;
-                var valuesInterMat_x3y3 = data_x2y2.x1y1.RawValue;
+                var valuesInterMat_x0y0 = data_x0y0.x0y0;
+                var valuesInterMat_x0y1 = data_x0y0.x0y1;
+                var valuesInterMat_x0y2 = data_x0y2.x0y0;
+                var valuesInterMat_x0y3 = data_x0y2.x0y1;
+                var valuesInterMat_x1y0 = data_x0y0.x1y0;
+                var valuesInterMat_x1y1 = data_x0y0.x1y1;
+                var valuesInterMat_x1y2 = data_x0y2.x1y0;
+                var valuesInterMat_x1y3 = data_x0y2.x1y1;
+                var valuesInterMat_x2y0 = data_x2y0.x0y0;
+                var valuesInterMat_x2y1 = data_x2y0.x0y1;
+                var valuesInterMat_x2y2 = data_x2y2.x0y0;
+                var valuesInterMat_x2y3 = data_x2y2.x0y1;
+                var valuesInterMat_x3y0 = data_x2y0.x1y0;
+                var valuesInterMat_x3y1 = data_x2y0.x1y1;
+                var valuesInterMat_x3y2 = data_x2y2.x1y0;
+                var valuesInterMat_x3y3 = data_x2y2.x1y1;
 
                 var mask_x0y0 = mask.SampleCell(cell - Vector2i.One + new Vector2i(0, 0));
                 var mask_x0y2 = mask.SampleCell(cell - Vector2i.One + new Vector2i(0, 2));
@@ -92,7 +92,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                         var valueCol2 = Intepolate(valuesInterMat_x0y2, valuesInterMat_x1y2, valuesInterMat_x2y2, valuesInterMat_x3y2, pos.X);
                         var valueCol3 = Intepolate(valuesInterMat_x0y3, valuesInterMat_x1y3, valuesInterMat_x2y3, valuesInterMat_x3y3, pos.X);
                         var value = Intepolate(valueCol0, valueCol1, valueCol2, valueCol3, pos.Y);
-                        valuesToFill[ix, iy] = (pos + cell).ToVector3f(new Height1f(value));
+                        valuesToFill[ix, iy] = (pos + cell).ToVector3f(value);
 
                         if (ix > 0 && iy > 0)
                         {

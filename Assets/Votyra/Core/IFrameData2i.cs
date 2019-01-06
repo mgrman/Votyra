@@ -9,7 +9,7 @@ namespace Votyra.Core
     {
         IImage2f Image { get; }
         IMask2e Mask { get; }
-        Range1hf RangeZ { get; }
+        Area1f RangeZ { get; }
         Range2i InvalidatedArea { get; }
     }
 }

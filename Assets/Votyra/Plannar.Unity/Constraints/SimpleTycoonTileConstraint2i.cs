@@ -10,28 +10,30 @@ namespace Votyra.Plannar.Images.Constraints
 {
     public class SimpleTycoonTileConstraint2i : TycoonTileConstraint2i
     {
-        private static readonly IComparer<Height1i> DefaultComparer = Comparer<Height1i>.Default;
+        private static readonly IComparer<float> DefaultComparer = Comparer<float>.Default;
 
-        private IComparer<Height1i> _comparer;
-        private Func<Vector2i, Height1i> _getValue;
-        public SimpleTycoonTileConstraint2i([ConfigInject("scaleFactor")] int scaleFactor)
-            : base(scaleFactor)
+        private IComparer<float> _comparer;
+        private Func<Vector2i, float> _getValue;
+
+        public SimpleTycoonTileConstraint2i([ConfigInject("scaleFactor")] int scaleFactor) : base(scaleFactor)
         {
         }
 
-        public override void Constrain()
+        protected override void Constrain()
         {
             switch (_direction)
             {
                 case Direction.Up:
-                    _comparer = Comparer<Height1i>.Create((a, b) => -(DefaultComparer.Compare(a, b)));
-                    _getValue = cell => _editableMatrix.SampleCell(cell).Max;
+                    _comparer = Comparer<float>.Create((a, b) => -(DefaultComparer.Compare(a, b)));
+                    _getValue = cell => _editableMatrix.SampleCell(cell)
+                        .Max;
                     break;
 
                 case Direction.Down:
                 default:
                     _comparer = DefaultComparer;
-                    _getValue = cell => _editableMatrix.SampleCell(cell).Min;
+                    _getValue = cell => _editableMatrix.SampleCell(cell)
+                        .Min;
                     break;
             }
 
@@ -40,7 +42,7 @@ namespace Votyra.Plannar.Images.Constraints
 
         protected override void ConstrainCell(Vector2i seedCell)
         {
-            var queue = new PrioritySetQueue<Vector2i, Height1i>(EqualityComparer<Vector2i>.Default, _comparer);
+            var queue = new PrioritySetQueue<Vector2i, float>(EqualityComparer<Vector2i>.Default, _comparer);
             queue.Add(seedCell, _getValue(seedCell));
 
             while (queue.Count > 0)
@@ -51,10 +53,12 @@ namespace Votyra.Plannar.Images.Constraints
                     return;
                 }
 #endif
-                var cell = queue.GetFirst().Value;
+                var cell = queue.GetFirst()
+                    .Value;
                 _invalidatedCellArea = _invalidatedCellArea.CombineWith(cell);
 
-                var sample = _editableMatrix.SampleCell(cell);
+                var sample = _editableMatrix.SampleCell(cell)
+                    .ToSampledData2i();
                 var processedSample = Process(sample);
 
                 Vector2i cell_x0y0 = ImageSampler2iUtils.CellToX0Y0(cell);
@@ -62,22 +66,23 @@ namespace Votyra.Plannar.Images.Constraints
                 Vector2i cell_x1y0 = ImageSampler2iUtils.CellToX1Y0(cell);
                 Vector2i cell_x1y1 = ImageSampler2iUtils.CellToX1Y1(cell);
 
-                Height1i.Difference change = Height1i.Difference.Zero;
+                var change = 0f;
                 if (_editableMatrix.ContainsIndex(cell_x0y0) && _editableMatrix.ContainsIndex(cell_x1y1))
                 {
-                    change += (_editableMatrix[cell_x0y0] - processedSample.x0y0).Abs;
+                    change += Math.Abs(_editableMatrix[cell_x0y0] - processedSample.x0y0);
                     _editableMatrix[cell_x0y0] = processedSample.x0y0;
 
-                    change += (_editableMatrix[cell_x0y1] - processedSample.x0y1).Abs;
+                    change += Math.Abs(_editableMatrix[cell_x0y1] - processedSample.x0y1);
                     _editableMatrix[cell_x0y1] = processedSample.x0y1;
 
-                    change += (_editableMatrix[cell_x1y0] - processedSample.x1y0).Abs;
+                    change += Math.Abs(_editableMatrix[cell_x1y0] - processedSample.x1y0);
                     _editableMatrix[cell_x1y0] = processedSample.x1y0;
 
-                    change += (_editableMatrix[cell_x1y1] - processedSample.x1y1).Abs;
+                    change += Math.Abs(_editableMatrix[cell_x1y1] - processedSample.x1y1);
                     _editableMatrix[cell_x1y1] = processedSample.x1y1;
                 }
-                if (change > Height1i.Difference.Zero)
+
+                if (change > 0f)
                 {
                     const int areaSize = 1;
                     for (int offsetX = -areaSize; offsetX <= areaSize; offsetX++)
@@ -99,6 +104,5 @@ namespace Votyra.Plannar.Images.Constraints
                 }
             }
         }
-
     }
 }

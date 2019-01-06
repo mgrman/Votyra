@@ -21,7 +21,7 @@ namespace Votyra.Core
             Image = image;
             Mask = mask;
 
-            RangeZ = image?.RangeZ ?? Range1hf.Default;
+            RangeZ = image?.RangeZ ?? Area1f.Zero;
 
             InvalidatedArea = invalidatedArea;
 
@@ -47,7 +47,7 @@ namespace Votyra.Core
             }
         }
 
-        public Range1hf RangeZ { get; }
+        public Area1f RangeZ { get; }
         public Range2i InvalidatedArea { get; }
         public IImage2f Image { get; }
         public IMask2e Mask { get; }

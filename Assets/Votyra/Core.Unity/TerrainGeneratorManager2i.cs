@@ -219,7 +219,7 @@ namespace Votyra.Core
             var image = context.Image;
             var mask = context.Mask;
 
-            var bounds = _range.ToArea3fFromMinMax(image.RangeZ.Min.RawValue, image.RangeZ.Max.RawValue);
+            var bounds = _range.ToArea3f(image.RangeZ);
 
             IPooledTerrainMesh pooledMesh;
             if (_interpolationConfig.DynamicMeshes)

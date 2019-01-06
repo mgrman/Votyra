@@ -4,6 +4,6 @@ namespace Votyra.Core.Images
 {
     public interface IEditableImage2i
     {
-        IEditableImageAccessor2i RequestAccess(Range2i area);
+        IEditableImageAccessor2f RequestAccess(Range2i area);
     }
 }

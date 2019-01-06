@@ -10,7 +10,59 @@ namespace Votyra.Core.Editor
 {
     [TestFixture]
     public class ConversionUtilsTest
-    {
+    {  
+        
+        // [Test]
+        // [TestCase(10)]
+        // [TestCase(100)]
+        // [TestCase(1000)]
+        // [TestCase(10000)]
+        // [TestCase(100000)]
+        // [TestCase(1000000)]
+        // public void ListConversionTest(int tests)
+        // {
+        //     // Debug.Log("capacity: " + createNewList().Capacity);
+        //
+        //     DateTime start = DateTime.UtcNow;
+        //     Range1hi rangeHI = Range1hi.Default;
+        //     for (int test = 0; test < tests; test++)
+        //     {
+        //         rangeHI = rangeHI.UnionWith(new Range1hi(new Height1i(test), new Height1i(test*2)));
+        //     }
+        //     TimeSpan integerHeights = DateTime.UtcNow - start;
+        //
+        //     start = DateTime.UtcNow;
+        //     Range1i rangeI = Range1i.Zero;
+        //     for (int test = 0; test < tests; test++)
+        //     {
+        //         rangeI = rangeI.UnionWith(new Range1i(test, test * 2));
+        //     }
+        //     TimeSpan integers = DateTime.UtcNow - start;
+        //     
+        //     
+        //     start = DateTime.UtcNow;
+        //     Range1hf rangeHF = Range1hf.Default;
+        //     for (int test = 0; test < tests; test++)
+        //     {
+        //         rangeHF = rangeHF.UnionWith(new Range1hf(new Height1f(test), new Height1f(test * 2)));
+        //     }
+        //     TimeSpan floatHeights = DateTime.UtcNow - start;
+        //
+        //     start = DateTime.UtcNow;
+        //     Area1f rangeF = Area1f.Zero;
+        //     for (int test = 0; test < tests; test++)
+        //     {
+        //         rangeF = rangeF.UnionWith(new Area1f(test, test * 2));
+        //     }
+        //     TimeSpan floats = DateTime.UtcNow - start;
+        //
+        //
+        //     Debug.Log("integerHeights: " + (int) integerHeights.TotalMilliseconds);
+        //     Debug.Log("integers: " + (int) integers.TotalMilliseconds);
+        //     Debug.Log("floatHeights: " + (int) floatHeights.TotalMilliseconds);
+        //     Debug.Log("floats: " + (int) floats.TotalMilliseconds);
+        // }
+        
         // [Test]
         // [TestCase(10)]
         // [TestCase(13)]

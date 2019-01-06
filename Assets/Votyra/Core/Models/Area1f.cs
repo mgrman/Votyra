@@ -45,6 +45,32 @@ namespace Votyra.Core.Models
             return new Area1f(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
         }
 
+        public Area1f? UnionWith(Area1f? range)
+        {
+            if (range == null)
+            {
+                return this;
+            }
+
+            return UnionWith(range.Value);
+        }
+
+        public Area1f UnionWith(float value)
+        {
+            if (value < Min)
+            {
+                return new Area1f(value, Max);
+            }
+            else if (value > Max)
+            {
+                return new Area1f(Min, value);
+            }
+            else
+            {
+                return this;
+            }
+        }
+        
         public bool Equals(Area1f other)
         {
             return this == other;

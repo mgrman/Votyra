@@ -3,10 +3,10 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public interface IEditableImageAccessor2i : IDisposable
+    public interface IEditableImageAccessor2f : IDisposable
     {
         Range2i Area { get; }
 
-        Height1i this[Vector2i pos] { get; set; }
+        float this[Vector2i pos] { get; set; }
     }
 }

@@ -6,12 +6,12 @@ using Zenject;
 
 namespace Votyra.Core.Images
 {
-    public class EditableMatrixImage2i : IImage2iProvider, IEditableImage2i
+    public class EditableMatrixImage2i : IImage2fProvider, IEditableImage2i
     {
-        private readonly Matrix2<Height1i> _editableMatrix;
-        private Range1hi _editableRangeZ;
+        private readonly Matrix2<float> _editableMatrix;
+        private Area1f _editableRangeZ;
 
-        private readonly List<LockableMatrix2<Height1i>> _readonlyMatrices = new List<LockableMatrix2<Height1i>>();
+        private readonly List<LockableMatrix2<float>> _readonlyMatrices = new List<LockableMatrix2<float>>();
         private Range2i? _invalidatedArea;
         private MatrixImage2i _image = null;
 
@@ -20,11 +20,11 @@ namespace Votyra.Core.Images
         public EditableMatrixImage2i([InjectOptional] IImageConstraint2i constraint, IImageConfig imageConfig)
         {
             _constraint = constraint;
-            _editableMatrix = new Matrix2<Height1i>(imageConfig.ImageSize.XY);
-            _editableRangeZ = new Range1hi(_editableMatrix[0,0], _editableMatrix[0, 0]);
+            _editableMatrix = new Matrix2<float>(imageConfig.ImageSize.XY);
+            _editableRangeZ = new Area1f(_editableMatrix[0,0], _editableMatrix[0, 0]);
         }
 
-        public IImage2i CreateImage()
+        public IImage2f CreateImage()
         {
             if (_invalidatedArea == Range2i.Zero)
             {
@@ -39,7 +39,7 @@ namespace Votyra.Core.Images
                 var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
                 if (readonlyMatrix == null)
                 {
-                    readonlyMatrix = new LockableMatrix2<Height1i>(_editableMatrix.Size);
+                    readonlyMatrix = new LockableMatrix2<float>(_editableMatrix.Size);
                     _readonlyMatrices.Add(readonlyMatrix);
                 }
 
@@ -59,7 +59,7 @@ namespace Votyra.Core.Images
             return _image;
         }
 
-        public IEditableImageAccessor2i RequestAccess(Range2i areaRequest)
+        public IEditableImageAccessor2f RequestAccess(Range2i areaRequest)
         {
             return new MatrixImageAccessor(this, areaRequest);
         }
@@ -92,12 +92,12 @@ namespace Votyra.Core.Images
         //     return Height1i.Range(min, max);
         // }
 
-        private class MatrixImageAccessor : IEditableImageAccessor2i
+        private class MatrixImageAccessor : IEditableImageAccessor2f
         {
-            private readonly Height1i[,] _editableMatrix;
+            private readonly float[,] _editableMatrix;
             private readonly EditableMatrixImage2i _editableImage;
-            private Range1hi _editableRangeZ;
-            private Height1i.Difference _changeCounter = Height1i.Difference.Zero;
+            private Area1f _editableRangeZ;
+            private float _changeCounter = 0f;
 
             public MatrixImageAccessor(EditableMatrixImage2i editableImage, Range2i area)
             {
@@ -108,7 +108,7 @@ namespace Votyra.Core.Images
 
             public Range2i Area { get; }
 
-            public Height1i this[Vector2i pos]
+            public float this[Vector2i pos]
             {
                 get
                 {
@@ -126,7 +126,7 @@ namespace Votyra.Core.Images
             public void Dispose()
             {
                 this._editableImage._editableRangeZ = _editableRangeZ;
-                var direction = _changeCounter > Height1i.Difference.Zero ? Direction.Up : (_changeCounter < Height1i.Difference.Zero ? Direction.Down : Direction.Unknown);
+                var direction = _changeCounter > 0 ? Direction.Up : (_changeCounter < 0 ? Direction.Down : Direction.Unknown);
                 this._editableImage.FixImage(Area, direction);
                 
             }

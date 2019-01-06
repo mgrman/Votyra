@@ -17,34 +17,24 @@ namespace Votyra.Core.ImageSamplers
 
         public static Vector2i CellToX1Y1(Vector2i pos) => pos + OffsetX1Y1;
 
-        public static SampledData2hi SampleCell(this Matrix2<Height1i> image, Vector2i cell)
+        public static SampledData2f SampleCell(this Matrix2<float> image, Vector2i cell)
         {
-            var x0y0 = image.TryGet(ImageSampler2iUtils.CellToX0Y0(cell), Height1i.Default);
-            var x0y1 = image.TryGet(ImageSampler2iUtils.CellToX0Y1(cell), Height1i.Default);
-            var x1y0 = image.TryGet(ImageSampler2iUtils.CellToX1Y0(cell), Height1i.Default);
-            var x1y1 = image.TryGet(ImageSampler2iUtils.CellToX1Y1(cell), Height1i.Default);
+            var x0y0 = image.TryGet(ImageSampler2iUtils.CellToX0Y0(cell), 0f);
+            var x0y1 = image.TryGet(ImageSampler2iUtils.CellToX0Y1(cell), 0f);
+            var x1y0 = image.TryGet(ImageSampler2iUtils.CellToX1Y0(cell), 0f);
+            var x1y1 = image.TryGet(ImageSampler2iUtils.CellToX1Y1(cell), 0f);
 
-            return new SampledData2hi(x0y0, x0y1, x1y0, x1y1);
+            return new SampledData2f(x0y0, x0y1, x1y0, x1y1);
         }
 
-        public static SampledData2hf SampleCell(this IImage2f image, Vector2i cell)
+        public static SampledData2f SampleCell(this IImage2f image, Vector2i cell)
         {
             var x0y0 = image.Sample(ImageSampler2iUtils.CellToX0Y0(cell));
             var x0y1 = image.Sample(ImageSampler2iUtils.CellToX0Y1(cell));
             var x1y0 = image.Sample(ImageSampler2iUtils.CellToX1Y0(cell));
             var x1y1 = image.Sample(ImageSampler2iUtils.CellToX1Y1(cell));
 
-            return new SampledData2hf(x0y0, x0y1, x1y0, x1y1);
-        }
-
-        public static SampledData2hi SampleCell(this IImage2i image, Vector2i cell)
-        {
-            var x0y0 = image.Sample(ImageSampler2iUtils.CellToX0Y0(cell));
-            var x0y1 = image.Sample(ImageSampler2iUtils.CellToX0Y1(cell));
-            var x1y0 = image.Sample(ImageSampler2iUtils.CellToX1Y0(cell));
-            var x1y1 = image.Sample(ImageSampler2iUtils.CellToX1Y1(cell));
-
-            return new SampledData2hi(x0y0, x0y1, x1y0, x1y1);
+            return new SampledData2f(x0y0, x0y1, x1y0, x1y1);
         }
 
         public static SampledMask2e SampleCell(this IMask2e mask, Vector2i cell)

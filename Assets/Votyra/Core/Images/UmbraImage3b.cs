@@ -4,16 +4,16 @@ namespace Votyra.Core.Images
 {
     public class UmbraImage3b : IImage3b
     {
-        public UmbraImage3b(IImage2i imageA)
+        public UmbraImage3b(IImage2f imageA)
         {
             Image = imageA;
         }
 
-        public IImage2i Image { get; private set; }
+        public IImage2f Image { get; private set; }
 
         public bool Sample(Vector3i point)
         {
-            return Image.Sample(new Vector2i(point.X, point.Y)) - point.Z.CreateHeight() > Height1i.Difference.Zero;
+            return Image.Sample(new Vector2i(point.X, point.Y)) - point.Z > 0;
         }
 
         public bool AnyData(Range3i range)

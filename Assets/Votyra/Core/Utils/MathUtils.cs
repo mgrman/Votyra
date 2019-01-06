@@ -20,6 +20,26 @@ namespace Votyra.Core.Utils
             return Math.Abs(val);
         }
 
+        public static int? Sign(this int? val)
+        {
+            return val.HasValue ? Math.Sign(val.Value) : val;
+        }
+
+        public static int Sign(this int val)
+        {
+            return Math.Sign(val);
+        }
+
+        public static float? Abs(this float? val)
+        {
+            return val.HasValue ? Math.Abs(val.Value) : val;
+        }
+
+        public static float Abs(this float val)
+        {
+            return Math.Abs(val);
+        }
+
         public static int CeilToInt(this float f)
         {
             if (float.IsPositiveInfinity(f))
