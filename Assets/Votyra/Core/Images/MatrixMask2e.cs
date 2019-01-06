@@ -11,26 +11,15 @@ namespace Votyra.Core.Images
             InvalidatedArea = invalidatedArea;
         }
 
-        public Range2i InvalidatedArea { get; }
-
         public LockableMatrix2<MaskValues> Image { get; }
 
-        public bool AnyData(Range2i range)
+        public void Dispose()
         {
-            bool allHoles = true;
-            range.ForeachPointExlusive(o =>
-            {
-                var value = Sample(o);
-                allHoles = allHoles && value.IsHole();
-            });
-
-            return !allHoles;
+            if (Image.IsLocked)
+                Image.Unlock(this);
         }
 
-        public MaskValues Sample(Vector2i point)
-        {
-            return Image.TryGet(point, MaskValues.Terrain);
-        }
+        public Range2i InvalidatedArea { get; }
 
         public void StartUsing()
         {
@@ -42,12 +31,18 @@ namespace Votyra.Core.Images
             Image.Unlock(this);
         }
 
-        public void Dispose()
+        public bool AnyData(Range2i range)
         {
-            if (Image.IsLocked)
+            var allHoles = true;
+            range.ForeachPointExlusive(o =>
             {
-                Image.Unlock(this);
-            }
+                var value = Sample(o);
+                allHoles = allHoles && value.IsHole();
+            });
+
+            return !allHoles;
         }
+
+        public MaskValues Sample(Vector2i point) => Image.TryGet(point, MaskValues.Terrain);
     }
 }

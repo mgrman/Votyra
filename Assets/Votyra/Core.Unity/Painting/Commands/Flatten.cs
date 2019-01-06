@@ -1,9 +1,5 @@
 using System;
 using UnityEngine;
-using Votyra.Core.Images;
-using Votyra.Core.ImageSamplers;
-using Votyra.Core.Models;
-using Zenject;
 
 namespace Votyra.Core.Painting.Commands
 {
@@ -24,9 +20,6 @@ namespace Votyra.Core.Painting.Commands
             base.PrepareWithClickedValue(clickedValue);
         }
 
-        protected override float Invoke(float value, int strength)
-        {
-            return (Mathf.Lerp(_centerValue ?? 0f, value, smoothSpeedRelative) - value) * Math.Sign(strength) + value;
-        }
+        protected override float Invoke(float value, int strength) => (Mathf.Lerp(_centerValue ?? 0f, value, smoothSpeedRelative) - value) * Math.Sign(strength) + value;
     }
 }

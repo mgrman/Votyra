@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using Zenject;
+using UnityEngine.UI;
 using Votyra.Core.Painting.Commands;
+using Zenject;
 
 namespace Votyra.Core.Painting.UI
 {
@@ -24,7 +22,9 @@ namespace Votyra.Core.Painting.UI
         // Start is called before the first frame update
         private void Start()
         {
-            GetComponentInChildren<Text>().text = PaintCommand.GetType().Name;
+            GetComponentInChildren<Text>()
+                .text = PaintCommand.GetType()
+                .Name;
         }
     }
 }

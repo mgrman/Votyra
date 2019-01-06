@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using Object = UnityEngine.Object;
 
 namespace Votyra.Core.Profiling
 {
     public static class UnityProfilerAggregator
     {
-        private static object _lock = new Object();
-        private static Dictionary<Tuple<UnityEngine.Object, string>, double> Values { get; } = new Dictionary<Tuple<UnityEngine.Object, string>, double>();
+        private static readonly object _lock = new object();
+        private static Dictionary<System.Tuple<Object, string>, double> Values { get; } = new Dictionary<System.Tuple<Object, string>, double>();
 
-        public static void Add(UnityEngine.Object owner, string name, double ms)
+        public static void Add(Object owner, string name, double ms)
         {
             lock (_lock)
             {
@@ -16,13 +17,14 @@ namespace Votyra.Core.Profiling
             }
         }
 
-        public static IReadOnlyDictionary<Tuple<UnityEngine.Object, string>, double> ValuesClone()
+        public static IReadOnlyDictionary<System.Tuple<Object, string>, double> ValuesClone()
         {
-            Dictionary<Tuple<UnityEngine.Object, string>, double> clone;
+            Dictionary<Tuple<Object, string>, double> clone;
             lock (_lock)
             {
-                clone = new Dictionary<Tuple<UnityEngine.Object, string>, double>(Values);
+                clone = new Dictionary<Tuple<Object, string>, double>(Values);
             }
+
             return clone;
         }
     }

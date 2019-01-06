@@ -1,51 +1,48 @@
-﻿using System;
+﻿using System.Linq;
 using UniRx;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-using System.Linq;
 
 namespace Votyra.Core.Painting.UI
 {
     public class PaintCommandsCollection : MonoBehaviour
     {
-        public string PaintCommands;
+        [Inject]
+        protected IInstantiator _instantiator;
 
         [Inject]
         protected IPaintingModel _paintingModel;
 
-        [Inject]
-        protected IInstantiator _instantiator;
+        public string PaintCommands;
 
         // Start is called before the first frame update
         private void Start()
         {
             //_paintingModel.PaintCommands
-            _paintingModel.PaintCommands
-                .Subscribe(o =>
+            _paintingModel.PaintCommands.Subscribe(o =>
+            {
+                PaintCommands = string.Join(", ", o.Select(o1 => o1.GetType()
+                    .Name));
+                var childrenCount = transform.childCount;
+                for (var i = childrenCount - 1; i >= 0; i--)
                 {
-                    PaintCommands = string.Join(", ", o.Select(o1 => o1.GetType().Name));
-                    var childrenCount = transform.childCount;
-                    for (int i = childrenCount - 1; i >= 0; i--)
-                    {
-                        var child = transform.GetChild(i).gameObject;
-                        if (child.activeSelf)
-                        {
-                            GameObject.DestroyImmediate(child);
-                        }
-                    }
+                    var child = transform.GetChild(i)
+                        .gameObject;
+                    if (child.activeSelf)
+                        DestroyImmediate(child);
+                }
 
-                    var template = transform.GetChild(0).gameObject;
+                var template = transform.GetChild(0)
+                    .gameObject;
 
-                    foreach (var cmd in o)
-                    {
-                        var instance = _instantiator.InstantiatePrefab(template, transform);
-                        instance.SetActive(true);
-                        var instanceScript = instance.GetComponentInChildren<PaintCommandButton>();
-                        instanceScript.PaintCommand = cmd;
-                    }
-                });
+                foreach (var cmd in o)
+                {
+                    var instance = _instantiator.InstantiatePrefab(template, transform);
+                    instance.SetActive(true);
+                    var instanceScript = instance.GetComponentInChildren<PaintCommandButton>();
+                    instanceScript.PaintCommand = cmd;
+                }
+            });
         }
     }
 }

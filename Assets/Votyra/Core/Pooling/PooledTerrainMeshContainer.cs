@@ -5,8 +5,7 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {
-    public class PooledTerrainMeshContainer<T> : IPooledTerrainMesh
-        where T : ITerrainMesh, new()
+    public class PooledTerrainMeshContainer<T> : IPooledTerrainMesh where T : ITerrainMesh, new()
     {
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
         private static readonly ConcurentObjectPool<PooledTerrainMeshContainer<T>> Pool = new ConcurentObjectPool<PooledTerrainMeshContainer<T>>(5, () => new PooledTerrainMeshContainer<T>());
@@ -24,19 +23,10 @@ namespace Votyra.Core.Pooling
 
         ITerrainMesh IPooledTerrainMesh.Mesh => Mesh;
 
-
-        public static PooledTerrainMeshContainer<T> CreateDirty()
-        {
-            var obj = Pool.GetObject();
-            return obj;
-        }
-
         public void Dispose()
         {
             if (IsDisposable)
-            {
                 (Mesh as IDisposable)?.Dispose();
-            }
             Pool.ReturnObject(this);
         }
 
@@ -50,14 +40,21 @@ namespace Votyra.Core.Pooling
             Mesh.AddTriangle(a, b, c);
         }
 
-        public void Initialize(int triangleCount)
-        {
-            throw new InvalidOperationException("Cannot initialize pooled mesh.");
-        }
-
         public void FinalizeMesh()
         {
             Mesh.FinalizeMesh();
+        }
+
+
+        public static PooledTerrainMeshContainer<T> CreateDirty()
+        {
+            var obj = Pool.GetObject();
+            return obj;
+        }
+
+        public void Initialize(int triangleCount)
+        {
+            throw new InvalidOperationException("Cannot initialize pooled mesh.");
         }
     }
 }

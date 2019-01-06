@@ -10,18 +10,18 @@ namespace Votyra.Core.Unity
     public class TerrainDataController : MonoBehaviour
     {
         [SerializeField]
-        public int _activeTerrainAlgorithm = 0;
+        public int _activeTerrainAlgorithm;
+
+        [NonSerialized]
+        private GameObject _activeTerrainRoot;
 
         [SerializeField]
         public GameObject[] _availableTerrainAlgorithms;
 
+        private ITerrainManagerModel _terrainManagerModel;
+
         [SerializeField]
         public ConfigItem[] Config;
-
-        [NonSerialized]
-        private GameObject _activeTerrainRoot = null;
-
-        private ITerrainManagerModel _terrainManagerModel;
 
         [Inject]
         public void Initialize(ITerrainManagerModel terrainManagerModel, Context context)
@@ -31,11 +31,10 @@ namespace Votyra.Core.Unity
 
             UpdateModel();
 
-            UniRx.Observable
-                .CombineLatest(_terrainManagerModel.ActiveAlgorithm, _terrainManagerModel.Config, (activeAlgorithm, config) =>
-                 {
-                     return new { activeAlgorithm, config };
-                 })
+            _terrainManagerModel.ActiveAlgorithm.CombineLatest(_terrainManagerModel.Config, (activeAlgorithm, config) =>
+                {
+                    return new {activeAlgorithm, config};
+                })
                 .Throttle(TimeSpan.FromMilliseconds(200))
                 .Synchronize()
                 .Subscribe(data =>
@@ -52,16 +51,16 @@ namespace Votyra.Core.Unity
                             return;
 
                         if (data.config != null)
-                        {
                             foreach (var configItem in data.config)
                             {
                                 var type = configItem.Type;
                                 var value = configItem.Value;
 
                                 container.UnbindId(type, configItem.Id);
-                                container.Bind(type).WithId(configItem.Id).FromInstance(value);
+                                container.Bind(type)
+                                    .WithId(configItem.Id)
+                                    .FromInstance(value);
                             }
-                        }
 
                         var instance = container.InstantiatePrefab(data.activeAlgorithm.Prefab, context.transform);
                         _activeTerrainRoot = instance;
@@ -86,9 +85,7 @@ namespace Votyra.Core.Unity
         private void UpdateModel()
         {
             if (_terrainManagerModel == null)
-            {
                 return;
-            }
             // if (_keepImageChanges && _activeTerrainRoot != null)
             // {
             //     Debug.Log("Has old values");
@@ -132,8 +129,7 @@ namespace Votyra.Core.Unity
             //     _initialDataFromPrevious = null;
             // }
 
-            var availableAlgorithms = _availableTerrainAlgorithms
-                .EmptyIfNull()
+            var availableAlgorithms = _availableTerrainAlgorithms.EmptyIfNull()
                 .Select(o => new TerrainAlgorithm(o.name, o))
                 .ToArray();
             if (!_terrainManagerModel.AvailableAlgorithms.Value.SequenceEqual(availableAlgorithms))
@@ -143,7 +139,8 @@ namespace Votyra.Core.Unity
             if (_activeTerrainAlgorithm < 0 || _activeTerrainAlgorithm >= availableAlgorithms.Length)
                 activeAlgorithm = null;
             else
-                activeAlgorithm = availableAlgorithms.Skip(_activeTerrainAlgorithm).FirstOrDefault();
+                activeAlgorithm = availableAlgorithms.Skip(_activeTerrainAlgorithm)
+                    .FirstOrDefault();
             if (_terrainManagerModel.ActiveAlgorithm.Value != activeAlgorithm)
                 _terrainManagerModel.ActiveAlgorithm.OnNext(activeAlgorithm);
 

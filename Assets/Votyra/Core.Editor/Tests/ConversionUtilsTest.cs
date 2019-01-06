@@ -1,17 +1,10 @@
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using Votyra.Core.Models;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Editor
 {
     [TestFixture]
     public class ConversionUtilsTest
-    {  
-        
+    {
         // [Test]
         // [TestCase(10)]
         // [TestCase(100)]
@@ -62,7 +55,7 @@ namespace Votyra.Core.Editor
         //     Debug.Log("floatHeights: " + (int) floatHeights.TotalMilliseconds);
         //     Debug.Log("floats: " + (int) floats.TotalMilliseconds);
         // }
-        
+
         // [Test]
         // [TestCase(10)]
         // [TestCase(13)]

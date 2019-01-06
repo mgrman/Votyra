@@ -1,19 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
-using Votyra.Core.Models;
-using Votyra.Core.Pooling;
-using Votyra.Core.Profiling;
 using Votyra.Core.TerrainMeshes;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.MeshUpdaters
 {
-    public static class TerrainMeshUpdater 
+    public static class TerrainMeshUpdater
     {
-        public static void SetUnityMesh(this UnityMesh triangleMesh,GameObject unityData)
+        public static void SetUnityMesh(this UnityMesh triangleMesh, GameObject unityData)
         {
             var meshFilter = unityData.GetComponent<MeshFilter>();
             SetUnityMesh(triangleMesh, meshFilter.sharedMesh);
@@ -26,11 +21,9 @@ namespace Votyra.Core.MeshUpdaters
         {
             SetMeshFormat(mesh, triangleMesh.VertexCount);
 
-            bool reinitializeMesh = mesh.vertexCount != triangleMesh.VertexCount;
+            var reinitializeMesh = mesh.vertexCount != triangleMesh.VertexCount;
             if (reinitializeMesh)
-            {
                 mesh.Clear();
-            }
 
             switch (triangleMesh.Vertices)
             {
@@ -48,7 +41,7 @@ namespace Votyra.Core.MeshUpdaters
             switch (triangleMesh.Normals)
             {
                 case Vector3[] array:
-                    mesh.normals =array;
+                    mesh.normals = array;
                     break;
                 case List<Vector3> list:
                     mesh.SetNormals(list);
@@ -90,13 +83,9 @@ namespace Votyra.Core.MeshUpdaters
         private static void SetMeshFormat(Mesh mesh, int vertexCount)
         {
             if (vertexCount > 65000 && mesh.indexFormat != IndexFormat.UInt32)
-            {
                 mesh.indexFormat = IndexFormat.UInt32;
-            }
             else if (vertexCount < 65000 && mesh.indexFormat != IndexFormat.UInt16)
-            {
                 mesh.indexFormat = IndexFormat.UInt16;
-            }
         }
     }
 }

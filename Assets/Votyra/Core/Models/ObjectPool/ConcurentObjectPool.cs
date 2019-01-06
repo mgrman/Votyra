@@ -4,7 +4,7 @@ namespace Votyra.Core.Models.ObjectPool
 {
     public class ConcurentObjectPool<T> : ObjectPool<T>
     {
-        private object _accessLock = new object();
+        private readonly object _accessLock = new object();
 
         public ConcurentObjectPool(int limit, Func<T> objectGenerator)
             : base(limit, objectGenerator)

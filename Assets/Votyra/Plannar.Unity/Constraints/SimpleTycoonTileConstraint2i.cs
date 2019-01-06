@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using Votyra.Core;
 using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
@@ -15,7 +16,8 @@ namespace Votyra.Plannar.Images.Constraints
         private IComparer<float> _comparer;
         private Func<Vector2i, float> _getValue;
 
-        public SimpleTycoonTileConstraint2i([ConfigInject("scaleFactor")] int scaleFactor) : base(scaleFactor)
+        public SimpleTycoonTileConstraint2i([ConfigInject("scaleFactor")] int scaleFactor)
+            : base(scaleFactor)
         {
         }
 
@@ -24,7 +26,7 @@ namespace Votyra.Plannar.Images.Constraints
             switch (_direction)
             {
                 case Direction.Up:
-                    _comparer = Comparer<float>.Create((a, b) => -(DefaultComparer.Compare(a, b)));
+                    _comparer = Comparer<float>.Create((a, b) => -DefaultComparer.Compare(a, b));
                     _getValue = cell => _editableMatrix.SampleCell(cell)
                         .Max;
                     break;
@@ -48,10 +50,8 @@ namespace Votyra.Plannar.Images.Constraints
             while (queue.Count > 0)
             {
 #if UNITY_EDITOR
-                if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
-                {
+                if (!EditorApplication.isPlayingOrWillChangePlaymode)
                     return;
-                }
 #endif
                 var cell = queue.GetFirst()
                     .Value;
@@ -61,10 +61,10 @@ namespace Votyra.Plannar.Images.Constraints
                     .ToSampledData2i();
                 var processedSample = Process(sample);
 
-                Vector2i cell_x0y0 = ImageSampler2iUtils.CellToX0Y0(cell);
-                Vector2i cell_x0y1 = ImageSampler2iUtils.CellToX0Y1(cell);
-                Vector2i cell_x1y0 = ImageSampler2iUtils.CellToX1Y0(cell);
-                Vector2i cell_x1y1 = ImageSampler2iUtils.CellToX1Y1(cell);
+                var cell_x0y0 = ImageSampler2iUtils.CellToX0Y0(cell);
+                var cell_x0y1 = ImageSampler2iUtils.CellToX0Y1(cell);
+                var cell_x1y0 = ImageSampler2iUtils.CellToX1Y0(cell);
+                var cell_x1y1 = ImageSampler2iUtils.CellToX1Y1(cell);
 
                 var change = 0f;
                 if (_editableMatrix.ContainsIndex(cell_x0y0) && _editableMatrix.ContainsIndex(cell_x1y1))
@@ -85,20 +85,18 @@ namespace Votyra.Plannar.Images.Constraints
                 if (change > 0f)
                 {
                     const int areaSize = 1;
-                    for (int offsetX = -areaSize; offsetX <= areaSize; offsetX++)
+                    for (var offsetX = -areaSize; offsetX <= areaSize; offsetX++)
                     {
-                        for (int offsetY = -areaSize; offsetY <= areaSize; offsetY++)
+                        for (var offsetY = -areaSize; offsetY <= areaSize; offsetY++)
                         {
                             if (offsetX == 0 && offsetY == 0)
                                 continue;
-                            int ix = cell.X + offsetX;
-                            int iy = cell.Y + offsetY;
-                            Vector2i newCellToCheck = new Vector2i(ix, iy);
+                            var ix = cell.X + offsetX;
+                            var iy = cell.Y + offsetY;
+                            var newCellToCheck = new Vector2i(ix, iy);
                             var newCellToCheckValue = _getValue(cell);
                             if (_editableMatrix.ContainsIndex(newCellToCheck))
-                            {
                                 queue.Add(newCellToCheck, newCellToCheckValue);
-                            }
                         }
                     }
                 }

@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Core;
 using Votyra.Core.Images;
-using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
@@ -37,16 +35,7 @@ namespace Votyra.Cubical
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);
             var frustumCorners = frustumCornersUnity.ToVector3f();
 
-            return new FrameData3b(
-                camera.transform.position.ToVector3f(),
-                planes,
-                frustumCorners,
-                camera.transform.localToWorldMatrix.ToMatrix4x4f(),
-                container.transform.worldToLocalMatrix.ToMatrix4x4f(),
-                existingGroups,
-                image,
-                (image as IImageInvalidatableImage3)?.InvalidatedArea ?? Range3i.Zero
-            );
+            return new FrameData3b(camera.transform.position.ToVector3f(), planes, frustumCorners, camera.transform.localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), existingGroups, image, (image as IImageInvalidatableImage3)?.InvalidatedArea ?? Range3i.Zero);
         }
     }
 }

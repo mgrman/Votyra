@@ -1,11 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Core;
 using Votyra.Core.Images;
-using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
-using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.Utils;
 using Zenject;
 
@@ -14,14 +11,14 @@ namespace Votyra.Plannar
     //TODO: move to floats
     public class FrameData2iProvider : IFrameDataProvider2i
     {
+        [InjectOptional]
+        private readonly IImage2fPostProcessor _image2fPostProcessor;
+
         [Inject]
         protected IImage2fProvider _imageProvider;
 
         [InjectOptional]
         protected IMask2eProvider _maskProvider;
-
-        [InjectOptional]
-        private readonly IImage2fPostProcessor _image2fPostProcessor;
 
         [Inject(Id = "root")]
         protected GameObject _root;
@@ -34,7 +31,7 @@ namespace Votyra.Plannar
 
             var image = _imageProvider.CreateImage();
             image = _image2fPostProcessor?.PostProcess(image) ?? image;
-            
+
             var mask = _maskProvider?.CreateMask();
 
             var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;

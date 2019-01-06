@@ -13,10 +13,9 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
 
     static ConstrainNamespacesPrebuildCommnand()
     {
-        EditorApplication.playModeStateChanged += (stateChange) =>
+        EditorApplication.playModeStateChanged += stateChange =>
         {
             if (stateChange == PlayModeStateChange.ExitingEditMode)
-            {
                 try
                 {
                     ConstrainNamespaces();
@@ -25,11 +24,15 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
                 {
                     EditorApplication.isPlaying = false;
                 }
-            }
         };
     }
 
     public int callbackOrder => int.MaxValue;
+
+    public void OnPreprocessBuild(BuildReport report)
+    {
+        ConstrainNamespaces();
+    }
 
     public static void ConstrainNamespaces()
     {
@@ -42,16 +45,14 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
             var assemblyName = Path.GetFileNameWithoutExtension(assemblyDefinitionPath);
 
             if (assemblyName.EndsWith(".Editor") || assemblyName.EndsWith(".Unity"))
-            {
                 continue;
-            }
 
             var csFiles = Directory.EnumerateFiles(assemblyDefinitionFolder, "*.cs", SearchOption.AllDirectories);
-            int errorCount = 0;
+            var errorCount = 0;
             foreach (var csFile in csFiles)
             {
                 var csFileLines = File.ReadAllLines(csFile);
-                for (int lineIndex = 0; lineIndex < csFileLines.Length; lineIndex++)
+                for (var lineIndex = 0; lineIndex < csFileLines.Length; lineIndex++)
                 {
                     var line = csFileLines[lineIndex];
                     if (line.Contains(UnityEngineNamespaceUsage1) || line.Contains(UnityEngineNamespaceUsage2))
@@ -62,6 +63,7 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
                     }
                 }
             }
+
             // if (errorCount > 0)
             // {
             //     throw new System.Exception($"Some files use code from not allowed namespace:{UnityEngineNamespace}!");
@@ -70,11 +72,6 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
     }
 
     public void OnPreprocessBuild(BuildReport report, string path)
-    {
-        ConstrainNamespaces();
-    }
-
-    public void OnPreprocessBuild(BuildReport report)
     {
         ConstrainNamespaces();
     }

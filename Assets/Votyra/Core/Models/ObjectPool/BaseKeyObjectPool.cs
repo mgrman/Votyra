@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace Votyra.Core.Models.ObjectPool
 {
-    public abstract class BaseKeyObjectPool<T, TKey> : IObjectDictionaryPool<T, TKey>
-        where TKey : struct
+    public abstract class BaseKeyObjectPool<T, TKey> : IObjectDictionaryPool<T, TKey> where TKey : struct
     {
-        private readonly Func<TKey, T> _objectGenerator;
         private readonly int _limit;
+        private readonly Func<TKey, T> _objectGenerator;
 
         public BaseKeyObjectPool(int limit, Func<TKey, T> objectGenerator)
         {
-            if (objectGenerator == null) throw new ArgumentNullException("objectGenerator");
+            if (objectGenerator == null)
+                throw new ArgumentNullException("objectGenerator");
             _objectGenerator = objectGenerator;
 
             _limit = Math.Max(limit, 1);
@@ -30,6 +30,7 @@ namespace Votyra.Core.Models.ObjectPool
             {
                 obj = _objectGenerator(key);
             }
+
             return obj;
         }
 
@@ -37,9 +38,7 @@ namespace Votyra.Core.Models.ObjectPool
         {
             var objectPool = GetPool(key);
             if (objectPool.Count < _limit)
-            {
                 objectPool.Add(obj);
-            }
         }
 
         protected abstract List<T> GetPool(TKey key);

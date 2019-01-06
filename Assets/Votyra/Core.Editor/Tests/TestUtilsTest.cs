@@ -1,12 +1,25 @@
-﻿using NUnit.Framework;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace Votyra.Core
 {
     [TestFixture]
     public class TestUtilsTest
     {
+        private async Task TestAsync()
+        {
+            var cts = new TaskCompletionSource<bool>();
+
+            var _ = Task.Run(async () =>
+            {
+                await Task.Delay(500);
+                cts.SetResult(true);
+            });
+
+            await cts.Task;
+        }
+
         [Test]
         public void UnityAsyncTest_RunTheAsyncFunctionGiven_PropagatesThrownExceptions()
         {
@@ -25,7 +38,7 @@ namespace Votyra.Core
         [Test]
         public void UnityAsyncTest_RunTheAsyncFunctionGiven_WaitsForItToFinish()
         {
-            bool finished = false;
+            var finished = false;
             TestUtils.UnityAsyncTest(async () =>
             {
                 await TestAsync();
@@ -35,19 +48,6 @@ namespace Votyra.Core
             });
 
             Assert.IsTrue(finished);
-        }
-
-        private async Task TestAsync()
-        {
-            var cts = new TaskCompletionSource<bool>();
-
-            var _ = Task.Run(async () =>
-            {
-                await Task.Delay(500);
-                cts.SetResult(true);
-            });
-
-            await cts.Task;
         }
     }
 }

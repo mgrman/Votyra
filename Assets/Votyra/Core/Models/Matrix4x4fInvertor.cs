@@ -28,32 +28,17 @@ namespace Votyra.Core.Models
 
             var matInvertedArrays = MatrixInverse(matArrays);
 
-            return new Matrix4x4f
-                (
-                    (float)matInvertedArrays[0][0],
-                    (float)matInvertedArrays[0][1],
-                    (float)matInvertedArrays[0][2],
-                    (float)matInvertedArrays[0][3],
-                    (float)matInvertedArrays[1][0],
-                    (float)matInvertedArrays[1][1],
-                    (float)matInvertedArrays[1][2],
-                    (float)matInvertedArrays[1][3],
-                    (float)matInvertedArrays[2][0],
-                    (float)matInvertedArrays[2][1],
-                    (float)matInvertedArrays[2][2],
-                    (float)matInvertedArrays[2][3],
-                    (float)matInvertedArrays[3][0],
-                    (float)matInvertedArrays[3][1],
-                    (float)matInvertedArrays[3][2],
-                    (float)matInvertedArrays[3][3]
-                );
+            return new Matrix4x4f((float) matInvertedArrays[0][0], (float) matInvertedArrays[0][1], (float) matInvertedArrays[0][2], (float) matInvertedArrays[0][3], (float) matInvertedArrays[1][0], (float) matInvertedArrays[1][1], (float) matInvertedArrays[1][2], (float) matInvertedArrays[1][3], (float) matInvertedArrays[2][0], (float) matInvertedArrays[2][1], (float) matInvertedArrays[2][2], (float) matInvertedArrays[2][3], (float) matInvertedArrays[3][0], (float) matInvertedArrays[3][1], (float) matInvertedArrays[3][2], (float) matInvertedArrays[3][3]);
         }
 
         private static double[][] MatrixCreate(int rows, int cols)
         {
-            double[][] result = new double[rows][];
-            for (int i = 0; i < rows; ++i)
+            var result = new double[rows][];
+            for (var i = 0; i < rows; ++i)
+            {
                 result[i] = new double[cols];
+            }
+
             return result;
         }
 
@@ -61,29 +46,38 @@ namespace Votyra.Core.Models
         {
             // assumes determinant is not 0
             // that is, the matrix does have an inverse
-            int n = matrix.Length;
-            double[][] result = MatrixCreate(n, n); // make a copy of matrix
-            for (int i = 0; i < n; ++i)
-                for (int j = 0; j < n; ++j)
+            var n = matrix.Length;
+            var result = MatrixCreate(n, n); // make a copy of matrix
+            for (var i = 0; i < n; ++i)
+            {
+                for (var j = 0; j < n; ++j)
+                {
                     result[i][j] = matrix[i][j];
+                }
+            }
 
             double[][] lum; // combined lower & upper
             int[] perm;
             MatrixDecompose(matrix, out lum, out perm);
 
-            double[] b = new double[n];
-            for (int i = 0; i < n; ++i)
+            var b = new double[n];
+            for (var i = 0; i < n; ++i)
             {
-                for (int j = 0; j < n; ++j)
+                for (var j = 0; j < n; ++j)
+                {
                     if (i == perm[j])
                         b[j] = 1.0;
                     else
                         b[j] = 0.0;
+                }
 
-                double[] x = Helper(lum, b); //
-                for (int j = 0; j < n; ++j)
+                var x = Helper(lum, b); //
+                for (var j = 0; j < n; ++j)
+                {
                     result[j][i] = x[j];
+                }
             }
+
             return result;
         } // MatrixInverse
 
@@ -96,28 +90,34 @@ namespace Votyra.Core.Models
             // lower gets dummy 1.0s on diagonal (0.0s above)
             // upper gets lum values on diagonal (0.0s below)
 
-            int toggle = +1; // even (+1) or odd (-1) row permutatuions
-            int n = m.Length;
+            var toggle = +1; // even (+1) or odd (-1) row permutatuions
+            var n = m.Length;
 
             // make a copy of m[][] into result lu[][]
             lum = MatrixCreate(n, n);
-            for (int i = 0; i < n; ++i)
-                for (int j = 0; j < n; ++j)
+            for (var i = 0; i < n; ++i)
+            {
+                for (var j = 0; j < n; ++j)
+                {
                     lum[i][j] = m[i][j];
+                }
+            }
 
             // make perm[]
             perm = new int[n];
-            for (int i = 0; i < n; ++i)
-                perm[i] = i;
-
-            for (int j = 0; j < n - 1; ++j) // process by column. note n-1
+            for (var i = 0; i < n; ++i)
             {
-                double max = Math.Abs(lum[j][j]);
-                int piv = j;
+                perm[i] = i;
+            }
 
-                for (int i = j + 1; i < n; ++i) // find pivot index
+            for (var j = 0; j < n - 1; ++j) // process by column. note n-1
+            {
+                var max = Math.Abs(lum[j][j]);
+                var piv = j;
+
+                for (var i = j + 1; i < n; ++i) // find pivot index
                 {
-                    double xij = Math.Abs(lum[i][j]);
+                    var xij = Math.Abs(lum[i][j]);
                     if (xij > max)
                     {
                         max = xij;
@@ -127,28 +127,28 @@ namespace Votyra.Core.Models
 
                 if (piv != j)
                 {
-                    double[] tmp = lum[piv]; // swap rows j, piv
+                    var tmp = lum[piv]; // swap rows j, piv
                     lum[piv] = lum[j];
                     lum[j] = tmp;
 
-                    int t = perm[piv]; // swap perm elements
+                    var t = perm[piv]; // swap perm elements
                     perm[piv] = perm[j];
                     perm[j] = t;
 
                     toggle = -toggle;
                 }
 
-                double xjj = lum[j][j];
+                var xjj = lum[j][j];
                 if (xjj != 0.0)
-                {
-                    for (int i = j + 1; i < n; ++i)
+                    for (var i = j + 1; i < n; ++i)
                     {
-                        double xij = lum[i][j] / xjj;
+                        var xij = lum[i][j] / xjj;
                         lum[i][j] = xij;
-                        for (int k = j + 1; k < n; ++k)
+                        for (var k = j + 1; k < n; ++k)
+                        {
                             lum[i][k] -= xij * lum[j][k];
+                        }
                     }
-                }
             } // j
 
             return toggle;
@@ -156,24 +156,30 @@ namespace Votyra.Core.Models
 
         private static double[] Helper(double[][] luMatrix, double[] b) // helper
         {
-            int n = luMatrix.Length;
-            double[] x = new double[n];
+            var n = luMatrix.Length;
+            var x = new double[n];
             b.CopyTo(x, 0);
 
-            for (int i = 1; i < n; ++i)
+            for (var i = 1; i < n; ++i)
             {
-                double sum = x[i];
-                for (int j = 0; j < i; ++j)
+                var sum = x[i];
+                for (var j = 0; j < i; ++j)
+                {
                     sum -= luMatrix[i][j] * x[j];
+                }
+
                 x[i] = sum;
             }
 
             x[n - 1] /= luMatrix[n - 1][n - 1];
-            for (int i = n - 2; i >= 0; --i)
+            for (var i = n - 2; i >= 0; --i)
             {
-                double sum = x[i];
-                for (int j = i + 1; j < n; ++j)
+                var sum = x[i];
+                for (var j = i + 1; j < n; ++j)
+                {
                     sum -= luMatrix[i][j] * x[j];
+                }
+
                 x[i] = sum / luMatrix[i][i];
             }
 

@@ -9,12 +9,17 @@ namespace Votyra.Core.Utils
         {
             var halfSize = obj.size / 2;
             var result = new List<Vector3>();
-            for (int x = -1; x <= 1; x += 2)
-                for (int y = -1; y <= 1; y += 2)
-                    for (int z = -1; z <= 1; z += 2)
+            for (var x = -1; x <= 1; x += 2)
+            {
+                for (var y = -1; y <= 1; y += 2)
+                {
+                    for (var z = -1; z <= 1; z += 2)
                     {
                         result.Add((includePosition ? obj.center : Vector3.zero) + new Vector3(halfSize.x * x, halfSize.y * y + halfSize.z * z));
                     }
+                }
+            }
+
             return result;
         }
     }

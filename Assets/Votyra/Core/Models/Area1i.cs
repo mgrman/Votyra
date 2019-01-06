@@ -12,12 +12,12 @@ namespace Votyra.Core.Models
 
         public Area1i(int min, int max)
         {
-            this.Min = Math.Min(min, max);
-            this.Max = Math.Max(min, max);
+            Min = Math.Min(min, max);
+            Max = Math.Max(min, max);
         }
 
         public Area1i(Area1f range)
-            : this((int)Math.Floor(range.Min), (int)Math.Floor(range.Max))
+            : this((int) Math.Floor(range.Min), (int) Math.Floor(range.Max))
         {
         }
 
@@ -27,59 +27,39 @@ namespace Votyra.Core.Models
 
         public int Size => Max - Min + 1;
 
-        public static Area1i operator +(Area1i a, Area1i b)
-        {
-            return new Area1i(a.Min + b.Min, a.Max + b.Max);
-        }
+        public static Area1i operator +(Area1i a, Area1i b) => new Area1i(a.Min + b.Min, a.Max + b.Max);
 
-        public static Area1i operator -(Area1i a, Area1i b)
-        {
-            return new Area1i(a.Min - b.Min, a.Max - b.Max);
-        }
+        public static Area1i operator -(Area1i a, Area1i b) => new Area1i(a.Min - b.Min, a.Max - b.Max);
 
-        public static bool operator ==(Area1i a, Area1i b)
-        {
-            return a.Min == b.Min && a.Max == b.Max;
-        }
+        public static bool operator ==(Area1i a, Area1i b) => a.Min == b.Min && a.Max == b.Max;
 
-        public static bool operator !=(Area1i a, Area1i b)
-        {
-            return a.Min != b.Min || a.Max != b.Max;
-        }
+        public static bool operator !=(Area1i a, Area1i b) => a.Min != b.Min || a.Max != b.Max;
 
         public void ForeachPointInclusive(Action<int> action)
         {
-            for (int i = this.Min; i <= this.Max; i++)
+            for (var i = Min; i <= Max; i++)
             {
                 action(i);
             }
         }
 
-        public Area1i UnionWith(Area1i range)
-        {
-            return new Area1i(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
-        }
+        public Area1i UnionWith(Area1i range) => new Area1i(Math.Min(Min, range.Min), Math.Min(Max, range.Max));
 
         public Area1i? UnionWith(Area1i? range)
         {
             if (range == null)
-            {
                 return this;
-            }
             return UnionWith(range.Value);
         }
 
-        public bool Equals(Area1i other)
-        {
-            return this == other;
-        }
+        public bool Equals(Area1i other) => this == other;
 
         public override bool Equals(object obj)
         {
             if (!(obj is Area1i))
                 return false;
 
-            return this.Equals((Area1i)obj);
+            return Equals((Area1i) obj);
         }
 
         public override int GetHashCode()
@@ -90,9 +70,6 @@ namespace Votyra.Core.Models
             }
         }
 
-        public override string ToString()
-        {
-            return string.Format("({0} , {1})", Min, Max);
-        }
+        public override string ToString() => string.Format("({0} , {1})", Min, Max);
     }
 }

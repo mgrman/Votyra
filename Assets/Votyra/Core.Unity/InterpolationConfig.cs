@@ -1,14 +1,7 @@
-﻿using Votyra.Core.Models;
-
-namespace Votyra.Core.Images
+﻿namespace Votyra.Core.Images
 {
     public class InterpolationConfig : IInterpolationConfig
     {
-        public int ImageSubdivision { get; }
-        public int MeshSubdivision { get; }
-        public bool DynamicMeshes { get; }
-        public IntepolationAlgorithm ActiveAlgorithm { get; }
-        
         public InterpolationConfig([ConfigInject("activeAlgorithm")] IntepolationAlgorithm activeAlgorithm, [ConfigInject("dynamicMeshes")] bool dynamicMeshes, [ConfigInject("imageSubdivision")] int imageSubdivision, [ConfigInject("meshSubdivision")] int meshSubdivision)
         {
             ActiveAlgorithm = activeAlgorithm;
@@ -17,16 +10,21 @@ namespace Votyra.Core.Images
             MeshSubdivision = meshSubdivision;
         }
 
-        protected bool Equals(InterpolationConfig other)
-        {
-            return ImageSubdivision == other.ImageSubdivision && MeshSubdivision == other.MeshSubdivision && DynamicMeshes == other.DynamicMeshes && ActiveAlgorithm == other.ActiveAlgorithm;
-        }
+        public int ImageSubdivision { get; }
+        public int MeshSubdivision { get; }
+        public bool DynamicMeshes { get; }
+        public IntepolationAlgorithm ActiveAlgorithm { get; }
+
+        protected bool Equals(InterpolationConfig other) => ImageSubdivision == other.ImageSubdivision && MeshSubdivision == other.MeshSubdivision && DynamicMeshes == other.DynamicMeshes && ActiveAlgorithm == other.ActiveAlgorithm;
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (ReferenceEquals(null, obj))
+                return false;
+            if (ReferenceEquals(this, obj))
+                return true;
+            if (obj.GetType() != GetType())
+                return false;
             return Equals((InterpolationConfig) obj);
         }
 
@@ -41,8 +39,5 @@ namespace Votyra.Core.Images
                 return hashCode;
             }
         }
-
-        
-
     }
 }

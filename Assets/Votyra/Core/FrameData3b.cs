@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
@@ -45,9 +43,7 @@ namespace Votyra.Core
         {
             _activeCounter--;
             if (_activeCounter <= 0)
-            {
                 Dispose();
-            }
         }
 
         private void Dispose()

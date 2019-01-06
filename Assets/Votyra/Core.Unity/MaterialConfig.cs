@@ -4,7 +4,7 @@ namespace Votyra.Core.Images
 {
     public class MaterialConfig : IMaterialConfig
     {
-        public MaterialConfig([ConfigInject("material")]Material material, [ConfigInject("materialWalls")]Material materialWalls)
+        public MaterialConfig([ConfigInject("material")] Material material, [ConfigInject("materialWalls")] Material materialWalls)
         {
             Material = material;
             MaterialWalls = materialWalls;
@@ -13,34 +13,24 @@ namespace Votyra.Core.Images
         public Material Material { get; }
         public Material MaterialWalls { get; }
 
-        public static bool operator ==(MaterialConfig a, MaterialConfig b)
-        {
-            return a?.Equals(b) ?? b?.Equals(a) ?? true;
-        }
+        public static bool operator ==(MaterialConfig a, MaterialConfig b) => a?.Equals(b) ?? b?.Equals(a) ?? true;
 
-        public static bool operator !=(MaterialConfig a, MaterialConfig b)
-        {
-            return !(a == b);
-        }
+        public static bool operator !=(MaterialConfig a, MaterialConfig b) => !(a == b);
 
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
-            {
                 return false;
-            }
             var that = obj as MaterialConfig;
 
-            return this.Material == that.Material
-                && this.MaterialWalls == that.MaterialWalls;
+            return Material == that.Material && MaterialWalls == that.MaterialWalls;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return this.Material.GetHashCode() * 23
-                    + this.MaterialWalls.GetHashCode() - 3;
+                return Material.GetHashCode() * 23 + MaterialWalls.GetHashCode() - 3;
             }
         }
     }

@@ -1,3 +1,4 @@
+using UnityEngine;
 using Votyra.Core.Logging;
 using Votyra.Core.Profiling;
 using Zenject;
@@ -8,33 +9,31 @@ namespace Votyra.Core.Unity
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<TerrainManagerModel>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TerrainManagerModel>()
+                .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<StateModel>().AsSingle();
+            Container.BindInterfacesAndSelfTo<StateModel>()
+                .AsSingle();
 
             Container.Bind<IThreadSafeLogger>()
                 .FromMethod(context =>
                 {
                     //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
-                    return new UnityLogger(context.ObjectType.FullName, context.ObjectInstance as UnityEngine.Object);
-                }).AsTransient();
+                    return new UnityLogger(context.ObjectType.FullName, context.ObjectInstance as Object);
+                })
+                .AsTransient();
 
             Container.Bind<IProfiler>()
                 .FromMethod(context =>
                 {
                     //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
-                    return CreateProfiler(context.ObjectInstance as UnityEngine.Object);
-                }).AsTransient();
+                    return CreateProfiler(context.ObjectInstance as Object);
+                })
+                .AsTransient();
         }
 
-        private static IThreadSafeLogger CreateLogger(string name, UnityEngine.Object owner)
-        {
-            return new UnityLogger(name, owner);
-        }
+        private static IThreadSafeLogger CreateLogger(string name, Object owner) => new UnityLogger(name, owner);
 
-        private IProfiler CreateProfiler(UnityEngine.Object owner)
-        {
-            return new UnityProfiler(owner);
-        }
+        private IProfiler CreateProfiler(Object owner) => new UnityProfiler(owner);
     }
 }

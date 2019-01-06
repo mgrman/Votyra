@@ -13,9 +13,9 @@ namespace Votyra.Core.Models
 
         public Triangle3f(Vector3f a, Vector3f b, Vector3f c)
         {
-            this.A = a;
-            this.B = b;
-            this.C = c;
+            A = a;
+            B = b;
+            C = c;
         }
 
         public IEnumerable<Vector3f> Points
@@ -39,36 +39,27 @@ namespace Votyra.Core.Models
         {
             var dot = DotWithObserver(observer);
             if (dot == 0f)
-            {
                 throw new InvalidOperationException($"Wrong observer! Observer '{observer}' cannot be used with triangle '{this}'.");
-            }
             return dot >= 0;
         }
 
         public Triangle3f EnsureCCW(Vector3f observer)
         {
             if (IsCCW(observer))
-            {
                 return this;
-            }
-            else
-            {
-                return GetReversedOrder();
-            }
+            return GetReversedOrder();
         }
 
-        public Triangle3f GetReversedOrder()
-        {
-            return new Triangle3f(A, C, B);
-        }
+        public Triangle3f GetReversedOrder() => new Triangle3f(A, C, B);
 
         public override bool Equals(object obj)
         {
             if (obj is Triangle3f)
             {
-                var that = (Triangle3f)obj;
-                return this.A == that.A && this.B == that.B && this.C == that.C;
+                var that = (Triangle3f) obj;
+                return A == that.A && B == that.B && C == that.C;
             }
+
             return false;
         }
 
@@ -80,33 +71,22 @@ namespace Votyra.Core.Models
             }
         }
 
-        public override string ToString()
-        {
-            return $"{A},{B},{C}";
-        }
+        public override string ToString() => $"{A},{B},{C}";
 
         private class TriangleInvariantComparer : IEqualityComparer<Triangle3f>
         {
-            public TriangleInvariantComparer()
-            {
-            }
-
             public bool Equals(Triangle3f x, Triangle3f y)
             {
                 foreach (var xP in x.Points)
                 {
                     if (!y.Points.Any(yP => (xP - yP).SqrMagnitude < 0.1f))
-                    {
                         return false;
-                    }
                 }
+
                 return true;
             }
 
-            public int GetHashCode(Triangle3f obj)
-            {
-                return 0;
-            }
+            public int GetHashCode(Triangle3f obj) => 0;
         }
     }
 
@@ -115,13 +95,8 @@ namespace Votyra.Core.Models
         public static IEnumerable<Triangle3f> ChangeOrderIfTrue(this IEnumerable<Triangle3f> triangles, bool value)
         {
             if (value)
-            {
                 return triangles.Select(o => o.GetReversedOrder());
-            }
-            else
-            {
-                return triangles;
-            }
+            return triangles;
         }
     }
 }

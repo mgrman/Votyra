@@ -9,13 +9,13 @@ namespace Votyra.Core.Images
 {
     public class EditableMatrixImage3b : IImage3bProvider, IEditableImage3b
     {
+        private readonly IImageConstraint3b _constraint;
         private readonly Matrix3<bool> _editableMatrix;
+        private readonly IThreadSafeLogger _logger;
 
         private readonly List<LockableMatrix3<bool>> _readonlyMatrices = new List<LockableMatrix3<bool>>();
-        private readonly IImageConstraint3b _constraint;
-        private readonly IThreadSafeLogger _logger;
+        private MatrixImage3b _image;
         private Range3i? _invalidatedArea;
-        private MatrixImage3b _image = null;
 
         public EditableMatrixImage3b([InjectOptional] IImageConstraint3b constraint, IImageConfig imageConfig, IThreadSafeLogger logger)
         {
@@ -23,6 +23,8 @@ namespace Votyra.Core.Images
             _editableMatrix = new Matrix3<bool>(imageConfig.ImageSize);
             _logger = logger;
         }
+
+        public IEditableImageAccessor3b RequestAccess(Range3i areaRequest) => new MatrixImageAccessor(this, areaRequest);
 
         public IImage3b CreateImage()
         {
@@ -44,11 +46,10 @@ namespace Votyra.Core.Images
                 }
 
                 //sync
-                _editableMatrix
-                    .ForeachPointExlusive(i =>
-                    {
-                        readonlyMatrix[i] = _editableMatrix[i];
-                    });
+                _editableMatrix.ForeachPointExlusive(i =>
+                {
+                    readonlyMatrix[i] = _editableMatrix[i];
+                });
 
                 // Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
 
@@ -56,12 +57,8 @@ namespace Votyra.Core.Images
                 _image = new MatrixImage3b(readonlyMatrix, _invalidatedArea.Value);
                 _invalidatedArea = Range3i.Zero;
             }
-            return _image;
-        }
 
-        public IEditableImageAccessor3b RequestAccess(Range3i areaRequest)
-        {
-            return new MatrixImageAccessor(this, areaRequest);
+            return _image;
         }
 
         private void FixImage(Range3i invalidatedImageArea, Direction direction)
@@ -69,9 +66,7 @@ namespace Votyra.Core.Images
             _invalidatedArea = _invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
 
             if (_constraint == null)
-            {
                 return;
-            }
 
             var newInvalidatedImageArea = _constraint.FixImage(_editableMatrix, invalidatedImageArea, direction);
             _logger.LogMessage("newInvalidatedImageArea:" + newInvalidatedImageArea);
@@ -82,10 +77,10 @@ namespace Votyra.Core.Images
 
         private class MatrixImageAccessor : IEditableImageAccessor3b
         {
-            private readonly bool[,,] _editableMatrix;
             private readonly EditableMatrixImage3b _editableImage;
-            private int _changeCounter = 0;
-            private bool _changed = false;
+            private readonly bool[,,] _editableMatrix;
+            private int _changeCounter;
+            private bool _changed;
 
             public MatrixImageAccessor(EditableMatrixImage3b editableImage, Range3i area)
             {
@@ -98,10 +93,7 @@ namespace Votyra.Core.Images
 
             public bool this[Vector3i pos]
             {
-                get
-                {
-                    return _editableMatrix[pos.X, pos.Y, pos.Z];
-                }
+                get => _editableMatrix[pos.X, pos.Y, pos.Z];
                 set
                 {
                     if (value && !_editableMatrix[pos.X, pos.Y, pos.Z])
@@ -109,11 +101,13 @@ namespace Votyra.Core.Images
                         _changeCounter += 1;
                         _changed = true;
                     }
+
                     if (!value && _editableMatrix[pos.X, pos.Y, pos.Z])
                     {
                         _changeCounter -= 1;
                         _changed = true;
                     }
+
                     _editableMatrix[pos.X, pos.Y, pos.Z] = value;
                 }
             }
@@ -123,7 +117,7 @@ namespace Votyra.Core.Images
                 if (!_changed)
                     return;
 
-                this._editableImage.FixImage(Area, _changeCounter > 0 ? Direction.Up : (_changeCounter < 0 ? Direction.Down : Direction.Unknown));
+                _editableImage.FixImage(Area, _changeCounter > 0 ? Direction.Up : _changeCounter < 0 ? Direction.Down : Direction.Unknown);
             }
         }
     }

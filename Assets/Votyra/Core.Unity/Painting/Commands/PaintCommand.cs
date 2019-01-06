@@ -1,12 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using UniRx.Async;
 using UnityEngine;
 using Votyra.Core.Images;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Zenject;
 
@@ -17,15 +12,17 @@ namespace Votyra.Core.Painting.Commands
         [Inject]
         protected readonly IEditableImage2f _editableImage;
 
-        protected int _maxStrength;
+        private readonly LinkedList<(Vector2i cell, int maxStrength)> _invocationPath = new LinkedList<(Vector2i cell, int maxStrength)>();
+
+        private readonly object _invokeLock = new object();
         protected Vector2i _cell;
 
         [InjectOptional]
         protected IEditableMask2e _editableMask;
 
-        private readonly object _invokeLock = new object();
-        private LinkedList<(Vector2i cell, int maxStrength)> _invocationPath = new LinkedList<(Vector2i cell, int maxStrength)>();
         private (Vector2i cell, int maxStrength)? _lastInvocation;
+
+        protected int _maxStrength;
         protected virtual int PeriodMs { get; } = 200;
 
         public virtual void Selected()
@@ -40,14 +37,19 @@ namespace Votyra.Core.Painting.Commands
         {
             _invocationPath.AddLast((cell, maxStrength));
             if (_lastInvocation == null)
-            {
                 Invoke(cell, maxStrength);
-            }
+        }
+
+        public void StopInvocation()
+        {
+            OnInvocationStopping();
+            _invocationPath.Clear();
+            _lastInvocation = null;
         }
 
         public void Tick()
         {
-            if (_invocationPath.Count>0)
+            if (_invocationPath.Count > 0)
             {
                 var next = _invocationPath.First.Value;
                 var previous = _lastInvocation ?? next;
@@ -58,29 +60,19 @@ namespace Votyra.Core.Painting.Commands
             }
         }
 
-        public void StopInvocation()
-        {
-            OnInvocationStopping();
-            _invocationPath.Clear();
-            _lastInvocation = null;
-        }
-
         protected void InvokeOnPath((Vector2i cell, int maxStrength) from, (Vector2i cell, int maxStrength) to)
         {
             Debug.Log($"from:{from} to:{to}");
             if (from.cell == to.cell)
             {
-                return;
             }
             else if (from.cell.X == to.cell.X)
             {
                 InvokeOnPathVertical(from, to);
-                return;
             }
             else
             {
                 InvokeOnPathNotVertical(from, to);
-                return;
             }
         }
 
@@ -88,16 +80,14 @@ namespace Votyra.Core.Painting.Commands
         {
             var deltax = to.cell.X - from.cell.X;
             var deltay = to.cell.Y - from.cell.Y;
-            var deltaerr = Math.Abs(deltay / deltax);// if vertical this would be division by 0
+            var deltaerr = Math.Abs(deltay / deltax); // if vertical this would be division by 0
             var error = 0.0f;
             var y = from.cell.Y;
             var signX = Math.Sign(to.cell.X - from.cell.X);
-            for (int x = from.cell.X; x != to.cell.X; x += signX)
+            for (var x = from.cell.X; x != to.cell.X; x += signX)
             {
                 if (x != from.cell.X || y != from.cell.Y)
-                {
                     Invoke(new Vector2i(x, y), to.maxStrength);
-                }
                 error = error + deltaerr;
                 if (error >= 0.5f)
                 {
@@ -105,6 +95,7 @@ namespace Votyra.Core.Painting.Commands
                     error = error - 1.0f;
                 }
             }
+
             Invoke(to.cell, to.maxStrength);
         }
 
@@ -112,10 +103,11 @@ namespace Votyra.Core.Painting.Commands
         {
             var x = from.cell.X;
             var signY = Math.Sign(to.cell.Y - from.cell.Y);
-            for (int y = from.cell.Y + signY; y != to.cell.Y; y += signY)
+            for (var y = from.cell.Y + signY; y != to.cell.Y; y += signY)
             {
                 Invoke(new Vector2i(x, y), to.maxStrength);
             }
+
             Invoke(to.cell, to.maxStrength);
         }
 
@@ -130,22 +122,20 @@ namespace Votyra.Core.Painting.Commands
             {
                 using (var mask = _editableMask?.RequestAccess(requestedArea))
                 {
-                    var givenArea = image.Area
-                        .IntersectWith(mask.Area);
+                    var givenArea = image.Area.IntersectWith(mask.Area);
                     if (!givenArea.Contains(cell))
                         return;
 
                     PrepareWithClickedValue(image[cell]);
                     givenArea.ForeachPointExlusive(index =>
                     {
-                        int ox = index.X - cell.X;
-                        int oy = index.Y - cell.Y;
+                        var ox = index.X - cell.X;
+                        var oy = index.Y - cell.Y;
 
                         var cellStrength = (absStrength - Mathf.Max(Mathf.Abs(ox), Mathf.Abs(oy))) * Math.Sign(maxStrength);
                         image[index] = Invoke(image[index], cellStrength);
                         mask[index] = Invoke(mask[index], cellStrength);
                     });
-
                 }
             }
         }

@@ -11,39 +11,33 @@ namespace Votyra.Core.Models
 
         public Plane3f(Vector3f inNormal, float d)
         {
-            this.Normal = inNormal.Normalized;
-            this.Distance = d;
+            Normal = inNormal.Normalized;
+            Distance = d;
         }
 
-        public float GetDistanceToPoint(Vector3f inPt)
-        {
-            return Vector3f.Dot(this.Normal, inPt) + this.Distance;
-        }
+        public float GetDistanceToPoint(Vector3f inPt) => Vector3f.Dot(Normal, inPt) + Distance;
     }
 
     public static class Plane3fExtensions
     {
         public static bool TestPlanesAABB(this IReadOnlyList<Plane3f> planes, Area3f bounds)
         {
-            Vector3f boundsCenter = bounds.Center;  // center of bounds
-            Vector3f boundsExtent = bounds.Extents; // half diagonal
-                                                    // do intersection test for each active frame
+            var boundsCenter = bounds.Center; // center of bounds
+            var boundsExtent = bounds.Extents; // half diagonal
+            // do intersection test for each active frame
 
             // while active frames
-            int planesCount = 0;
-            for (int i = 0; i < planes.Count; i++)
+            var planesCount = 0;
+            for (var i = 0; i < planes.Count; i++)
             {
                 var p = planes[i];
                 var n = new Vector3f(Math.Abs(p.Normal.X), Math.Abs(p.Normal.Y), Math.Abs(p.Normal.Z));
 
-                float distance = p.GetDistanceToPoint(boundsCenter);
-                float radius = Vector3f.Dot(boundsExtent, n);
+                var distance = p.GetDistanceToPoint(boundsCenter);
+                var radius = Vector3f.Dot(boundsExtent, n);
 
                 if (distance + radius < 0)
-                {
-                    // behind clip plane
                     return false;
-                }
 
                 planesCount++;
             }

@@ -1,10 +1,6 @@
-using System;
 using UniRx;
 using UnityEngine;
-using Votyra.Core.Images;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Painting.Commands;
 using Zenject;
 
 namespace Votyra.Core.Painting
@@ -18,16 +14,14 @@ namespace Votyra.Core.Painting
         {
             _paintingModel = paintingModel;
 
-            _paintingModel.SelectedPaintCommand
-                .PairWithPrevious()
+            _paintingModel.SelectedPaintCommand.PairWithPrevious()
                 .Subscribe(o =>
                 {
                     o.OldValue?.Unselected();
                     o.NewValue?.Selected();
                 });
 
-            _paintingModel.SelectedPaintCommand
-                .CombineLatest(_paintingModel.PaintInvocationData, (cmd, data) => new { cmd, data })
+            _paintingModel.SelectedPaintCommand.CombineLatest(_paintingModel.PaintInvocationData, (cmd, data) => new {cmd, data})
                 .Subscribe(o =>
                 {
                     if (o.cmd != null && o.data != null)

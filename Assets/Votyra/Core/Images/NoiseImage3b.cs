@@ -11,26 +11,23 @@ namespace Votyra.Core.Images
             Scale = scale;
         }
 
-        public Vector3f Offset { get; private set; }
+        public Vector3f Offset { get; }
 
-        public Vector3f Scale { get; private set; }
+        public Vector3f Scale { get; }
 
         public bool Sample(Vector3i point)
         {
-            var pointf = (point / Scale + Offset);
+            var pointf = point / Scale + Offset;
 
-            float valueXY = MathUtils.PerlinNoise(pointf.X, pointf.Y);
-            float valueYZ = MathUtils.PerlinNoise(pointf.Y, pointf.Z);
-            float valueZX = MathUtils.PerlinNoise(pointf.Z, pointf.X);
+            var valueXY = MathUtils.PerlinNoise(pointf.X, pointf.Y);
+            var valueYZ = MathUtils.PerlinNoise(pointf.Y, pointf.Z);
+            var valueZX = MathUtils.PerlinNoise(pointf.Z, pointf.X);
 
-            float value = (valueXY + valueYZ + valueZX) / 3;
+            var value = (valueXY + valueYZ + valueZX) / 3;
 
             return value > 0.5f;
         }
 
-        public bool AnyData(Range3i range)
-        {
-            return true;
-        }
+        public bool AnyData(Range3i range) => true;
     }
 }

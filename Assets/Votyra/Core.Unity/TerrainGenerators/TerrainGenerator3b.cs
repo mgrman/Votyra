@@ -1,19 +1,16 @@
-using System;
-using System.Collections.Generic;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
-using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators
 {
     public class TerrainGenerator3b : ITerrainGenerator3b
     {
+        private readonly Vector3i _cellInGroupCount;
         private readonly ITerrainMesher3b _mesher;
         private readonly IProfiler _profiler;
-        private readonly Vector3i _cellInGroupCount;
 
         public TerrainGenerator3b(ITerrainMesher3b mesher, ITerrainConfig terrainConfig, IProfiler profiler)
         {
@@ -34,13 +31,14 @@ namespace Votyra.Core.TerrainGenerators
                 _mesher.InitializeGroup(group);
             }
 
-            _cellInGroupCount.ToRange3i().ForeachPointExlusive(cellInGroup =>
-            {
-                using (_profiler.Start("TerrainMesher.AddCell()"))
+            _cellInGroupCount.ToRange3i()
+                .ForeachPointExlusive(cellInGroup =>
                 {
-                    _mesher.AddCell(cellInGroup);
-                }
-            });
+                    using (_profiler.Start("TerrainMesher.AddCell()"))
+                    {
+                        _mesher.AddCell(cellInGroup);
+                    }
+                });
             using (_profiler.Start("Other"))
             {
                 return _mesher.GetResultingMesh();

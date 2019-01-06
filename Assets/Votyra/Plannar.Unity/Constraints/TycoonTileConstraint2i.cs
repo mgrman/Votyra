@@ -11,9 +11,9 @@ namespace Votyra.Plannar.Images.Constraints
         private static TileMap2i _tileMap;
         private static int? _tileMapScaleFactor;
         private readonly int _scaleFactor;
-        protected Range2i _invalidatedCellArea;
         protected Direction _direction;
         protected Matrix2<float> _editableMatrix;
+        protected Range2i _invalidatedCellArea;
 
         public TycoonTileConstraint2i([ConfigInject("scaleFactor")] int scaleFactor)
         {
@@ -48,9 +48,7 @@ namespace Votyra.Plannar.Images.Constraints
         {
             _invalidatedCellArea = invalidatedImageArea;
             if (direction != Direction.Up && direction != Direction.Down)
-            {
                 direction = Direction.Down;
-            }
 
             _direction = direction;
             _editableMatrix = editableMatrix;
@@ -69,13 +67,13 @@ namespace Votyra.Plannar.Images.Constraints
             var cell_x1y1 = ImageSampler2iUtils.CellToX1Y1(cell);
             if (!_editableMatrix.ContainsIndex(cell_x0y0) || !_editableMatrix.ContainsIndex(cell_x1y1))
                 return;
-            
+
             var sample = _editableMatrix.SampleCell(cell)
                 .ToSampledData2i();
             var processedSample = Process(sample);
 
-            Vector2i cell_x0y1 = ImageSampler2iUtils.CellToX0Y1(cell);
-            Vector2i cell_x1y0 = ImageSampler2iUtils.CellToX1Y0(cell);
+            var cell_x0y1 = ImageSampler2iUtils.CellToX0Y1(cell);
+            var cell_x1y0 = ImageSampler2iUtils.CellToX1Y0(cell);
 
             _editableMatrix[cell_x0y0] = processedSample.x0y0;
             _editableMatrix[cell_x0y1] = processedSample.x0y1;
@@ -92,7 +90,7 @@ namespace Votyra.Plannar.Images.Constraints
 
                 case Direction.Down:
                     return ProcessDown(sampleData);
-                
+
                 case Direction.Unknown:
                 default:
                     return sampleData;
@@ -106,8 +104,8 @@ namespace Votyra.Plannar.Images.Constraints
         private SampledData2i ProcessInner(SampledData2i sampleData)
         {
             var height = sampleData.Max;
-            SampledData2i normalizedHeightData = (sampleData - height).ClipMin(-2 * _scaleFactor);
-            SampledData2i choosenTemplateTile = _tileMap.GetTile(normalizedHeightData);
+            var normalizedHeightData = (sampleData - height).ClipMin(-2 * _scaleFactor);
+            var choosenTemplateTile = _tileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
         }
     }

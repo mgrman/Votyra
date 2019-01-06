@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
@@ -33,6 +31,7 @@ namespace Votyra.Core
         public IReadOnlyPooledList<Vector3f> CameraFrustumCorners { get; }
         public Matrix4x4f CameraLocalToWorldMatrix { get; }
         public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
+
         public void Activate()
         {
             _activeCounter++;
@@ -42,9 +41,7 @@ namespace Votyra.Core
         {
             _activeCounter--;
             if (_activeCounter <= 0)
-            {
                 Dispose();
-            }
         }
 
         public Area1f RangeZ { get; }

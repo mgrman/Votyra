@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 
 namespace Votyra.Core
 {
-    public interface IFrameData 
+    public interface IFrameData
     {
         Vector3f CameraPosition { get; }
         IReadOnlyPooledList<Plane3f> CameraPlanes { get; }
@@ -16,6 +14,5 @@ namespace Votyra.Core
         void Activate();
 
         void Deactivate();
-        
     }
 }

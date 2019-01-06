@@ -1,15 +1,10 @@
-using System;
-using UnityEngine;
 using Votyra.Core.Models.ObjectPool;
-using Votyra.Core.Pooling;
 
 namespace Votyra.Core.Models
 {
-    public class PoolableMatrix<T>: IPoolableMatrix2<T>
+    public class PoolableMatrix<T> : IPoolableMatrix2<T>
     {
-        private static readonly ConcurentObjectDictionaryPool<PoolableMatrix<T>, Vector2i> Pool
-            = new ConcurentObjectDictionaryPool<PoolableMatrix<T>, Vector2i>(5,
-                (matrixSize) => new PoolableMatrix<T>(matrixSize));
+        private static readonly ConcurentObjectDictionaryPool<PoolableMatrix<T>, Vector2i> Pool = new ConcurentObjectDictionaryPool<PoolableMatrix<T>, Vector2i>(5, matrixSize => new PoolableMatrix<T>(matrixSize));
 
 
         public readonly T[,] RawMatrix;
@@ -20,15 +15,9 @@ namespace Votyra.Core.Models
             Size = matrixSize;
         }
 
-        public static PoolableMatrix<T> CreateDirty(Vector2i matrixSize)
-        {
-            var obj = Pool.GetObject(matrixSize);
-            return obj;
-        }
-
         public void Dispose()
         {
-            Pool.ReturnObject(this, this.Size);
+            Pool.ReturnObject(this, Size);
         }
 
         public Vector2i Size { get; }
@@ -43,6 +32,12 @@ namespace Votyra.Core.Models
         {
             get => RawMatrix[i.X, i.Y];
             set => RawMatrix[i.X, i.Y] = value;
+        }
+
+        public static PoolableMatrix<T> CreateDirty(Vector2i matrixSize)
+        {
+            var obj = Pool.GetObject(matrixSize);
+            return obj;
         }
     }
 }

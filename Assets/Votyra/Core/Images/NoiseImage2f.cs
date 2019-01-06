@@ -11,10 +11,10 @@ namespace Votyra.Core.Images
             Scale = scale;
         }
 
-        public Vector3f Offset { get; private set; }
+        public Vector3f Offset { get; }
 
-        public Vector3f Scale { get; private set; }
-        public Area1f RangeZ { get { return new Area1f(Offset.Z, Offset.Z + Scale.Z); } }
+        public Vector3f Scale { get; }
+        public Area1f RangeZ => new Area1f(Offset.Z, Offset.Z + Scale.Z);
 
         public float Sample(Vector2i point)
         {
@@ -30,13 +30,13 @@ namespace Votyra.Core.Images
             var min = area.Min;
 
             var matrix = PoolableMatrix<float>.CreateDirty(area.Size);
-            matrix.Size.ForeachPointExlusive(matPoint => { matrix[matPoint] = Sample(matPoint + min); });
+            matrix.Size.ForeachPointExlusive(matPoint =>
+            {
+                matrix[matPoint] = Sample(matPoint + min);
+            });
             return matrix;
         }
 
-        public bool AnyData(Range2i range)
-        {
-            return true;
-        }
+        public bool AnyData(Range2i range) => true;
     }
 }

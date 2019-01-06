@@ -12,141 +12,69 @@ namespace Votyra.Core.Models
 
         public Vector2i(int x, int y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
-        public bool AnyNegative => this.X < 0 || this.Y < 0;
-        public bool AnyZero => this.X == 0 || this.Y == 0;
-        public bool AnyZeroOrNegative => this.X <= 0 || this.Y <= 0;
+        public bool AnyNegative => X < 0 || Y < 0;
+        public bool AnyZero => X == 0 || Y == 0;
+        public bool AnyZeroOrNegative => X <= 0 || Y <= 0;
 
         public int AreaSum => X * Y;
 
-        public static Vector2i FromSame(int value)
-        {
-            return new Vector2i(value, value);
-        }
+        public static Vector2i FromSame(int value) => new Vector2i(value, value);
 
-        public static Vector2i operator +(Vector2i a, int b)
-        {
-            return new Vector2i(a.X + b, a.Y + b);
-        }
+        public static Vector2i operator +(Vector2i a, int b) => new Vector2i(a.X + b, a.Y + b);
 
-        public static Vector2i operator -(Vector2i a, int b)
-        {
-            return new Vector2i(a.X - b, a.Y - b);
-        }
+        public static Vector2i operator -(Vector2i a, int b) => new Vector2i(a.X - b, a.Y - b);
 
-        public static Vector2i operator +(Vector2i a, Vector2i b)
-        {
-            return new Vector2i(a.X + b.X, a.Y + b.Y);
-        }
+        public static Vector2i operator +(Vector2i a, Vector2i b) => new Vector2i(a.X + b.X, a.Y + b.Y);
 
-        public static Vector2i operator -(Vector2i a, Vector2i b)
-        {
-            return new Vector2i(a.X - b.X, a.Y - b.Y);
-        }
+        public static Vector2i operator -(Vector2i a, Vector2i b) => new Vector2i(a.X - b.X, a.Y - b.Y);
 
-        public static Vector2f operator *(Vector2f a, Vector2i b)
-        {
-            return new Vector2f(a.X * b.X, a.Y * b.Y);
-        }
+        public static Vector2f operator *(Vector2f a, Vector2i b) => new Vector2f(a.X * b.X, a.Y * b.Y);
 
-        public static Vector2f operator *(Vector2i a, Vector2f b)
-        {
-            return new Vector2f(a.X * b.X, a.Y * b.Y);
-        }
+        public static Vector2f operator *(Vector2i a, Vector2f b) => new Vector2f(a.X * b.X, a.Y * b.Y);
 
-        public static Vector2i operator *(Vector2i a, Vector2i b)
-        {
-            return new Vector2i(a.X * b.X, a.Y * b.Y);
-        }
+        public static Vector2i operator *(Vector2i a, Vector2i b) => new Vector2i(a.X * b.X, a.Y * b.Y);
 
-        public static Vector2i operator /(Vector2i a, Vector2i b)
-        {
-            return new Vector2i(a.X / b.X, a.Y / b.Y);
-        }
+        public static Vector2i operator /(Vector2i a, Vector2i b) => new Vector2i(a.X / b.X, a.Y / b.Y);
 
-        public static Vector2f operator /(Vector2i a, Vector2f b)
-        {
-            return new Vector2f(a.X / b.X, a.Y / b.Y);
-        }
+        public static Vector2f operator /(Vector2i a, Vector2f b) => new Vector2f(a.X / b.X, a.Y / b.Y);
 
-        public static Vector2i operator /(Vector2i a, int b)
-        {
-            return new Vector2i(a.X / b, a.Y / b);
-        }
+        public static Vector2i operator /(Vector2i a, int b) => new Vector2i(a.X / b, a.Y / b);
 
-        public static Vector2f operator /(Vector2i a, float b)
-        {
-            return new Vector2f(a.X / b, a.Y / b);
-        }
+        public static Vector2f operator /(Vector2i a, float b) => new Vector2f(a.X / b, a.Y / b);
 
-        public static Vector2i operator *(Vector2i a, int b)
-        {
-            return new Vector2i(a.X * b, a.Y * b);
-        }
+        public static Vector2i operator *(Vector2i a, int b) => new Vector2i(a.X * b, a.Y * b);
 
-        public static Vector2i operator %(Vector2i a, Vector2i b)
-        {
-            return new Vector2i(a.X % b.X, a.Y % b.Y);
-        }
+        public static Vector2i operator %(Vector2i a, Vector2i b) => new Vector2i(a.X % b.X, a.Y % b.Y);
 
-        public static Vector2i operator %(Vector2i a, int b)
-        {
-            return new Vector2i(a.X % b, a.Y % b);
-        }
+        public static Vector2i operator %(Vector2i a, int b) => new Vector2i(a.X % b, a.Y % b);
 
-        public static bool operator <(Vector2i a, Vector2i b)
-        {
-            return a.X < b.X && a.Y < b.Y;
-        }
+        public static bool operator <(Vector2i a, Vector2i b) => a.X < b.X && a.Y < b.Y;
 
-        public static bool operator <=(Vector2i a, Vector2i b)
-        {
-            return a.X <= b.X && a.Y <= b.Y;
-        }
+        public static bool operator <=(Vector2i a, Vector2i b) => a.X <= b.X && a.Y <= b.Y;
 
-        public static bool operator >(Vector2i a, Vector2i b)
-        {
-            return a.X > b.X && a.Y > b.Y;
-        }
+        public static bool operator >(Vector2i a, Vector2i b) => a.X > b.X && a.Y > b.Y;
 
-        public static bool operator >=(Vector2i a, Vector2i b)
-        {
-            return a.X >= b.X && a.Y >= b.Y;
-        }
+        public static bool operator >=(Vector2i a, Vector2i b) => a.X >= b.X && a.Y >= b.Y;
 
-        public static bool operator ==(Vector2i a, Vector2i b)
-        {
-            return a.X == b.X && a.Y == b.Y;
-        }
+        public static bool operator ==(Vector2i a, Vector2i b) => a.X == b.X && a.Y == b.Y;
 
-        public static bool operator !=(Vector2i a, Vector2i b)
-        {
-            return a.X != b.X || a.Y != b.Y;
-        }
+        public static bool operator !=(Vector2i a, Vector2i b) => a.X != b.X || a.Y != b.Y;
 
-        public static Vector2i Max(Vector2i a, Vector2i b)
-        {
-            return new Vector2i(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));
-        }
+        public static Vector2i Max(Vector2i a, Vector2i b) => new Vector2i(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y));
 
-        public static Vector2i Min(Vector2i a, Vector2i b)
-        {
-            return new Vector2i(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
-        }
+        public static Vector2i Min(Vector2i a, Vector2i b) => new Vector2i(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y));
 
-        public Vector3i ToVector3i(int z)
-        {
-            return new Vector3i(X, Y, z);
-        }
+        public Vector3i ToVector3i(int z) => new Vector3i(X, Y, z);
 
         public void ForeachPointExlusive(Action<Vector2i> action)
         {
-            for (int ix = 0; ix < this.X; ix++)
+            for (var ix = 0; ix < X; ix++)
             {
-                for (int iy = 0; iy < this.Y; iy++)
+                for (var iy = 0; iy < Y; iy++)
                 {
                     action(new Vector2i(ix, iy));
                 }
@@ -155,46 +83,31 @@ namespace Votyra.Core.Models
 
         public void ForeachPointInclusive(Action<Vector2i> action)
         {
-            for (int ix = 0; ix <= this.X; ix++)
+            for (var ix = 0; ix <= X; ix++)
             {
-                for (int iy = 0; iy <= this.Y; iy++)
+                for (var iy = 0; iy <= Y; iy++)
                 {
                     action(new Vector2i(ix, iy));
                 }
             }
         }
 
-        public Vector2i DivideUp(Vector2i a, int b)
-        {
-            return new Vector2i(a.X.DivideUp(b), a.Y.DivideUp(b));
-        }
+        public Vector2i DivideUp(Vector2i a, int b) => new Vector2i(a.X.DivideUp(b), a.Y.DivideUp(b));
 
-        public Vector2f ToVector2f()
-        {
-            return new Vector2f(X, Y);
-        }
+        public Vector2f ToVector2f() => new Vector2f(X, Y);
 
-        public Vector3f ToVector3f(float z)
-        {
-            return new Vector3f(X, Y, z);
-        }
+        public Vector3f ToVector3f(float z) => new Vector3f(X, Y, z);
 
-        public Range2i ToRange2i()
-        {
-            return Range2i.FromMinAndSize(Vector2i.Zero, this);
-        }
+        public Range2i ToRange2i() => Range2i.FromMinAndSize(Zero, this);
 
-        public bool Equals(Vector2i other)
-        {
-            return this == other;
-        }
+        public bool Equals(Vector2i other) => this == other;
 
         public override bool Equals(object obj)
         {
             if (!(obj is Vector2i))
                 return false;
 
-            return this.Equals((Vector2i)obj);
+            return Equals((Vector2i) obj);
         }
 
         public override int GetHashCode()
@@ -205,9 +118,6 @@ namespace Votyra.Core.Models
             }
         }
 
-        public override string ToString()
-        {
-            return string.Format("({0} , {1})", X, Y);
-        }
+        public override string ToString() => string.Format("({0} , {1})", X, Y);
     }
 }

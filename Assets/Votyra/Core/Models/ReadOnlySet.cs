@@ -12,20 +12,15 @@ namespace Votyra.Core.Models
         {
             public int Count => 0;
 
-            public bool Contains(T value)
-            {
-                return false;
-            }
+            public bool Contains(T value) => false;
 
-            public IEnumerator<T> GetEnumerator()
-            {
-                return Enumerable.Empty<T>().GetEnumerator();
-            }
+            public IEnumerator<T> GetEnumerator() =>
+                Enumerable.Empty<T>()
+                    .GetEnumerator();
 
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return Enumerable.Empty<T>().GetEnumerator();
-            }
+            IEnumerator IEnumerable.GetEnumerator() =>
+                Enumerable.Empty<T>()
+                    .GetEnumerator();
         }
     }
 }

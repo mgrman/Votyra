@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using UniRx;
-using Votyra.Core.Models;
-using Votyra.Core.Painting.Commands;
+﻿using Votyra.Core.Models;
 
 namespace Votyra.Core.Painting
 {
     public struct PaintInvocationData
     {
-        public PaintInvocationData(int strength, Vector2i imagePosition) : this()
+        public PaintInvocationData(int strength, Vector2i imagePosition)
+            : this()
         {
             Strength = strength;
             ImagePosition = imagePosition;

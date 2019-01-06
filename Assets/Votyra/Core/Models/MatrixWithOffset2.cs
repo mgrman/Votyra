@@ -16,31 +16,16 @@ namespace Votyra.Core.Models
 
         public T this[int ix, int iy]
         {
-            get
-            {
-                return _points[ix + offset.X, iy + offset.Y];
-            }
-            set
-            {
-                _points[ix + offset.X, iy + offset.Y] = value;
-            }
+            get => _points[ix + offset.X, iy + offset.Y];
+            set => _points[ix + offset.X, iy + offset.Y] = value;
         }
 
         public T this[Vector2i i]
         {
-            get
-            {
-                return _points[i.X + offset.X, i.Y + offset.Y];
-            }
-            set
-            {
-                _points[i.X + offset.X, i.Y + offset.Y] = value;
-            }
+            get => _points[i.X + offset.X, i.Y + offset.Y];
+            set => _points[i.X + offset.X, i.Y + offset.Y] = value;
         }
 
-        public bool IsSameSize(Vector2i size, Vector2i offset)
-        {
-            return this.Size == size && this.offset == offset;
-        }
+        public bool IsSameSize(Vector2i size, Vector2i offset) => Size == size && this.offset == offset;
     }
 }

@@ -14,25 +14,16 @@ namespace Votyra.Core.Models
 
         public T this[int ix, int iy]
         {
-            get { return NativeMatrix[ix, iy]; }
-            set { NativeMatrix[ix, iy] = value; }
+            get => NativeMatrix[ix, iy];
+            set => NativeMatrix[ix, iy] = value;
         }
 
         public T this[Vector2i i]
         {
-            get
-            {
-                return NativeMatrix[i.X, i.Y];
-            }
-            set
-            {
-                NativeMatrix[i.X, i.Y] = value;
-            }
+            get => NativeMatrix[i.X, i.Y];
+            set => NativeMatrix[i.X, i.Y] = value;
         }
 
-        public bool IsSameSize(Vector2i size)
-        {
-            return this.Size == size;
-        }
+        public bool IsSameSize(Vector2i size) => Size == size;
     }
 }

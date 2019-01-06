@@ -1,11 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using Zenject;
-using Votyra.Core.Painting.Commands;
-using System;
+﻿using UnityEngine;
 
 namespace Votyra.Core.Painting.UI
 {

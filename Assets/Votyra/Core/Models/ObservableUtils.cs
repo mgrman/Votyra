@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UniRx;
 
 namespace Votyra.Core.Models
@@ -8,8 +7,7 @@ namespace Votyra.Core.Models
     {
         public static IObservable<ValueWithChange<TSource>> PairWithPrevious<TSource>(this IObservable<TSource> source)
         {
-            return source.Scan(default(ValueWithChange<TSource>),
-                (acc, current) => new ValueWithChange<TSource>(current, acc.NewValue));
+            return source.Scan(default(ValueWithChange<TSource>), (acc, current) => new ValueWithChange<TSource>(current, acc.NewValue));
         }
 
         public struct ValueWithChange<T>

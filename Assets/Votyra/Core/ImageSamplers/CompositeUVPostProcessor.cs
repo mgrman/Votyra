@@ -1,12 +1,5 @@
-using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Votyra.Core.Images;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
-using Votyra.Core.TerrainMeshes;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.ImageSamplers
 {
@@ -18,22 +11,24 @@ namespace Votyra.Core.ImageSamplers
         {
             _steps = steps;
         }
-        
+
         public Vector2f ProcessUV(Vector2f vertex)
         {
-            for (int i = 0; i < _steps.Count; i++)
+            for (var i = 0; i < _steps.Count; i++)
             {
-                vertex = _steps[i].ProcessUV(vertex);
+                vertex = _steps[i]
+                    .ProcessUV(vertex);
             }
 
             return vertex;
         }
-        
+
         public Vector2f ReverseUV(Vector2f vertex)
         {
-            for (int i = _steps.Count-1; i >=0; i--)
+            for (var i = _steps.Count - 1; i >= 0; i--)
             {
-                vertex = _steps[i].ReverseUV(vertex);
+                vertex = _steps[i]
+                    .ReverseUV(vertex);
             }
 
             return vertex;

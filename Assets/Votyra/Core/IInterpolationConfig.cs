@@ -1,6 +1,4 @@
-﻿using Votyra.Core.Models;
-
-namespace Votyra.Core
+﻿namespace Votyra.Core
 {
     public interface IInterpolationConfig : IConfig
     {
@@ -14,6 +12,6 @@ namespace Votyra.Core
     {
         NearestNeighbour,
         Linear,
-        Cubic   
+        Cubic
     }
 }

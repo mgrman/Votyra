@@ -9,16 +9,10 @@ namespace Votyra.Core.Images
             Image = imageA;
         }
 
-        public IImage2f Image { get; private set; }
+        public IImage2f Image { get; }
 
-        public bool Sample(Vector3i point)
-        {
-            return Image.Sample(new Vector2i(point.X, point.Y)) - point.Z > 0;
-        }
+        public bool Sample(Vector3i point) => Image.Sample(new Vector2i(point.X, point.Y)) - point.Z > 0;
 
-        public bool AnyData(Range3i range)
-        {
-            return true;
-        }
+        public bool AnyData(Range3i range) => true;
     }
 }

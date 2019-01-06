@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UniRx;
-using Votyra.Core.Models;
 using Votyra.Core.Painting.Commands;
 
 namespace Votyra.Core.Painting

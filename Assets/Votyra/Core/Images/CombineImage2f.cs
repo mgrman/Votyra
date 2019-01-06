@@ -4,6 +4,14 @@ namespace Votyra.Core.Images
 {
     public class CombineImage2f : IImage2f
     {
+        public enum Operations
+        {
+            Add,
+            Subtract,
+            Multiply,
+            Divide
+        }
+
         public CombineImage2f(IImage2f imageA, IImage2f imageB, Operations operation)
         {
             ImageA = imageA;
@@ -33,18 +41,10 @@ namespace Votyra.Core.Images
             }
         }
 
-        public enum Operations
-        {
-            Add,
-            Subtract,
-            Multiply,
-            Divide
-        }
-
-        public IImage2f ImageA { get; private set; }
-        public IImage2f ImageB { get; private set; }
-        public Operations Operation { get; private set; }
-        public Area1f RangeZ { get; private set; }
+        public IImage2f ImageA { get; }
+        public IImage2f ImageB { get; }
+        public Operations Operation { get; }
+        public Area1f RangeZ { get; }
 
         public float Sample(Vector2i point)
         {
@@ -74,7 +74,10 @@ namespace Votyra.Core.Images
             var min = area.Min;
 
             var matrix = PoolableMatrix<float>.CreateDirty(area.Size);
-            matrix.Size.ForeachPointExlusive(matPoint => { matrix[matPoint] = Sample(matPoint + min); });
+            matrix.Size.ForeachPointExlusive(matPoint =>
+            {
+                matrix[matPoint] = Sample(matPoint + min);
+            });
             return matrix;
         }
     }

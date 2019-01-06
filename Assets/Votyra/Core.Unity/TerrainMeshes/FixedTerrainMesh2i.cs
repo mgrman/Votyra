@@ -31,7 +31,8 @@ namespace Votyra.Core.TerrainMeshes
 
             Vertices = new Vector3[pointCount];
             UV = new Vector2[pointCount];
-            Indices = Enumerable.Range(0, pointCount).ToArray();
+            Indices = Enumerable.Range(0, pointCount)
+                .ToArray();
             Normals = new Vector3[pointCount];
         }
 
@@ -51,9 +52,11 @@ namespace Votyra.Core.TerrainMeshes
                 posB = VertexPostProcessor(posB);
                 posC = VertexPostProcessor(posC);
             }
+
             var side1 = posB - posA;
             var side2 = posC - posA;
-            var normal = Vector3f.Cross(side1, side2).Normalized;
+            var normal = Vector3f.Cross(side1, side2)
+                .Normalized;
 
             Vertices[_counter] = posA.ToVector3();
             UV[_counter] = (UVAdjustor?.Invoke(posA.XY) ?? posA.XY).ToVector2();
@@ -75,12 +78,13 @@ namespace Votyra.Core.TerrainMeshes
         {
             if (_counter != VertexCount)
             {
-                for (int i = _counter; i < VertexCount; i++)
+                for (var i = _counter; i < VertexCount; i++)
                 {
                     Vertices[i] = Vector3.zero;
                     UV[i] = Vector2.zero;
                     Normals[i] = Vector3.zero;
                 }
+
                 Debug.LogWarning($"Mesh was not fully filled. Expected {VertexCount} points, got {_counter} points!");
             }
         }

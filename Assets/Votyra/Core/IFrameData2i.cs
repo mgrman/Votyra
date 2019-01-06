@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 

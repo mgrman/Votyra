@@ -13,17 +13,17 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
     public class TerrainMesher3b : ITerrainMesher3b
     {
         public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
-        protected Vector3i groupPosition;
-        protected Vector3i groupSize;
-        protected IPooledTerrainMesh pooledMesh;
-        protected ITerrainMesh mesh;
         private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
 
-        private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3f>> DataToTriangles = SampledData3b.AllValues
-            .ToDictionary(o => o, o => ChooseTrianglesForCell(o), SampledData3b.NormallessComparer);
+        private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3f>> DataToTriangles = SampledData3b.AllValues.ToDictionary(o => o, o => ChooseTrianglesForCell(o), SampledData3b.NormallessComparer);
+
+        private readonly Vector3i _cellInGroupCount;
 
         private readonly IImageSampler3 _imageSampler;
-        private readonly Vector3i _cellInGroupCount;
+        protected Vector3i groupPosition;
+        protected Vector3i groupSize;
+        protected ITerrainMesh mesh;
+        protected IPooledTerrainMesh pooledMesh;
 
         public TerrainMesher3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
@@ -43,22 +43,11 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             InitializeGroup(group, PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty());
         }
 
-        public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
-        {
-            var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
-
-            this.groupPosition = _cellInGroupCount * group;
-
-            this.pooledMesh = cleanPooledMesh;
-            this.mesh = this.pooledMesh.Mesh;
-            mesh.Clear(bounds, null, null);
-        }
-
         public void AddCell(Vector3i cellInGroup)
         {
-            Vector3i cell = cellInGroup + groupPosition;
+            var cell = cellInGroup + groupPosition;
 
-            SampledData3b data = _imageSampler.Sample(Image, cell);
+            var data = _imageSampler.Sample(Image, cell);
 
             var finalTris = DataToTriangles[data];
 
@@ -72,9 +61,18 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             // or maybe postProcessing?
         }
 
-        public IPooledTerrainMesh GetResultingMesh()
+        public IPooledTerrainMesh GetResultingMesh() => pooledMesh;
+
+        public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
         {
-            return pooledMesh;
+            var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount)
+                .ToRange3f();
+
+            groupPosition = _cellInGroupCount * group;
+
+            pooledMesh = cleanPooledMesh;
+            mesh = pooledMesh.Mesh;
+            mesh.Clear(bounds, null, null);
         }
 
         private static IReadOnlyCollection<Triangle3f> ChooseTrianglesForCell(SampledData3b data)
@@ -98,196 +96,146 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             Matrix4x4f matrix;
             if (data.Data == 0 || data.Data == byte.MaxValue)
-            {
                 return Array.Empty<Triangle3f>();
-            }
-            else if (SampledData3b.ParseCube(@"
+
+            if (SampledData3b.ParseCube(@"
               0-----0
              /|    /|
             0-+---0 |
             | 1---+-1
             |/    |/
             1-----1
-            ").EqualsRotationInvariant(data, out matrix))
+            ")
+                .EqualsRotationInvariant(data, out matrix))
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return TerrainMeshExtensions
-                    .GetQuadTriangles(
-                        matrix.MultiplyPoint(pos_x0y0z0),
-                        matrix.MultiplyPoint(pos_x0y1z0),
-                        matrix.MultiplyPoint(pos_x1y0z0),
-                        matrix.MultiplyPoint(pos_x1y1z0), false)
-                     .ChangeOrderIfTrue(isInverted)
-                     .ToArray();
+                return TerrainMeshExtensions.GetQuadTriangles(matrix.MultiplyPoint(pos_x0y0z0), matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z0), false)
+                    .ChangeOrderIfTrue(isInverted)
+                    .ToArray();
             }
-            else if (SampledData3b.ParseCube(@"
+
+            if (SampledData3b.ParseCube(@"
               1-----0
              /|    /|
             1-+---0 |
             | 1---+-1
             |/    |/
             1-----1
-            ").EqualsRotationInvariant(data, out matrix))
+            ")
+                .EqualsRotationInvariant(data, out matrix))
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
-                return TerrainMeshExtensions
-                    .GetQuadTriangles(
-                        matrix.MultiplyPoint(pos_x0y0z1),
-                        matrix.MultiplyPoint(pos_x0y1z1),
-                        matrix.MultiplyPoint(pos_x1y0z0),
-                        matrix.MultiplyPoint(pos_x1y1z0), false)
+                return TerrainMeshExtensions.GetQuadTriangles(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x0y1z1), matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z0), false)
                     .ChangeOrderIfTrue(isInverted)
                     .ToArray();
             }
-            else if (SampledData3b.ParseCube(@"
+
+            if (SampledData3b.ParseCube(@"
               0-----0
              /|    /|
             1-+---0 |
             | 1---+-0
             |/    |/
             1-----1
-            ").EqualsRotationInvariant(data, out matrix))
+            ")
+                .EqualsRotationInvariant(data, out matrix))
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return new Triangle3f(
-                        matrix.MultiplyPoint(pos_x1y0z0),
-                        matrix.MultiplyPoint(pos_x0y1z0),
-                        matrix.MultiplyPoint(pos_x0y0z1))
-                   .AsEnumerable()
-                   .ChangeOrderIfTrue(isInverted)
-                   .ToArray();
+                return new Triangle3f(matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x0y0z1)).AsEnumerable()
+                    .ChangeOrderIfTrue(isInverted)
+                    .ToArray();
             }
-            else if (SampledData3b.ParseCube(@"
+
+            if (SampledData3b.ParseCube(@"
               0-----0
              /|    /|
             1-+---0 |
             | 1---+-1
             |/    |/
             1-----1
-            ").EqualsRotationInvariant(data, out matrix))
+            ")
+                .EqualsRotationInvariant(data, out matrix))
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return new Triangle3f[]{
-                    new Triangle3f(
-                        matrix.MultiplyPoint(pos_x1y0z0),
-                        matrix.MultiplyPoint(pos_x0y1z0),
-                        matrix.MultiplyPoint(pos_x0y0z1)),
-                    new Triangle3f(
-                        matrix.MultiplyPoint(pos_x1y0z0),
-                        matrix.MultiplyPoint(pos_x1y1z0),
-                        matrix.MultiplyPoint(pos_x0y1z0))
-                   }.ChangeOrderIfTrue(isInverted)
-                   .ToArray();
+                return new[] {new Triangle3f(matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x0y0z1)), new Triangle3f(matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z0), matrix.MultiplyPoint(pos_x0y1z0))}.ChangeOrderIfTrue(isInverted)
+                    .ToArray();
             }
-            else if (SampledData3b.ParseCube(@"
+
+            if (SampledData3b.ParseCube(@"
               1-----0
              /|    /|
             1-+---1 |
             | 1---+-1
             |/    |/
             1-----1
-            ").EqualsRotationInvariant(data, out matrix))
+            ")
+                .EqualsRotationInvariant(data, out matrix))
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return new Triangle3f[]{
-                    new Triangle3f(
-                        matrix.MultiplyPoint(pos_x0y1z1),
-                        matrix.MultiplyPoint(pos_x1y0z1),
-                        matrix.MultiplyPoint(pos_x1y1z0))
-                   }
-                   .ChangeOrderIfTrue(isInverted)
-                   .ToArray();
+                return new[] {new Triangle3f(matrix.MultiplyPoint(pos_x0y1z1), matrix.MultiplyPoint(pos_x1y0z1), matrix.MultiplyPoint(pos_x1y1z0))}.ChangeOrderIfTrue(isInverted)
+                    .ToArray();
             }
-            else if (SampledData3b.ParseCube(@"
+
+            if (SampledData3b.ParseCube(@"
               0-----1
              /|    /|
             1-+---0 |
             | 1---+-1
             |/    |/
             1-----1
-            ").EqualsRotationInvariant(data, out matrix))
+            ")
+                .EqualsRotationInvariant(data, out matrix))
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return new Triangle3f[]{
-                    new Triangle3f(
-                        matrix.MultiplyPoint(pos_x0y0z1),
-                        matrix.MultiplyPoint(pos_x1y0z0),
-                        matrix.MultiplyPoint(pos_x1y1z1)),
-                    new Triangle3f(
-                        matrix.MultiplyPoint(pos_x0y0z1),
-                        matrix.MultiplyPoint(pos_x1y1z1),
-                        matrix.MultiplyPoint(pos_x0y1z0)),
-                   }
-                   .ChangeOrderIfTrue(isInverted)
-                   .ToArray();
+                return new[] {new Triangle3f(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z1)), new Triangle3f(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x1y1z1), matrix.MultiplyPoint(pos_x0y1z0))}.ChangeOrderIfTrue(isInverted)
+                    .ToArray();
             }
-            else if (SampledData3b.ParseCube(@"
+
+            if (SampledData3b.ParseCube(@"
               0-----0
              /|    /|
             1-+---0 |
             | 1---+-1
             |/    |/
             1-----0
-            ").EqualsRotationInvariant(data, out matrix))
+            ")
+                .EqualsRotationInvariant(data, out matrix))
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
-                return new Triangle3f[]{
-                    new Triangle3f(
-                        matrix.MultiplyPoint(pos_x0y0z0),
-                        matrix.MultiplyPoint(pos_x1y1z0),
-                        matrix.MultiplyPoint(pos_x0y0z1)),
-                    new Triangle3f(
-                        matrix.MultiplyPoint(pos_x1y1z0),
-                        matrix.MultiplyPoint(pos_x0y1z0),
-                        matrix.MultiplyPoint(pos_x0y0z1)),
-                   }
-                   .ChangeOrderIfTrue(isInverted)
-                   .ToArray();
+                return new[] {new Triangle3f(matrix.MultiplyPoint(pos_x0y0z0), matrix.MultiplyPoint(pos_x1y1z0), matrix.MultiplyPoint(pos_x0y0z1)), new Triangle3f(matrix.MultiplyPoint(pos_x1y1z0), matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x0y0z1))}.ChangeOrderIfTrue(isInverted)
+                    .ToArray();
             }
-            else if (SampledData3b.ParseCube(@"
+
+            if (SampledData3b.ParseCube(@"
               0-----1
              /|    /|
             1-+---0 |
             | 1---+-1
             |/    |/
             1-----0
-            ").EqualsRotationInvariant(data, out matrix))
+            ")
+                .EqualsRotationInvariant(data, out matrix))
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return new Triangle3f[]{
-                    new Triangle3f(
-                        matrix.MultiplyPoint(pos_x0y1z0),
-                        matrix.MultiplyPoint(pos_x0y0z1),
-                        matrix.MultiplyPoint(pos_x1y1z1)),
-                    new Triangle3f(
-                        matrix.MultiplyPoint(pos_x0y0z0),
-                        matrix.MultiplyPoint(pos_x1y1z0),
-                        matrix.MultiplyPoint(pos_x1y1z1)),
-                    new Triangle3f(
-                        matrix.MultiplyPoint(pos_x0y0z0),
-                        matrix.MultiplyPoint(pos_x1y1z1),
-                        matrix.MultiplyPoint(pos_x0y0z1)),
-                   }
-                   .ChangeOrderIfTrue(isInverted)
-                   .ToArray();
+                return new[] {new Triangle3f(matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x1y1z1)), new Triangle3f(matrix.MultiplyPoint(pos_x0y0z0), matrix.MultiplyPoint(pos_x1y1z0), matrix.MultiplyPoint(pos_x1y1z1)), new Triangle3f(matrix.MultiplyPoint(pos_x0y0z0), matrix.MultiplyPoint(pos_x1y1z1), matrix.MultiplyPoint(pos_x0y0z1))}.ChangeOrderIfTrue(isInverted)
+                    .ToArray();
             }
-            else
-            {
-                var template = SampledData3b.ParseCube(@"
+
+            var template = SampledData3b.ParseCube(@"
                       0-----0
                      /|    /|
                     0-+---0 |
@@ -295,25 +243,19 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     |/    |/
                     1-----1
                     ");
-                var triangles = template.GetAllRotationSubsets(data)
-                    .Select(m =>
-                    {
-                        var mInv = m.Inverse;
-                        return new Triangle3f(
-                            mInv.MultiplyPoint(pos_x0y0z0),
-                            mInv.MultiplyPoint(pos_x0y1z0),
-                            mInv.MultiplyPoint(pos_x1y0z0));
-                    })
-                    .Distinct(Triangle3f.OrderInvariantComparer)
-                    .Select(t => t.EnsureCCW(CenterZeroCell))
-                    .ToArray();
-
-                if (triangles.Length == 0)
+            var triangles = template.GetAllRotationSubsets(data)
+                .Select(m =>
                 {
-                    DataWithoutTriangles.Add(data);
-                }
-                return triangles.ToArray();
-            }
+                    var mInv = m.Inverse;
+                    return new Triangle3f(mInv.MultiplyPoint(pos_x0y0z0), mInv.MultiplyPoint(pos_x0y1z0), mInv.MultiplyPoint(pos_x1y0z0));
+                })
+                .Distinct(Triangle3f.OrderInvariantComparer)
+                .Select(t => t.EnsureCCW(CenterZeroCell))
+                .ToArray();
+
+            if (triangles.Length == 0)
+                DataWithoutTriangles.Add(data);
+            return triangles.ToArray();
         }
     }
 }

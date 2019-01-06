@@ -9,13 +9,15 @@ namespace Votyra.Core.Images
         private readonly Matrix2<MaskValues> _editableMatrix;
 
         private readonly List<LockableMatrix2<MaskValues>> _readonlyMatrices = new List<LockableMatrix2<MaskValues>>();
-        private MatrixMask2e _image = null;
+        private MatrixMask2e _image;
         private Range2i? _invalidatedArea;
 
         public EditableMatrixMask2e(IImageConfig imageConfig)
         {
             _editableMatrix = new Matrix2<MaskValues>(imageConfig.ImageSize.XY);
         }
+
+        public IEditableMaskAccessor2e RequestAccess(Range2i areaRequest) => new MatrixImageAccessor(this, areaRequest);
 
         public IMask2e CreateMask()
         {
@@ -37,11 +39,10 @@ namespace Votyra.Core.Images
                 }
 
                 //sync
-                _editableMatrix
-                    .ForeachPointExlusive(i =>
-                    {
-                        readonlyMatrix[i] = _editableMatrix[i];
-                    });
+                _editableMatrix.ForeachPointExlusive(i =>
+                {
+                    readonlyMatrix[i] = _editableMatrix[i];
+                });
 
                 // Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
 
@@ -49,12 +50,8 @@ namespace Votyra.Core.Images
                 _image = new MatrixMask2e(readonlyMatrix, _invalidatedArea.Value);
                 _invalidatedArea = Range2i.Zero;
             }
-            return _image;
-        }
 
-        public IEditableMaskAccessor2e RequestAccess(Range2i areaRequest)
-        {
-            return new MatrixImageAccessor(this, areaRequest);
+            return _image;
         }
 
         private void UpdateImage(Range2i invalidatedImageArea)
@@ -78,19 +75,13 @@ namespace Votyra.Core.Images
 
             public MaskValues this[Vector2i pos]
             {
-                get
-                {
-                    return _editableMatrix[pos.X, pos.Y];
-                }
-                set
-                {
-                    _editableMatrix[pos.X, pos.Y] = value;
-                }
+                get => _editableMatrix[pos.X, pos.Y];
+                set => _editableMatrix[pos.X, pos.Y] = value;
             }
 
             public void Dispose()
             {
-                this._editableImage.UpdateImage(Area);
+                _editableImage.UpdateImage(Area);
             }
         }
     }

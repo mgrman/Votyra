@@ -14,23 +14,22 @@ namespace Votyra.Core.Pooling
         {
         }
 
+        public void Dispose()
+        {
+            if (IsDisposable)
+                foreach (var item in Values)
+                {
+                    (item as IDisposable)?.Dispose();
+                }
+
+            Pool.ReturnObject(this);
+        }
+
         public static PooledDictionary<TKey, TValue> Create()
         {
             var obj = Pool.GetObject();
             obj.Clear();
             return obj;
-        }
-
-        public void Dispose()
-        {
-            if (IsDisposable)
-            {
-                foreach (var item in this.Values)
-                {
-                    (item as IDisposable)?.Dispose();
-                }
-            }
-            Pool.ReturnObject(this);
         }
     }
 }

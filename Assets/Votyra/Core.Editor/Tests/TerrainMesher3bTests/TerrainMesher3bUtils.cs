@@ -1,7 +1,7 @@
-using Moq;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using Moq;
+using NUnit.Framework;
 using Votyra.Core;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
@@ -25,18 +25,16 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 
         public static void AssertContainsQuad(IReadOnlyCollection<Triangle3i> triangles, string cube, Vector3i a, Vector3i b, Vector3i c, Vector3i d)
         {
-            bool contains = false;
+            var contains = false;
 
-            contains = contains || triangles.Contains(new Triangle3i(a, b, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, b, d), Triangle3i.OrderInvariantComparer);//ab
-            contains = contains || triangles.Contains(new Triangle3i(a, b, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, c, d), Triangle3i.OrderInvariantComparer);//ac
-            contains = contains || triangles.Contains(new Triangle3i(a, d, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, d, b), Triangle3i.OrderInvariantComparer);//ad
-            contains = contains || triangles.Contains(new Triangle3i(b, c, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(b, c, d), Triangle3i.OrderInvariantComparer);//bc
-            contains = contains || triangles.Contains(new Triangle3i(b, d, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(b, d, c), Triangle3i.OrderInvariantComparer);//bd
-            contains = contains || triangles.Contains(new Triangle3i(c, d, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(c, d, b), Triangle3i.OrderInvariantComparer);//cd
+            contains = contains || triangles.Contains(new Triangle3i(a, b, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, b, d), Triangle3i.OrderInvariantComparer); //ab
+            contains = contains || triangles.Contains(new Triangle3i(a, b, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, c, d), Triangle3i.OrderInvariantComparer); //ac
+            contains = contains || triangles.Contains(new Triangle3i(a, d, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, d, b), Triangle3i.OrderInvariantComparer); //ad
+            contains = contains || triangles.Contains(new Triangle3i(b, c, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(b, c, d), Triangle3i.OrderInvariantComparer); //bc
+            contains = contains || triangles.Contains(new Triangle3i(b, d, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(b, d, c), Triangle3i.OrderInvariantComparer); //bd
+            contains = contains || triangles.Contains(new Triangle3i(c, d, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(c, d, b), Triangle3i.OrderInvariantComparer); //cd
             if (!contains)
-            {
                 throw new AssertionException($"On cube:\r\b{cube.Replace(' ', '\u00A0')}\r\nExpected collection containing quad {a},{b},{c},{d}. Actual:\r\n{(triangles.Any() ? string.Join(", ", triangles) : "<empty>")}");
-            }
         }
 
         public static List<Triangle3i> Evaluate(string cubeString)
@@ -46,7 +44,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             var cube = SampledData3b.ParseCube(cubeString);
             //            Debug.Log(cube);
             imageMock.Setup(o => o.Sample(It.IsAny<Vector3i>()))
-                .Returns<Vector3i>((pos) => cube[pos]);
+                .Returns<Vector3i>(pos => cube[pos]);
 
             var triangles = new List<Triangle3i>();
             var meshMock = new Mock<ITerrainMesh>();
@@ -59,11 +57,10 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 
             var pooledMeshMock = new Mock<IPooledTerrainMesh>();
             pooledMeshMock.Setup(o => o.Mesh)
-            .Returns(() => mesh);
+                .Returns(() => mesh);
 
             var terrainConfig = new Mock<ITerrainConfig>();
-            terrainConfig
-                .Setup(o => o.CellInGroupCount)
+            terrainConfig.Setup(o => o.CellInGroupCount)
                 .Returns(new Vector3i(1, 1, 1));
 
             var mesher = new TerrainMesher3b(terrainConfig.Object, sampler);

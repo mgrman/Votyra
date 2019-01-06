@@ -11,15 +11,6 @@ namespace Votyra.Core
 {
     public class ClickToPaint3b : ITickable
     {
-        [Inject]
-        protected IImageSampler3 _sampler;
-
-        [Inject(Id = "root")]
-        protected GameObject _root;
-
-        [Inject]
-        protected IThreadSafeLogger _logger;
-
         private const float Period = 0.1f;
 
         private const int maxDistBig = 2;
@@ -33,27 +24,32 @@ namespace Votyra.Core
         [Inject]
         protected IEditableImage3b _editableImage;
 
-        private float _lastTime;
+        private Stack<Renderer> _emptyDebugObjects = new Stack<Renderer>();
+
+        private Material _falseMaterial;
         private Vector3i? _lastCell;
 
-        private Stack<Renderer> _usedDebugObjects = new Stack<Renderer>();
+        private float _lastTime;
 
-        private Stack<Renderer> _emptyDebugObjects = new Stack<Renderer>();
+        [Inject]
+        protected IThreadSafeLogger _logger;
+
+        [Inject(Id = "root")]
+        protected GameObject _root;
+
+        [Inject]
+        protected IImageSampler3 _sampler;
 
         private Material _trueMaterial;
 
-        private Material _falseMaterial;
+        private Stack<Renderer> _usedDebugObjects = new Stack<Renderer>();
 
         public void Tick()
         {
             if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1))
-            {
                 _lastCell = null;
-            }
             if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
-            {
                 ProcessMouseClick();
-            }
             DebugMouse();
         }
 
@@ -72,8 +68,9 @@ namespace Votyra.Core
             _usedDebugObjects = temp;
             foreach (var toDelete in _usedDebugObjects)
             {
-                GameObject.Destroy(toDelete.gameObject);
+                Object.Destroy(toDelete.gameObject);
             }
+
             _usedDebugObjects.Clear();
 
             var localArea = Area3f.FromCenterAndExtents(mouseLocalPosition, new Vector3f(1, 1, 1));
@@ -81,35 +78,36 @@ namespace Votyra.Core
             using (var image = _editableImage.RequestAccess(imageArea))
             {
                 localArea = localArea.IntersectWith(_sampler.ImageToWorld(image.Area));
-                localArea.RoundToContain().ForeachPointExlusive((localPosition) =>
-                {
-                    var imagePosition_x0y0z0 = _sampler.CellToX0Y0Z0(localPosition);
-                    var imagePosition_x0y0z1 = _sampler.CellToX0Y0Z1(localPosition);
-                    var imagePosition_x0y1z0 = _sampler.CellToX0Y1Z0(localPosition);
-                    var imagePosition_x0y1z1 = _sampler.CellToX0Y1Z1(localPosition);
-                    var imagePosition_x1y0z0 = _sampler.CellToX1Y0Z0(localPosition);
-                    var imagePosition_x1y0z1 = _sampler.CellToX1Y0Z1(localPosition);
-                    var imagePosition_x1y1z0 = _sampler.CellToX1Y1Z0(localPosition);
-                    var imagePosition_x1y1z1 = _sampler.CellToX1Y1Z1(localPosition);
+                localArea.RoundToContain()
+                    .ForeachPointExlusive(localPosition =>
+                    {
+                        var imagePosition_x0y0z0 = _sampler.CellToX0Y0Z0(localPosition);
+                        var imagePosition_x0y0z1 = _sampler.CellToX0Y0Z1(localPosition);
+                        var imagePosition_x0y1z0 = _sampler.CellToX0Y1Z0(localPosition);
+                        var imagePosition_x0y1z1 = _sampler.CellToX0Y1Z1(localPosition);
+                        var imagePosition_x1y0z0 = _sampler.CellToX1Y0Z0(localPosition);
+                        var imagePosition_x1y0z1 = _sampler.CellToX1Y0Z1(localPosition);
+                        var imagePosition_x1y1z0 = _sampler.CellToX1Y1Z0(localPosition);
+                        var imagePosition_x1y1z1 = _sampler.CellToX1Y1Z1(localPosition);
 
-                    var x0y0z0 = image[imagePosition_x0y0z0];
-                    var x0y0z1 = image[imagePosition_x0y0z1];
-                    var x0y1z0 = image[imagePosition_x0y1z0];
-                    var x0y1z1 = image[imagePosition_x0y1z1];
-                    var x1y0z0 = image[imagePosition_x1y0z0];
-                    var x1y0z1 = image[imagePosition_x1y0z1];
-                    var x1y1z0 = image[imagePosition_x1y1z0];
-                    var x1y1z1 = image[imagePosition_x1y1z1];
+                        var x0y0z0 = image[imagePosition_x0y0z0];
+                        var x0y0z1 = image[imagePosition_x0y0z1];
+                        var x0y1z0 = image[imagePosition_x0y1z0];
+                        var x0y1z1 = image[imagePosition_x0y1z1];
+                        var x1y0z0 = image[imagePosition_x1y0z0];
+                        var x1y0z1 = image[imagePosition_x1y0z1];
+                        var x1y1z0 = image[imagePosition_x1y1z0];
+                        var x1y1z1 = image[imagePosition_x1y1z1];
 
-                    CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z0) + LocalToWorldVector(new Vector3f(0.1f, 0.1f, 0)), x0y0z0);
-                    // CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z1) + new Vector3f(0.1f, 0.1f, -0.1f), x0y0z1);
-                    CreateDebugObjectAt(ImageToWorld(imagePosition_x0y1z0) + LocalToWorldVector(new Vector3f(0.1f, 0.4f, 0)), x0y1z0);
-                    // CreateDebugObjectAt(ImageToWorld(imagePosition_x0y1z1) + new Vector3f(0.1f, -0.1f, -0.1f), x0y1z1);
-                    CreateDebugObjectAt(ImageToWorld(imagePosition_x1y0z0) + LocalToWorldVector(new Vector3f(0.4f, 0.1f, 0)), x1y0z0);
-                    // CreateDebugObjectAt(ImageToWorld(imagePosition_x1y0z1) + new Vector3f(-0.1f, 0.1f, -0.1f), x1y0z1);
-                    CreateDebugObjectAt(ImageToWorld(imagePosition_x1y1z0) + LocalToWorldVector(new Vector3f(0.4f, 0.4f, 0)), x1y1z0);
-                    // CreateDebugObjectAt(ImageToWorld(imagePosition_x1y1z1) + new Vector3f(-0.1f, -0.1f, -0.1f), x1y1z1);
-                });
+                        CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z0) + LocalToWorldVector(new Vector3f(0.1f, 0.1f, 0)), x0y0z0);
+                        // CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z1) + new Vector3f(0.1f, 0.1f, -0.1f), x0y0z1);
+                        CreateDebugObjectAt(ImageToWorld(imagePosition_x0y1z0) + LocalToWorldVector(new Vector3f(0.1f, 0.4f, 0)), x0y1z0);
+                        // CreateDebugObjectAt(ImageToWorld(imagePosition_x0y1z1) + new Vector3f(0.1f, -0.1f, -0.1f), x0y1z1);
+                        CreateDebugObjectAt(ImageToWorld(imagePosition_x1y0z0) + LocalToWorldVector(new Vector3f(0.4f, 0.1f, 0)), x1y0z0);
+                        // CreateDebugObjectAt(ImageToWorld(imagePosition_x1y0z1) + new Vector3f(-0.1f, 0.1f, -0.1f), x1y0z1);
+                        CreateDebugObjectAt(ImageToWorld(imagePosition_x1y1z0) + LocalToWorldVector(new Vector3f(0.4f, 0.4f, 0)), x1y1z0);
+                        // CreateDebugObjectAt(ImageToWorld(imagePosition_x1y1z1) + new Vector3f(-0.1f, -0.1f, -0.1f), x1y1z1);
+                    });
             }
         }
 
@@ -124,31 +122,27 @@ namespace Votyra.Core
             {
                 var debugObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 debugObject.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-                debugObject.GetComponent<Collider>().enabled = false;
+                debugObject.GetComponent<Collider>()
+                    .enabled = false;
                 debugObject.name = "Debug pointer";
                 debugRenderer = debugObject.GetComponent<Renderer>();
                 _trueMaterial = Resources.Load<Material>("PointerTrue");
                 _falseMaterial = Resources.Load<Material>("PointerFalse");
             }
+
             debugRenderer.transform.position = worldPos.ToVector3();
             debugRenderer.material = value ? _trueMaterial : _falseMaterial;
 
             _usedDebugObjects.Push(debugRenderer);
         }
 
-        private Vector3i MouseImagePosition()
-        {
-            return LocalToImage(ScreenToLocal(Input.mousePosition));
-        }
+        private Vector3i MouseImagePosition() => LocalToImage(ScreenToLocal(Input.mousePosition));
 
-        private Vector3f MouseLocalPosition()
-        {
-            return ScreenToLocal(Input.mousePosition);
-        }
+        private Vector3f MouseLocalPosition() => ScreenToLocal(Input.mousePosition);
 
         private Vector3f ScreenToLocal(Vector3 screenPosition)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             // Casts the ray and get the first game object hit
             Physics.Raycast(ray, out hit);
@@ -180,17 +174,13 @@ namespace Votyra.Core
         {
             //var cell = new Vector2i(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.y));
             if (cell == _lastCell || Time.time < _lastTime + Period)
-            {
                 return;
-            }
             _lastCell = cell;
             _lastTime = Time.time;
 
             var editableImage = _editableImage;
             if (editableImage == null)
-            {
                 return;
-            }
 
             if (Input.GetButton("Modifier1"))
             {
@@ -219,12 +209,10 @@ namespace Votyra.Core
             }
             else
             {
-                bool value = false;
+                var value = false;
 
                 if (Input.GetMouseButton(0))
-                {
                     value = true;
-                }
                 int maxDist;
                 if (Input.GetButton("Modifier2"))
                     maxDist = maxDistBig;

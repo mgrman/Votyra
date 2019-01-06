@@ -10,7 +10,7 @@ namespace Votyra.Core.Editor.Profiling
         private static void Init()
         {
             // Get existing open window or if none, make a new one:
-            UnityProfilerWindow window = (UnityProfilerWindow)EditorWindow.GetWindow(typeof(UnityProfilerWindow));
+            var window = (UnityProfilerWindow) GetWindow(typeof(UnityProfilerWindow));
             window.Show();
         }
 

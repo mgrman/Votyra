@@ -10,9 +10,14 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
-            Container.Rebind<IImageConstraint2i>().To<DualSampledTycoonTileConstraint2i>().AsSingle();
-            Container.Rebind<ITerrainVertexPostProcessor>().To<WallsVertexPostProcessor>().AsSingle();
-            Container.BindInterfacesAndSelfTo<DualSampleTerrainUVPostProcessor>().AsSingle();
+            Container.Rebind<IImageConstraint2i>()
+                .To<DualSampledTycoonTileConstraint2i>()
+                .AsSingle();
+            Container.Rebind<ITerrainVertexPostProcessor>()
+                .To<WallsVertexPostProcessor>()
+                .AsSingle();
+            Container.BindInterfacesAndSelfTo<DualSampleTerrainUVPostProcessor>()
+                .AsSingle();
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -9,6 +10,7 @@ using Votyra.Core.Models;
 using Votyra.Core.Unity;
 using Votyra.Core.Utils;
 using Zenject;
+using Object = UnityEngine.Object;
 
 namespace Votyra.Core.Editor
 {
@@ -17,11 +19,12 @@ namespace Votyra.Core.Editor
     {
         public static IEnumerable<Type> GetConfigTypes(GameObject algorithPrefab)
         {
-            var installers = algorithPrefab.GetComponentInChildren<GameObjectContext>().Installers;
+            var installers = algorithPrefab.GetComponentInChildren<GameObjectContext>()
+                .Installers;
 
             var container = new DiContainer(false);
             var types = new List<Type>();
-            Action<IBindingFinalizer> handler = (finalizer) =>
+            Action<IBindingFinalizer> handler = finalizer =>
             {
                 if (finalizer is BindFinalizerWrapper)
                 {
@@ -36,9 +39,12 @@ namespace Votyra.Core.Editor
                         }
                     }
 
-                    Debug.Log($"bindFinalizer.SubFinalizer:" + bindFinalizer.SubFinalizer?.GetType().FullName);
+                    Debug.Log("bindFinalizer.SubFinalizer:" + bindFinalizer.SubFinalizer?.GetType()
+                        .FullName);
                 }
-                Debug.Log($"finalizer:" + finalizer.GetType().FullName);
+
+                Debug.Log("finalizer:" + finalizer.GetType()
+                    .FullName);
             };
             container.FinalizeBinding += handler;
             foreach (var installer in installers)
@@ -53,13 +59,16 @@ namespace Votyra.Core.Editor
                     {
                         tempInstaller.InstallBindings();
                     }
-                    catch { }
+                    catch
+                    {
+                    }
                 }
                 finally
                 {
-                    GameObject.DestroyImmediate(tempInstallerGo.gameObject);
+                    DestroyImmediate(tempInstallerGo.gameObject);
                 }
             }
+
             container.FlushBindings();
             container.FinalizeBinding -= handler;
             return types;
@@ -67,13 +76,13 @@ namespace Votyra.Core.Editor
 
         public override void OnInspectorGUI()
         {
-            var controller = this.target as TerrainDataController;
+            var controller = target as TerrainDataController;
             var list = new ReorderableList(serializedObject, serializedObject.FindProperty(nameof(TerrainDataController._availableTerrainAlgorithms)), true, true, true, true);
-            list.drawHeaderCallback = (Rect rect) =>
+            list.drawHeaderCallback = rect =>
             {
                 EditorGUI.LabelField(rect, "Terrain algorithms");
             };
-            list.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+            list.drawElementCallback = (rect, index, isActive, isFocused) =>
             {
                 var element = list.serializedProperty.GetArrayElementAtIndex(index);
                 rect.y += 2;
@@ -81,9 +90,7 @@ namespace Votyra.Core.Editor
 
                 isSelected = EditorGUI.Toggle(new Rect(rect.x, rect.y, 20, EditorGUIUtility.singleLineHeight), GUIContent.none, isSelected, EditorStyles.radioButton);
                 if (isSelected)
-                {
                     controller._activeTerrainAlgorithm = index;
-                }
 
                 EditorGUI.PropertyField(new Rect(rect.x + 20, rect.y, rect.width - 20, EditorGUIUtility.singleLineHeight), element, GUIContent.none);
             };
@@ -96,9 +103,7 @@ namespace Votyra.Core.Editor
             var newConfigValues = new List<ConfigItem>();
 
             if (controller._activeTerrainAlgorithm < 0 || controller._activeTerrainAlgorithm >= controller._availableTerrainAlgorithms.Length)
-            {
                 controller._activeTerrainAlgorithm = 0;
-            }
 
             var activeAlgorith = controller._availableTerrainAlgorithms[controller._activeTerrainAlgorithm];
             if (activeAlgorith != null)
@@ -108,15 +113,13 @@ namespace Votyra.Core.Editor
                 {
                     var ctors = configType.GetConstructors();
 
-                    var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null))
-                        .SelectMany(o => o.GetParameters()
-                            .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()?.Id as string, p.ParameterType, null))
-                            .Where(a => a.Id != null));
+                    var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null)).SelectMany(o => o.GetParameters()
+                        .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()
+                            ?.Id as string, p.ParameterType, null))
+                        .Where(a => a.Id != null));
 
                     if (!configItems.Any())
-                    {
                         continue;
-                    }
 
                     EditorGUILayout.LabelField($"{configType.Name}", EditorStyles.boldLabel);
                     foreach (var configItem in configItems)
@@ -126,10 +129,8 @@ namespace Votyra.Core.Editor
                         var oldConfigItem = oldConfigValues?.FirstOrDefault(o => o.Id == configItem.Id && o.Type == configItem.Type);
 
                         if (oldConfigItem != null)
-                        {
                             oldConfigValues.Remove(oldConfigItem);
-                        }
-                        object oldValue = oldConfigItem?.Value;
+                        var oldValue = oldConfigItem?.Value;
                         var newValue = GetNewValue(configItem.Type, oldValue);
 
                         newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
@@ -140,7 +141,7 @@ namespace Votyra.Core.Editor
 
             if (oldConfigValues.Any())
             {
-                EditorGUILayout.LabelField($"Unused", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("Unused", EditorStyles.boldLabel);
                 foreach (var configItem in oldConfigValues.ToArray())
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -149,25 +150,19 @@ namespace Votyra.Core.Editor
                     var oldConfigItem = oldConfigValues?.FirstOrDefault(o => o.Id == configItem.Id && o.Type == configItem.Type);
 
                     if (oldConfigItem != null)
-                    {
                         oldConfigValues.Remove(oldConfigItem);
-                    }
-                    object oldValue = oldConfigItem?.Value;
+                    var oldValue = oldConfigItem?.Value;
                     var newValue = GetNewValue(configItem.Type, oldValue);
 
                     if (!delete)
-                    {
                         newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
-                    }
                     EditorGUILayout.EndHorizontal();
                 }
             }
 
             controller.Config = newConfigValues.ToArray();
             if (Application.isPlaying)
-            {
                 controller.SendMessage("OnValidate", null, SendMessageOptions.DontRequireReceiver);
-            }
             EditorUtility.SetDirty(controller);
         }
 
@@ -175,9 +170,9 @@ namespace Votyra.Core.Editor
         {
             object newValue;
 
-            if (typeof(UnityEngine.Object).IsAssignableFrom(type))
+            if (typeof(Object).IsAssignableFrom(type))
             {
-                newValue = EditorGUILayout.ObjectField(oldValue as UnityEngine.Object, type, true, GUILayout.MaxWidth(200));
+                newValue = EditorGUILayout.ObjectField(oldValue as Object, type, true, GUILayout.MaxWidth(200));
             }
             else if (typeof(bool).IsAssignableFrom(type))
             {
@@ -196,34 +191,40 @@ namespace Votyra.Core.Editor
             }
             else if (type.IsEnum)
             {
-                var oldEnumValue = oldValue!=null && Enum.IsDefined(type, oldValue) ? oldValue as Enum:Enum.GetValues(type).GetValue(0) as Enum;
+                var oldEnumValue = oldValue != null && Enum.IsDefined(type, oldValue)
+                    ? oldValue as Enum
+                    : Enum.GetValues(type)
+                        .GetValue(0) as Enum;
                 newValue = EditorGUILayout.EnumPopup(oldEnumValue, GUILayout.MaxWidth(200));
             }
             else if (typeof(Vector3i).IsAssignableFrom(type))
             {
                 var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
-                var newVector3Value = EditorGUILayout.Vector3Field("", oldVector3iValue.ToVector3f().ToVector3(), GUILayout.MaxWidth(200));
+                var newVector3Value = EditorGUILayout.Vector3Field("", oldVector3iValue.ToVector3f()
+                    .ToVector3(), GUILayout.MaxWidth(200));
                 newValue = newVector3Value.ToVector3f()
                     .RoundToVector3i();
             }
             else if (typeof(Vector3f).IsAssignableFrom(type))
             {
                 var oldVector3fValue = oldValue as Vector3f? ?? Vector3f.Zero;
-                newValue = EditorGUILayout.Vector3Field("", oldVector3fValue.ToVector3(), GUILayout.MaxWidth(200)).ToVector3f();
+                newValue = EditorGUILayout.Vector3Field("", oldVector3fValue.ToVector3(), GUILayout.MaxWidth(200))
+                    .ToVector3f();
             }
             else
             {
-                var oldValueJson = Newtonsoft.Json.JsonConvert.SerializeObject(oldValue);
+                var oldValueJson = JsonConvert.SerializeObject(oldValue);
                 var newJsonValue = EditorGUILayout.TextArea(oldValueJson, GUILayout.MaxWidth(200));
                 try
                 {
-                    newValue = Newtonsoft.Json.JsonConvert.DeserializeObject(newJsonValue, type);
+                    newValue = JsonConvert.DeserializeObject(newJsonValue, type);
                 }
                 catch
                 {
                     newValue = null;
                 }
             }
+
             return newValue;
         }
     }

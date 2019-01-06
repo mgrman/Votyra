@@ -11,7 +11,10 @@ namespace Votyra.Core.Utils
 
             var result = new Bounds(center, Vector3.zero);
             foreach (var point in points)
+            {
                 result.Encapsulate(self.TransformPoint(point));
+            }
+
             return result;
         }
 
@@ -22,7 +25,10 @@ namespace Votyra.Core.Utils
 
             var result = new Bounds(center, Vector3.zero);
             foreach (var point in points)
+            {
                 result.Encapsulate(self.InverseTransformPoint(point));
+            }
+
             return result;
         }
     }

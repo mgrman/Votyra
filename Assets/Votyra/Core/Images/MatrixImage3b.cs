@@ -11,14 +11,31 @@ namespace Votyra.Core.Images
             InvalidatedArea = invalidatedArea;
         }
 
-        public Range3i InvalidatedArea { get; }
-
         public LockableMatrix3<bool> Image { get; }
 
-        public bool Sample(Vector3i point)
+        public void Dispose()
         {
-            return Image.TryGet(point, false);
+            if (Image.IsLocked)
+                Image.Unlock(this);
         }
+
+        public bool Sample(Vector3i point) => Image.TryGet(point, false);
+
+        public bool AnyData(Range3i range)
+        {
+            var allFalse = true;
+            var allTrue = true;
+            range.ForeachPointExlusive(o =>
+            {
+                var value = Sample(o);
+                allFalse = allFalse && !value;
+                allTrue = allTrue && value;
+            });
+
+            return !allFalse && !allTrue;
+        }
+
+        public Range3i InvalidatedArea { get; }
 
         public void StartUsing()
         {
@@ -28,28 +45,6 @@ namespace Votyra.Core.Images
         public void FinishUsing()
         {
             Image.Unlock(this);
-        }
-
-        public void Dispose()
-        {
-            if (Image.IsLocked)
-            {
-                Image.Unlock(this);
-            }
-        }
-
-        public bool AnyData(Range3i range)
-        {
-            bool allFalse = true;
-            bool allTrue = true;
-            range.ForeachPointExlusive(o =>
-            {
-                var value = Sample(o);
-                allFalse = allFalse && !value;
-                allTrue = allTrue && value;
-            });
-
-            return !allFalse && !allTrue;
         }
     }
 }

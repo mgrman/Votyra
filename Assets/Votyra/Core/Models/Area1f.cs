@@ -10,47 +10,24 @@ namespace Votyra.Core.Models
 
         public Area1f(float min, float max)
         {
-            this.Min = Math.Min(min, max);
-            this.Max = Math.Max(min, max);
+            Min = Math.Min(min, max);
+            Max = Math.Max(min, max);
         }
 
-        public float Center
-        {
-            get
-            {
-                return (Max + Min) / 2;
-            }
-        }
+        public float Center => (Max + Min) / 2;
 
-        public float Size
-        {
-            get
-            {
-                return Max - Min;
-            }
-        }
+        public float Size => Max - Min;
 
-        public static bool operator ==(Area1f a, Area1f b)
-        {
-            return a.Min == b.Min && a.Max == b.Max;
-        }
+        public static bool operator ==(Area1f a, Area1f b) => a.Min == b.Min && a.Max == b.Max;
 
-        public static bool operator !=(Area1f a, Area1f b)
-        {
-            return a.Min != b.Min || a.Max != b.Max;
-        }
+        public static bool operator !=(Area1f a, Area1f b) => a.Min != b.Min || a.Max != b.Max;
 
-        public Area1f UnionWith(Area1f range)
-        {
-            return new Area1f(Math.Min(this.Min, range.Min), Math.Min(this.Max, range.Max));
-        }
+        public Area1f UnionWith(Area1f range) => new Area1f(Math.Min(Min, range.Min), Math.Min(Max, range.Max));
 
         public Area1f? UnionWith(Area1f? range)
         {
             if (range == null)
-            {
                 return this;
-            }
 
             return UnionWith(range.Value);
         }
@@ -58,30 +35,20 @@ namespace Votyra.Core.Models
         public Area1f UnionWith(float value)
         {
             if (value < Min)
-            {
                 return new Area1f(value, Max);
-            }
-            else if (value > Max)
-            {
+            if (value > Max)
                 return new Area1f(Min, value);
-            }
-            else
-            {
-                return this;
-            }
+            return this;
         }
-        
-        public bool Equals(Area1f other)
-        {
-            return this == other;
-        }
+
+        public bool Equals(Area1f other) => this == other;
 
         public override bool Equals(object obj)
         {
             if (!(obj is Area1f))
                 return false;
 
-            return this.Equals((Area1f)obj);
+            return Equals((Area1f) obj);
         }
 
         public override int GetHashCode()
@@ -92,9 +59,6 @@ namespace Votyra.Core.Models
             }
         }
 
-        public override string ToString()
-        {
-            return $"Area1i: min={Min} max={Max} size={Size}";
-        }
+        public override string ToString() => $"Area1i: min={Min} max={Max} size={Size}";
     }
 }

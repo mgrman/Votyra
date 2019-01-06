@@ -1,14 +1,11 @@
-using System;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
-using Zenject;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public static class TerrainMesher2f 
+    public static class TerrainMesher2f
     {
         public static void GetResultingMesh(ITerrainMesh mesh, Vector2i group, Vector2i cellInGroupCount, IImage2f image, IMask2e mask)
         {

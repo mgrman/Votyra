@@ -13,32 +13,24 @@ namespace Votyra.Core
         public string Name { get; }
         public GameObject Prefab { get; }
 
-        public static bool operator ==(TerrainAlgorithm a, TerrainAlgorithm b)
-        {
-            return a?.Equals(b) ?? b?.Equals(a) ?? true;
-        }
+        public static bool operator ==(TerrainAlgorithm a, TerrainAlgorithm b) => a?.Equals(b) ?? b?.Equals(a) ?? true;
 
-        public static bool operator !=(TerrainAlgorithm a, TerrainAlgorithm b)
-        {
-            return !(a == b);
-        }
+        public static bool operator !=(TerrainAlgorithm a, TerrainAlgorithm b) => !(a == b);
 
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
-            {
                 return false;
-            }
             var that = obj as TerrainAlgorithm;
 
-            return this.Name == that.Name && this.Prefab == that.Prefab;
+            return Name == that.Name && Prefab == that.Prefab;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return this.Name.GetHashCode() + this.Prefab.GetHashCode() * 7;
+                return Name.GetHashCode() + Prefab.GetHashCode() * 7;
             }
         }
     }

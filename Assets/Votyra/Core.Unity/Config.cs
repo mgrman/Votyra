@@ -1,5 +1,7 @@
 ﻿using System;
+using Newtonsoft.Json;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Votyra.Core
 {
@@ -10,13 +12,13 @@ namespace Votyra.Core
         public string Id;
 
         [SerializeField]
+        public string JsonValue;
+
+        [SerializeField]
         public string TypeAssemblyQualifiedName;
 
         [SerializeField]
-        public UnityEngine.Object UnityValue;
-
-        [SerializeField]
-        public string JsonValue;
+        public Object UnityValue;
 
         public ConfigItem()
         {
@@ -26,14 +28,10 @@ namespace Votyra.Core
         {
             Id = id;
             TypeAssemblyQualifiedName = type?.AssemblyQualifiedName;
-            if (value is UnityEngine.Object)
-            {
-                UnityValue = value as UnityEngine.Object;
-            }
+            if (value is Object)
+                UnityValue = value as Object;
             else
-            {
-                JsonValue = Newtonsoft.Json.JsonConvert.SerializeObject(value);
-            }
+                JsonValue = JsonConvert.SerializeObject(value);
         }
 
         public Type Type
@@ -42,7 +40,7 @@ namespace Votyra.Core
             {
                 try
                 {
-                    return System.Type.GetType(TypeAssemblyQualifiedName);
+                    return Type.GetType(TypeAssemblyQualifiedName);
                 }
                 catch
                 {
@@ -57,7 +55,7 @@ namespace Votyra.Core
             {
                 try
                 {
-                    return UnityValue != null ? UnityValue : Newtonsoft.Json.JsonConvert.DeserializeObject(JsonValue, Type);
+                    return UnityValue != null ? UnityValue : JsonConvert.DeserializeObject(JsonValue, Type);
                 }
                 catch
                 {
@@ -69,10 +67,8 @@ namespace Votyra.Core
         public bool Equals(ConfigItem that)
         {
             if (that == null)
-            {
                 return false;
-            }
-            return this.Id == that.Id && this.Type == that.Type && this.UnityValue == that.UnityValue && this.JsonValue == that.JsonValue;
+            return Id == that.Id && Type == that.Type && UnityValue == that.UnityValue && JsonValue == that.JsonValue;
         }
 
         public override bool Equals(object obj)
@@ -81,14 +77,8 @@ namespace Votyra.Core
             return Equals(that);
         }
 
-        public override int GetHashCode()
-        {
-            return this.Id.GetHashCode();
-        }
+        public override int GetHashCode() => Id.GetHashCode();
 
-        public override string ToString()
-        {
-            return $"CONFIG {Id}({Type.Name}): {JsonValue}{UnityValue}";
-        }
+        public override string ToString() => $"CONFIG {Id}({Type.Name}): {JsonValue}{UnityValue}";
     }
 }

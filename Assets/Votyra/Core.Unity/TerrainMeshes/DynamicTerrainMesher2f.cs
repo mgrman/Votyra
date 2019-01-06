@@ -1,19 +1,15 @@
-using System;
 using Votyra.Core.Images;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
-using Zenject;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public static class DynamicTerrainMesher2f 
+    public static class DynamicTerrainMesher2f
     {
-        public static void GetResultingMesh(ITerrainMesh mesh,Vector2i group, Vector2i cellInGroupCount, IImage2f image, IMask2e mask)
+        public static void GetResultingMesh(ITerrainMesh mesh, Vector2i group, Vector2i cellInGroupCount, IImage2f image, IMask2e mask)
         {
             var groupPosition = cellInGroupCount * group;
-            
+
             var samples = image.SampleArea(Range2i.FromMinAndSize(groupPosition, cellInGroupCount + Vector2i.One));
 
             for (var ix = 0; ix < cellInGroupCount.X; ix++)
@@ -28,6 +24,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     mesh.AddQuad(x0y0, x0y1, x1y0, x1y1);
                 }
             }
+
             samples.Dispose();
         }
     }

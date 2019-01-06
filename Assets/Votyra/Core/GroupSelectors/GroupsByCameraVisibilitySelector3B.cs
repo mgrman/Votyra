@@ -7,10 +7,10 @@ namespace Votyra.Core.GroupSelectors
 {
     public class GroupsByCameraVisibilitySelector3B : IGroupSelector3b
     {
-        private readonly IImageSampler3 _imageSampler;
         private readonly Vector3i _cellInGroupCount;
+        private readonly IImageSampler3 _imageSampler;
 
-        private HashSet<Vector3i> _skippedAreas = new HashSet<Vector3i>();
+        private readonly HashSet<Vector3i> _skippedAreas = new HashSet<Vector3i>();
 
         public GroupsByCameraVisibilitySelector3B(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
@@ -21,17 +21,14 @@ namespace Votyra.Core.GroupSelectors
         public GroupActions<Vector3i> GetGroupsToUpdate(IFrameData3b options)
         {
             if (options == null)
-            {
                 return null;
-            }
 
             var planes = options.CameraPlanes;
             var frustumCorners = options.CameraFrustumCorners;
             var cameraPosition = options.CameraPosition;
             var cameraLocalToWorldMatrix = options.CameraLocalToWorldMatrix;
             var parentContainerWorldToLocalMatrix = options.ParentContainerWorldToLocalMatrix;
-            var invalidatedArea = _imageSampler
-                .ImageToWorld(options.InvalidatedArea_imageSpace)
+            var invalidatedArea = _imageSampler.ImageToWorld(options.InvalidatedArea_imageSpace)
                 .RoundToContain();
 
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition);
@@ -42,6 +39,7 @@ namespace Votyra.Core.GroupSelectors
                 var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner));
                 localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
+
             var cameraBoundsGroups = (localCameraBounds / _cellInGroupCount.ToVector3f()).RoundToContain();
 
             var groupsToRecompute = PooledSet<Vector3i>.Create();
@@ -49,14 +47,15 @@ namespace Votyra.Core.GroupSelectors
 
             cameraBoundsGroups.ForeachPointExlusive(group =>
             {
-                var groupBounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount).ToRange3f();
+                var groupBounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount)
+                    .ToRange3f();
 
-                bool isInside = planes.TestPlanesAABB(groupBounds);
+                var isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)
                 {
                     var groupArea = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount);
 
-                    bool isInvalidated = groupArea.Overlaps(invalidatedArea);
+                    var isInvalidated = groupArea.Overlaps(invalidatedArea);
 
                     if (isInvalidated)
                     {
@@ -95,30 +94,17 @@ namespace Votyra.Core.GroupSelectors
             var min = bounds.Min;
             var max = bounds.Max;
 
-            bool isInside = true;
+            var isInside = true;
             foreach (var plane in planes)
             {
                 isInside = isInside && TestPlaneAABB(plane, min, max);
             }
+
             return isInside;
         }
 
-        private bool TestPlaneAABB(Plane3f plane, Vector3f boundsMin, Vector3f boundsMax)
-        {
-            return
-            TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMin.Y, boundsMin.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMin.Y, boundsMax.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMax.Y, boundsMin.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMax.Y, boundsMax.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMin.Y, boundsMin.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMin.Y, boundsMax.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMax.Y, boundsMin.Z)) ||
-                TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMax.Y, boundsMax.Z));
-        }
+        private bool TestPlaneAABB(Plane3f plane, Vector3f boundsMin, Vector3f boundsMax) => TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMin.Y, boundsMin.Z)) || TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMin.Y, boundsMax.Z)) || TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMax.Y, boundsMin.Z)) || TestPlanePoint(plane, new Vector3f(boundsMin.X, boundsMax.Y, boundsMax.Z)) || TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMin.Y, boundsMin.Z)) || TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMin.Y, boundsMax.Z)) || TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMax.Y, boundsMin.Z)) || TestPlanePoint(plane, new Vector3f(boundsMax.X, boundsMax.Y, boundsMax.Z));
 
-        private bool TestPlanePoint(Plane3f plane, Vector3f point)
-        {
-            return plane.GetDistanceToPoint(point) > 0;
-        }
+        private bool TestPlanePoint(Plane3f plane, Vector3f point) => plane.GetDistanceToPoint(point) > 0;
     }
 }

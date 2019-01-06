@@ -1,14 +1,15 @@
 using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Votyra.Core.Logging
 {
     public class UnityLogger : IThreadSafeLogger
     {
         private readonly string _name;
-        private readonly UnityEngine.Object _owner;
+        private readonly Object _owner;
 
-        public UnityLogger(string name, UnityEngine.Object owner)
+        public UnityLogger(string name, Object owner)
         {
             _name = name;
             _owner = owner;
@@ -34,9 +35,6 @@ namespace Votyra.Core.Logging
             Debug.LogWarning(Format(message), _owner);
         }
 
-        private string Format(object message)
-        {
-            return $"{message}\n{_name}";
-        }
+        private string Format(object message) => $"{message}\n{_name}";
     }
 }

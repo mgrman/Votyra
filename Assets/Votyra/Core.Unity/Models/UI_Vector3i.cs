@@ -16,33 +16,19 @@ namespace Votyra.Core.Models
             this.z = z;
         }
 
-        public static implicit operator Vector3i(UI_Vector3i value)
-        {
-            return new Vector3i(value.x, value.y, value.z);
-        }
+        public static implicit operator Vector3i(UI_Vector3i value) => new Vector3i(value.x, value.y, value.z);
 
-        public static implicit operator UI_Vector3i(Vector3i value)
-        {
-            return new UI_Vector3i(value.X, value.Y, value.Z);
-        }
+        public static implicit operator UI_Vector3i(Vector3i value) => new UI_Vector3i(value.X, value.Y, value.Z);
 
-        public static bool operator ==(UI_Vector3i a, UI_Vector3i b)
-        {
-            return a.x == b.x && a.y == b.y && a.z == b.z;
-        }
+        public static bool operator ==(UI_Vector3i a, UI_Vector3i b) => a.x == b.x && a.y == b.y && a.z == b.z;
 
-        public static bool operator !=(UI_Vector3i a, UI_Vector3i b)
-        {
-            return a.x != b.x || a.y != b.y || a.z != b.z;
-        }
+        public static bool operator !=(UI_Vector3i a, UI_Vector3i b) => a.x != b.x || a.y != b.y || a.z != b.z;
 
         public override bool Equals(object obj)
         {
             if (!(obj is UI_Vector3i))
-            {
                 return false;
-            }
-            var that = (UI_Vector3i)obj;
+            var that = (UI_Vector3i) obj;
 
             return this == that;
         }

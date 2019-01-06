@@ -9,34 +9,30 @@ namespace Votyra.Core.Images
 {
     public class InitialStateSetter3b
     {
-        public InitialStateSetter3b(IEditableImage3b editableImage, IInitialImageConfig initialImageConfig, IImageConfig imageConfig, IImageSampler3 sampler, [Inject(Id = "root")]GameObject root)
+        public InitialStateSetter3b(IEditableImage3b editableImage, IInitialImageConfig initialImageConfig, IImageConfig imageConfig, IImageSampler3 sampler, [Inject(Id = "root")] GameObject root)
         {
             if (editableImage == null)
                 return;
             if (initialImageConfig.InitialData is Texture2D)
-            {
                 FillInitialState(editableImage, initialImageConfig.InitialData as Texture2D, initialImageConfig.InitialDataScale.Z, imageConfig.ImageSize.Z);
-            }
             if (initialImageConfig.InitialData is GameObject)
             {
                 var gameObject = initialImageConfig.InitialData as GameObject;
                 FillInitialState(editableImage, gameObject.GetComponentsInChildren<Collider>(), initialImageConfig.InitialDataScale.Z, sampler, root);
                 gameObject.SetActive(false);
             }
+
             if (initialImageConfig.InitialData is Collider)
             {
                 var collider = initialImageConfig.InitialData as Collider;
-                FillInitialState(editableImage, new[] { collider }, initialImageConfig.InitialDataScale.Z, sampler, root);
+                FillInitialState(editableImage, new[] {collider}, initialImageConfig.InitialDataScale.Z, sampler, root);
                 collider.enabled = false;
             }
+
             if (initialImageConfig.InitialData is IMatrix2<int?>)
-            {
                 FillInitialState(editableImage, initialImageConfig.InitialData as IMatrix2<int?>, initialImageConfig.InitialDataScale.Z, imageConfig.ImageSize.Z);
-            }
             if (initialImageConfig.InitialData is IMatrix3<bool>)
-            {
                 FillInitialState(editableImage, initialImageConfig.InitialData as IMatrix3<bool>, initialImageConfig.InitialDataScale.Z);
-            }
         }
 
         private static void FillInitialState(IEditableImage3b editableImage, Texture2D texture, float scale, int fallbackMaxZ)
@@ -45,18 +41,15 @@ namespace Votyra.Core.Images
             {
                 Range3i matrixAreaToFill;
                 if (imageAccessor.Area == Range3i.All)
-                {
                     matrixAreaToFill = new Vector3i(texture.width, texture.height, fallbackMaxZ).ToRange3i();
-                }
                 else
-                {
                     matrixAreaToFill = imageAccessor.Area;
-                }
                 var matrixSizeX = matrixAreaToFill.Size.X;
                 var matrixSizeY = matrixAreaToFill.Size.Y;
                 matrixAreaToFill.ForeachPointExlusive(i =>
                 {
-                    var value = texture.GetPixelBilinear((float)i.X / matrixSizeX, (float)i.Y / matrixSizeY).grayscale * scale;
+                    var value = texture.GetPixelBilinear((float) i.X / matrixSizeX, (float) i.Y / matrixSizeY)
+                        .grayscale * scale;
                     imageAccessor[i] = value - i.Z > 0;
                 });
             }
@@ -69,7 +62,7 @@ namespace Votyra.Core.Images
                 .DefaultIfEmpty(Area3f.zero)
                 .Aggregate((a, b) => a.Encapsulate(b));
 
-            float maxSize = bounds.DiagonalLength;
+            var maxSize = bounds.DiagonalLength;
 
             using (var imageAccessor = editableImage.RequestAccess(Range3i.All))
             {
@@ -79,8 +72,7 @@ namespace Votyra.Core.Images
                     var localPos = sampler.ImageToWorld(i);
                     var worldPos = root.transform.TransformPoint(new Vector3(localPos.X, localPos.Y, localPos.Z));
 
-                    imageAccessor[i] = colliders
-                        .Select(collider =>
+                    imageAccessor[i] = colliders.Select(collider =>
                         {
                             return IsInside(collider, worldPos, maxSize);
                         })
@@ -93,8 +85,8 @@ namespace Votyra.Core.Images
         {
             var outsidePoint = initialPoint + new Vector3(0, maxSize, 0) * 2;
 
-            int counter = 0;
-            bool isHit = false;
+            var counter = 0;
+            var isHit = false;
             var point = initialPoint;
             do
             {
@@ -105,8 +97,7 @@ namespace Votyra.Core.Images
                     counter++;
                     point = hit.point + Vector3.up * (maxSize / 1000f);
                 }
-            }
-            while (isHit);
+            } while (isHit);
 
             isHit = false;
             point = outsidePoint;
@@ -115,16 +106,14 @@ namespace Votyra.Core.Images
                 RaycastHit hit;
                 isHit = collider.Raycast(new Ray(point, Vector3.down), out hit, maxSize * 3);
                 if (hit.point.y < initialPoint.y)
-                {
                     break;
-                }
                 if (isHit)
                 {
                     counter++;
                     point = hit.point + Vector3.down * (maxSize / 1000f);
                 }
-            }
-            while (isHit);
+            } while (isHit);
+
             return counter % 2 == 1;
         }
 
@@ -134,19 +123,14 @@ namespace Votyra.Core.Images
             {
                 Range3i matrixAreaToFill;
                 if (imageAccessor.Area == Range3i.All)
-                {
                     matrixAreaToFill = new Vector3i(texture.Size.X, texture.Size.Y, fallbackMaxZ).ToRange3i();
-                }
                 else
-                {
                     matrixAreaToFill = imageAccessor.Area;
-                }
-                matrixAreaToFill
-                    .ForeachPointExlusive(i =>
-                    {
-                        var value = texture[i.XY] * scale;
-                        imageAccessor[i] = value - i.Z > 0;
-                    });
+                matrixAreaToFill.ForeachPointExlusive(i =>
+                {
+                    var value = texture[i.XY] * scale;
+                    imageAccessor[i] = value - i.Z > 0;
+                });
             }
         }
 
@@ -156,13 +140,9 @@ namespace Votyra.Core.Images
             {
                 Range3i matrixAreaToFill;
                 if (imageAccessor.Area == Range3i.All)
-                {
                     matrixAreaToFill = texture.Size.ToRange3i();
-                }
                 else
-                {
                     matrixAreaToFill = imageAccessor.Area;
-                }
                 matrixAreaToFill.ForeachPointExlusive(i =>
                 {
                     imageAccessor[i] = texture[i];

@@ -9,9 +9,10 @@ namespace Votyra.Core.Behaviours
         {
             Gizmos.color = Color.red;
 
-            var bounds = this.gameObject.GetComponent<MeshFilter>().sharedMesh.bounds;
+            var bounds = gameObject.GetComponent<MeshFilter>()
+                .sharedMesh.bounds;
 
-            bounds = this.transform.TransformBounds(bounds);
+            bounds = transform.TransformBounds(bounds);
             Gizmos.DrawWireCube(bounds.center, bounds.size);
         }
     }

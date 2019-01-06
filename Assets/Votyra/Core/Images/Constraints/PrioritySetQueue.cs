@@ -6,16 +6,15 @@ namespace Votyra.Core.Images.Constraints
 {
     public class PrioritySetQueue<TValue, TPriority>
     {
-        private LinkedList<PrioritisedValue> _queue;
-        private IComparer<TPriority> _priorityOrderComparer;
-        private IEqualityComparer<TValue> _valueEqualityComparer;
+        private readonly IComparer<TPriority> _priorityOrderComparer;
+        private readonly LinkedList<PrioritisedValue> _queue;
+        private readonly IEqualityComparer<TValue> _valueEqualityComparer;
 
         public PrioritySetQueue(IEnumerable<TValue> values, IEqualityComparer<TValue> valueEqualityComparer, Func<TValue, TPriority> getPriority, IComparer<TPriority> priorityOrderComparer)
         {
             _priorityOrderComparer = priorityOrderComparer;
             _valueEqualityComparer = valueEqualityComparer;
-            _queue = new LinkedList<PrioritisedValue>(values
-                .Select(cell => new PrioritisedValue(cell, getPriority(cell)))
+            _queue = new LinkedList<PrioritisedValue>(values.Select(cell => new PrioritisedValue(cell, getPriority(cell)))
                 .OrderBy(cell => cell.Priority, priorityOrderComparer));
         }
 
@@ -38,12 +37,12 @@ namespace Votyra.Core.Images.Constraints
 
         public void Add(TValue newCellToCheck, TPriority newCellToCheckValue)
         {
-            bool addded = false;
+            var addded = false;
             var node = _queue.First;
             while (node != null)
             {
-                bool isOldToRemove = _valueEqualityComparer.Equals(node.Value.Value, newCellToCheck);
-                bool isNewToBeAddedBeforeCurrent = _priorityOrderComparer.Compare(node.Value.Priority, newCellToCheckValue) > 0 && !addded; //node.Value.Value < newCellToCheckValue && !addded;
+                var isOldToRemove = _valueEqualityComparer.Equals(node.Value.Value, newCellToCheck);
+                var isNewToBeAddedBeforeCurrent = _priorityOrderComparer.Compare(node.Value.Priority, newCellToCheckValue) > 0 && !addded; //node.Value.Value < newCellToCheckValue && !addded;
 
                 if (isOldToRemove && isNewToBeAddedBeforeCurrent)
                 {
@@ -51,7 +50,8 @@ namespace Votyra.Core.Images.Constraints
                     addded = true;
                     break;
                 }
-                else if (isOldToRemove)
+
+                if (isOldToRemove)
                 {
                     _queue.Remove(node);
                 }
@@ -63,10 +63,9 @@ namespace Votyra.Core.Images.Constraints
 
                 node = node.Next;
             }
+
             if (!addded)
-            {
                 _queue.AddLast(new PrioritisedValue(newCellToCheck, newCellToCheckValue));
-            }
         }
 
         public struct PrioritisedValue

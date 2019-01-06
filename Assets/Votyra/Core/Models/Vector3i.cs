@@ -1,15 +1,16 @@
 using System;
 using System.Globalization;
+using Newtonsoft.Json;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
     public struct Vector3i : IEquatable<Vector3i>
     {
-        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         public static readonly Vector3i Zero = new Vector3i();
 
-        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         public static readonly Vector3i One = new Vector3i(1, 1, 1);
 
         public readonly int X;
@@ -18,162 +19,90 @@ namespace Votyra.Core.Models
 
         public readonly int Z;
 
-        [Newtonsoft.Json.JsonConstructor]
+        [JsonConstructor]
         public Vector3i(int x, int y, int z)
         {
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
-        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         public Vector2i XY => new Vector2i(X, Y);
 
-        [Newtonsoft.Json.JsonIgnore]
-        public bool AllPositive => this.X > 0 && this.Y > 0 && this.Z > 0;
+        [JsonIgnore]
+        public bool AllPositive => X > 0 && Y > 0 && Z > 0;
 
-        [Newtonsoft.Json.JsonIgnore]
-        public bool AllZeroOrPositive => this.X >= 0 && this.Y >= 0 && this.Z >= 0;
+        [JsonIgnore]
+        public bool AllZeroOrPositive => X >= 0 && Y >= 0 && Z >= 0;
 
-        [Newtonsoft.Json.JsonIgnore]
-        public bool AnyNegative => this.X < 0 || this.Y < 0 || this.Z < 0;
+        [JsonIgnore]
+        public bool AnyNegative => X < 0 || Y < 0 || Z < 0;
 
-        [Newtonsoft.Json.JsonIgnore]
-        public bool AnyZero => this.X == 0 || this.Y == 0 || this.Z == 0;
+        [JsonIgnore]
+        public bool AnyZero => X == 0 || Y == 0 || Z == 0;
 
-        [Newtonsoft.Json.JsonIgnore]
-        public bool AnyZeroOrNegative => this.X <= 0 || this.Y <= 0 || this.Z <= 0;
+        [JsonIgnore]
+        public bool AnyZeroOrNegative => X <= 0 || Y <= 0 || Z <= 0;
 
-        [Newtonsoft.Json.JsonIgnore]
+        [JsonIgnore]
         public int Volume => X * Y * Z;
 
-        public static Vector3i operator +(Vector3i a, int b)
-        {
-            return new Vector3i(a.X + b, a.Y + b, a.Z + b);
-        }
+        public static Vector3i operator +(Vector3i a, int b) => new Vector3i(a.X + b, a.Y + b, a.Z + b);
 
-        public static Vector3i operator -(Vector3i a, int b)
-        {
-            return new Vector3i(a.X - b, a.Y - b, a.Z - b);
-        }
+        public static Vector3i operator -(Vector3i a, int b) => new Vector3i(a.X - b, a.Y - b, a.Z - b);
 
-        public static Vector3i operator +(Vector3i a, Vector3i b)
-        {
-            return new Vector3i(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-        }
+        public static Vector3i operator +(Vector3i a, Vector3i b) => new Vector3i(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 
-        public static Vector3f operator +(Vector3i a, Vector3f b)
-        {
-            return new Vector3f(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
-        }
+        public static Vector3f operator +(Vector3i a, Vector3f b) => new Vector3f(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 
-        public static Vector3i operator -(Vector3i a, Vector3i b)
-        {
-            return new Vector3i(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-        }
+        public static Vector3i operator -(Vector3i a, Vector3i b) => new Vector3i(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 
-        public static Vector3f operator *(Vector3f a, Vector3i b)
-        {
-            return new Vector3f(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
-        }
+        public static Vector3f operator *(Vector3f a, Vector3i b) => new Vector3f(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
 
-        public static Vector3f operator *(Vector3i a, Vector3f b)
-        {
-            return new Vector3f(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
-        }
+        public static Vector3f operator *(Vector3i a, Vector3f b) => new Vector3f(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
 
-        public static Vector3i operator *(Vector3i a, Vector3i b)
-        {
-            return new Vector3i(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
-        }
+        public static Vector3i operator *(Vector3i a, Vector3i b) => new Vector3i(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
 
-        public static Vector3i operator %(Vector3i a, Vector3i b)
-        {
-            return new Vector3i(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
-        }
+        public static Vector3i operator %(Vector3i a, Vector3i b) => new Vector3i(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
 
-        public static Vector3i operator %(Vector3i a, int b)
-        {
-            return new Vector3i(a.X % b, a.Y % b, a.Z % b);
-        }
+        public static Vector3i operator %(Vector3i a, int b) => new Vector3i(a.X % b, a.Y % b, a.Z % b);
 
-        public static Vector3i operator /(Vector3i a, Vector3i b)
-        {
-            return new Vector3i(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
-        }
+        public static Vector3i operator /(Vector3i a, Vector3i b) => new Vector3i(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
 
-        public static Vector3f operator /(Vector3i a, Vector3f b)
-        {
-            return new Vector3f(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
-        }
+        public static Vector3f operator /(Vector3i a, Vector3f b) => new Vector3f(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
 
-        public static Vector3i operator /(Vector3i a, int b)
-        {
-            return new Vector3i(a.X / b, a.Y / b, a.Z / b);
-        }
+        public static Vector3i operator /(Vector3i a, int b) => new Vector3i(a.X / b, a.Y / b, a.Z / b);
 
-        public static Vector3f operator /(Vector3i a, float b)
-        {
-            return new Vector3f(a.X / b, a.Y / b, a.Z / b);
-        }
+        public static Vector3f operator /(Vector3i a, float b) => new Vector3f(a.X / b, a.Y / b, a.Z / b);
 
-        public static Vector3i Max(Vector3i a, Vector3i b)
-        {
-            return new Vector3i(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y), Math.Max(a.Z, b.Z));
-        }
+        public static Vector3i Max(Vector3i a, Vector3i b) => new Vector3i(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y), Math.Max(a.Z, b.Z));
 
-        public static Vector3i Min(Vector3i a, Vector3i b)
-        {
-            return new Vector3i(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y), Math.Min(a.Z, b.Z));
-        }
+        public static Vector3i Min(Vector3i a, Vector3i b) => new Vector3i(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y), Math.Min(a.Z, b.Z));
 
-        public static Vector3i FromSame(int value)
-        {
-            return new Vector3i(value, value, value);
-        }
+        public static Vector3i FromSame(int value) => new Vector3i(value, value, value);
 
-        public static Vector3i Cross(Vector3i lhs, Vector3i rhs)
-        {
-            return new Vector3i(lhs.Y * rhs.Z - lhs.Z * rhs.Y, lhs.Z * rhs.X - lhs.X * rhs.Z, lhs.X * rhs.Y - lhs.Y * rhs.X);
-        }
+        public static Vector3i Cross(Vector3i lhs, Vector3i rhs) => new Vector3i(lhs.Y * rhs.Z - lhs.Z * rhs.Y, lhs.Z * rhs.X - lhs.X * rhs.Z, lhs.X * rhs.Y - lhs.Y * rhs.X);
 
-        public static bool operator <(Vector3i a, Vector3i b)
-        {
-            return a.X < b.X && a.Y < b.Y && a.Z < b.Z;
-        }
+        public static bool operator <(Vector3i a, Vector3i b) => a.X < b.X && a.Y < b.Y && a.Z < b.Z;
 
-        public static bool operator <=(Vector3i a, Vector3i b)
-        {
-            return a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
-        }
+        public static bool operator <=(Vector3i a, Vector3i b) => a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
 
-        public static bool operator >(Vector3i a, Vector3i b)
-        {
-            return a.X > b.X && a.Y > b.Y && a.Z > b.Z;
-        }
+        public static bool operator >(Vector3i a, Vector3i b) => a.X > b.X && a.Y > b.Y && a.Z > b.Z;
 
-        public static bool operator >=(Vector3i a, Vector3i b)
-        {
-            return a.X >= b.X && a.Y >= b.Y && a.Z >= b.Z;
-        }
+        public static bool operator >=(Vector3i a, Vector3i b) => a.X >= b.X && a.Y >= b.Y && a.Z >= b.Z;
 
-        public static bool operator ==(Vector3i a, Vector3i b)
-        {
-            return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
-        }
+        public static bool operator ==(Vector3i a, Vector3i b) => a.X == b.X && a.Y == b.Y && a.Z == b.Z;
 
-        public static bool operator !=(Vector3i a, Vector3i b)
-        {
-            return a.X != b.X || a.Y != b.Y || a.Z != b.Z;
-        }
+        public static bool operator !=(Vector3i a, Vector3i b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z;
 
         public void ForeachPointExlusive(Action<Vector3i> action)
         {
-            for (int ix = 0; ix < this.X; ix++)
+            for (var ix = 0; ix < X; ix++)
             {
-                for (int iy = 0; iy < this.Y; iy++)
+                for (var iy = 0; iy < Y; iy++)
                 {
-                    for (int iz = 0; iz < this.Z; iz++)
+                    for (var iz = 0; iz < Z; iz++)
                     {
                         action(new Vector3i(ix, iy, iz));
                     }
@@ -181,32 +110,20 @@ namespace Votyra.Core.Models
             }
         }
 
-        public Vector3i DivideUp(Vector3i a, int b)
-        {
-            return new Vector3i(a.X.DivideUp(b), a.Y.DivideUp(b), a.Z.DivideUp(b));
-        }
+        public Vector3i DivideUp(Vector3i a, int b) => new Vector3i(a.X.DivideUp(b), a.Y.DivideUp(b), a.Z.DivideUp(b));
 
-        public Vector3f ToVector3f()
-        {
-            return new Vector3f(X, Y, Z);
-        }
+        public Vector3f ToVector3f() => new Vector3f(X, Y, Z);
 
-        public Range3i ToRange3i()
-        {
-            return Range3i.FromMinAndSize(Vector3i.Zero, this);
-        }
+        public Range3i ToRange3i() => Range3i.FromMinAndSize(Zero, this);
 
-        public bool Equals(Vector3i other)
-        {
-            return this == other;
-        }
+        public bool Equals(Vector3i other) => this == other;
 
         public override bool Equals(object obj)
         {
             if (!(obj is Vector3i))
                 return false;
 
-            return this.Equals((Vector3i)obj);
+            return Equals((Vector3i) obj);
         }
 
         public override int GetHashCode()
@@ -217,9 +134,6 @@ namespace Votyra.Core.Models
             }
         }
 
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "({0}, {1}, {2})", X, Y, Z);
-        }
+        public override string ToString() => string.Format(CultureInfo.InvariantCulture, "({0}, {1}, {2})", X, Y, Z);
     }
 }

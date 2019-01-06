@@ -14,22 +14,17 @@ namespace Votyra.Core.Models
             Size = matrixSize;
         }
 
-        public Vector3i Size { get; }
-
         public bool IsLocked => _accessLock != null;
+
+        public Vector3i Size { get; }
 
         public T this[Vector3i i]
         {
-            get
-            {
-                return _points[i.X, i.Y, i.Z];
-            }
+            get => _points[i.X, i.Y, i.Z];
             set
             {
                 if (IsLocked)
-                {
                     throw new MatrixLockedException();
-                }
                 _points[i.X, i.Y, i.Z] = value;
             }
         }
@@ -56,9 +51,6 @@ namespace Votyra.Core.Models
             }
         }
 
-        public bool IsSameSize(Vector3i size)
-        {
-            return this.Size == size;
-        }
+        public bool IsSameSize(Vector3i size) => Size == size;
     }
 }
