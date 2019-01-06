@@ -111,7 +111,6 @@ namespace Votyra.Core
                         context.UpdateGroupsVisibility(cellInGroupCount, groupsToRecompute, newGroup =>
                         {
                             var groupManager = new TerrainGroupGeneratorManager2i(_interpolationConfig, _vertexPostProcessor, _uvPostProcessor, cellInGroupCount, _gameObjectFactory, newGroup, token);
-                            groupManager.Update(context);
                             _activeGroups.TryAdd(newGroup, groupManager);
                         }, removedGroup =>
                         {
@@ -120,13 +119,15 @@ namespace Votyra.Core
                                 data?.Dispose();
                             }
                         });
+
+                        foreach (var activeGroup in _activeGroups.Values)
+                        {
+                            activeGroup.Update(context);
+                        }
+                        
                         context?.Deactivate();
                     });
 
-                    foreach (var activeGroup in _activeGroups.Values)
-                    {
-                        activeGroup.Update(context);
-                    }
                 }
             }
             catch (Exception ex)
