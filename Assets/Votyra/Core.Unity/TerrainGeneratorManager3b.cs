@@ -82,7 +82,8 @@ namespace Votyra.Core
 
         private async Task UpdateTerrain(IFrameData3b context, bool async, CancellationToken token)
         {
-            
+
+            context?.Activate();
             GroupActions<Vector3i> groupActions = null;
             IReadOnlyPooledDictionary<Vector3i, UnityMesh> results = null;
             try
@@ -198,7 +199,7 @@ namespace Votyra.Core
             }
             finally
             {
-                context?.Dispose();
+                context?.Deactivate();
                 groupActions?.Dispose();
                 results?.Dispose();
             }

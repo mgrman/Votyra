@@ -6,12 +6,14 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core
 {
-    public class FrameData3b : IFrameData3b, IDisposable
+    public class FrameData3b : IFrameData3b
     {
+        private int _activeCounter;
+
         public FrameData3b(
             Vector3f cameraPosition,
-            IEnumerable<Plane3f> cameraPlanes,
-            IEnumerable<Vector3f> cameraFrustumCorners,
+            Plane3f[] cameraPlanes,
+            Vector3f[] cameraFrustumCorners,
             Matrix4x4f cameraLocalToWorldMatrix,
             Matrix4x4f parentContainerWorldToLocalMatrix,
             IReadOnlySet<Vector3i> existingGroups,
@@ -32,8 +34,8 @@ namespace Votyra.Core
         }
 
         public Vector3f CameraPosition { get; }
-        public IEnumerable<Plane3f> CameraPlanes { get; }
-        public IEnumerable<Vector3f> CameraFrustumCorners { get; }
+        public Plane3f[] CameraPlanes { get; }
+        public Vector3f[] CameraFrustumCorners { get; }
         public Matrix4x4f CameraLocalToWorldMatrix { get; }
         public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
 
@@ -41,7 +43,21 @@ namespace Votyra.Core
         public IImage3b Image { get; }
         public Range3i InvalidatedArea_imageSpace { get; }
 
-        public void Dispose()
+        public void Activate()
+        {
+            _activeCounter++;
+        }
+
+        public void Deactivate()
+        {
+            _activeCounter--;
+            if (_activeCounter <= 0)
+            {
+                Dispose();
+            }
+        }
+        
+        private void Dispose()
         {
             CameraPlanes.TryDispose();
             CameraFrustumCorners.TryDispose();

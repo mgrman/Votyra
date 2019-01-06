@@ -4,7 +4,7 @@ using Votyra.Core.Models.ObjectPool;
 
 namespace Votyra.Core.Pooling
 {
-    public class PooledSet<T> : List<T>, IReadOnlyPooledSet<T>
+    public class PooledSet<T> : HashSet<T>, IReadOnlyPooledSet<T>
     {
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
 

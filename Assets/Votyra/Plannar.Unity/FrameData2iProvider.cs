@@ -15,9 +15,6 @@ namespace Votyra.Plannar
     public class FrameData2iProvider : IFrameDataProvider2i
     {
         [Inject]
-        protected ITerrainConfig _terrainConfig;
-
-        [Inject]
         protected IImage2fProvider _imageProvider;
 
         [InjectOptional]
@@ -26,7 +23,7 @@ namespace Votyra.Plannar
         [Inject(Id = "root")]
         protected GameObject _root;
 
-        public IFrameData2i GetCurrentFrameData(IReadOnlySet<Vector2i> existingGroups,HashSet<Vector2i> skippedAreas,int meshTopologyDistance)
+        public IFrameData2i GetCurrentFrameData(int meshTopologyDistance)
         {
             var camera = Camera.main;
             var container = _root.gameObject;
@@ -48,19 +45,7 @@ namespace Votyra.Plannar
             var invalidatedArea = ((image as IImageInvalidatableImage2i)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2i)?.InvalidatedArea) ?? Range2i.All;
             invalidatedArea = invalidatedArea.ExtendBothDirections(meshTopologyDistance);
 
-            return new FrameData2i(
-                camera.transform.position.ToVector3f(),
-                planes,
-                frustumCorners,
-                camera.transform.localToWorldMatrix.ToMatrix4x4f(),
-                container.transform.worldToLocalMatrix.ToMatrix4x4f(),
-                existingGroups,
-                image,
-                mask,
-                invalidatedArea, 
-                _terrainConfig.CellInGroupCount.XY, 
-                skippedAreas
-            );
+            return new FrameData2i(camera.transform.position.ToVector3f(), planes, frustumCorners, camera.transform.localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), image, mask, invalidatedArea);
         }
     }
 }

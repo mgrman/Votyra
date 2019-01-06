@@ -95,6 +95,11 @@ namespace Votyra.Core.Editor
             var oldConfigValues = controller.Config.ToList();
             var newConfigValues = new List<ConfigItem>();
 
+            if (controller._activeTerrainAlgorithm < 0 || controller._activeTerrainAlgorithm >= controller._availableTerrainAlgorithms.Length)
+            {
+                controller._activeTerrainAlgorithm = 0;
+            }
+
             var activeAlgorith = controller._availableTerrainAlgorithms[controller._activeTerrainAlgorithm];
             if (activeAlgorith != null)
             {

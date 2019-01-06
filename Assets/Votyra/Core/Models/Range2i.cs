@@ -151,6 +151,11 @@ namespace Votyra.Core.Models
             return Range2i.FromMinAndMax(min, max);
         }
 
+        public Area3f ToArea3fFromMinMax(float minZ, float maxZ)
+        {
+            return Area3f.FromMinAndMax(Min.ToVector3f(minZ), Max.ToVector3f(maxZ));
+        }
+
         public bool Equals(Range2i other)
         {
             return this == other;

@@ -47,6 +47,10 @@ namespace Votyra.Core.Utils
 
         public static void Destroy(this GameObject gameObject)
         {
+            if (gameObject == null)
+            {
+                return;
+            }
 #if UNITY_EDITOR
             GameObject.DestroyImmediate(gameObject);
 #else
