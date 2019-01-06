@@ -5,11 +5,11 @@ namespace Votyra.Core.Images
 {
     public class MatrixImage2i : IImage2i, IInitializableImage, IImageInvalidatableImage2i, IDisposable
     {
-        public MatrixImage2i(LockableMatrix2<Height1i> values, Range2i invalidatedArea)
+        public MatrixImage2i(LockableMatrix2<Height1i> values, Range2i invalidatedArea,Range1hi rangeZ)
         {
             Image = values;
             InvalidatedArea = invalidatedArea;
-            RangeZ = CalculateRangeZ(values);
+            RangeZ = rangeZ;
         }
 
         public Range1hi RangeZ { get; }
@@ -39,20 +39,6 @@ namespace Votyra.Core.Images
             {
                 Image.Unlock(this);
             }
-        }
-
-        private static Range1hi CalculateRangeZ(LockableMatrix2<Height1i> values)
-        {
-            Height1i min = Height1i.MaxValue;
-            Height1i max = Height1i.MinValue;
-            values.ForeachPointExlusive(i =>
-            {
-                Height1i val = values[i];
-
-                min = Height1i.Min(min, val);
-                max = Height1i.Max(max, val);
-            });
-            return Height1i.Range(min, max);
         }
     }
 }

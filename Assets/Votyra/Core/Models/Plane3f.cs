@@ -23,7 +23,7 @@ namespace Votyra.Core.Models
 
     public static class Plane3fExtensions
     {
-        public static bool TestPlanesAABB(this IEnumerable<Plane3f> planes, Area3f bounds)
+        public static bool TestPlanesAABB(this IReadOnlyList<Plane3f> planes, Area3f bounds)
         {
             Vector3f boundsCenter = bounds.Center;  // center of bounds
             Vector3f boundsExtent = bounds.Extents; // half diagonal
@@ -31,8 +31,9 @@ namespace Votyra.Core.Models
 
             // while active frames
             int planesCount = 0;
-            foreach (var p in planes)
+            for (int i = 0; i < planes.Count; i++)
             {
+                var p = planes[i];
                 var n = new Vector3f(Math.Abs(p.Normal.X), Math.Abs(p.Normal.Y), Math.Abs(p.Normal.Z));
 
                 float distance = p.GetDistanceToPoint(boundsCenter);

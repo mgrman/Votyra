@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using Votyra.Core.Models;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainMeshes
 {
@@ -11,9 +12,9 @@ namespace Votyra.Core.TerrainMeshes
         public Area3f MeshBounds { get; private set; }
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
         public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
-        public Vector3f[] Vertices { get; private set; }
-        public Vector3f[] Normals { get; private set; }
-        public Vector2f[] UV { get; private set; }
+        public Vector3[] Vertices { get; private set; }
+        public Vector3[] Normals { get; private set; }
+        public Vector2[] UV { get; private set; }
         public int[] Indices { get; private set; }
 
         public int TriangleCount => _counter / 3;
@@ -22,18 +23,16 @@ namespace Votyra.Core.TerrainMeshes
 
         public int TriangleCapacity { get; private set; }
 
-        public Vector3f this[int point] => Vertices[point];
-
         public virtual void Initialize(int triangleCapacity)
         {
             TriangleCapacity = triangleCapacity;
 
             var pointCount = triangleCapacity * 3;
 
-            Vertices = new Vector3f[pointCount];
-            UV = new Vector2f[pointCount];
+            Vertices = new Vector3[pointCount];
+            UV = new Vector2[pointCount];
             Indices = Enumerable.Range(0, pointCount).ToArray();
-            Normals = new Vector3f[pointCount];
+            Normals = new Vector3[pointCount];
         }
 
         public void Clear(Area3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
@@ -56,19 +55,19 @@ namespace Votyra.Core.TerrainMeshes
             var side2 = posC - posA;
             var normal = Vector3f.Cross(side1, side2).Normalized;
 
-            Vertices[_counter] = posA;
-            UV[_counter] = UVAdjustor?.Invoke(posA.XY) ?? posA.XY;
-            Normals[_counter] = normal;
+            Vertices[_counter] = posA.ToVector3();
+            UV[_counter] = (UVAdjustor?.Invoke(posA.XY) ?? posA.XY).ToVector2();
+            Normals[_counter] = normal.ToVector3();
             _counter++;
 
-            Vertices[_counter] = posB;
-            UV[_counter] = UVAdjustor?.Invoke(posB.XY) ?? posB.XY;
-            Normals[_counter] = normal;
+            Vertices[_counter] = posB.ToVector3();
+            UV[_counter] = (UVAdjustor?.Invoke(posB.XY) ?? posB.XY).ToVector2();
+            Normals[_counter] = normal.ToVector3();
             _counter++;
 
-            Vertices[_counter] = posC;
-            UV[_counter] = UVAdjustor?.Invoke(posC.XY) ?? posC.XY;
-            Normals[_counter] = normal;
+            Vertices[_counter] = posC.ToVector3();
+            UV[_counter] = (UVAdjustor?.Invoke(posC.XY) ?? posC.XY).ToVector2();
+            Normals[_counter] = normal.ToVector3();
             _counter++;
         }
 
@@ -78,9 +77,9 @@ namespace Votyra.Core.TerrainMeshes
             {
                 for (int i = _counter; i < VertexCount; i++)
                 {
-                    Vertices[i] = Vector3f.Zero;
-                    UV[i] = Vector2f.Zero;
-                    Normals[i] = Vector3f.Zero;
+                    Vertices[i] = Vector3.zero;
+                    UV[i] = Vector2.zero;
+                    Normals[i] = Vector3.zero;
                 }
                 Debug.LogWarning($"Mesh was not fully filled. Expected {VertexCount} points, got {_counter} points!");
             }

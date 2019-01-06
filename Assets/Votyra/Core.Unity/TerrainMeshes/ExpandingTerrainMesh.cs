@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Votyra.Core.Models;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainMeshes
 {
@@ -8,24 +10,22 @@ namespace Votyra.Core.TerrainMeshes
     {
         public ExpandingTerrainMesh()
         {
-            Vertices = new List<Vector3f>();
-            UV = new List<Vector2f>();
+            Vertices = new List<Vector3>();
+            UV = new List<Vector2>();
             Indices = new List<int>();
-            Normals = new List<Vector3f>();
+            Normals = new List<Vector3>();
         }
 
         public Area3f MeshBounds { get; private set; }
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
         public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
-        public List<Vector3f> Vertices { get; }
-        public List<Vector3f> Normals { get; }
-        public List<Vector2f> UV { get; }
+        public List<Vector3> Vertices { get; }
+        public List<Vector3> Normals { get; }
+        public List<Vector2> UV { get; }
         public List<int> Indices { get; }
 
         public int TriangleCount { get; private set; }
         public int VertexCount { get; private set; }
-
-        public Vector3f this[int point] => Vertices[point];
 
         public void Clear(Area3f meshBounds, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
@@ -53,21 +53,21 @@ namespace Votyra.Core.TerrainMeshes
             var normal = Vector3f.Cross(side1, side2).Normalized;
 
             Indices.Add(VertexCount);
-            Vertices.Add(posA);
-            UV.Add(UVAdjustor?.Invoke(posA.XY) ?? posA.XY);
-            Normals.Add(normal);
+            Vertices.Add(posA.ToVector3());
+            UV.Add((UVAdjustor?.Invoke(posA.XY) ?? posA.XY).ToVector2());
+            Normals.Add(normal.ToVector3());
             VertexCount++;
 
             Indices.Add(VertexCount);
-            Vertices.Add(posB);
-            UV.Add(UVAdjustor?.Invoke(posB.XY) ?? posB.XY);
-            Normals.Add(normal);
+            Vertices.Add(posB.ToVector3());
+            UV.Add((UVAdjustor?.Invoke(posB.XY) ?? posB.XY).ToVector2());
+            Normals.Add(normal.ToVector3());
             VertexCount++;
 
             Indices.Add(VertexCount);
-            Vertices.Add(posC);
-            UV.Add(UVAdjustor?.Invoke(posC.XY) ?? posC.XY);
-            Normals.Add(normal);
+            Vertices.Add(posC.ToVector3());
+            UV.Add((UVAdjustor?.Invoke(posC.XY) ?? posC.XY).ToVector2());
+            Normals.Add(normal.ToVector3());
             VertexCount++;
 
             TriangleCount++;

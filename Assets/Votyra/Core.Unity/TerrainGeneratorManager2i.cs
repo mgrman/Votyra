@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,8 @@ namespace Votyra.Core
         private readonly IProfiler _profiler;
         private readonly IStateModel _stateModel;
         private readonly ITerrainConfig _terrainConfig;
+        private readonly Vector2i _cellInGroupCount;
+
         private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
         private readonly ITerrainUVPostProcessor _uvPostProcessor;
         private readonly IInterpolationConfig _interpolationConfig;
@@ -44,6 +47,7 @@ namespace Votyra.Core
             _gameObjectFactory = gameObjectFactory;
             _logger = logger;
             _terrainConfig = terrainConfig;
+            _cellInGroupCount = _terrainConfig.CellInGroupCount.XY;
             _stateModel = stateModel;
             _profiler = profiler;
             _frameDataProvider = frameDataProvider;
@@ -59,85 +63,81 @@ namespace Votyra.Core
             _onDestroyCts.Cancel();
         }
 
-        private async void StartUpdateing()
+        private void StartUpdateing()
         {
-            while (!_onDestroyCts.IsCancellationRequested)
+            UniTask.Run(async () =>
             {
-#if UNITY_EDITOR
-                if (!UnityEditor.EditorApplication.isPlaying)
-                    return;
-#endif
-                try
+                while (!_onDestroyCts.IsCancellationRequested)
                 {
-                    if (_stateModel.IsEnabled)
+                    try
                     {
-                        var meshTopologyDistance = (_interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1) ? 2 : 1;
-                        var context = _frameDataProvider.GetCurrentFrameData(meshTopologyDistance);
-                        await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
+                        if (_stateModel.IsEnabled)
+                        {
+                            IFrameData2i context = null;
+                            await UniTask.Run(async () =>
+                            {
+                                await UniTask.SwitchToMainThread();
+                                var meshTopologyDistance = (_interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1) ? 2 : 1;
+                                context = _frameDataProvider.GetCurrentFrameData(meshTopologyDistance);
+                            });
+                            UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        await UniTask.Delay(10);
+                        _logger.LogException(ex);
                     }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogException(ex);
+
                     await UniTask.Delay(10);
                 }
-            }
+            }, false);
         }
 
-        private readonly ConcurrentDictionary<Vector2i, TerrainGroupGeneratorManager2i> _activeGroups = new ConcurrentDictionary<Vector2i, TerrainGroupGeneratorManager2i>();
+        private readonly Dictionary<Vector2i, TerrainGroupGeneratorManager2i> _activeGroups = new Dictionary<Vector2i, TerrainGroupGeneratorManager2i>();
 
-        private readonly PooledSet<Vector2i> groupsToRecompute = PooledSet<Vector2i>.Create();
-        
-        private async Task UpdateTerrain(IFrameData2i context, bool async, CancellationToken token)
+        private readonly HashSet<Vector2i> _groupsToRecompute = new HashSet<Vector2i>();
+
+        private void UpdateTerrain(IFrameData2i context, bool async, CancellationToken token)
         {
-            context?.Activate();
-            var cellInGroupCount = _terrainConfig.CellInGroupCount.XY;
-
             try
             {
                 if (!async)
                 {
-                    await UniTask.Yield();
+                    throw new NotImplementedException();
                 }
                 else
                 {
-                    await Task.Run(() =>
-                    {
-                        context?.Activate();
-                        context.UpdateGroupsVisibility(cellInGroupCount, groupsToRecompute, newGroup =>
-                        {
-                            var groupManager = new TerrainGroupGeneratorManager2i(_interpolationConfig, _vertexPostProcessor, _uvPostProcessor, cellInGroupCount, _gameObjectFactory, newGroup, token);
-                            _activeGroups.TryAdd(newGroup, groupManager);
-                        }, removedGroup =>
-                        {
-                            if (_activeGroups.TryRemove(removedGroup, out var data))
-                            {
-                                data?.Dispose();
-                            }
-                        });
+                    context?.Activate();
 
-                        foreach (var activeGroup in _activeGroups.Values)
-                        {
-                            activeGroup.Update(context);
-                        }
-                        
-                        context?.Deactivate();
+                    context.UpdateGroupsVisibility(_cellInGroupCount, _groupsToRecompute, newGroup =>
+                    {
+                        var groupManager = CreateGroupManager(token, newGroup);
+                        _activeGroups.Add(newGroup, groupManager);
+                    }, removedGroup =>
+                    {
+                        if (!_activeGroups.TryGetValue(removedGroup, out var groupManager))
+                            return;
+                        _activeGroups.Remove(removedGroup);
+                        groupManager?.Dispose();
                     });
 
+                    foreach (var activeGroup in _activeGroups)
+                    {
+                        activeGroup.Value.Update(context);
+                    }
+
+                    context?.Deactivate();
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogException(ex);
             }
-            finally
-            {
-                context?.Deactivate();
-            }
+        }
+
+        private TerrainGroupGeneratorManager2i CreateGroupManager(CancellationToken token, Vector2i newGroup)
+        {
+            return new TerrainGroupGeneratorManager2i(_interpolationConfig, _vertexPostProcessor, _uvPostProcessor, _cellInGroupCount, _gameObjectFactory, newGroup, token);
         }
     }
 
@@ -166,63 +166,16 @@ namespace Votyra.Core
         private readonly CancellationTokenSource _cts;
         private readonly CancellationToken _token;
         private GameObject _unityData;
-        private Task _activeTask = Task.CompletedTask;
+        private UniTask _activeTask = UniTask.CompletedTask;
 
         private bool _updatedOnce;
         private IFrameData2i _contextToProcess;
-
-        // public static TerrainGroupGeneratorManager2i Start(Vector2i group, IInterpolationConfig interpolationConfig, ITerrainVertexPostProcessor vertexPostProcessor, ITerrainUVPostProcessor uvPostProcessor, Vector2i cellInGroupCount, GameObject unityData)
-        // {
-        //     // var task = Task.Run(async () =>
-        //     // {
-        //     //     var image = context.Image;
-        //     //     var rangeZ = context.RangeZ;
-        //     //     var mask = context.Mask;
-        //     //     GameObject go = null;
-        //     //
-        //     //
-        //     //     await await UniTask.Run(async () =>
-        //     //     {
-        //     //         await UniTask.SwitchToMainThread();
-        //     //         go = _gameObjectFactory();
-        //     //     });
-        //     //
-        //     //     Task.Run(async () =>
-        //     //     {
-        //     //         try
-        //     //         {
-        //     //             while (!groupToken.IsCancellationRequested)
-        //     //             {
-        //     //                 var groupArea = Range2i.FromMinAndSize(newGroup * cellInGroupCount, cellInGroupCount);
-        //     //                 if (!context.InvalidatedArea.Overlaps(groupArea))
-        //     //                 {
-        //     //                     return;
-        //     //                 }
-        //     //
-        //     //
-        //     //                 await UpdateGroup(cellInGroupCount, rangeZ, image, mask, newGroup, go);
-        //     //                 await Task.Yield();
-        //     //             }
-        //     //         }
-        //     //         finally
-        //     //         {
-        //     //             await await UniTask.Run(async () =>
-        //     //             {
-        //     //                 await UniTask.SwitchToMainThread();
-        //     //                 go.Destroy();
-        //     //             });
-        //     //         }
-        //     //     });
-        //     //
-        //     //     token.ThrowIfCancellationRequested();
-        //     // }, cts.Token);
-        // }
 
         public void Update(IFrameData2i context)
         {
             if (_token.IsCancellationRequested)
                 return;
-            
+
             if (_updatedOnce && !context.InvalidatedArea.Overlaps(_range))
                 return;
             _updatedOnce = true;
@@ -239,23 +192,23 @@ namespace Votyra.Core
         {
             if (_token.IsCancellationRequested)
                 return;
-            
-            if (_activeTask.IsCompleted && _contextToProcess!=null)
+
+            if (_activeTask.IsCompleted && _contextToProcess != null)
             {
                 var context = _contextToProcess;
                 _contextToProcess = null;
 
-                _activeTask = Task.Run(async () =>
+                _activeTask = UniTask.Run(async () =>
                 {
                     await UpdateGroup(context, _token);
                     context.Deactivate();
-                }, _cts.Token);
-                
-                _activeTask.ContinueWith(t => UpdateGroupInBackground(), _token);
+                }, false);
+
+                _activeTask.ContinueWith(() => UpdateGroupInBackground());
             }
         }
 
-        private async Task UpdateGroup(IFrameData2i context,CancellationToken token)
+        private async UniTask UpdateGroup(IFrameData2i context, CancellationToken token)
         {
             if (context == null)
             {
@@ -300,30 +253,44 @@ namespace Votyra.Core
             if (_token.IsCancellationRequested)
                 return;
 
-            await await UniTask.Run(async () =>
+            await UniTask.SwitchToMainThread();
+
+            if (_token.IsCancellationRequested)
+                return;
+            if (_unityData == null)
             {
-                await UniTask.SwitchToMainThread();
+                _unityData = _unityDataFactory();
+            }
 
-                if (_token.IsCancellationRequested)
-                    return;
-                if (_unityData == null)
-                {
-                    _unityData = _unityDataFactory();
-                }
-
-                unityMesh.SetUnityMesh(_unityData);
-            });
+            unityMesh.SetUnityMesh(_unityData);
         }
 
         public void Dispose()
         {
             _cts.Cancel();
-            
-            UniTask.Run(async () =>
+
+            DestroyOnMainThreadAsync();
+        }
+
+        private async UniTask DestroyOnMainThreadAsync()
+        {
+            await UniTask.SwitchToMainThread();
+            _unityData.Destroy();
+        }
+
+        public static IEqualityComparer<TerrainGroupGeneratorManager2i> GroupEqualityComparer = new TerrainGroupGeneratorManager2iGroupEquality();
+
+        private class TerrainGroupGeneratorManager2iGroupEquality : IEqualityComparer<TerrainGroupGeneratorManager2i>
+        {
+            public bool Equals(TerrainGroupGeneratorManager2i x, TerrainGroupGeneratorManager2i y)
             {
-                await UniTask.SwitchToMainThread();
-                _unityData.Destroy();
-            });
+                return x?._group == y?._group;
+            }
+
+            public int GetHashCode(TerrainGroupGeneratorManager2i obj)
+            {
+                return obj?._group.GetHashCode() ?? 0;
+            }
         }
     }
 }

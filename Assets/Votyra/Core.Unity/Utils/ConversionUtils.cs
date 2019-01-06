@@ -22,9 +22,19 @@ namespace Votyra.Core.Utils
             return new Vector3f(vector.x, vector.y, vector.z);
         }
 
-        public static Vector3f[] ToVector3f(this PooledArrayContainer<UnityEngine.Vector3> planesUnity)
+        public static PooledArrayContainer<Vector3f> ToVector3f(this PooledArrayContainer<UnityEngine.Vector3> planesUnity)
         {
-            return planesUnity.Array.ToVector3f();
+            var unityArray = planesUnity.Array;
+
+            var container = PooledArrayContainer<Vector3f>.CreateDirty(unityArray.Length);
+            var votyraArray = container.Array;
+
+            for (int i = 0; i < unityArray.Length; i++)
+            {
+                votyraArray[i] = unityArray[i].ToVector3f();
+            }
+
+            return container;
         }
 
         public static Plane3f ToPlane3f(this UnityEngine.Plane plane)
@@ -32,9 +42,18 @@ namespace Votyra.Core.Utils
             return new Plane3f(plane.normal.ToVector3f(), plane.distance);
         }
 
-        public static Plane3f[] ToPlane3f(this PooledArrayContainer<UnityEngine.Plane> planesUnity)
+        public static PooledArrayContainer<Plane3f> ToPlane3f(this PooledArrayContainer<UnityEngine.Plane> planesUnity)
         {
-            return planesUnity.Array.ToPlane3f();
+            var unityArray = planesUnity.Array;
+            
+            var container = PooledArrayContainer<Plane3f>.CreateDirty(unityArray.Length);
+            var votyraArray = container.Array;
+            
+            for (int i = 0; i < unityArray.Length; i++)
+            {
+                votyraArray[i] = unityArray[i].ToPlane3f();
+            }
+            return container;
         }
 
         public static UnityEngine.Vector2 ToVector2(this Vector2f vector)
@@ -52,89 +71,89 @@ namespace Votyra.Core.Utils
             return new UnityEngine.Bounds(bounds.Center.ToVector3(), bounds.Size.ToVector3());
         }
 
-        public static UnityEngine.Vector3[] ToVector3Array(this List<Vector3f> vector)
-        {
-            return vector.Select(o => o.ToVector3()).ToArray();
-//            return vector.GetInnerArray<Vector3f>().ToVector3();
-        }
+//         public static UnityEngine.Vector3[] ToVector3Array(this List<Vector3f> vector)
+//         {
+//             return vector.Select(o => o.ToVector3()).ToArray();
+// //            return vector.GetInnerArray<Vector3f>().ToVector3();
+//         }
+//
+//         public static List<UnityEngine.Vector3> ToVector3List(this List<Vector3f> vector)
+//         {
+//             return vector.Select(o => o.ToVector3()).ToList();
+// //            return vector.ConvertListOfMatchingStructs<Vector3f, UnityEngine.Vector3>(ToVector3);
+//         }
 
-        public static List<UnityEngine.Vector3> ToVector3List(this List<Vector3f> vector)
-        {
-            return vector.Select(o => o.ToVector3()).ToList();
-//            return vector.ConvertListOfMatchingStructs<Vector3f, UnityEngine.Vector3>(ToVector3);
-        }
+        // public static Plane3f[] ToPlane3f(this UnityEngine.Plane[] vector)
+        // {
+        //     return Array.ConvertAll(vector, item => item.ToPlane3f());
+        //
+        //     // var union = new UnionPlane();
+        //     // union.Unity = vector;
+        //     // var res = union.Votyra;
+        //     // if (res.Length != vector.Length)
+        //     // {
+        //     //     throw new InvalidOperationException("ToPlane3f conversion failed!");
+        //     // }
+        //     // return res;
+        // }
 
-        public static Plane3f[] ToPlane3f(this UnityEngine.Plane[] vector)
-        {
-            return Array.ConvertAll(vector, item => item.ToPlane3f());
+        // public static UnityEngine.Vector3[] ToVector3(this Vector3f[] vector)
+        // {
+        //     return Array.ConvertAll(vector, item => item.ToVector3());
+        //
+        //
+        //     // var union = new UnionVector3();
+        //     // union.Votyra = vector;
+        //     // var res = union.Unity;
+        //     // if (res.Length != vector.Length)
+        //     // {
+        //     //     throw new InvalidOperationException("ToVector3 conversion failed!");
+        //     // }
+        //     // return res;
+        //     // //return vector.Select(o => o.ToVector3()).ToArray();
+        // }
 
-            // var union = new UnionPlane();
-            // union.Unity = vector;
-            // var res = union.Votyra;
-            // if (res.Length != vector.Length)
-            // {
-            //     throw new InvalidOperationException("ToPlane3f conversion failed!");
-            // }
-            // return res;
-        }
+        // public static Vector3f[] ToVector3f(this UnityEngine.Vector3[] vector)
+        // {
+        //     return Array.ConvertAll(vector, item => item.ToVector3f());
+        //
+        //     // var union = new UnionVector3();
+        //     // union.Unity = vector;
+        //     // var res = union.Votyra;
+        //     // if (res.Length != vector.Length)
+        //     // {
+        //     //     throw new InvalidOperationException("ToVector3f conversion failed!");
+        //     // }
+        //     // return res;
+        //     // //return vector.Select(o => o.ToVector3()).ToArray();
+        // }
 
-        public static UnityEngine.Vector3[] ToVector3(this Vector3f[] vector)
-        {
-            return Array.ConvertAll(vector, item => item.ToVector3());
+        // public static UnityEngine.Vector2[] ToVector2(this Vector2f[] vector)
+        // {
+        //     return Array.ConvertAll(vector, item => item.ToVector2());
+        //
+        //     // var union = new UnionVector2();
+        //     // union.Votyra = vector;
+        //     // var res = union.Unity;
+        //     // if (res.Length != vector.Length)
+        //     // {
+        //     //     throw new InvalidOperationException("ToVector2 conversion failed!");
+        //     // }
+        //     // return res;
+        //     // //return vector.Select(o => o.ToVector2()).ToArray();
+        // }
 
-
-            // var union = new UnionVector3();
-            // union.Votyra = vector;
-            // var res = union.Unity;
-            // if (res.Length != vector.Length)
-            // {
-            //     throw new InvalidOperationException("ToVector3 conversion failed!");
-            // }
-            // return res;
-            // //return vector.Select(o => o.ToVector3()).ToArray();
-        }
-
-        public static Vector3f[] ToVector3f(this UnityEngine.Vector3[] vector)
-        {
-            return Array.ConvertAll(vector, item => item.ToVector3f());
-
-            // var union = new UnionVector3();
-            // union.Unity = vector;
-            // var res = union.Votyra;
-            // if (res.Length != vector.Length)
-            // {
-            //     throw new InvalidOperationException("ToVector3f conversion failed!");
-            // }
-            // return res;
-            // //return vector.Select(o => o.ToVector3()).ToArray();
-        }
-
-        public static UnityEngine.Vector2[] ToVector2(this Vector2f[] vector)
-        {
-            return Array.ConvertAll(vector, item => item.ToVector2());
-
-            // var union = new UnionVector2();
-            // union.Votyra = vector;
-            // var res = union.Unity;
-            // if (res.Length != vector.Length)
-            // {
-            //     throw new InvalidOperationException("ToVector2 conversion failed!");
-            // }
-            // return res;
-            // //return vector.Select(o => o.ToVector2()).ToArray();
-        }
-
-        public static UnityEngine.Vector2[] ToVector2Array(this List<Vector2f> vector)
-        {
-            return vector.Select(o => o.ToVector2()).ToArray();
-//            return vector.GetInnerArray<Vector2f>().ToVector2();
-        }
-
-        public static List<UnityEngine.Vector2> ToVector2List(this List<Vector2f> vector)
-        {
-            return vector.Select(o => o.ToVector2()).ToList();
-//            return vector.ConvertListOfMatchingStructs<Vector2f, UnityEngine.Vector2>(ToVector2);
-        }
+//         public static UnityEngine.Vector2[] ToVector2Array(this List<Vector2f> vector)
+//         {
+//             return vector.Select(o => o.ToVector2()).ToArray();
+// //            return vector.GetInnerArray<Vector2f>().ToVector2();
+//         }
+//
+//         public static List<UnityEngine.Vector2> ToVector2List(this List<Vector2f> vector)
+//         {
+//             return vector.Select(o => o.ToVector2()).ToList();
+// //            return vector.ConvertListOfMatchingStructs<Vector2f, UnityEngine.Vector2>(ToVector2);
+//         }
 
         public static Matrix4x4f ToMatrix4x4f(this UnityEngine.Matrix4x4 mat)
         {

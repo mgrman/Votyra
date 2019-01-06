@@ -53,6 +53,22 @@ namespace Votyra.Core.Models
             return new Range1hi(Height1i.Min(this.Min, range.Min), Height1i.Min(this.Max, range.Max));
         }
 
+        public Range1hi UnionWith(Height1i value)
+        {
+            if (value < Min)
+            {
+                return new Range1hi(value, Max);
+            }
+            else if (value > Max)
+            {
+                return new Range1hi(Min, value);
+            }
+            else
+            {
+                return this;
+            }
+        }
+
         public Range1hi? UnionWith(Range1hi? range)
         {
             if (range == null)

@@ -8,7 +8,7 @@ namespace Votyra.Core.GroupSelectors
 {
     public static class GroupsByCameraVisibilitySelector2i
     {
-        public static void UpdateGroupsVisibility(this IFrameData2i options, Vector2i cellInGroupCount, PooledSet<Vector2i> groupsToRecompute,Action<Vector2i> onAdd,Action<Vector2i> onRemove)
+        public static void UpdateGroupsVisibility(this IFrameData2i options, Vector2i cellInGroupCount, HashSet<Vector2i> groupsToRecompute,Action<Vector2i> onAdd,Action<Vector2i> onRemove)
         {
             if (options == null)
             {
@@ -23,7 +23,7 @@ namespace Votyra.Core.GroupSelectors
             var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition).XY;
 
             var localCameraBounds = Area2f.FromMinAndSize(cameraPositionLocal, new Vector2f());
-            for (var i = 0; i < frustumCorners.Length; i++)
+            for (var i = 0; i < frustumCorners.Count; i++)
             {
                 var frustumCorner = frustumCorners[i];
                 var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner)).XY;

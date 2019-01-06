@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
+using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core
@@ -10,15 +11,7 @@ namespace Votyra.Core
     {
         private int _activeCounter;
 
-        public FrameData3b(
-            Vector3f cameraPosition,
-            Plane3f[] cameraPlanes,
-            Vector3f[] cameraFrustumCorners,
-            Matrix4x4f cameraLocalToWorldMatrix,
-            Matrix4x4f parentContainerWorldToLocalMatrix,
-            IReadOnlySet<Vector3i> existingGroups,
-            IImage3b image,
-            Range3i invalidatedArea_imageSpace)
+        public FrameData3b(Vector3f cameraPosition, IReadOnlyPooledList<Plane3f> cameraPlanes, IReadOnlyPooledList<Vector3f> cameraFrustumCorners, Matrix4x4f cameraLocalToWorldMatrix, Matrix4x4f parentContainerWorldToLocalMatrix, IReadOnlySet<Vector3i> existingGroups, IImage3b image, Range3i invalidatedArea_imageSpace)
         {
             CameraPosition = cameraPosition;
             CameraPlanes = cameraPlanes;
@@ -34,8 +27,8 @@ namespace Votyra.Core
         }
 
         public Vector3f CameraPosition { get; }
-        public Plane3f[] CameraPlanes { get; }
-        public Vector3f[] CameraFrustumCorners { get; }
+        public IReadOnlyPooledList<Plane3f> CameraPlanes { get; }
+        public IReadOnlyPooledList<Vector3f> CameraFrustumCorners { get; }
         public Matrix4x4f CameraLocalToWorldMatrix { get; }
         public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
 
@@ -56,7 +49,7 @@ namespace Votyra.Core
                 Dispose();
             }
         }
-        
+
         private void Dispose()
         {
             CameraPlanes.TryDispose();

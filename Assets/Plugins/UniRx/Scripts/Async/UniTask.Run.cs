@@ -2,11 +2,22 @@
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using System;
+using System.Threading.Tasks;
 
 namespace UniRx.Async
 {
     public partial struct UniTask
     {
+        /// <summary>Run action on the threadPool and return to main thread if configureAwait = true.</summary>
+        public static async UniTask Run(Func<Task> action, bool configureAwait = true)
+        {
+            await UniTask.SwitchToThreadPool();
+            await action();
+            if (configureAwait)
+            {
+                await UniTask.Yield();
+            }
+        }
         /// <summary>Run action on the threadPool and return to main thread if configureAwait = true.</summary>
         public static async UniTask Run(Action action, bool configureAwait = true)
         {

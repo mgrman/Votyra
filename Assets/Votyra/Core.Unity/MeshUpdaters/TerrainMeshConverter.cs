@@ -62,9 +62,9 @@ namespace Votyra.Core.MeshUpdaters
                 existingUnityMesh = null;
             }
 
-            var vertices = triangleMesh.Vertices.ToVector3Array();
-            var normals = triangleMesh.Normals.ToVector3Array();
-            var uvs = existingUnityMesh?.UV ?? triangleMesh.UV.ToVector2Array();
+            var vertices = triangleMesh.Vertices;
+            var normals = triangleMesh.Normals;
+            var uvs = existingUnityMesh?.UV ?? triangleMesh.UV;
             var indices = existingUnityMesh?.Indices ?? triangleMesh.Indices.ToArray();
             var bounds = existingUnityMesh?.MeshBounds ?? triangleMesh.MeshBounds.ToBounds();
             
@@ -79,9 +79,9 @@ namespace Votyra.Core.MeshUpdaters
                 existingUnityMesh = null;
             }
 
-            var vertices = triangleMesh.Vertices.ToVector3();
-            var normals = triangleMesh.Normals.ToVector3();
-            var uvs = existingUnityMesh?.UV ?? triangleMesh.UV.ToVector2();
+            var vertices = triangleMesh.Vertices;
+            var normals = triangleMesh.Normals;
+            var uvs = existingUnityMesh?.UV ?? triangleMesh.UV;
             var indices = existingUnityMesh?.Indices ?? triangleMesh.Indices.ToArray();
             var bounds = existingUnityMesh?.MeshBounds ?? triangleMesh.MeshBounds.ToBounds();
             return new UnityMesh(bounds, vertices, normals, uvs, indices,  onDispose);
