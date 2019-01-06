@@ -65,7 +65,7 @@ namespace Votyra.Core
 
         private void StartUpdateing()
         {
-            UniTask.Run(async () =>
+            Task.Run(async () =>
             {
                 while (!_onDestroyCts.IsCancellationRequested)
                 {
@@ -74,7 +74,7 @@ namespace Votyra.Core
                         if (_stateModel.IsEnabled)
                         {
                             IFrameData2i context = null;
-                            await UniTask.Run(async () =>
+                            await Task.Run(async () =>
                             {
                                 await UniTask.SwitchToMainThread();
                                 var meshTopologyDistance = (_interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1) ? 2 : 1;
@@ -88,9 +88,9 @@ namespace Votyra.Core
                         _logger.LogException(ex);
                     }
 
-                    await UniTask.Delay(10);
+                    await Task.Delay(10);
                 }
-            }, false);
+            }).ConfigureAwait(false);
         }
 
         private readonly Dictionary<Vector2i, TerrainGroupGeneratorManager2i> _activeGroups = new Dictionary<Vector2i, TerrainGroupGeneratorManager2i>();
@@ -166,7 +166,7 @@ namespace Votyra.Core
         private readonly CancellationTokenSource _cts;
         private readonly CancellationToken _token;
         private GameObject _unityData;
-        private UniTask _activeTask = UniTask.CompletedTask;
+        private Task _activeTask = Task.CompletedTask;
 
         private bool _updatedOnce;
         private IFrameData2i _contextToProcess;
@@ -198,17 +198,18 @@ namespace Votyra.Core
                 var context = _contextToProcess;
                 _contextToProcess = null;
 
-                _activeTask = UniTask.Run(async () =>
+                _activeTask = Task.Run(async () =>
                 {
                     await UpdateGroup(context, _token);
                     context.Deactivate();
-                }, false);
+                });
+                _activeTask.ConfigureAwait(false);
 
-                _activeTask.ContinueWith(() => UpdateGroupInBackground());
+                _activeTask.ContinueWith((t) => UpdateGroupInBackground());
             }
         }
 
-        private async UniTask UpdateGroup(IFrameData2i context, CancellationToken token)
+        private async Task UpdateGroup(IFrameData2i context, CancellationToken token)
         {
             if (context == null)
             {
@@ -272,7 +273,7 @@ namespace Votyra.Core
             DestroyOnMainThreadAsync();
         }
 
-        private async UniTask DestroyOnMainThreadAsync()
+        private async Task DestroyOnMainThreadAsync()
         {
             await UniTask.SwitchToMainThread();
             _unityData.Destroy();

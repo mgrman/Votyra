@@ -18,7 +18,7 @@ namespace Votyra.Core
             {
                 List<Tuple<int, string, string>> handlerCalls = new List<Tuple<int, string, string>>();
 
-                var subject = new BehaviorSubject<string>(default(string)).MakeScheduledOnCurrentThread();
+                var subject = new BehaviorSubject<string>(default(string)).MakeScheduledOnMainThread();
 
                 var mainThread = Thread.CurrentThread;
 
@@ -65,9 +65,9 @@ namespace Votyra.Core
         [Test]
         public void ScheduledSubject_CircullarConnection_CombinedValueIsCorrect()
         {
-            var subjectA = new BehaviorSubject<string>(null).MakeScheduledOnCurrentThread();
-            var subjectB = new BehaviorSubject<string>(null).MakeScheduledOnCurrentThread();
-            var subjectC = new BehaviorSubject<string>(null).MakeScheduledOnCurrentThread();
+            var subjectA = new BehaviorSubject<string>(null).MakeScheduledOnMainThread();
+            var subjectB = new BehaviorSubject<string>(null).MakeScheduledOnMainThread();
+            var subjectC = new BehaviorSubject<string>(null).MakeScheduledOnMainThread();
 
             subjectA.Subscribe((valueA) =>
             {

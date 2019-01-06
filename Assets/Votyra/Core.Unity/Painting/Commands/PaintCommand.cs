@@ -47,7 +47,7 @@ namespace Votyra.Core.Painting.Commands
 
         public void Tick()
         {
-            if (_invocationPath.Any())
+            if (_invocationPath.Count>0)
             {
                 var next = _invocationPath.First.Value;
                 var previous = _lastInvocation ?? next;

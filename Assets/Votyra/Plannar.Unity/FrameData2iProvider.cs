@@ -37,10 +37,12 @@ namespace Votyra.Plannar
             var planesUnity = PooledArrayContainer<Plane>.CreateDirty(6);
             GeometryUtility.CalculateFrustumPlanes(localToProjection, planesUnity.Array);
             var planes = planesUnity.ToPlane3f();
+            planesUnity.Dispose();
 
             var frustumCornersUnity = PooledArrayContainer<Vector3>.CreateDirty(4);
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);
             var frustumCorners = frustumCornersUnity.ToVector3f();
+            frustumCornersUnity.Dispose();
 
             var invalidatedArea = ((image as IImageInvalidatableImage2i)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2i)?.InvalidatedArea) ?? Range2i.All;
             invalidatedArea = invalidatedArea.ExtendBothDirections(meshTopologyDistance);

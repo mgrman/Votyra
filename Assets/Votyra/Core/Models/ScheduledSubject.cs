@@ -1,38 +1,19 @@
 using System;
+using System.Threading;
 using UniRx;
 
 namespace Votyra.Core.Models
 {
     public static class ScheduledSubjectUtils
     {
-        public static IBehaviorSubject<T> MakeScheduledOnCurrentThread<T>(this IBehaviorSubject<T> subject)
-        {
-            return new ScheduledSubject<T>(subject, Scheduler.CurrentThread);
-        }
-
-        public static ISubject<T> MakeScheduledOnCurrentThread<T>(this ISubject<T> subject)
-        {
-            return new ScheduledSubject<T>(subject, Scheduler.CurrentThread);
-        }
-
         public static IBehaviorSubject<T> MakeScheduledOnMainThread<T>(this IBehaviorSubject<T> subject)
         {
-            return new ScheduledSubject<T>(subject, Scheduler.MainThread);
+            return new ScheduledSubject<T>(subject);
         }
 
         public static ISubject<T> MakeScheduledOnMainThread<T>(this ISubject<T> subject)
         {
-            return new ScheduledSubject<T>(subject, Scheduler.MainThread);
-        }
-
-        public static IBehaviorSubject<T> MakeScheduled<T>(this IBehaviorSubject<T> subject, IScheduler scheduler)
-        {
-            return new ScheduledSubject<T>(subject, scheduler);
-        }
-
-        public static ISubject<T> MakeScheduled<T>(this ISubject<T> subject, IScheduler scheduler)
-        {
-            return new ScheduledSubject<T>(subject, scheduler);
+            return new ScheduledSubject<T>(subject);
         }
     }
 
@@ -44,9 +25,9 @@ namespace Votyra.Core.Models
 
         private readonly Func<T> _getValue;
 
-        public ScheduledSubject(ISubject<T> subject, IScheduler scheduler)
+        public ScheduledSubject(ISubject<T> subject)
         {
-            _scheduler = scheduler;
+            _scheduler = Scheduler.MainThread;
             _observable = subject;
 
             _observer = subject;
@@ -56,10 +37,7 @@ namespace Votyra.Core.Models
             }
             else
             {
-                _getValue = () =>
-                {
-                    throw new NotSupportedException();
-                };
+                _getValue = () => { throw new NotSupportedException(); };
             }
         }
 
@@ -67,27 +45,43 @@ namespace Votyra.Core.Models
 
         public void OnCompleted()
         {
-            _scheduler.Schedule(() =>
+            if (MainThreadDispatcher.IsInMainThread)
             {
-                _observer
-                    .OnCompleted();
-            });
+                _observer.OnCompleted(); 
+            }
+            else
+            {
+                _scheduler.Schedule(() => { _observer.OnCompleted(); });
+            }
         }
 
         public void OnError(Exception error)
         {
-            _scheduler.Schedule(() =>
+            if (MainThreadDispatcher.IsInMainThread)
             {
                 _observer.OnError(error);
-            });
+            }
+            else
+            {
+                _scheduler.Schedule(() => { _observer.OnError(error); });
+            }
         }
 
         public void OnNext(T value)
         {
-            _scheduler.Schedule(() =>
+            if (MainThreadDispatcher.IsInMainThread)
             {
                 _observer.OnNext(value);
-            });
+            }
+            else
+            {
+                ScheduledOnNext(value);
+            }
+        }
+
+        private void ScheduledOnNext(T value)
+        {
+            _scheduler.Schedule(() => { _observer.OnNext(value); });
         }
 
         public IDisposable Subscribe(IObserver<T> observer)
