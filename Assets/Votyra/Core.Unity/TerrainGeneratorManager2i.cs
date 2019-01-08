@@ -38,6 +38,8 @@ namespace Votyra.Core
 
         private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
 
+        private readonly int _meshTopologyDistance;
+
 
         public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IStateModel stateModel, IProfiler profiler, IFrameDataProvider2i frameDataProvider, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, IInterpolationConfig interpolationConfig)
         {
@@ -51,6 +53,7 @@ namespace Votyra.Core
             _vertexPostProcessor = vertexPostProcessor;
             _uvPostProcessor = uvPostProcessor;
             _interpolationConfig = interpolationConfig;
+            _meshTopologyDistance = _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
 
             StartUpdateing();
         }
@@ -60,72 +63,85 @@ namespace Votyra.Core
             _onDestroyCts.Cancel();
         }
 
-        private void StartUpdateing()
+        private async void StartUpdateing()
         {
-            Task.Run(async () =>
-                {
-                    while (!_onDestroyCts.IsCancellationRequested)
+            if (_terrainConfig.Async)
+            {
+                await Task.Run(async () =>
                     {
-                        try
+                        while (!_onDestroyCts.IsCancellationRequested)
                         {
-                            if (_stateModel.IsEnabled)
+                            try
                             {
-                                IFrameData2i context = null;
-                                await Task.Run(async () =>
+                                if (_stateModel.IsEnabled)
                                 {
-                                    await UniTask.SwitchToMainThread();
-                                    var meshTopologyDistance = _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
-                                    context = _frameDataProvider.GetCurrentFrameData(meshTopologyDistance);
-                                });
-                                UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
+                                    var context = await TaskUtils.RunOnMainThread(() => _frameDataProvider.GetCurrentFrameData(_meshTopologyDistance));
+                                    UpdateTerrain(context, _onDestroyCts.Token);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogException(ex);
                             }
                         }
-                        catch (Exception ex)
+                    })
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                while (!_onDestroyCts.IsCancellationRequested)
+                {
+                    try
+                    {
+                        if (_stateModel.IsEnabled)
                         {
-                            _logger.LogException(ex);
+                            var context = _frameDataProvider.GetCurrentFrameData(_meshTopologyDistance);
+                            UpdateTerrain(context, _onDestroyCts.Token);
                         }
-
-                        await Task.Delay(10);
                     }
-                })
-                .ConfigureAwait(false);
-        }
+                    catch (Exception ex)
+                    {
+                        _logger.LogException(ex);
+                    }
 
-        private void UpdateTerrain(IFrameData2i context, bool async, CancellationToken token)
-        {
-            try
-            {
-                if (!async)
-                    throw new NotImplementedException();
-
-                context?.Activate();
-
-                context.UpdateGroupsVisibility(_cellInGroupCount, _groupsToRecompute, newGroup =>
-                {
-                    var groupManager = CreateGroupManager(token, newGroup);
-                    _activeGroups.Add(newGroup, groupManager);
-                }, removedGroup =>
-                {
-                    if (!_activeGroups.TryGetValue(removedGroup, out var groupManager))
-                        return;
-                    _activeGroups.Remove(removedGroup);
-                    groupManager?.Dispose();
-                });
-
-                foreach (var activeGroup in _activeGroups)
-                {
-                    activeGroup.Value.Update(context);
+                    await UniTask.Yield();
                 }
-
-                context?.Deactivate();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogException(ex);
             }
         }
 
-        private TerrainGroupGeneratorManager2i CreateGroupManager(CancellationToken token, Vector2i newGroup) => new TerrainGroupGeneratorManager2i(_interpolationConfig, _vertexPostProcessor, _uvPostProcessor, _cellInGroupCount, _gameObjectFactory, newGroup, token);
+        private void UpdateTerrain(IFrameData2i context, CancellationToken token)
+        {
+            context?.Activate();
+
+            HandleVisibilityUpdates(context, token);
+            UpdateGroupManagers(context);
+
+            context?.Deactivate();
+        }
+
+        private void UpdateGroupManagers(IFrameData2i context)
+        {
+            foreach (var activeGroup in _activeGroups)
+            {
+                activeGroup.Value.Update(context);
+            }
+        }
+
+        private void HandleVisibilityUpdates(IFrameData2i context, CancellationToken token)
+        {
+            context.UpdateGroupsVisibility(_cellInGroupCount, _groupsToRecompute, newGroup =>
+            {
+                _activeGroups.Add(newGroup, CreateGroupManager(token, newGroup));
+            }, removedGroup =>
+            {
+                if (!_activeGroups.TryGetValue(removedGroup, out var groupManager))
+                    return;
+                _activeGroups.Remove(removedGroup);
+                groupManager?.Dispose();
+            });
+        }
+
+        private TerrainGroupGeneratorManager2i CreateGroupManager(CancellationToken token, Vector2i newGroup) => new TerrainGroupGeneratorManager2i(_interpolationConfig, _vertexPostProcessor, _uvPostProcessor, _cellInGroupCount, _gameObjectFactory, newGroup, token, _terrainConfig.Async);
     }
 
     public class TerrainGroupGeneratorManager2i : IDisposable
@@ -141,13 +157,14 @@ namespace Votyra.Core
         private readonly Func<GameObject> _unityDataFactory;
         private readonly ITerrainUVPostProcessor _uvPostProcessor;
         private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
+        private readonly bool _async;
         private Task _activeTask = Task.CompletedTask;
         private IFrameData2i _contextToProcess;
         private GameObject _unityData;
 
         private bool _updatedOnce;
 
-        public TerrainGroupGeneratorManager2i(IInterpolationConfig interpolationConfig, ITerrainVertexPostProcessor vertexPostProcessor, ITerrainUVPostProcessor uvPostProcessor, Vector2i cellInGroupCount, Func<GameObject> unityDataFactory, Vector2i group, CancellationToken token)
+        public TerrainGroupGeneratorManager2i(IInterpolationConfig interpolationConfig, ITerrainVertexPostProcessor vertexPostProcessor, ITerrainUVPostProcessor uvPostProcessor, Vector2i cellInGroupCount, Func<GameObject> unityDataFactory, Vector2i group, CancellationToken token, bool async)
         {
             _interpolationConfig = interpolationConfig;
             _vertexPostProcessor = vertexPostProcessor;
@@ -158,13 +175,21 @@ namespace Votyra.Core
             _range = Range2i.FromMinAndSize(group * cellInGroupCount, cellInGroupCount);
             _cts = CancellationTokenSource.CreateLinkedTokenSource(token);
             _token = _cts.Token;
+            _async = async;
         }
 
         public void Dispose()
         {
             _cts.Cancel();
 
-            DestroyOnMainThreadAsync();
+            if (_async)
+            {
+                DestroyOnMainThreadAsync();
+            }
+            else
+            {
+                _unityData.Destroy();
+            }
         }
 
         public void Update(IFrameData2i context)
@@ -181,7 +206,29 @@ namespace Votyra.Core
             context.Activate();
             _contextToProcess = context;
 
-            UpdateGroupInBackground();
+            if (_async)
+            {
+                UpdateGroupInBackground();
+            }
+            else
+            {
+                UpdateGroupInForeground();
+            }
+        }
+
+        private void UpdateGroupInForeground()
+        {
+            if (_token.IsCancellationRequested)
+                return;
+
+            if (_contextToProcess != null)
+            {
+                var context = _contextToProcess;
+                _contextToProcess = null;
+
+                UpdateGroup(context, _token);
+                context.Deactivate();
+            }
         }
 
         private void UpdateGroupInBackground()
@@ -196,7 +243,7 @@ namespace Votyra.Core
 
                 _activeTask = Task.Run(async () =>
                 {
-                    await UpdateGroup(context, _token);
+                    await UpdateGroupAsync(context, _token);
                     context.Deactivate();
                 });
                 _activeTask.ConfigureAwait(false);
@@ -205,11 +252,39 @@ namespace Votyra.Core
             }
         }
 
-        private async Task UpdateGroup(IFrameData2i context, CancellationToken token)
+        private void UpdateGroup(IFrameData2i context, CancellationToken token)
         {
             if (context == null)
                 return;
+            var unityMesh = GenerateUnityMesh(context);
+            if (_token.IsCancellationRequested)
+                return;
+            UpdateUnityMesh(unityMesh);
+        }
 
+        private async Task UpdateGroupAsync(IFrameData2i context, CancellationToken token)
+        {
+            if (context == null)
+                return;
+            var unityMesh = GenerateUnityMesh(context);
+            if (_token.IsCancellationRequested)
+                return;
+            await UniTask.SwitchToMainThread();
+            if (_token.IsCancellationRequested)
+                return;
+            UpdateUnityMesh(unityMesh);
+        }
+
+        private void UpdateUnityMesh(UnityMesh unityMesh)
+        {
+            if (_unityData == null)
+                _unityData = _unityDataFactory();
+
+            unityMesh.SetUnityMesh(_unityData);
+        }
+
+        private UnityMesh GenerateUnityMesh(IFrameData2i context)
+        {
             var image = context.Image;
             var mask = context.Mask;
 
@@ -238,18 +313,7 @@ namespace Votyra.Core
             pooledMesh.FinalizeMesh();
 
             var unityMesh = pooledMesh.Mesh.GetUnityMesh(null);
-
-            if (_token.IsCancellationRequested)
-                return;
-
-            await UniTask.SwitchToMainThread();
-
-            if (_token.IsCancellationRequested)
-                return;
-            if (_unityData == null)
-                _unityData = _unityDataFactory();
-
-            unityMesh.SetUnityMesh(_unityData);
+            return unityMesh;
         }
 
         private async Task DestroyOnMainThreadAsync()
