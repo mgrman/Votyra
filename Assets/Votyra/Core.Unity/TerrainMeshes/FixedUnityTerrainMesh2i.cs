@@ -1,36 +1,44 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainMeshes
 {
-    public class ExpandingUnityTerrainMesh : ITerrainMesh
+    public class FixedUnityTerrainMesh2i : ITerrainMeshWithFixedCapacity
     {
+        private int _counter;
+        private bool _reset;
         private Bounds _meshBounds;
-        private bool _reset = true;
-
-        public ExpandingUnityTerrainMesh()
-        {
-            Vertices = new List<Vector3>();
-            UV = new List<Vector2>();
-            Indices = new List<int>();
-            Normals = new List<Vector3>();
-        }
 
         public Bounds MeshBounds => _meshBounds;
 
-        private Func<Vector3f, Vector3f> VertexPostProcessor { get; set; }
-        private Func<Vector2f, Vector2f> UVAdjustor { get; set; }
+        public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
+        public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
+        public Vector3[] Vertices { get; private set; }
+        public Vector3[] Normals { get; private set; }
+        public Vector2[] UV { get; private set; }
+        public int[] Indices { get; private set; }
 
-        public List<Vector3> Vertices { get; }
-        public List<Vector3> Normals { get; }
-        public List<Vector2> UV { get; }
-        public List<int> Indices { get; }
+        public int TriangleCount => _counter / 3;
 
-        public int TriangleCount { get; private set; }
-        public int VertexCount { get; private set; }
+        public int VertexCount => Vertices.Length;
+
+        public int TriangleCapacity { get; private set; }
+
+        public virtual void Initialize(int triangleCapacity)
+        {
+            TriangleCapacity = triangleCapacity;
+
+            var pointCount = triangleCapacity * 3;
+
+            Vertices = new Vector3[pointCount];
+            UV = new Vector2[pointCount];
+            Indices = Enumerable.Range(0, pointCount)
+                .ToArray();
+            Normals = new Vector3[pointCount];
+        }
 
         public void Initialize(Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
@@ -40,13 +48,8 @@ namespace Votyra.Core.TerrainMeshes
 
         public void Reset()
         {
+            _counter = 0;
             _reset = true;
-            TriangleCount = 0;
-            VertexCount = 0;
-            Vertices.Clear();
-            UV.Clear();
-            Indices.Clear();
-            Normals.Clear();
         }
 
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
@@ -109,29 +112,35 @@ namespace Votyra.Core.TerrainMeshes
             var normal = Vector3.Cross(side1, side2)
                 .normalized;
 
-            Indices.Add(VertexCount);
-            Vertices.Add(posAu);
-            UV.Add(uvAu);
-            Normals.Add(normal);
-            VertexCount++;
+            Vertices[_counter] = posAu;
+            UV[_counter] = uvAu;
+            Normals[_counter] = normal;
+            _counter++;
 
-            Indices.Add(VertexCount);
-            Vertices.Add(posBu);
-            UV.Add(uvBu);
-            Normals.Add(normal);
-            VertexCount++;
+            Vertices[_counter] = posBu;
+            UV[_counter] = uvBu;
+            Normals[_counter] = normal;
+            _counter++;
 
-            Indices.Add(VertexCount);
-            Vertices.Add(posCu);
-            UV.Add(uvCu);
-            Normals.Add(normal);
-            VertexCount++;
-
-            TriangleCount++;
+            Vertices[_counter] = posCu;
+            UV[_counter] = uvCu;
+            Normals[_counter] = normal;
+            _counter++;
         }
 
         public void FinalizeMesh()
         {
+            if (_counter != VertexCount)
+            {
+                for (var i = _counter; i < VertexCount; i++)
+                {
+                    Vertices[i] = Vector3.zero;
+                    UV[i] = Vector2.zero;
+                    Normals[i] = Vector3.zero;
+                }
+
+                Debug.LogWarning($"Mesh was not fully filled. Expected {VertexCount} points, got {_counter} points!");
+            }
         }
     }
 }

@@ -76,7 +76,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void InitializeGroup(Vector3i group)
         {
-            InitializeGroup(group, PooledTerrainMeshContainer<ExpandingTerrainMesh>.CreateDirty());
+            InitializeGroup(group, PooledTerrainMeshContainer<ExpandingUnityTerrainMesh>.CreateDirty());
         }
 
         public void AddCell(Vector3i cellInGroup)
@@ -120,7 +120,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             pooledMesh = cleanPooledMesh;
             mesh = pooledMesh.Mesh;
-            mesh.Clear(bounds, null, null);
+            mesh.Initialize(null, null);
+            mesh.Reset();
         }
 
         private static Tuple<SampledData3b, IReadOnlyCollection<Triangle3f>> ChooseTrianglesForCell(SampledData3b data)

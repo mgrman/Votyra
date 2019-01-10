@@ -8,7 +8,7 @@ namespace Votyra.Core.MeshUpdaters
 {
     public static class TerrainMeshUpdater
     {
-        public static void SetUnityMesh(this UnityMesh triangleMesh, GameObject unityData)
+        public static void SetUnityMesh(this ITerrainMesh triangleMesh, GameObject unityData)
         {
             var meshFilter = unityData.GetComponent<MeshFilter>();
             SetUnityMesh(triangleMesh, meshFilter.sharedMesh);
@@ -17,7 +17,7 @@ namespace Votyra.Core.MeshUpdaters
             meshCollider.sharedMesh = meshFilter.sharedMesh;
         }
 
-        private static void SetUnityMesh(UnityMesh triangleMesh, Mesh mesh)
+        private static void SetUnityMesh(ITerrainMesh triangleMesh, Mesh mesh)
         {
             SetMeshFormat(mesh, triangleMesh.VertexCount);
 
@@ -25,59 +25,28 @@ namespace Votyra.Core.MeshUpdaters
             if (reinitializeMesh)
                 mesh.Clear();
 
-            switch (triangleMesh.Vertices)
+            if (triangleMesh is FixedUnityTerrainMesh2i fixedMesh)
             {
-                case Vector3[] array:
-                    mesh.vertices = array;
-                    break;
-                case List<Vector3> list:
-                    mesh.SetVertices(list);
-                    break;
-                default:
-                    mesh.vertices = triangleMesh.Vertices.ToArray();
-                    break;
+                mesh.vertices = fixedMesh.Vertices;
+                mesh.normals = fixedMesh.Normals;
+                if (reinitializeMesh)
+                {
+                    mesh.uv = fixedMesh.UV;
+                    mesh.SetTriangles(fixedMesh.Indices, 0);
+                }
+                mesh.bounds = fixedMesh.MeshBounds;
             }
-
-            switch (triangleMesh.Normals)
+            else if (triangleMesh is ExpandingUnityTerrainMesh expandingMesh)
             {
-                case Vector3[] array:
-                    mesh.normals = array;
-                    break;
-                case List<Vector3> list:
-                    mesh.SetNormals(list);
-                    break;
-                default:
-                    mesh.normals = triangleMesh.Normals.ToArray();
-                    break;
+                mesh.SetVertices(expandingMesh.Vertices);
+                mesh.SetNormals(expandingMesh.Normals);
+                if (reinitializeMesh)
+                {
+                    mesh.SetUVs(0, expandingMesh.UV);
+                    mesh.SetTriangles(expandingMesh.Indices, 0);
+                }
+                mesh.bounds = expandingMesh.MeshBounds;
             }
-
-            switch (triangleMesh.UV)
-            {
-                case Vector2[] array:
-                    mesh.uv = array;
-                    break;
-                case List<Vector2> list:
-                    mesh.SetUVs(0, list);
-                    break;
-                default:
-                    mesh.uv = triangleMesh.UV.ToArray();
-                    break;
-            }
-
-            switch (triangleMesh.Indices)
-            {
-                case int[] array:
-                    mesh.SetTriangles(array, 0, false);
-                    break;
-                case List<int> list:
-                    mesh.SetTriangles(list, 0, false);
-                    break;
-                default:
-                    mesh.SetTriangles(triangleMesh.Indices.ToArray(), 0, false);
-                    break;
-            }
-
-            mesh.bounds = triangleMesh.MeshBounds;
         }
 
         private static void SetMeshFormat(Mesh mesh, int vertexCount)

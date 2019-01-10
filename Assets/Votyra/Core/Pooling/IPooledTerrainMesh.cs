@@ -3,7 +3,7 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {
-    public interface IPooledTerrainMesh : ITerrainMesh, IDisposable
+    public interface IPooledTerrainMesh :  IDisposable
     {
         ITerrainMesh Mesh { get; }
     }

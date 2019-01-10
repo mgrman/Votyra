@@ -9,5 +9,7 @@ namespace Votyra.Core
         IMask2e Mask { get; }
         Area1f RangeZ { get; }
         Range2i InvalidatedArea { get; }
+        Vector2i CellInGroupCount { get; }
+        int MeshSubdivision { get; }
     }
 }

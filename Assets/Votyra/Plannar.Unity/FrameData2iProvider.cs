@@ -17,19 +17,35 @@ namespace Votyra.Plannar
         [Inject]
         protected IImage2fProvider _imageProvider;
 
+        [Inject]
+        protected ITerrainConfig _terrainConfig;
+
+        [Inject]
+        protected IInterpolationConfig _interpolationConfig;
+
         [InjectOptional]
         protected IMask2eProvider _maskProvider;
 
         [Inject(Id = "root")]
         protected GameObject _root;
 
-        public IFrameData2i GetCurrentFrameData(int meshTopologyDistance)
+        private Matrix4x4 _previousCameraMatrix;
+
+        public IFrameData2i GetCurrentFrameData(int meshTopologyDistance,bool computedOnce)
         {
-            var camera = Camera.main;
+            var camera = CameraUtils.MainCamera;
+            var image = _imageProvider.CreateImage();
+
+            var localToWorldMatrix = camera.transform.localToWorldMatrix;
+            if (computedOnce && localToWorldMatrix == _previousCameraMatrix && (image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero)
+            {
+                return null;
+            }
+
+            _previousCameraMatrix = localToWorldMatrix;
+            
             var container = _root.gameObject;
 
-
-            var image = _imageProvider.CreateImage();
             image = _image2fPostProcessor?.PostProcess(image) ?? image;
 
             var mask = _maskProvider?.CreateMask();
@@ -49,7 +65,7 @@ namespace Votyra.Plannar
             var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
             invalidatedArea = invalidatedArea.ExtendBothDirections(meshTopologyDistance);
 
-            return new FrameData2i(camera.transform.position.ToVector3f(), planes, frustumCorners, camera.transform.localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), image, mask, invalidatedArea);
+            return new FrameData2i(camera.transform.position.ToVector3f(), planes, frustumCorners, localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), image, mask, invalidatedArea, _terrainConfig.CellInGroupCount.XY, _interpolationConfig.MeshSubdivision);
         }
     }
 }

@@ -36,6 +36,16 @@ namespace Votyra.Core.Utils
             }
         }
 
+        public static void DestroyWithMeshes(this GameObject gameObject)
+        {
+            if (gameObject == null)
+                return;
+            var mesh = gameObject.GetComponent<MeshFilter>()
+                .sharedMesh;
+            mesh.Destroy();
+            gameObject.Destroy();
+        }
+
         public static void Destroy(this GameObject gameObject)
         {
             if (gameObject == null)
@@ -44,6 +54,17 @@ namespace Votyra.Core.Utils
             Object.DestroyImmediate(gameObject);
 #else
             GameObject.Destroy(gameObject);
+#endif
+        }
+
+        public static void Destroy(this Object component)
+        {
+            if (component == null)
+                return;
+#if UNITY_EDITOR
+            Object.DestroyImmediate(component);
+#else
+            GameObject.Destroy(component);
 #endif
         }
     }

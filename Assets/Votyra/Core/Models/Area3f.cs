@@ -76,6 +76,7 @@ namespace Votyra.Core.Models
         }
 
         public Area3f Encapsulate(Vector3f point) => FromMinAndMax(Vector3f.Min(Min, point), Vector3f.Max(Max, point));
+        public Area3f Encapsulate(Vector3f a, Vector3f b, Vector3f c) => FromMinAndMax(Vector3f.Min(Vector3f.Min(Vector3f.Min(Min, a), b), c), Vector3f.Max(Vector3f.Max(Vector3f.Max(Max, a), b), c));
 
         public Area3f Encapsulate(Area3f bounds) => FromMinAndMax(Vector3f.Min(Min, bounds.Min), Vector3f.Max(Max, bounds.Max));
 

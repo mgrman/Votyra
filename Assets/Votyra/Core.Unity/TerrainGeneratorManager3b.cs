@@ -84,10 +84,10 @@ namespace Votyra.Core
         {
             context?.Activate();
             GroupActions<Vector3i> groupActions = null;
-            IReadOnlyPooledDictionary<Vector3i, UnityMesh> results = null;
+            IReadOnlyPooledDictionary<Vector3i, IPooledTerrainMesh> results = null;
             try
             {
-                Func<IReadOnlyPooledDictionary<Vector3i, UnityMesh>> computeAction = () =>
+                Func<IReadOnlyPooledDictionary<Vector3i, IPooledTerrainMesh>> computeAction = () =>
                 {
                     using (_profiler.Start("Creating visible groups"))
                     {
@@ -100,16 +100,16 @@ namespace Votyra.Core
                     if (toRecompute.Any())
                         using (_profiler.Start("TerrainMeshGenerator"))
                         {
-                            PooledDictionary<Vector3i, UnityMesh> meshes;
+                            PooledDictionary<Vector3i, IPooledTerrainMesh> meshes;
                             using (_profiler.Start("init"))
                             {
-                                meshes = PooledDictionary<Vector3i, UnityMesh>.Create();
+                                meshes = PooledDictionary<Vector3i, IPooledTerrainMesh>.Create();
                             }
 
                             foreach (var group in toRecompute)
                             {
                                 var mesh = _terrainGenerator.Generate(group, context.Image);
-                                meshes[group] = mesh.GetUnityMesh(null);
+                                meshes[group] = mesh;
                             }
 
                             return meshes;
@@ -143,7 +143,7 @@ namespace Votyra.Core
                                     var group = terrainMesh.Key;
                                     var triangleMesh = terrainMesh.Value;
 
-                                    if (terrainMesh.Value == null || triangleMesh.VertexCount == 0)
+                                    if (terrainMesh.Value == null || triangleMesh.Mesh.VertexCount == 0)
                                     {
                                         if (_meshFilters.ContainsKey(group))
                                             _meshFilters[group]
@@ -158,7 +158,7 @@ namespace Votyra.Core
                                         unityData = _gameObjectFactory();
 
 
-                                    triangleMesh.SetUnityMesh(unityData);
+                                    triangleMesh.Mesh.SetUnityMesh(unityData);
                                     _meshFilters[group] = unityData;
                                 }
 

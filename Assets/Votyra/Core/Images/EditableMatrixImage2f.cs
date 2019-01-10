@@ -29,7 +29,10 @@ namespace Votyra.Core.Images
 
         public IImage2f CreateImage()
         {
-            if (_invalidatedArea == Range2i.Zero)
+            if (_invalidatedArea == Range2i.Zero && _image.InvalidatedArea == Range2i.Zero)
+            {
+            }
+            else if (_invalidatedArea == Range2i.Zero)
             {
                 _image?.Dispose();
                 _image = new MatrixImage2f(_image.Image, Range2i.Zero, _image.RangeZ);
