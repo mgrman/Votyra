@@ -130,17 +130,6 @@ namespace UniRx.Async.Triggers
             return component.gameObject.GetAsyncCanvasGroupChangedTrigger();
         }
 
-        /// <summary>Get for OnCollisionEnter2DAsync | OnCollisionExit2DAsync | OnCollisionStay2DAsync.</summary>
-        public static AsyncCollision2DTrigger GetAsyncCollision2DTrigger(this GameObject gameObject)
-        {
-            return GetOrAddComponent<AsyncCollision2DTrigger>(gameObject);
-        }
-
-        /// <summary>Get for OnCollisionEnter2DAsync | OnCollisionExit2DAsync | OnCollisionStay2DAsync.</summary>
-        public static AsyncCollision2DTrigger GetAsyncCollision2DTrigger(this Component component)
-        {
-            return component.gameObject.GetAsyncCollision2DTrigger();
-        }
 
         /// <summary>Get for OnCollisionEnterAsync | OnCollisionExitAsync | OnCollisionStayAsync.</summary>
         public static AsyncCollisionTrigger GetAsyncCollisionTrigger(this GameObject gameObject)
@@ -250,17 +239,6 @@ namespace UniRx.Async.Triggers
             return component.gameObject.GetAsyncInitializePotentialDragTrigger();
         }
 
-        /// <summary>Get for OnJointBreakAsync.</summary>
-        public static AsyncJointTrigger GetAsyncJointTrigger(this GameObject gameObject)
-        {
-            return GetOrAddComponent<AsyncJointTrigger>(gameObject);
-        }
-
-        /// <summary>Get for OnJointBreakAsync.</summary>
-        public static AsyncJointTrigger GetAsyncJointTrigger(this Component component)
-        {
-            return component.gameObject.GetAsyncJointTrigger();
-        }
 
         /// <summary>Get for LateUpdateAsync.</summary>
         public static AsyncLateUpdateTrigger GetAsyncLateUpdateTrigger(this GameObject gameObject)
@@ -446,17 +424,6 @@ namespace UniRx.Async.Triggers
             return component.gameObject.GetAsyncTransformChangedTrigger();
         }
 
-        /// <summary>Get for OnTriggerEnter2DAsync | OnTriggerExit2DAsync | OnTriggerStay2DAsync.</summary>
-        public static AsyncTrigger2DTrigger GetAsyncTrigger2DTrigger(this GameObject gameObject)
-        {
-            return GetOrAddComponent<AsyncTrigger2DTrigger>(gameObject);
-        }
-
-        /// <summary>Get for OnTriggerEnter2DAsync | OnTriggerExit2DAsync | OnTriggerStay2DAsync.</summary>
-        public static AsyncTrigger2DTrigger GetAsyncTrigger2DTrigger(this Component component)
-        {
-            return component.gameObject.GetAsyncTrigger2DTrigger();
-        }
 
         /// <summary>Get for OnTriggerEnterAsync | OnTriggerExitAsync | OnTriggerStayAsync.</summary>
         public static AsyncTriggerTrigger GetAsyncTriggerTrigger(this GameObject gameObject)

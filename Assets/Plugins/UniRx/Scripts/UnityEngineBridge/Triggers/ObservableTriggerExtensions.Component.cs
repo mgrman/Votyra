@@ -28,32 +28,6 @@ namespace UniRx.Triggers
 
         #endregion
 
-        #region ObservableCollision2DTrigger
-
-        /// <summary>Sent when an incoming collider makes contact with this object's collider (2D physics only).</summary>
-        public static IObservable<Collision2D> OnCollisionEnter2DAsObservable(this Component component)
-        {
-            if (component == null || component.gameObject == null) return Observable.Empty<Collision2D>();
-            return GetOrAddComponent<ObservableCollision2DTrigger>(component.gameObject).OnCollisionEnter2DAsObservable();
-        }
-
-
-        /// <summary>Sent when a collider on another object stops touching this object's collider (2D physics only).</summary>
-        public static IObservable<Collision2D> OnCollisionExit2DAsObservable(this Component component)
-        {
-            if (component == null || component.gameObject == null) return Observable.Empty<Collision2D>();
-            return GetOrAddComponent<ObservableCollision2DTrigger>(component.gameObject).OnCollisionExit2DAsObservable();
-        }
-
-        /// <summary>Sent each frame where a collider on another object is touching this object's collider (2D physics only).</summary>
-        public static IObservable<Collision2D> OnCollisionStay2DAsObservable(this Component component)
-        {
-            if (component == null || component.gameObject == null) return Observable.Empty<Collision2D>();
-            return GetOrAddComponent<ObservableCollision2DTrigger>(component.gameObject).OnCollisionStay2DAsObservable();
-        }
-
-        #endregion
-
         #region ObservableCollisionTrigger
 
         /// <summary>OnCollisionEnter is called when this collider/rigidbody has begun touching another rigidbody/collider.</summary>
@@ -189,31 +163,6 @@ namespace UniRx.Triggers
 
 #endif
 
-        #region ObservableTrigger2DTrigger
-
-        /// <summary>Sent when another object enters a trigger collider attached to this object (2D physics only).</summary>
-        public static IObservable<Collider2D> OnTriggerEnter2DAsObservable(this Component component)
-        {
-            if (component == null || component.gameObject == null) return Observable.Empty<Collider2D>();
-            return GetOrAddComponent<ObservableTrigger2DTrigger>(component.gameObject).OnTriggerEnter2DAsObservable();
-        }
-
-
-        /// <summary>Sent when another object leaves a trigger collider attached to this object (2D physics only).</summary>
-        public static IObservable<Collider2D> OnTriggerExit2DAsObservable(this Component component)
-        {
-            if (component == null || component.gameObject == null) return Observable.Empty<Collider2D>();
-            return GetOrAddComponent<ObservableTrigger2DTrigger>(component.gameObject).OnTriggerExit2DAsObservable();
-        }
-
-        /// <summary>Sent each frame where another object is within a trigger collider attached to this object (2D physics only).</summary>
-        public static IObservable<Collider2D> OnTriggerStay2DAsObservable(this Component component)
-        {
-            if (component == null || component.gameObject == null) return Observable.Empty<Collider2D>();
-            return GetOrAddComponent<ObservableTrigger2DTrigger>(component.gameObject).OnTriggerStay2DAsObservable();
-        }
-
-        #endregion
 
         #region ObservableTriggerTrigger
 
