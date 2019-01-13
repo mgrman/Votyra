@@ -6,6 +6,7 @@ using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
+using Votyra.Core.Unity.Painting;
 using Votyra.Core.Utils;
 using Zenject;
 
@@ -78,8 +79,8 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<MakeOrRemoveHole>()
                 .AsSingle()
                 .NonLazy();
-            Container.Bind<Canvas>()
-                .FromComponentInNewPrefabResource("PaintingUI")
+            Container.BindInterfacesAndSelfTo<PaintingIMGui>()
+                .FromNewComponentOn(this.gameObject)
                 .AsSingle()
                 .NonLazy();
 
