@@ -5,38 +5,32 @@ namespace Votyra.Core.Images
 {
     public class MatrixImage2f : IImage2f, IInitializableImage, IImageInvalidatableImage2
     {
-        private int usingCounter;
+        private readonly float[,] _image;
+        private readonly Range2i _imageRange;
+        
+        private int _usingCounter;
 
-        public MatrixImage2f(MatrixImage2f template, Range2i invalidatedArea, Area1f rangeZ)
+        public MatrixImage2f(Vector2i size)
         {
-            _image = template._image;
-            InvalidatedArea = invalidatedArea;
+            _image = new float[size.X, size.Y];
+            _imageRange=Range2i.FromMinAndSize(Vector2i.Zero, size);
+        }
+
+        public void UpdateImage(Matrix2<float> template, Area1f rangeZ)
+        {
+            Array.Copy(template.NativeMatrix,_image,_image.Length);
+
             RangeZ = rangeZ;
         }
 
-        public MatrixImage2f(Matrix2<float> template, Range2i invalidatedArea, Area1f rangeZ)
+        public void UpdateInvalidatedArea(Range2i invalidatedArea)
         {
-            _image= new Matrix2<float>(template.Size);
             InvalidatedArea = invalidatedArea;
-            RangeZ = rangeZ;
-
-            UpdateImage(template);
         }
 
-        public void UpdateImage(Matrix2<float> template)
-        {
-
-            template.ForeachPointExlusive(i =>
-            {
-                _image[i] = template[i];
-            });
-        }
-
-        private readonly Matrix2<float> _image;
-
-        public Area1f RangeZ { get; }
-
-        public float Sample(Vector2i point) => _image.TryGet(point, 0f);
+        public Area1f RangeZ { get; private set; }
+        
+        public float Sample(Vector2i point) => _imageRange.Contains(point) ? _image[point.X, point.Y] : 0f;
 
         public IPoolableMatrix2<float> SampleArea(Range2i area)
         {
@@ -49,18 +43,18 @@ namespace Votyra.Core.Images
             return matrix;
         }
 
-        public Range2i InvalidatedArea { get; }
+        public Range2i InvalidatedArea { get; private set; }
 
-        public bool IsBeingUsed => usingCounter > 0;
+        public bool IsBeingUsed => _usingCounter > 0;
 
         public void StartUsing()
         {
-            usingCounter++;
+            _usingCounter++;
         }
 
         public void FinishUsing()
         {
-            usingCounter--;
+            _usingCounter--;
         }
     }
 }

@@ -43,30 +43,27 @@ namespace Votyra.Core.Images
             if (_invalidatedArea == Range2i.Zero && PreparedImage.InvalidatedArea == Range2i.Zero)
             {
             }
-            else if (_invalidatedArea == Range2i.Zero)
-            {
-                PreparedImage = new MatrixImage2f(PreparedImage, Range2i.Zero, PreparedImage.RangeZ);
-            }
             else if (_invalidatedArea.HasValue || PreparedImage == null)
             {
                 _invalidatedArea = _invalidatedArea ?? _editableMatrix.Size.ToRange2i();
-                // Debug.LogFormat("Update readonlyCount:{0}", _readonlyMatrices.Count);
-                
-                
-                PreparedImage = _readonlyMatrices.FirstOrDefault(o => !o.IsBeingUsed);
-                if (PreparedImage == null)
-                {
-                    PreparedImage = new MatrixImage2f(_editableMatrix, _invalidatedArea.Value, _editableRangeZ);
-                    _invalidatedArea = Range2i.Zero;
-                    _readonlyMatrices.Add(PreparedImage);
-                }
-                else
-                {
-                    PreparedImage.UpdateImage(_editableMatrix);
-                    _invalidatedArea = Range2i.Zero;
-                }
+
+                PreparedImage = GetNotUsedImage();
+                PreparedImage.UpdateImage(_editableMatrix,_editableRangeZ);
+                PreparedImage.UpdateInvalidatedArea(_invalidatedArea.Value);
+                _invalidatedArea = Range2i.Zero;
             }
             return PreparedImage;
+        }
+
+        private MatrixImage2f GetNotUsedImage()
+        {
+            var image = _readonlyMatrices.FirstOrDefault(o => !o.IsBeingUsed);
+            if (image == null)
+            {
+                image = new MatrixImage2f(_editableMatrix.Size);
+                _readonlyMatrices.Add(image);
+            }
+            return image;
         }
 
         private void FixImage(Range2i invalidatedImageArea, Direction direction)
@@ -79,21 +76,6 @@ namespace Votyra.Core.Images
             var newInvalidatedImageArea = _constraint.FixImage(_editableMatrix, invalidatedImageArea, direction);
             _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedImageArea) ?? newInvalidatedImageArea;
         }
-
-
-        // private static Range1hi CalculateRangeZ(LockableMatrix2<Height1i> values)
-        // {
-        //     Height1i min = Height1i.MaxValue;
-        //     Height1i max = Height1i.MinValue;
-        //     values.ForeachPointExlusive(i =>
-        //     {
-        //         Height1i val = values[i];
-        //
-        //         min = Height1i.Min(min, val);
-        //         max = Height1i.Max(max, val);
-        //     });
-        //     return Height1i.Range(min, max);
-        // }
 
         private class MatrixImageAccessor : IEditableImageAccessor2f
         {
