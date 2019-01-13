@@ -12,7 +12,7 @@ namespace Votyra.Core.TerrainMeshes
         void Initialize(Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor);
 
         void Reset(Area3f area);
-        
+
         void AddTriangle(Vector3f a, Vector3f b, Vector3f c);
 
         void FinalizeMesh();

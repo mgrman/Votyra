@@ -34,6 +34,7 @@ public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
         ConstrainNamespaces();
     }
 
+    [MenuItem("Build/Votyra/" + nameof(ConstrainNamespaces))]
     public static void ConstrainNamespaces()
     {
         var rootPath = Application.dataPath;

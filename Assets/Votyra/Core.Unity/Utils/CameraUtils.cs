@@ -6,7 +6,7 @@ namespace Votyra.Core.Utils
 {
     public static class CameraUtils
     {
-        private static Lazy<Camera> _mainCamera = new Lazy<Camera>(() =>
+        private static readonly Lazy<Camera> _mainCamera = new Lazy<Camera>(() =>
         {
             Camera camera = null;
             TaskUtils.RunOnMainThread(() => camera = Camera.main);

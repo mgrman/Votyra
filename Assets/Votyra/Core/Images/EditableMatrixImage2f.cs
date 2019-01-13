@@ -15,7 +15,15 @@ namespace Votyra.Core.Images
 
         private readonly List<MatrixImage2f> _readonlyMatrices = new List<MatrixImage2f>();
         private Area1f _editableRangeZ;
+        private Range2i? _invalidatedArea;
         private MatrixImage2f _preparedImage;
+
+        public EditableMatrixImage2f([InjectOptional] IImageConstraint2i constraint, IImageConfig imageConfig)
+        {
+            _constraint = constraint;
+            _editableMatrix = new Matrix2<float>(imageConfig.ImageSize.XY);
+            _editableRangeZ = new Area1f(_editableMatrix[0, 0], _editableMatrix[0, 0]);
+        }
 
         private MatrixImage2f PreparedImage
         {
@@ -26,14 +34,6 @@ namespace Votyra.Core.Images
                 _preparedImage = value;
                 _preparedImage?.StartUsing();
             }
-        }
-        private Range2i? _invalidatedArea;
-
-        public EditableMatrixImage2f([InjectOptional] IImageConstraint2i constraint, IImageConfig imageConfig)
-        {
-            _constraint = constraint;
-            _editableMatrix = new Matrix2<float>(imageConfig.ImageSize.XY);
-            _editableRangeZ = new Area1f(_editableMatrix[0, 0], _editableMatrix[0, 0]);
         }
 
         public IEditableImageAccessor2f RequestAccess(Range2i areaRequest) => new MatrixImageAccessor(this, areaRequest);
@@ -48,10 +48,11 @@ namespace Votyra.Core.Images
                 _invalidatedArea = _invalidatedArea ?? _editableMatrix.Size.ToRange2i();
 
                 PreparedImage = GetNotUsedImage();
-                PreparedImage.UpdateImage(_editableMatrix,_editableRangeZ);
+                PreparedImage.UpdateImage(_editableMatrix, _editableRangeZ);
                 PreparedImage.UpdateInvalidatedArea(_invalidatedArea.Value);
                 _invalidatedArea = Range2i.Zero;
             }
+
             return PreparedImage;
         }
 
@@ -63,6 +64,7 @@ namespace Votyra.Core.Images
                 image = new MatrixImage2f(_editableMatrix.Size);
                 _readonlyMatrices.Add(image);
             }
+
             return image;
         }
 

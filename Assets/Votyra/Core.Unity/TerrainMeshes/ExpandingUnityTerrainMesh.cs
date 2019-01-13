@@ -45,7 +45,7 @@ namespace Votyra.Core.TerrainMeshes
             Indices.Clear();
             Normals.Clear();
         }
-        
+
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
         {
             Vector3 posAu;
@@ -85,7 +85,7 @@ namespace Votyra.Core.TerrainMeshes
                 uvBu = posB.XY.ToVector2();
                 uvCu = posC.XY.ToVector2();
             }
-            
+
             var side1 = posBu - posAu;
             var side2 = posCu - posAu;
             var normal = Vector3.Cross(side1, side2)

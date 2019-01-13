@@ -4,15 +4,9 @@ namespace Votyra.Core.Utils
 {
     public static class DictionaryUtils
     {
-        public static TValue TryGetValue<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key) where TValue : class
-        {
-            return dict.TryGetValue(key, out var temp) ? temp : null;
-        }
+        public static TValue TryGetValue<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key) where TValue : class => dict.TryGetValue(key, out var temp) ? temp : null;
 
-        public static TValue? TryGetValueN<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key) where TValue : struct
-        {
-            return dict.TryGetValue(key, out var temp) ? temp : (TValue?) null;
-        }
+        public static TValue? TryGetValueN<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key) where TValue : struct => dict.TryGetValue(key, out var temp) ? temp : (TValue?) null;
 
         public static TValue TryRemoveAndReturnValue<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) where TValue : class
         {
@@ -21,10 +15,8 @@ namespace Votyra.Core.Utils
                 dict.Remove(key);
                 return temp;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public static TValue? TryRemoveAndReturnValueN<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) where TValue : struct
@@ -34,10 +26,8 @@ namespace Votyra.Core.Utils
                 dict.Remove(key);
                 return temp;
             }
-            else
-            {
-                return null;
-            }
-        }  
+
+            return null;
+        }
     }
 }

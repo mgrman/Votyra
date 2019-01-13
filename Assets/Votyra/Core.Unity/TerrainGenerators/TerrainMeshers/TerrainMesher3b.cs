@@ -72,7 +72,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             pooledMesh = cleanPooledMesh;
             mesh = pooledMesh.Mesh;
-            mesh.Initialize(null,null);
+            mesh.Initialize(null, null);
             mesh.Reset(Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f()));
         }
 

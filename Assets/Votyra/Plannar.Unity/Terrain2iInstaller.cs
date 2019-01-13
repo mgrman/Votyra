@@ -80,7 +80,7 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
             Container.BindInterfacesAndSelfTo<PaintingIMGui>()
-                .FromNewComponentOn(this.gameObject)
+                .FromNewComponentOn(gameObject)
                 .AsSingle()
                 .NonLazy();
 

@@ -49,7 +49,7 @@ namespace Votyra.Core.TerrainMeshes
             MeshBounds = area.ToBounds();
             _counter = 0;
         }
-        
+
 
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
         {
@@ -71,7 +71,7 @@ namespace Votyra.Core.TerrainMeshes
                 posBu = posB.ToVector3();
                 posCu = posC.ToVector3();
             }
-            
+
 
             Vector2 uvAu;
             Vector2 uvBu;

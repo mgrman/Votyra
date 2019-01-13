@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Votyra.Core.TerrainMeshes;
@@ -34,6 +32,7 @@ namespace Votyra.Core.MeshUpdaters
                     mesh.uv = fixedMesh.UV;
                     mesh.SetTriangles(fixedMesh.Indices, 0);
                 }
+
                 mesh.bounds = fixedMesh.MeshBounds;
             }
             else if (triangleMesh is ExpandingUnityTerrainMesh expandingMesh)
@@ -45,6 +44,7 @@ namespace Votyra.Core.MeshUpdaters
                     mesh.SetUVs(0, expandingMesh.UV);
                     mesh.SetTriangles(expandingMesh.Indices, 0);
                 }
+
                 mesh.bounds = expandingMesh.MeshBounds;
             }
         }

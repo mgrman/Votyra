@@ -33,9 +33,10 @@
 using FN_DECIMAL = System.Double;
 #else
 
-using System.Runtime.CompilerServices;
 using System;
+using System.Runtime.CompilerServices;
 using FN_DECIMAL = System.Single;
+
 #endif
 
 namespace Votyra.Core.Utils

@@ -15,7 +15,7 @@ namespace Votyra.Core.Utils
                 {
                     for (var z = -1; z <= 1; z += 2)
                     {
-                        result.Add((includePosition ? obj.center : Vector3.zero) + new Vector3(halfSize.x * x, halfSize.y * y , halfSize.z * z));
+                        result.Add((includePosition ? obj.center : Vector3.zero) + new Vector3(halfSize.x * x, halfSize.y * y, halfSize.z * z));
                     }
                 }
             }

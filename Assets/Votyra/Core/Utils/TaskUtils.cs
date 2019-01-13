@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using UniRx.Async;
 using UniRx;
+using UniRx.Async;
 using UnityEngine;
 
 namespace Votyra.Core.Utils
@@ -13,25 +12,21 @@ namespace Votyra.Core.Utils
         public static void RunOnMainThread(Action action)
         {
             if (MainThreadDispatcher.IsInMainThread)
-            {
                 action();
-            }
             else
-            {
                 RunOnMainThreadAsync(action)
                     .Wait();
-            }
         }
 
         public static Task RunOrNot(Action action, bool async)
         {
             if (async)
-                return Task.Run(action);
-            else
             {
-                action();
-                return Task.CompletedTask;
+                return Task.Run(action);
             }
+
+            action();
+            return Task.CompletedTask;
         }
 
         public static Task RunOnMainThreadAsync(Action action)
@@ -63,9 +58,9 @@ namespace Votyra.Core.Utils
                 .ConfiguraAwaitFluent(false);
         }
 
-        public static  Task<T> RunOnMainThreadAsync<T>(Func<T> action)
+        public static Task<T> RunOnMainThreadAsync<T>(Func<T> action)
         {
-           return Task.Run(async () =>
+            return Task.Run(async () =>
                 {
                     await UniTask.SwitchToMainThread();
                     return action();
@@ -78,7 +73,7 @@ namespace Votyra.Core.Utils
             return Task.Run(async () =>
                 {
                     await UniTask.SwitchToMainThread();
-                   return await action();
+                    return await action();
                 })
                 .ConfiguraAwaitFluent(false);
         }
@@ -109,14 +104,11 @@ namespace Votyra.Core.Utils
                 get
                 {
                     if (_instance == null)
-                    {
                         _instance = new GameObject(nameof(CoroutineRunner)).AddComponent<CoroutineRunner>();
-                    }
 
                     return _instance;
                 }
             }
-
         }
     }
 }

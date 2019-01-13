@@ -4,12 +4,12 @@ using Zenject;
 
 namespace Votyra.Core.Unity.Painting
 {
-    public class PaintingIMGui:MonoBehaviour
+    public class PaintingIMGui : MonoBehaviour
     {
         [Inject]
-        private IPaintingModel _paintingModel;
-        
-       protected void OnGUI()
+        protected IPaintingModel _paintingModel;
+
+        protected void OnGUI()
         {
             foreach (var cmd in _paintingModel.PaintCommands.Value)
             {
@@ -17,11 +17,10 @@ namespace Votyra.Core.Unity.Painting
                     .Name;
                 if (!GUILayout.Button(label))
                     continue;
-                
+
                 var isSelected = _paintingModel.SelectedPaintCommand.Value == cmd;
-                _paintingModel.SelectedPaintCommand.OnNext( isSelected ? null : cmd);
+                _paintingModel.SelectedPaintCommand.OnNext(isSelected ? null : cmd);
             }
-            
         }
     }
 }

@@ -11,39 +11,37 @@ namespace Votyra.Plannar
     //TODO: move to floats
     public class FrameData2iProvider : IFrameDataProvider2i
     {
-        [InjectOptional]
         private readonly IImage2fPostProcessor _image2fPostProcessor;
-
-        [Inject]
-        protected IImage2fProvider _imageProvider;
-
-        [Inject]
-        protected ITerrainConfig _terrainConfig;
-
-        [Inject]
-        protected IInterpolationConfig _interpolationConfig;
-
-        [InjectOptional]
-        protected IMask2eProvider _maskProvider;
-
-        [Inject(Id = "root")]
-        protected GameObject _root;
+        private readonly IImage2fProvider _imageProvider;
+        private readonly IInterpolationConfig _interpolationConfig;
+        private readonly IMask2eProvider _maskProvider;
+        private readonly GameObject _root;
+        private readonly ITerrainConfig _terrainConfig;
 
         private Matrix4x4 _previousCameraMatrix;
 
-        public IFrameData2i GetCurrentFrameData(int meshTopologyDistance,bool computedOnce)
+        [Inject]
+        public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [InjectOptional] IMask2eProvider maskProvider, [Inject(Id = "root")] GameObject root)
+        {
+            _image2fPostProcessor = image2FPostProcessor;
+            _imageProvider = imageProvider;
+            _terrainConfig = terrainConfig;
+            _interpolationConfig = interpolationConfig;
+            _maskProvider = maskProvider;
+            _root = root;
+        }
+
+        public IFrameData2i GetCurrentFrameData(int meshTopologyDistance, bool computedOnce)
         {
             var camera = CameraUtils.MainCamera;
             var image = _imageProvider.CreateImage();
 
             var localToWorldMatrix = camera.transform.localToWorldMatrix;
             if (computedOnce && localToWorldMatrix == _previousCameraMatrix && (image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero)
-            {
                 return null;
-            }
 
             _previousCameraMatrix = localToWorldMatrix;
-            
+
             var container = _root.gameObject;
 
             image = _image2fPostProcessor?.PostProcess(image) ?? image;
