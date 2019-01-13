@@ -121,7 +121,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             pooledMesh = cleanPooledMesh;
             mesh = pooledMesh.Mesh;
             mesh.Initialize(null, null);
-            mesh.Reset();
+            mesh.Reset(Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f()));
         }
 
         private static Tuple<SampledData3b, IReadOnlyCollection<Triangle3f>> ChooseTrianglesForCell(SampledData3b data)

@@ -13,9 +13,20 @@ namespace Votyra.Core.Images
 
         private readonly IImage2fPostProcessor _image2fPostProcessor;
 
-        private readonly List<LockableMatrix2<float>> _readonlyMatrices = new List<LockableMatrix2<float>>();
+        private readonly List<MatrixImage2f> _readonlyMatrices = new List<MatrixImage2f>();
         private Area1f _editableRangeZ;
-        private MatrixImage2f _image;
+        private MatrixImage2f _preparedImage;
+
+        private MatrixImage2f PreparedImage
+        {
+            get => _preparedImage;
+            set
+            {
+                _preparedImage?.FinishUsing();
+                _preparedImage = value;
+                _preparedImage?.StartUsing();
+            }
+        }
         private Range2i? _invalidatedArea;
 
         public EditableMatrixImage2f([InjectOptional] IImageConstraint2i constraint, IImageConfig imageConfig)
@@ -29,40 +40,33 @@ namespace Votyra.Core.Images
 
         public IImage2f CreateImage()
         {
-            if (_invalidatedArea == Range2i.Zero && _image.InvalidatedArea == Range2i.Zero)
+            if (_invalidatedArea == Range2i.Zero && PreparedImage.InvalidatedArea == Range2i.Zero)
             {
             }
             else if (_invalidatedArea == Range2i.Zero)
             {
-                _image?.Dispose();
-                _image = new MatrixImage2f(_image.Image, Range2i.Zero, _image.RangeZ);
+                PreparedImage = new MatrixImage2f(PreparedImage, Range2i.Zero, PreparedImage.RangeZ);
             }
-            else if (_invalidatedArea.HasValue || _image == null)
+            else if (_invalidatedArea.HasValue || PreparedImage == null)
             {
                 _invalidatedArea = _invalidatedArea ?? _editableMatrix.Size.ToRange2i();
                 // Debug.LogFormat("Update readonlyCount:{0}", _readonlyMatrices.Count);
-
-                var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
-                if (readonlyMatrix == null)
+                
+                
+                PreparedImage = _readonlyMatrices.FirstOrDefault(o => !o.IsBeingUsed);
+                if (PreparedImage == null)
                 {
-                    readonlyMatrix = new LockableMatrix2<float>(_editableMatrix.Size);
-                    _readonlyMatrices.Add(readonlyMatrix);
+                    PreparedImage = new MatrixImage2f(_editableMatrix, _invalidatedArea.Value, _editableRangeZ);
+                    _invalidatedArea = Range2i.Zero;
+                    _readonlyMatrices.Add(PreparedImage);
                 }
-
-                //sync
-                _editableMatrix.ForeachPointExlusive(i =>
+                else
                 {
-                    readonlyMatrix[i] = _editableMatrix[i];
-                });
-
-                // Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
-
-                _image?.Dispose();
-                _image = new MatrixImage2f(readonlyMatrix, _invalidatedArea.Value, _editableRangeZ);
-                _invalidatedArea = Range2i.Zero;
+                    PreparedImage.UpdateImage(_editableMatrix);
+                    _invalidatedArea = Range2i.Zero;
+                }
             }
-
-            return _image;
+            return PreparedImage;
         }
 
         private void FixImage(Range2i invalidatedImageArea, Direction direction)

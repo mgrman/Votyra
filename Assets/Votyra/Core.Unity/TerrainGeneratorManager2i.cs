@@ -71,7 +71,7 @@ namespace Votyra.Core
             if (_onDestroyCts.IsCancellationRequested || !_stateModel.IsEnabled || !_waitForTask.IsCompleted)
                 return;
 
-             _context = _frameDataProvider.GetCurrentFrameData(_meshTopologyDistance, _computedOnce);
+            _context = _frameDataProvider.GetCurrentFrameData(_meshTopologyDistance, _computedOnce);
 
             if (_context != null)
             {
@@ -82,10 +82,9 @@ namespace Votyra.Core
 
         private Task UpdateTerrain()
         {
-            IFrameData2i context= _context;
-            return TaskUtils.RunOrNot(()=>UpdateTerrain(context, _onDestroyCts.Token),_terrainConfig.Async);
+            IFrameData2i context = _context;
+            return TaskUtils.RunOrNot(() => UpdateTerrain(context, _onDestroyCts.Token), _terrainConfig.Async);
         }
-        
 
 
         private void UpdateTerrain(IFrameData2i context, CancellationToken token)
@@ -113,10 +112,8 @@ namespace Votyra.Core
                 _activeGroups.Add(newGroup, CreateGroupManager(token, newGroup));
             }, removedGroup =>
             {
-                if (!_activeGroups.TryGetValue(removedGroup, out var groupManager))
-                    return;
-                _activeGroups.Remove(removedGroup);
-                groupManager?.Dispose();
+                _activeGroups.TryRemoveAndReturnValue(removedGroup)
+                    ?.Dispose();
             });
         }
 
@@ -213,14 +210,10 @@ namespace Votyra.Core
             if (_token.IsCancellationRequested)
                 return;
 
-            if (_contextToProcess != null)
+            if (ContextToProcess != null)
             {
-                var context = _contextToProcess;
-                _contextToProcess = null;
-                _contextToProcessDisposed = true;
-
-                UpdateGroup(context, _token);
-                context.Deactivate();
+                UpdateGroup(ContextToProcess, _token);
+                ContextToProcess = null;
             }
         }
 
@@ -237,6 +230,8 @@ namespace Votyra.Core
 
     public class AsyncTerrainGroupGeneratorManager2i : TerrainGroupGeneratorManager2i
     {
+        private Task _activeTask = Task.CompletedTask;
+
         public AsyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory, Vector2i @group, CancellationToken token, IPooledTerrainMesh pooledMesh, Action<IFrameData2i, Vector2i, ITerrainMesh> generateUnityMesh)
             : base(cellInGroupCount, unityDataFactory, @group, token, pooledMesh, generateUnityMesh)
         {
@@ -247,17 +242,21 @@ namespace Votyra.Core
             if (_token.IsCancellationRequested)
                 return;
 
-            if (!_activeTask.IsCompleted || _contextToProcess == null)
+            if (!_activeTask.IsCompleted || ContextToProcess == null)
                 return;
 
-            var context = _contextToProcess;
-            _contextToProcess = null;
-            _contextToProcessDisposed = true;
+            var context = GetFrameDataWithOwnership();
 
             _activeTask = Task.Run(async () =>
             {
-                await UpdateGroupAsync(context, _token);
-                context.Deactivate();
+                try
+                {
+                    await UpdateGroupAsync(context, _token);
+                }
+                finally
+                {
+                    context?.Deactivate();
+                }
             });
             _activeTask.ConfigureAwait(false);
 
@@ -293,15 +292,32 @@ namespace Votyra.Core
     {
         protected readonly CancellationTokenSource _cts;
         protected readonly Vector2i _group;
-
         protected readonly Range2i _range;
         protected readonly CancellationToken _token;
         protected readonly Func<GameObject> _unityDataFactory;
         protected readonly Action<IFrameData2i, Vector2i, ITerrainMesh> _generateUnityMesh;
         protected readonly IPooledTerrainMesh _pooledMesh;
-        protected Task _activeTask = Task.CompletedTask;
-        protected IFrameData2i _contextToProcess;
-        protected bool _contextToProcessDisposed;
+
+        private IFrameData2i _contextToProcess;
+
+        protected IFrameData2i ContextToProcess
+        {
+            get => _contextToProcess;
+            set
+            {
+                _contextToProcess?.Deactivate();
+                _contextToProcess = value;
+                _contextToProcess?.Activate();
+            }
+        }
+
+        protected IFrameData2i GetFrameDataWithOwnership()
+        {
+            var contextToProcess = _contextToProcess;
+            _contextToProcess = null;
+            return contextToProcess;
+        }
+
         protected GameObject _unityData;
 
         private bool _updatedOnce;
@@ -327,30 +343,17 @@ namespace Votyra.Core
                 return;
             _updatedOnce = true;
 
-            TryDeactiveContextToProcess();
-            context.Activate();
-            _contextToProcess = context;
-            _contextToProcessDisposed = false;
+            ContextToProcess = context;
 
             UpdateGroup();
         }
-
-        private void TryDeactiveContextToProcess()
-        {
-            if (!_contextToProcessDisposed)
-            {
-                _contextToProcess?.Deactivate();
-                _contextToProcessDisposed = true;
-            }
-        }
-
 
         protected abstract void UpdateGroup();
 
 
         protected void UpdateTerrainMesh(IFrameData2i context)
         {
-            _pooledMesh.Mesh.Reset();
+            _pooledMesh.Mesh.Reset(Area3f.FromMinAndSize((_group * context.CellInGroupCount).ToVector3f(context.RangeZ.Min),context.CellInGroupCount.ToVector3f(context.RangeZ.Size)));
             _generateUnityMesh(context, _group, _pooledMesh.Mesh);
             _pooledMesh.Mesh.FinalizeMesh();
         }
@@ -365,7 +368,7 @@ namespace Votyra.Core
 
         public virtual void Dispose()
         {
-            TryDeactiveContextToProcess();
+            ContextToProcess = null;
             _cts.Cancel();
             _pooledMesh.Dispose();
         }

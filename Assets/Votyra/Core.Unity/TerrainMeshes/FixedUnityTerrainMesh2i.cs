@@ -9,10 +9,8 @@ namespace Votyra.Core.TerrainMeshes
     public class FixedUnityTerrainMesh2i : ITerrainMeshWithFixedCapacity
     {
         private int _counter;
-        private bool _reset;
-        private Bounds _meshBounds;
 
-        public Bounds MeshBounds => _meshBounds;
+        public Bounds MeshBounds { get; private set; }
 
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
         public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
@@ -46,11 +44,12 @@ namespace Votyra.Core.TerrainMeshes
             UVAdjustor = uvAdjustor;
         }
 
-        public void Reset()
+        public void Reset(Area3f area)
         {
+            MeshBounds = area.ToBounds();
             _counter = 0;
-            _reset = true;
         }
+        
 
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
         {
@@ -72,6 +71,7 @@ namespace Votyra.Core.TerrainMeshes
                 posBu = posB.ToVector3();
                 posCu = posC.ToVector3();
             }
+            
 
             Vector2 uvAu;
             Vector2 uvBu;
@@ -91,21 +91,6 @@ namespace Votyra.Core.TerrainMeshes
                 uvBu = posB.XY.ToVector2();
                 uvCu = posC.XY.ToVector2();
             }
-
-            Bounds meshBounds;
-            if (_reset)
-            {
-                meshBounds = new Bounds(posAu, Vector3.zero);
-            }
-            else
-            {
-                meshBounds = _meshBounds;
-            }
-            meshBounds.Encapsulate(posAu);
-            meshBounds.Encapsulate(posBu);
-            meshBounds.Encapsulate(posCu);
-            _meshBounds = meshBounds;
-            _reset = false;
 
             var side1 = posBu - posAu;
             var side2 = posCu - posAu;

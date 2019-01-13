@@ -8,9 +8,6 @@ namespace Votyra.Core.TerrainMeshes
 {
     public class ExpandingUnityTerrainMesh : ITerrainMesh
     {
-        private Bounds _meshBounds;
-        private bool _reset = true;
-
         public ExpandingUnityTerrainMesh()
         {
             Vertices = new List<Vector3>();
@@ -19,7 +16,7 @@ namespace Votyra.Core.TerrainMeshes
             Normals = new List<Vector3>();
         }
 
-        public Bounds MeshBounds => _meshBounds;
+        public Bounds MeshBounds { get; private set; }
 
         private Func<Vector3f, Vector3f> VertexPostProcessor { get; set; }
         private Func<Vector2f, Vector2f> UVAdjustor { get; set; }
@@ -38,9 +35,9 @@ namespace Votyra.Core.TerrainMeshes
             UVAdjustor = uvAdjustor;
         }
 
-        public void Reset()
+        public void Reset(Area3f area)
         {
-            _reset = true;
+            MeshBounds = area.ToBounds();
             TriangleCount = 0;
             VertexCount = 0;
             Vertices.Clear();
@@ -48,7 +45,7 @@ namespace Votyra.Core.TerrainMeshes
             Indices.Clear();
             Normals.Clear();
         }
-
+        
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
         {
             Vector3 posAu;
@@ -88,22 +85,7 @@ namespace Votyra.Core.TerrainMeshes
                 uvBu = posB.XY.ToVector2();
                 uvCu = posC.XY.ToVector2();
             }
-
-            Bounds meshBounds;
-            if (_reset)
-            {
-                meshBounds = new Bounds(posAu, Vector3.zero);
-            }
-            else
-            {
-                meshBounds = _meshBounds;
-            }
-            meshBounds.Encapsulate(posAu);
-            meshBounds.Encapsulate(posBu);
-            meshBounds.Encapsulate(posCu);
-            _meshBounds = meshBounds;
-            _reset = false;
-
+            
             var side1 = posBu - posAu;
             var side2 = posCu - posAu;
             var normal = Vector3.Cross(side1, side2)

@@ -3,26 +3,40 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class MatrixImage2f : IImage2f, IInitializableImage, IImageInvalidatableImage2, IDisposable
+    public class MatrixImage2f : IImage2f, IInitializableImage, IImageInvalidatableImage2
     {
-        public MatrixImage2f(LockableMatrix2<float> values, Range2i invalidatedArea, Area1f rangeZ)
+        private int usingCounter;
+
+        public MatrixImage2f(MatrixImage2f template, Range2i invalidatedArea, Area1f rangeZ)
         {
-            Image = values;
+            _image = template._image;
             InvalidatedArea = invalidatedArea;
             RangeZ = rangeZ;
         }
 
-        public LockableMatrix2<float> Image { get; }
-
-        public void Dispose()
+        public MatrixImage2f(Matrix2<float> template, Range2i invalidatedArea, Area1f rangeZ)
         {
-            if (Image.IsLocked)
-                Image.Unlock(this);
+            _image= new Matrix2<float>(template.Size);
+            InvalidatedArea = invalidatedArea;
+            RangeZ = rangeZ;
+
+            UpdateImage(template);
         }
+
+        public void UpdateImage(Matrix2<float> template)
+        {
+
+            template.ForeachPointExlusive(i =>
+            {
+                _image[i] = template[i];
+            });
+        }
+
+        private readonly Matrix2<float> _image;
 
         public Area1f RangeZ { get; }
 
-        public float Sample(Vector2i point) => Image.TryGet(point, 0f);
+        public float Sample(Vector2i point) => _image.TryGet(point, 0f);
 
         public IPoolableMatrix2<float> SampleArea(Range2i area)
         {
@@ -37,14 +51,16 @@ namespace Votyra.Core.Images
 
         public Range2i InvalidatedArea { get; }
 
+        public bool IsBeingUsed => usingCounter > 0;
+
         public void StartUsing()
         {
-            Image.Lock(this);
+            usingCounter++;
         }
 
         public void FinishUsing()
         {
-            Image.Unlock(this);
+            usingCounter--;
         }
     }
 }
