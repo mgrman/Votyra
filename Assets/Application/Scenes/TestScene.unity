@@ -193,6 +193,7 @@ GameObject:
   - component: {fileID: 873199101}
   - component: {fileID: 873199100}
   - component: {fileID: 873199103}
+  - component: {fileID: 873199104}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -266,105 +267,117 @@ MonoBehaviour:
   - {fileID: 1196856220923246, guid: af727f8a56b1bb740a7f6c600fb6516f, type: 3}
   Config:
   - Id: imageSize
+    JsonValue: '{"X":100,"Y":100,"Z":100}'
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 0}
-    JsonValue: '{"X":100,"Y":100,"Z":100}'
   - Id: initialData
+    JsonValue: 
     TypeAssemblyQualifiedName: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
-    JsonValue: 
   - Id: initialDataScale
+    JsonValue: '{"X":1.0,"Y":1.0,"Z":20.0}'
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3f, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 0}
-    JsonValue: '{"X":1.0,"Y":1.0,"Z":20.0}'
   - Id: zeroFromInitialStateIsNull
+    JsonValue: false
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-    JsonValue: false
   - Id: cellInGroupCount
+    JsonValue: '{"X":5,"Y":5,"Z":5}'
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 0}
-    JsonValue: '{"X":5,"Y":5,"Z":5}'
   - Id: flipTriangles
+    JsonValue: false
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-    JsonValue: false
   - Id: drawBounds
-    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    UnityValue: {fileID: 0}
     JsonValue: false
-  - Id: async
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
+  - Id: async
     JsonValue: true
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
   - Id: material
+    JsonValue: 
     TypeAssemblyQualifiedName: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
-    JsonValue: 
   - Id: materialWalls
+    JsonValue: 
     TypeAssemblyQualifiedName: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
-    JsonValue: 
   - Id: activeAlgorithm
+    JsonValue: 2
     TypeAssemblyQualifiedName: Votyra.Core.IntepolationAlgorithm, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 0}
-    JsonValue: 2
   - Id: dynamicMeshes
+    JsonValue: false
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-    JsonValue: false
   - Id: imageSubdivision
+    JsonValue: 1
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-    JsonValue: 1
   - Id: meshSubdivision
+    JsonValue: 4
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-    JsonValue: 4
   - Id: scaleFactor
-    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    UnityValue: {fileID: 0}
     JsonValue: 1
-  - Id: subdivision
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
+  - Id: subdivision
     JsonValue: 4
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
   - Id: noiseScale
+    JsonValue: '{"X":0.0,"Y":0.0,"Z":0.0}'
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3f, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 0}
-    JsonValue: '{"X":0.0,"Y":0.0,"Z":0.0}'
   - Id: maskLimit
-    TypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    UnityValue: {fileID: 0}
     JsonValue: 0.0
-  - Id: wallSquishFactor
     TypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
+  - Id: wallSquishFactor
     JsonValue: 0.8
+    TypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValue: {fileID: 0}
   - Id: ensureFlat
+    JsonValue: false
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-    JsonValue: false
+--- !u!114 &873199104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 873199099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad4f4b5d62674d09a5dd6572b0aa80c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &886990423
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,7 +501,6 @@ GameObject:
   - component: {fileID: 1196365547}
   - component: {fileID: 1196365551}
   - component: {fileID: 1196365550}
-  - component: {fileID: 1196365548}
   - component: {fileID: 1196365552}
   - component: {fileID: 1196365553}
   m_Layer: 0
@@ -515,14 +527,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
---- !u!81 &1196365548
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1196365546}
-  m_Enabled: 1
 --- !u!124 &1196365550
 Behaviour:
   m_ObjectHideFlags: 0

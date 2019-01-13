@@ -79,7 +79,7 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<MakeOrRemoveHole>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<PaintingIMGui>()
+            Container.BindInterfacesAndSelfTo<PaintingGui>()
                 .FromNewComponentOn(gameObject)
                 .AsSingle()
                 .NonLazy();

@@ -9,9 +9,9 @@ namespace Votyra.Core.Painting
 {
     public class PaintingSelectionManager : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
-        protected const int maxDistBig = 3;
+        private const int MaxDistBig = 3;
 
-        protected const int maxDistSmall = 1;
+        private const int MaxDistSmall = 1;
 
         private PointerEventData _activePointerData;
 
@@ -23,6 +23,9 @@ namespace Votyra.Core.Painting
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            if(GUIUtility.hotControl!=0)
+                return;
+            
             if (_activePointerData != null)
                 return;
             _activePointerData = eventData;
@@ -35,15 +38,7 @@ namespace Votyra.Core.Painting
             _activePointerData = null;
         }
 
-        [Inject]
-        public void Initialize()
-        {
-        }
-
-        /// <summary>
-        ///     Update is called every frame, if the MonoBehaviour is enabled.
-        /// </summary>
-        private void Update()
+        protected void Update()
         {
             var invocationData = GetInvocationDataFromPointer(_activePointerData);
             _paintingModel.PaintInvocationData.OnNext(invocationData);
@@ -55,19 +50,18 @@ namespace Votyra.Core.Painting
             var worldPosition = eventData.pointerCurrentRaycast.worldPosition;
 
             var ray = new Ray(cameraPosition, worldPosition - cameraPosition);
-            var gameObject = eventData.pointerCurrentRaycast.gameObject;
-            if (gameObject == null)
+            var pointedGameObject = eventData.pointerCurrentRaycast.gameObject;
+            if (pointedGameObject == null)
                 return null;
-            var collider = gameObject.GetComponent<Collider>();
-            if (collider == null)
-                return null;
-
-            RaycastHit hitInfo;
-            if (!collider.Raycast(ray, out hitInfo, eventData.pointerCurrentRaycast.distance * 1.1f))
+            var pointerCollider = pointedGameObject.GetComponent<Collider>();
+            if (pointerCollider == null)
                 return null;
 
-            var textureCoord = hitInfo.textureCoord.ToVector2f();
-            return (_uvToImage?.ReverseUV(textureCoord) ?? textureCoord).RoundToVector2i();
+            if (!pointerCollider.Raycast(ray, out var hitInfo, eventData.pointerCurrentRaycast.distance * 1.1f))
+                return null;
+
+            var textureCoordinates = hitInfo.textureCoord.ToVector2f();
+            return (_uvToImage?.ReverseUV(textureCoordinates) ?? textureCoordinates).RoundToVector2i();
         }
 
         private PaintInvocationData? GetInvocationDataFromPointer(PointerEventData eventData)
@@ -81,18 +75,9 @@ namespace Votyra.Core.Painting
             return new PaintInvocationData(strength, imagePosition.Value);
         }
 
-        private int GetMultiplier()
-        {
-            if (Input.GetButton("InverseModifier"))
-                return -1;
-            return 1;
-        }
+        private static int GetMultiplier()=> Input.GetButton("InverseModifier") ? -1 : 1;
 
-        private int GetDistance()
-        {
-            if (Input.GetButton("ExtendedModifier"))
-                return maxDistBig;
-            return maxDistSmall;
-        }
+        private static int GetDistance()=>Input.GetButton("ExtendedModifier") ? MaxDistBig : MaxDistSmall;
+        
     }
 }
