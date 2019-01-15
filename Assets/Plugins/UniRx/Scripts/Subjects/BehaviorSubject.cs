@@ -3,7 +3,7 @@ using UniRx.InternalUtil;
 
 namespace UniRx
 {
-    public sealed class BehaviorSubject<T> : IBehaviorSubject<T>, IDisposable, IOptimizedObservable<T>
+    public sealed class BehaviorSubject<T> : ISubject<T>, IDisposable, IOptimizedObservable<T>
     {
         object observerLock = new object();
 

@@ -9,7 +9,7 @@ namespace Votyra.Core.Utils
         private static readonly Lazy<Camera> _mainCamera = new Lazy<Camera>(() =>
         {
             Camera camera = null;
-            TaskUtils.RunOnMainThread(() => camera = Camera.main);
+            MainThreadUtils.RunOnMainThread(() => camera = Camera.main);
             return camera;
         }, LazyThreadSafetyMode.ExecutionAndPublication);
 

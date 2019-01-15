@@ -111,5 +111,10 @@ namespace Votyra.Core.Utils
         public static int? RoundToInt(this decimal? f) => f.HasValue ? (int) Math.Round(f.Value) : (int?) null;
 
         public static float RoundToMultiple(this float val, float multiple) => (float) (Math.Round(val / multiple) * multiple);
+
+        public static float Lerp(float a, float b, float t)
+        {
+            return a + (b - a) * t;
+        }
     }
 }

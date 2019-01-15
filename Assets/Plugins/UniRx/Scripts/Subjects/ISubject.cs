@@ -12,8 +12,4 @@ namespace UniRx
     {
     }
 
-    public interface IBehaviorSubject<T> : ISubject<T>
-    {
-        T Value { get; }
-    }
 }

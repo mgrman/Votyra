@@ -3,6 +3,7 @@ using UnityEngine;
 using Votyra.Core;
 using Votyra.Core.Behaviours;
 using Votyra.Core.Images;
+using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
@@ -33,6 +34,8 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<MaterialConfig>()
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<InterpolationConfig>()
+                .AsSingle();
+            Container.BindInterfacesAndSelfTo<ConstraintConfig>()
                 .AsSingle();
 
             Container.BindInterfacesAndSelfTo<InitialStateSetter2f>()

@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using UniRx;
 
 namespace Votyra.Core
 {
-    public interface ITerrainManagerModel
+    public interface ITerrainManagerModel:INotifyPropertyChanged
     {
-        IBehaviorSubject<IEnumerable<TerrainAlgorithm>> AvailableAlgorithms { get; }
-        IBehaviorSubject<TerrainAlgorithm> ActiveAlgorithm { get; }
-        IBehaviorSubject<IReadOnlyCollection<ConfigItem>> Config { get; }
+        IEnumerable<TerrainAlgorithm> AvailableAlgorithms { get; set; }
+        TerrainAlgorithm ActiveAlgorithm { get; set; }
+        IReadOnlyCollection<ConfigItem> Config { get; set; }
     }
 }

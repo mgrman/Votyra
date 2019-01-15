@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using UniRx;
 using UnityEngine;
@@ -23,53 +24,58 @@ namespace Votyra.Core.Unity
         [SerializeField]
         public ConfigItem[] Config;
 
+        private Context _context;
+
         [Inject]
         public void Initialize(ITerrainManagerModel terrainManagerModel, Context context)
         {
             _terrainManagerModel = terrainManagerModel;
-            var container = context.Container;
+            _context = context;
 
             UpdateModel();
 
-            _terrainManagerModel.ActiveAlgorithm.CombineLatest(_terrainManagerModel.Config, (activeAlgorithm, config) =>
+            _terrainManagerModel.PropertyChanged += OnTerrainManagerModelOnPropertyChanged;
+            OnTerrainManagerModelOnPropertyChanged();
+        }
+
+        void OnTerrainManagerModelOnPropertyChanged(object o, PropertyChangedEventArgs e)
+        {
+            OnTerrainManagerModelOnPropertyChanged();
+        }
+
+        private void OnTerrainManagerModelOnPropertyChanged()
+        {
+            var container = _context.Container;
+            try
+            {
+                if (_activeTerrainRoot != null)
                 {
-                    return new {activeAlgorithm, config};
-                })
-                .Throttle(TimeSpan.FromMilliseconds(200))
-                .Synchronize()
-                .Subscribe(data =>
-                {
-                    try
+                    _activeTerrainRoot.Destroy();
+                    _activeTerrainRoot = null;
+                }
+
+                if (_terrainManagerModel.ActiveAlgorithm == null || _terrainManagerModel.ActiveAlgorithm.Prefab == null)
+                    return;
+
+                if (_terrainManagerModel.Config != null)
+                    foreach (var configItem in _terrainManagerModel.Config)
                     {
-                        if (_activeTerrainRoot != null)
-                        {
-                            _activeTerrainRoot.Destroy();
-                            _activeTerrainRoot = null;
-                        }
+                        var type = configItem.Type;
+                        var value = configItem.Value;
 
-                        if (data.activeAlgorithm == null || data.activeAlgorithm.Prefab == null)
-                            return;
-
-                        if (data.config != null)
-                            foreach (var configItem in data.config)
-                            {
-                                var type = configItem.Type;
-                                var value = configItem.Value;
-
-                                container.UnbindId(type, configItem.Id);
-                                container.Bind(type)
-                                    .WithId(configItem.Id)
-                                    .FromInstance(value);
-                            }
-
-                        var instance = container.InstantiatePrefab(data.activeAlgorithm.Prefab, context.transform);
-                        _activeTerrainRoot = instance;
+                        container.UnbindId(type, configItem.Id);
+                        container.Bind(type)
+                            .WithId(configItem.Id)
+                            .FromInstance(value);
                     }
-                    catch (Exception ex)
-                    {
-                        Debug.LogException(ex);
-                    }
-                });
+
+                var instance = container.InstantiatePrefab(_terrainManagerModel.ActiveAlgorithm.Prefab, _context.transform);
+                _activeTerrainRoot = instance;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
         }
 
         protected void OnValidate()
@@ -132,8 +138,8 @@ namespace Votyra.Core.Unity
             var availableAlgorithms = _availableTerrainAlgorithms.EmptyIfNull()
                 .Select(o => new TerrainAlgorithm(o.name, o))
                 .ToArray();
-            if (!_terrainManagerModel.AvailableAlgorithms.Value.SequenceEqual(availableAlgorithms))
-                _terrainManagerModel.AvailableAlgorithms.OnNext(availableAlgorithms);
+            if (!_terrainManagerModel.AvailableAlgorithms.SequenceEqual(availableAlgorithms))
+                _terrainManagerModel.AvailableAlgorithms = availableAlgorithms;
 
             TerrainAlgorithm activeAlgorithm;
             if (_activeTerrainAlgorithm < 0 || _activeTerrainAlgorithm >= availableAlgorithms.Length)
@@ -141,11 +147,11 @@ namespace Votyra.Core.Unity
             else
                 activeAlgorithm = availableAlgorithms.Skip(_activeTerrainAlgorithm)
                     .FirstOrDefault();
-            if (_terrainManagerModel.ActiveAlgorithm.Value != activeAlgorithm)
-                _terrainManagerModel.ActiveAlgorithm.OnNext(activeAlgorithm);
+            if (_terrainManagerModel.ActiveAlgorithm != activeAlgorithm)
+                _terrainManagerModel.ActiveAlgorithm = activeAlgorithm;
 
-            if (!(_terrainManagerModel.Config.Value ?? Enumerable.Empty<ConfigItem>()).SequenceEqual(Config ?? Enumerable.Empty<ConfigItem>()))
-                _terrainManagerModel.Config.OnNext(Config.ToArray());
+            if (!(_terrainManagerModel.Config ?? Enumerable.Empty<ConfigItem>()).SequenceEqual(Config ?? Enumerable.Empty<ConfigItem>()))
+                _terrainManagerModel.Config = Config.ToArray();
         }
     }
 }

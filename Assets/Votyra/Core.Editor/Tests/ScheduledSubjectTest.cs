@@ -60,53 +60,53 @@ namespace Votyra.Core
             TestUtils.AssertListEquality(expectedResult, handlerCalls);
         }
 
-        [Test]
-        public void ScheduledSubject_OnNext_HandlersAreSerialized()
-        {
-            TestUtils.UnityAsyncTest(async () =>
-            {
-                var handlerCalls = new List<Tuple<int, string, string>>();
-
-                var subject = new BehaviorSubject<string>(default(string)).MakeScheduledOnMainThread();
-
-                var mainThread = Thread.CurrentThread;
-
-                subject.Subscribe(x =>
-                {
-                    handlerCalls.Add(Tuple.Create(0, x, subject.Value));
-                    Assert.AreEqual(mainThread, Thread.CurrentThread);
-
-                    if (x == "val1")
-                        subject.OnNext("val2");
-                });
-
-                subject.Subscribe(x =>
-                {
-                    handlerCalls.Add(Tuple.Create(1, x, subject.Value));
-                    Assert.AreEqual(mainThread, Thread.CurrentThread);
-                });
-
-                await Task.Delay(100);
-
-                subject.OnNext("val1");
-
-                for (var i = 0; i < 10; i++)
-                {
-                    await Task.Delay(100);
-                }
-
-                var expectedResult = new List<Tuple<int, string, string>>
-                {
-                    Tuple.Create(0, null as string, null as string),
-                    Tuple.Create(1, null as string, null as string),
-                    Tuple.Create(0, "val1", "val1"),
-                    Tuple.Create(1, "val1", "val1"),
-                    Tuple.Create(0, "val2", "val2"),
-                    Tuple.Create(1, "val2", "val2")
-                };
-
-                TestUtils.AssertListEquality(expectedResult, handlerCalls);
-            });
-        }
+        // [Test]
+        // public void ScheduledSubject_OnNext_HandlersAreSerialized()
+        // {
+        //     TestUtils.UnityAsyncTest(async () =>
+        //     {
+        //         var handlerCalls = new List<Tuple<int, string, string>>();
+        //
+        //         var subject = new BehaviorSubject<string>(default(string)).MakeScheduledOnMainThread();
+        //
+        //         var mainThread = Thread.CurrentThread;
+        //
+        //         subject.Subscribe(x =>
+        //         {
+        //             handlerCalls.Add(Tuple.Create(0, x, subject));
+        //             Assert.AreEqual(mainThread, Thread.CurrentThread);
+        //
+        //             if (x == "val1")
+        //                 subject.OnNext("val2");
+        //         });
+        //
+        //         subject.Subscribe(x =>
+        //         {
+        //             handlerCalls.Add(Tuple.Create(1, x, subject.Value));
+        //             Assert.AreEqual(mainThread, Thread.CurrentThread);
+        //         });
+        //
+        //         await Task.Delay(100);
+        //
+        //         subject.OnNext("val1");
+        //
+        //         for (var i = 0; i < 10; i++)
+        //         {
+        //             await Task.Delay(100);
+        //         }
+        //
+        //         var expectedResult = new List<Tuple<int, string, string>>
+        //         {
+        //             Tuple.Create(0, null as string, null as string),
+        //             Tuple.Create(1, null as string, null as string),
+        //             Tuple.Create(0, "val1", "val1"),
+        //             Tuple.Create(1, "val1", "val1"),
+        //             Tuple.Create(0, "val2", "val2"),
+        //             Tuple.Create(1, "val2", "val2")
+        //         };
+        //
+        //         TestUtils.AssertListEquality(expectedResult, handlerCalls);
+        //     });
+        // }
     }
 }

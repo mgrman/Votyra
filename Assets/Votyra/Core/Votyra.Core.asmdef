@@ -1,12 +1,12 @@
 {
     "name": "Votyra.Core",
-    "references": [
-        "UniRx",
-        "Zenject",
-        "UniRx.Async"
-    ],
+    "references": [],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": []
 }

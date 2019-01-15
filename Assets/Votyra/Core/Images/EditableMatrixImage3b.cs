@@ -3,8 +3,6 @@ using System.Linq;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
-using Zenject;
-
 namespace Votyra.Core.Images
 {
     public class EditableMatrixImage3b : IImage3bProvider, IEditableImage3b
@@ -17,7 +15,7 @@ namespace Votyra.Core.Images
         private MatrixImage3b _image;
         private Range3i? _invalidatedArea;
 
-        public EditableMatrixImage3b([InjectOptional] IImageConstraint3b constraint, IImageConfig imageConfig, IThreadSafeLogger logger)
+        public EditableMatrixImage3b(IImageConstraint3b constraint, IImageConfig imageConfig, IThreadSafeLogger logger)
         {
             _constraint = constraint;
             _editableMatrix = new Matrix3<bool>(imageConfig.ImageSize);

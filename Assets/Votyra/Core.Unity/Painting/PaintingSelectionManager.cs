@@ -41,7 +41,16 @@ namespace Votyra.Core.Painting
         protected void Update()
         {
             var invocationData = GetInvocationDataFromPointer(_activePointerData);
-            _paintingModel.PaintInvocationData.OnNext(invocationData);
+            var command = _paintingModel.SelectedPaintCommand;
+
+            if (command != null && invocationData != null)
+            {
+                command.UpdateInvocationValues(invocationData.Value.ImagePosition, invocationData.Value.Strength);
+            }
+            else
+            {
+                command?.StopInvocation();
+            }
         }
 
         private Vector2i? GetImagePosition(PointerEventData eventData)

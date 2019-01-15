@@ -1,3 +1,4 @@
+using UniRx;
 using UnityEngine;
 using Votyra.Core.Logging;
 using Votyra.Core.Profiling;
@@ -9,6 +10,7 @@ namespace Votyra.Core.Unity
     {
         public override void InstallBindings()
         {
+            MainThreadDispatcher.Initialize();
             Container.BindInterfacesAndSelfTo<TerrainManagerModel>()
                 .AsSingle();
 

@@ -15,14 +15,14 @@ namespace Votyra.Core.Unity.Painting
         {
             GUILayout.BeginArea(new Rect((Screen.width ) - 200, 0, 200, Screen.height));
 
-            foreach (var cmd in _paintingModel.PaintCommands.Value)
+            foreach (var cmd in _paintingModel.PaintCommands)
             {
                 var label = cmd.GetTypeDisplayName();
                 if (!GUILayout.Button(label,GUILayout.Width(200)))
                     continue;
 
-                var isSelected = _paintingModel.SelectedPaintCommand.Value == cmd;
-                _paintingModel.SelectedPaintCommand.OnNext(isSelected ? null : cmd);
+                var isSelected = _paintingModel.SelectedPaintCommand == cmd;
+                _paintingModel.SelectedPaintCommand=isSelected ? null : cmd;
             }
 
             GUILayout.EndArea();

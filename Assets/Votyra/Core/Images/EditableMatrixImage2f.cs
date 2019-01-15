@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.Models;
-using Zenject;
 
 namespace Votyra.Core.Images
 {
@@ -18,7 +17,7 @@ namespace Votyra.Core.Images
         private Range2i? _invalidatedArea;
         private MatrixImage2f _preparedImage;
 
-        public EditableMatrixImage2f([InjectOptional] IImageConstraint2i constraint, IImageConfig imageConfig)
+        public EditableMatrixImage2f(IImageConstraint2i constraint, IImageConfig imageConfig)
         {
             _constraint = constraint;
             _editableMatrix = new Matrix2<float>(imageConfig.ImageSize.XY);

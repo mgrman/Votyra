@@ -2,20 +2,22 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using Votyra.Core.Logging;
 
 namespace Votyra.Core.Models
 {
     public class TileMap2i
     {
+        private readonly IThreadSafeLogger _logger;
         private readonly IReadOnlyDictionary<SampledData2i, SampledData2i> _tileMap;
 
-        public TileMap2i(IEnumerable<SampledData2i> templates)
+        public TileMap2i(IEnumerable<SampledData2i> templates,IThreadSafeLogger logger)
         {
+            _logger = logger;
 #if VERBOSE
             foreach (var template in templates)
             {
-                Debug.Log($"{GetType().Name}-Template {template}");
+                _logger.LogMessage($"{GetType().Name}-Template {template}");
             }
 #endif
             Templates = templates.ToArray();
@@ -42,7 +44,7 @@ namespace Votyra.Core.Models
 #if VERBOSE
             foreach (var pair in _tileMap)
             {
-                Debug.Log($"{GetType().Name} {pair.Key} => {pair.Value}");
+                _logger.LogMessage($"{GetType().Name} {pair.Key} => {pair.Value}");
             }
 #endif
         }
@@ -60,7 +62,7 @@ namespace Votyra.Core.Models
             if (_tileMap.TryGetValue(key, out value))
                 return value;
 
-            Debug.Log($"{GetType().Name} missing tile {key}");
+            _logger.LogMessage($"{GetType().Name} missing tile {key}");
             return key;
 #endif
         }

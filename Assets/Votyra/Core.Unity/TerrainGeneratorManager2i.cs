@@ -274,7 +274,7 @@ namespace Votyra.Core
         public override void Dispose()
         {
             base.Dispose();
-            TaskUtils.RunOnMainThreadAsync(() =>
+            MainThreadUtils.RunOnMainThreadAsync(() =>
             {
                 _unityData.DestroyWithMeshes();
             });
