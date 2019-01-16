@@ -53,64 +53,45 @@ namespace Votyra.Core.TerrainMeshes
 
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
         {
-            Vector3 posAu;
-            Vector3 posBu;
-            Vector3 posCu;
             if (VertexPostProcessor != null)
             {
-                posAu = VertexPostProcessor(posA)
-                    .ToVector3();
-                posBu = VertexPostProcessor(posB)
-                    .ToVector3();
-                posCu = VertexPostProcessor(posC)
-                    .ToVector3();
-            }
-            else
-            {
-                posAu = posA.ToVector3();
-                posBu = posB.ToVector3();
-                posCu = posC.ToVector3();
+                posA = VertexPostProcessor(posA);
+                posB = VertexPostProcessor(posB);
+                posC = VertexPostProcessor(posC);
             }
 
-
-            Vector2 uvAu;
-            Vector2 uvBu;
-            Vector2 uvCu;
+            var uvA= posA.XY;
+            var uvB= posB.XY;
+            var uvC= posC.XY;
             if (UVAdjustor != null)
             {
-                uvAu = UVAdjustor(posA.XY)
-                    .ToVector2();
-                uvBu = UVAdjustor(posB.XY)
-                    .ToVector2();
-                uvCu = UVAdjustor(posC.XY)
-                    .ToVector2();
+                uvA = UVAdjustor(posA.XY);
+                uvB = UVAdjustor(posB.XY);
+                uvC = UVAdjustor(posC.XY);
             }
-            else
+
+            var side1 = posB - posA;
+            var side2 = posC - posA;
+            var normal = Vector3f.Cross(side1, side2)
+                .Normalized;
+
+            unsafe
             {
-                uvAu = posA.XY.ToVector2();
-                uvBu = posB.XY.ToVector2();
-                uvCu = posC.XY.ToVector2();
+                Vertices[_counter] = *(Vector3*) &posA;
+                UV[_counter] = *(Vector2*) &uvA;
+                Normals[_counter] = *(Vector3*) &normal;
+                _counter++;
+
+                Vertices[_counter] = *(Vector3*) &posB;
+                UV[_counter] = *(Vector2*) &uvB;
+                Normals[_counter] = *(Vector3*) &normal;
+                _counter++;
+
+                Vertices[_counter] = *(Vector3*) &posC;
+                UV[_counter] = *(Vector2*) &uvC;
+                Normals[_counter] = *(Vector3*) &normal;
+                _counter++;
             }
-
-            var side1 = posBu - posAu;
-            var side2 = posCu - posAu;
-            var normal = Vector3.Cross(side1, side2)
-                .normalized;
-
-            Vertices[_counter] = posAu;
-            UV[_counter] = uvAu;
-            Normals[_counter] = normal;
-            _counter++;
-
-            Vertices[_counter] = posBu;
-            UV[_counter] = uvBu;
-            Normals[_counter] = normal;
-            _counter++;
-
-            Vertices[_counter] = posCu;
-            UV[_counter] = uvCu;
-            Normals[_counter] = normal;
-            _counter++;
         }
 
         public void FinalizeMesh()

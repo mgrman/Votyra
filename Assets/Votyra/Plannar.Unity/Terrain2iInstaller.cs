@@ -49,7 +49,12 @@ namespace Votyra.Plannar.Unity
                 .AsSingle();
 
             Container.BindInterfacesAndSelfTo<InterpolatedUVPostProcessorStep>()
-                .AsSingle();
+                .AsSingle()
+                .When(c =>
+                {
+                    var config = c.Container.Resolve<IInterpolationConfig>();
+                    return config.ImageSubdivision>1;
+                });
             Container.Bind<ScaleAdjustor>()
                 .ToSelf()
                 .AsSingle()

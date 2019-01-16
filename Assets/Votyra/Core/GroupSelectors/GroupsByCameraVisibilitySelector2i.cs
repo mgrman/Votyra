@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.GroupSelectors
@@ -32,11 +31,12 @@ namespace Votyra.Core.GroupSelectors
             var cameraBoundsGroups = (localCameraBounds / cellInGroupCount.ToVector2f()).RoundToContain();
 
             var minZ = options.RangeZ.Min;
-            var boundsSize = cellInGroupCount.ToVector3f(options.RangeZ.Size);
+            var boundsSize = new Vector2f(cellInGroupCount.X, cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
 
             groupsToRecompute.RemoveWhere(group =>
             {
-                var groupBoundsMin = (group * cellInGroupCount).ToVector3f(minZ);
+                var groupBoundsMin = (group * cellInGroupCount).ToVector2f()
+                    .ToVector3f(minZ);
                 var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
                 var isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)
@@ -46,18 +46,17 @@ namespace Votyra.Core.GroupSelectors
                 return true;
             });
 
-            var min = cameraBoundsGroups.Min;
-            var max = cameraBoundsGroups.Max;
-            for (var ix = min.X; ix <= max.X; ix++)
+            for (int ix = cameraBoundsGroups.Min.X; ix < cameraBoundsGroups.Max.X; ix++)
             {
-                for (var iy = min.Y; iy <= max.Y; iy++)
+                for (int iy = cameraBoundsGroups.Min.Y; iy < cameraBoundsGroups.Max.Y; iy++)
                 {
-                    var group=new Vector2i(ix, iy);
-                    var groupBoundsMin = (group * cellInGroupCount).ToVector3f(minZ);
+                    var group = new Vector2i(ix, iy);
+                    var groupBoundsMin = (group * cellInGroupCount).ToVector2f()
+                        .ToVector3f(minZ);
                     var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
                     var isInside = planes.TestPlanesAABB(groupBounds);
                     if (!isInside)
-                        return;
+                        continue;
 
                     if (groupsToRecompute.Add(group))
                         onAdd.Invoke(group);

@@ -4,7 +4,7 @@ namespace Votyra.Core.ImageSamplers
 {
     public class InterpolatedUVPostProcessorStep : ITerrainUVPostProcessor
     {
-        private readonly float _subdivision;
+        private readonly int _subdivision;
 
         public InterpolatedUVPostProcessorStep(IInterpolationConfig interpolationConfig)
         {

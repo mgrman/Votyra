@@ -65,6 +65,8 @@ namespace Votyra.Core.Models
 
         public static Vector2f operator /(Vector2f a, float b) => new Vector2f(a.X / b, a.Y / b);
 
+        public static Vector2f operator /(Vector2f a, int b) =>new Vector2f(a.X / b, a.Y / b);
+
         public static Vector2f operator +(Vector2f a, float b) => new Vector2f(a.X + b, a.Y + b);
 
         public static Vector2f operator +(Vector2f a, Vector2f b) => new Vector2f(a.X + b.X, a.Y + b.Y);
