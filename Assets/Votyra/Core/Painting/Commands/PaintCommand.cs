@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.Painting.Commands
 {
     public abstract class PaintCommand : IPaintCommand
     {
         private readonly IEditableImage2f _editableImage;
-        
+
 
         private IEditableMask2e _editableMask;
 
         private IThreadSafeLogger _logger;
 
-        private (Vector2i cell, int maxStrength)? _lastInvocation;
+        private Vector2i? _lastInvocation;
+        private int _maxStrength;
 
 
         protected PaintCommand(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
@@ -23,20 +25,14 @@ namespace Votyra.Core.Painting.Commands
             _editableImage = editableImage;
             _editableMask = editableMask;
             _logger = logger;
-            
         }
 
         public virtual void UpdateInvocationValues(Vector2i cell, int maxStrength)
         {
-            if (_lastInvocation == null)
-                Invoke(cell, maxStrength);
+            _maxStrength = maxStrength;
+            PathUtils.InvokeOnPath(_lastInvocation, cell, Invoke);
 
-
-            var next = (cell, maxStrength);
-            var previous = _lastInvocation ?? next;
-            _lastInvocation = next;
-
-            InvokeOnPath(previous, next);
+            _lastInvocation = cell;
         }
 
         public void StopInvocation()
@@ -45,57 +41,13 @@ namespace Votyra.Core.Painting.Commands
             _lastInvocation = null;
         }
 
-        protected void InvokeOnPath((Vector2i cell, int maxStrength) from, (Vector2i cell, int maxStrength) to)
+
+        protected void Invoke(Vector2i cell)
         {
-            _logger.LogMessage($"from:{from} to:{to}");
-            if (from.cell == to.cell)
-            {
-            }
-            else if (from.cell.X == to.cell.X)
-            {
-                InvokeOnPathVertical(from, to);
-            }
-            else
-            {
-                InvokeOnPathNotVertical(from, to);
-            }
+            OnNewInvocationData();
+            Invoke(cell, _maxStrength);
         }
-
-        protected void InvokeOnPathNotVertical((Vector2i cell, int maxStrength) from, (Vector2i cell, int maxStrength) to)
-        {
-            var deltax = to.cell.X - from.cell.X;
-            var deltay = to.cell.Y - from.cell.Y;
-            var deltaerr = Math.Abs(deltay / deltax); // if vertical this would be division by 0
-            var error = 0.0f;
-            var y = from.cell.Y;
-            var signX = Math.Sign(to.cell.X - from.cell.X);
-            for (var x = from.cell.X; x != to.cell.X; x += signX)
-            {
-                if (x != from.cell.X || y != from.cell.Y)
-                    Invoke(new Vector2i(x, y), to.maxStrength);
-                error = error + deltaerr;
-                if (error >= 0.5f)
-                {
-                    y = y + Math.Sign(deltay) * 1;
-                    error = error - 1.0f;
-                }
-            }
-
-            Invoke(to.cell, to.maxStrength);
-        }
-
-        protected void InvokeOnPathVertical((Vector2i cell, int maxStrength) from, (Vector2i cell, int maxStrength) to)
-        {
-            var x = from.cell.X;
-            var signY = Math.Sign(to.cell.Y - from.cell.Y);
-            for (var y = from.cell.Y + signY; y != to.cell.Y; y += signY)
-            {
-                Invoke(new Vector2i(x, y), to.maxStrength);
-            }
-
-            Invoke(to.cell, to.maxStrength);
-        }
-
+        
         protected void Invoke(Vector2i cell, int maxStrength)
         {
             _logger.LogMessage($"invoke on {cell}");
@@ -126,10 +78,6 @@ namespace Votyra.Core.Painting.Commands
         }
 
         protected virtual void OnNewInvocationData()
-        {
-        }
-
-        protected virtual void OnInvocationStarting()
         {
         }
 
