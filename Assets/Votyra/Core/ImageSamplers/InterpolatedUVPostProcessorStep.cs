@@ -2,7 +2,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.ImageSamplers
 {
-    public class InterpolatedUVPostProcessorStep : ITerrainUVPostProcessorStep
+    public class InterpolatedUVPostProcessorStep : ITerrainUVPostProcessor
     {
         private readonly float _subdivision;
 

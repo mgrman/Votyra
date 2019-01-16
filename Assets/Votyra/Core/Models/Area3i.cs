@@ -40,12 +40,6 @@ namespace Votyra.Core.Models
 
         public static bool operator !=(Area3i a, Area3i b) => a.Min != b.Min || a.Max != b.Max;
 
-        public void ForeachPointExlusive(Action<Vector3i> action)
-        {
-            var min = Min;
-            Size.ForeachPointExlusive(i => action(i + min));
-        }
-
         public bool Contains(Vector3i point) => point >= Min && point <= Max;
 
         public bool Overlaps(Area3i that)

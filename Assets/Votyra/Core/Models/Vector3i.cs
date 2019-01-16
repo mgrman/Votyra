@@ -96,20 +96,6 @@ namespace Votyra.Core.Models
 
         public static bool operator !=(Vector3i a, Vector3i b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z;
 
-        public void ForeachPointExlusive(Action<Vector3i> action)
-        {
-            for (var ix = 0; ix < X; ix++)
-            {
-                for (var iy = 0; iy < Y; iy++)
-                {
-                    for (var iz = 0; iz < Z; iz++)
-                    {
-                        action(new Vector3i(ix, iy, iz));
-                    }
-                }
-            }
-        }
-
         public Vector3i DivideUp(Vector3i a, int b) => new Vector3i(a.X.DivideUp(b), a.Y.DivideUp(b), a.Z.DivideUp(b));
 
         public Vector3f ToVector3f() => new Vector3f(X, Y, Z);

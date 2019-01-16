@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
@@ -45,46 +46,55 @@ namespace Votyra.Core.GroupSelectors
             var groupsToRecompute = PooledSet<Vector3i>.Create();
             var groupsToKeep = PooledSet<Vector3i>.Create();
 
-            cameraBoundsGroups.ForeachPointExlusive(group =>
+            var min = cameraBoundsGroups.Min;
+            var max = cameraBoundsGroups.Max;
+            for (var ix = min.X; ix <= max.X; ix++)
             {
-                var groupBounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount)
-                    .ToRange3f();
-
-                var isInside = planes.TestPlanesAABB(groupBounds);
-                if (isInside)
+                for (var iy = min.Y; iy <= max.Y; iy++)
                 {
-                    var groupArea = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount);
-
-                    var isInvalidated = groupArea.Overlaps(invalidatedArea);
-
-                    if (isInvalidated)
+                    for (var iz = min.Z; iz <= max.Z; iz++)
                     {
-                        groupsToRecompute.Add(group);
-                        _skippedAreas.Remove(group);
-                    }
-                    else
-                    {
-                        if (!options.ExistingGroups.Contains(group))
+                        var group = new Vector3i(ix, iy, iz) ;
+                        var groupBounds = Range3i.FromMinAndSize(@group * _cellInGroupCount, _cellInGroupCount)
+                            .ToRange3f();
+
+                        var isInside = planes.TestPlanesAABB(groupBounds);
+                        if (isInside)
                         {
-                            var groupBounds_image = _imageSampler.WorldToImage(groupBounds);
-                            var noData = _skippedAreas.Contains(group) || !options.Image.AnyData(groupBounds_image);
-                            if (noData)
+                            var groupArea = Range3i.FromMinAndSize(@group * _cellInGroupCount, _cellInGroupCount);
+
+                            var isInvalidated = groupArea.Overlaps(invalidatedArea);
+
+                            if (isInvalidated)
                             {
-                                groupsToKeep.Add(group);
-                                _skippedAreas.Add(group);
+                                groupsToRecompute.Add(@group);
+                                _skippedAreas.Remove(@group);
                             }
                             else
                             {
-                                groupsToRecompute.Add(group);
+                                if (!options.ExistingGroups.Contains(@group))
+                                {
+                                    var groupBounds_image = _imageSampler.WorldToImage(groupBounds);
+                                    var noData = _skippedAreas.Contains(@group) || !options.Image.AnyData(groupBounds_image);
+                                    if (noData)
+                                    {
+                                        groupsToKeep.Add(@group);
+                                        _skippedAreas.Add(@group);
+                                    }
+                                    else
+                                    {
+                                        groupsToRecompute.Add(@group);
+                                    }
+                                }
+                                else
+                                {
+                                    groupsToKeep.Add(@group);
+                                }
                             }
-                        }
-                        else
-                        {
-                            groupsToKeep.Add(group);
                         }
                     }
                 }
-            });
+            }
 
             return new GroupActions<Vector3i>(groupsToRecompute, groupsToKeep);
         }

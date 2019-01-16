@@ -47,8 +47,6 @@ namespace Votyra.Plannar.Unity
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<InterpolatedImage2iTo2fPostProcessor>()
                 .AsSingle();
-            Container.BindInterfacesAndSelfTo<CompositeUVPostProcessor>()
-                .AsSingle();
 
             Container.BindInterfacesAndSelfTo<InterpolatedUVPostProcessorStep>()
                 .AsSingle();

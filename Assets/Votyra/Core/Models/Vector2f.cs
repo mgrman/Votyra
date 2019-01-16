@@ -31,6 +31,8 @@ namespace Votyra.Core.Models
 
         [JsonIgnore]
         public float SqrMagnitude => X * X + Y * Y;
+        
+        public  Vector2f Perpendicular=> new Vector2f(Y,-X);
 
         public static Vector2f FromSame(float value) => new Vector2f(value, value);
 

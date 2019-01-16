@@ -40,7 +40,6 @@ namespace Votyra.Core
 
         private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
         private bool _computedOnce;
-        private IFrameData2i _context;
 
         private Task _waitForTask = Task.CompletedTask;
 
@@ -70,27 +69,37 @@ namespace Votyra.Core
             if (_onDestroyCts.IsCancellationRequested || !_stateModel.IsEnabled || !_waitForTask.IsCompleted)
                 return;
 
-            _context = _frameDataProvider.GetCurrentFrameData(_meshTopologyDistance, _computedOnce);
+            var context = _frameDataProvider.GetCurrentFrameData(_meshTopologyDistance, _computedOnce);
 
-            if (_context != null)
+            if (context != null)
             {
-                _waitForTask = UpdateTerrain();
+                context?.Activate();
+                _waitForTask = _terrainConfig.Async ? UpdateTerrainInBackground(context) : UpdateTerrainInForegroud(context);
                 _computedOnce = true;
             }
         }
 
-        private Task UpdateTerrain()
+        private Task UpdateTerrainInForegroud(IFrameData2i context)
         {
-            var context = _context;
-            return TaskUtils.RunOrNot(() => UpdateTerrain(context, _onDestroyCts.Token), _terrainConfig.Async);
+            UpdateTerrain(context);
+            return Task.CompletedTask;
         }
 
-
-        private void UpdateTerrain(IFrameData2i context, CancellationToken token)
+        private TaskFactory _taskFactory = new TaskFactory();
+        private Task UpdateTerrainInBackground(IFrameData2i context)
         {
-            context?.Activate();
+           return _taskFactory.StartNew(UpdateTerrain, context);
+        }
 
-            HandleVisibilityUpdates(context, token);
+        private void UpdateTerrain(object context)
+        {
+            UpdateTerrain(context as IFrameData2i);
+        }
+        
+        private void UpdateTerrain(IFrameData2i context)
+        {
+
+            HandleVisibilityUpdates(context);
             UpdateGroupManagers(context);
 
             context?.Deactivate();
@@ -104,23 +113,26 @@ namespace Votyra.Core
             }
         }
 
-        private void HandleVisibilityUpdates(IFrameData2i context, CancellationToken token)
+        private void HandleVisibilityUpdates(IFrameData2i context)
         {
-            context.UpdateGroupsVisibility(_cellInGroupCount, _groupsToRecompute, newGroup =>
-            {
-                _activeGroups.Add(newGroup, CreateGroupManager(token, newGroup));
-            }, removedGroup =>
-            {
-                _activeGroups.TryRemoveAndReturnValue(removedGroup)
-                    ?.Dispose();
-            });
+            context.UpdateGroupsVisibility(_cellInGroupCount,
+                _groupsToRecompute,
+                newGroup =>
+                {
+                    _activeGroups.Add(newGroup, CreateGroupManager( newGroup));
+                },
+                removedGroup =>
+                {
+                    _activeGroups.TryRemoveAndReturnValue(removedGroup)
+                        ?.Dispose();
+                });
         }
 
-        private ITerrainGroupGeneratorManager2i CreateGroupManager(CancellationToken token, Vector2i newGroup)
+        private ITerrainGroupGeneratorManager2i CreateGroupManager( Vector2i newGroup)
         {
             if (_terrainConfig.Async)
-                return new AsyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup, token, CreatePooledTerrainMesh(), GetMeshStrategy());
-            return new SyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup, token, CreatePooledTerrainMesh(), GetMeshStrategy());
+                return new AsyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup, _onDestroyCts.Token, CreatePooledTerrainMesh(), GetMeshStrategy());
+            return new SyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup, _onDestroyCts.Token, CreatePooledTerrainMesh(), GetMeshStrategy());
         }
 
         private IPooledTerrainMesh CreatePooledTerrainMesh()

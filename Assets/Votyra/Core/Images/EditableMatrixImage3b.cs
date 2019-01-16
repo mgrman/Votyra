@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Votyra.Core.Images.Constraints;
@@ -44,10 +45,17 @@ namespace Votyra.Core.Images
                 }
 
                 //sync
-                _editableMatrix.ForeachPointExlusive(i =>
+                for (var ix = 0; ix < _editableMatrix.Size.X; ix++)
                 {
-                    readonlyMatrix[i] = _editableMatrix[i];
-                });
+                    for (var iy = 0; iy < _editableMatrix.Size.Y; iy++)
+                    {
+                        for (var iz = 0; iz < _editableMatrix.Size.Z; iz++)
+                        {
+                            var i=new Vector3i(ix, iy, iz);
+                            readonlyMatrix[i] = _editableMatrix[i];
+                        }
+                    }
+                }
 
                 // Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
 

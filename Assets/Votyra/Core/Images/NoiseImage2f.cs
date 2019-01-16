@@ -1,3 +1,4 @@
+using System;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
 
@@ -30,10 +31,15 @@ namespace Votyra.Core.Images
             var min = area.Min;
 
             var matrix = PoolableMatrix<float>.CreateDirty(area.Size);
-            matrix.Size.ForeachPointExlusive(matPoint =>
+            for (var ix = 0; ix < matrix.Size.X; ix++)
             {
-                matrix[matPoint] = Sample(matPoint + min);
-            });
+                for (var iy = 0; iy < matrix.Size.Y; iy++)
+                {
+                    var matPoint=new Vector2i(ix, iy);
+                    matrix[matPoint] = Sample(matPoint + min);
+                }
+            }
+
             return matrix;
         }
 

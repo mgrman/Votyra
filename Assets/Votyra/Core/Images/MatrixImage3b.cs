@@ -25,12 +25,20 @@ namespace Votyra.Core.Images
         {
             var allFalse = true;
             var allTrue = true;
-            range.ForeachPointExlusive(o =>
+            var min = range.Min;
+            for (var ix = 0; ix < range.Size.X; ix++)
             {
-                var value = Sample(o);
-                allFalse = allFalse && !value;
-                allTrue = allTrue && value;
-            });
+                for (var iy = 0; iy < range.Size.Y; iy++)
+                {
+                    for (var iz = 0; iz < range.Size.Z; iz++)
+                    {
+                        var o=new Vector3i(ix, iy, iz)+min;
+                        var value = Sample(o);
+                        allFalse = allFalse && !value;
+                        allTrue = allTrue && value;
+                    }
+                }
+            }
 
             return !allFalse && !allTrue;
         }

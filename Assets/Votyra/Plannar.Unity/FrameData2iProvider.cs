@@ -36,6 +36,21 @@ namespace Votyra.Plannar
             var camera = CameraUtils.MainCamera;
             var image = _imageProvider.CreateImage();
 
+            var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
+            var planesUnity = PooledArrayContainer<Plane>.CreateDirty(6);
+            GeometryUtility.CalculateFrustumPlanes(localToProjection, planesUnity.Array);
+            var planes = planesUnity.ToPlane3f();
+            planesUnity.Dispose();
+
+            foreach (var plane in planes)
+            {
+                var dirPerp= plane.Normal.XY.Perpendicular.Normalized * 100;
+                var start = plane.Normal.XY.Normalized * plane.Distance;
+                var end = start + dirPerp;
+                start = end- dirPerp -dirPerp;
+                Debug.DrawLine(new Vector3(start.X, 0,start.Y), new Vector3(end.X,0, end.Y));
+            }
+
             var localToWorldMatrix = camera.transform.localToWorldMatrix;
             if (computedOnce && localToWorldMatrix == _previousCameraMatrix && (image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero)
                 return null;
@@ -48,12 +63,7 @@ namespace Votyra.Plannar
 
             var mask = _maskProvider?.CreateMask();
 
-            var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
 
-            var planesUnity = PooledArrayContainer<Plane>.CreateDirty(6);
-            GeometryUtility.CalculateFrustumPlanes(localToProjection, planesUnity.Array);
-            var planes = planesUnity.ToPlane3f();
-            planesUnity.Dispose();
 
             var frustumCornersUnity = PooledArrayContainer<Vector3>.CreateDirty(4);
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);

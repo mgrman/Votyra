@@ -34,11 +34,17 @@ namespace Votyra.Core.Images
         public bool AnyData(Range2i range)
         {
             var allHoles = true;
-            range.ForeachPointExlusive(o =>
+            var min = range.Min;
+            var max = range.Max;
+            for (var ix = min.X; ix < max.X; ix++)
             {
-                var value = Sample(o);
-                allHoles = allHoles && value.IsHole();
-            });
+                for (var iy = min.Y; iy <= max.Y; iy++)
+                {
+                    var o=new Vector2i(ix, iy);
+                    var value = Sample(o);
+                    allHoles = allHoles && value.IsHole();
+                }
+            }
 
             return !allHoles;
         }

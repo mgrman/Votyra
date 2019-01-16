@@ -70,28 +70,6 @@ namespace Votyra.Core.Models
 
         public Vector3i ToVector3i(int z) => new Vector3i(X, Y, z);
 
-        public void ForeachPointExlusive(Action<Vector2i> action)
-        {
-            for (var ix = 0; ix < X; ix++)
-            {
-                for (var iy = 0; iy < Y; iy++)
-                {
-                    action(new Vector2i(ix, iy));
-                }
-            }
-        }
-
-        public void ForeachPointInclusive(Action<Vector2i> action)
-        {
-            for (var ix = 0; ix <= X; ix++)
-            {
-                for (var iy = 0; iy <= Y; iy++)
-                {
-                    action(new Vector2i(ix, iy));
-                }
-            }
-        }
-
         public Vector2i DivideUp(Vector2i a, int b) => new Vector2i(a.X.DivideUp(b), a.Y.DivideUp(b));
 
         public Vector2f ToVector2f() => new Vector2f(X, Y);

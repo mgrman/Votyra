@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.GroupSelectors
@@ -31,12 +32,11 @@ namespace Votyra.Core.GroupSelectors
             var cameraBoundsGroups = (localCameraBounds / cellInGroupCount.ToVector2f()).RoundToContain();
 
             var minZ = options.RangeZ.Min;
-            var boundsSize = new Vector2f(cellInGroupCount.X, cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
+            var boundsSize = cellInGroupCount.ToVector3f(options.RangeZ.Size);
 
             groupsToRecompute.RemoveWhere(group =>
             {
-                var groupBoundsMin = (group * cellInGroupCount).ToVector2f()
-                    .ToVector3f(minZ);
+                var groupBoundsMin = (group * cellInGroupCount).ToVector3f(minZ);
                 var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
                 var isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)
@@ -46,18 +46,23 @@ namespace Votyra.Core.GroupSelectors
                 return true;
             });
 
-            cameraBoundsGroups.ForeachPointExlusive(group =>
+            var min = cameraBoundsGroups.Min;
+            var max = cameraBoundsGroups.Max;
+            for (var ix = min.X; ix <= max.X; ix++)
             {
-                var groupBoundsMin = (group * cellInGroupCount).ToVector2f()
-                    .ToVector3f(minZ);
-                var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
-                var isInside = planes.TestPlanesAABB(groupBounds);
-                if (!isInside)
-                    return;
+                for (var iy = min.Y; iy <= max.Y; iy++)
+                {
+                    var group=new Vector2i(ix, iy);
+                    var groupBoundsMin = (group * cellInGroupCount).ToVector3f(minZ);
+                    var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
+                    var isInside = planes.TestPlanesAABB(groupBounds);
+                    if (!isInside)
+                        return;
 
-                if (groupsToRecompute.Add(group))
-                    onAdd.Invoke(group);
-            });
+                    if (groupsToRecompute.Add(group))
+                        onAdd.Invoke(group);
+                }
+            }
         }
     }
 }

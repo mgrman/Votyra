@@ -64,15 +64,21 @@ namespace Votyra.Core.Painting.Commands
                         return;
 
                     PrepareWithClickedValue(image[cell]);
-                    givenArea.ForeachPointExlusive(index =>
+                    var min = givenArea.Min;
+                    var max = givenArea.Max;
+                    for (var ix = min.X; ix < max.X; ix++)
                     {
-                        var ox = index.X - cell.X;
-                        var oy = index.Y - cell.Y;
+                        for (var iy = min.Y; iy <= max.Y; iy++)
+                        {
+                            var index=new Vector2i(ix, iy);
+                            var ox = index.X - cell.X;
+                            var oy = index.Y - cell.Y;
 
-                        var cellStrength = (absStrength - Math.Max(Math.Abs(ox), Math.Abs(oy))) * Math.Sign(maxStrength);
-                        image[index] = Invoke(image[index], cellStrength);
-                        mask[index] = Invoke(mask[index], cellStrength);
-                    });
+                            var cellStrength = (absStrength - Math.Max(Math.Abs(ox), Math.Abs(oy))) * Math.Sign(maxStrength);
+                            image[index] = Invoke(image[index], cellStrength);
+                            mask[index] = Invoke(mask[index], cellStrength);
+                        }
+                    }
                 }
             }
         }

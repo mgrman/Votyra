@@ -57,12 +57,6 @@ namespace Votyra.Core.Models
         // }
         public Area2f ToArea2f() => Area2f.FromMinAndMax(Min.ToVector2f(), Max.ToVector2f());
 
-        public void ForeachPointInclusive(Action<Vector2i> action)
-        {
-            var min = Min;
-            Size.ForeachPointInclusive(i => action(i + min));
-        }
-
         public bool Contains(Vector2i point) => point >= Min && point <= Max;
 
         public bool Overlaps(Area2i that)

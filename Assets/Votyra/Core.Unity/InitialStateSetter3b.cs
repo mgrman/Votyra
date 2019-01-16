@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using Votyra.Core.ImageSamplers;
@@ -46,12 +47,21 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = imageAccessor.Area;
                 var matrixSizeX = matrixAreaToFill.Size.X;
                 var matrixSizeY = matrixAreaToFill.Size.Y;
-                matrixAreaToFill.ForeachPointExlusive(i =>
+               
+                var min = matrixAreaToFill.Min;
+                for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
                 {
-                    var value = texture.GetPixelBilinear((float) i.X / matrixSizeX, (float) i.Y / matrixSizeY)
-                        .grayscale * scale;
-                    imageAccessor[i] = value - i.Z > 0;
-                });
+                    for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
+                    {
+                        for (var iz = 0; iz < matrixAreaToFill.Size.Z; iz++)
+                        {
+                            var i=new Vector3i(ix, iy, iz)+min;
+                            var value = texture.GetPixelBilinear((float) i.X / matrixSizeX, (float) i.Y / matrixSizeY)
+                                .grayscale * scale;
+                            imageAccessor[i] = value - i.Z > 0;
+                        }
+                    }
+                }
             }
         }
 
@@ -67,17 +77,26 @@ namespace Votyra.Core.Images
             using (var imageAccessor = editableImage.RequestAccess(Range3i.All))
             {
                 var area = imageAccessor.Area;
-                area.ForeachPointExlusive(i =>
+              
+                var min = area.Min;
+                for (var ix = 0; ix < area.Size.X; ix++)
                 {
-                    var localPos = sampler.ImageToWorld(i);
-                    var worldPos = root.transform.TransformPoint(new Vector3(localPos.X, localPos.Y, localPos.Z));
-
-                    imageAccessor[i] = colliders.Select(collider =>
+                    for (var iy = 0; iy < area.Size.Y; iy++)
+                    {
+                        for (var iz = 0; iz < area.Size.Z; iz++)
                         {
-                            return IsInside(collider, worldPos, maxSize);
-                        })
-                        .Any(o => o);
-                });
+                            var i = new Vector3i(ix, iy, iz) + min;
+                            var localPos = sampler.ImageToWorld(i);
+                            var worldPos = root.transform.TransformPoint(new Vector3(localPos.X, localPos.Y, localPos.Z));
+
+                            imageAccessor[i] = colliders.Select(collider =>
+                                {
+                                    return IsInside(collider, worldPos, maxSize);
+                                })
+                                .Any(o => o);
+                        }
+                    }
+                }
             }
         }
 
@@ -126,11 +145,19 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = new Vector3i(texture.Size.X, texture.Size.Y, fallbackMaxZ).ToRange3i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
-                matrixAreaToFill.ForeachPointExlusive(i =>
+                var min = matrixAreaToFill.Min;
+                for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
                 {
-                    var value = texture[i.XY] * scale;
-                    imageAccessor[i] = value - i.Z > 0;
-                });
+                    for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
+                    {
+                        for (var iz = 0; iz < matrixAreaToFill.Size.Z; iz++)
+                        {
+                            var i = new Vector3i(ix, iy, iz) + min;
+                            var value = texture[i.XY] * scale;
+                            imageAccessor[i] = value - i.Z > 0;
+                        }
+                    }
+                }
             }
         }
 
@@ -143,10 +170,19 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = texture.Size.ToRange3i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
-                matrixAreaToFill.ForeachPointExlusive(i =>
+                
+                var min = matrixAreaToFill.Min;
+                for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
                 {
-                    imageAccessor[i] = texture[i];
-                });
+                    for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
+                    {
+                        for (var iz = 0; iz < matrixAreaToFill.Size.Z; iz++)
+                        {
+                            var i = new Vector3i(ix, iy, iz) + min;
+                            imageAccessor[i] = texture[i];
+                        }
+                    }
+                }
             }
         }
     }

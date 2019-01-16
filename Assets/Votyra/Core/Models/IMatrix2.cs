@@ -18,10 +18,5 @@ namespace Votyra.Core.Models
         public static bool ContainsIndex<T>(this IMatrix2<T> matrix, Vector2i index) => index.X >= 0 && index.Y >= 0 && index.X < matrix.Size.X && index.Y < matrix.Size.Y;
 
         public static T TryGet<T>(this IMatrix2<T> matrix, Vector2i i, T defaultValue) => matrix.ContainsIndex(i) ? matrix[i] : defaultValue;
-
-        public static void ForeachPointExlusive<T>(this IMatrix2<T> matrix, Action<Vector2i> action)
-        {
-            matrix.Size.ForeachPointExlusive(action);
-        }
     }
 }

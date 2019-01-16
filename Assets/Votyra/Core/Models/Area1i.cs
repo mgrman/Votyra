@@ -35,14 +35,6 @@ namespace Votyra.Core.Models
 
         public static bool operator !=(Area1i a, Area1i b) => a.Min != b.Min || a.Max != b.Max;
 
-        public void ForeachPointInclusive(Action<int> action)
-        {
-            for (var i = Min; i <= Max; i++)
-            {
-                action(i);
-            }
-        }
-
         public Area1i UnionWith(Area1i range) => new Area1i(Math.Min(Min, range.Min), Math.Min(Max, range.Max));
 
         public Area1i? UnionWith(Area1i? range)

@@ -17,9 +17,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             var maskToFill = poolableMaskToFill.RawMatrix;
 
             var groupPosition = cellInGroupCount * group;
-            cellInGroupCount.ToRange2i()
-                .ForeachPointExlusive(cellInGroup =>
+
+            for (var iix = 0; iix < cellInGroupCount.X; iix++)
+            {
+                for (var iiy = 0; iiy < cellInGroupCount.Y; iiy++)
                 {
+                    var cellInGroup = new Vector2i(iix, iiy);
+
                     var cell = cellInGroup + groupPosition;
                     var maskData = mask.SampleCell(cell);
                     if (maskData.GetHoleCount() == 4)
@@ -106,7 +110,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                             }
                         }
                     }
-                });
+                }
+            }
 
             poolableValuesToFill.Dispose();
             poolableMaskToFill.Dispose();

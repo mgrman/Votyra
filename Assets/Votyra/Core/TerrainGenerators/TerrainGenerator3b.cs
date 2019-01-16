@@ -1,3 +1,4 @@
+using System;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
@@ -31,14 +32,23 @@ namespace Votyra.Core.TerrainGenerators
                 _mesher.InitializeGroup(group,pooledTerrainMesh);
             }
 
-            _cellInGroupCount.ToRange3i()
-                .ForeachPointExlusive(cellInGroup =>
+            Range3i tempQualifier = _cellInGroupCount.ToRange3i();
+            var min = tempQualifier.Min;
+            for (var ix = 0; ix < tempQualifier.Size.X; ix++)
+            {
+                for (var iy = 0; iy < tempQualifier.Size.Y; iy++)
                 {
-                    using (_profiler.Start("TerrainMesher.AddCell()"))
+                    for (var iz = 0; iz < tempQualifier.Size.Z; iz++)
                     {
-                        _mesher.AddCell(cellInGroup);
+                        var
+                        cellInGroup=new Vector3i(ix, iy, iz)+min;
+                        using (_profiler.Start("TerrainMesher.AddCell()"))
+                        {
+                            _mesher.AddCell(cellInGroup);
+                        }
                     }
-                });
+                }
+            }
         }
     }
 }

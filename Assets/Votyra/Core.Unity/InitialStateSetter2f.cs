@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using Votyra.Core.Models;
@@ -44,15 +45,20 @@ namespace Votyra.Core.Images
                     var matrixSizeX = matrixAreaToFill.Size.X;
                     var matrixSizeY = matrixAreaToFill.Size.Y;
 
-                    matrixAreaToFill.ForeachPointExlusive(pos =>
+                    var min = matrixAreaToFill.Min;
+                    for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
                     {
-                        var value = texture.GetPixelBilinear((float) pos.X / matrixSizeX, (float) pos.Y / matrixSizeY)
-                            .grayscale * scale;
-                        var height = value;
-                        imageAccessor[pos] = height;
-                        if (maskAccessor != null)
-                            maskAccessor[pos] = zeroIsNull && height == 0f ? MaskValues.Hole : MaskValues.Terrain;
-                    });
+                        for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
+                        {
+                            var pos=new Vector2i(ix, iy)+min;
+                            var value = texture.GetPixelBilinear((float) pos.X / matrixSizeX, (float) pos.Y / matrixSizeY)
+                                .grayscale * scale;
+                            var height = value;
+                            imageAccessor[pos] = height;
+                            if (maskAccessor != null)
+                                maskAccessor[pos] = zeroIsNull && height == 0f ? MaskValues.Hole : MaskValues.Terrain;
+                        }
+                    }
                 }
             }
         }
@@ -67,22 +73,27 @@ namespace Votyra.Core.Images
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
                 var area = imageAccessor.Area;
-                area.ForeachPointExlusive(localPos =>
+                var min = area.Min;
+                for (var ix = 0; ix < area.Size.X; ix++)
                 {
-                    var ray = new Ray(root.transform.TransformPoint(new Vector3(localPos.X, localPos.Y, bounds.Max.Z)), root.transform.TransformDirection(new Vector3(0, 0, -1)));
+                    for (var iy = 0; iy < area.Size.Y; iy++)
+                    {
+                        var localPos=new Vector2i(ix, iy)+min;
+                        var ray = new Ray(root.transform.TransformPoint(new Vector3(localPos.X, localPos.Y, bounds.Max.Z)), root.transform.TransformDirection(new Vector3(0, 0, -1)));
 
-                    var value = colliders.Select(collider =>
-                        {
-                            RaycastHit hit;
-                            if (collider.Raycast(ray, out hit, bounds.Size.Z))
-                                return Mathf.Max(0, bounds.Max.Z - hit.distance);
-                            return 0;
-                        })
-                        .DefaultIfEmpty(0)
-                        .Max() * scale;
+                        var value = colliders.Select(collider =>
+                            {
+                                RaycastHit hit;
+                                if (collider.Raycast(ray, out hit, bounds.Size.Z))
+                                    return Mathf.Max(0, bounds.Max.Z - hit.distance);
+                                return 0;
+                            })
+                            .DefaultIfEmpty(0)
+                            .Max() * scale;
 
-                    imageAccessor[localPos] = value;
-                });
+                        imageAccessor[localPos] = value;
+                    }
+                }
             }
         }
 
@@ -95,10 +106,16 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = texture.Size.ToRange2i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
-                matrixAreaToFill.ForeachPointExlusive(i =>
+               
+                var min = matrixAreaToFill.Min;
+                for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
                 {
-                    imageAccessor[i] = texture[i] * scale;
-                });
+                    for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
+                    {
+                        var i=new Vector2i(ix, iy)+min;
+                        imageAccessor[i] = texture[i] * scale;
+                    }
+                }
             }
         }
 
@@ -111,22 +128,27 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = texture.Size.XY.ToRange2i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
-                matrixAreaToFill.ForeachPointExlusive(i =>
+                var min = matrixAreaToFill.Min;
+                for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
                 {
-                    float value = 0;
-
-                    for (var iz = texture.Size.Z - 1; iz >= 0; iz--)
+                    for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
                     {
-                        var iTexture = new Vector3i(i.X, i.Y, iz);
-                        if (texture[iTexture])
-                        {
-                            value = iz;
-                            break;
-                        }
-                    }
+                        var i=new Vector2i(ix, iy)+min;
+                        float value = 0;
 
-                    imageAccessor[i] = value * scale;
-                });
+                        for (var iz = texture.Size.Z - 1; iz >= 0; iz--)
+                        {
+                            var iTexture = new Vector3i(i.X, i.Y, iz);
+                            if (texture[iTexture])
+                            {
+                                value = iz;
+                                break;
+                            }
+                        }
+
+                        imageAccessor[i] = value * scale;
+                    }
+                }
             }
         }
     }

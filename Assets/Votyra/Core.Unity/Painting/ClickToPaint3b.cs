@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Core.Images;
@@ -6,6 +7,7 @@ using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
 using Zenject;
+using Object = UnityEngine.Object;
 
 namespace Votyra.Core
 {
@@ -78,36 +80,44 @@ namespace Votyra.Core
             using (var image = _editableImage.RequestAccess(imageArea))
             {
                 localArea = localArea.IntersectWith(_sampler.ImageToWorld(image.Area));
-                localArea.RoundToContain()
-                    .ForeachPointExlusive(localPosition =>
+                Range3i tempQualifier = localArea.RoundToContain();
+                var min = tempQualifier.Min;
+                for (var ix = tempQualifier.Size.X; ix < tempQualifier.Size.X; ix++)
+                {
+                    for (var iy = 0; iy < tempQualifier.Size.Y; iy++)
                     {
-                        var imagePosition_x0y0z0 = _sampler.CellToX0Y0Z0(localPosition);
-                        var imagePosition_x0y0z1 = _sampler.CellToX0Y0Z1(localPosition);
-                        var imagePosition_x0y1z0 = _sampler.CellToX0Y1Z0(localPosition);
-                        var imagePosition_x0y1z1 = _sampler.CellToX0Y1Z1(localPosition);
-                        var imagePosition_x1y0z0 = _sampler.CellToX1Y0Z0(localPosition);
-                        var imagePosition_x1y0z1 = _sampler.CellToX1Y0Z1(localPosition);
-                        var imagePosition_x1y1z0 = _sampler.CellToX1Y1Z0(localPosition);
-                        var imagePosition_x1y1z1 = _sampler.CellToX1Y1Z1(localPosition);
+                        for (var iz = 0; iz < tempQualifier.Size.Z; iz++)
+                        {
+                            var localPosition = min + new Vector3i(ix, iy, iz);
+                            var imagePosition_x0y0z0 = _sampler.CellToX0Y0Z0(localPosition);
+                            var imagePosition_x0y0z1 = _sampler.CellToX0Y0Z1(localPosition);
+                            var imagePosition_x0y1z0 = _sampler.CellToX0Y1Z0(localPosition);
+                            var imagePosition_x0y1z1 = _sampler.CellToX0Y1Z1(localPosition);
+                            var imagePosition_x1y0z0 = _sampler.CellToX1Y0Z0(localPosition);
+                            var imagePosition_x1y0z1 = _sampler.CellToX1Y0Z1(localPosition);
+                            var imagePosition_x1y1z0 = _sampler.CellToX1Y1Z0(localPosition);
+                            var imagePosition_x1y1z1 = _sampler.CellToX1Y1Z1(localPosition);
 
-                        var x0y0z0 = image[imagePosition_x0y0z0];
-                        var x0y0z1 = image[imagePosition_x0y0z1];
-                        var x0y1z0 = image[imagePosition_x0y1z0];
-                        var x0y1z1 = image[imagePosition_x0y1z1];
-                        var x1y0z0 = image[imagePosition_x1y0z0];
-                        var x1y0z1 = image[imagePosition_x1y0z1];
-                        var x1y1z0 = image[imagePosition_x1y1z0];
-                        var x1y1z1 = image[imagePosition_x1y1z1];
+                            var x0y0z0 = image[imagePosition_x0y0z0];
+                            var x0y0z1 = image[imagePosition_x0y0z1];
+                            var x0y1z0 = image[imagePosition_x0y1z0];
+                            var x0y1z1 = image[imagePosition_x0y1z1];
+                            var x1y0z0 = image[imagePosition_x1y0z0];
+                            var x1y0z1 = image[imagePosition_x1y0z1];
+                            var x1y1z0 = image[imagePosition_x1y1z0];
+                            var x1y1z1 = image[imagePosition_x1y1z1];
 
-                        CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z0) + LocalToWorldVector(new Vector3f(0.1f, 0.1f, 0)), x0y0z0);
-                        // CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z1) + new Vector3f(0.1f, 0.1f, -0.1f), x0y0z1);
-                        CreateDebugObjectAt(ImageToWorld(imagePosition_x0y1z0) + LocalToWorldVector(new Vector3f(0.1f, 0.4f, 0)), x0y1z0);
-                        // CreateDebugObjectAt(ImageToWorld(imagePosition_x0y1z1) + new Vector3f(0.1f, -0.1f, -0.1f), x0y1z1);
-                        CreateDebugObjectAt(ImageToWorld(imagePosition_x1y0z0) + LocalToWorldVector(new Vector3f(0.4f, 0.1f, 0)), x1y0z0);
-                        // CreateDebugObjectAt(ImageToWorld(imagePosition_x1y0z1) + new Vector3f(-0.1f, 0.1f, -0.1f), x1y0z1);
-                        CreateDebugObjectAt(ImageToWorld(imagePosition_x1y1z0) + LocalToWorldVector(new Vector3f(0.4f, 0.4f, 0)), x1y1z0);
-                        // CreateDebugObjectAt(ImageToWorld(imagePosition_x1y1z1) + new Vector3f(-0.1f, -0.1f, -0.1f), x1y1z1);
-                    });
+                            CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z0) + LocalToWorldVector(new Vector3f(0.1f, 0.1f, 0)), x0y0z0);
+                            // CreateDebugObjectAt(ImageToWorld(imagePosition_x0y0z1) + new Vector3f(0.1f, 0.1f, -0.1f), x0y0z1);
+                            CreateDebugObjectAt(ImageToWorld(imagePosition_x0y1z0) + LocalToWorldVector(new Vector3f(0.1f, 0.4f, 0)), x0y1z0);
+                            // CreateDebugObjectAt(ImageToWorld(imagePosition_x0y1z1) + new Vector3f(0.1f, -0.1f, -0.1f), x0y1z1);
+                            CreateDebugObjectAt(ImageToWorld(imagePosition_x1y0z0) + LocalToWorldVector(new Vector3f(0.4f, 0.1f, 0)), x1y0z0);
+                            // CreateDebugObjectAt(ImageToWorld(imagePosition_x1y0z1) + new Vector3f(-0.1f, 0.1f, -0.1f), x1y0z1);
+                            CreateDebugObjectAt(ImageToWorld(imagePosition_x1y1z0) + LocalToWorldVector(new Vector3f(0.4f, 0.4f, 0)), x1y1z0);
+                            // CreateDebugObjectAt(ImageToWorld(imagePosition_x1y1z1) + new Vector3f(-0.1f, -0.1f, -0.1f), x1y1z1);
+                        }
+                    }
+                }
             }
         }
 
@@ -228,13 +238,21 @@ namespace Votyra.Core
                     _logger.LogMessage($"areaToChange:{areaToChange}");
                     var actualAreaToChange = areaToChange.IntersectWith(image.Area);
                     _logger.LogMessage($"actualAreaToChange:{actualAreaToChange}");
-                    actualAreaToChange.ForeachPointExlusive(point =>
+                    var min = actualAreaToChange.Min;
+                    for (var ix = 0; ix < actualAreaToChange.Size.X; ix++)
                     {
-                        _logger.LogMessage($"image[point] {image[point]} to {value}");
-                        _logger.LogMessage($"image[point+ new Vector3i(0, 0, 1)] {image[point + new Vector3i(0, 0, 1)]} to {value}");
-                        image[point] = value;
-                        image[point + new Vector3i(0, 0, 1)] = value;
-                    });
+                        for (var iy = 0; iy < actualAreaToChange.Size.Y; iy++)
+                        {
+                            for (var iz = 0; iz < actualAreaToChange.Size.Z; iz++)
+                            {
+                                var point=new Vector3i(ix, iy, iz)+min;
+                                _logger.LogMessage($"image[point] {image[point]} to {value}");
+                                _logger.LogMessage($"image[point+ new Vector3i(0, 0, 1)] {image[point + new Vector3i(0, 0, 1)]} to {value}");
+                                image[point] = value;
+                                image[point + new Vector3i(0, 0, 1)] = value;
+                            }
+                        }
+                    }
                 }
             }
         }

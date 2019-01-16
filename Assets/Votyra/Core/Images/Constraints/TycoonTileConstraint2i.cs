@@ -1,3 +1,4 @@
+using System;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
@@ -58,7 +59,15 @@ namespace Votyra.Core.Images.Constraints
 
         protected virtual void Constrain()
         {
-            _invalidatedCellArea.ForeachPointExlusive(ConstrainCell);
+            var min = _invalidatedCellArea.Min;
+            var max = _invalidatedCellArea.Max;
+            for (var ix = min.X; ix < max.X; ix++)
+            {
+                for (var iy = min.Y; iy <= max.Y; iy++)
+                {
+                    ConstrainCell(new Vector2i(ix, iy));
+                }
+            }
         }
 
         protected virtual void ConstrainCell(Vector2i cell)
