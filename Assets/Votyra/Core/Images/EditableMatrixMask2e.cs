@@ -9,57 +9,61 @@ namespace Votyra.Core.Images
     {
         private readonly Matrix2<MaskValues> _editableMatrix;
 
-        private readonly List<LockableMatrix2<MaskValues>> _readonlyMatrices = new List<LockableMatrix2<MaskValues>>();
-        private MatrixMask2e _image;
-        private Range2i? _invalidatedArea;
+        private readonly IImage2fPostProcessor _image2fPostProcessor;
 
-        public EditableMatrixMask2e(IImageConfig imageConfig)
+        private readonly List<MatrixMask2e> _readonlyMatrices = new List<MatrixMask2e>();
+        private Range2i? _invalidatedArea;
+        private MatrixMask2e _preparedImage;
+
+        public EditableMatrixMask2e( IImageConfig imageConfig)
         {
             _editableMatrix = new Matrix2<MaskValues>(imageConfig.ImageSize.XY);
+        }
+
+        private MatrixMask2e PreparedImage
+        {
+            get => _preparedImage;
+            set
+            {
+                _preparedImage?.FinishUsing();
+                _preparedImage = value;
+                _preparedImage?.StartUsing();
+            }
         }
 
         public IEditableMaskAccessor2e RequestAccess(Range2i areaRequest) => new MatrixImageAccessor(this, areaRequest);
 
         public IMask2e CreateMask()
         {
-            if (_invalidatedArea == Range2i.Zero)
+            if (_invalidatedArea == Range2i.Zero && PreparedImage.InvalidatedArea == Range2i.Zero)
             {
-                _image?.Dispose();
-                _image = new MatrixMask2e(_image.Image, Range2i.Zero);
             }
-            else if (_invalidatedArea.HasValue || _image == null)
+            else if (_invalidatedArea.HasValue || PreparedImage == null)
             {
                 _invalidatedArea = _invalidatedArea ?? _editableMatrix.Size.ToRange2i();
-                // Debug.LogFormat("Update readonlyCount:{0}", _readonlyMatrices.Count);
 
-                var readonlyMatrix = _readonlyMatrices.FirstOrDefault(o => !o.IsLocked);
-                if (readonlyMatrix == null)
-                {
-                    readonlyMatrix = new LockableMatrix2<MaskValues>(_editableMatrix.Size);
-                    _readonlyMatrices.Add(readonlyMatrix);
-                }
-
-                //sync
-                for (var ix = 0; ix < _editableMatrix.Size.X; ix++)
-                {
-                    for (var iy = 0; iy < _editableMatrix.Size.Y; iy++)
-                    {
-                        var i=new Vector2i(ix, iy);
-                        readonlyMatrix[i] = _editableMatrix[i];
-                    }
-                }
-
-                // Debug.LogError($"_readonlyMatrices: {_readonlyMatrices.Count}");
-
-                _image?.Dispose();
-                _image = new MatrixMask2e(readonlyMatrix, _invalidatedArea.Value);
+                PreparedImage = GetNotUsedImage();
+                PreparedImage.UpdateImage(_editableMatrix);
+                PreparedImage.UpdateInvalidatedArea(_invalidatedArea.Value);
                 _invalidatedArea = Range2i.Zero;
             }
 
-            return _image;
+            return PreparedImage;
         }
 
-        private void UpdateImage(Range2i invalidatedImageArea)
+        private MatrixMask2e GetNotUsedImage()
+        {
+            var image = _readonlyMatrices.FirstOrDefault(o => !o.IsBeingUsed);
+            if (image == null)
+            {
+                image = new MatrixMask2e(_editableMatrix.Size);
+                _readonlyMatrices.Add(image);
+            }
+
+            return image;
+        }
+
+        private void FixImage(Range2i invalidatedImageArea)
         {
             _invalidatedArea = _invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
         }
@@ -68,6 +72,7 @@ namespace Votyra.Core.Images
         {
             private readonly EditableMatrixMask2e _editableImage;
             private readonly MaskValues[,] _editableMatrix;
+            private float _changeCounter;
 
             public MatrixImageAccessor(EditableMatrixMask2e editableImage, Range2i area)
             {
@@ -81,12 +86,17 @@ namespace Votyra.Core.Images
             public MaskValues this[Vector2i pos]
             {
                 get => _editableMatrix[pos.X, pos.Y];
-                set => _editableMatrix[pos.X, pos.Y] = value;
+                set
+                {
+                    var existingValue = _editableMatrix[pos.X, pos.Y];
+                    _changeCounter += value - existingValue;
+                    _editableMatrix[pos.X, pos.Y] = value;
+                }
             }
 
             public void Dispose()
             {
-                _editableImage.UpdateImage(Area);
+                _editableImage.FixImage(Area);
             }
         }
     }

@@ -58,10 +58,10 @@ namespace Votyra.Core.Images.Constraints
                     .ToSampledData2i();
                 var processedSample = Process(sample);
 
-                var cell_x0y0 = ImageSampler2iUtils.CellToX0Y0(cell);
-                var cell_x0y1 = ImageSampler2iUtils.CellToX0Y1(cell);
-                var cell_x1y0 = ImageSampler2iUtils.CellToX1Y0(cell);
-                var cell_x1y1 = ImageSampler2iUtils.CellToX1Y1(cell);
+                var cell_x0y0 = cell;
+                var cell_x0y1 = new Vector2i(cell.X,cell.Y+1);
+                var cell_x1y0 = new Vector2i(cell.X+1, cell.Y);
+                var cell_x1y1 = new Vector2i(cell.X+1, cell.Y+1);
 
                 var change = 0f;
                 if (_editableMatrix.ContainsIndex(cell_x0y0) && _editableMatrix.ContainsIndex(cell_x1y1))

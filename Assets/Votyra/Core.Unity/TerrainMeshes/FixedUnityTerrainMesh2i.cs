@@ -72,8 +72,7 @@ namespace Votyra.Core.TerrainMeshes
 
             var side1 = posB - posA;
             var side2 = posC - posA;
-            var normal = Vector3f.Cross(side1, side2)
-                .Normalized;
+            var normal = Vector3f.Cross(side1, side2);
 
             unsafe
             {
