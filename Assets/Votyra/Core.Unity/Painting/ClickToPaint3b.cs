@@ -192,69 +192,68 @@ namespace Votyra.Core
             if (editableImage == null)
                 return;
 
-            if (Input.GetButton("Modifier1"))
-            {
-                // int maxDist = 4;
+            // if (Input.GetButton("Modifier1"))
+            // {
+            // int maxDist = 4;
 
-                // var area = Rect3i.CenterAndExtents(cell, new Vector3i(maxDist, maxDist, maxDist));
-                // using (var image = editableImage.RequestAccess(area))
-                // {
-                //     area = area.IntersectWith(image.Area);
-                //     bool centerValue;
-                //     if (_centerValueToReuse.HasValue)
-                //     {
-                //         centerValue = _centerValueToReuse.Value;
-                //     }
-                //     else
-                //     {
-                //         centerValue = image[cell];
-                //         _centerValueToReuse = centerValue;
-                //     }
+            // var area = Rect3i.CenterAndExtents(cell, new Vector3i(maxDist, maxDist, maxDist));
+            // using (var image = editableImage.RequestAccess(area))
+            // {
+            //     area = area.IntersectWith(image.Area);
+            //     bool centerValue;
+            //     if (_centerValueToReuse.HasValue)
+            //     {
+            //         centerValue = _centerValueToReuse.Value;
+            //     }
+            //     else
+            //     {
+            //         centerValue = image[cell];
+            //         _centerValueToReuse = centerValue;
+            //     }
 
-                //     area.ForeachPoint(index =>
-                //     {
-                //         image[index] = centerValue;
-                //     });
-                // }
-            }
+            //     area.ForeachPoint(index =>
+            //     {
+            //         image[index] = centerValue;
+            //     });
+            // }
+            // }
+            // else
+            // {
+            var value = Input.GetButton("Action");
+
+            int maxDist;
+            if (Input.GetButton("ExtendedModifier"))
+                maxDist = maxDistBig;
             else
+                maxDist = maxDistSmall;
+
+            var areaToChange = Range3i.FromCenterAndExtents(cell, Vector3i.FromSame(maxDist));
+
+            var extendedSetArea = Range3i.FromMinAndSize(areaToChange.Min, areaToChange.Size + new Vector3i(0, 0, 1));
+            using (var image = editableImage.RequestAccess(extendedSetArea))
             {
-                var value = false;
-
-                if (Input.GetMouseButton(0))
-                    value = true;
-                int maxDist;
-                if (Input.GetButton("Modifier2"))
-                    maxDist = maxDistBig;
-                else
-                    maxDist = maxDistSmall;
-
-                var areaToChange = Range3i.FromCenterAndExtents(cell, Vector3i.FromSame(maxDist));
-
-                var extendedSetArea = Range3i.FromMinAndSize(areaToChange.Min, areaToChange.Size + new Vector3i(0, 0, 1));
-                using (var image = editableImage.RequestAccess(extendedSetArea))
+                _logger.LogMessage($"image.Area:{image.Area}");
+                _logger.LogMessage($"areaToChange:{areaToChange}");
+                var actualAreaToChange = areaToChange.IntersectWith(image.Area);
+                _logger.LogMessage($"actualAreaToChange:{actualAreaToChange}");
+                var min = actualAreaToChange.Min;
+                for (var ix = 0; ix < actualAreaToChange.Size.X; ix++)
                 {
-                    _logger.LogMessage($"image.Area:{image.Area}");
-                    _logger.LogMessage($"areaToChange:{areaToChange}");
-                    var actualAreaToChange = areaToChange.IntersectWith(image.Area);
-                    _logger.LogMessage($"actualAreaToChange:{actualAreaToChange}");
-                    var min = actualAreaToChange.Min;
-                    for (var ix = 0; ix < actualAreaToChange.Size.X; ix++)
+                    for (var iy = 0; iy < actualAreaToChange.Size.Y; iy++)
                     {
-                        for (var iy = 0; iy < actualAreaToChange.Size.Y; iy++)
+                        for (var iz = 0; iz < actualAreaToChange.Size.Z; iz++)
                         {
-                            for (var iz = 0; iz < actualAreaToChange.Size.Z; iz++)
-                            {
-                                var point=new Vector3i(ix, iy, iz)+min;
-                                _logger.LogMessage($"image[point] {image[point]} to {value}");
-                                _logger.LogMessage($"image[point+ new Vector3i(0, 0, 1)] {image[point + new Vector3i(0, 0, 1)]} to {value}");
-                                image[point] = value;
-                                image[point + new Vector3i(0, 0, 1)] = value;
-                            }
+                            var point = new Vector3i(ix, iy, iz) + min;
+                            _logger.LogMessage($"image[point] {image[point]} to {value}");
+                            _logger.LogMessage($"image[point+ new Vector3i(0, 0, 1)] {image[point + new Vector3i(0, 0, 1)]} to {value}");
+                            image[point] = value;
+                            image[point + new Vector3i(0, 0, 1)] = value;
                         }
                     }
                 }
             }
+
+            // }
         }
     }
 }

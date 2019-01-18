@@ -66,9 +66,6 @@ namespace Votyra.Plannar.Unity
                 .WithId("root")
                 .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<PaintingInvocationManager>()
-                .AsSingle()
-                .NonLazy();
             Container.BindInterfacesAndSelfTo<PaintingSelectionManager>()
                 .FromNewComponentOnGameObjectWithID("root")
                 .AsSingle()

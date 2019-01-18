@@ -1,3 +1,4 @@
+using Votyra.Core;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
@@ -16,6 +17,8 @@ namespace Votyra.Plannar.Unity
                 .To<WallsVertexPostProcessor>()
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<DualSampleTerrainUVPostProcessor>()
+                .AsSingle();
+            Container.BindInterfacesAndSelfTo<DualSampleConfig>()
                 .AsSingle();
         }
     }
