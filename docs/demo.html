@@ -34,6 +34,10 @@
             Use <b>Ctrl</b> or <b>Right click</b> to invert the tool
         </p>
         <p>
+            Currently only plane based algorithms are optimized (SimpleSampleTerrain2i, HeightMapTerrain2i and DualSampleTerrain2i). Voxel base algorithms are still work in progress (SimpleSampleTerrain3b, DualSampleTerrain3b and ConstrainedDualSampleTerrain3b) and
+            are not expected to fully work, they serve as preview.
+        </p>
+        <p>
             Sadly WebAssembly and <b>Unity WebGL do not support Threads yet</b>, this means whole computation has to be done in this demo on the main thread. On platforms supporting Threads most of the work has been offloaded to other threads, only Unity
             specific parts remain on main thread (gather initial state and set Mesh object). You can check out the repository itself in the Editor for more or <a href="Votyra-Win.zip">download a Windows client here</a>.</a>
         </p>
