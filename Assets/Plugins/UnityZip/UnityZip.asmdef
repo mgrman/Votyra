@@ -1,0 +1,16 @@
+{
+    "name": "UnityZip",
+    "references": [],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Ionic.Zip.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": []
+}

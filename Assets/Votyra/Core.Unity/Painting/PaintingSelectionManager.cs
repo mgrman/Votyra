@@ -40,6 +40,26 @@ namespace Votyra.Core.Painting
 
         protected void Update()
         {
+            if (Input.GetButtonDown("ExtendedModifier"))
+            {
+                _paintingModel.IsExtendedModifierActive = true;
+            }
+
+            if (Input.GetButtonUp("ExtendedModifier"))
+            {
+                _paintingModel.IsExtendedModifierActive = false;
+            }
+
+            if (Input.GetButtonDown("InverseModifier"))
+            {
+                _paintingModel.IsInvertModifierActive = true;
+            }
+            if (Input.GetButtonUp("InverseModifier"))
+            {
+                _paintingModel.IsInvertModifierActive = false;
+            }
+
+            
             var invocationData = GetInvocationDataFromPointer(_activePointerData);
             var command = _paintingModel.SelectedPaintCommand;
 
@@ -84,9 +104,9 @@ namespace Votyra.Core.Painting
             return new PaintInvocationData(strength, imagePosition.Value);
         }
 
-        private static int GetMultiplier()=> Input.GetButton("InverseModifier") ? -1 : 1;
+        private  int GetMultiplier()=> _paintingModel.IsInvertModifierActive ? -1 : 1;
 
-        private static int GetDistance()=>Input.GetButton("ExtendedModifier") ? MaxDistBig : MaxDistSmall;
+        private  int GetDistance()=>_paintingModel.IsExtendedModifierActive ? MaxDistBig : MaxDistSmall;
         
     }
 }

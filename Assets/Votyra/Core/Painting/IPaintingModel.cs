@@ -9,7 +9,8 @@ namespace Votyra.Core.Painting
         IReadOnlyList<IPaintCommand> PaintCommands { get; }
 
         IPaintCommand SelectedPaintCommand { get; set; }
+        bool IsExtendedModifierActive { get; set; }
+        bool IsInvertModifierActive { get; set; }
 
-         event Action<IPaintCommand> SelectedPaintCommandChanged;
     }
 }

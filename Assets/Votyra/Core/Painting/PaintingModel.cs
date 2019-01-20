@@ -12,6 +12,14 @@ namespace Votyra.Core.Painting
         private readonly IThreadSafeLogger _logger;
         private IPaintCommand _selectedPaintCommand;
 
+
+        public IReadOnlyList<IPaintCommand> PaintCommands { get; }
+
+        public IPaintCommand SelectedPaintCommand { get; set; }
+
+        public bool IsExtendedModifierActive { get; set; }
+        public bool IsInvertModifierActive { get; set; }
+        
         public PaintingModel(List<IPaintCommand> commands, IThreadSafeLogger logger)
         {
             _logger = logger;
@@ -23,21 +31,5 @@ namespace Votyra.Core.Painting
             SelectedPaintCommand.TryDispose();
         }
 
-        public IReadOnlyList<IPaintCommand> PaintCommands { get; }
-
-        public IPaintCommand SelectedPaintCommand
-        {
-            get
-            {
-                return _selectedPaintCommand;
-            }
-            set
-            {
-                _selectedPaintCommand = value;
-                SelectedPaintCommandChanged?.Invoke(value);
-            }
-        }
-
-        public event Action<IPaintCommand> SelectedPaintCommandChanged;
     }
 }
