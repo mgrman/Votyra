@@ -26,19 +26,15 @@ namespace Votyra.Core.GroupSelectors
 
             var planes = options.CameraPlanes;
             var frustumCorners = options.CameraFrustumCorners;
-            var cameraPosition = options.CameraPosition;
-            var cameraLocalToWorldMatrix = options.CameraLocalToWorldMatrix;
-            var parentContainerWorldToLocalMatrix = options.ParentContainerWorldToLocalMatrix;
+            var cameraPosition = options.CameraRay.Origin;
             var invalidatedArea = _imageSampler.ImageToWorld(options.InvalidatedArea_imageSpace)
                 .RoundToContain();
 
-            var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition);
-
-            var localCameraBounds = Area3f.FromMinAndSize(cameraPositionLocal, new Vector3f());
+            var localCameraBounds = Area3f.FromMinAndSize(cameraPosition, new Vector3f());
             foreach (var frustumCorner in frustumCorners)
             {
-                var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner));
-                localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
+                var vector = frustumCorner;
+                localCameraBounds = localCameraBounds.Encapsulate(cameraPosition + vector);
             }
 
             var cameraBoundsGroups = (localCameraBounds / _cellInGroupCount.ToVector3f()).RoundToContain();

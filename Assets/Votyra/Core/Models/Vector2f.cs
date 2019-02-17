@@ -47,6 +47,8 @@ namespace Votyra.Core.Models
         public static Vector2f operator -(Vector2f a, int b) => new Vector2f(a.X - b, a.Y - b);
 
         public static Vector2f operator -(Vector2f a, Vector2f b) => new Vector2f(a.X - b.X, a.Y - b.Y);
+        public static Vector2f operator -(Vector2f a, Vector2i b) => new Vector2f(a.X - b.X, a.Y - b.Y);
+        public static Vector2f operator -(Vector2i a, Vector2f b) => new Vector2f(a.X - b.X, a.Y - b.Y);
 
         public static bool operator !=(Vector2f a, Vector2f b) => a.X != b.X || a.Y != b.Y;
 
@@ -112,5 +114,11 @@ namespace Votyra.Core.Models
         public override string ToString() => string.Format("({0} , {1})", X, Y);
 
         public Vector3f ToVector3f(float z) => new Vector3f(X, Y, z);
+
+
+        public static double Determinant(Vector2f a, Vector2f b)
+        {
+            return a.X * b.Y - a.Y * b.X;
+        }
     }
 }

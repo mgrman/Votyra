@@ -17,7 +17,7 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager2i(null, null, null, null, null, null, null, null, null);
+            new TerrainGeneratorManager2i(null, null, null, null, null, null, null,null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -66,8 +66,11 @@ namespace Votyra.Plannar.Unity
                 .WithId("root")
                 .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<PaintingSelectionManager>()
+            Container.BindInterfacesAndSelfTo<UnityInputManager>()
                 .FromNewComponentOnGameObjectWithID("root")
+                .AsSingle()
+                .NonLazy();
+            Container.BindInterfacesAndSelfTo<PaintingSelectionManager>()
                 .AsSingle()
                 .NonLazy();
             Container.BindInterfacesAndSelfTo<PaintingModel>()
@@ -120,8 +123,15 @@ namespace Votyra.Plannar.Unity
 
             var meshFilter = go.GetOrAddComponent<MeshFilter>();
             go.AddComponentIfMissing<MeshRenderer>();
-            go.AddComponentIfMissing<MeshCollider>();
-
+            if (terrainConfig.UseMeshCollider)
+            {
+                go.AddComponentIfMissing<MeshCollider>();
+            }
+            else
+            {
+                go.AddComponentIfMissing<BoxCollider>();
+            }
+           
             if (meshFilter.sharedMesh == null)
                 meshFilter.mesh = new Mesh();
 

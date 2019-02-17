@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UniRx.Async;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Votyra.Core.GroupSelectors;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Logging;
@@ -19,9 +21,10 @@ using Zenject;
 namespace Votyra.Core
 {
     //TODO: move to floats
-    public class TerrainGeneratorManager2i : IDisposable, ITickable
+    public class TerrainGeneratorManager2i : IDisposable
     {
-        private readonly Dictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new Dictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
+        private readonly ConcurrentDictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new ConcurrentDictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
+
         private readonly Vector2i _cellInGroupCount;
         private readonly IFrameDataProvider2i _frameDataProvider;
         private readonly Func<GameObject> _gameObjectFactory;
@@ -34,71 +37,76 @@ namespace Votyra.Core
 
         private readonly CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
         private readonly IProfiler _profiler;
-        private readonly IStateModel _stateModel;
         private readonly ITerrainConfig _terrainConfig;
         private readonly ITerrainUVPostProcessor _uvPostProcessor;
 
         private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
-        private bool _computedOnce;
 
+        private readonly TaskFactory _taskFactory = new TaskFactory();
+        
         private Task _waitForTask = Task.CompletedTask;
 
-
-        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IStateModel stateModel, IProfiler profiler, IFrameDataProvider2i frameDataProvider, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, IInterpolationConfig interpolationConfig)
+        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IProfiler profiler, IFrameDataProvider2i frameDataProvider, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, IInterpolationConfig interpolationConfig)
         {
             _gameObjectFactory = gameObjectFactory;
             _logger = logger;
             _terrainConfig = terrainConfig;
             _cellInGroupCount = _terrainConfig.CellInGroupCount.XY;
-            _stateModel = stateModel;
             _profiler = profiler;
             _frameDataProvider = frameDataProvider;
             _vertexPostProcessor = vertexPostProcessor;
             _uvPostProcessor = uvPostProcessor;
             _interpolationConfig = interpolationConfig;
-            _meshTopologyDistance = _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
+
+            if (_terrainConfig.Async)
+            {
+                _frameDataProvider.FrameData += UpdateTerrainInBackground;
+            }
+            else
+            {
+                _frameDataProvider.FrameData += UpdateTerrainInForeground;
+            }
         }
 
         public void Dispose()
         {
             _onDestroyCts.Cancel();
-        }
 
-        public void Tick()
-        {
-            if (_onDestroyCts.IsCancellationRequested || !_stateModel.IsEnabled || !_waitForTask.IsCompleted)
-                return;
-
-            var context = _frameDataProvider.GetCurrentFrameData(_meshTopologyDistance, _computedOnce);
-
-            if (context != null)
+            if (_terrainConfig.Async)
             {
-                context?.Activate();
-                _waitForTask = _terrainConfig.Async ? UpdateTerrainInBackground(context) : UpdateTerrainInForegroud(context);
-                _computedOnce = true;
+                _frameDataProvider.FrameData -= UpdateTerrainInBackground;
+            }
+            else
+            {
+                _frameDataProvider.FrameData -= UpdateTerrainInForeground;
             }
         }
 
-        private Task UpdateTerrainInForegroud(IFrameData2i context)
+        private void UpdateTerrainInForeground(IFrameData2i context)
         {
+            context?.Activate();
             UpdateTerrain(context);
-            return Task.CompletedTask;
         }
 
-        private TaskFactory _taskFactory = new TaskFactory();
-        private Task UpdateTerrainInBackground(IFrameData2i context)
+
+        private void UpdateTerrainInBackground(IFrameData2i context)
         {
-           return _taskFactory.StartNew(UpdateTerrain, context);
+            if (!_waitForTask.IsCompleted)
+            {
+                return;
+            }
+
+            context?.Activate();
+            _waitForTask = _taskFactory.StartNew(UpdateTerrain, context);
         }
 
         private void UpdateTerrain(object context)
         {
             UpdateTerrain(context as IFrameData2i);
         }
-        
+
         private void UpdateTerrain(IFrameData2i context)
         {
-
             HandleVisibilityUpdates(context);
             UpdateGroupManagers(context);
 
@@ -119,16 +127,19 @@ namespace Votyra.Core
                 _groupsToRecompute,
                 newGroup =>
                 {
-                    _activeGroups.Add(newGroup, CreateGroupManager( newGroup));
+                    var success = _activeGroups.TryAdd(newGroup, CreateGroupManager(newGroup));
+                    Assert.IsTrue(success, "Problem adding new group to the dictionary of active groups, seems the dictionary already contains it.");
                 },
                 removedGroup =>
                 {
-                    _activeGroups.TryRemoveAndReturnValue(removedGroup)
-                        ?.Dispose();
+                    ITerrainGroupGeneratorManager2i value;
+                    var success = _activeGroups.TryRemove(removedGroup, out value);
+                    Assert.IsTrue(success, "Problem removing existing group from the dictionary of active groups, seems the dictionary does not contain it.");
+                    value.Dispose();
                 });
         }
 
-        private ITerrainGroupGeneratorManager2i CreateGroupManager( Vector2i newGroup)
+        private ITerrainGroupGeneratorManager2i CreateGroupManager(Vector2i newGroup)
         {
             if (_terrainConfig.Async)
                 return new AsyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup, _onDestroyCts.Token, CreatePooledTerrainMesh(), GetMeshStrategy());
@@ -209,7 +220,6 @@ namespace Votyra.Core
             _unityData.DestroyWithMeshes();
         }
 
-
         protected override void UpdateGroup()
         {
             if (_token.IsCancellationRequested)
@@ -268,7 +278,6 @@ namespace Votyra.Core
             _activeTask.ContinueWith(t => UpdateGroup());
         }
 
-
         private async Task UpdateGroupAsync(IFrameData2i context, CancellationToken token)
         {
             if (context == null)
@@ -281,7 +290,6 @@ namespace Votyra.Core
                 return;
             UpdateUnityMesh(_pooledMesh.Mesh);
         }
-
 
         public override void Dispose()
         {
@@ -361,7 +369,6 @@ namespace Votyra.Core
         }
 
         protected abstract void UpdateGroup();
-
 
         protected void UpdateTerrainMesh(IFrameData2i context)
         {

@@ -30,7 +30,7 @@ namespace Votyra.Core.Painting.Commands
         public virtual void UpdateInvocationValues(Vector2i cell, int maxStrength)
         {
             _maxStrength = maxStrength;
-            PathUtils.InvokeOnPath(_lastInvocation, cell, Invoke);
+            Path2iUtils.InvokeOnPath(_lastInvocation, cell, Invoke);
 
             _lastInvocation = cell;
         }
@@ -50,7 +50,7 @@ namespace Votyra.Core.Painting.Commands
         
         protected void Invoke(Vector2i cell, int maxStrength)
         {
-            _logger.LogMessage($"invoke on {cell}");
+            // _logger.LogMessage($"invoke on {cell}");
             var absStrength = Math.Abs(maxStrength);
             var absExtents = absStrength - 1;
 

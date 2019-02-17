@@ -3,7 +3,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Utils
 {
-    public static class PathUtils
+    public static class Path2iUtils
     {
 
         

@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
 using Votyra.Core;
 using Votyra.Core.Images;
+using Votyra.Core.InputHandling;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
@@ -9,7 +11,7 @@ using Zenject;
 namespace Votyra.Plannar
 {
     //TODO: move to floats
-    public class FrameData2iProvider : IFrameDataProvider2i
+    public class FrameData2iProvider : IFrameDataProvider2i,ITickable
     {
         private readonly IImage2fPostProcessor _image2fPostProcessor;
         private readonly IImage2fProvider _imageProvider;
@@ -18,7 +20,10 @@ namespace Votyra.Plannar
         private readonly GameObject _root;
         private readonly ITerrainConfig _terrainConfig;
 
-        private Matrix4x4 _previousCameraMatrix;
+        private Matrix4x4f _previousCameraMatrix;
+        private readonly int _meshTopologyDistance;
+
+        private event Action<IFrameData2i> _frameData;
 
         [Inject]
         public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [InjectOptional] IMask2eProvider maskProvider, [Inject(Id = "root")] GameObject root)
@@ -29,9 +34,30 @@ namespace Votyra.Plannar
             _interpolationConfig = interpolationConfig;
             _maskProvider = maskProvider;
             _root = root;
+            _meshTopologyDistance = _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
         }
 
-        public IFrameData2i GetCurrentFrameData(int meshTopologyDistance, bool computedOnce)
+        public event Action<IFrameData2i> FrameData
+        {
+            add
+            {
+                _frameData += value;
+                value.Invoke(GetCurrentFrameData(false));
+            }
+            remove => _frameData -= value;
+        }
+
+        public void Tick()
+        {
+            var data = GetCurrentFrameData(true);
+            if (data == null)
+            {
+                return;
+            }
+            _frameData?.Invoke(data);
+        }
+
+        private IFrameData2i GetCurrentFrameData(bool computedOnce)
         {
             var camera = CameraUtils.MainCamera;
             var image = _imageProvider.CreateImage();
@@ -51,11 +77,11 @@ namespace Votyra.Plannar
                 Debug.DrawLine(new Vector3(start.X, 0,start.Y), new Vector3(end.X,0, end.Y));
             }
 
-            var localToWorldMatrix = camera.transform.localToWorldMatrix;
-            if (computedOnce && localToWorldMatrix == _previousCameraMatrix && (image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero)
+            var cameraLocalToWorldMatrix = camera.transform.localToWorldMatrix.ToMatrix4x4f();
+            if (computedOnce && cameraLocalToWorldMatrix == _previousCameraMatrix && (image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero)
                 return null;
 
-            _previousCameraMatrix = localToWorldMatrix;
+            _previousCameraMatrix = cameraLocalToWorldMatrix;
 
             var container = _root.gameObject;
 
@@ -63,17 +89,25 @@ namespace Votyra.Plannar
 
             var mask = _maskProvider?.CreateMask();
 
-
+            var parentContainerWorldToLocalMatrix = container.transform.worldToLocalMatrix.ToMatrix4x4f();
 
             var frustumCornersUnity = PooledArrayContainer<Vector3>.CreateDirty(4);
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);
             var frustumCorners = frustumCornersUnity.ToVector3f();
+            for (var i = 0; i < frustumCorners.Array.Length; i++)
+            {
+                frustumCorners.Array[i] = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorners.Array[i]));
+            }
             frustumCornersUnity.Dispose();
 
             var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
-            invalidatedArea = invalidatedArea.ExtendBothDirections(meshTopologyDistance);
+            invalidatedArea = invalidatedArea.ExtendBothDirections(_meshTopologyDistance);
 
-            return new FrameData2i(camera.transform.position.ToVector3f(), planes, frustumCorners, localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), image, mask, invalidatedArea, _terrainConfig.CellInGroupCount.XY, _interpolationConfig.MeshSubdivision);
+            var cameraPosition = _root.transform.InverseTransformPoint(camera.transform.position).ToVector3f();
+            var cameraDirection = _root.transform.InverseTransformDirection(camera.transform.forward).ToVector3f();
+
+            return new FrameData2i(new Ray3f(cameraPosition,cameraDirection), planes, frustumCorners, image, mask, invalidatedArea, _terrainConfig.CellInGroupCount.XY, _interpolationConfig.MeshSubdivision);
         }
+
     }
 }

@@ -29,18 +29,16 @@ namespace Votyra.Core
         private readonly CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
         protected readonly IProfiler _profiler;
-        protected readonly IStateModel _stateModel;
         protected readonly ITerrainConfig _terrainConfig;
         protected readonly ITerrainGenerator3b _terrainGenerator;
 
-        public TerrainGeneratorManager3b(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector3b groupsSelector, ITerrainGenerator3b terrainGenerator, IStateModel stateModel, IProfiler profiler, IFrameDataProvider3b frameDataProvider)
+        public TerrainGeneratorManager3b(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector3b groupsSelector, ITerrainGenerator3b terrainGenerator, IProfiler profiler, IFrameDataProvider3b frameDataProvider)
         {
             _gameObjectFactory = gameObjectFactory;
             _logger = logger;
             _terrainConfig = terrainConfig;
             _groupsSelector = groupsSelector;
             _terrainGenerator = terrainGenerator;
-            _stateModel = stateModel;
             _profiler = profiler;
             _frameDataProvider = frameDataProvider;
 
@@ -62,15 +60,8 @@ namespace Votyra.Core
 #endif
                 try
                 {
-                    if (_stateModel.IsEnabled)
-                    {
-                        var context = _frameDataProvider.GetCurrentFrameData(_meshFilters);
-                        await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
-                    }
-                    else
-                    {
-                        await UniTask.Delay(10);
-                    }
+                    var context = _frameDataProvider.GetCurrentFrameData(_meshFilters);
+                    await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
                 }
                 catch (Exception ex)
                 {

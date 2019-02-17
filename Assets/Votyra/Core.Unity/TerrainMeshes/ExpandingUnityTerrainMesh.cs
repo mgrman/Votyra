@@ -16,8 +16,15 @@ namespace Votyra.Core.TerrainMeshes
             Normals = new List<Vector3>();
         }
 
-        public Bounds MeshBounds { get; private set; }
+        public Bounds MeshBounds =>
+            Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ))
+                .ToBounds();
 
+        public Area2f MeshBoundsXY { get; private set; }
+
+        private float _minZ;
+
+        private float _maxZ;
         private Func<Vector3f, Vector3f> VertexPostProcessor { get; set; }
         private Func<Vector2f, Vector2f> UVAdjustor { get; set; }
 
@@ -37,7 +44,7 @@ namespace Votyra.Core.TerrainMeshes
 
         public void Reset(Area3f area)
         {
-            MeshBounds = area.ToBounds();
+            MeshBoundsXY = Area2f.FromMinAndMax(area.Min.XY, area.Max.XY);
             TriangleCount = 0;
             VertexCount = 0;
             Vertices.Clear();
@@ -70,6 +77,13 @@ namespace Votyra.Core.TerrainMeshes
             var normal = Vector3f.Cross(side1, side2)
                 .Normalized;
 
+            _minZ = TriangleCount == 0 ? posA.Z : Math.Min(_minZ, posA.Z);
+            _minZ = Math.Min(_minZ, posB.Z);
+            _minZ = Math.Min(_minZ, posC.Z);
+            _maxZ = TriangleCount == 0 ? posA.Z : Math.Max(_maxZ, posA.Z);
+            _maxZ = Math.Max(_maxZ, posB.Z);
+            _maxZ = Math.Max(_maxZ, posC.Z);
+            
             unsafe
             {
                 Indices.Add(VertexCount);

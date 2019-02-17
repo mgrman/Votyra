@@ -1,4 +1,5 @@
 using Votyra.Core.Images;
+using Votyra.Core.InputHandling;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
@@ -9,13 +10,11 @@ namespace Votyra.Core
     {
         private int _activeCounter;
 
-        public FrameData2i(Vector3f cameraPosition, IReadOnlyPooledList<Plane3f> cameraPlanes, IReadOnlyPooledList<Vector3f> cameraFrustumCorners, Matrix4x4f cameraLocalToWorldMatrix, Matrix4x4f parentContainerWorldToLocalMatrix, IImage2f image, IMask2e mask, Range2i invalidatedArea, Vector2i cellInGroupCount, int meshSubdivision)
+        public FrameData2i(Ray3f cameraRay, IReadOnlyPooledList<Plane3f> cameraPlanes, IReadOnlyPooledList<Vector3f> cameraFrustumCorners, IImage2f image, IMask2e mask, Range2i invalidatedArea, Vector2i cellInGroupCount, int meshSubdivision)
         {
-            CameraPosition = cameraPosition;
+            CameraRay = cameraRay;
             CameraPlanes = cameraPlanes;
             CameraFrustumCorners = cameraFrustumCorners;
-            CameraLocalToWorldMatrix = cameraLocalToWorldMatrix;
-            ParentContainerWorldToLocalMatrix = parentContainerWorldToLocalMatrix;
             Image = image;
             Mask = mask;
 
@@ -28,11 +27,9 @@ namespace Votyra.Core
             (Image as IInitializableImage)?.StartUsing();
         }
 
-        public Vector3f CameraPosition { get; }
+        public Ray3f CameraRay { get; }
         public IReadOnlyPooledList<Plane3f> CameraPlanes { get; }
         public IReadOnlyPooledList<Vector3f> CameraFrustumCorners { get; }
-        public Matrix4x4f CameraLocalToWorldMatrix { get; }
-        public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
 
         public void Activate()
         {

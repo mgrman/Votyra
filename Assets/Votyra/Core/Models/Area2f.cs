@@ -57,6 +57,7 @@ namespace Votyra.Core.Models
             return FromMinAndMax(min, max);
         }
 
+
         public bool Equals(Area2f other) => this == other;
 
         public override bool Equals(object obj)

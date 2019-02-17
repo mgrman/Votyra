@@ -12,7 +12,16 @@ namespace Votyra.Core.MeshUpdaters
             SetUnityMesh(triangleMesh, meshFilter.sharedMesh);
 
             var meshCollider = unityData.GetComponent<MeshCollider>();
-            meshCollider.sharedMesh = meshFilter.sharedMesh;
+            if (meshCollider != null)
+            {
+                meshCollider.sharedMesh = meshFilter.sharedMesh;
+            }
+
+            var boxCollider = unityData.GetComponent<BoxCollider>();
+            if (boxCollider != null)
+            {
+                SetBoxCollider(triangleMesh, boxCollider);
+            }
         }
 
         private static void SetUnityMesh(ITerrainMesh triangleMesh, Mesh mesh)
@@ -46,6 +55,21 @@ namespace Votyra.Core.MeshUpdaters
                 }
 
                 mesh.bounds = expandingMesh.MeshBounds;
+            }
+        }
+
+        private static void SetBoxCollider(ITerrainMesh triangleMesh, BoxCollider collider)
+        {
+            if (triangleMesh is FixedUnityTerrainMesh2i fixedMesh)
+            {
+                collider.center = fixedMesh.MeshBounds.center;
+                collider.size = fixedMesh.MeshBounds.size;
+
+            }
+            else if (triangleMesh is ExpandingUnityTerrainMesh expandingMesh)
+            {
+                collider.center = expandingMesh.MeshBounds.center;
+                collider.size = expandingMesh.MeshBounds.size;
             }
         }
 

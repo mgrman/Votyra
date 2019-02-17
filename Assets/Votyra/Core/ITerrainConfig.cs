@@ -6,6 +6,7 @@ namespace Votyra.Core
     {
         Vector3i CellInGroupCount { get; }
         bool FlipTriangles { get; }
+        bool UseMeshCollider { get; }
         bool DrawBounds { get; }
         bool Async { get; }
     }

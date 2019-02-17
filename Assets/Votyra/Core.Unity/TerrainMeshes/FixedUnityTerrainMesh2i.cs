@@ -10,7 +10,13 @@ namespace Votyra.Core.TerrainMeshes
     {
         private int _counter;
 
-        public Bounds MeshBounds { get; private set; }
+        public Bounds MeshBounds =>Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ)).ToBounds();
+
+        public Area2f MeshBoundsXY { get; private set; }
+
+        private float _minZ;
+
+        private float _maxZ;
 
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
         public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
@@ -46,7 +52,7 @@ namespace Votyra.Core.TerrainMeshes
 
         public void Reset(Area3f area)
         {
-            MeshBounds = area.ToBounds();
+            MeshBoundsXY = Area2f.FromMinAndMax(area.Min.XY,area.Max.XY);
             _counter = 0;
         }
 
@@ -73,6 +79,13 @@ namespace Votyra.Core.TerrainMeshes
             var side1 = posB - posA;
             var side2 = posC - posA;
             var normal = Vector3f.Cross(side1, side2);
+
+            _minZ = _counter == 0 ? posA.Z : Math.Min(_minZ, posA.Z);
+            _minZ = Math.Min(_minZ, posB.Z);
+            _minZ = Math.Min(_minZ, posC.Z);
+            _maxZ = _counter == 0 ? posA.Z : Math.Max(_maxZ, posA.Z);
+            _maxZ = Math.Max(_maxZ, posB.Z);
+            _maxZ = Math.Max(_maxZ, posC.Z);
 
             unsafe
             {

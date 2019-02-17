@@ -12,19 +12,15 @@ namespace Votyra.Core.GroupSelectors
                 return;
             var planes = options.CameraPlanes;
             var frustumCorners = options.CameraFrustumCorners;
-            var cameraPosition = options.CameraPosition;
-            var cameraLocalToWorldMatrix = options.CameraLocalToWorldMatrix;
-            var parentContainerWorldToLocalMatrix = options.ParentContainerWorldToLocalMatrix;
+            var cameraPosition = options.CameraRay.Origin;
 
-            var cameraPositionLocal = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraPosition)
-                .XY;
+            var cameraPositionLocal = cameraPosition.XY;
 
             var localCameraBounds = Area2f.FromMinAndSize(cameraPositionLocal, new Vector2f());
             for (var i = 0; i < frustumCorners.Count; i++)
             {
                 var frustumCorner = frustumCorners[i];
-                var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner))
-                    .XY;
+                var vector = frustumCorner.XY;
                 localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
 

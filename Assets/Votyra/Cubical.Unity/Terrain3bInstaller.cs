@@ -14,7 +14,7 @@ namespace Votyra.Cubical.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager3b(null, null, null, null, null, null, null, null);
+            new TerrainGeneratorManager3b(null, null, null,  null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -79,7 +79,6 @@ namespace Votyra.Cubical.Unity
 
             var meshFilter = go.GetOrAddComponent<MeshFilter>();
             go.AddComponentIfMissing<MeshRenderer>();
-            go.AddComponentIfMissing<MeshCollider>();
 
             if (meshFilter.sharedMesh == null)
                 meshFilter.mesh = new Mesh();
