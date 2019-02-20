@@ -13,6 +13,5 @@ namespace Votyra.Core.Painting
             InputRay = inputRay;
             InputActions = inputActions;
         }
-        
     }
 }

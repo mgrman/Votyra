@@ -16,7 +16,7 @@ namespace Votyra.Core.Painting.Commands
 
         private IThreadSafeLogger _logger;
 
-        private Vector2i? _lastInvocation;
+        private Vector2i? _lastInvocation { get; set; }
         private int _maxStrength;
 
 

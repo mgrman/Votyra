@@ -7,6 +7,7 @@ using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
+using Votyra.Core.Raycasting;
 using Votyra.Core.Unity.Painting;
 using Votyra.Core.Utils;
 using Zenject;
@@ -68,6 +69,9 @@ namespace Votyra.Plannar.Unity
 
             Container.BindInterfacesAndSelfTo<UnityInputManager>()
                 .FromNewComponentOnGameObjectWithID("root")
+                .AsSingle()
+                .NonLazy();
+            Container.BindInterfacesAndSelfTo<TerrainRaycaster>()
                 .AsSingle()
                 .NonLazy();
             Container.BindInterfacesAndSelfTo<PaintingSelectionManager>()

@@ -3,6 +3,7 @@ using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.InputHandling;
 using Votyra.Core.Models;
+using Votyra.Core.Raycasting;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Painting
@@ -15,27 +16,19 @@ namespace Votyra.Core.Painting
 
         private readonly IPaintingModel _paintingModel;
 
-        private readonly IImage2fProvider _image2FProvider;
+        private readonly IRaycaster _raycaster;
 
         private InputActions _previousInputActions;
 
-        public PaintingSelectionManager(IPaintingModel paintingModel, IImage2fProvider image2FProvider)
+        public PaintingSelectionManager(IPaintingModel paintingModel, IRaycaster raycaster)
         {
             _paintingModel = paintingModel;
-            _image2FProvider = image2FProvider;
+            _raycaster = raycaster;
         }
-
-        public bool Update(InputData frameData)
+        
+        public bool Update(Ray3f inputRay, InputActions activeInput)
         {
-            var activeInput = frameData.InputActions;
             var command = _paintingModel.SelectedPaintCommand;
-            
-            if (!activeInput.IsInputActive(InputActions.Action))
-            {
-                command?.StopInvocation();
-                _previousInputActions = activeInput;
-                return false;
-            }
             
             if (activeInput.IsInputActive(InputActions.ExtendedModifier))
             {
@@ -57,9 +50,9 @@ namespace Votyra.Core.Painting
                 _paintingModel.IsInvertModifierActive = false;
             }
 
-            var invocationData = GetInvocationDataFromPointer(frameData.InputRay);
+            var invocationData = GetInvocationDataFromPointer(inputRay);
 
-            if (command != null && invocationData != null)
+            if (activeInput.IsInputActive(InputActions.Action) && command != null && invocationData != null)
             {
                 command.UpdateInvocationValues(invocationData.Value.ImagePosition, invocationData.Value.Strength);
                 _previousInputActions = activeInput;
@@ -76,72 +69,10 @@ namespace Votyra.Core.Painting
 
         private Vector2i? GetImagePosition(Ray3f cameraRay)
         {
-             return Raycast(cameraRay)
+             return _raycaster.Raycast(cameraRay)
                  ?.RoundToVector2i();
         }
 
-        private Vector2f? Raycast(Ray3f cameraRay)
-        {
-            float maxDistance = 500;
-            var image = _image2FProvider.CreateImage();
-            (image as IInitializableImage)?.StartUsing();
-
-            var cameraRayXY = cameraRay.XY;
-            
-            var startXY = cameraRayXY.Origin;
-            var directionNonNormalizedXY = cameraRay.Direction.XY;
-            var directionXYMag = directionNonNormalizedXY.Magnitude;
-            var endXY = (startXY + directionNonNormalizedXY.Normalized * maxDistance);
-
-            float GetRayValue(Vector2f point)
-            {
-                var p = (point - startXY).Magnitude / directionXYMag;
-                return cameraRay.Origin.Z + cameraRay.Direction.Z * p;
-            }
-
-            Vector2f? result = null;
-
-            Path2fUtils.InvokeOnPath(startXY,
-                endXY,
-                (line) =>
-                {
-                    var fromImageValue = GetLinearInterpolatedValue(image, line.From);
-                    var toImageValue = GetLinearInterpolatedValue(image, line.To);
-
-                    var fromRayValue = GetRayValue(line.From);
-                    var toRayValue = GetRayValue(line.To);
-
-                    var x = (fromRayValue - fromImageValue) / (toImageValue - fromImageValue - toRayValue + fromRayValue);
-                    if (x < 0 || x > 1)
-                    {
-                        return false;
-                    }
-
-                    result = line.From + (line.To - line.From) * x;
-                    return true;
-                });
-
-            (image as IInitializableImage)?.FinishUsing();
-
-            return result;
-        }
-
-        private float GetLinearInterpolatedValue(IImage2f image, Vector2f pos)
-        {
-            var pos_x0y0 = pos.FloorToVector2i();
-            var fraction = pos - pos_x0y0;
-
-            var pos_x0y1 = pos_x0y0 + new Vector2i(0, 1);
-            var pos_x1y0 = pos_x0y0 + new Vector2i(1, 0);
-            var pos_x1y1 = pos_x0y0 + new Vector2i(1, 1);
-
-            var x0y0 = image.Sample(pos_x0y0);
-            var x0y1 = image.Sample(pos_x0y1);
-            var x1y0 = image.Sample(pos_x1y0);
-            var x1y1 = image.Sample(pos_x1y1);
-
-            return (1f - fraction.X) * (1f - fraction.Y) * x0y0 + fraction.X * (1f - fraction.Y) * x1y0 + (1f - fraction.X) * fraction.Y * x0y1 + fraction.X * fraction.Y * x1y1;
-        }
 
         private PaintInvocationData? GetInvocationDataFromPointer(Ray3f cameraRay)
         {
