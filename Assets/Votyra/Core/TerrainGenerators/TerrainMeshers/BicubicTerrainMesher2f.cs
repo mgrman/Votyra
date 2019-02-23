@@ -5,22 +5,32 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public static class BicubicTerrainMesher2f
+    public  class BicubicTerrainMesher2f:ITerrainMesher2f
     {
         private const float MaskLimit = 0f;
 
-        public static void GetResultingMesh(ITerrainMesh mesh, Vector2i group, Vector2i cellInGroupCount, IImage2f image, IMask2e mask, int subdivision)
+        private readonly Vector2i _cellInGroupCount;
+        private readonly int _subdivision;
+
+
+        public BicubicTerrainMesher2f(ITerrainConfig terrainConfig,IInterpolationConfig interpolationConfig)
         {
-            var poolableValuesToFill = PoolableMatrix<Vector3f>.CreateDirty(new Vector2i(subdivision + 1, subdivision + 1));
+            _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+            _subdivision = interpolationConfig.MeshSubdivision;
+        }
+        
+        public  void GetResultingMesh(ITerrainMesh mesh, Vector2i group,  IImage2f image, IMask2e mask)
+        {
+            var poolableValuesToFill = PoolableMatrix<Vector3f>.CreateDirty(new Vector2i(_subdivision + 1, _subdivision + 1));
             var valuesToFill = poolableValuesToFill.RawMatrix;
-            var poolableMaskToFill = PoolableMatrix<float>.CreateDirty(new Vector2i(subdivision + 1, subdivision + 1));
+            var poolableMaskToFill = PoolableMatrix<float>.CreateDirty(new Vector2i(_subdivision + 1, _subdivision + 1));
             var maskToFill = poolableMaskToFill.RawMatrix;
 
-            var groupPosition = cellInGroupCount * group;
+            var groupPosition = _cellInGroupCount * group;
 
-            for (var iix = 0; iix < cellInGroupCount.X; iix++)
+            for (var iix = 0; iix < _cellInGroupCount.X; iix++)
             {
-                for (var iiy = 0; iiy < cellInGroupCount.Y; iiy++)
+                for (var iiy = 0; iiy < _cellInGroupCount.Y; iiy++)
                 {
                     var cellInGroup = new Vector2i(iix, iiy);
 
@@ -29,7 +39,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     if (maskData.GetHoleCount() == 4)
                         return;
 
-                    var step = 1.0f / subdivision;
+                    var step = 1.0f / _subdivision;
 
                     var data_x0y0 = image.SampleCell(cell - Vector2i.One + new Vector2i(0, 0));
                     var data_x0y2 = image.SampleCell(cell - Vector2i.One + new Vector2i(0, 2));
@@ -75,9 +85,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     var maskInterMat_x3y2 = mask_x2y2.x1y0.IsHole() ? -1 : 1;
                     var maskInterMat_x3y3 = mask_x2y2.x1y1.IsHole() ? -1 : 1;
 
-                    for (var ix = 0; ix < subdivision + 1; ix++)
+                    for (var ix = 0; ix < _subdivision + 1; ix++)
                     {
-                        for (var iy = 0; iy < subdivision + 1; iy++)
+                        for (var iy = 0; iy < _subdivision + 1; iy++)
                         {
                             var pos = new Vector2f(step * ix, step * iy);
 

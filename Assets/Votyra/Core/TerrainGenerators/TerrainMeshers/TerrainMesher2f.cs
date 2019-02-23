@@ -6,14 +6,22 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public static class TerrainMesher2f
+    public class TerrainMesher2f: ITerrainMesher2f
     {
-        public static void GetResultingMesh(ITerrainMesh mesh, Vector2i group, Vector2i cellInGroupCount, IImage2f image, IMask2e mask)
+        private Vector2i _cellInGroupCount;
+
+
+        public TerrainMesher2f(ITerrainConfig terrainConfig)
         {
-            var groupPosition = cellInGroupCount * group;
-            for (var ix = 0; ix < cellInGroupCount.X; ix++)
+            _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+        }
+        
+        public void GetResultingMesh(ITerrainMesh mesh, Vector2i group, IImage2f image, IMask2e mask)
+        {
+            var groupPosition = _cellInGroupCount * group;
+            for (var ix = 0; ix < _cellInGroupCount.X; ix++)
             {
-                for (var iy = 0; iy < cellInGroupCount.Y; iy++)
+                for (var iy = 0; iy < _cellInGroupCount.Y; iy++)
                 {
                     var cellInGroup=new Vector2i(ix, iy);
                     var cell = cellInGroup + groupPosition;
