@@ -21,6 +21,8 @@ namespace Votyra.Core.Models
         public bool AnyZeroOrNegative => X <= 0 || Y <= 0;
 
         public int AreaSum => X * Y;
+        
+        public int ManhattanMagnitude => Math.Abs(X) + Math.Abs(Y);
 
         public static Vector2i FromSame(int value) => new Vector2i(value, value);
 

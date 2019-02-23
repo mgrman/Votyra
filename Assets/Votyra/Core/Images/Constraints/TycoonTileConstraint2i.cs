@@ -47,7 +47,7 @@ namespace Votyra.Core.Images.Constraints
 
         public Range2i FixImage(Matrix2<float> editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
-            _invalidatedCellArea = invalidatedImageArea;
+            _invalidatedCellArea = invalidatedImageArea.ExtendBothDirections(2);
             if (direction != Direction.Up && direction != Direction.Down)
                 direction = Direction.Down;
 

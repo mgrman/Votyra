@@ -8,22 +8,22 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Raycasting
 {
-    public sealed class TerrainRaycaster : IRaycaster
+    public  abstract class BaseRaycaster : IRaycaster
     {
-        private readonly IImage2fProvider _image2FProvider;
         private readonly ITerrainVertexPostProcessor _terrainVertexPostProcessor;
 
-        public TerrainRaycaster(IImage2fProvider image2FProvider,  ITerrainVertexPostProcessor terrainVertexPostProcessor=null)
+        private static readonly Vector2i Y1Offset = new Vector2i(0, 1);
+        private static readonly Vector2i Y0Offset = new Vector2i(0, -1);
+        private static readonly Vector2i X1Offset = new Vector2i(1, 0);
+        private static readonly Vector2i X0Offset = new Vector2i(-1, 0);
+
+        protected BaseRaycaster(ITerrainVertexPostProcessor terrainVertexPostProcessor)
         {
-            _image2FProvider = image2FProvider;
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
         }
-
-        public Vector2f? Raycast(Ray3f cameraRay)
+        public virtual Vector2f? Raycast(Ray3f cameraRay)
         {
             float maxDistance = 500;
-            var image = _image2FProvider.CreateImage();
-            (image as IInitializableImage)?.StartUsing();
 
             var cameraRayXY = cameraRay.XY;
 
@@ -38,10 +38,10 @@ namespace Votyra.Core.Raycasting
                 return cameraRay.Origin.Z + cameraRay.Direction.Z * p;
             }
 
-             Vector2f? IsHit(Line2f line)
+            Vector2f? IsHit(Line2f line)
             {
-                var fromImageValue = GetLinearInterpolatedValue(image, line.From);
-                var toImageValue = GetLinearInterpolatedValue(image, line.To);
+                var fromImageValue = GetValue( line.From);
+                var toImageValue = GetValue( line.To);
 
                 var fromRayValue = GetRayValue(line.From);
                 var toRayValue = GetRayValue(line.To);
@@ -55,15 +55,15 @@ namespace Votyra.Core.Raycasting
                 return line.From + (line.To - line.From) * x;
             }
 
-             Vector2f? result = InvokeOnPath(startXY, endXY, IsHit);
+            Vector2f? result = InvokeOnPath(startXY, endXY, IsHit);
 
-            (image as IInitializableImage)?.FinishUsing();
 
             return result;
         }
 
-        private T? InvokeOnPath<T>(Vector2f from, Vector2f to, Func<Line2f, T?> action)
-            where T:struct
+        protected abstract float GetValue(Vector2f pos);
+        
+        private Vector2f? InvokeOnPath(Vector2f from, Vector2f to, Func<Line2f, Vector2f?> action)
         {
             var direction = to - from;
 
@@ -72,41 +72,49 @@ namespace Votyra.Core.Raycasting
             var cell = FindCell(from);
             var position = from;
             int counter = 100;
+            var offset = Vector2i.Zero;
+            var previousOffset = Vector2i.Zero;
             while (cell != lastCell && counter > 0)
             {
                 counter--;
+                previousOffset = offset;
                 var ray = new Ray2f(position, direction);
 
-                var area = Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
-                Vector2f? intersection = IntersectLine(ray, new Line2f(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y))));
-                if (intersection.HasValue)
+                var area = MeshCellArea(cell);
+
+                Vector2f? intersection;
+                if (previousOffset != Y1Offset && IntersectLine(ray, area.Y0, out intersection))
                 {
-                    cell += new Vector2i(0, -1);
+                    offset = Y0Offset;
                 }
                 else
                 {
-                    intersection = IntersectLine(ray, new Line2f(ProcessVertex(new Vector2f(cell.X + 1, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1))));
-                    if (intersection.HasValue)
+                    if (previousOffset != X0Offset && IntersectLine(ray, area.X1, out intersection))
                     {
-                        cell += new Vector2i(1, 0);
+                        offset = X1Offset;
                     }
                     else
                     {
-                        intersection = IntersectLine(ray, new Line2f(ProcessVertex(new Vector2f(cell.X, cell.Y + 1)), ProcessVertex(new Vector2f(cell.X, cell.Y))));
-                        if (intersection.HasValue)
+                        if (previousOffset != X1Offset && IntersectLine(ray, area.X0, out intersection))
                         {
-                            cell += new Vector2i(-1, 0);
+                            offset = X0Offset;
                         }
                         else
                         {
-                            intersection = IntersectLine(ray, new Line2f(ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)), ProcessVertex(new Vector2f(cell.X, cell.Y + 1))));
-                            if (intersection.HasValue)
+                            if (previousOffset != Y0Offset && IntersectLine(ray, area.Y1, out intersection))
                             {
-                                cell += new Vector2i(0, 1);
+                                offset = Y1Offset;
+                            }
+                            else
+                            {
+                                offset = Vector2i.Zero;
+                                intersection = null;
                             }
                         }
                     }
                 }
+
+                cell += offset;
 
                 if (intersection == null)
                 {
@@ -131,12 +139,12 @@ namespace Votyra.Core.Raycasting
             var cell = meshPoint.FloorToVector2i();
             var area = MeshCellArea(cell);
             int counter = 100;
-            while (!area.Contains(meshPoint) && counter>0)
+            while (!area.Contains(meshPoint) && counter > 0)
             {
                 counter--;
                 if (meshPoint.X > area.Max.X)
                 {
-                    cell+=new Vector2i(1,0);
+                    cell += new Vector2i(1, 0);
                 }
                 else if (meshPoint.X < area.Min.X)
                 {
@@ -159,23 +167,14 @@ namespace Votyra.Core.Raycasting
             }
 
             Assert.IsTrue(counter > 0, "FindCell used too many iterations");
-     
+
             return cell;
         }
 
-        private Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
-
-        private Vector2f ProcessVertex(Vector2f point)
+        private static bool IntersectLine(Ray2f ray, Line2f line, out Vector2f? res)
         {
-            if (_terrainVertexPostProcessor == null)
-            {
-                return point;
-            }
-            else
-            {
-                return _terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
-                    .XY;
-            }
+            res = IntersectLine(ray, line);
+            return res != null;
         }
 
         private static Vector2f? IntersectLine(Ray2f ray, Line2f line)
@@ -205,7 +204,7 @@ namespace Votyra.Core.Raycasting
 
             // If lines are both line segments we must check whether these lines intersect in the segments:
 
-            if (rayParameter > 0 && m >= 0 && m <= 1)
+            if (rayParameter >= 0 && m >= 0 && m <= 1)
                 return (ray.Origin + v1 * rayParameter);
             else
                 return null;
@@ -226,6 +225,21 @@ namespace Votyra.Core.Raycasting
             var x1y1 = image.Sample(pos_x1y1);
 
             return (1f - fraction.X) * (1f - fraction.Y) * x0y0 + fraction.X * (1f - fraction.Y) * x1y0 + (1f - fraction.X) * fraction.Y * x0y1 + fraction.X * fraction.Y * x1y1;
+        }
+
+        protected  Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
+
+        private Vector2f ProcessVertex(Vector2f point)
+        {
+            if (_terrainVertexPostProcessor == null)
+            {
+                return point;
+            }
+            else
+            {
+                return _terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
+                    .XY;
+            }
         }
     }
 }

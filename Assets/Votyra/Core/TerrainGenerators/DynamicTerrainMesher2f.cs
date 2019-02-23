@@ -4,17 +4,24 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public static class DynamicTerrainMesher2f
+    public class DynamicTerrainMesher2f:ITerrainMesher2f
     {
-        public static void GetResultingMesh(ITerrainMesh mesh, Vector2i group, Vector2i cellInGroupCount, IImage2f image, IMask2e mask)
+        private Vector2i _cellInGroupCount;
+
+        public DynamicTerrainMesher2f(ITerrainConfig terrainConfig)
         {
-            var groupPosition = cellInGroupCount * group;
+            _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+        }
+        
+        public void GetResultingMesh(ITerrainMesh mesh, Vector2i group, IImage2f image, IMask2e mask)
+        {
+            var groupPosition = _cellInGroupCount * group;
 
-            var samples = image.SampleArea(Range2i.FromMinAndSize(groupPosition, cellInGroupCount + Vector2i.One));
+            var samples = image.SampleArea(Range2i.FromMinAndSize(groupPosition, _cellInGroupCount + Vector2i.One));
 
-            for (var ix = 0; ix < cellInGroupCount.X; ix++)
+            for (var ix = 0; ix < _cellInGroupCount.X; ix++)
             {
-                for (var iy = 0; iy < cellInGroupCount.Y; iy++)
+                for (var iy = 0; iy < _cellInGroupCount.Y; iy++)
                 {
                     var cell = new Vector2i(ix, iy) + groupPosition;
                     var x0y0 = new Vector3f(cell.X + 0, cell.Y + 0, samples[ix + 0, iy + 0]);

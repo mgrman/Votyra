@@ -10,6 +10,17 @@ namespace Votyra.Core.Models
         public readonly Vector2f Max;
         public readonly Vector2f Min;
 
+        public Vector2f X0Y0 => Min;
+        public Vector2f X0Y1 => new Vector2f(Min.X,Max.Y);
+        public Vector2f X1Y0 => new Vector2f(Max.X, Min.Y);
+        public Vector2f X1Y1 => Max;
+
+        public Line2f X0 => new Line2f(X0Y0, X0Y1);
+        public Line2f X1 => new Line2f(X1Y0, X1Y1);
+        public Line2f Y0 => new Line2f(X0Y0, X1Y0);
+        public Line2f Y1 => new Line2f(X0Y1, X1Y1);
+
+
         private Area2f(Vector2f min, Vector2f max)
         {
             Min = min;

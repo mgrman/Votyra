@@ -27,8 +27,22 @@ namespace Votyra.Core.Painting.Commands
             _logger = logger;
         }
 
+        private DateTime _clickLimit;
+        private static readonly TimeSpan ClickDelay = TimeSpan.FromSeconds(0.2);
+
         public virtual void UpdateInvocationValues(Vector2i cell, int maxStrength)
         {
+            if (DateTime.Now < _clickLimit && (_lastInvocation == null || (_lastInvocation.Value - cell).ManhattanMagnitude < 3))
+            {
+                return;
+            }
+
+            if (_lastInvocation == null)
+            {
+                _clickLimit = DateTime.Now + ClickDelay;
+            }
+
+
             _maxStrength = maxStrength;
             Path2iUtils.InvokeOnPath(_lastInvocation, cell, Invoke);
 
@@ -47,7 +61,7 @@ namespace Votyra.Core.Painting.Commands
             OnNewInvocationData();
             Invoke(cell, _maxStrength);
         }
-        
+
         protected void Invoke(Vector2i cell, int maxStrength)
         {
             // _logger.LogMessage($"invoke on {cell}");
@@ -70,7 +84,7 @@ namespace Votyra.Core.Painting.Commands
                     {
                         for (var iy = min.Y; iy <= max.Y; iy++)
                         {
-                            var index=new Vector2i(ix, iy);
+                            var index = new Vector2i(ix, iy);
                             var ox = index.X - cell.X;
                             var oy = index.Y - cell.Y;
 
