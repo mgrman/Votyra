@@ -17,63 +17,6 @@ namespace Votyra.Core.Editor
     [CustomEditor(typeof(TerrainDataController))]
     public class TerrainDataControllerEditor : UnityEditor.Editor
     {
-        public static IEnumerable<Type> GetConfigTypes(GameObject algorithPrefab)
-        {
-            var installers = algorithPrefab.GetComponentInChildren<GameObjectContext>()
-                .Installers;
-
-            var container = new DiContainer(false);
-            var types = new List<Type>();
-            Action<IBindingFinalizer> handler = finalizer =>
-            {
-                if (finalizer is BindFinalizerWrapper)
-                {
-                    var bindFinalizer = finalizer as BindFinalizerWrapper;
-                    if (bindFinalizer.SubFinalizer is ProviderBindingFinalizer)
-                    {
-                        var providerBindingFinalizer = bindFinalizer.SubFinalizer as ProviderBindingFinalizer;
-                        if (providerBindingFinalizer != null)
-                        {
-                            types.AddRange(providerBindingFinalizer.BindInfo.ToTypes);
-                            return;
-                        }
-                    }
-
-                    Debug.Log("bindFinalizer.SubFinalizer:" + bindFinalizer.SubFinalizer?.GetType()
-                        .FullName);
-                }
-
-                Debug.Log("finalizer:" + finalizer.GetType()
-                    .FullName);
-            };
-            container.FinalizeBinding += handler;
-            foreach (var installer in installers)
-            {
-                var containerField = typeof(MonoInstallerBase).GetField("_container", BindingFlags.GetField | BindingFlags.SetField | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-                var tempInstallerGo = new GameObject().AddComponent(installer.GetType());
-                try
-                {
-                    var tempInstaller = tempInstallerGo.GetComponentInChildren<MonoInstallerBase>(true);
-                    containerField.SetValue(tempInstaller, container);
-                    try
-                    {
-                        tempInstaller.InstallBindings();
-                    }
-                    catch
-                    {
-                    }
-                }
-                finally
-                {
-                    DestroyImmediate(tempInstallerGo.gameObject);
-                }
-            }
-
-            container.FlushBindings();
-            container.FinalizeBinding -= handler;
-            return types;
-        }
-
         public override void OnInspectorGUI()
         {
             var controller = target as TerrainDataController;
@@ -108,9 +51,13 @@ namespace Votyra.Core.Editor
             var activeAlgorith = controller._availableTerrainAlgorithms[controller._activeTerrainAlgorithm];
             if (activeAlgorith != null)
             {
-                var configTypes = GetConfigTypes(activeAlgorith);
+                var configTypes = TerrainDataControllerGui.GetConfigTypes(activeAlgorith);
                 foreach (var configType in configTypes)
                 {
+                    if (configType == null)
+                    {
+                        continue;
+                    }
                     var ctors = configType.GetConstructors();
 
                     var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null)).SelectMany(o => o.GetParameters()

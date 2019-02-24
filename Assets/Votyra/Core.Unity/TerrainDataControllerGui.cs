@@ -8,7 +8,7 @@ using Votyra.Core.Unity;
 using Votyra.Core.Utils;
 using Zenject;
 
-namespace Votyra.Core.Editor
+namespace Votyra.Core
 {
     public class TerrainDataControllerGui : MonoBehaviour
     {
@@ -18,61 +18,54 @@ namespace Votyra.Core.Editor
                 .Installers;
 
             var container = new DiContainer(false);
-            var types = new List<Type>();
-            Action<IBindingFinalizer> handler = finalizer =>
+            var tempGameObject = new GameObject();
+            try
             {
-                if (finalizer is BindFinalizerWrapper)
+                foreach (var installer in installers)
                 {
-                    var bindFinalizer = finalizer as BindFinalizerWrapper;
-                    if (bindFinalizer.SubFinalizer is ProviderBindingFinalizer)
-                    {
-                        var providerBindingFinalizer = bindFinalizer.SubFinalizer as ProviderBindingFinalizer;
-                        if (providerBindingFinalizer != null)
-                        {
-                            types.AddRange(providerBindingFinalizer.BindInfo.ToTypes);
-                            return;
-                        }
-                    }
-
-                    Debug.Log("bindFinalizer.SubFinalizer:" + bindFinalizer.SubFinalizer?.GetType()
-                        .FullName);
-                }
-
-                Debug.Log("finalizer:" + finalizer.GetType()
-                    .FullName);
-            };
-            container.FinalizeBinding += handler;
-            foreach (var installer in installers)
-            {
-                var containerField = typeof(MonoInstallerBase).GetField("_container", BindingFlags.GetField | BindingFlags.SetField | BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-                var tempInstallerGo = new GameObject().AddComponent(installer.GetType());
-                try
-                {
+                    var tempInstallerGo = tempGameObject.AddComponent(installer.GetType());
                     var tempInstaller = tempInstallerGo.GetComponentInChildren<MonoInstallerBase>(true);
-                    containerField.SetValue(tempInstaller, container);
+
                     try
                     {
+                        container.Inject(tempInstaller, new object[0]);
                         tempInstaller.InstallBindings();
                     }
                     catch
                     {
                     }
+                    finally
+                    {
+                        GameObject.DestroyImmediate(tempInstaller);
+                    }
                 }
-                finally
+
+                container.FlushBindings();
+            }
+            finally
+            {
+                DestroyImmediate(tempGameObject);
+            }
+
+            var types = new List<Type>();
+            foreach (var provider in container.AllProviders)
+            {
+                try
                 {
-                    DestroyImmediate(tempInstallerGo.gameObject);
+                    var instanceType = provider.GetInstanceType(new InjectContext(container,typeof(object)));
+                    types.Add(instanceType);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);   
                 }
             }
 
-            container.FlushBindings();
-            container.FinalizeBinding -= handler;
             return types;
         }
 
-
         private Dictionary<GameObject, IEnumerable<ConfigItem>> _cachedConfigs;
         private TerrainDataController _controller;
-
 
         private void Awake()
         {
@@ -89,7 +82,9 @@ namespace Votyra.Core.Editor
                     var ctors = configType.GetConstructors();
                     var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null)).SelectMany(o => o.GetParameters()
                         .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()
-                            ?.Id as string, p.ParameterType, null))
+                                ?.Id as string,
+                            p.ParameterType,
+                            null))
                         .Where(a => a.Id != null));
 
                     items.AddRange(configItems);
@@ -114,7 +109,6 @@ namespace Votyra.Core.Editor
                     _controller._activeTerrainAlgorithm = index;
                 }
             }
-
 
 
             if (_controller._activeTerrainAlgorithm < 0 || _controller._activeTerrainAlgorithm >= _controller._availableTerrainAlgorithms.Length)
@@ -157,7 +151,6 @@ namespace Votyra.Core.Editor
                     _controller.Config = newConfigValues.Value.ToArray();
                 }
             }
-
 
 
             if (anyChange)
