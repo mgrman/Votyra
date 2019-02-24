@@ -12,11 +12,13 @@ namespace Votyra.Core.Raycasting
     {
         private readonly IImage2fProvider _image2FProvider;
         private IImage2f _image;
+        private ITerrainMesher2f _terrainMesher;
 
-        public Image2fRaycaster(IImage2fProvider image2FProvider, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
+        public Image2fRaycaster(IImage2fProvider image2FProvider, ITerrainMesher2f mesher, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
         :base(terrainVertexPostProcessor)
         {
             _image2FProvider = image2FProvider;
+            _terrainMesher = mesher;
         }
 
         public override Vector2f? Raycast(Ray3f cameraRay)
@@ -32,7 +34,7 @@ namespace Votyra.Core.Raycasting
             return result;
         }
 
-        protected override float GetValue(Vector2f pos) => GetLinearInterpolatedValue(_image,pos);
+        protected override LineValues GetValue(Line2f line, Vector2i cell) => new LineValues(GetLinearInterpolatedValue(_image, line.From), GetLinearInterpolatedValue(_image, line.To));
 
         private float GetLinearInterpolatedValue(IImage2f image, Vector2f pos)
         {

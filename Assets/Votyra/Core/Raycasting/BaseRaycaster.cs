@@ -21,6 +21,7 @@ namespace Votyra.Core.Raycasting
         {
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
         }
+        
         public virtual Vector2f? Raycast(Ray3f cameraRay)
         {
             float maxDistance = 500;
@@ -38,15 +39,14 @@ namespace Votyra.Core.Raycasting
                 return cameraRay.Origin.Z + cameraRay.Direction.Z * p;
             }
 
-            Vector2f? IsHit(Line2f line)
+            Vector2f? IsHit(Line2f line, Vector2i cell)
             {
-                var fromImageValue = GetValue( line.From);
-                var toImageValue = GetValue( line.To);
+                var imageValue = GetValue(line,cell);
 
                 var fromRayValue = GetRayValue(line.From);
                 var toRayValue = GetRayValue(line.To);
 
-                var x = (fromRayValue - fromImageValue) / (toImageValue - fromImageValue - toRayValue + fromRayValue);
+                var x = (fromRayValue - imageValue.FromValue) / (imageValue.ToValue - imageValue.FromValue - toRayValue + fromRayValue);
                 if (x < 0 || x > 1)
                 {
                     return null;
@@ -61,9 +61,21 @@ namespace Votyra.Core.Raycasting
             return result;
         }
 
-        protected abstract float GetValue(Vector2f pos);
+        protected readonly ref struct LineValues
+        {
+            public readonly float FromValue;
+            public readonly float ToValue;
+
+            public LineValues(float fromValue, float toValue)
+            {
+                FromValue = fromValue;
+                ToValue = toValue;
+            }
+        }
+
+        protected abstract LineValues GetValue(Line2f pos,Vector2i cell);
         
-        private Vector2f? InvokeOnPath(Vector2f from, Vector2f to, Func<Line2f, Vector2f?> action)
+        private Vector2f? InvokeOnPath(Vector2f from, Vector2f to, Func<Line2f,Vector2i, Vector2f?> action)
         {
             var direction = to - from;
 
@@ -114,19 +126,19 @@ namespace Votyra.Core.Raycasting
                     }
                 }
 
-                cell += offset;
 
                 if (intersection == null)
                 {
                     return null;
                 }
 
-                var stop = action(new Line2f(position, intersection.Value));
+                var stop = action(new Line2f(position, intersection.Value), cell);
                 if (stop.HasValue)
                 {
                     return stop;
                 }
 
+                cell += offset;
                 position = intersection.Value;
             }
 
