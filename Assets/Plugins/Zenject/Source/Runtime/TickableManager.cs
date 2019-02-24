@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ModestTree;
+using ModestTree.Util;
+#if ZEN_SIGNALS_ADD_UNIRX
+using UniRx;
+#endif
 
 namespace Zenject
 {
     public class TickableManager
     {
-        // Make this lazy just as bit of extra assurance that we don't trigger circular dependencies
-        // accidentally
-        [Inject(Optional = true, Source = InjectSources.Parent)]
-        readonly Lazy<List<TickableManager>> _parents = null;
-
         [Inject(Optional = true, Source = InjectSources.Local)]
         readonly List<ITickable> _tickables = null;
 
@@ -22,13 +21,19 @@ namespace Zenject
         readonly List<ILateTickable> _lateTickables = null;
 
         [Inject(Optional = true, Source = InjectSources.Local)]
-        readonly List<ModestTree.Util.ValuePair<Type, int>> _priorities = null;
+        readonly List<ValuePair<Type, int>> _priorities = null;
 
         [Inject(Optional = true, Id = "Fixed", Source = InjectSources.Local)]
-        readonly List<ModestTree.Util.ValuePair<Type, int>> _fixedPriorities = null;
+        readonly List<ValuePair<Type, int>> _fixedPriorities = null;
 
         [Inject(Optional = true, Id = "Late", Source = InjectSources.Local)]
-        readonly List<ModestTree.Util.ValuePair<Type, int>> _latePriorities = null;
+        readonly List<ValuePair<Type, int>> _latePriorities = null;
+
+#if ZEN_SIGNALS_ADD_UNIRX
+        readonly Subject<Unit> _tickStream = new Subject<Unit>();
+        readonly Subject<Unit> _lateTickStream = new Subject<Unit>();
+        readonly Subject<Unit> _fixedTickStream = new Subject<Unit>();
+#endif
 
         readonly TickablesTaskUpdater _updater = new TickablesTaskUpdater();
         readonly FixedTickablesTaskUpdater _fixedUpdater = new FixedTickablesTaskUpdater();
@@ -41,6 +46,23 @@ namespace Zenject
         {
         }
 
+#if ZEN_SIGNALS_ADD_UNIRX
+        public IObservable<Unit> TickStream
+        {
+            get { return _tickStream; }
+        }
+
+        public IObservable<Unit> LateTickStream
+        {
+            get { return _lateTickStream; }
+        }
+
+        public IObservable<Unit> FixedTickStream
+        {
+            get { return _fixedTickStream; }
+        }
+#endif
+
         public IEnumerable<ITickable> Tickables
         {
             get { return _tickables; }
@@ -48,26 +70,8 @@ namespace Zenject
 
         public bool IsPaused
         {
-            get
-            {
-                if (_isPaused)
-                {
-                    return true;
-                }
-
-                if (_parents.Value != null)
-                {
-                    for (int i = 0; i < _parents.Value.Count; i++)
-                    {
-                        if (_parents.Value[i].IsPaused)
-                        {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
-            }
+            get { return _isPaused; }
+            set { _isPaused = value; }
         }
 
         [Inject]
@@ -189,6 +193,10 @@ namespace Zenject
 
             _updater.OnFrameStart();
             _updater.UpdateAll();
+
+#if ZEN_SIGNALS_ADD_UNIRX
+            _tickStream.OnNext(Unit.Default);
+#endif
         }
 
         public void FixedUpdate()
@@ -200,6 +208,10 @@ namespace Zenject
 
             _fixedUpdater.OnFrameStart();
             _fixedUpdater.UpdateAll();
+
+#if ZEN_SIGNALS_ADD_UNIRX
+            _fixedTickStream.OnNext(Unit.Default);
+#endif
         }
 
         public void LateUpdate()
@@ -211,16 +223,10 @@ namespace Zenject
 
             _lateUpdater.OnFrameStart();
             _lateUpdater.UpdateAll();
-        }
 
-        public void Pause()
-        {
-            _isPaused = true;
-        }
-
-        public void Resume()
-        {
-            _isPaused = false;
+#if ZEN_SIGNALS_ADD_UNIRX
+            _lateTickStream.OnNext(Unit.Default);
+#endif
         }
     }
 }

@@ -1,42 +1,29 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Xml.Serialization;
 using ModestTree;
-using Zenject.Internal;
-
-#if !NOT_UNITY3D
-
-#if UNITY_5_5
+#if UNITY_EDITOR
 using UnityEngine.Profiling;
-#endif
+using System.Threading;
 #endif
 
 namespace Zenject
 {
+    [NoReflectionBaking]
     public class ProfileBlock : IDisposable
     {
-#if UNITY_EDITOR && ZEN_PROFILING_ENABLED
-        static bool _isActive;
+#if UNITY_EDITOR
+        static int _blockCount;
+        static ProfileBlock _instance = new ProfileBlock();
+        static Dictionary<int, string> _nameCache = new Dictionary<int, string>();
 
-        bool _rootBlock;
-
-        ProfileBlock(string sampleName, bool rootBlock)
+        ProfileBlock()
         {
-            UnityEngine.Profiling.Profiler.BeginSample(sampleName);
-            _rootBlock = rootBlock;
-
-            if (rootBlock)
-            {
-                Assert.That(!_isActive);
-                _isActive = true;
-            }
         }
 
-        ProfileBlock(string sampleName)
-            : this(sampleName, false)
+        public static Thread UnityMainThread
         {
+            get; set;
         }
 
         public static Regex ProfilePattern
@@ -45,52 +32,126 @@ namespace Zenject
             set;
         }
 
+        static int GetHashCode(object p1, object p2)
+        {
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+                hash = hash * 29 + p1.GetHashCode();
+                hash = hash * 29 + p2.GetHashCode();
+                return hash;
+            }
+        }
+
+        static int GetHashCode(object p1, object p2, object p3)
+        {
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+                hash = hash * 29 + p1.GetHashCode();
+                hash = hash * 29 + p2.GetHashCode();
+                hash = hash * 29 + p3.GetHashCode();
+                return hash;
+            }
+        }
+
         public static ProfileBlock Start(string sampleNameFormat, object obj1, object obj2)
         {
-            if (ZenUtilInternal.IsOutsideUnity())
+#if ZEN_TESTS_OUTSIDE_UNITY
+            return null;
+#else
+            if (UnityMainThread == null
+                || !UnityMainThread.Equals(Thread.CurrentThread))
             {
                 return null;
             }
 
-            return StartInternal(string.Format(sampleNameFormat, obj1, obj2));
+            if (!Profiler.enabled)
+            {
+                return null;
+            }
+
+            // We need to ensure that we do not have per-frame allocations in ProfileBlock
+            // to avoid infecting the test too much, so use a cache of formatted strings given
+            // the input values
+            // This only works if the input values do not change per frame
+            var hash = GetHashCode(sampleNameFormat, obj1, obj2);
+
+            string formatString;
+
+            if (!_nameCache.TryGetValue(hash, out formatString))
+            {
+                formatString = string.Format(sampleNameFormat, obj1, obj2);
+                _nameCache.Add(hash, formatString);
+            }
+
+            return StartInternal(formatString);
+#endif
         }
 
         public static ProfileBlock Start(string sampleNameFormat, object obj)
         {
-            if (ZenUtilInternal.IsOutsideUnity())
+#if ZEN_TESTS_OUTSIDE_UNITY
+            return null;
+#else
+            if (UnityMainThread == null
+                || !UnityMainThread.Equals(Thread.CurrentThread))
             {
                 return null;
             }
 
-            return StartInternal(string.Format(sampleNameFormat, obj));
+            if (!Profiler.enabled)
+            {
+                return null;
+            }
+
+            // We need to ensure that we do not have per-frame allocations in ProfileBlock
+            // to avoid infecting the test too much, so use a cache of formatted strings given
+            // the input values
+            // This only works if the input values do not change per frame
+            var hash = GetHashCode(sampleNameFormat, obj);
+
+            string formatString;
+
+            if (!_nameCache.TryGetValue(hash, out formatString))
+            {
+                formatString = string.Format(sampleNameFormat, obj);
+                _nameCache.Add(hash, formatString);
+            }
+
+            return StartInternal(formatString);
+#endif
         }
 
         public static ProfileBlock Start(string sampleName)
         {
-            if (ZenUtilInternal.IsOutsideUnity())
+#if ZEN_TESTS_OUTSIDE_UNITY
+            return null;
+#else
+            if (UnityMainThread == null
+                || !UnityMainThread.Equals(Thread.CurrentThread))
+            {
+                return null;
+            }
+
+            if (!Profiler.enabled)
             {
                 return null;
             }
 
             return StartInternal(sampleName);
+#endif
         }
 
         static ProfileBlock StartInternal(string sampleName)
         {
-            if (!UnityEngine.Profiling.Profiler.enabled)
-            {
-                return null;
-            }
+            Assert.That(Profiler.enabled);
 
-            if (ProfilePattern == null || _isActive)
-            // If we are below one of the regex matches, show all all profile blocks
+            if (ProfilePattern == null || ProfilePattern.Match(sampleName).Success)
             {
-                return new ProfileBlock(sampleName);
-            }
-
-            if (ProfilePattern.Match(sampleName).Success)
-            {
-                return new ProfileBlock(sampleName, true);
+                Profiler.BeginSample(sampleName);
+                _blockCount++;
+                return _instance;
             }
 
             return null;
@@ -98,13 +159,9 @@ namespace Zenject
 
         public void Dispose()
         {
-            UnityEngine.Profiling.Profiler.EndSample();
-
-            if (_rootBlock)
-            {
-                Assert.That(_isActive);
-                _isActive = false;
-            }
+            _blockCount--;
+            Assert.That(_blockCount >= 0);
+            Profiler.EndSample();
         }
 
 #else
@@ -123,13 +180,11 @@ namespace Zenject
             set;
         }
 
-        // Remove the call completely for builds
         public static ProfileBlock Start()
         {
             return null;
         }
 
-        // Remove the call completely for builds
         public static ProfileBlock Start(string sampleNameFormat, object obj1, object obj2)
         {
             return null;

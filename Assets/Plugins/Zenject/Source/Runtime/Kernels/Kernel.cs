@@ -1,9 +1,9 @@
 using System;
-using ModestTree;
+using System.Diagnostics;
 
 namespace Zenject
 {
-    [System.Diagnostics.DebuggerStepThrough]
+    [DebuggerStepThrough]
     public class Kernel : IInitializable, IDisposable, ITickable, ILateTickable, IFixedTickable, ILateDisposable
     {
         [InjectLocal]
@@ -17,20 +17,16 @@ namespace Zenject
 
         public virtual void Initialize()
         {
-            Log.Debug("Zenject: Initializing IInitializable's");
-
             _initializableManager.Initialize();
         }
 
         public virtual void Dispose()
         {
-            Log.Debug("Zenject: Disposing IDisposable's");
             _disposablesManager.Dispose();
         }
 
         public virtual void LateDispose()
         {
-            Log.Debug("Zenject: Disposing ILateDisposable's");
             _disposablesManager.LateDispose();
         }
 

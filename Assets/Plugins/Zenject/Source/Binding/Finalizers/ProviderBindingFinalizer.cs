@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ModestTree;
+using Zenject.Internal;
 
 namespace Zenject
 {
+    [NoReflectionBaking]
     public abstract class ProviderBindingFinalizer : IBindingFinalizer
     {
         public ProviderBindingFinalizer(BindInfo bindInfo)
@@ -12,9 +14,9 @@ namespace Zenject
             BindInfo = bindInfo;
         }
 
-        public bool CopyIntoAllSubContainers
+        public BindingInheritanceMethods BindingInheritanceMethod
         {
-            get { return BindInfo.CopyIntoAllSubContainers; }
+            get { return BindInfo.BindingInheritanceMethod; }
         }
 
         public BindInfo BindInfo
@@ -30,7 +32,7 @@ namespace Zenject
                 // If condition is set then it's probably fine to allow the default of transient
                 Assert.That(!BindInfo.RequireExplicitScope || BindInfo.Condition != null,
                     "Scope must be set for the previous binding!  Please either specify AsTransient, AsCached, or AsSingle. Last binding: Contract: {0}, Identifier: {1} {2}",
-                    BindInfo.ContractTypes.Select(x => x.ToString()).Join(", "), BindInfo.Identifier,
+                    BindInfo.ContractTypes.Select(x => x.PrettyName()).Join(", "), BindInfo.Identifier,
                     BindInfo.ContextInfo != null ? "Context: '{0}'".Fmt(BindInfo.ContextInfo) : "");
                 return ScopeTypes.Transient;
             }
@@ -40,7 +42,7 @@ namespace Zenject
 
         public void FinalizeBinding(DiContainer container)
         {
-            if (BindInfo.ContractTypes.IsEmpty())
+            if (BindInfo.ContractTypes.Count == 0)
             {
                 // We could assert her instead but it is nice when used with things like
                 // BindInterfaces() (and there aren't any interfaces) to allow
@@ -48,25 +50,16 @@ namespace Zenject
                 return;
             }
 
-            OnFinalizeBinding(container);
-
-            if (BindInfo.NonLazy)
+            try
             {
-                // Note that we can't simply use container.BindRootResolve here because
-                // binding finalizers must only use RegisterProvider to allow cloning / bind
-                // inheritance to work properly
-                var bindingId = new BindingId(
-                    typeof(object), DiContainer.DependencyRootIdentifier);
-
-                foreach (var contractType in BindInfo.ContractTypes)
-                {
-                    container.RegisterProvider(
-                        bindingId, null, new ResolveProvider(
-                            contractType, container, BindInfo.Identifier, false,
-                            // We always want to only use local here so that we can use
-                            // NonLazy() inside subcontainers
-                            InjectSources.Local));
-                }
+                OnFinalizeBinding(container);
+            }
+            catch (Exception e)
+            {
+                throw Assert.CreateException(
+                    e, "Error while finalizing previous binding! Contract: {0}, Identifier: {1} {2}",
+                    BindInfo.ContractTypes.Select(x => x.PrettyName()).Join(", "), BindInfo.Identifier,
+                    BindInfo.ContextInfo != null ? "Context: '{0}'".Fmt(BindInfo.ContextInfo) : "");
             }
         }
 
@@ -81,12 +74,17 @@ namespace Zenject
         protected void RegisterProvider(
             DiContainer container, Type contractType, IProvider provider)
         {
+            if (BindInfo.OnlyBindIfNotBound && container.HasBindingId(contractType, BindInfo.Identifier))
+            {
+                return;
+            }
+
             container.RegisterProvider(
                 new BindingId(contractType, BindInfo.Identifier),
                 BindInfo.Condition,
-                provider);
+                provider, BindInfo.NonLazy);
 
-            if (contractType.IsValueType())
+            if (contractType.IsValueType() && !(contractType.IsGenericType() && contractType.GetGenericTypeDefinition() == typeof(Nullable<>)))
             {
                 var nullableType = typeof(Nullable<>).MakeGenericType(contractType);
 
@@ -95,7 +93,7 @@ namespace Zenject
                 container.RegisterProvider(
                     new BindingId(nullableType, BindInfo.Identifier),
                     BindInfo.Condition,
-                    provider);
+                    provider, BindInfo.NonLazy);
             }
         }
 
@@ -104,7 +102,18 @@ namespace Zenject
         {
             foreach (var contractType in BindInfo.ContractTypes)
             {
-                RegisterProvider(container, contractType, providerFunc(container, contractType));
+                var provider = providerFunc(container, contractType);
+
+                if (BindInfo.MarkAsUniqueSingleton)
+                {
+                    container.SingletonMarkRegistry.MarkSingleton(contractType);
+                }
+                else if (BindInfo.MarkAsCreationBinding)
+                {
+                    container.SingletonMarkRegistry.MarkNonSingleton(contractType);
+                }
+
+                RegisterProvider(container, contractType, provider);
             }
         }
 
@@ -113,6 +122,15 @@ namespace Zenject
         {
             foreach (var contractType in BindInfo.ContractTypes)
             {
+                if (BindInfo.MarkAsUniqueSingleton)
+                {
+                    container.SingletonMarkRegistry.MarkSingleton(contractType);
+                }
+                else if (BindInfo.MarkAsCreationBinding)
+                {
+                    container.SingletonMarkRegistry.MarkNonSingleton(contractType);
+                }
+
                 RegisterProvider(container, contractType, provider);
             }
         }
@@ -131,8 +149,7 @@ namespace Zenject
                 {
                     if (ValidateBindTypes(concreteType, contractType))
                     {
-                        RegisterProvider(
-                            container, contractType, providerFunc(contractType, concreteType));
+                        RegisterProvider(container, contractType, providerFunc(contractType, concreteType));
                     }
                 }
             }
@@ -141,7 +158,9 @@ namespace Zenject
         // Returns true if the bind should continue, false to skip
         bool ValidateBindTypes(Type concreteType, Type contractType)
         {
-            if (concreteType.IsOpenGenericType() != contractType.IsOpenGenericType())
+            bool isConcreteOpenGenericType = concreteType.IsOpenGenericType();
+            bool isContractOpenGenericType = contractType.IsOpenGenericType();
+            if (isConcreteOpenGenericType != isContractOpenGenericType)
             {
                 return false;
             }
@@ -149,9 +168,9 @@ namespace Zenject
 #if !(UNITY_WSA && ENABLE_DOTNET)
             // TODO: Is it possible to do this on WSA?
 
-            if (contractType.IsOpenGenericType())
+            if (isContractOpenGenericType)
             {
-                Assert.That(concreteType.IsOpenGenericType());
+                Assert.That(isConcreteOpenGenericType);
 
                 if (TypeExtensions.IsAssignableToGenericType(concreteType, contractType))
                 {
@@ -190,19 +209,40 @@ namespace Zenject
             Assert.That(!BindInfo.ContractTypes.IsEmpty());
             Assert.That(!concreteTypes.IsEmpty());
 
-            var providerMap = concreteTypes.ToDictionary(x => x, x => providerFunc(container, x));
-
-            foreach (var contractType in BindInfo.ContractTypes)
+            var providerMap = ZenPools.SpawnDictionary<Type, IProvider>();
+            try
             {
                 foreach (var concreteType in concreteTypes)
                 {
-                    if (ValidateBindTypes(concreteType, contractType))
+                    var provider = providerFunc(container, concreteType);
+
+                    providerMap[concreteType] = provider;
+
+                    if (BindInfo.MarkAsUniqueSingleton)
                     {
-                        RegisterProvider(container, contractType, providerMap[concreteType]);
+                        container.SingletonMarkRegistry.MarkSingleton(concreteType);
+                    }
+                    else if (BindInfo.MarkAsCreationBinding)
+                    {
+                        container.SingletonMarkRegistry.MarkNonSingleton(concreteType);
                     }
                 }
+
+                foreach (var contractType in BindInfo.ContractTypes)
+                {
+                    foreach (var concreteType in concreteTypes)
+                    {
+                        if (ValidateBindTypes(concreteType, contractType))
+                        {
+                            RegisterProvider(container, contractType, providerMap[concreteType]);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                ZenPools.DespawnDictionary(providerMap);
             }
         }
     }
 }
-
