@@ -1,0 +1,62 @@
+using System;
+using Newtonsoft.Json;
+using Votyra.Core.Utils;
+
+namespace Votyra.Core.Models
+{
+    {{dimSize = dims.size}}
+    {{type = "Ray" +dimSize +"f"}}
+    {{vectorFloatType = "Vector" +dimSize +"f"}}
+    {{vectorIntType = "Vector" +dimSize +"i"}}
+    {{if dimSize != 1}}
+        {{vectorFloatRealType=vectorFloatType}}
+        {{vectorIntRealType=vectorIntType}}
+    {{else}}
+        {{vectorFloatRealType="float"}}
+        {{vectorIntRealType="int"}}
+    {{end}}
+    {{func dimAccess}}{{if dimSize!=1}}{{$0}}.{{$1}}{{else}}{{$0}}{{end}}{{end}}
+    public partial struct {{type}} : IEquatable<{{type}}>
+    {
+        public readonly {{vectorFloatRealType}} Origin;
+        public readonly {{vectorFloatRealType}} Direction;
+
+        {{if dimSize > 1}}
+            {{for x in 0..(dimSize-1)}}
+                {{for y in 0..(dimSize-1)}}
+                public Ray2f {{dims[x]}}{{dims[y]}}() => new Ray2f( Origin.{{dims[x]}}{{dims[y]}}(), Direction.{{dims[x]}}{{dims[y]}}());
+                {{end}}
+            {{end}}
+        {{end}}
+
+
+        public {{vectorFloatRealType}} ToAt1 => Origin + Direction;
+
+        public {{type}}({{vectorFloatRealType}} origin, {{vectorFloatRealType}} direction)
+        {
+            Origin = origin;
+            Direction = direction.Normalized();
+        }
+
+        public {{vectorFloatRealType}} GetPoint(float distance) => Origin + Direction * distance;
+
+        public bool Equals({{type}} other) => Origin.Equals(other.Origin) && Direction.Equals(other.Direction);
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+                return false;
+            return obj is {{type}} other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Origin.GetHashCode() * 397) ^ Direction.GetHashCode();
+            }
+        }
+
+        public override string ToString() => $"origin:{Origin} dir:{Direction}";
+    }
+}

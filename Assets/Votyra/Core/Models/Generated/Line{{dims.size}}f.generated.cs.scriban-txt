@@ -1,0 +1,50 @@
+using System;
+using Newtonsoft.Json;
+using Votyra.Core.Utils;
+
+namespace Votyra.Core.Models
+{
+    {{dimSize = dims.size}}
+    {{type = "Line" +dimSize +"f"}}
+
+    {{vectorFloatType = "Vector" +dimSize +"f"}}
+    {{vectorIntType = "Vector" +dimSize +"i"}}
+    {{if dimSize != 1}}
+        {{vectorFloatRealType=vectorFloatType}}
+        {{vectorIntRealType=vectorIntType}}
+    {{else}}
+        {{vectorFloatRealType="float"}}
+        {{vectorIntRealType="int"}}
+    {{end}}
+    {{func dimAccess}}{{if dimSize!=1}}{{$0}}.{{$1}}{{else}}{{$0}}{{end}}{{end}}
+    public partial struct {{type}} : IEquatable<{{type}}>
+    {
+        public readonly {{vectorFloatRealType}} From;
+        public readonly {{vectorFloatRealType}} To;
+
+        public {{type}}({{vectorFloatRealType}} from, {{vectorFloatRealType}} to)
+        {
+            From = from;
+            To = to;
+        }
+        
+        public bool Equals({{type}} other) => From.Equals(other.From) && To.Equals(other.To);
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+                return false;
+            return obj is {{type}} other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (From.GetHashCode() * 397) ^ To.GetHashCode();
+            }
+        }
+
+        public override string ToString() => $"Origin {From} to {To}";
+    }
+}

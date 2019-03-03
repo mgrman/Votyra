@@ -1,0 +1,116 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Votyra.Core.Models
+{
+    {{dimSize = dims.size}}
+    {{triangleFloatType = "Triangle" +dimSize +"f"}}
+    {{vectorFloatType = "Vector" +dimSize +"f"}}
+    {{vectorIntType = "Vector" +dimSize +"i"}}
+    {{if dimSize != 1}}
+        {{vectorFloatRealType=vectorFloatType}}
+        {{vectorIntRealType=vectorIntType}}
+    {{else}}
+        {{vectorFloatRealType="float"}}
+        {{vectorIntRealType="int"}}
+    {{end}}
+    {{func dimAccess}}{{if dimSize!=1}}{{$0}}.{{$1}}{{else}}{{$0}}{{end}}{{end}}
+    public partial struct {{triangleFloatType}}
+    {
+        public static readonly IEqualityComparer<{{triangleFloatType}}> OrderInvariantComparer = new TriangleInvariantComparer();
+        public readonly {{vectorFloatRealType}} A;
+        public readonly {{vectorFloatRealType}} B;
+        public readonly {{vectorFloatRealType}} C;
+
+        public {{triangleFloatType}}({{vectorFloatRealType}} a, {{vectorFloatRealType}} b, {{vectorFloatRealType}} c)
+        {
+            A = a;
+            B = b;
+            C = c;
+        }
+
+        public IEnumerable<{{vectorFloatRealType}}> Points
+        {
+            get
+            {
+                yield return A;
+                yield return B;
+                yield return C;
+            }
+        }
+
+        {{if dimSize==3}}
+        public float DotWithObserver({{vectorFloatRealType}} observer)
+        {
+            var center = (A + B + C) / 3f;
+            var normal = {{vectorFloatType}}Utils.Cross(B - A, C - A);
+            return {{vectorFloatType}}Utils.Dot(observer - center, normal);
+        }
+
+        public bool IsCCW({{vectorFloatRealType}} observer)
+        {
+            var dot = DotWithObserver(observer);
+            if (dot == 0f)
+                throw new InvalidOperationException($"Wrong observer! Observer '{observer}' cannot be used with triangle '{this}'.");
+            return dot >= 0;
+        }
+
+        public {{triangleFloatType}} EnsureCCW({{vectorFloatRealType}} observer)
+        {
+            if (IsCCW(observer))
+                return this;
+            return GetReversedOrder();
+        }
+        {{end}}
+
+        public {{triangleFloatType}} GetReversedOrder() => new {{triangleFloatType}}(A, C, B);
+
+        public override bool Equals(object obj)
+        {
+            if (obj is {{triangleFloatType}})
+            {
+                var that = ({{triangleFloatType}}) obj;
+                return A == that.A && B == that.B && C == that.C;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return A.GetHashCode() + B.GetHashCode() * 3 + C.GetHashCode() * 7;
+            }
+        }
+
+        public override string ToString() => $"{A},{B},{C}";
+
+        private class TriangleInvariantComparer : IEqualityComparer<{{triangleFloatType}}>
+        {
+            public bool Equals({{triangleFloatType}} x, {{triangleFloatType}} y)
+            {
+                foreach (var xP in x.Points)
+                {
+                    if (!y.Points.Any(yP => (xP - yP).SqrMagnitude() < 0.1f))
+                        return false;
+                }
+
+                return true;
+            }
+
+            public int GetHashCode({{triangleFloatType}} obj) => 0;
+        }
+    }
+
+    public static class {{triangleFloatType}}Extensions
+    {
+        public static IEnumerable<{{triangleFloatType}}> ChangeOrderIfTrue(this IEnumerable<{{triangleFloatType}}> triangles, bool value)
+        {
+            if (value)
+                return triangles.Select(o => o.GetReversedOrder());
+            return triangles;
+        }
+    }
+}

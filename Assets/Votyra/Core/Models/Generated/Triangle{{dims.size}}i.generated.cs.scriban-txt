@@ -1,0 +1,80 @@
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Votyra.Core.Models
+{
+    {{dimSize = dims.size}}
+    {{triangleIntType = "Triangle" +dimSize +"i"}}
+    {{triangleFloatType = "Triangle" +dimSize +"f"}}
+    {{vectorFloatType = "Vector" +dimSize +"f"}}
+    {{vectorIntType = "Vector" +dimSize +"i"}}
+    {{if dimSize != 1}}
+        {{vectorFloatRealType=vectorFloatType}}
+        {{vectorIntRealType=vectorIntType}}
+    {{else}}
+        {{vectorFloatRealType="float"}}
+        {{vectorIntRealType="int"}}
+    {{end}}
+    {{func dimAccess}}{{if dimSize!=1}}{{$0}}.{{$1}}{{else}}{{$0}}{{end}}{{end}}
+    public partial struct {{triangleIntType}}
+    {
+        public static readonly IEqualityComparer<{{triangleIntType}}> OrderInvariantComparer = new TriangleInvariantComparer();
+        public readonly {{vectorIntRealType}} A;
+        public readonly {{vectorIntRealType}} B;
+        public readonly {{vectorIntRealType}} C;
+
+        public {{triangleIntType}}({{vectorIntRealType}} a, {{vectorIntRealType}} b, {{vectorIntRealType}} c)
+        {
+            A = a;
+            B = b;
+            C = c;
+        }
+
+        public IEnumerable<{{vectorIntRealType}}> Points
+        {
+            get
+            {
+                yield return A;
+                yield return B;
+                yield return C;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is {{triangleIntType}})
+            {
+                var that = ({{triangleIntType}}) obj;
+                return A == that.A && B == that.B && C == that.C;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return A.GetHashCode() + B.GetHashCode() * 3 + C.GetHashCode() * 7;
+            }
+        }
+
+        public override string ToString() => $"{A},{B},{C}";
+
+        private class TriangleInvariantComparer : IEqualityComparer<{{triangleIntType}}>
+        {
+            public bool Equals({{triangleIntType}} x, {{triangleIntType}} y)
+            {
+                foreach (var point in x.Points)
+                {
+                    if (!y.Points.Contains(point))
+                        return false;
+                }
+
+                return true;
+            }
+
+            public int GetHashCode({{triangleIntType}} obj) => (obj.A + obj.B + obj.C).GetHashCode();
+        }
+    }
+}
