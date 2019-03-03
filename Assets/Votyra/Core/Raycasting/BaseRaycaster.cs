@@ -8,7 +8,7 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Raycasting
 {
-    public  abstract class BaseRaycaster : IRaycaster
+    public abstract class BaseRaycaster : IRaycaster
     {
         private readonly ITerrainVertexPostProcessor _terrainVertexPostProcessor;
 
@@ -17,15 +17,15 @@ namespace Votyra.Core.Raycasting
         private static readonly Vector2i X1Offset = new Vector2i(1, 0);
         private static readonly Vector2i X0Offset = new Vector2i(-1, 0);
 
+        protected const float maxDistance = 500;
+
         protected BaseRaycaster(ITerrainVertexPostProcessor terrainVertexPostProcessor)
         {
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
         }
-        
+
         public virtual Vector2f? Raycast(Ray3f cameraRay)
         {
-            float maxDistance = 500;
-
             var cameraRayXY = cameraRay.XY;
 
             var startXY = cameraRayXY.Origin;
@@ -33,49 +33,16 @@ namespace Votyra.Core.Raycasting
             var directionXYMag = directionNonNormalizedXY.Magnitude;
             var endXY = (startXY + directionNonNormalizedXY.Normalized * maxDistance);
 
-            float GetRayValue(Vector2f point)
-            {
-                var p = (point - startXY).Magnitude / directionXYMag;
-                return cameraRay.Origin.Z + cameraRay.Direction.Z * p;
-            }
 
-            Vector2f? IsHit(Line2f line, Vector2i cell)
-            {
-                var imageValue = GetValue(line,cell);
-
-                var fromRayValue = GetRayValue(line.From);
-                var toRayValue = GetRayValue(line.To);
-
-                var x = (fromRayValue - imageValue.FromValue) / (imageValue.ToValue - imageValue.FromValue - toRayValue + fromRayValue);
-                if (x < 0 || x > 1)
-                {
-                    return null;
-                }
-
-                return line.From + (line.To - line.From) * x;
-            }
-
-            Vector2f? result = InvokeOnPath(startXY, endXY, IsHit);
+            Vector2f? result = InvokeOnPath(startXY, endXY);
 
 
             return result;
         }
 
-        protected readonly ref struct LineValues
-        {
-            public readonly float FromValue;
-            public readonly float ToValue;
+        protected abstract Vector2f? RaycastCell(Line2f line, Vector2i cell);
 
-            public LineValues(float fromValue, float toValue)
-            {
-                FromValue = fromValue;
-                ToValue = toValue;
-            }
-        }
-
-        protected abstract LineValues GetValue(Line2f pos,Vector2i cell);
-        
-        private Vector2f? InvokeOnPath(Vector2f from, Vector2f to, Func<Line2f,Vector2i, Vector2f?> action)
+        private Vector2f? InvokeOnPath(Vector2f from, Vector2f to)
         {
             var direction = to - from;
 
@@ -132,7 +99,7 @@ namespace Votyra.Core.Raycasting
                     return null;
                 }
 
-                var stop = action(new Line2f(position, intersection.Value), cell);
+                var stop = RaycastCell(new Line2f(position, intersection.Value), cell);
                 if (stop.HasValue)
                 {
                     return stop;
@@ -222,24 +189,7 @@ namespace Votyra.Core.Raycasting
                 return null;
         }
 
-        private float GetLinearInterpolatedValue(IImage2f image, Vector2f pos)
-        {
-            var pos_x0y0 = pos.FloorToVector2i();
-            var fraction = pos - pos_x0y0;
-
-            var pos_x0y1 = pos_x0y0 + new Vector2i(0, 1);
-            var pos_x1y0 = pos_x0y0 + new Vector2i(1, 0);
-            var pos_x1y1 = pos_x0y0 + new Vector2i(1, 1);
-
-            var x0y0 = image.Sample(pos_x0y0);
-            var x0y1 = image.Sample(pos_x0y1);
-            var x1y0 = image.Sample(pos_x1y0);
-            var x1y1 = image.Sample(pos_x1y1);
-
-            return (1f - fraction.X) * (1f - fraction.Y) * x0y0 + fraction.X * (1f - fraction.Y) * x1y0 + (1f - fraction.X) * fraction.Y * x0y1 + fraction.X * fraction.Y * x1y1;
-        }
-
-        protected  Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
+        protected Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
 
         private Vector2f ProcessVertex(Vector2f point)
         {
