@@ -51,8 +51,7 @@ namespace Votyra.Core.GroupSelectors
                     for (var iz = min.Z; iz <= max.Z; iz++)
                     {
                         var group = new Vector3i(ix, iy, iz) ;
-                        var groupBounds = Range3i.FromMinAndSize(@group * _cellInGroupCount, _cellInGroupCount)
-                            .ToRange3f();
+                        var groupBounds = Area3f.FromMinAndSize((@group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f());
 
                         var isInside = planes.TestPlanesAABB(groupBounds);
                         if (isInside)

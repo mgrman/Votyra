@@ -18,7 +18,7 @@ namespace Votyra.Core.Utils
                 maxZ = Mathf.Max(maxZ, z);
             }
 
-            mesh.UpdateBounds(xyBounds, new Area1f(minZ, maxZ));
+            mesh.UpdateBounds(xyBounds, Area1f.FromMinAndMax(minZ, maxZ));
         }
 
         public static void UpdateBounds(this Mesh mesh, Rect xyBounds, Area1f rangeZ)

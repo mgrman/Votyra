@@ -310,3 +310,7 @@ typings/
 # Rider
 /.idea
 
+
+#generated dataTypes
+*.generated.cs
+*.generated.cs.meta

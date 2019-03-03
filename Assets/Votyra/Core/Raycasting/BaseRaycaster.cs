@@ -8,7 +8,7 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Raycasting
 {
-    public  abstract class BaseRaycaster : IRaycaster
+    public abstract class BaseRaycaster : IRaycaster
     {
         private readonly ITerrainVertexPostProcessor _terrainVertexPostProcessor;
 
@@ -21,27 +21,27 @@ namespace Votyra.Core.Raycasting
         {
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
         }
-        
+
         public virtual Vector2f? Raycast(Ray3f cameraRay)
         {
             float maxDistance = 500;
 
-            var cameraRayXY = cameraRay.XY;
+            var cameraRayXY = cameraRay.XY();
 
             var startXY = cameraRayXY.Origin;
-            var directionNonNormalizedXY = cameraRay.Direction.XY;
-            var directionXYMag = directionNonNormalizedXY.Magnitude;
-            var endXY = (startXY + directionNonNormalizedXY.Normalized * maxDistance);
+            var directionNonNormalizedXY = cameraRay.Direction.XY();
+            var directionXYMag = directionNonNormalizedXY.Magnitude();
+            var endXY = (startXY + directionNonNormalizedXY.Normalized() * maxDistance);
 
             float GetRayValue(Vector2f point)
             {
-                var p = (point - startXY).Magnitude / directionXYMag;
+                var p = (point - startXY).Magnitude() / directionXYMag;
                 return cameraRay.Origin.Z + cameraRay.Direction.Z * p;
             }
 
             Vector2f? IsHit(Line2f line, Vector2i cell)
             {
-                var imageValue = GetValue(line,cell);
+                var imageValue = GetValue(line, cell);
 
                 var fromRayValue = GetRayValue(line.From);
                 var toRayValue = GetRayValue(line.To);
@@ -73,9 +73,9 @@ namespace Votyra.Core.Raycasting
             }
         }
 
-        protected abstract LineValues GetValue(Line2f pos,Vector2i cell);
-        
-        private Vector2f? InvokeOnPath(Vector2f from, Vector2f to, Func<Line2f,Vector2i, Vector2f?> action)
+        protected abstract LineValues GetValue(Line2f pos, Vector2i cell);
+
+        private Vector2f? InvokeOnPath(Vector2f from, Vector2f to, Func<Line2f, Vector2i, Vector2f?> action)
         {
             var direction = to - from;
 
@@ -200,7 +200,7 @@ namespace Votyra.Core.Raycasting
             Vector2f v2 = line.To - line.From;
 
             // If lines are perpendicular then they dont intersect:
-            if (Vector2f.Determinant(v1, v2) == 0)
+            if (Vector2fUtils.Determinant(v1, v2) == 0)
                 return null;
 
             // Using solved equations for intersection of parametric lines
@@ -239,7 +239,7 @@ namespace Votyra.Core.Raycasting
             return (1f - fraction.X) * (1f - fraction.Y) * x0y0 + fraction.X * (1f - fraction.Y) * x1y0 + (1f - fraction.X) * fraction.Y * x0y1 + fraction.X * fraction.Y * x1y1;
         }
 
-        protected  Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
+        protected Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
 
         private Vector2f ProcessVertex(Vector2f point)
         {
@@ -250,7 +250,7 @@ namespace Votyra.Core.Raycasting
             else
             {
                 return _terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
-                    .XY;
+                    .XY();
             }
         }
     }

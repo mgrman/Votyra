@@ -45,7 +45,7 @@ namespace Votyra.Core.Editor
         //     Area1f rangeF = Area1f.Zero;
         //     for (int test = 0; test < tests; test++)
         //     {
-        //         rangeF = rangeF.UnionWith(new Area1f(test, test * 2));
+        //         rangeF = rangeF.UnionWith(Area1f.FromMinAndMax(test, test * 2));
         //     }
         //     TimeSpan floats = DateTime.UtcNow - start;
         //

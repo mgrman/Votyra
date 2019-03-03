@@ -44,7 +44,7 @@ namespace Votyra.Core.TerrainMeshes
 
         public void Reset(Area3f area)
         {
-            MeshBoundsXY = Area2f.FromMinAndMax(area.Min.XY, area.Max.XY);
+            MeshBoundsXY = Area2f.FromMinAndMax(area.Min.XY(), area.Max.XY());
             TriangleCount = 0;
             VertexCount = 0;
             Vertices.Clear();
@@ -62,20 +62,20 @@ namespace Votyra.Core.TerrainMeshes
                 posC = VertexPostProcessor(posC);
             }
 
-            var uvA = posA.XY;
-            var uvB = posB.XY;
-            var uvC = posC.XY;
+            var uvA = posA.XY();
+            var uvB = posB.XY();
+            var uvC = posC.XY();
             if (UVAdjustor != null)
             {
-                uvA = UVAdjustor(posA.XY);
-                uvB = UVAdjustor(posB.XY);
-                uvC = UVAdjustor(posC.XY);
+                uvA = UVAdjustor(posA.XY());
+                uvB = UVAdjustor(posB.XY());
+                uvC = UVAdjustor(posC.XY());
             }
 
             var side1 = posB - posA;
             var side2 = posC - posA;
-            var normal = Vector3f.Cross(side1, side2)
-                .Normalized;
+            var normal = Vector3fUtils.Cross(side1, side2)
+                .Normalized();
 
             _minZ = TriangleCount == 0 ? posA.Z : Math.Min(_minZ, posA.Z);
             _minZ = Math.Min(_minZ, posB.Z);
@@ -83,25 +83,25 @@ namespace Votyra.Core.TerrainMeshes
             _maxZ = TriangleCount == 0 ? posA.Z : Math.Max(_maxZ, posA.Z);
             _maxZ = Math.Max(_maxZ, posB.Z);
             _maxZ = Math.Max(_maxZ, posC.Z);
-            
+
             unsafe
             {
                 Indices.Add(VertexCount);
-                Vertices.Add(*(Vector3*) &posA);
-                UV.Add(*(Vector2*) &uvA);
-                Normals.Add(*(Vector3*) &normal);
+                Vertices.Add(*(Vector3*)&posA);
+                UV.Add(*(Vector2*)&uvA);
+                Normals.Add(*(Vector3*)&normal);
                 VertexCount++;
-    
+
                 Indices.Add(VertexCount);
-                Vertices.Add(*(Vector3*) &posB);
-                UV.Add(*(Vector2*) &uvB);
-                Normals.Add(*(Vector3*) &normal);
+                Vertices.Add(*(Vector3*)&posB);
+                UV.Add(*(Vector2*)&uvB);
+                Normals.Add(*(Vector3*)&normal);
                 VertexCount++;
-    
+
                 Indices.Add(VertexCount);
-                Vertices.Add(*(Vector3*) &posC);
-                UV.Add(*(Vector2*) &uvC);
-                Normals.Add(*(Vector3*) &normal);
+                Vertices.Add(*(Vector3*)&posC);
+                UV.Add(*(Vector2*)&uvC);
+                Normals.Add(*(Vector3*)&normal);
                 VertexCount++;
             }
 

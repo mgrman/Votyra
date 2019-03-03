@@ -26,7 +26,7 @@ namespace Votyra.Core.Models
             {
                 var min = Min;
                 var max = Max;
-                return new Area1f(min, max);
+                return Area1f.FromMinAndMax(min, max);
             }
         }
 
@@ -102,7 +102,7 @@ namespace Votyra.Core.Models
 
         public static IEnumerable<SampledData2f> GenerateAllValuesWithHoles(Area1f range, float step)
         {
-            var stepCount = (range.Size / step).RoundToInt() + 1;
+            var stepCount = (range.Size / step).RoundToVector1i() + 1;
             step = range.Size / (stepCount - 1);
 
             var results = new List<SampledData2f>();

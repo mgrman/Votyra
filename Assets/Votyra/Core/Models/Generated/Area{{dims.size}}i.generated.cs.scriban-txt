@@ -112,7 +112,13 @@ namespace Votyra.Core.Models
             return FromMinAndMax(min, max);
         }
 
-        public {{type}} UnionWith({{type}}? that) => this;
+        public {{type}} UnionWith({{type}}? that) 
+        {
+            if (that == null)
+                return this;
+
+            return UnionWith(that.Value);
+        }
 
         public {{type}} UnionWith({{type}} that)
         {

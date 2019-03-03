@@ -4,15 +4,15 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class DynamicTerrainMesher2f:ITerrainMesher2f
+    public class DynamicTerrainMesher2f : ITerrainMesher2f
     {
         private Vector2i _cellInGroupCount;
 
         public DynamicTerrainMesher2f(ITerrainConfig terrainConfig)
         {
-            _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+            _cellInGroupCount = terrainConfig.CellInGroupCount.XY();
         }
-        
+
         public void GetResultingMesh(ITerrainMesh mesh, Vector2i group, IImage2f image, IMask2e mask)
         {
             var groupPosition = _cellInGroupCount * group;

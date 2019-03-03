@@ -227,7 +227,7 @@ namespace Votyra.Core
             else
                 maxDist = maxDistSmall;
 
-            var areaToChange = Range3i.FromCenterAndExtents(cell, Vector3i.FromSame(maxDist));
+            var areaToChange = Range3i.FromCenterAndExtents(cell, Vector3iUtils.FromSame(maxDist));
 
             var extendedSetArea = Range3i.FromMinAndSize(areaToChange.Min, areaToChange.Size + new Vector3i(0, 0, 1));
             using (var image = editableImage.RequestAccess(extendedSetArea))

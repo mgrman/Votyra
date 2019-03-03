@@ -26,7 +26,7 @@ namespace Votyra.Core.Images
             if (initialImageConfig.InitialData is Collider)
             {
                 var collider = initialImageConfig.InitialData as Collider;
-                FillInitialState(editableImage, new[] {collider}, initialImageConfig.InitialDataScale.Z, sampler, root);
+                FillInitialState(editableImage, new[] { collider }, initialImageConfig.InitialDataScale.Z, sampler, root);
                 collider.enabled = false;
             }
 
@@ -47,7 +47,7 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = imageAccessor.Area;
                 var matrixSizeX = matrixAreaToFill.Size.X;
                 var matrixSizeY = matrixAreaToFill.Size.Y;
-               
+
                 var min = matrixAreaToFill.Min;
                 for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
                 {
@@ -55,8 +55,8 @@ namespace Votyra.Core.Images
                     {
                         for (var iz = 0; iz < matrixAreaToFill.Size.Z; iz++)
                         {
-                            var i=new Vector3i(ix, iy, iz)+min;
-                            var value = texture.GetPixelBilinear((float) i.X / matrixSizeX, (float) i.Y / matrixSizeY)
+                            var i = new Vector3i(ix, iy, iz) + min;
+                            var value = texture.GetPixelBilinear((float)i.X / matrixSizeX, (float)i.Y / matrixSizeY)
                                 .grayscale * scale;
                             imageAccessor[i] = value - i.Z > 0;
                         }
@@ -69,7 +69,7 @@ namespace Votyra.Core.Images
         {
             var bounds = colliders.Select(o => o.bounds)
                 .Select(o => Area3f.FromMinAndSize(o.min.ToVector3f(), o.size.ToVector3f()))
-                .DefaultIfEmpty(Area3f.zero)
+                .DefaultIfEmpty(Area3f.Zero)
                 .Aggregate((a, b) => a.Encapsulate(b));
 
             var maxSize = bounds.DiagonalLength;
@@ -77,7 +77,7 @@ namespace Votyra.Core.Images
             using (var imageAccessor = editableImage.RequestAccess(Range3i.All))
             {
                 var area = imageAccessor.Area;
-              
+
                 var min = area.Min;
                 for (var ix = 0; ix < area.Size.X; ix++)
                 {
@@ -153,7 +153,7 @@ namespace Votyra.Core.Images
                         for (var iz = 0; iz < matrixAreaToFill.Size.Z; iz++)
                         {
                             var i = new Vector3i(ix, iy, iz) + min;
-                            var value = texture[i.XY] * scale;
+                            var value = texture[i.XY()] * scale;
                             imageAccessor[i] = value - i.Z > 0;
                         }
                     }
@@ -170,7 +170,7 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = texture.Size.ToRange3i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
-                
+
                 var min = matrixAreaToFill.Min;
                 for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
                 {

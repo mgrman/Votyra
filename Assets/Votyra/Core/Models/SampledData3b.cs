@@ -316,7 +316,7 @@ namespace Votyra.Core.Models
             var dz_x1 = (dz_x1y0 + dz_x1y1) / 2;
             var dz = (dz_x0 + dz_x1) / 2;
 
-            return -new Vector3f(dx, dy, dz).Normalized;
+            return -new Vector3f(dx, dy, dz).Normalized();
         }
 
         private int NumberOfSetBits(int i)
