@@ -1,0 +1,61 @@
+using System;
+using System.Collections.Generic;
+
+namespace Votyra.Core.Models
+{
+    {{dimSize = dims.size}}
+    {{type = "Plane" +dimSize +"f"}}
+    {{vectorFloatType = "Vector" +dimSize +"f"}}
+    {{vectorIntType = "Vector" +dimSize +"i"}}
+    {{if dimSize != 1}}
+        {{vectorFloatRealType=vectorFloatType}}
+        {{vectorIntRealType=vectorIntType}}
+    {{else}}
+        {{vectorFloatRealType="float"}}
+        {{vectorIntRealType="int"}}
+    {{end}}
+    {{func dimAccess}}{{if dimSize!=1}}{{$0}}.{{$1}}{{else}}{{$0}}{{end}}{{end}}
+    {{areaType = "Area" +dimSize +"f"}}
+    public partial struct {{type}}
+    {
+        public readonly {{vectorFloatRealType}} Normal;
+
+        public readonly float Distance;
+
+        public {{type}}({{vectorFloatRealType}} inNormal, float d)
+        {
+            Normal = inNormal.Normalized();
+            Distance = d;
+        }
+
+        public float GetDistanceToPoint({{vectorFloatRealType}} inPt) => {{vectorFloatType}}Utils.Dot(Normal, inPt) + Distance;
+    }
+
+    public static class {{type}}Extensions
+    {
+        public static bool TestPlanesAABB(this IReadOnlyList<{{type}}> planes, {{areaType}} bounds)
+        {
+            var boundsCenter = bounds.Center; // center of bounds
+            var boundsExtent = bounds.Extents; // half diagonal
+            // do intersection test for each active frame
+
+            // while active frames
+            var planesCount = 0;
+            for (var i = 0; i < planes.Count; i++)
+            {
+                var p = planes[i];
+                var n = p.Normal.Abs();
+
+                var distance = p.GetDistanceToPoint(boundsCenter);
+                var radius = {{vectorFloatType}}Utils.Dot(boundsExtent, n);
+
+                if (distance + radius < 0)
+                    return false;
+
+                planesCount++;
+            }
+
+            return true;
+        }
+    }
+}

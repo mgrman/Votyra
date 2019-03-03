@@ -1,0 +1,209 @@
+using System;
+using Newtonsoft.Json;
+using Votyra.Core.Utils;
+
+namespace Votyra.Core.Models
+{
+    {{dimSize = dims.size}}
+    {{vectorFloatType = "Vector" +dimSize +"f"}}
+    {{vectorIntType = "Vector" +dimSize +"i"}}
+    {{if dimSize != 1}}
+        {{vectorFloatRealType=vectorFloatType}}
+        {{vectorIntRealType=vectorIntType}}
+    {{else}}
+        {{vectorFloatRealType="float"}}
+        {{vectorIntRealType="int"}}
+    {{end}}
+    {{areaFloatType = "Area" +dimSize +"f"}}
+    {{unaryOperators = [
+        {name:"operator -",prefix:"-"}
+        ]}}
+    {{unaryInstanceFunctions = [
+        {name:"Ceil",prefix:"MathUtils.CeilToInt(",sufix:")",int:true},
+        {name:"Abs",prefix:"Math.Abs(",sufix:")"},
+        {name:"Floor",prefix:"MathUtils.FloorToInt(",sufix:")",int:true},
+        {name:"Round",prefix:"MathUtils.RoundToInt(",sufix:")",int:true}
+        ]}}
+    {{binaryOperators = [
+            {name:"operator *",infix:" * "},
+            {name:"operator +",infix:" + "},
+            {name:"operator -",infix:" - "},
+            {name:"operator /",infix:" / "},
+            {name:"operator %",infix:" % "},
+            {name:"operator <",infix:" < ",zip:" && ", type:"bool"},
+            {name:"operator >",infix:" > ",zip:" && ", type:"bool"},
+            {name:"operator <=",infix:" <= ",zip:" && ", type:"bool"},
+            {name:"operator >=",infix:" >= ",zip:" && ", type:"bool"},
+            {name:"operator ==",infix:" == ",zip:" && ", type:"bool"},
+            {name:"operator !=",infix:" != ",zip:" || ", type:"bool"}
+            ]}}
+    {{binaryStaticFunctions = [
+        {name:"Max",prefix:"Math.Max(",infix:", ",sufix:")"},
+        {name:"Min",prefix:"Math.Min(",infix:", ",sufix:")"}
+        ]}}
+    {{func sep}}{{if !for.last}}{{$0}}{{end}}{{end}}
+    {{func dimAccess}}{{if dimSize!=1}}{{$0}}.{{$1}}{{else}}{{$0}}{{end}}{{end}}
+    {{func ctorStart}}{{if dimSize!=1}}new {{vectorFloatType}}({{end}}{{end}}
+    {{func ctorEnd}}{{if dimSize!=1}}){{end}}{{end}}
+    {{func ctorIntStart}}{{if dimSize!=1}}new {{vectorIntType}}({{end}}{{end}}
+    {{func ctorIntEnd}}{{if dimSize!=1}}){{end}}{{end}}
+
+    {{if dimSize != 1}}
+    public partial struct {{vectorFloatType}} : IEquatable<{{vectorFloatType}}>
+    {
+        public static readonly {{vectorFloatType}} One = {{ctorStart}}{{for dim in dims}}1{{sep ", "}}{{end}}{{ctorEnd}};
+        public static readonly {{vectorFloatType}} Zero = {{ctorStart}}{{for dim in dims}}0{{sep ", "}}{{end}}{{ctorEnd}};
+
+        {{for dim in dims}}
+        public readonly float {{dim}};
+        {{end}}
+
+        [JsonConstructor]
+        public {{vectorFloatType}}({{for dim in dims}}float {{dim | string.downcase}}{{sep ", "}}{{end}})
+        {
+            {{for dim in dims}}
+            {{dim}} = {{dim | string.downcase}};
+            {{end}}
+        }
+
+        {{for function in unaryOperators}}
+            public static {{vectorFloatRealType}} {{function.name}}({{vectorFloatType}} a) => {{ctorStart}}{{for dim in dims}}{{function.prefix}}{{dimAccess "a" dim}}{{function.sufix}}{{sep ", "}}{{end}}{{ctorEnd}};
+        {{end}}
+        {{for function in binaryOperators}}
+
+        {{ if !function.zip
+            ctor =true
+            zip=", "
+        else 
+            ctor =false
+            zip=function.zip
+        end}}
+
+
+            public static {{function.type ?? vectorFloatType}} {{function.name}}({{vectorFloatType}} a, {{vectorFloatType}} b) =>  {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}{{dimAccess "a" dim}}{{function.infix}} {{dimAccess "b" dim}}{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
+
+            public static {{function.type ?? vectorFloatType}} {{function.name}}({{vectorFloatType}} a, float b) =>  {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}{{dimAccess "a" dim}}{{function.infix}} b{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
+
+            public static {{function.type ?? vectorFloatType}} {{function.name}}(float a, {{vectorFloatType}} b) =>  {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}a{{function.infix}} {{dimAccess "b" dim}}{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
+            
+
+            public static {{function.type ?? vectorFloatType}} {{function.name}}({{vectorFloatType}} a, int b) =>  {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}{{dimAccess "a" dim}}{{function.infix}} b{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
+
+            public static {{function.type ?? vectorFloatType}} {{function.name}}(int a, {{vectorFloatType}} b) =>  {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}a{{function.infix}} {{dimAccess "b" dim}}{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
+        {{end}}
+
+        public bool Equals({{vectorFloatType}} other) => this == other;
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is {{vectorFloatType}}))
+                return false;
+
+            return Equals(({{vectorFloatType}}) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return {{for dim in dims}}({{dim}}.GetHashCode() * 397){{sep " ^ "}}{{end}};
+            }
+        }
+
+        public override string ToString() => "("+ {{for dim in dims}}{{dim}}{{sep " + \",\" +  "}}{{end}} +")";
+    }
+    {{else}}
+    public static class {{vectorFloatType}}
+        {
+            public static readonly {{vectorFloatRealType}} One =1f;
+            public static readonly {{vectorFloatRealType}} Zero = 0f;
+        }
+    
+    {{end}}
+
+
+    public static class {{vectorFloatType}}Utils
+    {
+        {{if dimSize > 1}}
+            {{for x in 0..(dimSize-1)}}
+                {{for y in 0..(dimSize-1)}}
+                public static Vector2f {{dims[x]}}{{dims[y]}}(this {{vectorFloatRealType}} @this) => new Vector2f(@this.{{dims[x]}}, @this.{{dims[y]}});
+                {{end}}
+            {{end}}
+        {{end}}
+
+        public static bool AnyNegative(this {{vectorFloatRealType}} @this) => {{for dim in dims}}{{dimAccess "@this" dim}}<0{{sep " || "}}{{end}};
+
+        public static float AreaSum(this {{vectorFloatRealType}} @this) => {{for dim in dims}}{{dimAccess "@this" dim}}{{sep " * "}}{{end}};
+
+        public static float Magnitude(this {{vectorFloatRealType}} @this) => (float) Math.Sqrt(@this.SqrMagnitude());
+
+        public static {{vectorFloatRealType}} Normalized(this {{vectorFloatRealType}} @this)
+        {
+            var magnitude=@this.Magnitude();
+            return magnitude<= float.Epsilon ? @this : @this / magnitude;
+        } 
+
+        public static float SqrMagnitude(this {{vectorFloatRealType}} @this) => {{for dim in dims}}{{dimAccess "@this" dim}}*{{dimAccess "@this" dim}}{{sep " + "}} {{end}};
+
+        {{if dimSize == 2}}
+        public static {{vectorFloatRealType}} Perpendicular(this {{vectorFloatRealType}} @this)=> {{ctorStart}}@this.Y,-@this.X{{ctorEnd}};
+        {{end}}
+
+        public static {{vectorFloatRealType}} FromSame(float value) => {{ctorStart}}{{for dim in dims}}value{{sep ", "}} {{end}}{{ctorEnd}};
+
+        public static float Dot({{vectorFloatRealType}} a, {{vectorFloatRealType}} b) => (float)({{for dim in dims}}(double){{dimAccess "a" dim}}*{{dimAccess "b" dim}}{{sep " + "}} {{end}});
+
+        {{if dimSize == 2}}
+        public static double Determinant({{vectorFloatType}} a, {{vectorFloatType}} b)
+        {
+            return a.X * b.Y - a.Y * b.X;
+        }
+        {{end}}
+
+        {{for function in unaryInstanceFunctions}}
+            public static {{vectorFloatRealType}} {{function.name}}(this {{vectorFloatRealType}} @this) => {{ctorStart}}{{for dim in dims}}{{function.prefix}}{{dimAccess "@this" dim}}{{function.sufix}}{{sep ", "}}{{end}}{{ctorEnd}};
+            {{if function.int}}
+                public static {{vectorIntRealType}} {{function.name}}To{{vectorIntType}}(this {{vectorFloatRealType}} @this) => {{ctorIntStart}}{{for dim in dims}}{{function.prefix}}{{dimAccess "@this" dim}}{{function.sufix}}{{sep ", "}}{{end}}{{ctorEnd}};
+            {{end}}
+        {{end}}
+
+        
+        {{if dimSize < max_dim}}
+            {{for x in (dimSize+1)..max_dim}}
+                {{moreDimType = "Vector" +x +"f"}}
+        public static {{moreDimType}} To{{moreDimType}}(this {{vectorFloatRealType}} @this, {{for i in (dimSize+1)..x}}float x{{i}}{{sep ", "}}{{end}} ) => new {{moreDimType}}({{for dim in dims}}{{dimAccess "@this" dim}}, {{end}} {{for i in (dimSize+1)..x}}x{{i}}{{sep ", "}}{{end}});
+            {{end}}
+        {{end}}
+
+        public static {{areaFloatType}} To{{areaFloatType}}(this {{vectorFloatRealType}} @this) =>  {{areaFloatType}}.FromMinAndSize({{vectorFloatType}}.Zero, @this);
+
+        {{if dimSize == 3}}
+        public static {{vectorFloatRealType}} Cross({{vectorFloatType}} lhs, {{vectorFloatType}} rhs) => {{ctorStart}}lhs.{{dims[1]}} * rhs.{{dims[2]}} - lhs.{{dims[2]}} * rhs.{{dims[1]}}, lhs.{{dims[2]}} * rhs.{{dims[0]}} - lhs.{{dims[0]}} * rhs.{{dims[2]}}, lhs.{{dims[0]}} * rhs.{{dims[1]}} - lhs.{{dims[1]}} * rhs.{{dims[0]}}{{ctorEnd}};
+        {{end}}
+
+        {{for function in binaryStaticFunctions}}
+
+        {{ if !function.zip
+            ctor =true
+            zip=", "
+        else 
+            ctor =false
+            zip=function.zip
+        end}}
+
+        public static {{function.type ?? vectorFloatRealType}} {{function.name}}({{vectorFloatRealType}} a, {{vectorFloatRealType}} b) => {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}{{dimAccess "a" dim}}{{function.infix}} {{dimAccess "b" dim}}{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
+
+        {{if vectorFloatRealType!="float"}}
+
+        public static {{function.type ?? vectorFloatRealType}} {{function.name}}({{vectorFloatRealType}} a, float b) => {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}{{dimAccess "a" dim}}{{function.infix}} b{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
+
+        public static {{function.type ?? vectorFloatRealType}} {{function.name}}(float a, {{vectorFloatRealType}} b) => {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}a{{function.infix}} {{dimAccess "b" dim}}{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
+        {{end}}
+
+        public static {{function.type ?? vectorFloatRealType}} {{function.name}}({{vectorFloatRealType}} a, int b) => {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}{{dimAccess "a" dim}}{{function.infix}} b{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
+
+        public static {{function.type ?? vectorFloatRealType}} {{function.name}}(int a, {{vectorFloatRealType}} b) => {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}a{{function.infix}} {{dimAccess "b" dim}}{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
+    {{end}}
+    }
+}

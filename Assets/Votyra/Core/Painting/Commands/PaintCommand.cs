@@ -32,7 +32,7 @@ namespace Votyra.Core.Painting.Commands
 
         public virtual void UpdateInvocationValues(Vector2i cell, int maxStrength)
         {
-            if (DateTime.Now < _clickLimit && (_lastInvocation == null || (_lastInvocation.Value - cell).ManhattanMagnitude < 3))
+            if (DateTime.Now < _clickLimit && (_lastInvocation == null || (_lastInvocation.Value - cell).ManhattanMagnitude() < 3))
             {
                 return;
             }

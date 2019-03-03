@@ -25,7 +25,7 @@ namespace Votyra.Core.Models
             {
                 var min = Min;
                 var max = Max;
-                return new Area1i(min, max);
+                return Area1i.FromMinAndMax(min, max);
             }
         }
 

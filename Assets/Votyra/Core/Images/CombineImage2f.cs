@@ -21,19 +21,19 @@ namespace Votyra.Core.Images
             switch (Operation)
             {
                 case Operations.Add:
-                    RangeZ = new Area1f(imageA.RangeZ.Min + imageB.RangeZ.Min, imageA.RangeZ.Max + imageB.RangeZ.Max);
+                    RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min + imageB.RangeZ.Min, imageA.RangeZ.Max + imageB.RangeZ.Max);
                     break;
 
                 case Operations.Subtract:
-                    RangeZ = new Area1f(imageA.RangeZ.Min - imageB.RangeZ.Min, imageA.RangeZ.Max - imageB.RangeZ.Max);
+                    RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min - imageB.RangeZ.Min, imageA.RangeZ.Max - imageB.RangeZ.Max);
                     break;
 
                 case Operations.Multiply:
-                    RangeZ = new Area1f(imageA.RangeZ.Min * imageB.RangeZ.Min, imageA.RangeZ.Max * imageB.RangeZ.Max);
+                    RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min * imageB.RangeZ.Min, imageA.RangeZ.Max * imageB.RangeZ.Max);
                     break;
 
                 case Operations.Divide:
-                    RangeZ = new Area1f(imageA.RangeZ.Min / imageB.RangeZ.Min, imageA.RangeZ.Max / imageB.RangeZ.Max);
+                    RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min / imageB.RangeZ.Min, imageA.RangeZ.Max / imageB.RangeZ.Max);
                     break;
 
                 default:

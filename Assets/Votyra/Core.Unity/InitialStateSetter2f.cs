@@ -23,7 +23,7 @@ namespace Votyra.Core.Images
             if (imageConfig.InitialData is GameObject)
                 FillInitialState(editableImage, (imageConfig.InitialData as GameObject).GetComponentsInChildren<Collider>(), imageConfig.InitialDataScale.Z, root);
             if (imageConfig.InitialData is Collider)
-                FillInitialState(editableImage, new[] {imageConfig.InitialData as Collider}, imageConfig.InitialDataScale.Z, root);
+                FillInitialState(editableImage, new[] { imageConfig.InitialData as Collider }, imageConfig.InitialDataScale.Z, root);
             if (imageConfig.InitialData is IMatrix2<float>)
                 FillInitialState(editableImage, imageConfig.InitialData as IMatrix2<float>, imageConfig.InitialDataScale.Z);
             if (imageConfig.InitialData is IMatrix3<bool>)
@@ -50,8 +50,8 @@ namespace Votyra.Core.Images
                     {
                         for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
                         {
-                            var pos=new Vector2i(ix, iy)+min;
-                            var value = texture.GetPixelBilinear((float) pos.X / matrixSizeX, (float) pos.Y / matrixSizeY)
+                            var pos = new Vector2i(ix, iy) + min;
+                            var value = texture.GetPixelBilinear((float)pos.X / matrixSizeX, (float)pos.Y / matrixSizeY)
                                 .grayscale * scale;
                             var height = value;
                             imageAccessor[pos] = height;
@@ -67,7 +67,7 @@ namespace Votyra.Core.Images
         {
             var bounds = colliders.Select(o => o.bounds)
                 .Select(o => Area3f.FromMinAndSize(o.min.ToVector3f(), o.size.ToVector3f()))
-                .DefaultIfEmpty(Area3f.zero)
+                .DefaultIfEmpty(Area3f.Zero)
                 .Aggregate((a, b) => a.Encapsulate(b));
 
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
@@ -78,7 +78,7 @@ namespace Votyra.Core.Images
                 {
                     for (var iy = 0; iy < area.Size.Y; iy++)
                     {
-                        var localPos=new Vector2i(ix, iy)+min;
+                        var localPos = new Vector2i(ix, iy) + min;
                         var ray = new Ray(root.transform.TransformPoint(new Vector3(localPos.X, localPos.Y, bounds.Max.Z)), root.transform.TransformDirection(new Vector3(0, 0, -1)));
 
                         var value = colliders.Select(collider =>
@@ -106,13 +106,13 @@ namespace Votyra.Core.Images
                     matrixAreaToFill = texture.Size.ToRange2i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
-               
+
                 var min = matrixAreaToFill.Min;
                 for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
                 {
                     for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
                     {
-                        var i=new Vector2i(ix, iy)+min;
+                        var i = new Vector2i(ix, iy) + min;
                         imageAccessor[i] = texture[i] * scale;
                     }
                 }
@@ -125,7 +125,7 @@ namespace Votyra.Core.Images
             {
                 Range2i matrixAreaToFill;
                 if (imageAccessor.Area == Range2i.All)
-                    matrixAreaToFill = texture.Size.XY.ToRange2i();
+                    matrixAreaToFill = texture.Size.XY().ToRange2i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
                 var min = matrixAreaToFill.Min;
@@ -133,7 +133,7 @@ namespace Votyra.Core.Images
                 {
                     for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
                     {
-                        var i=new Vector2i(ix, iy)+min;
+                        var i = new Vector2i(ix, iy) + min;
                         float value = 0;
 
                         for (var iz = texture.Size.Z - 1; iz >= 0; iz--)

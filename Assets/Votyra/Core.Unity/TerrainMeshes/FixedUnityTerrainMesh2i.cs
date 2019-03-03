@@ -10,7 +10,7 @@ namespace Votyra.Core.TerrainMeshes
     {
         private int _counter;
 
-        public Bounds MeshBounds =>Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ)).ToBounds();
+        public Bounds MeshBounds => Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ)).ToBounds();
 
         public Area2f MeshBoundsXY { get; private set; }
 
@@ -52,7 +52,7 @@ namespace Votyra.Core.TerrainMeshes
 
         public void Reset(Area3f area)
         {
-            MeshBoundsXY = Area2f.FromMinAndMax(area.Min.XY,area.Max.XY);
+            MeshBoundsXY = Area2f.FromMinAndMax(area.Min.XY(), area.Max.XY());
             _counter = 0;
         }
 
@@ -66,19 +66,19 @@ namespace Votyra.Core.TerrainMeshes
                 posC = VertexPostProcessor(posC);
             }
 
-            var uvA= posA.XY;
-            var uvB= posB.XY;
-            var uvC= posC.XY;
+            var uvA = posA.XY();
+            var uvB = posB.XY();
+            var uvC = posC.XY();
             if (UVAdjustor != null)
             {
-                uvA = UVAdjustor(posA.XY);
-                uvB = UVAdjustor(posB.XY);
-                uvC = UVAdjustor(posC.XY);
+                uvA = UVAdjustor(posA.XY());
+                uvB = UVAdjustor(posB.XY());
+                uvC = UVAdjustor(posC.XY());
             }
 
             var side1 = posB - posA;
             var side2 = posC - posA;
-            var normal = Vector3f.Cross(side1, side2);
+            var normal = Vector3fUtils.Cross(side1, side2);
 
             _minZ = _counter == 0 ? posA.Z : Math.Min(_minZ, posA.Z);
             _minZ = Math.Min(_minZ, posB.Z);
@@ -89,19 +89,19 @@ namespace Votyra.Core.TerrainMeshes
 
             unsafe
             {
-                Vertices[_counter] = *(Vector3*) &posA;
-                UV[_counter] = *(Vector2*) &uvA;
-                Normals[_counter] = *(Vector3*) &normal;
+                Vertices[_counter] = *(Vector3*)&posA;
+                UV[_counter] = *(Vector2*)&uvA;
+                Normals[_counter] = *(Vector3*)&normal;
                 _counter++;
 
-                Vertices[_counter] = *(Vector3*) &posB;
-                UV[_counter] = *(Vector2*) &uvB;
-                Normals[_counter] = *(Vector3*) &normal;
+                Vertices[_counter] = *(Vector3*)&posB;
+                UV[_counter] = *(Vector2*)&uvB;
+                Normals[_counter] = *(Vector3*)&normal;
                 _counter++;
 
-                Vertices[_counter] = *(Vector3*) &posC;
-                UV[_counter] = *(Vector2*) &uvC;
-                Normals[_counter] = *(Vector3*) &normal;
+                Vertices[_counter] = *(Vector3*)&posC;
+                UV[_counter] = *(Vector2*)&uvC;
+                Normals[_counter] = *(Vector3*)&normal;
                 _counter++;
             }
         }

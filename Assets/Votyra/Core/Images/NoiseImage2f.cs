@@ -15,11 +15,11 @@ namespace Votyra.Core.Images
         public Vector3f Offset { get; }
 
         public Vector3f Scale { get; }
-        public Area1f RangeZ => new Area1f(Offset.Z, Offset.Z + Scale.Z);
+        public Area1f RangeZ => Area1f.FromMinAndMax(Offset.Z, Offset.Z + Scale.Z);
 
         public float Sample(Vector2i point)
         {
-            point = (point / Scale.XY + Offset.XY).RoundToVector2i();
+            point = (point / Scale.XY() + Offset.XY()).RoundToVector2i();
 
             var value = MathUtils.PerlinNoise(point.X, point.Y);
 
@@ -35,7 +35,7 @@ namespace Votyra.Core.Images
             {
                 for (var iy = 0; iy < matrix.Size.Y; iy++)
                 {
-                    var matPoint=new Vector2i(ix, iy);
+                    var matPoint = new Vector2i(ix, iy);
                     matrix[matPoint] = Sample(matPoint + min);
                 }
             }

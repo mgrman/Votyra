@@ -52,7 +52,7 @@ namespace Votyra.Core
             _gameObjectFactory = gameObjectFactory;
             _logger = logger;
             _terrainConfig = terrainConfig;
-            _cellInGroupCount = _terrainConfig.CellInGroupCount.XY;
+            _cellInGroupCount = _terrainConfig.CellInGroupCount.XY();
             _profiler = profiler;
             _frameDataProvider = frameDataProvider;
             _vertexPostProcessor = vertexPostProcessor;
@@ -156,11 +156,11 @@ namespace Votyra.Core
             }
             else
             {
-                var triangleCount = _cellInGroupCount.AreaSum * 2 * _interpolationConfig.MeshSubdivision * _interpolationConfig.MeshSubdivision;
+                var triangleCount = _cellInGroupCount.AreaSum() * 2 * _interpolationConfig.MeshSubdivision * _interpolationConfig.MeshSubdivision;
                 pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedUnityTerrainMesh2i>.CreateDirty(triangleCount);
             }
 
-            pooledMesh.Mesh.Initialize(_vertexPostProcessor == null ? (Func<Vector3f, Vector3f>) null : _vertexPostProcessor.PostProcessVertex, _uvPostProcessor == null ? (Func<Vector2f, Vector2f>) null : _uvPostProcessor.ProcessUV);
+            pooledMesh.Mesh.Initialize(_vertexPostProcessor == null ? (Func<Vector3f, Vector3f>)null : _vertexPostProcessor.PostProcessVertex, _uvPostProcessor == null ? (Func<Vector2f, Vector2f>)null : _uvPostProcessor.ProcessUV);
             return pooledMesh;
         }
     }

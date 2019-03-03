@@ -11,7 +11,7 @@ using Zenject;
 namespace Votyra.Plannar
 {
     //TODO: move to floats
-    public class FrameData2iProvider : IFrameDataProvider2i,ITickable
+    public class FrameData2iProvider : IFrameDataProvider2i, ITickable
     {
         private readonly IImage2fPostProcessor _image2fPostProcessor;
         private readonly IImage2fProvider _imageProvider;
@@ -70,11 +70,11 @@ namespace Votyra.Plannar
 
             foreach (var plane in planes)
             {
-                var dirPerp= plane.Normal.XY.Perpendicular.Normalized * 100;
-                var start = plane.Normal.XY.Normalized * plane.Distance;
+                var dirPerp = plane.Normal.XY().Perpendicular().Normalized() * 100;
+                var start = plane.Normal.XY().Normalized() * plane.Distance;
                 var end = start + dirPerp;
-                start = end- dirPerp -dirPerp;
-                Debug.DrawLine(new Vector3(start.X, 0,start.Y), new Vector3(end.X,0, end.Y));
+                start = end - dirPerp - dirPerp;
+                Debug.DrawLine(new Vector3(start.X, 0, start.Y), new Vector3(end.X, 0, end.Y));
             }
 
             var cameraLocalToWorldMatrix = camera.transform.localToWorldMatrix.ToMatrix4x4f();
@@ -106,7 +106,7 @@ namespace Votyra.Plannar
             var cameraPosition = _root.transform.InverseTransformPoint(camera.transform.position).ToVector3f();
             var cameraDirection = _root.transform.InverseTransformDirection(camera.transform.forward).ToVector3f();
 
-            return new FrameData2i(new Ray3f(cameraPosition,cameraDirection), planes, frustumCorners, image, mask, invalidatedArea, _terrainConfig.CellInGroupCount.XY, _interpolationConfig.MeshSubdivision);
+            return new FrameData2i(new Ray3f(cameraPosition, cameraDirection), planes, frustumCorners, image, mask, invalidatedArea, _terrainConfig.CellInGroupCount.XY(), _interpolationConfig.MeshSubdivision);
         }
 
     }

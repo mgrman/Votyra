@@ -26,12 +26,12 @@ namespace Votyra.Core.Raycasting
 
         public virtual Vector2f? Raycast(Ray3f cameraRay)
         {
-            var cameraRayXY = cameraRay.XY;
+            var cameraRayXY = cameraRay.XY();
 
             var startXY = cameraRayXY.Origin;
-            var directionNonNormalizedXY = cameraRay.Direction.XY;
-            var directionXYMag = directionNonNormalizedXY.Magnitude;
-            var endXY = (startXY + directionNonNormalizedXY.Normalized * maxDistance);
+            var directionNonNormalizedXY = cameraRay.Direction.XY();
+            var directionXYMag = directionNonNormalizedXY.Magnitude();
+            var endXY = (startXY + directionNonNormalizedXY.Normalized() * maxDistance);
 
 
             Vector2f? result = InvokeOnPath(startXY, endXY);
@@ -167,7 +167,7 @@ namespace Votyra.Core.Raycasting
             Vector2f v2 = line.To - line.From;
 
             // If lines are perpendicular then they dont intersect:
-            if (Vector2f.Determinant(v1, v2) == 0)
+            if (Vector2fUtils.Determinant(v1, v2) == 0)
                 return null;
 
             // Using solved equations for intersection of parametric lines
@@ -200,7 +200,7 @@ namespace Votyra.Core.Raycasting
             else
             {
                 return _terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
-                    .XY;
+                    .XY();
             }
         }
     }

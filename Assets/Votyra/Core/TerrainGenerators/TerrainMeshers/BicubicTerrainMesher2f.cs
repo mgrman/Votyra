@@ -5,7 +5,7 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public  class BicubicTerrainMesher2f:ITerrainMesher2f
+    public class BicubicTerrainMesher2f : ITerrainMesher2f
     {
         private const float MaskLimit = 0f;
 
@@ -13,13 +13,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         private readonly int _subdivision;
 
 
-        public BicubicTerrainMesher2f(ITerrainConfig terrainConfig,IInterpolationConfig interpolationConfig)
+        public BicubicTerrainMesher2f(ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig)
         {
-            _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+            _cellInGroupCount = terrainConfig.CellInGroupCount.XY();
             _subdivision = interpolationConfig.MeshSubdivision;
         }
-        
-        public  void GetResultingMesh(ITerrainMesh mesh, Vector2i group,  IImage2f image, IMask2e mask)
+
+        public void GetResultingMesh(ITerrainMesh mesh, Vector2i group, IImage2f image, IMask2e mask)
         {
             var poolableValuesToFill = PoolableMatrix<Vector3f>.CreateDirty(new Vector2i(_subdivision + 1, _subdivision + 1));
             var valuesToFill = poolableValuesToFill.RawMatrix;
@@ -116,7 +116,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                                 var x05y00Mask = maskToFill[ix - 1 + 1, iy - 1 + 0] >= MaskLimit;
                                 var x05y05Mask = maskToFill[ix - 1 + 1, iy - 1 + 1] >= MaskLimit;
 
-                                mesh.AddQuad(x00y00Mask ? x00y00 : (Vector3f?) null, x00y05Mask ? x00y05 : (Vector3f?) null, x05y00Mask ? x05y00 : (Vector3f?) null, x05y05Mask ? x05y05 : (Vector3f?) null);
+                                mesh.AddQuad(x00y00Mask ? x00y00 : (Vector3f?)null, x00y05Mask ? x00y05 : (Vector3f?)null, x05y00Mask ? x05y00 : (Vector3f?)null, x05y05Mask ? x05y05 : (Vector3f?)null);
                             }
                         }
                     }

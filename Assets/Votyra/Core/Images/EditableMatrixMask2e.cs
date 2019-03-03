@@ -15,9 +15,9 @@ namespace Votyra.Core.Images
         private Range2i? _invalidatedArea;
         private MatrixMask2e _preparedImage;
 
-        public EditableMatrixMask2e( IImageConfig imageConfig)
+        public EditableMatrixMask2e(IImageConfig imageConfig)
         {
-            _editableMatrix = new Matrix2<MaskValues>(imageConfig.ImageSize.XY);
+            _editableMatrix = new Matrix2<MaskValues>(imageConfig.ImageSize.XY());
         }
 
         private MatrixMask2e PreparedImage
