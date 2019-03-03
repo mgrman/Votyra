@@ -36,8 +36,9 @@ namespace Votyra.Core.Raycasting
 
             _cameraRay = cameraRay;
 
-            _startXy = cameraRay.XY.Origin;
-            _directionXyMag = cameraRay.Direction.XY.Magnitude;
+            _startXy = cameraRay.XY().Origin;
+            _directionXyMag = cameraRay.Direction.XY()
+                .Magnitude();
 
             var result = base.Raycast(cameraRay);
 
@@ -68,7 +69,7 @@ namespace Votyra.Core.Raycasting
 
         float GetRayValue(Vector2f point)
         {
-            var p = (point - _startXy).Magnitude / _directionXyMag;
+            var p = (point - _startXy).Magnitude() / _directionXyMag;
             return _cameraRay.Origin.Z + _cameraRay.Direction.Z * p;
         }
 
