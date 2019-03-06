@@ -32,7 +32,7 @@ namespace Votyra.Core.Images
                 {
                     for (var iz = 0; iz < range.Size.Z; iz++)
                     {
-                        var o=new Vector3i(ix, iy, iz)+min;
+                        var o = new Vector3i(ix, iy, iz) + min;
                         var value = Sample(o);
                         allFalse = allFalse && !value;
                         allTrue = allTrue && value;

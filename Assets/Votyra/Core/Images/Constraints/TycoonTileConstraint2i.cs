@@ -1,4 +1,3 @@
-using System;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
@@ -7,15 +6,15 @@ namespace Votyra.Core.Images.Constraints
 {
     public class TycoonTileConstraint2i : IImageConstraint2i
     {
-        private readonly IThreadSafeLogger _logger;
         private static TileMap2i _tileMap;
         private static int? _tileMapScaleFactor;
+        private readonly IThreadSafeLogger _logger;
         private readonly int _scaleFactor;
         protected Direction _direction;
         protected Matrix2<float> _editableMatrix;
         protected Range2i _invalidatedCellArea;
 
-        public TycoonTileConstraint2i(IConstraintConfig constraintConfig,IThreadSafeLogger logger)
+        public TycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
         {
             _logger = logger;
             _scaleFactor = constraintConfig.ScaleFactor;
@@ -73,7 +72,7 @@ namespace Votyra.Core.Images.Constraints
         protected virtual void ConstrainCell(Vector2i cell)
         {
             var cell_x0y0 = cell;
-            var cell_x1y1 = new Vector2i(cell.X+1, cell.Y+1);
+            var cell_x1y1 = new Vector2i(cell.X + 1, cell.Y + 1);
             if (!_editableMatrix.ContainsIndex(cell_x0y0) || !_editableMatrix.ContainsIndex(cell_x1y1))
                 return;
 
@@ -81,8 +80,8 @@ namespace Votyra.Core.Images.Constraints
                 .ToSampledData2i();
             var processedSample = Process(sample);
 
-            var cell_x0y1 = new Vector2i(cell.X,cell.Y+1);
-            var cell_x1y0 = new Vector2i(cell.X+1, cell.Y);
+            var cell_x0y1 = new Vector2i(cell.X, cell.Y + 1);
+            var cell_x1y0 = new Vector2i(cell.X + 1, cell.Y);
 
             _editableMatrix[cell_x0y0] = processedSample.x0y0;
             _editableMatrix[cell_x0y1] = processedSample.x0y1;

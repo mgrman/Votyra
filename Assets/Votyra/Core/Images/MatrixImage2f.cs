@@ -1,4 +1,3 @@
-using System;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
@@ -6,7 +5,7 @@ namespace Votyra.Core.Images
     public class MatrixImage2f : BaseMatrix2<float>, IImage2f
     {
         public MatrixImage2f(Vector2i size)
-        :base(size)
+            : base(size)
         {
         }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using UnityEngine;
 using Votyra.Core.ImageSamplers;
@@ -26,7 +25,7 @@ namespace Votyra.Core.Images
             if (initialImageConfig.InitialData is Collider)
             {
                 var collider = initialImageConfig.InitialData as Collider;
-                FillInitialState(editableImage, new[] { collider }, initialImageConfig.InitialDataScale.Z, sampler, root);
+                FillInitialState(editableImage, new[] {collider}, initialImageConfig.InitialDataScale.Z, sampler, root);
                 collider.enabled = false;
             }
 
@@ -56,7 +55,7 @@ namespace Votyra.Core.Images
                         for (var iz = 0; iz < matrixAreaToFill.Size.Z; iz++)
                         {
                             var i = new Vector3i(ix, iy, iz) + min;
-                            var value = texture.GetPixelBilinear((float)i.X / matrixSizeX, (float)i.Y / matrixSizeY)
+                            var value = texture.GetPixelBilinear((float) i.X / matrixSizeX, (float) i.Y / matrixSizeY)
                                 .grayscale * scale;
                             imageAccessor[i] = value - i.Z > 0;
                         }

@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEngine.Assertions;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
-using Votyra.Core.TerrainMeshes;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Raycasting
 {
@@ -14,11 +8,11 @@ namespace Votyra.Core.Raycasting
     {
         private readonly IImage2fProvider _image2FProvider;
         private readonly IMask2eProvider _mask2EProvider;
+        private Ray3f _cameraRay;
+        private float _directionXyMag;
         private IImage2f _image;
         private IMask2e _mask;
-        private Ray3f _cameraRay;
         private Vector2f _startXy;
-        private float _directionXyMag;
 
         public Image2fRaycaster(IImage2fProvider image2FProvider, IMask2eProvider mask2eProvider, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
             : base(terrainVertexPostProcessor)
@@ -36,7 +30,8 @@ namespace Votyra.Core.Raycasting
 
             _cameraRay = cameraRay;
 
-            _startXy = cameraRay.XY().Origin;
+            _startXy = cameraRay.XY()
+                .Origin;
             _directionXyMag = cameraRay.Direction.XY()
                 .Magnitude();
 
@@ -60,14 +55,12 @@ namespace Votyra.Core.Raycasting
 
             var x = (fromRayValue - imageValueFrom) / (imageValueTo - imageValueFrom - toRayValue + fromRayValue);
             if (x < 0 || x > 1)
-            {
                 return null;
-            }
 
             return line.From + (line.To - line.From) * x;
         }
 
-        float GetRayValue(Vector2f point)
+        private float GetRayValue(Vector2f point)
         {
             var p = (point - _startXy).Magnitude() / _directionXyMag;
             return _cameraRay.Origin.Z + _cameraRay.Direction.Z * p;

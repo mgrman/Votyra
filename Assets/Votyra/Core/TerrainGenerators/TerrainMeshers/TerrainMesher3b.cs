@@ -56,8 +56,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             // or maybe postProcessing?
         }
 
-        public IPooledTerrainMesh GetResultingMesh() => pooledMesh;
-
         public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
         {
             var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount)
@@ -70,6 +68,8 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             mesh.Initialize(null, null);
             mesh.Reset(Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f()));
         }
+
+        public IPooledTerrainMesh GetResultingMesh() => pooledMesh;
 
         private static IReadOnlyCollection<Triangle3f> ChooseTrianglesForCell(SampledData3b data)
         {

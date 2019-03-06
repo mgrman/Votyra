@@ -1,5 +1,3 @@
-using System;
-
 namespace Votyra.Core.Models
 {
     public interface IMatrix3<T>

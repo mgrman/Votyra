@@ -11,7 +11,7 @@ namespace Votyra.Core.Models
         private readonly IThreadSafeLogger _logger;
         private readonly IReadOnlyDictionary<SampledData2i, SampledData2i> _tileMap;
 
-        public TileMap2i(IEnumerable<SampledData2i> templates,IThreadSafeLogger logger)
+        public TileMap2i(IEnumerable<SampledData2i> templates, IThreadSafeLogger logger)
         {
             _logger = logger;
 #if VERBOSE
@@ -24,22 +24,23 @@ namespace Votyra.Core.Models
             ValueRange = Templates.RangeUnion();
 
             _tileMap = SampledData2i.GenerateAllValuesWithHoles(ValueRange)
-                .ToDictionary(inputValue => inputValue, inputValue =>
-                {
-                    var choosenTemplateTile = default(SampledData2i);
-                    float choosenTemplateTileDiff = int.MaxValue;
-                    foreach (var tile in Templates)
+                .ToDictionary(inputValue => inputValue,
+                    inputValue =>
                     {
-                        var value = SampledData2i.Dif(tile, inputValue);
-                        if (value < choosenTemplateTileDiff)
+                        var choosenTemplateTile = default(SampledData2i);
+                        float choosenTemplateTileDiff = int.MaxValue;
+                        foreach (var tile in Templates)
                         {
-                            choosenTemplateTile = tile;
-                            choosenTemplateTileDiff = value;
+                            var value = SampledData2i.Dif(tile, inputValue);
+                            if (value < choosenTemplateTileDiff)
+                            {
+                                choosenTemplateTile = tile;
+                                choosenTemplateTileDiff = value;
+                            }
                         }
-                    }
 
-                    return choosenTemplateTile;
-                });
+                        return choosenTemplateTile;
+                    });
 
 #if VERBOSE
             foreach (var pair in _tileMap)

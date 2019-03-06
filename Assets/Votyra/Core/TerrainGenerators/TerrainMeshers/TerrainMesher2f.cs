@@ -1,4 +1,3 @@
-using System;
 using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
@@ -8,7 +7,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class TerrainMesher2f : ITerrainMesher2f
     {
-        private Vector2i _cellInGroupCount;
+        private readonly Vector2i _cellInGroupCount;
 
 
         public TerrainMesher2f(ITerrainConfig terrainConfig)

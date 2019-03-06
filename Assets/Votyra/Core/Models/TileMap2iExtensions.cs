@@ -7,13 +7,13 @@ namespace Votyra.Core.Models
 {
     public static class TileMap2iExtensions
     {
-        public static TileMap2i CreateExpandedTileMap2i(this IEnumerable<SampledData2i> templates, float scaleFactor,IThreadSafeLogger logger) =>
+        public static TileMap2i CreateExpandedTileMap2i(this IEnumerable<SampledData2i> templates, float scaleFactor, IThreadSafeLogger logger) =>
             templates.ScaleTemplates(scaleFactor)
                 .CreateVariantsOfUmbra()
                 .ExpandRotations()
                 .CreateTileMap2i(logger);
 
-        public static TileMap2i CreateTileMap2i(this IEnumerable<SampledData2i> templates,IThreadSafeLogger logger) => new TileMap2i(templates, logger);
+        public static TileMap2i CreateTileMap2i(this IEnumerable<SampledData2i> templates, IThreadSafeLogger logger) => new TileMap2i(templates, logger);
 
         public static IEnumerable<SampledData2i> CreateVariantsOfUmbra(this IEnumerable<SampledData2i> templates)
         {

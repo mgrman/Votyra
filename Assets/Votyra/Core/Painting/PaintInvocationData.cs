@@ -4,7 +4,7 @@ namespace Votyra.Core.Painting
 {
     public struct PaintInvocationData
     {
-        public PaintInvocationData( int strength, Vector2i imagePosition)
+        public PaintInvocationData(int strength, Vector2i imagePosition)
             : this()
         {
             Strength = strength;

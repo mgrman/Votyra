@@ -19,7 +19,7 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager2i(null, null, null, null, null, null, null,null,null);
+            new TerrainGeneratorManager2i(null, null, null, null, null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -55,7 +55,7 @@ namespace Votyra.Plannar.Unity
                 .When(c =>
                 {
                     var config = c.Container.Resolve<IInterpolationConfig>();
-                    return config.ImageSubdivision>1;
+                    return config.ImageSubdivision > 1;
                 });
             Container.Bind<ScaleAdjustor>()
                 .ToSelf()
@@ -123,7 +123,7 @@ namespace Votyra.Plannar.Unity
                     var interpolationConfig = c.Container.Resolve<IInterpolationConfig>();
                     return interpolationConfig.MeshSubdivision == 1 && interpolationConfig.ImageSubdivision == 1;
                 });
-            
+
             Container.BindInterfacesAndSelfTo<FrameData2iProvider>()
                 .AsSingle();
 
@@ -155,14 +155,10 @@ namespace Votyra.Plannar.Unity
             var meshFilter = go.GetOrAddComponent<MeshFilter>();
             go.AddComponentIfMissing<MeshRenderer>();
             if (terrainConfig.UseMeshCollider)
-            {
                 go.AddComponentIfMissing<MeshCollider>();
-            }
             else
-            {
                 go.AddComponentIfMissing<BoxCollider>();
-            }
-           
+
             if (meshFilter.sharedMesh == null)
                 meshFilter.mesh = new Mesh();
 

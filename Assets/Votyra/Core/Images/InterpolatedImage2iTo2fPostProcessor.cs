@@ -96,7 +96,7 @@ namespace Votyra.Core.Images
                 var offset = area.Min - min * _subdivision;
 
                 var matrix = PoolableMatrix<float>.CreateDirty(area.Size);
-                Area2i tempQualifier = Area2i.FromMinAndMax(min, max);
+                var tempQualifier = Area2i.FromMinAndMax(min, max);
 
                 var min1 = tempQualifier.Min;
                 for (var ix1 = 0; ix1 <= tempQualifier.Size.X; ix1++)
@@ -225,7 +225,7 @@ namespace Votyra.Core.Images
                 var offset = area.Min - min * _subdivision;
 
                 var matrix = PoolableMatrix<float>.CreateDirty(area.Size);
-                Area2i tempQualifier = Area2i.FromMinAndMax(min, max);
+                var tempQualifier = Area2i.FromMinAndMax(min, max);
                 var min1 = tempQualifier.Min;
                 for (var ix1 = 0; ix1 <= tempQualifier.Size.X; ix1++)
                 {
@@ -312,14 +312,14 @@ namespace Votyra.Core.Images
                 var offset = area.Min - min * _subdivision;
 
                 var matrix = PoolableMatrix<float>.CreateDirty(area.Size);
-                Area2i tempQualifier = Area2i.FromMinAndMax(min, max);
-                
+                var tempQualifier = Area2i.FromMinAndMax(min, max);
+
                 var min1 = tempQualifier.Min;
                 for (var ix1 = 0; ix1 <= tempQualifier.Size.X; ix1++)
                 {
                     for (var iy1 = 0; iy1 <= tempQualifier.Size.Y; iy1++)
                     {
-                        var minPoint = new Vector2i(ix1, iy1)+min1;
+                        var minPoint = new Vector2i(ix1, iy1) + min1;
                         for (var ix = 0; ix < _subdivision; ix++)
                         {
                             for (var iy = 0; iy < _subdivision; iy++)

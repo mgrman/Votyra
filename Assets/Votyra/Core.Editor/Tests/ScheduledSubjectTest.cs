@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using UniRx;
 using Votyra.Core.Models;
@@ -39,10 +37,12 @@ namespace Votyra.Core
             });
 
             var handlerCalls = new List<Tuple<string, string, string>>();
-            subjectA.CombineLatest(subjectB, subjectC, (a, b, c) =>
-                {
-                    return Tuple.Create(a, b, c);
-                })
+            subjectA.CombineLatest(subjectB,
+                    subjectC,
+                    (a, b, c) =>
+                    {
+                        return Tuple.Create(a, b, c);
+                    })
                 .Subscribe(call => handlerCalls.Add(call));
 
             subjectA.OnNext("A");

@@ -9,7 +9,6 @@ using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Unity;
 using Votyra.Core.Utils;
-using Zenject;
 using Object = UnityEngine.Object;
 
 namespace Votyra.Core.Editor
@@ -55,14 +54,14 @@ namespace Votyra.Core.Editor
                 foreach (var configType in configTypes)
                 {
                     if (configType == null)
-                    {
                         continue;
-                    }
                     var ctors = configType.GetConstructors();
 
                     var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null)).SelectMany(o => o.GetParameters()
                         .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()
-                            ?.Id as string, p.ParameterType, null))
+                                ?.Id as string,
+                            p.ParameterType,
+                            null))
                         .Where(a => a.Id != null));
 
                     if (!configItems.Any())
@@ -147,8 +146,10 @@ namespace Votyra.Core.Editor
             else if (typeof(Vector3i).IsAssignableFrom(type))
             {
                 var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
-                var newVector3Value = EditorGUILayout.Vector3Field("", oldVector3iValue.ToVector3f()
-                    .ToVector3(), GUILayout.MaxWidth(200));
+                var newVector3Value = EditorGUILayout.Vector3Field("",
+                    oldVector3iValue.ToVector3f()
+                        .ToVector3(),
+                    GUILayout.MaxWidth(200));
                 newValue = newVector3Value.ToVector3f()
                     .RoundToVector3i();
             }

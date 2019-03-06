@@ -3,8 +3,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class BaseMatrix2<T> :  IInitializableImage, IImageInvalidatableImage2
-    where T:struct
+    public class BaseMatrix2<T> : IInitializableImage, IImageInvalidatableImage2 where T : struct
     {
         private readonly T[,] _image;
         private readonly Range2i _imageRange;
@@ -19,7 +18,19 @@ namespace Votyra.Core.Images
 
         public bool IsBeingUsed => _usingCounter > 0;
 
-        public T Sample(Vector2i point) => _imageRange.Contains(point) ? _image[point.X, point.Y] : default(T);
+        public Range2i InvalidatedArea { get; private set; }
+
+        public void StartUsing()
+        {
+            _usingCounter++;
+        }
+
+        public void FinishUsing()
+        {
+            _usingCounter--;
+        }
+
+        public T Sample(Vector2i point) => _imageRange.Contains(point) ? _image[point.X, point.Y] : default;
 
         public IPoolableMatrix2<T> SampleArea(Range2i area)
         {
@@ -36,18 +47,6 @@ namespace Votyra.Core.Images
             }
 
             return matrix;
-        }
-
-        public Range2i InvalidatedArea { get; private set; }
-
-        public void StartUsing()
-        {
-            _usingCounter++;
-        }
-
-        public void FinishUsing()
-        {
-            _usingCounter--;
         }
 
         public void UpdateImage(Matrix2<T> template)

@@ -116,7 +116,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                                 var x05y00Mask = maskToFill[ix - 1 + 1, iy - 1 + 0] >= MaskLimit;
                                 var x05y05Mask = maskToFill[ix - 1 + 1, iy - 1 + 1] >= MaskLimit;
 
-                                mesh.AddQuad(x00y00Mask ? x00y00 : (Vector3f?)null, x00y05Mask ? x00y05 : (Vector3f?)null, x05y00Mask ? x05y00 : (Vector3f?)null, x05y05Mask ? x05y05 : (Vector3f?)null);
+                                mesh.AddQuad(x00y00Mask ? x00y00 : (Vector3f?) null, x00y05Mask ? x00y05 : (Vector3f?) null, x05y00Mask ? x05y00 : (Vector3f?) null, x05y05Mask ? x05y05 : (Vector3f?) null);
                             }
                         }
                     }

@@ -218,7 +218,7 @@ namespace Votyra.Core.Models
                 }
             }
 
-            matrix = default(Matrix4x4f);
+            matrix = default;
             return false;
         }
 
@@ -236,8 +236,8 @@ namespace Votyra.Core.Models
                 }
             }
 
-            matrix = default(Matrix4x4f);
-            rotatedData = default(SampledData3b);
+            matrix = default;
+            rotatedData = default;
             return false;
         }
 

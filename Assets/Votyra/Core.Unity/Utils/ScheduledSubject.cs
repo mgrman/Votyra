@@ -5,10 +5,7 @@ namespace Votyra.Core.Models
 {
     public static class ScheduledSubjectUtils
     {
-        public static ISubject<T> MakeScheduledOnMainThread<T>(this ISubject<T> subject)
-        {
-            return new ScheduledSubject<T>(subject);
-        }
+        public static ISubject<T> MakeScheduledOnMainThread<T>(this ISubject<T> subject) => new ScheduledSubject<T>(subject);
     }
 
     public class ScheduledSubject<T> : ISubject<T>
@@ -16,20 +13,19 @@ namespace Votyra.Core.Models
         private readonly Func<T> _getValue;
         private readonly IObservable<T> _observable;
         private readonly IObserver<T> _observer;
-        private readonly UniRx.IScheduler _scheduler;
+        private readonly IScheduler _scheduler;
 
         public ScheduledSubject(ISubject<T> subject)
         {
-            _scheduler = UniRx.Scheduler.MainThread;
+            _scheduler = Scheduler.MainThread;
             _observable = subject;
 
             _observer = subject;
-         
         }
 
         public void OnCompleted()
         {
-            if (UniRx.MainThreadDispatcher.IsInMainThread)
+            if (MainThreadDispatcher.IsInMainThread)
                 _observer.OnCompleted();
             else
                 _scheduler.Schedule(() =>
@@ -40,7 +36,7 @@ namespace Votyra.Core.Models
 
         public void OnError(Exception error)
         {
-            if (UniRx.MainThreadDispatcher.IsInMainThread)
+            if (MainThreadDispatcher.IsInMainThread)
                 _observer.OnError(error);
             else
                 _scheduler.Schedule(() =>
@@ -51,7 +47,7 @@ namespace Votyra.Core.Models
 
         public void OnNext(T value)
         {
-            if (UniRx.MainThreadDispatcher.IsInMainThread)
+            if (MainThreadDispatcher.IsInMainThread)
                 _observer.OnNext(value);
             else
                 ScheduledOnNext(value);

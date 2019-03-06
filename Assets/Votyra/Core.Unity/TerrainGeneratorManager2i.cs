@@ -14,7 +14,6 @@ using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
-using Votyra.Core.TerrainGenerators;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
@@ -39,11 +38,11 @@ namespace Votyra.Core
 
         private readonly CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
         private readonly IProfiler _profiler;
+        private readonly TaskFactory _taskFactory = new TaskFactory();
         private readonly ITerrainConfig _terrainConfig;
+        private readonly ITerrainMesher2f _terrainMesher;
         private readonly ITerrainUVPostProcessor _uvPostProcessor;
         private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
-        private readonly ITerrainMesher2f _terrainMesher;
-        private readonly TaskFactory _taskFactory = new TaskFactory();
 
         private Task _waitForTask = Task.CompletedTask;
 
@@ -61,13 +60,9 @@ namespace Votyra.Core
             _terrainMesher = terrainMesher;
 
             if (_terrainConfig.Async)
-            {
                 _frameDataProvider.FrameData += UpdateTerrainInBackground;
-            }
             else
-            {
                 _frameDataProvider.FrameData += UpdateTerrainInForeground;
-            }
         }
 
         public void Dispose()
@@ -75,13 +70,9 @@ namespace Votyra.Core
             _onDestroyCts.Cancel();
 
             if (_terrainConfig.Async)
-            {
                 _frameDataProvider.FrameData -= UpdateTerrainInBackground;
-            }
             else
-            {
                 _frameDataProvider.FrameData -= UpdateTerrainInForeground;
-            }
         }
 
         private void UpdateTerrainInForeground(IFrameData2i context)
@@ -94,9 +85,7 @@ namespace Votyra.Core
         private void UpdateTerrainInBackground(IFrameData2i context)
         {
             if (!_waitForTask.IsCompleted)
-            {
                 return;
-            }
 
             context?.Activate();
             _waitForTask = _taskFactory.StartNew(UpdateTerrain, context);
@@ -160,7 +149,7 @@ namespace Votyra.Core
                 pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedUnityTerrainMesh2i>.CreateDirty(triangleCount);
             }
 
-            pooledMesh.Mesh.Initialize(_vertexPostProcessor == null ? (Func<Vector3f, Vector3f>)null : _vertexPostProcessor.PostProcessVertex, _uvPostProcessor == null ? (Func<Vector2f, Vector2f>)null : _uvPostProcessor.ProcessUV);
+            pooledMesh.Mesh.Initialize(_vertexPostProcessor == null ? (Func<Vector3f, Vector3f>) null : _vertexPostProcessor.PostProcessVertex, _uvPostProcessor == null ? (Func<Vector2f, Vector2f>) null : _uvPostProcessor.ProcessUV);
             return pooledMesh;
         }
     }

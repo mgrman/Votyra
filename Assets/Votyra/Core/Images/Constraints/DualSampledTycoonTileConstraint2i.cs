@@ -1,4 +1,3 @@
-using Votyra.Core;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
 
@@ -7,7 +6,7 @@ namespace Votyra.Core.Images.Constraints
     public class DualSampledTycoonTileConstraint2i : TycoonTileConstraint2i
     {
         public DualSampledTycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
-            : base(constraintConfig,logger)
+            : base(constraintConfig, logger)
         {
         }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Core.Images;
@@ -7,7 +6,6 @@ using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
 using Zenject;
-using Object = UnityEngine.Object;
 
 namespace Votyra.Core
 {
@@ -80,7 +78,7 @@ namespace Votyra.Core
             using (var image = _editableImage.RequestAccess(imageArea))
             {
                 localArea = localArea.IntersectWith(_sampler.ImageToWorld(image.Area));
-                Range3i tempQualifier = localArea.RoundToContain();
+                var tempQualifier = localArea.RoundToContain();
                 var min = tempQualifier.Min;
                 for (var ix = tempQualifier.Size.X; ix < tempQualifier.Size.X; ix++)
                 {

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
@@ -9,14 +8,15 @@ namespace Votyra.Core.Painting.Commands
 {
     public abstract class PaintCommand : IPaintCommand
     {
+        private static readonly TimeSpan ClickDelay = TimeSpan.FromSeconds(0.2);
         private readonly IEditableImage2f _editableImage;
 
+        private DateTime _clickLimit;
 
-        private IEditableMask2e _editableMask;
+
+        private readonly IEditableMask2e _editableMask;
 
         private IThreadSafeLogger _logger;
-
-        private Vector2i? _lastInvocation { get; set; }
         private int _maxStrength;
 
 
@@ -27,20 +27,15 @@ namespace Votyra.Core.Painting.Commands
             _logger = logger;
         }
 
-        private DateTime _clickLimit;
-        private static readonly TimeSpan ClickDelay = TimeSpan.FromSeconds(0.2);
+        private Vector2i? _lastInvocation { get; set; }
 
         public virtual void UpdateInvocationValues(Vector2i cell, int maxStrength)
         {
             if (DateTime.Now < _clickLimit && (_lastInvocation == null || (_lastInvocation.Value - cell).ManhattanMagnitude() < 3))
-            {
                 return;
-            }
 
             if (_lastInvocation == null)
-            {
                 _clickLimit = DateTime.Now + ClickDelay;
-            }
 
 
             _maxStrength = maxStrength;

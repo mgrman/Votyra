@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Votyra.Core
 {
-    public class SimpleSubject<T> : IObservable<T>, IObserver<T>,IDisposable
+    public class SimpleSubject<T> : IObservable<T>, IObserver<T>, IDisposable
     {
-        private readonly List<IObserver<T>> _observers=new List<IObserver<T>>();
+        private readonly List<IObserver<T>> _observers = new List<IObserver<T>>();
         private T _value;
 
         public T Value
@@ -13,17 +13,20 @@ namespace Votyra.Core
             get => _value;
             set
             {
-                if (EqualityComparer<T>.Default.Equals(_value,value))
-                {
+                if (EqualityComparer<T>.Default.Equals(_value, value))
                     return;
-                }
 
                 _value = value;
                 OnNext(value);
             }
         }
 
-        public IDisposable Subscribe(IObserver<T> observer) 
+        public void Dispose()
+        {
+            OnCompleted();
+        }
+
+        public IDisposable Subscribe(IObserver<T> observer)
         {
             _observers.Add(observer);
             observer.OnNext(Value);
@@ -32,7 +35,7 @@ namespace Votyra.Core
 
         public void OnCompleted()
         {
-            _observers.ForEach(o=>o.OnCompleted());
+            _observers.ForEach(o => o.OnCompleted());
             _observers.Clear();
         }
 
@@ -51,21 +54,16 @@ namespace Votyra.Core
             private readonly SimpleSubject<T> _parent;
             private readonly IObserver<T> _observer;
 
-            public CallbackDisposable(SimpleSubject<T> parent,IObserver<T> observer)
+            public CallbackDisposable(SimpleSubject<T> parent, IObserver<T> observer)
             {
                 _parent = parent;
                 _observer = observer;
             }
-            
+
             public void Dispose()
             {
                 _parent._observers.Remove(_observer);
             }
-        }
-
-        public void Dispose()
-        {
-            OnCompleted();
         }
     }
 }

@@ -1,5 +1,4 @@
 using Votyra.Core.Images;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
 using Votyra.Core.TerrainMeshes;
 

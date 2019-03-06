@@ -3,15 +3,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
-using UniRx;
 
 namespace Votyra.Core
 {
     public class TerrainManagerModel : ITerrainManagerModel
     {
-        private IReadOnlyCollection<ConfigItem> _config;
         private TerrainAlgorithm _activeAlgorithm;
         private IEnumerable<TerrainAlgorithm> _availableAlgorithms;
+        private IReadOnlyCollection<ConfigItem> _config;
 
         public TerrainManagerModel()
         {

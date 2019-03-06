@@ -13,7 +13,7 @@ namespace Votyra.Core.Unity
             MainThreadDispatcher.Initialize();
             Container.BindInterfacesAndSelfTo<TerrainManagerModel>()
                 .AsSingle();
-            
+
             Container.Bind<IThreadSafeLogger>()
                 .FromMethod(context =>
                 {

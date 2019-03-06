@@ -8,6 +8,10 @@ namespace Votyra.Core.TerrainMeshes
 {
     public class ExpandingUnityTerrainMesh : ITerrainMesh
     {
+        private float _maxZ;
+
+        private float _minZ;
+
         public ExpandingUnityTerrainMesh()
         {
             Vertices = new List<Vector3>();
@@ -21,10 +25,6 @@ namespace Votyra.Core.TerrainMeshes
                 .ToBounds();
 
         public Area2f MeshBoundsXY { get; private set; }
-
-        private float _minZ;
-
-        private float _maxZ;
         private Func<Vector3f, Vector3f> VertexPostProcessor { get; set; }
         private Func<Vector2f, Vector2f> UVAdjustor { get; set; }
 
@@ -87,21 +87,21 @@ namespace Votyra.Core.TerrainMeshes
             unsafe
             {
                 Indices.Add(VertexCount);
-                Vertices.Add(*(Vector3*)&posA);
-                UV.Add(*(Vector2*)&uvA);
-                Normals.Add(*(Vector3*)&normal);
+                Vertices.Add(*(Vector3*) &posA);
+                UV.Add(*(Vector2*) &uvA);
+                Normals.Add(*(Vector3*) &normal);
                 VertexCount++;
 
                 Indices.Add(VertexCount);
-                Vertices.Add(*(Vector3*)&posB);
-                UV.Add(*(Vector2*)&uvB);
-                Normals.Add(*(Vector3*)&normal);
+                Vertices.Add(*(Vector3*) &posB);
+                UV.Add(*(Vector2*) &uvB);
+                Normals.Add(*(Vector3*) &normal);
                 VertexCount++;
 
                 Indices.Add(VertexCount);
-                Vertices.Add(*(Vector3*)&posC);
-                UV.Add(*(Vector2*)&uvC);
-                Normals.Add(*(Vector3*)&normal);
+                Vertices.Add(*(Vector3*) &posC);
+                UV.Add(*(Vector2*) &uvC);
+                Normals.Add(*(Vector3*) &normal);
                 VertexCount++;
             }
 

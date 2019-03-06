@@ -10,13 +10,15 @@ namespace Votyra.Core.TerrainMeshes
     {
         private int _counter;
 
-        public Bounds MeshBounds => Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ)).ToBounds();
-
-        public Area2f MeshBoundsXY { get; private set; }
+        private float _maxZ;
 
         private float _minZ;
 
-        private float _maxZ;
+        public Bounds MeshBounds =>
+            Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ))
+                .ToBounds();
+
+        public Area2f MeshBoundsXY { get; private set; }
 
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
         public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
@@ -89,19 +91,19 @@ namespace Votyra.Core.TerrainMeshes
 
             unsafe
             {
-                Vertices[_counter] = *(Vector3*)&posA;
-                UV[_counter] = *(Vector2*)&uvA;
-                Normals[_counter] = *(Vector3*)&normal;
+                Vertices[_counter] = *(Vector3*) &posA;
+                UV[_counter] = *(Vector2*) &uvA;
+                Normals[_counter] = *(Vector3*) &normal;
                 _counter++;
 
-                Vertices[_counter] = *(Vector3*)&posB;
-                UV[_counter] = *(Vector2*)&uvB;
-                Normals[_counter] = *(Vector3*)&normal;
+                Vertices[_counter] = *(Vector3*) &posB;
+                UV[_counter] = *(Vector2*) &uvB;
+                Normals[_counter] = *(Vector3*) &normal;
                 _counter++;
 
-                Vertices[_counter] = *(Vector3*)&posC;
-                UV[_counter] = *(Vector2*)&uvC;
-                Normals[_counter] = *(Vector3*)&normal;
+                Vertices[_counter] = *(Vector3*) &posC;
+                UV[_counter] = *(Vector2*) &uvC;
+                Normals[_counter] = *(Vector3*) &normal;
                 _counter++;
             }
         }

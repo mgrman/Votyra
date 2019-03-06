@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Scriban;
 using Scriban.Parsing;
+using Scriban.Syntax;
 using UnityEditor;
 using UnityEngine;
 
@@ -72,7 +72,7 @@ namespace Votyra.Core.Editor
                     return;
                 }
 
-                for (int dimCount = 1; dimCount <= MaxDimCount; dimCount++)
+                for (var dimCount = 1; dimCount <= MaxDimCount; dimCount++)
                 {
                     try
                     {
@@ -93,7 +93,7 @@ namespace Votyra.Core.Editor
                         var result = template.Render(data);
                         File.WriteAllText(resultPath, result);
                     }
-                    catch (Scriban.Syntax.ScriptRuntimeException ex)
+                    catch (ScriptRuntimeException ex)
                     {
                         Debug.LogError($"Problem with template:{scribanFilePath} in dim:{dimCount}!\n{ex.Span}\n{ex.Message}");
                         Debug.LogException(ex);

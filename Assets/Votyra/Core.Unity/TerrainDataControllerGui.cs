@@ -5,13 +5,15 @@ using System.Reflection;
 using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Unity;
-using Votyra.Core.Utils;
 using Zenject;
 
 namespace Votyra.Core
 {
     public class TerrainDataControllerGui : MonoBehaviour
     {
+        private Dictionary<GameObject, IEnumerable<ConfigItem>> _cachedConfigs;
+        private TerrainDataController _controller;
+
         public static IEnumerable<Type> GetConfigTypes(GameObject algorithPrefab)
         {
             var installers = algorithPrefab.GetComponentInChildren<GameObjectContext>()
@@ -36,7 +38,7 @@ namespace Votyra.Core
                     }
                     finally
                     {
-                        GameObject.DestroyImmediate(tempInstaller);
+                        DestroyImmediate(tempInstaller);
                     }
                 }
 
@@ -52,20 +54,17 @@ namespace Votyra.Core
             {
                 try
                 {
-                    var instanceType = provider.GetInstanceType(new InjectContext(container,typeof(object)));
+                    var instanceType = provider.GetInstanceType(new InjectContext(container, typeof(object)));
                     types.Add(instanceType);
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogException(ex);   
+                    Debug.LogException(ex);
                 }
             }
 
             return types;
         }
-
-        private Dictionary<GameObject, IEnumerable<ConfigItem>> _cachedConfigs;
-        private TerrainDataController _controller;
 
         private void Awake()
         {
@@ -76,7 +75,7 @@ namespace Votyra.Core
             foreach (var algorithm in _controller._availableTerrainAlgorithms)
             {
                 var configTypes = GetConfigTypes(algorithm);
-                List<ConfigItem> items = new List<ConfigItem>();
+                var items = new List<ConfigItem>();
                 foreach (var configType in configTypes)
                 {
                     var ctors = configType.GetConstructors();
@@ -96,7 +95,7 @@ namespace Votyra.Core
 
         private void OnGUI()
         {
-            bool anyChange = false;
+            var anyChange = false;
             GUILayout.Label("Terrain algorithms:");
             for (var index = 0; index < _controller._availableTerrainAlgorithms.Length; index++)
             {
@@ -120,13 +119,11 @@ namespace Votyra.Core
             var activeAlgorith = _controller._availableTerrainAlgorithms[_controller._activeTerrainAlgorithm];
             if (activeAlgorith != null)
             {
-                var newConfigValues = new System.Lazy<List<ConfigItem>>(() => _controller.Config.ToList());
+                var newConfigValues = new Lazy<List<ConfigItem>>(() => _controller.Config.ToList());
                 foreach (var configItem in _cachedConfigs[activeAlgorith])
                 {
                     if (!IsSupported(configItem.Type))
-                    {
                         continue;
-                    }
 
                     GUILayout.BeginHorizontal();
                     GUILayout.Label($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
@@ -147,49 +144,30 @@ namespace Votyra.Core
                 }
 
                 if (newConfigValues.IsValueCreated)
-                {
                     _controller.Config = newConfigValues.Value.ToArray();
-                }
             }
 
 
             if (anyChange)
-            {
                 if (Application.isPlaying)
                     _controller.SendMessage("OnValidate", null, SendMessageOptions.DontRequireReceiver);
-            }
         }
 
         private bool IsSupported(Type type)
         {
             if (typeof(bool).IsAssignableFrom(type))
-            {
                 return true;
-            }
-            else if (typeof(int).IsAssignableFrom(type))
-            {
+            if (typeof(int).IsAssignableFrom(type))
                 return true;
-            }
-            else if (typeof(float).IsAssignableFrom(type))
-            {
+            if (typeof(float).IsAssignableFrom(type))
                 return true;
-            }
-            else if (type.IsEnum)
-            {
+            if (type.IsEnum)
                 return true;
-            }
-            else if (typeof(Vector3i).IsAssignableFrom(type))
-            {
+            if (typeof(Vector3i).IsAssignableFrom(type))
                 return true;
-            }
-            else if (typeof(Vector3f).IsAssignableFrom(type))
-            {
+            if (typeof(Vector3f).IsAssignableFrom(type))
                 return true;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         private object GetNewValue(Type type, object oldValue)
@@ -209,12 +187,12 @@ namespace Votyra.Core
             else if (typeof(int).IsAssignableFrom(type))
             {
                 var oldIntValue = oldValue as int? ?? 0;
-                newValue = Int32.TryParse(GUILayout.TextField(oldIntValue.ToString()), out int intValue) ? intValue : 0;
+                newValue = int.TryParse(GUILayout.TextField(oldIntValue.ToString()), out var intValue) ? intValue : 0;
             }
             else if (typeof(float).IsAssignableFrom(type))
             {
                 var oldFloatValue = oldValue as float? ?? 0;
-                newValue = float.TryParse(GUILayout.TextField(oldFloatValue.ToString()), out float floatValue) ? floatValue : 0;
+                newValue = float.TryParse(GUILayout.TextField(oldFloatValue.ToString()), out var floatValue) ? floatValue : 0;
             }
             else if (type.IsEnum)
             {
@@ -229,18 +207,16 @@ namespace Votyra.Core
                 {
                     var selected = GUILayout.Toggle(option.Equals(newValue), Enum.GetName(type, option));
                     if (selected)
-                    {
                         newValue = option;
-                    }
                 }
             }
             else if (typeof(Vector3i).IsAssignableFrom(type))
             {
                 var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
 
-                var x = Int32.TryParse(GUILayout.TextField(oldVector3iValue.X.ToString()), out int xVal) ? xVal : 0;
-                var y = Int32.TryParse(GUILayout.TextField(oldVector3iValue.Y.ToString()), out int yVal) ? yVal : 0;
-                var z = Int32.TryParse(GUILayout.TextField(oldVector3iValue.Z.ToString()), out int zVal) ? zVal : 0;
+                var x = int.TryParse(GUILayout.TextField(oldVector3iValue.X.ToString()), out var xVal) ? xVal : 0;
+                var y = int.TryParse(GUILayout.TextField(oldVector3iValue.Y.ToString()), out var yVal) ? yVal : 0;
+                var z = int.TryParse(GUILayout.TextField(oldVector3iValue.Z.ToString()), out var zVal) ? zVal : 0;
 
                 newValue = new Vector3i(x, y, z);
             }
@@ -248,9 +224,9 @@ namespace Votyra.Core
             {
                 var oldVector3fValue = oldValue as Vector3f? ?? Vector3f.Zero;
 
-                var x = float.TryParse(GUILayout.TextField(oldVector3fValue.X.ToString()), out float xVal) ? xVal : 0;
-                var y = float.TryParse(GUILayout.TextField(oldVector3fValue.Y.ToString()), out float yVal) ? yVal : 0;
-                var z = float.TryParse(GUILayout.TextField(oldVector3fValue.Z.ToString()), out float zVal) ? zVal : 0;
+                var x = float.TryParse(GUILayout.TextField(oldVector3fValue.X.ToString()), out var xVal) ? xVal : 0;
+                var y = float.TryParse(GUILayout.TextField(oldVector3fValue.Y.ToString()), out var yVal) ? yVal : 0;
+                var z = float.TryParse(GUILayout.TextField(oldVector3fValue.Z.ToString()), out var zVal) ? zVal : 0;
 
                 newValue = new Vector3f(x, y, z);
             }

@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using Votyra.Core;
 using Votyra.Core.Images;
-using Votyra.Core.InputHandling;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
@@ -17,13 +16,11 @@ namespace Votyra.Plannar
         private readonly IImage2fProvider _imageProvider;
         private readonly IInterpolationConfig _interpolationConfig;
         private readonly IMask2eProvider _maskProvider;
+        private readonly int _meshTopologyDistance;
         private readonly GameObject _root;
         private readonly ITerrainConfig _terrainConfig;
 
         private Matrix4x4f _previousCameraMatrix;
-        private readonly int _meshTopologyDistance;
-
-        private event Action<IFrameData2i> _frameData;
 
         [Inject]
         public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [InjectOptional] IMask2eProvider maskProvider, [Inject(Id = "root")] GameObject root)
@@ -51,11 +48,11 @@ namespace Votyra.Plannar
         {
             var data = GetCurrentFrameData(true);
             if (data == null)
-            {
                 return;
-            }
             _frameData?.Invoke(data);
         }
+
+        private event Action<IFrameData2i> _frameData;
 
         private IFrameData2i GetCurrentFrameData(bool computedOnce)
         {
@@ -70,8 +67,11 @@ namespace Votyra.Plannar
 
             foreach (var plane in planes)
             {
-                var dirPerp = plane.Normal.XY().Perpendicular().Normalized() * 100;
-                var start = plane.Normal.XY().Normalized() * plane.Distance;
+                var dirPerp = plane.Normal.XY()
+                    .Perpendicular()
+                    .Normalized() * 100;
+                var start = plane.Normal.XY()
+                    .Normalized() * plane.Distance;
                 var end = start + dirPerp;
                 start = end - dirPerp - dirPerp;
                 Debug.DrawLine(new Vector3(start.X, 0, start.Y), new Vector3(end.X, 0, end.Y));
@@ -98,16 +98,18 @@ namespace Votyra.Plannar
             {
                 frustumCorners.Array[i] = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorners.Array[i]));
             }
+
             frustumCornersUnity.Dispose();
 
             var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
             invalidatedArea = invalidatedArea.ExtendBothDirections(_meshTopologyDistance);
 
-            var cameraPosition = _root.transform.InverseTransformPoint(camera.transform.position).ToVector3f();
-            var cameraDirection = _root.transform.InverseTransformDirection(camera.transform.forward).ToVector3f();
+            var cameraPosition = _root.transform.InverseTransformPoint(camera.transform.position)
+                .ToVector3f();
+            var cameraDirection = _root.transform.InverseTransformDirection(camera.transform.forward)
+                .ToVector3f();
 
             return new FrameData2i(new Ray3f(cameraPosition, cameraDirection), planes, frustumCorners, image, mask, invalidatedArea, _terrainConfig.CellInGroupCount.XY(), _interpolationConfig.MeshSubdivision);
         }
-
     }
 }

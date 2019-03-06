@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
-using UniRx;
 using UnityEngine;
 using Votyra.Core.Utils;
 using Zenject;
@@ -19,12 +18,12 @@ namespace Votyra.Core.Unity
         [SerializeField]
         public GameObject[] _availableTerrainAlgorithms;
 
+        private Context _context;
+
         private ITerrainManagerModel _terrainManagerModel;
 
         [SerializeField]
         public ConfigItem[] Config;
-
-        private Context _context;
 
         [Inject]
         public void Initialize(ITerrainManagerModel terrainManagerModel, Context context)
@@ -38,7 +37,7 @@ namespace Votyra.Core.Unity
             OnTerrainManagerModelOnPropertyChanged();
         }
 
-        void OnTerrainManagerModelOnPropertyChanged(object o, PropertyChangedEventArgs e)
+        private void OnTerrainManagerModelOnPropertyChanged(object o, PropertyChangedEventArgs e)
         {
             OnTerrainManagerModelOnPropertyChanged();
         }

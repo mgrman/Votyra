@@ -7,15 +7,12 @@ namespace Votyra.Core.Utils
 {
     public static class EnumUtilities
     {
-        public static bool IsInputActive(this InputActions value, InputActions flagToCheck)
-        {
-            return (value & flagToCheck) != 0;
-        }
+        public static bool IsInputActive(this InputActions value, InputActions flagToCheck) => (value & flagToCheck) != 0;
 
         public static IReadOnlyList<T> GetValues<T>() => ValueProvider<T>.Values;
 
         public static IReadOnlyList<string> GetNames<T>() => ValueProvider<T>.Names;
-        
+
         public static IReadOnlyList<(T value, string name)> GetNamesAndValues<T>() => ValueProvider<T>.NamesAndValues;
 
         private static class ValueProvider<T>

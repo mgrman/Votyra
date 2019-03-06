@@ -20,10 +20,13 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
 
             var cube = SampledData3b.ParseCube(cubeString);
 
-            Assert.AreEqual(string.Join("\n", cubeString.Split('\n')
-                .Select(o => o.Trim())), string.Join("\n", cube.ToCubeString()
-                .Split('\n')
-                .Select(o => o.Trim())));
+            Assert.AreEqual(string.Join("\n",
+                    cubeString.Split('\n')
+                        .Select(o => o.Trim())),
+                string.Join("\n",
+                    cube.ToCubeString()
+                        .Split('\n')
+                        .Select(o => o.Trim())));
         }
 
         [Test]

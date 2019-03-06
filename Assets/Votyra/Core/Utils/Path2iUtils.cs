@@ -5,9 +5,7 @@ namespace Votyra.Core.Utils
 {
     public static class Path2iUtils
     {
-
-        
-        public static void InvokeOnPath(Vector2i? from, Vector2i to,  Action<Vector2i> action)
+        public static void InvokeOnPath(Vector2i? from, Vector2i to, Action<Vector2i> action)
         {
             if (from == null)
             {
@@ -34,7 +32,7 @@ namespace Votyra.Core.Utils
             }
         }
 
-        private static void InvokeOnPathHorizontalish(Vector2i from, Vector2i to,  Action<Vector2i> action)
+        private static void InvokeOnPathHorizontalish(Vector2i from, Vector2i to, Action<Vector2i> action)
         {
             float deltaX = to.X - from.X;
             float deltaY = to.Y - from.Y;
@@ -42,14 +40,12 @@ namespace Votyra.Core.Utils
             // note that this division needs to be done in a way that preserves the fractional part
             var error = 0.0f;
             var y = from.Y;
-            var signY = Math.Sign(to.X - @from.X);
+            var signY = Math.Sign(to.X - from.X);
             for (var x = from.X; x != to.X; x += signY)
             {
                 var position = new Vector2i(x, y);
                 if (position != from)
-                {
                     action(position);
-                }
                 error = error + deltaErr;
                 if (!(error >= 0.5))
                     continue;
@@ -60,7 +56,7 @@ namespace Votyra.Core.Utils
             action(to);
         }
 
-        private static void InvokeOnPathVerticalish(Vector2i from, Vector2i to,Action<Vector2i> action)
+        private static void InvokeOnPathVerticalish(Vector2i from, Vector2i to, Action<Vector2i> action)
         {
             float deltaY = to.Y - from.Y;
             float deltaX = to.X - from.X;
@@ -68,15 +64,13 @@ namespace Votyra.Core.Utils
             // 
             var error = 0.0f;
             var x = from.X;
-            var signY = Math.Sign(to.Y - @from.Y);
-            
+            var signY = Math.Sign(to.Y - from.Y);
+
             for (var y = from.Y; y != to.Y; y += signY)
             {
                 var position = new Vector2i(x, y);
                 if (position != from)
-                {
                     action(position);
-                }
                 error = error + deltaErr;
                 if (!(error >= 0.5))
                     continue;
@@ -110,6 +104,5 @@ namespace Votyra.Core.Utils
 
             action(to);
         }
-
     }
 }

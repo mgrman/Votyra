@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Threading.Tasks;
 using UniRx;
 using UniRx.Async;
@@ -30,10 +29,11 @@ namespace Votyra.Core.Utils
         public static UniTask RunOnMainThreadUniAsync(Action action)
         {
             return UniTask.Run(async () =>
-            {
-                await UniTask.SwitchToMainThread();
-                action();
-            }, false);
+                {
+                    await UniTask.SwitchToMainThread();
+                    action();
+                },
+                false);
         }
 
         public static Task RunOnMainThreadAsync(Func<Task> action)
@@ -65,6 +65,5 @@ namespace Votyra.Core.Utils
                 })
                 .ConfiguraAwaitFluent(false);
         }
-
     }
 }

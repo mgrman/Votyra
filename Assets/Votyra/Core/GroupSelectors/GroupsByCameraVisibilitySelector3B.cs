@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
@@ -50,40 +49,40 @@ namespace Votyra.Core.GroupSelectors
                 {
                     for (var iz = min.Z; iz <= max.Z; iz++)
                     {
-                        var group = new Vector3i(ix, iy, iz) ;
-                        var groupBounds = Area3f.FromMinAndSize((@group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f());
+                        var group = new Vector3i(ix, iy, iz);
+                        var groupBounds = Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f());
 
                         var isInside = planes.TestPlanesAABB(groupBounds);
                         if (isInside)
                         {
-                            var groupArea = Range3i.FromMinAndSize(@group * _cellInGroupCount, _cellInGroupCount);
+                            var groupArea = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount);
 
                             var isInvalidated = groupArea.Overlaps(invalidatedArea);
 
                             if (isInvalidated)
                             {
-                                groupsToRecompute.Add(@group);
-                                _skippedAreas.Remove(@group);
+                                groupsToRecompute.Add(group);
+                                _skippedAreas.Remove(group);
                             }
                             else
                             {
-                                if (!options.ExistingGroups.Contains(@group))
+                                if (!options.ExistingGroups.Contains(group))
                                 {
                                     var groupBounds_image = _imageSampler.WorldToImage(groupBounds);
-                                    var noData = _skippedAreas.Contains(@group) || !options.Image.AnyData(groupBounds_image);
+                                    var noData = _skippedAreas.Contains(group) || !options.Image.AnyData(groupBounds_image);
                                     if (noData)
                                     {
-                                        groupsToKeep.Add(@group);
-                                        _skippedAreas.Add(@group);
+                                        groupsToKeep.Add(group);
+                                        _skippedAreas.Add(group);
                                     }
                                     else
                                     {
-                                        groupsToRecompute.Add(@group);
+                                        groupsToRecompute.Add(group);
                                     }
                                 }
                                 else
                                 {
-                                    groupsToKeep.Add(@group);
+                                    groupsToKeep.Add(group);
                                 }
                             }
                         }

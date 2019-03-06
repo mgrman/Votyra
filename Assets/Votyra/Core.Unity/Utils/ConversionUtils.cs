@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;

@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using UnityEngine;
 using Votyra.Core.Models;
@@ -23,7 +22,7 @@ namespace Votyra.Core.Images
             if (imageConfig.InitialData is GameObject)
                 FillInitialState(editableImage, (imageConfig.InitialData as GameObject).GetComponentsInChildren<Collider>(), imageConfig.InitialDataScale.Z, root);
             if (imageConfig.InitialData is Collider)
-                FillInitialState(editableImage, new[] { imageConfig.InitialData as Collider }, imageConfig.InitialDataScale.Z, root);
+                FillInitialState(editableImage, new[] {imageConfig.InitialData as Collider}, imageConfig.InitialDataScale.Z, root);
             if (imageConfig.InitialData is IMatrix2<float>)
                 FillInitialState(editableImage, imageConfig.InitialData as IMatrix2<float>, imageConfig.InitialDataScale.Z);
             if (imageConfig.InitialData is IMatrix3<bool>)
@@ -51,7 +50,7 @@ namespace Votyra.Core.Images
                         for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
                         {
                             var pos = new Vector2i(ix, iy) + min;
-                            var value = texture.GetPixelBilinear((float)pos.X / matrixSizeX, (float)pos.Y / matrixSizeY)
+                            var value = texture.GetPixelBilinear((float) pos.X / matrixSizeX, (float) pos.Y / matrixSizeY)
                                 .grayscale * scale;
                             var height = value;
                             imageAccessor[pos] = height;
@@ -125,7 +124,8 @@ namespace Votyra.Core.Images
             {
                 Range2i matrixAreaToFill;
                 if (imageAccessor.Area == Range2i.All)
-                    matrixAreaToFill = texture.Size.XY().ToRange2i();
+                    matrixAreaToFill = texture.Size.XY()
+                        .ToRange2i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
                 var min = matrixAreaToFill.Min;

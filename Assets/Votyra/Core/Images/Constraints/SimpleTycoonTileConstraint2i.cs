@@ -14,7 +14,7 @@ namespace Votyra.Core.Images.Constraints
         private Func<Vector2i, float> _getValue;
 
         public SimpleTycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
-            : base(constraintConfig,logger)
+            : base(constraintConfig, logger)
         {
         }
 
@@ -46,10 +46,10 @@ namespace Votyra.Core.Images.Constraints
 
             while (queue.Count > 0)
             {
-// #if UNITY_EDITOR
-//                 if (!EditorApplication.isPlayingOrWillChangePlaymode)
-//                     return;
-// #endif
+                // #if UNITY_EDITOR
+                //                 if (!EditorApplication.isPlayingOrWillChangePlaymode)
+                //                     return;
+                // #endif
                 var cell = queue.GetFirst()
                     .Value;
                 _invalidatedCellArea = _invalidatedCellArea.CombineWith(cell);
@@ -59,9 +59,9 @@ namespace Votyra.Core.Images.Constraints
                 var processedSample = Process(sample);
 
                 var cell_x0y0 = cell;
-                var cell_x0y1 = new Vector2i(cell.X,cell.Y+1);
-                var cell_x1y0 = new Vector2i(cell.X+1, cell.Y);
-                var cell_x1y1 = new Vector2i(cell.X+1, cell.Y+1);
+                var cell_x0y1 = new Vector2i(cell.X, cell.Y + 1);
+                var cell_x1y0 = new Vector2i(cell.X + 1, cell.Y);
+                var cell_x1y1 = new Vector2i(cell.X + 1, cell.Y + 1);
 
                 var change = 0f;
                 if (_editableMatrix.ContainsIndex(cell_x0y0) && _editableMatrix.ContainsIndex(cell_x1y1))

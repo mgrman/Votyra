@@ -12,7 +12,7 @@ namespace Votyra.Core.Utils
             var type = instance?.GetType() ?? typeof(T);
             return type.GetDisplayName();
         }
-        
+
         public static string GetDisplayName(this Type type)
         {
             var attr = type.GetCustomAttributes<DisplayNameAttribute>();

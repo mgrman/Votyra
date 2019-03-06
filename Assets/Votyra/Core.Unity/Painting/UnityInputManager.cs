@@ -1,8 +1,5 @@
 using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Votyra.Core.InputHandling;
@@ -17,32 +14,49 @@ namespace Votyra.Core.Unity.Painting
     {
         private PointerEventData _activePointerData;
 
-        [Inject(Id = "root")]
-        protected GameObject _root;
-
         [Inject]
         protected List<IInputHandler> _inputHandlers;
+
+        private bool _invokedWithNull;
+        private Ray3f _previousRay;
 
         // private Dictionary<int, PointerEventData> _pointersDictionary;
 
         private bool _processing;
-        private bool _invokedWithNull;
-        private Ray3f _previousRay;
+
+        [Inject(Id = "root")]
+        protected GameObject _root;
+
+
+        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
+        {
+            if (GUIUtility.hotControl != 0)
+                return;
+
+            if (_activePointerData != null)
+                return;
+            _activePointerData = eventData;
+        }
+
+        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
+        {
+            if (_activePointerData != eventData)
+                return;
+            _activePointerData = null;
+        }
 
         protected void Update()
         {
             if (_processing)
-            {
                 return;
-            }
 
             _processing = true;
-            
+
             if (_activePointerData == null)
             {
                 if (!_invokedWithNull)
                 {
-                    InvokeHandlers(_previousRay, default(InputActions));
+                    InvokeHandlers(_previousRay, default);
                     _invokedWithNull = true;
                 }
 
@@ -70,23 +84,21 @@ namespace Votyra.Core.Unity.Painting
                 var used = _inputHandlers[i]
                     .Update(ray, activeInputs);
                 if (used)
-                {
                     _activePointerData.Use();
-                }
             }
         }
 
         private static InputActions GetActiveInputs()
         {
-            InputActions activeInputs = default(InputActions);
+            var activeInputs = default(InputActions);
             var inputs = EnumUtilities.GetNamesAndValues<InputActions>();
-            for (int i = 0; i < inputs.Count; i++)
+            for (var i = 0; i < inputs.Count; i++)
             {
                 activeInputs |= Input.GetButton(inputs[i]
                     .name)
                     ? inputs[i]
                         .value
-                    : default(InputActions);
+                    : default;
             }
 
             return activeInputs;
@@ -106,24 +118,6 @@ namespace Votyra.Core.Unity.Painting
             Debug.DrawRay(_root.transform.TransformPoint(cameraRay.Origin.ToVector3()), _root.transform.TransformDirection(cameraRay.Direction.ToVector3()) * 100, Color.red);
 
             return cameraRay;
-        }
-
-
-        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-        {
-            if (GUIUtility.hotControl != 0)
-                return;
-
-            if (_activePointerData != null)
-                return;
-            _activePointerData = eventData;
-        }
-
-        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-        {
-            if (_activePointerData != eventData)
-                return;
-            _activePointerData = null;
         }
     }
 }

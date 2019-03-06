@@ -42,9 +42,9 @@ namespace Votyra.Core.GroupSelectors
                 return true;
             });
 
-            for (int ix = cameraBoundsGroups.Min.X; ix < cameraBoundsGroups.Max.X; ix++)
+            for (var ix = cameraBoundsGroups.Min.X; ix < cameraBoundsGroups.Max.X; ix++)
             {
-                for (int iy = cameraBoundsGroups.Min.Y; iy < cameraBoundsGroups.Max.Y; iy++)
+                for (var iy = cameraBoundsGroups.Min.Y; iy < cameraBoundsGroups.Max.Y; iy++)
                 {
                     var group = new Vector2i(ix, iy);
                     var groupBoundsMin = (group * cellInGroupCount).ToVector2f()

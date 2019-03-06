@@ -6,7 +6,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public class DynamicTerrainMesher2f : ITerrainMesher2f
     {
-        private Vector2i _cellInGroupCount;
+        private readonly Vector2i _cellInGroupCount;
 
         public DynamicTerrainMesher2f(ITerrainConfig terrainConfig)
         {

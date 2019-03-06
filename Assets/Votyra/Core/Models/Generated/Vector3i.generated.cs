@@ -8,23 +8,6 @@ namespace Votyra.Core.Models
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
     public partial struct Vector3i : IEquatable<Vector3i>
     {
         public static readonly Vector3i Zero = new Vector3i(0, 0, 0);

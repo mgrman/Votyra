@@ -5,13 +5,13 @@ namespace Votyra.Core.Painting
 {
     public class InputData
     {
-        public Ray3f InputRay { get; }
-        public InputActions InputActions { get; }
-        
-        public InputData(Ray3f inputRay,InputActions inputActions)
+        public InputData(Ray3f inputRay, InputActions inputActions)
         {
             InputRay = inputRay;
             InputActions = inputActions;
         }
+
+        public Ray3f InputRay { get; }
+        public InputActions InputActions { get; }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
@@ -20,7 +19,7 @@ namespace Votyra.Core.TerrainGenerators
             _cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        public void Generate(Vector3i group, IImage3b image,IPooledTerrainMesh pooledTerrainMesh)
+        public void Generate(Vector3i group, IImage3b image, IPooledTerrainMesh pooledTerrainMesh)
         {
             using (_profiler.Start("init"))
             {
@@ -29,10 +28,10 @@ namespace Votyra.Core.TerrainGenerators
 
             using (_profiler.Start("Other"))
             {
-                _mesher.InitializeGroup(group,pooledTerrainMesh);
+                _mesher.InitializeGroup(group, pooledTerrainMesh);
             }
 
-            Range3i tempQualifier = _cellInGroupCount.ToRange3i();
+            var tempQualifier = _cellInGroupCount.ToRange3i();
             var min = tempQualifier.Min;
             for (var ix = 0; ix < tempQualifier.Size.X; ix++)
             {
@@ -40,8 +39,7 @@ namespace Votyra.Core.TerrainGenerators
                 {
                     for (var iz = 0; iz < tempQualifier.Size.Z; iz++)
                     {
-                        var
-                        cellInGroup=new Vector3i(ix, iy, iz)+min;
+                        var cellInGroup = new Vector3i(ix, iy, iz) + min;
                         using (_profiler.Start("TerrainMesher.AddCell()"))
                         {
                             _mesher.AddCell(cellInGroup);

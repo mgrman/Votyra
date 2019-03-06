@@ -19,6 +19,5 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             var posY = position.Y + ((expandedCellIndex.Y < 1 ? expandedCellIndex.Y : 2 - expandedCellIndex.Y) - 0.5f) * _wallSquishFactor;
             return new Vector3f(posX, posY, position.Z);
         }
-
     }
 }

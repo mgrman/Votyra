@@ -4,6 +4,6 @@ namespace Votyra.Core.Raycasting
 {
     public interface IRaycaster
     {
-         Vector2f? Raycast(Ray3f cameraRay);
+        Vector2f? Raycast(Ray3f cameraRay);
     }
 }

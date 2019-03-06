@@ -14,11 +14,11 @@ namespace Votyra.Core.Models
     public class LogExceptionsSubject<T> : ISubject<T>
     {
         private readonly Func<T> _getValue;
-        private readonly IObservable<T> _observable;
         private readonly IThreadSafeLogger _logger;
+        private readonly IObservable<T> _observable;
         private readonly IObserver<T> _observer;
 
-        public LogExceptionsSubject(IObservable<T> subject,IThreadSafeLogger logger)
+        public LogExceptionsSubject(IObservable<T> subject, IThreadSafeLogger logger)
         {
             _observable = subject;
             _logger = logger;
@@ -45,18 +45,20 @@ namespace Votyra.Core.Models
         public IDisposable Subscribe(IObserver<T> observer)
         {
             return _observable.Subscribe(Observer.Create<T>(o =>
-            {
-                try
                 {
-                    _logger.LogMessage(o);
-                    observer.OnNext(o);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogException(ex);
-                    OnError(ex);
-                }
-            }, observer.OnError, observer.OnCompleted));
+                    try
+                    {
+                        _logger.LogMessage(o);
+                        observer.OnNext(o);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogException(ex);
+                        OnError(ex);
+                    }
+                },
+                observer.OnError,
+                observer.OnCompleted));
         }
     }
 }
