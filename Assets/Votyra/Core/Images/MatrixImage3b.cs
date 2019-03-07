@@ -3,28 +3,23 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class MatrixImage3b : IImage3b, IInitializableImage, IImageInvalidatableImage3, IDisposable
+    public class MatrixImage3b : BaseMatrix3<bool>, IImage3b
     {
-        public MatrixImage3b(LockableMatrix3<bool> values, Range3i invalidatedArea)
+        public MatrixImage3b(Vector3i size)
+            : base(size)
         {
-            Image = values;
-            InvalidatedArea = invalidatedArea;
         }
 
-        public LockableMatrix3<bool> Image { get; }
-
-        public void Dispose()
+        public void UpdateImage(bool[,,] template)
         {
-            if (Image.IsLocked)
-                Image.Unlock(this);
+            base.UpdateImage(template);
         }
-
-        public bool Sample(Vector3i point) => Image.TryGet(point, false);
 
         public bool AnyData(Range3i range)
         {
             var allFalse = true;
             var allTrue = true;
+            range = range.IntersectWith(_image.Range());
             var min = range.Min;
             for (var ix = 0; ix < range.Size.X; ix++)
             {
@@ -32,8 +27,7 @@ namespace Votyra.Core.Images
                 {
                     for (var iz = 0; iz < range.Size.Z; iz++)
                     {
-                        var o = new Vector3i(ix, iy, iz) + min;
-                        var value = Sample(o);
+                        var value = _image[ix + min.X, iy + min.Y, iz + min.Z];
                         allFalse = allFalse && !value;
                         allTrue = allTrue && value;
                     }
@@ -44,15 +38,5 @@ namespace Votyra.Core.Images
         }
 
         public Range3i InvalidatedArea { get; }
-
-        public void StartUsing()
-        {
-            Image.Lock(this);
-        }
-
-        public void FinishUsing()
-        {
-            Image.Unlock(this);
-        }
     }
 }

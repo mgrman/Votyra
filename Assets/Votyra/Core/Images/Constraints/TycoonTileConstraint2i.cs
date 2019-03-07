@@ -11,7 +11,7 @@ namespace Votyra.Core.Images.Constraints
         private readonly IThreadSafeLogger _logger;
         private readonly int _scaleFactor;
         protected Direction _direction;
-        protected Matrix2<float> _editableMatrix;
+        protected float[,] _editableMatrix;
         protected Range2i _invalidatedCellArea;
 
         public TycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
@@ -44,7 +44,7 @@ namespace Votyra.Core.Images.Constraints
             }
         }
 
-        public Range2i FixImage(Matrix2<float> editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        public Range2i FixImage(float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
             _invalidatedCellArea = invalidatedImageArea.ExtendBothDirections(2);
             if (direction != Direction.Up && direction != Direction.Down)
@@ -83,10 +83,10 @@ namespace Votyra.Core.Images.Constraints
             var cell_x0y1 = new Vector2i(cell.X, cell.Y + 1);
             var cell_x1y0 = new Vector2i(cell.X + 1, cell.Y);
 
-            _editableMatrix[cell_x0y0] = processedSample.x0y0;
-            _editableMatrix[cell_x0y1] = processedSample.x0y1;
-            _editableMatrix[cell_x1y0] = processedSample.x1y0;
-            _editableMatrix[cell_x1y1] = processedSample.x1y1;
+            _editableMatrix.Set(cell_x0y0, processedSample.x0y0);
+            _editableMatrix.Set(cell_x0y1, processedSample.x0y1);
+            _editableMatrix.Set(cell_x1y0, processedSample.x1y0);
+            _editableMatrix.Set(cell_x1y1, processedSample.x1y1);
         }
 
         protected SampledData2i Process(SampledData2i sampleData)

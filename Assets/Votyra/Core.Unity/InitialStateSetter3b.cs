@@ -29,10 +29,10 @@ namespace Votyra.Core.Images
                 collider.enabled = false;
             }
 
-            if (initialImageConfig.InitialData is IMatrix2<int?>)
-                FillInitialState(editableImage, initialImageConfig.InitialData as IMatrix2<int?>, initialImageConfig.InitialDataScale.Z, imageConfig.ImageSize.Z);
-            if (initialImageConfig.InitialData is IMatrix3<bool>)
-                FillInitialState(editableImage, initialImageConfig.InitialData as IMatrix3<bool>, initialImageConfig.InitialDataScale.Z);
+            if (initialImageConfig.InitialData is int?[,])
+                FillInitialState(editableImage, initialImageConfig.InitialData as int?[,], initialImageConfig.InitialDataScale.Z, imageConfig.ImageSize.Z);
+            if (initialImageConfig.InitialData is bool[,,])
+                FillInitialState(editableImage, initialImageConfig.InitialData as bool[,,], initialImageConfig.InitialDataScale.Z);
         }
 
         private static void FillInitialState(IEditableImage3b editableImage, Texture2D texture, float scale, int fallbackMaxZ)
@@ -135,13 +135,13 @@ namespace Votyra.Core.Images
             return counter % 2 == 1;
         }
 
-        private static void FillInitialState(IEditableImage3b editableImage, IMatrix2<int?> texture, float scale, int fallbackMaxZ)
+        private static void FillInitialState(IEditableImage3b editableImage, int?[,] texture, float scale, int fallbackMaxZ)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range3i.All))
             {
                 Range3i matrixAreaToFill;
                 if (imageAccessor.Area == Range3i.All)
-                    matrixAreaToFill = new Vector3i(texture.Size.X, texture.Size.Y, fallbackMaxZ).ToRange3i();
+                    matrixAreaToFill = new Vector3i(texture.SizeX(), texture.SizeY(), fallbackMaxZ).ToRange3i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
                 var min = matrixAreaToFill.Min;
@@ -152,7 +152,7 @@ namespace Votyra.Core.Images
                         for (var iz = 0; iz < matrixAreaToFill.Size.Z; iz++)
                         {
                             var i = new Vector3i(ix, iy, iz) + min;
-                            var value = texture[i.XY()] * scale;
+                            var value = texture[ix,iy] * scale;
                             imageAccessor[i] = value - i.Z > 0;
                         }
                     }
@@ -160,13 +160,13 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage3b editableImage, IMatrix3<bool> texture, float scale)
+        private static void FillInitialState(IEditableImage3b editableImage, bool[,,] texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range3i.All))
             {
                 Range3i matrixAreaToFill;
                 if (imageAccessor.Area == Range3i.All)
-                    matrixAreaToFill = texture.Size.ToRange3i();
+                    matrixAreaToFill = texture.Size().ToRange3i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
 
@@ -178,7 +178,7 @@ namespace Votyra.Core.Images
                         for (var iz = 0; iz < matrixAreaToFill.Size.Z; iz++)
                         {
                             var i = new Vector3i(ix, iy, iz) + min;
-                            imageAccessor[i] = texture[i];
+                            imageAccessor[i] = texture[ix, iy, iz];
                         }
                     }
                 }

@@ -20,9 +20,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void GetResultingMesh(ITerrainMesh mesh, Vector2i group, IImage2f image, IMask2e mask)
         {
-            var poolableValuesToFill = PoolableMatrix<Vector3f>.CreateDirty(new Vector2i(_subdivision + 1, _subdivision + 1));
+            var poolableValuesToFill = PoolableMatrix2<Vector3f>.CreateDirty(new Vector2i(_subdivision + 1, _subdivision + 1));
             var valuesToFill = poolableValuesToFill.RawMatrix;
-            var poolableMaskToFill = PoolableMatrix<float>.CreateDirty(new Vector2i(_subdivision + 1, _subdivision + 1));
+            var poolableMaskToFill = PoolableMatrix2<float>.CreateDirty(new Vector2i(_subdivision + 1, _subdivision + 1));
             var maskToFill = poolableMaskToFill.RawMatrix;
 
             var groupPosition = _cellInGroupCount * group;

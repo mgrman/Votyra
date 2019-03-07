@@ -8,6 +8,6 @@ namespace Votyra.Core.Images
 
         float Sample(Vector2i point);
 
-        IPoolableMatrix2<float> SampleArea(Range2i area);
+        PoolableMatrix2<float> SampleArea(Range2i area);
     }
 }

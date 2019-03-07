@@ -66,17 +66,17 @@ namespace Votyra.Core.Images.Constraints
                 var change = 0f;
                 if (_editableMatrix.ContainsIndex(cell_x0y0) && _editableMatrix.ContainsIndex(cell_x1y1))
                 {
-                    change += Math.Abs(_editableMatrix[cell_x0y0] - processedSample.x0y0);
-                    _editableMatrix[cell_x0y0] = processedSample.x0y0;
+                    change += Math.Abs(_editableMatrix.Get(cell_x0y0) - processedSample.x0y0);
+                    _editableMatrix.Set(cell_x0y0, processedSample.x0y0);
 
-                    change += Math.Abs(_editableMatrix[cell_x0y1] - processedSample.x0y1);
-                    _editableMatrix[cell_x0y1] = processedSample.x0y1;
+                    change += Math.Abs(_editableMatrix.Get(cell_x0y1) - processedSample.x0y1);
+                    _editableMatrix.Set(cell_x0y1, processedSample.x0y1);
 
-                    change += Math.Abs(_editableMatrix[cell_x1y0] - processedSample.x1y0);
-                    _editableMatrix[cell_x1y0] = processedSample.x1y0;
+                    change += Math.Abs(_editableMatrix.Get(cell_x1y0) - processedSample.x1y0);
+                    _editableMatrix.Set(cell_x1y0, processedSample.x1y0);
 
-                    change += Math.Abs(_editableMatrix[cell_x1y1] - processedSample.x1y1);
-                    _editableMatrix[cell_x1y1] = processedSample.x1y1;
+                    change += Math.Abs(_editableMatrix.Get(cell_x1y1) - processedSample.x1y1);
+                    _editableMatrix.Set(cell_x1y1, processedSample.x1y1);
                 }
 
                 if (change > 0f)

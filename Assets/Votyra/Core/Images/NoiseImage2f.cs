@@ -25,17 +25,18 @@ namespace Votyra.Core.Images
             return value * Scale.Z + Offset.Z;
         }
 
-        public IPoolableMatrix2<float> SampleArea(Range2i area)
+        public PoolableMatrix2<float> SampleArea(Range2i area)
         {
             var min = area.Min;
 
-            var matrix = PoolableMatrix<float>.CreateDirty(area.Size);
-            for (var ix = 0; ix < matrix.Size.X; ix++)
+            var matrix = PoolableMatrix2<float>.CreateDirty(area.Size);
+            var rawMatrix = matrix.RawMatrix;
+            for (var ix = 0; ix < rawMatrix.SizeX(); ix++)
             {
-                for (var iy = 0; iy < matrix.Size.Y; iy++)
+                for (var iy = 0; iy < rawMatrix.SizeY(); iy++)
                 {
                     var matPoint = new Vector2i(ix, iy);
-                    matrix[matPoint] = Sample(matPoint + min);
+                    rawMatrix.Set(matPoint, Sample(matPoint + min));
                 }
             }
 

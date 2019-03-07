@@ -11,7 +11,7 @@ namespace Votyra.Core.Images
 
         public Area1f RangeZ { get; private set; }
 
-        public void UpdateImage(Matrix2<float> template, Area1f rangeZ)
+        public void UpdateImage(float[,] template, Area1f rangeZ)
 
         {
             base.UpdateImage(template);

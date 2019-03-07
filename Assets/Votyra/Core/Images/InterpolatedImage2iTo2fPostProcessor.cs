@@ -88,14 +88,15 @@ namespace Votyra.Core.Images
                 return value;
             }
 
-            public IPoolableMatrix2<float> SampleArea(Range2i area)
+            public PoolableMatrix2<float> SampleArea(Range2i area)
             {
                 var min = ClipMinPoint(area.Min);
                 var max = ClipMinPoint(area.Max);
 
                 var offset = area.Min - min * _subdivision;
 
-                var matrix = PoolableMatrix<float>.CreateDirty(area.Size);
+                var matrix = PoolableMatrix2<float>.CreateDirty(area.Size);
+                var rawMatrix = matrix.RawMatrix;
                 var tempQualifier = Area2i.FromMinAndMax(min, max);
 
                 var min1 = tempQualifier.Min;
@@ -110,8 +111,7 @@ namespace Votyra.Core.Images
                             {
                                 var imagePos = new Vector2i(ix + minPoint.X * _subdivision, iy + minPoint.Y * _subdivision);
                                 var matPos = imagePos - area.Min;
-                                if (matrix.ContainsIndex(matPos))
-                                    matrix[matPos] = Sample(imagePos);
+                                rawMatrix.TrySet(matPos, Sample(imagePos));
                             }
                         }
                     }
@@ -215,14 +215,15 @@ namespace Votyra.Core.Images
                 return value;
             }
 
-            public IPoolableMatrix2<float> SampleArea(Range2i area)
+            public PoolableMatrix2<float> SampleArea(Range2i area)
             {
                 var min = ClipMinPoint(area.Min);
                 var max = ClipMinPoint(area.Max);
 
                 var offset = area.Min - min * _subdivision;
 
-                var matrix = PoolableMatrix<float>.CreateDirty(area.Size);
+                var matrix = PoolableMatrix2<float>.CreateDirty(area.Size);
+                var rawMatrix = matrix.RawMatrix;
                 var tempQualifier = Area2i.FromMinAndMax(min, max);
                 var min1 = tempQualifier.Min;
                 for (var ix1 = 0; ix1 <= tempQualifier.Size.X; ix1++)
@@ -236,8 +237,7 @@ namespace Votyra.Core.Images
                             {
                                 var imagePos = new Vector2i(ix + minPoint.X * _subdivision, iy + minPoint.Y * _subdivision);
                                 var matPos = imagePos - area.Min;
-                                if (matrix.ContainsIndex(matPos))
-                                    matrix[matPos] = Sample(imagePos);
+                                rawMatrix.TrySet(matPos, Sample(imagePos));
                             }
                         }
                     }
@@ -302,14 +302,15 @@ namespace Votyra.Core.Images
                 return x0y0;
             }
 
-            public IPoolableMatrix2<float> SampleArea(Range2i area)
+            public PoolableMatrix2<float> SampleArea(Range2i area)
             {
                 var min = ClipMinPoint(area.Min);
                 var max = ClipMinPoint(area.Max);
 
                 var offset = area.Min - min * _subdivision;
 
-                var matrix = PoolableMatrix<float>.CreateDirty(area.Size);
+                var matrix = PoolableMatrix2<float>.CreateDirty(area.Size);
+                var rawMatrix = matrix.RawMatrix;
                 var tempQualifier = Area2i.FromMinAndMax(min, max);
 
                 var min1 = tempQualifier.Min;
@@ -324,8 +325,7 @@ namespace Votyra.Core.Images
                             {
                                 var imagePos = new Vector2i(ix + minPoint.X * _subdivision, iy + minPoint.Y * _subdivision);
                                 var matPos = imagePos - area.Min;
-                                if (matrix.ContainsIndex(matPos))
-                                    matrix[matPos] = Sample(imagePos);
+                                rawMatrix.TrySet(matPos, Sample(imagePos));
                             }
                         }
                     }

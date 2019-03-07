@@ -5,12 +5,12 @@ namespace Votyra.Core.Images
 {
     public class BaseMatrix2<T> : IInitializableImage, IImageInvalidatableImage2 where T : struct
     {
-        private readonly T[,] _image;
-        private readonly Range2i _imageRange;
+        protected readonly T[,] _image;
+        protected readonly Range2i _imageRange;
 
         private int _usingCounter;
 
-        public BaseMatrix2(Vector2i size)
+        protected BaseMatrix2(Vector2i size)
         {
             _image = new T[size.X, size.Y];
             _imageRange = Range2i.FromMinAndSize(Vector2i.Zero, size);
@@ -32,26 +32,27 @@ namespace Votyra.Core.Images
 
         public T Sample(Vector2i point) => _imageRange.Contains(point) ? _image[point.X, point.Y] : default;
 
-        public IPoolableMatrix2<T> SampleArea(Range2i area)
+        public PoolableMatrix2<T> SampleArea(Range2i area)
         {
             var min = area.Min;
-            var matrix = PoolableMatrix<T>.CreateDirty(area.Size);
+            var matrix = PoolableMatrix2<T>.CreateDirty(area.Size);
+            var rawMatrix = matrix.RawMatrix;
 
-            for (var ix = 0; ix < matrix.Size.X; ix++)
+            for (var ix = 0; ix < rawMatrix.SizeX(); ix++)
             {
-                for (var iy = 0; iy < matrix.Size.Y; iy++)
+                for (var iy = 0; iy < rawMatrix.SizeY(); iy++)
                 {
                     var matPoint = new Vector2i(ix, iy);
-                    matrix[matPoint] = Sample(matPoint + min);
+                    rawMatrix.Set(matPoint, Sample(matPoint + min));
                 }
             }
 
             return matrix;
         }
 
-        public void UpdateImage(Matrix2<T> template)
+        public void UpdateImage(T[,] template)
         {
-            Array.Copy(template.NativeMatrix, _image, _image.Length);
+            Array.Copy(template, _image, _image.Length);
         }
 
         public void UpdateInvalidatedArea(Range2i invalidatedArea)

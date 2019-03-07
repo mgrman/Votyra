@@ -23,10 +23,10 @@ namespace Votyra.Core.Images
                 FillInitialState(editableImage, (imageConfig.InitialData as GameObject).GetComponentsInChildren<Collider>(), imageConfig.InitialDataScale.Z, root);
             if (imageConfig.InitialData is Collider)
                 FillInitialState(editableImage, new[] {imageConfig.InitialData as Collider}, imageConfig.InitialDataScale.Z, root);
-            if (imageConfig.InitialData is IMatrix2<float>)
-                FillInitialState(editableImage, imageConfig.InitialData as IMatrix2<float>, imageConfig.InitialDataScale.Z);
-            if (imageConfig.InitialData is IMatrix3<bool>)
-                FillInitialState(editableImage, imageConfig.InitialData as IMatrix3<bool>, imageConfig.InitialDataScale.Z);
+            if (imageConfig.InitialData is float[,])
+                FillInitialState(editableImage, imageConfig.InitialData as float[,], imageConfig.InitialDataScale.Z);
+            if (imageConfig.InitialData is bool[,,])
+                FillInitialState(editableImage, imageConfig.InitialData as bool[,,], imageConfig.InitialDataScale.Z);
         }
 
         private static void FillInitialState(IEditableImage2f editableImage, IEditableMask2e editableMask, Texture2D texture, float scale, bool zeroIsNull)
@@ -96,13 +96,13 @@ namespace Votyra.Core.Images
             }
         }
 
-        private static void FillInitialState(IEditableImage2f editableImage, IMatrix2<float> texture, float scale)
+        private static void FillInitialState(IEditableImage2f editableImage, float[,] texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
                 Range2i matrixAreaToFill;
                 if (imageAccessor.Area == Range2i.All)
-                    matrixAreaToFill = texture.Size.ToRange2i();
+                    matrixAreaToFill = texture.Size().ToRange2i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
 
@@ -112,19 +112,19 @@ namespace Votyra.Core.Images
                     for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
                     {
                         var i = new Vector2i(ix, iy) + min;
-                        imageAccessor[i] = texture[i] * scale;
+                        imageAccessor[i] = texture.Get(i) * scale;
                     }
                 }
             }
         }
 
-        private static void FillInitialState(IEditableImage2f editableImage, IMatrix3<bool> texture, float scale)
+        private static void FillInitialState(IEditableImage2f editableImage, bool[,,] texture, float scale)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
                 Range2i matrixAreaToFill;
                 if (imageAccessor.Area == Range2i.All)
-                    matrixAreaToFill = texture.Size.XY()
+                    matrixAreaToFill = texture.Size().XY()
                         .ToRange2i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
@@ -136,10 +136,10 @@ namespace Votyra.Core.Images
                         var i = new Vector2i(ix, iy) + min;
                         float value = 0;
 
-                        for (var iz = texture.Size.Z - 1; iz >= 0; iz--)
+                        for (var iz = texture.SizeZ() - 1; iz >= 0; iz--)
                         {
                             var iTexture = new Vector3i(i.X, i.Y, iz);
-                            if (texture[iTexture])
+                            if (texture.Get(iTexture))
                             {
                                 value = iz;
                                 break;

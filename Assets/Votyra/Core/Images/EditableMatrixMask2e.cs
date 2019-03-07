@@ -6,7 +6,7 @@ namespace Votyra.Core.Images
 {
     public class EditableMatrixMask2e : IMask2eProvider, IEditableMask2e
     {
-        private readonly Matrix2<MaskValues> _editableMatrix;
+        private readonly MaskValues[,] _editableMatrix;
 
         private readonly IImage2fPostProcessor _image2fPostProcessor;
 
@@ -16,7 +16,7 @@ namespace Votyra.Core.Images
 
         public EditableMatrixMask2e(IImageConfig imageConfig)
         {
-            _editableMatrix = new Matrix2<MaskValues>(imageConfig.ImageSize.XY());
+            _editableMatrix = new MaskValues[imageConfig.ImageSize.X,imageConfig.ImageSize.Y];
         }
 
         private MatrixMask2e PreparedImage
@@ -39,7 +39,7 @@ namespace Votyra.Core.Images
             }
             else if (_invalidatedArea.HasValue || PreparedImage == null)
             {
-                _invalidatedArea = _invalidatedArea ?? _editableMatrix.Size.ToRange2i();
+                _invalidatedArea = _invalidatedArea ?? _editableMatrix.Range();
 
                 PreparedImage = GetNotUsedImage();
                 PreparedImage.UpdateImage(_editableMatrix);
@@ -55,7 +55,7 @@ namespace Votyra.Core.Images
             var image = _readonlyMatrices.FirstOrDefault(o => !o.IsBeingUsed);
             if (image == null)
             {
-                image = new MatrixMask2e(_editableMatrix.Size);
+                image = new MatrixMask2e(_editableMatrix.Size());
                 _readonlyMatrices.Add(image);
             }
 
@@ -75,9 +75,9 @@ namespace Votyra.Core.Images
 
             public MatrixImageAccessor(EditableMatrixMask2e editableImage, Range2i area)
             {
-                _editableMatrix = editableImage._editableMatrix.NativeMatrix;
+                _editableMatrix = editableImage._editableMatrix;
                 _editableImage = editableImage;
-                Area = area.IntersectWith(editableImage._editableMatrix.Size.ToRange2i());
+                Area = area.IntersectWith(editableImage._editableMatrix.Range());
             }
 
             public Range2i Area { get; }

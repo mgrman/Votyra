@@ -8,7 +8,7 @@ namespace Votyra.Core.Images
     public class EditableMatrixImage2f : IImage2fProvider, IEditableImage2f
     {
         private readonly IImageConstraint2i _constraint;
-        private readonly Matrix2<float> _editableMatrix;
+        private readonly float[,] _editableMatrix;
 
         private readonly IImage2fPostProcessor _image2fPostProcessor;
 
@@ -20,7 +20,7 @@ namespace Votyra.Core.Images
         public EditableMatrixImage2f(IImageConfig imageConfig, IImageConstraint2i constraint = null)
         {
             _constraint = constraint;
-            _editableMatrix = new Matrix2<float>(imageConfig.ImageSize.XY());
+            _editableMatrix = new float[imageConfig.ImageSize.X,imageConfig.ImageSize.Y];
             _editableRangeZ = Area1f.FromMinAndMax(_editableMatrix[0, 0], _editableMatrix[0, 0]);
         }
 
@@ -44,7 +44,7 @@ namespace Votyra.Core.Images
             }
             else if (_invalidatedArea.HasValue || PreparedImage == null)
             {
-                _invalidatedArea = _invalidatedArea ?? _editableMatrix.Size.ToRange2i();
+                _invalidatedArea = _invalidatedArea ?? _editableMatrix.Range();
 
                 PreparedImage = GetNotUsedImage();
                 PreparedImage.UpdateImage(_editableMatrix, _editableRangeZ);
@@ -60,7 +60,7 @@ namespace Votyra.Core.Images
             var image = _readonlyMatrices.FirstOrDefault(o => !o.IsBeingUsed);
             if (image == null)
             {
-                image = new MatrixImage2f(_editableMatrix.Size);
+                image = new MatrixImage2f(_editableMatrix.Size());
                 _readonlyMatrices.Add(image);
             }
 
@@ -87,9 +87,9 @@ namespace Votyra.Core.Images
 
             public MatrixImageAccessor(EditableMatrixImage2f editableImage, Range2i area)
             {
-                _editableMatrix = editableImage._editableMatrix.NativeMatrix;
+                _editableMatrix = editableImage._editableMatrix;
                 _editableImage = editableImage;
-                Area = area.IntersectWith(editableImage._editableMatrix.Size.ToRange2i());
+                Area = area.IntersectWith(editableImage._editableMatrix.Range());
             }
 
             public Range2i Area { get; }
