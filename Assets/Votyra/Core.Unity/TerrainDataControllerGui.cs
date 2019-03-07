@@ -109,7 +109,6 @@ namespace Votyra.Core
                 }
             }
 
-
             if (_controller._activeTerrainAlgorithm < 0 || _controller._activeTerrainAlgorithm >= _controller._availableTerrainAlgorithms.Length)
             {
                 _controller._activeTerrainAlgorithm = 0;
@@ -146,7 +145,6 @@ namespace Votyra.Core
                 if (newConfigValues.IsValueCreated)
                     _controller.Config = newConfigValues.Value.ToArray();
             }
-
 
             if (anyChange)
                 if (Application.isPlaying)

@@ -14,7 +14,6 @@ namespace Votyra.Core.Utils
             return Task.CompletedTask;
         }
 
-
         public static Task ConfiguraAwaitFluent(this Task task, bool continueOnCapturedContext)
         {
             task.ConfigureAwait(continueOnCapturedContext);

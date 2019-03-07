@@ -26,7 +26,6 @@ namespace Votyra.Core.Models
             _observer = subject as IObserver<T>;
         }
 
-
         public void OnCompleted()
         {
             _observer?.OnCompleted();

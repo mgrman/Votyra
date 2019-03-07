@@ -64,7 +64,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             Image = image;
         }
 
-
         public void AddCell(Vector3i cellInGroup)
         {
             var cell = cellInGroup + groupPosition;
@@ -88,7 +87,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
             }
         }
-
 
         public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
         {

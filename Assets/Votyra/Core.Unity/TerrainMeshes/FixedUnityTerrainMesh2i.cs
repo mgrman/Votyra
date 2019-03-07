@@ -58,7 +58,6 @@ namespace Votyra.Core.TerrainMeshes
             _counter = 0;
         }
 
-
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
         {
             if (VertexPostProcessor != null)

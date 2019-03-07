@@ -12,7 +12,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         private readonly Vector2i _cellInGroupCount;
         private readonly int _subdivision;
 
-
         public BicubicTerrainMesher2f(ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig)
         {
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY();

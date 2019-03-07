@@ -120,7 +120,6 @@ namespace Votyra.Core.Images
                 return matrix;
             }
 
-
             public void StartUsing()
             {
                 (_image as IInitializableImage)?.StartUsing();
@@ -186,7 +185,6 @@ namespace Votyra.Core.Images
 
             public Range2i InvalidatedArea { get; }
         }
-
 
         private class LinearImage2fWrapper : IImage2f, IInitializableImage
         {

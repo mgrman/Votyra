@@ -9,7 +9,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
     {
         private readonly Vector2i _cellInGroupCount;
 
-
         public TerrainMesher2f(ITerrainConfig terrainConfig)
         {
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY();

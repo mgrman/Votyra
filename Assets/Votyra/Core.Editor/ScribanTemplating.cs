@@ -88,7 +88,6 @@ namespace Votyra.Core.Editor
                         };
                         var expandedFileName = fileNameTemplate.Render(data);
 
-
                         var resultPath = Path.Combine(directoyPath, expandedFileName);
                         var result = template.Render(data);
                         File.WriteAllText(resultPath, result);

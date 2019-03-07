@@ -11,14 +11,12 @@ namespace Votyra.Core.Painting.Commands
         private static readonly TimeSpan ClickDelay = TimeSpan.FromSeconds(0.2);
         private readonly IEditableImage2f _editableImage;
 
-        private DateTime _clickLimit;
-
-
         private readonly IEditableMask2e _editableMask;
+
+        private DateTime _clickLimit;
 
         private IThreadSafeLogger _logger;
         private int _maxStrength;
-
 
         protected PaintCommand(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
         {
@@ -37,7 +35,6 @@ namespace Votyra.Core.Painting.Commands
             if (_lastInvocation == null)
                 _clickLimit = DateTime.Now + ClickDelay;
 
-
             _maxStrength = maxStrength;
             Path2iUtils.InvokeOnPath(_lastInvocation, cell, Invoke);
 
@@ -49,7 +46,6 @@ namespace Votyra.Core.Painting.Commands
             OnInvocationStopping();
             _lastInvocation = null;
         }
-
 
         protected void Invoke(Vector2i cell)
         {

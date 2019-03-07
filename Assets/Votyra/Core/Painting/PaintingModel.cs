@@ -22,7 +22,6 @@ namespace Votyra.Core.Painting
             SelectedPaintCommand.TryDispose();
         }
 
-
         public IReadOnlyList<IPaintCommand> PaintCommands { get; }
 
         public IPaintCommand SelectedPaintCommand { get; set; }

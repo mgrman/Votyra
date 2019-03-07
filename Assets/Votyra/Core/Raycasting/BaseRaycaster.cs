@@ -29,9 +29,7 @@ namespace Votyra.Core.Raycasting
             var directionXYMag = directionNonNormalizedXY.Magnitude();
             var endXY = startXY + directionNonNormalizedXY.Normalized() * maxDistance;
 
-
             var result = InvokeOnPath(startXY, endXY);
-
 
             return result;
         }
@@ -88,7 +86,6 @@ namespace Votyra.Core.Raycasting
                         }
                     }
                 }
-
 
                 if (intersection == null)
                     return null;

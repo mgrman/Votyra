@@ -99,7 +99,6 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
 
-
             Container.BindInterfacesAndSelfTo<BicubicTerrainMesher2f>()
                 .AsSingle()
                 .When(c =>

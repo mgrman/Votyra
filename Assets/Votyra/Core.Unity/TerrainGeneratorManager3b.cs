@@ -149,7 +149,6 @@ namespace Votyra.Core
                                     if (unityData == null)
                                         unityData = _gameObjectFactory();
 
-
                                     triangleMesh.Mesh.SetUnityMesh(unityData);
                                     _meshFilters[group] = unityData;
                                 }

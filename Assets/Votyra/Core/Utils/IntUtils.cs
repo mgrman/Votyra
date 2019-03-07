@@ -11,6 +11,7 @@ namespace Votyra.Core.Utils
             var res = a / b;
             if (a % b != 0)
                 res++;
+
             return res;
         }
 
@@ -23,6 +24,7 @@ namespace Votyra.Core.Utils
             var res = a % b;
             if (res == 0)
                 res = b;
+
             return res;
         }
     }

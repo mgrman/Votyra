@@ -81,7 +81,6 @@ namespace Votyra.Core
             UpdateTerrain(context);
         }
 
-
         private void UpdateTerrainInBackground(IFrameData2i context)
         {
             if (!_waitForTask.IsCompleted)
@@ -269,7 +268,6 @@ namespace Votyra.Core
 
         private bool _updatedOnce;
 
-
         public TerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory, Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, Action<ITerrainMesh, Vector2i, IImage2f, IMask2e> generateUnityMesh)
         {
             _unityDataFactory = unityDataFactory;
@@ -306,7 +304,6 @@ namespace Votyra.Core
 
             UpdateGroup();
         }
-
 
         public virtual void Dispose()
         {

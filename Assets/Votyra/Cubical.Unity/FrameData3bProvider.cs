@@ -44,7 +44,6 @@ namespace Votyra.Cubical
             var cameraDirection = _root.transform.InverseTransformDirection(camera.transform.forward)
                 .ToVector3f();
 
-
             return new FrameData3b(new Ray3f(cameraPosition, cameraDirection), planes, frustumCorners, existingGroups, image, (image as IImageInvalidatableImage3)?.InvalidatedArea ?? Range3i.Zero);
         }
     }

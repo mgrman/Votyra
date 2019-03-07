@@ -27,7 +27,6 @@ namespace Votyra.Core.Unity.Painting
         [Inject(Id = "root")]
         protected GameObject _root;
 
-
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
         {
             if (GUIUtility.hotControl != 0)
