@@ -8,6 +8,7 @@ namespace Votyra.Core.Models
     {{triangleFloatType = "Triangle" +dimSize +"f"}}
     {{vectorFloatType = "Vector" +dimSize +"f"}}
     {{vectorIntType = "Vector" +dimSize +"i"}}
+    {{rayFloatType = "Ray" +dimSize +"f"}}
     {{if dimSize != 1}}
         {{vectorFloatRealType=vectorFloatType}}
         {{vectorIntRealType=vectorIntType}}
@@ -46,6 +47,67 @@ namespace Votyra.Core.Models
             var center = (A + B + C) / 3f;
             var normal = {{vectorFloatType}}Utils.Cross(B - A, C - A);
             return {{vectorFloatType}}Utils.Dot(observer - center, normal);
+        }
+
+        public {{vectorFloatRealType}}? Intersect({{rayFloatType}} ray)
+        {
+            // Vectors from p1 to p2/p3 (edges)
+            {{vectorFloatRealType}} e1, e2;
+
+            {{vectorFloatRealType}} p, q, t;
+            float det, invDet, u, v;
+
+            //Find vectors for two edges sharing vertex/point p1
+            e1 = B - A ;
+            e2 = C - A;
+
+            // calculating determinant 
+            p = {{vectorFloatType}}Utils.Cross(ray.Direction, e2);
+
+            //Calculate determinat
+            det = {{vectorFloatType}}Utils.Dot(e1, p);
+
+            //if determinant is near zero, ray lies in plane of triangle otherwise not
+            if (det > -float.Epsilon && det < float.Epsilon)
+            {
+                return null;
+            }
+
+            invDet = 1.0f / det;
+
+            //calculate distance from p1 to ray origin
+            t = ray.Origin - A;
+
+            //Calculate u parameter
+            u = {{vectorFloatType}}Utils.Dot(t, p) * invDet;
+
+            //Check for ray hit
+            if (u < 0 || u > 1)
+            {
+                return null;
+            }
+
+            //Prepare to test v parameter
+            q = {{vectorFloatType}}Utils.Cross(t, e1);
+
+            //Calculate v parameter
+            v = {{vectorFloatType}}Utils.Dot(ray.Direction, q) * invDet;
+
+            //Check for ray hit
+            if (v < 0 || u + v > 1)
+            {
+                return null;
+            }
+            
+            var rayDistance = {{vectorFloatType}}Utils.Dot(e2, q) * invDet;
+            if (rayDistance > float.Epsilon)
+            {
+                //ray does intersect
+                return ray.GetPoint(rayDistance);
+            }
+
+            // No hit at all
+            return null;
         }
 
         public bool IsCCW({{vectorFloatRealType}} observer)

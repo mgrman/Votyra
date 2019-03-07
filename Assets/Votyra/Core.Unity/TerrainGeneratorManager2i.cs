@@ -24,7 +24,7 @@ namespace Votyra.Core
     //TODO: move to floats
     public class TerrainGeneratorManager2i : IDisposable
     {
-        private readonly ConcurrentDictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new ConcurrentDictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
+        public readonly ConcurrentDictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new ConcurrentDictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
 
         private readonly Vector2i _cellInGroupCount;
         private readonly IFrameDataProvider2i _frameDataProvider;
@@ -156,6 +156,8 @@ namespace Votyra.Core
     public interface ITerrainGroupGeneratorManager2i : IDisposable
     {
         void Update(IFrameData2i context);
+        IPooledTerrainMesh _pooledMesh { get; }
+
     }
 
     public class SyncTerrainGroupGeneratorManager2i : TerrainGroupGeneratorManager2i
@@ -257,7 +259,7 @@ namespace Votyra.Core
         protected readonly CancellationTokenSource _cts;
         protected readonly Action<ITerrainMesh, Vector2i, IImage2f, IMask2e> _generateUnityMesh;
         protected readonly Vector2i _group;
-        protected readonly IPooledTerrainMesh _pooledMesh;
+        public  IPooledTerrainMesh _pooledMesh { get; }
         protected readonly Range2i _range;
         protected readonly CancellationToken _token;
         protected readonly Func<GameObject> _unityDataFactory;

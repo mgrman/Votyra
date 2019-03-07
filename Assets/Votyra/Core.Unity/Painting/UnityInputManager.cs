@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -55,7 +56,7 @@ namespace Votyra.Core.Unity.Painting
             {
                 if (!_invokedWithNull)
                 {
-                    InvokeHandlers(_previousRay, default);
+                    InvokeHandlers(_previousRay, default, _activePointerData);
                     _invokedWithNull = true;
                 }
 
@@ -71,19 +72,26 @@ namespace Votyra.Core.Unity.Painting
 
             Task.Run(() =>
             {
-                InvokeHandlers(ray, activeInputs);
+                InvokeHandlers(ray, activeInputs, _activePointerData);
                 _processing = false;
             });
         }
 
-        private void InvokeHandlers(Ray3f ray, InputActions activeInputs)
+        private void InvokeHandlers(Ray3f ray, InputActions activeInputs, PointerEventData pointerEventData)
         {
             for (var i = 0; i < _inputHandlers.Count; i++)
             {
-                var used = _inputHandlers[i]
-                    .Update(ray, activeInputs);
-                if (used)
-                    _activePointerData.Use();
+                try
+                {
+                    var used = _inputHandlers[i]
+                        .Update(ray, activeInputs);
+                    if (used)
+                        pointerEventData.Use();
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
             }
         }
 

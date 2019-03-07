@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Threading;
 using UniRx;
 using UnityEngine.Profiling;
 using Object = UnityEngine.Object;
@@ -26,7 +25,7 @@ namespace Votyra.Core.Profiling
         public IDisposable Start(string name)
         {
             _name = name;
-            if (Thread.CurrentThread == UnitySyncContext.UnityThread)
+            if (System.Threading.Thread.CurrentThread == UnitySyncContext.UnityThread)
             {
                 if (_owner != null)
                     Profiler.BeginSample(name, _owner);

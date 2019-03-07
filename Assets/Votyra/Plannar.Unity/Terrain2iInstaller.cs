@@ -72,7 +72,7 @@ namespace Votyra.Plannar.Unity
                 .FromNewComponentOnGameObjectWithID("root")
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<Image2fRaycaster>()
+            Container.BindInterfacesAndSelfTo<Terrain2fRaycaster>()
                 .AsSingle()
                 .NonLazy();
             Container.BindInterfacesAndSelfTo<PaintingSelectionManager>()

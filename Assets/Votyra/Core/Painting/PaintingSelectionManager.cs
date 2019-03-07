@@ -55,7 +55,8 @@ namespace Votyra.Core.Painting
 
         private Vector2i? GetImagePosition(Ray3f cameraRay) =>
             _raycaster.Raycast(cameraRay)
-                ?.RoundToVector2i();
+                ?.XY()
+                .RoundToVector2i();
 
         private PaintInvocationData? GetInvocationDataFromPointer(Ray3f cameraRay)
         {

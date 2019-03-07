@@ -21,7 +21,7 @@ namespace Votyra.Core.Raycasting
             _mask2EProvider = mask2eProvider;
         }
 
-        public override Vector2f? Raycast(Ray3f cameraRay)
+        public override Vector3f? Raycast(Ray3f cameraRay)
         {
             _image = _image2FProvider.CreateImage();
             (_image as IInitializableImage)?.StartUsing();
@@ -45,7 +45,7 @@ namespace Votyra.Core.Raycasting
             return result;
         }
 
-        protected override Vector2f? RaycastCell(Line2f line, Vector2i cell)
+        protected override Vector3f? RaycastCell(Line2f line, Vector2i cell)
         {
             var imageValueFrom = GetLinearInterpolatedValue(_image, line.From);
             var imageValueTo = GetLinearInterpolatedValue(_image, line.To);
@@ -57,7 +57,8 @@ namespace Votyra.Core.Raycasting
             if (x < 0 || x > 1)
                 return null;
 
-            return line.From + (line.To - line.From) * x;
+            var xy= (line.From + (line.To - line.From) * x);
+            return xy.ToVector3f(GetLinearInterpolatedValue(_image,xy));
         }
 
         private float GetRayValue(Vector2f point)

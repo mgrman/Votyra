@@ -20,7 +20,7 @@ namespace Votyra.Core.Raycasting
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
         }
 
-        public virtual Vector2f? Raycast(Ray3f cameraRay)
+        public virtual Vector3f? Raycast(Ray3f cameraRay)
         {
             var cameraRayXY = cameraRay.XY();
 
@@ -34,9 +34,9 @@ namespace Votyra.Core.Raycasting
             return result;
         }
 
-        protected abstract Vector2f? RaycastCell(Line2f line, Vector2i cell);
+        protected abstract Vector3f? RaycastCell(Line2f line, Vector2i cell);
 
-        private Vector2f? InvokeOnPath(Vector2f from, Vector2f to)
+        private Vector3f? InvokeOnPath(Vector2f from, Vector2f to)
         {
             var direction = to - from;
 
