@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainMeshes
 {
@@ -11,27 +9,32 @@ namespace Votyra.Core.TerrainMeshes
         private float _maxZ;
 
         private float _minZ;
+        private readonly List<Vector3f> _vertices;
+        private readonly List<Vector3f> _normals;
+        private readonly List<Vector2f> _uv;
+        private readonly List<int> _indices;
 
         public ExpandingUnityTerrainMesh()
         {
-            Vertices = new List<Vector3>();
-            UV = new List<Vector2>();
-            Indices = new List<int>();
-            Normals = new List<Vector3>();
+            _vertices = new List<Vector3f>();
+            _uv = new List<Vector2f>();
+            _indices = new List<int>();
+            _normals = new List<Vector3f>();
         }
 
-        public Bounds MeshBounds =>
-            Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ))
-                .ToBounds();
+        public Area3f MeshBounds => Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ));
 
         public Area2f MeshBoundsXY { get; private set; }
         private Func<Vector3f, Vector3f> VertexPostProcessor { get; set; }
         private Func<Vector2f, Vector2f> UVAdjustor { get; set; }
 
-        public List<Vector3> Vertices { get; }
-        public List<Vector3> Normals { get; }
-        public List<Vector2> UV { get; }
-        public List<int> Indices { get; }
+        public IReadOnlyList<Vector3f> Vertices => _vertices;
+
+        public IReadOnlyList<Vector3f> Normals => _normals;
+
+        public IReadOnlyList<Vector2f> UV => _uv;
+
+        public IReadOnlyList<int> Indices => _indices;
 
         public int TriangleCount { get; private set; }
         public int VertexCount { get; private set; }
@@ -47,10 +50,10 @@ namespace Votyra.Core.TerrainMeshes
             MeshBoundsXY = Area2f.FromMinAndMax(area.Min.XY(), area.Max.XY());
             TriangleCount = 0;
             VertexCount = 0;
-            Vertices.Clear();
-            UV.Clear();
-            Indices.Clear();
-            Normals.Clear();
+            _vertices.Clear();
+            _uv.Clear();
+            _indices.Clear();
+            _normals.Clear();
         }
 
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
@@ -84,32 +87,40 @@ namespace Votyra.Core.TerrainMeshes
             _maxZ = Math.Max(_maxZ, posB.Z);
             _maxZ = Math.Max(_maxZ, posC.Z);
 
-            unsafe
-            {
-                Indices.Add(VertexCount);
-                Vertices.Add(*(Vector3*) &posA);
-                UV.Add(*(Vector2*) &uvA);
-                Normals.Add(*(Vector3*) &normal);
-                VertexCount++;
+            _indices.Add(VertexCount);
+            _vertices.Add(posA);
+            _uv.Add(uvA);
+            _normals.Add(normal);
+            VertexCount++;
 
-                Indices.Add(VertexCount);
-                Vertices.Add(*(Vector3*) &posB);
-                UV.Add(*(Vector2*) &uvB);
-                Normals.Add(*(Vector3*) &normal);
-                VertexCount++;
+            _indices.Add(VertexCount);
+            _vertices.Add(posB);
+            _uv.Add(uvB);
+            _normals.Add(normal);
+            VertexCount++;
 
-                Indices.Add(VertexCount);
-                Vertices.Add(*(Vector3*) &posC);
-                UV.Add(*(Vector2*) &uvC);
-                Normals.Add(*(Vector3*) &normal);
-                VertexCount++;
-            }
+            _indices.Add(VertexCount);
+            _vertices.Add(posC);
+            _uv.Add(uvC);
+            _normals.Add(normal);
+            VertexCount++;
 
             TriangleCount++;
         }
 
         public void FinalizeMesh()
         {
+        }
+
+        public IEnumerable<Triangle3f> GetTriangles(Vector2i? limitToCellInGroup)
+        {
+            for (int i = 0; i < _vertices.Count; i += 3)
+            {
+                var a = _vertices[i];
+                var b = _vertices[i + 1];
+                var c = _vertices[i + 2];
+                yield return new Triangle3f(a, b, c);
+            }
         }
     }
 }

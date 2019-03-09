@@ -17,8 +17,12 @@ namespace Votyra.Core.Pooling
 
         ITerrainMesh IPooledTerrainMesh.Mesh => Mesh;
 
+        public event Action<IPooledTerrainMesh> OnDispose; 
+        
         public void Dispose()
         {
+            OnDispose?.Invoke(this);
+            OnDispose = null;
             Pool.ReturnObject(this);
         }
 

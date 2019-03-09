@@ -1,6 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
 
@@ -13,23 +14,41 @@ namespace Votyra.Core.TerrainMeshes
         private float _maxZ;
 
         private float _minZ;
+        private Vector3f[] _vertices;
+        private Vector3f[] _normals;
+        private Vector2f[] _uv;
+        private int[] _indices;
 
-        public Bounds MeshBounds =>
-            Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ))
-                .ToBounds();
+        public Area3f MeshBounds => Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ));
 
         public Area2f MeshBoundsXY { get; private set; }
 
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
         public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
-        public Vector3[] Vertices { get; private set; }
-        public Vector3[] Normals { get; private set; }
-        public Vector2[] UV { get; private set; }
-        public int[] Indices { get; private set; }
+
+        public IReadOnlyList<Vector3f> Vertices
+        {
+            get => _vertices;
+        }
+
+        public IReadOnlyList<Vector3f> Normals
+        {
+            get => _normals;
+        }
+
+        public IReadOnlyList<Vector2f> UV
+        {
+            get => _uv;
+        }
+
+        public IReadOnlyList<int> Indices
+        {
+            get => _indices;
+        }
 
         public int TriangleCount => _counter / 3;
 
-        public int VertexCount => Vertices.Length;
+        public int VertexCount => _vertices.Length;
 
         public int TriangleCapacity { get; private set; }
 
@@ -39,11 +58,11 @@ namespace Votyra.Core.TerrainMeshes
 
             var pointCount = triangleCapacity * 3;
 
-            Vertices = new Vector3[pointCount];
-            UV = new Vector2[pointCount];
-            Indices = Enumerable.Range(0, pointCount)
+            _vertices = new Vector3f[pointCount];
+            _uv = new Vector2f[pointCount];
+            _indices = Enumerable.Range(0, pointCount)
                 .ToArray();
-            Normals = new Vector3[pointCount];
+            _normals = new Vector3f[pointCount];
         }
 
         public void Initialize(Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
@@ -88,23 +107,20 @@ namespace Votyra.Core.TerrainMeshes
             _maxZ = Math.Max(_maxZ, posB.Z);
             _maxZ = Math.Max(_maxZ, posC.Z);
 
-            unsafe
-            {
-                Vertices[_counter] = *(Vector3*) &posA;
-                UV[_counter] = *(Vector2*) &uvA;
-                Normals[_counter] = *(Vector3*) &normal;
-                _counter++;
+            _vertices[_counter] = posA;
+            _uv[_counter] = uvA;
+            _normals[_counter] = normal;
+            _counter++;
 
-                Vertices[_counter] = *(Vector3*) &posB;
-                UV[_counter] = *(Vector2*) &uvB;
-                Normals[_counter] = *(Vector3*) &normal;
-                _counter++;
+            _vertices[_counter] = posB;
+            _uv[_counter] = uvB;
+            _normals[_counter] = normal;
+            _counter++;
 
-                Vertices[_counter] = *(Vector3*) &posC;
-                UV[_counter] = *(Vector2*) &uvC;
-                Normals[_counter] = *(Vector3*) &normal;
-                _counter++;
-            }
+            _vertices[_counter] = posC;
+            _uv[_counter] = uvC;
+            _normals[_counter] = normal;
+            _counter++;
         }
 
         public void FinalizeMesh()
@@ -113,12 +129,23 @@ namespace Votyra.Core.TerrainMeshes
             {
                 for (var i = _counter; i < VertexCount; i++)
                 {
-                    Vertices[i] = Vector3.zero;
-                    UV[i] = Vector2.zero;
-                    Normals[i] = Vector3.zero;
+                    _vertices[i] = Vector3f.Zero;
+                    _uv[i] = Vector2f.Zero;
+                    _normals[i] = Vector3f.Zero;
                 }
 
-                Debug.LogWarning($"Mesh was not fully filled. Expected {VertexCount} points, got {_counter} points!");
+                StaticLogger.LogWarning($"Mesh was not fully filled. Expected {VertexCount} points, got {_counter} points!");
+            }
+        }
+
+        public IEnumerable<Triangle3f> GetTriangles(Vector2i? limitToCellInGroup)
+        {
+            for (int i = 0; i < _vertices.Length; i += 3)
+            {
+                var a = _vertices[i];
+                var b = _vertices[i + 1];
+                var c = _vertices[i + 2];
+                yield return new Triangle3f(a, b, c);
             }
         }
     }

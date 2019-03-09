@@ -1,6 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Votyra.Core.Logging;
+using Votyra.Core.Models;
 using Votyra.Core.TerrainMeshes;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.MeshUpdaters
 {
@@ -28,44 +33,94 @@ namespace Votyra.Core.MeshUpdaters
             if (reinitializeMesh)
                 mesh.Clear();
 
-            if (triangleMesh is FixedUnityTerrainMesh2i fixedMesh)
-            {
-                mesh.vertices = fixedMesh.Vertices;
-                mesh.normals = fixedMesh.Normals;
-                if (reinitializeMesh)
-                {
-                    mesh.uv = fixedMesh.UV;
-                    mesh.SetTriangles(fixedMesh.Indices, 0);
-                }
+            SetVertices(triangleMesh, mesh);
+            SetNormals(triangleMesh, mesh);
 
-                mesh.bounds = fixedMesh.MeshBounds;
+            if (reinitializeMesh)
+            {
+                SetUVs(triangleMesh, mesh);
+                SetTriangles(triangleMesh, mesh);
             }
-            else if (triangleMesh is ExpandingUnityTerrainMesh expandingMesh)
-            {
-                mesh.SetVertices(expandingMesh.Vertices);
-                mesh.SetNormals(expandingMesh.Normals);
-                if (reinitializeMesh)
-                {
-                    mesh.SetUVs(0, expandingMesh.UV);
-                    mesh.SetTriangles(expandingMesh.Indices, 0);
-                }
 
-                mesh.bounds = expandingMesh.MeshBounds;
+            mesh.bounds = triangleMesh.MeshBounds.ToBounds();
+        }
+
+        private static void SetTriangles(ITerrainMesh triangleMesh, Mesh mesh)
+        {
+            if (triangleMesh.Indices is int[] indexArray)
+            {
+                mesh.SetTriangles(indexArray, 0);
+            }
+            else if (triangleMesh.Indices is List<int> indexList)
+            {
+                mesh.SetTriangles(indexList, 0);
+            }
+            else
+            {
+                mesh.SetTriangles(triangleMesh.Indices.ToList(), 0);
+                StaticLogger.LogWarning("Using unsuported IReadOnlyList type for Indices, slow conversion is used");
+            }
+        }
+
+        private static void SetUVs(ITerrainMesh triangleMesh, Mesh mesh)
+        {
+            if (triangleMesh.UV is Vector2f[] uvArray)
+            {
+                mesh.uv = uvArray.ToVector2();
+            }
+            else if (triangleMesh.UV is List<Vector2f> uvList)
+            {
+                mesh.SetUVs(0, uvList.ToVector2List());
+            }
+            else
+            {
+                mesh.SetUVs(0,
+                    triangleMesh.UV.Select(o => o.ToVector2())
+                        .ToList());
+                StaticLogger.LogWarning("Using unsuported IReadOnlyList type for UV, slow conversion is used");
+            }
+        }
+
+        private static void SetVertices(ITerrainMesh triangleMesh, Mesh mesh)
+        {
+            if (triangleMesh.Vertices is Vector3f[] verticesArray)
+            {
+                mesh.vertices = verticesArray.ToVector3();
+            }
+            else if (triangleMesh.Vertices is List<Vector3f> verticesList)
+            {
+                mesh.SetVertices(verticesList.ToVector3List());
+            }
+            else
+            {
+                mesh.SetVertices(triangleMesh.Vertices.Select(o => o.ToVector3())
+                    .ToList());
+                StaticLogger.LogWarning("Using unsuported IReadOnlyList type for Vertices, slow conversion is used");
+            }
+        }
+
+        private static void SetNormals(ITerrainMesh triangleMesh, Mesh mesh)
+        {
+            if (triangleMesh.Normals is Vector3f[] normalsArray)
+            {
+                mesh.normals = normalsArray.ToVector3();
+            }
+            else if (triangleMesh.Normals is List<Vector3f> normalsList)
+            {
+                mesh.SetNormals(normalsList.ToVector3List());
+            }
+            else
+            {
+                mesh.SetNormals(triangleMesh.Normals.Select(o => o.ToVector3())
+                    .ToList());
+                StaticLogger.LogWarning("Using unsuported IReadOnlyList type for Normals, slow conversion is used");
             }
         }
 
         private static void SetBoxCollider(ITerrainMesh triangleMesh, BoxCollider collider)
         {
-            if (triangleMesh is FixedUnityTerrainMesh2i fixedMesh)
-            {
-                collider.center = fixedMesh.MeshBounds.center;
-                collider.size = fixedMesh.MeshBounds.size;
-            }
-            else if (triangleMesh is ExpandingUnityTerrainMesh expandingMesh)
-            {
-                collider.center = expandingMesh.MeshBounds.center;
-                collider.size = expandingMesh.MeshBounds.size;
-            }
+            collider.center = triangleMesh.MeshBounds.Center.ToVector3();
+            collider.size = triangleMesh.MeshBounds.Size.ToVector3();
         }
 
         private static void SetMeshFormat(Mesh mesh, int vertexCount)

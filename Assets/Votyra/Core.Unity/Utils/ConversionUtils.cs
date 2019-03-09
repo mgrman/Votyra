@@ -1,10 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 
 namespace Votyra.Core.Utils
 {
-    public static class ConversionUtils
+    public static unsafe class ConversionUtils
     {
         public static Vector2f ToVector2f(this Vector2 vector) => new Vector2f(vector.x, vector.y);
 
@@ -44,9 +51,9 @@ namespace Votyra.Core.Utils
             return container;
         }
 
-        public static Vector2 ToVector2(this Vector2f vector) => new Vector2(vector.X, vector.Y);
+        public static Vector2 ToVector2(this Vector2f vector) => *(Vector2*) &vector;
 
-        public static Vector3 ToVector3(this Vector3f vector) => new Vector3(vector.X, vector.Y, vector.Z);
+        public static Vector3 ToVector3(this Vector3f vector) => *(Vector3*) &vector;
 
         public static Bounds ToBounds(this Area3f bounds) => new Bounds(bounds.Center.ToVector3(), bounds.Size.ToVector3());
 
@@ -76,22 +83,34 @@ namespace Votyra.Core.Utils
         //     // return res;
         // }
 
-        // public static UnityEngine.Vector3[] ToVector3(this Vector3f[] vector)
-        // {
-        //     return Array.ConvertAll(vector, item => item.ToVector3());
-        //
-        //
-        //     // var union = new UnionVector3();
-        //     // union.Votyra = vector;
-        //     // var res = union.Unity;
-        //     // if (res.Length != vector.Length)
-        //     // {
-        //     //     throw new InvalidOperationException("ToVector3 conversion failed!");
-        //     // }
-        //     // return res;
-        //     // //return vector.Select(o => o.ToVector3()).ToArray();
-        // }
+        public static Vector3[] ToVector3(this Vector3f[] vector)
+        {
+            var union = new UnionVector3();
+            union.From = vector;
+            var res = union.To;
+            Assert.AreEqual(vector.Length, res.Length, $"{nameof(ToVector3)} conversion failed!");
+            return res;
+        }
 
+        public static Vector2[] ToVector2(this Vector2f[] vector)
+        {
+            var union = new UnionVector2();
+            union.From = vector;
+            var res = union.To;
+            Assert.AreEqual(vector.Length, res.Length, $"{nameof(ToVector2)}  conversion failed!");
+            return res;
+        }
+
+        public static List<UnityEngine.Vector2> ToVector2List(this List<Vector2f> vector)
+        {
+            return vector.ConvertListOfMatchingStructs<Vector2f, UnityEngine.Vector2>(ToVector2);
+        }
+
+        public static List<UnityEngine.Vector3> ToVector3List(this List<Vector3f> vector)
+        {
+            return vector.ConvertListOfMatchingStructs<Vector3f, UnityEngine.Vector3>(ToVector3);
+        }
+        
         // public static Vector3f[] ToVector3f(this UnityEngine.Vector3[] vector)
         // {
         //     return Array.ConvertAll(vector, item => item.ToVector3f());
@@ -159,6 +178,26 @@ namespace Votyra.Core.Utils
             return mat2;
         }
 
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionVector3
+        {
+            [FieldOffset(0)]
+            public Vector3f[] From;
+
+            [FieldOffset(0)]
+            public Vector3[] To;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionVector2
+        {
+            [FieldOffset(0)]
+            public Vector2f[] From;
+
+            [FieldOffset(0)]
+            public Vector2[] To;
+        }
+
         //        private static T[] GetInnerArray<T>(this List<T> source)
         //        {
         //            source.TrimExcess();
@@ -171,21 +210,21 @@ namespace Votyra.Core.Utils
         //            return res;
         //        }
         //
-        //        private static List<TResult> ConvertListOfMatchingStructs<TSource, TResult>(this List<TSource> source, Func<TSource[], TResult[]> convert)
-        //        {
-        //            var target = new List<TResult>();
-        //            var targetItemsSet = ListInternals<TResult>.ItemsSet;
-        //            var sourceItemsGet = ListInternals<TSource>.ItemsGet;
-        //            var targetSizeSet = ListInternals<TResult>.SizeSet;
-        //
-        //            var sourceItemsValue = sourceItemsGet(source);
-        //            var targetItems = convert(sourceItemsValue);
-        //
-        //            targetItemsSet(target, targetItems);
-        //            // targetItemsSet.SetValue(target, targetItems, BindingFlags.SetField, new ArrayKeepBinder<TSource, TResult>(), null);
-        //            targetSizeSet(target, source.Count);
-        //            return target;
-        //        }
+        private static List<TResult> ConvertListOfMatchingStructs<TSource, TResult>(this List<TSource> source, Func<TSource[], TResult[]> convert)
+        {
+            var target = new List<TResult>();
+            var targetItemsSet = ListInternals<TResult>.ItemsSet;
+            var sourceItemsGet = ListInternals<TSource>.ItemsGet;
+            var targetSizeSet = ListInternals<TResult>.SizeSet;
+
+            var sourceItemsValue = sourceItemsGet(source);
+            var targetItems = convert(sourceItemsValue);
+
+            targetItemsSet(target, targetItems);
+            // targetItemsSet.SetValue(target, targetItems, BindingFlags.SetField, new ArrayKeepBinder<TSource, TResult>(), null);
+            targetSizeSet(target, source.Count);
+            return target;
+        }
         //
         //        [StructLayout(LayoutKind.Explicit)]
         //        private struct UnionVector3
@@ -208,50 +247,57 @@ namespace Votyra.Core.Utils
         //            [FieldOffset(0)] public Plane3f[] Votyra;
         //        }
 
-        //        private static class ListInternals<T>
-        //        {
-        //            public static readonly Func<List<T>, T[]> ItemsGet;
-        //            public static readonly Action<List<T>, T[]> ItemsSet;
-        //            public static readonly Func<List<T>, int> SizeGet;
-        //            public static readonly Action<List<T>, int> SizeSet;
-        //
-        //            static ListInternals()
-        //            {
-        //                var itemsField = typeof(List<T>).GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
-        //                ItemsGet = CreateGetFieldDelegate<List<T>, T[]>(itemsField);
-        //                ItemsSet = CreateSetFieldDelegate<List<T>, T[]>(itemsField);
-        //
-        //                var sizeField = typeof(List<T>).GetField("_size", BindingFlags.Instance | BindingFlags.NonPublic);
-        //                SizeGet = CreateGetFieldDelegate<List<T>, int>(sizeField);
-        //                SizeSet = CreateSetFieldDelegate<List<T>, int>(sizeField);
-        //            }
-        //
-        //            private static Func<TOwner, TValue> CreateGetFieldDelegate<TOwner, TValue>(FieldInfo fieldInfo)
-        //            {
-        //                ParameterExpression ownerParameter = Expression.Parameter(typeof(TOwner));
-        //
-        //                var fieldExpression = Expression.Field(
-        //                    Expression.Convert(ownerParameter, typeof(TOwner)), fieldInfo);
-        //
-        //                return Expression.Lambda<Func<TOwner, TValue>>(
-        //                    Expression.Convert(fieldExpression, typeof(TValue)),
-        //                    ownerParameter).Compile();
-        //            }
-        //
-        //            private static Action<TOwner, TValue> CreateSetFieldDelegate<TOwner, TValue>(FieldInfo fieldInfo)
-        //            {
-        //                ParameterExpression ownerParameter = Expression.Parameter(typeof(TOwner));
-        //                ParameterExpression fieldParameter = Expression.Parameter(typeof(TValue));
-        //
-        //                var fieldExpression = Expression.Field(
-        //                    Expression.Convert(ownerParameter, typeof(TOwner)), fieldInfo);
-        //
-        //                return Expression.Lambda<Action<TOwner, TValue>>(
-        //                    Expression.Assign(fieldExpression,
-        //                        Expression.Convert(fieldParameter, fieldInfo.FieldType)),
-        //                    ownerParameter, fieldParameter).Compile();
-        //            }
-        //        }
+        private static class ListInternals<T>
+        {
+            public static readonly Func<List<T>, T[]> ItemsGet;
+            public static readonly Action<List<T>, T[]> ItemsSet;
+            public static readonly Func<List<T>, int> SizeGet;
+            public static readonly Action<List<T>, int> SizeSet;
+
+            static ListInternals()
+            {
+#if ENABLE_IL2CPP
+                var itemsField = typeof(List<T>).GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
+                ItemsGet = o => (T[]) itemsField.GetValue(o);
+                ItemsSet = (o, value) => itemsField.SetValue(o, value);
+
+                var sizeField = typeof(List<T>).GetField("_size", BindingFlags.Instance | BindingFlags.NonPublic);
+                SizeGet = o => (int) itemsField.GetValue(o);
+                SizeSet = (o, value) => itemsField.SetValue(o, value);
+                
+#else
+                var itemsField = typeof(List<T>).GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
+                ItemsGet = CreateGetFieldDelegate<List<T>, T[]>(itemsField);
+                ItemsSet = CreateSetFieldDelegate<List<T>, T[]>(itemsField);
+
+                var sizeField = typeof(List<T>).GetField("_size", BindingFlags.Instance | BindingFlags.NonPublic);
+                SizeGet = CreateGetFieldDelegate<List<T>, int>(sizeField);
+                SizeSet = CreateSetFieldDelegate<List<T>, int>(sizeField);
+#endif
+            }
+
+            private static Func<TOwner, TValue> CreateGetFieldDelegate<TOwner, TValue>(FieldInfo fieldInfo)
+            {
+                ParameterExpression ownerParameter = Expression.Parameter(typeof(TOwner));
+
+                var fieldExpression = Expression.Field(Expression.Convert(ownerParameter, typeof(TOwner)), fieldInfo);
+
+                return Expression.Lambda<Func<TOwner, TValue>>(Expression.Convert(fieldExpression, typeof(TValue)), ownerParameter)
+                    .Compile();
+            }
+
+            private static Action<TOwner, TValue> CreateSetFieldDelegate<TOwner, TValue>(FieldInfo fieldInfo)
+            {
+                ParameterExpression ownerParameter = Expression.Parameter(typeof(TOwner));
+                ParameterExpression fieldParameter = Expression.Parameter(typeof(TValue));
+
+                var fieldExpression = Expression.Field(Expression.Convert(ownerParameter, typeof(TOwner)), fieldInfo);
+
+                return Expression.Lambda<Action<TOwner, TValue>>(Expression.Assign(fieldExpression, Expression.Convert(fieldParameter, fieldInfo.FieldType)), ownerParameter, fieldParameter)
+                    .Compile();
+            }
+        }
+
         //
         //        private class ArrayKeepBinder<TSource, TResult> : Binder
         //        {

@@ -1,3 +1,4 @@
+using System;
 using Votyra.Core.Models.ObjectPool;
 using Votyra.Core.TerrainMeshes;
 
@@ -19,8 +20,12 @@ namespace Votyra.Core.Pooling
 
         ITerrainMeshWithFixedCapacity IPooledTerrainMeshWithFixedCapacity.Mesh => Mesh;
 
+        public event Action<IPooledTerrainMesh> OnDispose; 
+        
         public void Dispose()
         {
+            OnDispose?.Invoke(this);
+            OnDispose = null;
             Pool.ReturnObject(this, Mesh.TriangleCount);
         }
 

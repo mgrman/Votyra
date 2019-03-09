@@ -65,23 +65,16 @@ namespace Votyra.Core.Raycasting
         protected override Vector3f? RaycastCell(Line2f line, Vector2i cell)
         {
             var group = cell / _cellInGroupCount;
-            var mesh = _manager._activeGroups.TryGetValue(group)
-                ?._pooledMesh?.Mesh as FixedUnityTerrainMesh2i;
+            var pooledMesh = _manager.GetMeshForGroup(group);
+            var mesh = pooledMesh?.Mesh as FixedUnityTerrainMesh2i;
 
             if (mesh == null)
             {
                 return null;
             }
 
-            for (int i = 0; i < mesh.Indices.Length; i += 3)
+            foreach (var triangle in mesh.GetTriangles(cell % _cellInGroupCount))
             {
-                var a = mesh.Vertices[mesh.Indices[i]]
-                    .ToVector3f();
-                var b = mesh.Vertices[mesh.Indices[i + 1]]
-                    .ToVector3f();
-                var c = mesh.Vertices[mesh.Indices[i + 2]]
-                    .ToVector3f();
-                var triangle = new Triangle3f(a, b, c);
                 var res = triangle.Intersect(_cameraRay);
                 if (res.HasValue)
                 {
