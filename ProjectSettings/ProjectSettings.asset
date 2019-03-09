@@ -106,6 +106,11 @@ PlayerSettings:
   xboxOneDisableEsram: 0
   xboxOnePresentImmediateThreshold: 0
   switchQueueCommandMemory: 0
+  switchQueueControlMemory: 16384
+  switchQueueComputeMemory: 262144
+  switchNVNShaderPoolsGranularity: 33554432
+  switchNVNDefaultPoolsGranularity: 16777216
+  switchNVNOtherPoolsGranularity: 16777216
   vulkanEnableSetSRGBWrite: 0
   m_SupportedAspectRatios:
     4:3: 1
@@ -404,6 +409,7 @@ PlayerSettings:
   switchAllowsRuntimeAddOnContentInstall: 0
   switchDataLossConfirmation: 0
   switchUserAccountLockEnabled: 0
+  switchSystemResourceMemory: 16777216
   switchSupportedNpadStyles: 3
   switchNativeFsCacheSize: 32
   switchIsHoldTypeHorizontal: 0
@@ -516,7 +522,7 @@ PlayerSettings:
   platformArchitecture: {}
   scriptingBackend:
     Android: 1
-    Metro: 2
+    Metro: 1
     Standalone: 1
   il2cppCompilerConfiguration:
     Standalone: 2
@@ -526,18 +532,18 @@ PlayerSettings:
   additionalIl2CppArgs: 
   scriptingRuntimeVersion: 1
   apiCompatibilityLevelPerPlatform:
-    Metro: 3
+    Metro: 6
     Standalone: 6
     WebGL: 6
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: TycoonTerain
   metroPackageVersion: 1.0.0.0
-  metroCertificatePath: 
+  metroCertificatePath: Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
-  metroCertificateSubject: 
-  metroCertificateIssuer: 
-  metroCertificateNotAfter: 0000000000000000
+  metroCertificateSubject: Martin Grman
+  metroCertificateIssuer: Martin Grman
+  metroCertificateNotAfter: 8061e06c54f5d501
   metroApplicationDescription: TycoonTerain
   wsaImages: {}
   metroTileShortName: 
@@ -628,7 +634,7 @@ PlayerSettings:
       daydreamIconForeground: {fileID: 0}
       daydreamIconBackground: {fileID: 0}
   cloudServicesEnabled:
-    Build: 1
+    Build: 0
     Collab: 0
     ErrorHub: 0
     Hub: 0
@@ -652,9 +658,9 @@ PlayerSettings:
   facebookXfbml: 0
   facebookFrictionlessRequests: 1
   apiCompatibilityLevel: 6
-  cloudProjectId: 4aca999b-04d3-448c-8981-375afb2ecab1
+  cloudProjectId: 6b9a579f-477d-4929-a98d-7e352cb2daaf
   framebufferDepthMemorylessMode: 0
-  projectName: TycoonTerrain
+  projectName: Votyra
   organizationId: martin-grman
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0

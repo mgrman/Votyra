@@ -28,7 +28,7 @@ namespace Zenject.ReflectionBaking
             }
 #endif
 
-            if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.WSAPlayer)
+            if (EditorUserBuildSettings.activeBuildTarget == BuildTarget.WSAPlayer && PlayerSettings.GetScriptingBackend(EditorUserBuildSettings.selectedBuildTargetGroup) != ScriptingImplementation.IL2CPP)
             {
                 Log.Warn("Zenject reflection baking skipped because it is not currently supported on WSA platform!");
             }

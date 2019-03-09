@@ -10,11 +10,6 @@ namespace Votyra.Core.Images
         {
         }
 
-        public void UpdateImage(bool[,,] template)
-        {
-            base.UpdateImage(template);
-        }
-
         public bool AnyData(Range3i range)
         {
             var allFalse = true;
@@ -36,7 +31,5 @@ namespace Votyra.Core.Images
 
             return !allFalse && !allTrue;
         }
-
-        public Range3i InvalidatedArea { get; }
     }
 }
