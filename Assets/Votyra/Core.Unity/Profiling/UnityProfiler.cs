@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using UniRx;
 using UnityEngine.Profiling;
-using Object = UnityEngine.Object;
 
 namespace Votyra.Core.Profiling
 {
@@ -10,13 +9,13 @@ namespace Votyra.Core.Profiling
     {
         private readonly bool _calledProfiler;
 
-        private readonly Object _owner;
+        private readonly UnityEngine.Object _owner;
 
         private readonly Stopwatch _stopwatch;
 
         private string _name;
 
-        public UnityProfiler(Object owner)
+        public UnityProfiler(UnityEngine.Object owner)
         {
             _owner = owner;
             _stopwatch = new Stopwatch();

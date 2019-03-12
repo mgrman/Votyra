@@ -7,6 +7,6 @@ namespace Votyra.Core.Pooling
     {
         ITerrainMesh Mesh { get; }
 
-        event Action<IPooledTerrainMesh> OnDispose; 
+        event Action<IPooledTerrainMesh> OnDispose;
     }
 }

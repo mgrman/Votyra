@@ -1,8 +1,8 @@
 using UniRx;
+using UnityEngine;
 using Votyra.Core.Logging;
 using Votyra.Core.Profiling;
 using Zenject;
-using Object = UnityEngine.Object;
 
 namespace Votyra.Core.Unity
 {
@@ -35,6 +35,5 @@ namespace Votyra.Core.Unity
         private static IThreadSafeLogger CreateLogger(string name, Object owner) => new UnityLogger(name, owner);
 
         private IProfiler CreateProfiler(Object owner) => new UnityProfiler(owner);
-
     }
 }

@@ -17,8 +17,8 @@ namespace Votyra.Core.Pooling
 
         ITerrainMesh IPooledTerrainMesh.Mesh => Mesh;
 
-        public event Action<IPooledTerrainMesh> OnDispose; 
-        
+        public event Action<IPooledTerrainMesh> OnDispose;
+
         public void Dispose()
         {
             OnDispose?.Invoke(this);

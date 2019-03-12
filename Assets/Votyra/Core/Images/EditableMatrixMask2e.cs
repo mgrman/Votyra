@@ -16,7 +16,7 @@ namespace Votyra.Core.Images
 
         public EditableMatrixMask2e(IImageConfig imageConfig)
         {
-            _editableMatrix = new MaskValues[imageConfig.ImageSize.X,imageConfig.ImageSize.Y];
+            _editableMatrix = new MaskValues[imageConfig.ImageSize.X, imageConfig.ImageSize.Y];
         }
 
         private MatrixMask2e PreparedImage

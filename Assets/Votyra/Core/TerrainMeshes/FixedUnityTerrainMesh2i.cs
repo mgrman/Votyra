@@ -3,48 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainMeshes
 {
     public class FixedUnityTerrainMesh2i : ITerrainMeshWithFixedCapacity
     {
         private int _counter;
+        private int[] _indices;
 
         private float _maxZ;
 
         private float _minZ;
-        private Vector3f[] _vertices;
         private Vector3f[] _normals;
         private Vector2f[] _uv;
-        private int[] _indices;
-
-        public Area3f MeshBounds => Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ));
+        private Vector3f[] _vertices;
 
         public Area2f MeshBoundsXY { get; private set; }
 
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
         public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
 
-        public IReadOnlyList<Vector3f> Vertices
-        {
-            get => _vertices;
-        }
+        public Area3f MeshBounds => Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ));
 
-        public IReadOnlyList<Vector3f> Normals
-        {
-            get => _normals;
-        }
+        public IReadOnlyList<Vector3f> Vertices => _vertices;
 
-        public IReadOnlyList<Vector2f> UV
-        {
-            get => _uv;
-        }
+        public IReadOnlyList<Vector3f> Normals => _normals;
 
-        public IReadOnlyList<int> Indices
-        {
-            get => _indices;
-        }
+        public IReadOnlyList<Vector2f> UV => _uv;
+
+        public IReadOnlyList<int> Indices => _indices;
 
         public int TriangleCount => _counter / 3;
 
@@ -140,7 +127,7 @@ namespace Votyra.Core.TerrainMeshes
 
         public IEnumerable<Triangle3f> GetTriangles(Vector2i? limitToCellInGroup)
         {
-            for (int i = 0; i < _vertices.Length; i += 3)
+            for (var i = 0; i < _vertices.Length; i += 3)
             {
                 var a = _vertices[i];
                 var b = _vertices[i + 1];

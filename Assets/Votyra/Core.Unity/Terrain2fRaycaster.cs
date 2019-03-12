@@ -4,7 +4,6 @@ using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.TerrainMeshes;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Raycasting
 {
@@ -13,12 +12,12 @@ namespace Votyra.Core.Raycasting
         private readonly IImage2fProvider _image2FProvider;
         private readonly IMask2eProvider _mask2EProvider;
         private Ray3f _cameraRay;
+        private readonly Vector2i _cellInGroupCount;
         private float _directionXyMag;
         private IImage2f _image;
+        private readonly TerrainGeneratorManager2i _manager;
         private IMask2e _mask;
         private Vector2f _startXy;
-        private Vector2i _cellInGroupCount;
-        private TerrainGeneratorManager2i _manager;
 
         public Terrain2fRaycaster(IImage2fProvider image2FProvider, IMask2eProvider mask2eProvider, ITerrainConfig terrainConfig, TerrainGeneratorManager2i manager, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
             : base(terrainVertexPostProcessor)
@@ -69,17 +68,13 @@ namespace Votyra.Core.Raycasting
             var mesh = pooledMesh?.Mesh as FixedUnityTerrainMesh2i;
 
             if (mesh == null)
-            {
                 return null;
-            }
 
             foreach (var triangle in mesh.GetTriangles(cell % _cellInGroupCount))
             {
                 var res = triangle.Intersect(_cameraRay);
                 if (res.HasValue)
-                {
                     return res.Value;
-                }
             }
 
             return null;

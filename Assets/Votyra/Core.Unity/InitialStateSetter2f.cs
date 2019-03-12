@@ -102,7 +102,8 @@ namespace Votyra.Core.Images
             {
                 Range2i matrixAreaToFill;
                 if (imageAccessor.Area == Range2i.All)
-                    matrixAreaToFill = texture.Size().ToRange2i();
+                    matrixAreaToFill = texture.Size()
+                        .ToRange2i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
 
@@ -124,7 +125,8 @@ namespace Votyra.Core.Images
             {
                 Range2i matrixAreaToFill;
                 if (imageAccessor.Area == Range2i.All)
-                    matrixAreaToFill = texture.Size().XY()
+                    matrixAreaToFill = texture.Size()
+                        .XY()
                         .ToRange2i();
                 else
                     matrixAreaToFill = imageAccessor.Area;

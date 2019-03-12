@@ -24,7 +24,6 @@ namespace Votyra.Core.TerrainMeshes
 
         void FinalizeMesh();
 
-
         IEnumerable<Triangle3f> GetTriangles(Vector2i? limitToCellInGroup);
     }
 }

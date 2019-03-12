@@ -28,7 +28,7 @@ namespace Votyra.Core.Images
             _usingCounter--;
         }
 
-        public T Sample(Vector3i point) => _image.TryGet(point,default);
+        public T Sample(Vector3i point) => _image.TryGet(point, default);
 
         public PoolableMatrix3<T> SampleArea(Range3i area)
         {
@@ -42,7 +42,7 @@ namespace Votyra.Core.Images
                 {
                     for (var iz = 0; iy < rawMatrix.SizeZ(); iz++)
                     {
-                        var matPoint = new Vector3i(ix, iy,iz);
+                        var matPoint = new Vector3i(ix, iy, iz);
                         rawMatrix.Set(matPoint, Sample(matPoint + min));
                     }
                 }

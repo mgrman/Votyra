@@ -26,13 +26,6 @@ namespace Votyra.Core
     {
         public readonly ConcurrentDictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new ConcurrentDictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
 
-        public IPooledTerrainMesh GetMeshForGroup(Vector2i group)
-        {
-            return _activeGroups.TryGetValue(group)
-                ?.PooledMesh;
-        }
-        
-        
         private readonly Vector2i _cellInGroupCount;
         private readonly IFrameDataProvider2i _frameDataProvider;
         private readonly Func<GameObject> _gameObjectFactory;
@@ -81,6 +74,10 @@ namespace Votyra.Core
             else
                 _frameDataProvider.FrameData -= UpdateTerrainInForeground;
         }
+
+        public IPooledTerrainMesh GetMeshForGroup(Vector2i group) =>
+            _activeGroups.TryGetValue(group)
+                ?.PooledMesh;
 
         private void UpdateTerrainInForeground(IFrameData2i context)
         {
@@ -162,9 +159,8 @@ namespace Votyra.Core
 
     public interface ITerrainGroupGeneratorManager2i : IDisposable
     {
-        void Update(IFrameData2i context);
         IPooledTerrainMesh PooledMesh { get; }
-
+        void Update(IFrameData2i context);
     }
 
     public class SyncTerrainGroupGeneratorManager2i : TerrainGroupGeneratorManager2i
@@ -277,9 +273,6 @@ namespace Votyra.Core
 
         private bool _updatedOnce;
 
-
-        public IPooledTerrainMesh PooledMesh => _pooledMesh;
-
         public TerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory, Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, Action<ITerrainMesh, Vector2i, IImage2f, IMask2e> generateUnityMesh)
         {
             _unityDataFactory = unityDataFactory;
@@ -302,6 +295,8 @@ namespace Votyra.Core
                 _contextToProcess?.Activate();
             }
         }
+
+        public IPooledTerrainMesh PooledMesh => _pooledMesh;
 
         public void Update(IFrameData2i context)
         {

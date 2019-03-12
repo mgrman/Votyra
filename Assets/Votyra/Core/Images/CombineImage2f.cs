@@ -81,7 +81,7 @@ namespace Votyra.Core.Images
                 for (var iy = 0; iy < rawMatrix.SizeY(); iy++)
                 {
                     var matPoint = new Vector2i(ix, iy);
-                    rawMatrix.Set(matPoint,Sample(matPoint + min));
+                    rawMatrix.Set(matPoint, Sample(matPoint + min));
                 }
             }
 

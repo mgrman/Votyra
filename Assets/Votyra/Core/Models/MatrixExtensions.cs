@@ -1,6 +1,3 @@
-using System;
-using JetBrains.Annotations;
-
 namespace Votyra.Core.Models
 {
     public static class MatrixExtensions

@@ -57,8 +57,8 @@ namespace Votyra.Core.Raycasting
             if (x < 0 || x > 1)
                 return null;
 
-            var xy= (line.From + (line.To - line.From) * x);
-            return xy.ToVector3f(GetLinearInterpolatedValue(_image,xy));
+            var xy = line.From + (line.To - line.From) * x;
+            return xy.ToVector3f(GetLinearInterpolatedValue(_image, xy));
         }
 
         private float GetRayValue(Vector2f point)

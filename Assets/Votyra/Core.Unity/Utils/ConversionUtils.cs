@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -101,16 +100,10 @@ namespace Votyra.Core.Utils
             return res;
         }
 
-        public static List<UnityEngine.Vector2> ToVector2List(this List<Vector2f> vector)
-        {
-            return vector.ConvertListOfMatchingStructs<Vector2f, UnityEngine.Vector2>(ToVector2);
-        }
+        public static List<Vector2> ToVector2List(this List<Vector2f> vector) => vector.ConvertListOfMatchingStructs(ToVector2);
 
-        public static List<UnityEngine.Vector3> ToVector3List(this List<Vector3f> vector)
-        {
-            return vector.ConvertListOfMatchingStructs<Vector3f, UnityEngine.Vector3>(ToVector3);
-        }
-        
+        public static List<Vector3> ToVector3List(this List<Vector3f> vector) => vector.ConvertListOfMatchingStructs(ToVector3);
+
         // public static Vector3f[] ToVector3f(this UnityEngine.Vector3[] vector)
         // {
         //     return Array.ConvertAll(vector, item => item.ToVector3f());
@@ -178,26 +171,6 @@ namespace Votyra.Core.Utils
             return mat2;
         }
 
-        [StructLayout(LayoutKind.Explicit)]
-        private struct UnionVector3
-        {
-            [FieldOffset(0)]
-            public Vector3f[] From;
-
-            [FieldOffset(0)]
-            public Vector3[] To;
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        private struct UnionVector2
-        {
-            [FieldOffset(0)]
-            public Vector2f[] From;
-
-            [FieldOffset(0)]
-            public Vector2[] To;
-        }
-
         //        private static T[] GetInnerArray<T>(this List<T> source)
         //        {
         //            source.TrimExcess();
@@ -224,6 +197,26 @@ namespace Votyra.Core.Utils
             // targetItemsSet.SetValue(target, targetItems, BindingFlags.SetField, new ArrayKeepBinder<TSource, TResult>(), null);
             targetSizeSet(target, source.Count);
             return target;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionVector3
+        {
+            [FieldOffset(0)]
+            public Vector3f[] From;
+
+            [FieldOffset(0)]
+            public readonly Vector3[] To;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionVector2
+        {
+            [FieldOffset(0)]
+            public Vector2f[] From;
+
+            [FieldOffset(0)]
+            public readonly Vector2[] To;
         }
         //
         //        [StructLayout(LayoutKind.Explicit)]
@@ -278,7 +271,7 @@ namespace Votyra.Core.Utils
 
             private static Func<TOwner, TValue> CreateGetFieldDelegate<TOwner, TValue>(FieldInfo fieldInfo)
             {
-                ParameterExpression ownerParameter = Expression.Parameter(typeof(TOwner));
+                var ownerParameter = Expression.Parameter(typeof(TOwner));
 
                 var fieldExpression = Expression.Field(Expression.Convert(ownerParameter, typeof(TOwner)), fieldInfo);
 
@@ -288,8 +281,8 @@ namespace Votyra.Core.Utils
 
             private static Action<TOwner, TValue> CreateSetFieldDelegate<TOwner, TValue>(FieldInfo fieldInfo)
             {
-                ParameterExpression ownerParameter = Expression.Parameter(typeof(TOwner));
-                ParameterExpression fieldParameter = Expression.Parameter(typeof(TValue));
+                var ownerParameter = Expression.Parameter(typeof(TOwner));
+                var fieldParameter = Expression.Parameter(typeof(TValue));
 
                 var fieldExpression = Expression.Field(Expression.Convert(ownerParameter, typeof(TOwner)), fieldInfo);
 

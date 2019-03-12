@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Votyra.Core.Images.Constraints;
-using Votyra.Core.Logging;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.Images

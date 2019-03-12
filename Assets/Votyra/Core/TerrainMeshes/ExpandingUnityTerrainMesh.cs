@@ -6,13 +6,13 @@ namespace Votyra.Core.TerrainMeshes
 {
     public class ExpandingUnityTerrainMesh : ITerrainMesh
     {
+        private readonly List<int> _indices;
+        private readonly List<Vector3f> _normals;
+        private readonly List<Vector2f> _uv;
+        private readonly List<Vector3f> _vertices;
         private float _maxZ;
 
         private float _minZ;
-        private readonly List<Vector3f> _vertices;
-        private readonly List<Vector3f> _normals;
-        private readonly List<Vector2f> _uv;
-        private readonly List<int> _indices;
 
         public ExpandingUnityTerrainMesh()
         {
@@ -22,11 +22,11 @@ namespace Votyra.Core.TerrainMeshes
             _normals = new List<Vector3f>();
         }
 
-        public Area3f MeshBounds => Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ));
-
         public Area2f MeshBoundsXY { get; private set; }
         private Func<Vector3f, Vector3f> VertexPostProcessor { get; set; }
         private Func<Vector2f, Vector2f> UVAdjustor { get; set; }
+
+        public Area3f MeshBounds => Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ));
 
         public IReadOnlyList<Vector3f> Vertices => _vertices;
 
@@ -114,7 +114,7 @@ namespace Votyra.Core.TerrainMeshes
 
         public IEnumerable<Triangle3f> GetTriangles(Vector2i? limitToCellInGroup)
         {
-            for (int i = 0; i < _vertices.Count; i += 3)
+            for (var i = 0; i < _vertices.Count; i += 3)
             {
                 var a = _vertices[i];
                 var b = _vertices[i + 1];

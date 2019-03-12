@@ -20,8 +20,8 @@ namespace Votyra.Core.Pooling
 
         ITerrainMeshWithFixedCapacity IPooledTerrainMeshWithFixedCapacity.Mesh => Mesh;
 
-        public event Action<IPooledTerrainMesh> OnDispose; 
-        
+        public event Action<IPooledTerrainMesh> OnDispose;
+
         public void Dispose()
         {
             OnDispose?.Invoke(this);

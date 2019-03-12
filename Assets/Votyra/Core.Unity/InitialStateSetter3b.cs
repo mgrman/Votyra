@@ -152,7 +152,7 @@ namespace Votyra.Core.Images
                         for (var iz = 0; iz < matrixAreaToFill.Size.Z; iz++)
                         {
                             var i = new Vector3i(ix, iy, iz) + min;
-                            var value = texture[ix,iy] * scale;
+                            var value = texture[ix, iy] * scale;
                             imageAccessor[i] = value - i.Z > 0;
                         }
                     }
@@ -166,7 +166,8 @@ namespace Votyra.Core.Images
             {
                 Range3i matrixAreaToFill;
                 if (imageAccessor.Area == Range3i.All)
-                    matrixAreaToFill = texture.Size().ToRange3i();
+                    matrixAreaToFill = texture.Size()
+                        .ToRange3i();
                 else
                     matrixAreaToFill = imageAccessor.Area;
 
