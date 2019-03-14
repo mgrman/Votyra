@@ -41,11 +41,11 @@ namespace Votyra.Core
         private readonly TaskFactory _taskFactory = new TaskFactory();
         private readonly ITerrainConfig _terrainConfig;
         private readonly ITerrainMesher2f _terrainMesher;
-        protected readonly ITerrainMeshPool _terrainMeshPool;
+        private readonly ITerrainMeshPool _terrainMeshPool;
 
         private Task _waitForTask = Task.CompletedTask;
 
-        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IProfiler profiler, IFrameDataProvider2i frameDataProvider, IInterpolationConfig interpolationConfig, ITerrainMesher2f terrainMesher)
+        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IProfiler profiler, IFrameDataProvider2i frameDataProvider, IInterpolationConfig interpolationConfig, ITerrainMesher2f terrainMesher, ITerrainMeshPool terrainMeshPool)
         {
             _gameObjectFactory = gameObjectFactory;
             _logger = logger;
@@ -55,6 +55,7 @@ namespace Votyra.Core
             _frameDataProvider = frameDataProvider;
             _interpolationConfig = interpolationConfig;
             _terrainMesher = terrainMesher;
+            _terrainMeshPool = terrainMeshPool;
 
             if (_terrainConfig.Async)
                 _frameDataProvider.FrameData += UpdateTerrainInBackground;

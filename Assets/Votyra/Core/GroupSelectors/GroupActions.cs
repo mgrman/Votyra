@@ -1,23 +1,25 @@
 using System;
+using System.Collections.Generic;
 using Votyra.Core.Pooling;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.GroupSelectors
 {
     public class GroupActions<TKey> : IDisposable
     {
-        public GroupActions(IReadOnlyPooledSet<TKey> toRecompute, IReadOnlyPooledSet<TKey> toKeep)
+        public GroupActions(IReadOnlyCollection<TKey> toRecompute, IReadOnlyCollection<TKey> toKeep)
         {
             ToRecompute = toRecompute;
             ToKeep = toKeep;
         }
 
-        public IReadOnlyPooledSet<TKey> ToRecompute { get; }
-        public IReadOnlyPooledSet<TKey> ToKeep { get; }
+        public IReadOnlyCollection<TKey> ToRecompute { get; }
+        public IReadOnlyCollection<TKey> ToKeep { get; }
 
         public void Dispose()
         {
-            ToRecompute.Dispose();
-            ToKeep.Dispose();
+            ToRecompute.TryDispose();
+            ToKeep.TryDispose();
         }
     }
 }

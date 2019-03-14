@@ -16,38 +16,15 @@ namespace Votyra.Core.Utils
 
         public static Vector3f ToVector3f(this Vector3 vector) => new Vector3f(vector.x, vector.y, vector.z);
 
-        public static PooledArrayContainer<Vector3f> ToVector3f(this PooledArrayContainer<Vector3> planesUnity)
-        {
-            var unityArray = planesUnity.Array;
-
-            var container = PooledArrayContainer<Vector3f>.CreateDirty(unityArray.Length);
-            var votyraArray = container.Array;
-
-            for (var i = 0; i < unityArray.Length; i++)
-            {
-                votyraArray[i] = unityArray[i]
-                    .ToVector3f();
-            }
-
-            return container;
-        }
-
         public static Plane3f ToPlane3f(this Plane plane) => new Plane3f(plane.normal.ToVector3f(), plane.distance);
 
-        public static PooledArrayContainer<Plane3f> ToPlane3f(this PooledArrayContainer<Plane> planesUnity)
+        public static Plane3f[] ToPlane3f(this Plane[] planesUnity)
         {
-            var unityArray = planesUnity.Array;
-
-            var container = PooledArrayContainer<Plane3f>.CreateDirty(unityArray.Length);
-            var votyraArray = container.Array;
-
-            for (var i = 0; i < unityArray.Length; i++)
-            {
-                votyraArray[i] = unityArray[i]
-                    .ToPlane3f();
-            }
-
-            return container;
+            var union = new UnionPlane();
+            union.From = planesUnity;
+            var res = union.To;
+            Assert.AreEqual(planesUnity.Length, res.Length, $"{nameof(ToPlane3f)} conversion failed!");
+            return res;
         }
 
         public static Vector2 ToVector2(this Vector2f vector) => *(Vector2*) &vector;
@@ -55,32 +32,6 @@ namespace Votyra.Core.Utils
         public static Vector3 ToVector3(this Vector3f vector) => *(Vector3*) &vector;
 
         public static Bounds ToBounds(this Area3f bounds) => new Bounds(bounds.Center.ToVector3(), bounds.Size.ToVector3());
-
-        //         public static UnityEngine.Vector3[] ToVector3Array(this List<Vector3f> vector)
-        //         {
-        //             return vector.Select(o => o.ToVector3()).ToArray();
-        // //            return vector.GetInnerArray<Vector3f>().ToVector3();
-        //         }
-        //
-        //         public static List<UnityEngine.Vector3> ToVector3List(this List<Vector3f> vector)
-        //         {
-        //             return vector.Select(o => o.ToVector3()).ToList();
-        // //            return vector.ConvertListOfMatchingStructs<Vector3f, UnityEngine.Vector3>(ToVector3);
-        //         }
-
-        // public static Plane3f[] ToPlane3f(this UnityEngine.Plane[] vector)
-        // {
-        //     return Array.ConvertAll(vector, item => item.ToPlane3f());
-        //
-        //     // var union = new UnionPlane();
-        //     // union.Unity = vector;
-        //     // var res = union.Votyra;
-        //     // if (res.Length != vector.Length)
-        //     // {
-        //     //     throw new InvalidOperationException("ToPlane3f conversion failed!");
-        //     // }
-        //     // return res;
-        // }
 
         public static Vector3[] ToVector3(this Vector3f[] vector)
         {
@@ -103,48 +54,6 @@ namespace Votyra.Core.Utils
         public static List<Vector2> ToVector2List(this List<Vector2f> vector) => vector.ConvertListOfMatchingStructs(ToVector2);
 
         public static List<Vector3> ToVector3List(this List<Vector3f> vector) => vector.ConvertListOfMatchingStructs(ToVector3);
-
-        // public static Vector3f[] ToVector3f(this UnityEngine.Vector3[] vector)
-        // {
-        //     return Array.ConvertAll(vector, item => item.ToVector3f());
-        //
-        //     // var union = new UnionVector3();
-        //     // union.Unity = vector;
-        //     // var res = union.Votyra;
-        //     // if (res.Length != vector.Length)
-        //     // {
-        //     //     throw new InvalidOperationException("ToVector3f conversion failed!");
-        //     // }
-        //     // return res;
-        //     // //return vector.Select(o => o.ToVector3()).ToArray();
-        // }
-
-        // public static UnityEngine.Vector2[] ToVector2(this Vector2f[] vector)
-        // {
-        //     return Array.ConvertAll(vector, item => item.ToVector2());
-        //
-        //     // var union = new UnionVector2();
-        //     // union.Votyra = vector;
-        //     // var res = union.Unity;
-        //     // if (res.Length != vector.Length)
-        //     // {
-        //     //     throw new InvalidOperationException("ToVector2 conversion failed!");
-        //     // }
-        //     // return res;
-        //     // //return vector.Select(o => o.ToVector2()).ToArray();
-        // }
-
-        //         public static UnityEngine.Vector2[] ToVector2Array(this List<Vector2f> vector)
-        //         {
-        //             return vector.Select(o => o.ToVector2()).ToArray();
-        // //            return vector.GetInnerArray<Vector2f>().ToVector2();
-        //         }
-        //
-        //         public static List<UnityEngine.Vector2> ToVector2List(this List<Vector2f> vector)
-        //         {
-        //             return vector.Select(o => o.ToVector2()).ToList();
-        // //            return vector.ConvertListOfMatchingStructs<Vector2f, UnityEngine.Vector2>(ToVector2);
-        //         }
 
         public static Matrix4x4f ToMatrix4x4f(this Matrix4x4 mat) => new Matrix4x4f(mat.m00, mat.m01, mat.m02, mat.m03, mat.m10, mat.m11, mat.m12, mat.m13, mat.m20, mat.m21, mat.m22, mat.m23, mat.m30, mat.m31, mat.m32, mat.m33);
 
@@ -170,19 +79,7 @@ namespace Votyra.Core.Utils
             mat2.m33 = mat.m33;
             return mat2;
         }
-
-        //        private static T[] GetInnerArray<T>(this List<T> source)
-        //        {
-        //            source.TrimExcess();
-        //            var itemsGet = ListInternals<T>.ItemsGet;
-        //            var res = itemsGet(source);
-        //            if (res.Length != source.Count)
-        //            {
-        //                throw new InvalidOperationException($"GetInnerArray<{typeof(T).Name}> conversion failed!");
-        //            }
-        //            return res;
-        //        }
-        //
+        
         private static List<TResult> ConvertListOfMatchingStructs<TSource, TResult>(this List<TSource> source, Func<TSource[], TResult[]> convert)
         {
             var target = new List<TResult>();
@@ -218,6 +115,17 @@ namespace Votyra.Core.Utils
             [FieldOffset(0)]
             public readonly Vector2[] To;
         }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UnionPlane
+        {
+            [FieldOffset(0)]
+            public Plane[] From;
+
+            [FieldOffset(0)]
+            public readonly Plane3f[] To;
+        }
+        
         //
         //        [StructLayout(LayoutKind.Explicit)]
         //        private struct UnionVector3
@@ -290,43 +198,5 @@ namespace Votyra.Core.Utils
                     .Compile();
             }
         }
-
-        //
-        //        private class ArrayKeepBinder<TSource, TResult> : Binder
-        //        {
-        //            public override FieldInfo BindToField(BindingFlags bindingAttr, FieldInfo[] match, object value, CultureInfo culture)
-        //            {
-        //                return Type.DefaultBinder.BindToField(bindingAttr, match, value, culture);
-        //            }
-        //
-        //            public override MethodBase BindToMethod(BindingFlags bindingAttr, MethodBase[] match, ref object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] names, out object state)
-        //            {
-        //                return Type.DefaultBinder.BindToMethod(bindingAttr, match, ref args, modifiers, culture, names, out state);
-        //            }
-        //
-        //            public override object ChangeType(object value, Type type, CultureInfo culture)
-        //            {
-        //                if (value.GetType() == typeof(TSource[]) && type == typeof(TResult[]))
-        //                {
-        //                    return value;
-        //                }
-        //                throw new NotImplementedException();
-        //            }
-        //
-        //            public override void ReorderArgumentArray(ref object[] args, object state)
-        //            {
-        //                Type.DefaultBinder.ReorderArgumentArray(ref args, state);
-        //            }
-        //
-        //            public override MethodBase SelectMethod(BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers)
-        //            {
-        //                return Type.DefaultBinder.SelectMethod(bindingAttr, match, types, modifiers);
-        //            }
-        //
-        //            public override PropertyInfo SelectProperty(BindingFlags bindingAttr, PropertyInfo[] match, Type returnType, Type[] indexes, ParameterModifier[] modifiers)
-        //            {
-        //                return Type.DefaultBinder.SelectProperty(bindingAttr, match, returnType, indexes, modifiers);
-        //            }
-        //        }
     }
 }

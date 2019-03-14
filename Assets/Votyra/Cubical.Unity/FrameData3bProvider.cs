@@ -24,19 +24,19 @@ namespace Votyra.Cubical
 
             var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
 
-            var planesUnity = PooledArrayContainer<Plane>.CreateDirty(6);
-            GeometryUtility.CalculateFrustumPlanes(localToProjection, planesUnity.Array);
+            var planesUnity = new Plane[6];
+            GeometryUtility.CalculateFrustumPlanes(localToProjection, planesUnity);
             var planes = planesUnity.ToPlane3f();
 
             var cameraLocalToWorldMatrix = camera.transform.localToWorldMatrix.ToMatrix4x4f();
             var parentContainerWorldToLocalMatrix = _root.transform.worldToLocalMatrix.ToMatrix4x4f();
 
-            var frustumCornersUnity = PooledArrayContainer<Vector3>.CreateDirty(4);
-            camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);
-            var frustumCorners = frustumCornersUnity.ToVector3f();
-            for (var i = 0; i < frustumCorners.Array.Length; i++)
+            var frustumCornersUnity = new Vector3[4];
+            camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity);
+            var frustumCorners = new Vector3f[4];
+            for (var i = 0; i < frustumCornersUnity.Length; i++)
             {
-                frustumCorners.Array[i] = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorners.Array[i]));
+                frustumCorners[i] = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCornersUnity[i].ToVector3f()));
             }
 
             var cameraPosition = _root.transform.InverseTransformPoint(camera.transform.position)

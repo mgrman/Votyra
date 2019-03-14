@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
@@ -9,7 +10,7 @@ namespace Votyra.Core
     {
         private int _activeCounter;
 
-        public FrameData3b(Ray3f cameraRay, IReadOnlyPooledList<Plane3f> cameraPlanes, IReadOnlyPooledList<Vector3f> cameraFrustumCorners, IReadOnlySet<Vector3i> existingGroups, IImage3b image, Range3i invalidatedArea_imageSpace)
+        public FrameData3b(Ray3f cameraRay, IReadOnlyList<Plane3f> cameraPlanes, IReadOnlyList<Vector3f> cameraFrustumCorners, IReadOnlySet<Vector3i> existingGroups, IImage3b image, Range3i invalidatedArea_imageSpace)
         {
             CameraRay = cameraRay;
             CameraPlanes = cameraPlanes;
@@ -23,8 +24,8 @@ namespace Votyra.Core
         }
 
         public Ray3f CameraRay { get; }
-        public IReadOnlyPooledList<Plane3f> CameraPlanes { get; }
-        public IReadOnlyPooledList<Vector3f> CameraFrustumCorners { get; }
+        public IReadOnlyList<Plane3f> CameraPlanes { get; }
+        public IReadOnlyList<Vector3f> CameraFrustumCorners { get; }
         public IReadOnlySet<Vector3i> ExistingGroups { get; }
         public IImage3b Image { get; }
         public Range3i InvalidatedArea_imageSpace { get; }

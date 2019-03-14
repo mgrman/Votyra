@@ -9,12 +9,12 @@ namespace Votyra.Core.Pooling
     public class PoolWithKey<TValue, TKey> : IPool<TValue, TKey> where TKey : struct
         where TValue : IPoolable<TValue, TKey>
     {
-        private readonly object _lock;
+        private readonly object _lock=new object();
         private readonly Dictionary<TKey, LinkedList<TValue>> _dictionary = new Dictionary<TKey, LinkedList<TValue>>();
 
         private readonly Func<TKey, TValue> _factory;
 
-        protected PoolWithKey(Func<TKey, TValue> factory)
+        public PoolWithKey(Func<TKey, TValue> factory)
         {
             _factory = factory;
         }

@@ -9,12 +9,12 @@ namespace Votyra.Core.Pooling
     public class Pool<TValue> : IPool<TValue> 
         where TValue : IPoolable<TValue>
     {
-        private readonly object _lock;
+        private readonly object _lock=new object();
         private readonly LinkedList<TValue> _list = new LinkedList<TValue>();
 
         private readonly Func<TValue> _factory;
 
-        protected Pool(Func<TValue> factory)
+        public Pool(Func<TValue> factory)
         {
             _factory = factory;
         }

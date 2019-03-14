@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,10 +78,10 @@ namespace Votyra.Core
         {
             context?.Activate();
             GroupActions<Vector3i> groupActions = null;
-            IReadOnlyPooledDictionary<Vector3i, IPooledTerrainMesh> results = null;
+            IReadOnlyDictionary<Vector3i, IPooledTerrainMesh> results = null;
             try
             {
-                Func<IReadOnlyPooledDictionary<Vector3i, IPooledTerrainMesh>> computeAction = () =>
+                Func<IReadOnlyDictionary<Vector3i, IPooledTerrainMesh>> computeAction = () =>
                 {
                     using (_profiler.Start("Creating visible groups"))
                     {
@@ -93,11 +94,7 @@ namespace Votyra.Core
                     if (toRecompute.Any())
                         using (_profiler.Start("TerrainMeshGenerator"))
                         {
-                            PooledDictionary<Vector3i, IPooledTerrainMesh> meshes;
-                            using (_profiler.Start("init"))
-                            {
-                                meshes = PooledDictionary<Vector3i, IPooledTerrainMesh>.Create();
-                            }
+                            var meshes = new Dictionary<Vector3i, IPooledTerrainMesh>();
 
                             foreach (var group in toRecompute)
                             {
@@ -123,7 +120,7 @@ namespace Votyra.Core
                 if (results != null)
                     using (_profiler.Start("Applying mesh"))
                     {
-                        var toKeepGroups = groupActions?.ToKeep ?? ReadOnlySet<Vector3i>.Empty;
+                        var toKeepGroups = groupActions?.ToKeep ?? Array.Empty<Vector3i>();
 
                         if (results != null)
                             using (_profiler.Start("Setting Mesh"))
@@ -175,7 +172,6 @@ namespace Votyra.Core
             {
                 context?.Deactivate();
                 groupActions?.Dispose();
-                results?.Dispose();
             }
         }
     }

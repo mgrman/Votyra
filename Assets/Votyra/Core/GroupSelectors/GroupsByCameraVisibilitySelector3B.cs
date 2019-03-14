@@ -38,8 +38,8 @@ namespace Votyra.Core.GroupSelectors
 
             var cameraBoundsGroups = (localCameraBounds / _cellInGroupCount.ToVector3f()).RoundToContain();
 
-            var groupsToRecompute = PooledSet<Vector3i>.Create();
-            var groupsToKeep = PooledSet<Vector3i>.Create();
+            var groupsToRecompute = new List<Vector3i>();
+            var groupsToKeep = new List<Vector3i>();
 
             var min = cameraBoundsGroups.Min;
             var max = cameraBoundsGroups.Max;
