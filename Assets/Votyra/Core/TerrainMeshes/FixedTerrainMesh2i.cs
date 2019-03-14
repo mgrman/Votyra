@@ -3,84 +3,72 @@ using System.Collections.Generic;
 using System.Linq;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
+using Votyra.Core.Pooling;
 
 namespace Votyra.Core.TerrainMeshes
 {
-    public class FixedUnityTerrainMesh2i : ITerrainMeshWithFixedCapacity
+    public class FixedTerrainMesh2i : IPooledTerrainMesh
     {
+        private readonly int[] _indices;
+        private readonly Vector3f[] _normals;
+        private readonly Vector2f[] _uv;
+        private readonly Vector3f[] _vertices;
+        private readonly Func<Vector3f, Vector3f> _vertexPostProcessor;
+        private readonly Func<Vector2f, Vector2f> _uVAdjustor;
         private int _counter;
-        private int[] _indices;
-
         private float _maxZ;
-
         private float _minZ;
-        private Vector3f[] _normals;
-        private Vector2f[] _uv;
-        private Vector3f[] _vertices;
-
-        public Area2f MeshBoundsXY { get; private set; }
-
-        public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
-        public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
-
-        public Area3f MeshBounds => Area3f.FromMinAndMax(MeshBoundsXY.Min.ToVector3f(_minZ), MeshBoundsXY.Max.ToVector3f(_maxZ));
-
+        private Area2f _meshBoundsXY;
+        
+        public Area3f MeshBounds => Area3f.FromMinAndMax(_meshBoundsXY.Min.ToVector3f(_minZ), _meshBoundsXY.Max.ToVector3f(_maxZ));
         public IReadOnlyList<Vector3f> Vertices => _vertices;
-
         public IReadOnlyList<Vector3f> Normals => _normals;
-
         public IReadOnlyList<Vector2f> UV => _uv;
-
         public IReadOnlyList<int> Indices => _indices;
-
-        public int TriangleCount => _counter / 3;
-
+        public int TriangleCount => VertexCount / 3;
         public int VertexCount => _vertices.Length;
+        public int TriangleCapacity => TriangleCount;
 
-        public int TriangleCapacity { get; private set; }
-
-        public virtual void Initialize(int triangleCapacity)
+        public FixedTerrainMesh2i(int triangleCapacity, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uVAdjustor)
         {
-            TriangleCapacity = triangleCapacity;
-
+            _vertexPostProcessor = vertexPostProcessor;
+            _uVAdjustor = uVAdjustor;
+            
             var pointCount = triangleCapacity * 3;
 
             _vertices = new Vector3f[pointCount];
             _uv = new Vector2f[pointCount];
-            _indices = Enumerable.Range(0, pointCount)
-                .ToArray();
+            _indices = new int[pointCount];
+            for (var i = 0; i < _indices.Length; i++)
+            {
+                _indices[i] = i;
+            }
             _normals = new Vector3f[pointCount];
-        }
-
-        public void Initialize(Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
-        {
-            VertexPostProcessor = vertexPostProcessor;
-            UVAdjustor = uvAdjustor;
         }
 
         public void Reset(Area3f area)
         {
-            MeshBoundsXY = Area2f.FromMinAndMax(area.Min.XY(), area.Max.XY());
+            _meshBoundsXY = Area2f.FromMinAndMax(area.Min.XY(), area.Max.XY());
             _counter = 0;
         }
 
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
         {
-            if (VertexPostProcessor != null)
+            if (_vertexPostProcessor != null)
             {
-                posA = VertexPostProcessor(posA);
-                posB = VertexPostProcessor(posB);
-                posC = VertexPostProcessor(posC);
+                posA = _vertexPostProcessor(posA);
+                posB = _vertexPostProcessor(posB);
+                posC = _vertexPostProcessor(posC);
             }
 
             var uvA = posA.XY();
             var uvB = posB.XY();
             var uvC = posC.XY();
-            if (UVAdjustor != null)
+            if (_uVAdjustor != null)
             {
-                uvA = UVAdjustor(posA.XY());
-                uvB = UVAdjustor(posB.XY());
-                uvC = UVAdjustor(posC.XY());
+                uvA = _uVAdjustor(posA.XY());
+                uvB = _uVAdjustor(posB.XY());
+                uvC = _uVAdjustor(posC.XY());
             }
 
             var side1 = posB - posA;
@@ -135,5 +123,14 @@ namespace Votyra.Core.TerrainMeshes
                 yield return new Triangle3f(a, b, c);
             }
         }
+
+        public void Dispose()
+        {
+            OnDispose?.Invoke(this);
+        }
+
+        public event Action<IPooledTerrainMesh> OnDispose;
+
+        int IPoolable<IPooledTerrainMesh, int>.Key => TriangleCapacity;
     }
 }

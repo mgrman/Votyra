@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Votyra.Core.Models;
+using Votyra.Core.Pooling;
 
 namespace Votyra.Core.TerrainMeshes
 {
-    public interface ITerrainMesh
+    public interface ITerrainMesh 
     {
         int VertexCount { get; }
+
+        int TriangleCapacity { get; }
 
         int TriangleCount { get; }
 
@@ -15,8 +18,6 @@ namespace Votyra.Core.TerrainMeshes
         IReadOnlyList<Vector2f> UV { get; }
         IReadOnlyList<int> Indices { get; }
         Area3f MeshBounds { get; }
-
-        void Initialize(Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor);
 
         void Reset(Area3f area);
 

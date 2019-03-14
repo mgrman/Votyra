@@ -4,6 +4,7 @@ using Votyra.Core;
 using Votyra.Core.Behaviours;
 using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
+using Votyra.Core.Pooling;
 using Votyra.Core.TerrainGenerators;
 using Votyra.Core.Utils;
 using Zenject;
@@ -14,7 +15,7 @@ namespace Votyra.Cubical.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager3b(null, null, null, null, null, null, null);
+            new TerrainGeneratorManager3b(null, null, null, null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -50,6 +51,8 @@ namespace Votyra.Cubical.Unity
                 .AsSingle()
                 .NonLazy();
             Container.BindInterfacesAndSelfTo<FrameData3bProvider>()
+                .AsSingle();
+            Container.BindInterfacesAndSelfTo<ExpandingTerrainMeshPool>()
                 .AsSingle();
 
             Container.Bind<Func<GameObject>>()

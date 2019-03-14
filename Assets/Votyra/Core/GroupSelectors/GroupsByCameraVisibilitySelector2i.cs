@@ -29,18 +29,20 @@ namespace Votyra.Core.GroupSelectors
             var minZ = options.RangeZ.Min;
             var boundsSize = new Vector2f(cellInGroupCount.X, cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
 
-            groupsToRecompute.RemoveWhere(group =>
+            bool HandleRemoval(Vector2i @group)
             {
-                var groupBoundsMin = (group * cellInGroupCount).ToVector2f()
+                var groupBoundsMin = (@group * cellInGroupCount).ToVector2f()
                     .ToVector3f(minZ);
                 var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
                 var isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)
                     return false;
 
-                onRemove.Invoke(group);
+                onRemove.Invoke(@group);
                 return true;
-            });
+            }
+
+            groupsToRecompute.RemoveWhere(HandleRemoval);
 
             for (var ix = cameraBoundsGroups.Min.X; ix < cameraBoundsGroups.Max.X; ix++)
             {

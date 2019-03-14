@@ -48,7 +48,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         private readonly IImageSampler3 _imageSampler;
         protected Vector3i groupPosition;
         protected Vector3i groupSize;
-        protected ITerrainMesh mesh;
         protected IPooledTerrainMesh pooledMesh;
 
         public TerrainMesherWithConstrainedWalls3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
@@ -74,17 +73,17 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             foreach (var tri in MainPlaneTriangles[data.Data])
             {
-                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
+                pooledMesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
             }
 
             foreach (var tri in XWallTriangles[SampledDataWithWall.GetIndexInAllValues(data, dataXMinus)])
             {
-                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
+                pooledMesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
             }
 
             foreach (var tri in YWallTriangles[SampledDataWithWall.GetIndexInAllValues(data, dataYMinus)])
             {
-                mesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
+                pooledMesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
             }
         }
 
@@ -96,9 +95,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             groupPosition = _cellInGroupCount * group;
 
             pooledMesh = cleanPooledMesh;
-            mesh = pooledMesh.Mesh;
-            mesh.Initialize(null, null);
-            mesh.Reset(Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f()));
+            pooledMesh.Reset(Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f()));
         }
 
         private static Tuple<SampledData3b, IReadOnlyCollection<Triangle3f>> ChooseTrianglesForCell(SampledData3b data)

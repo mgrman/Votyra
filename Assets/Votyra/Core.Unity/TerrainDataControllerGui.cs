@@ -95,6 +95,7 @@ namespace Votyra.Core
 
         private void OnGUI()
         {
+            return;
             var anyChange = false;
             GUILayout.Label("Terrain algorithms:");
             for (var index = 0; index < _controller._availableTerrainAlgorithms.Length; index++)

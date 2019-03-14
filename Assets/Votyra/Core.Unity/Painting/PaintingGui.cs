@@ -12,6 +12,7 @@ namespace Votyra.Core.Unity.Painting
 
         protected void OnGUI()
         {
+            return;
             GUILayout.BeginArea(new Rect(Screen.width - 200, 0, 200, Screen.height));
 
             var newSelection = _paintingModel.SelectedPaintCommand;

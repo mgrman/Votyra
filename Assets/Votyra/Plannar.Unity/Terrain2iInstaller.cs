@@ -7,8 +7,10 @@ using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
+using Votyra.Core.Pooling;
 using Votyra.Core.Raycasting;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Unity.Painting;
 using Votyra.Core.Utils;
 using Zenject;
@@ -19,7 +21,7 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager2i(null, null, null, null, null, null, null, null, null);
+            new TerrainGeneratorManager2i(null, null, null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -121,6 +123,22 @@ namespace Votyra.Plannar.Unity
                 {
                     var interpolationConfig = c.Container.Resolve<IInterpolationConfig>();
                     return interpolationConfig.MeshSubdivision == 1 && interpolationConfig.ImageSubdivision == 1;
+                });
+
+            Container.BindInterfacesAndSelfTo<FixedTerrainMeshPool>()
+                .AsSingle()
+                .When(c =>
+                {
+                    var interpolationConfig = c.Container.Resolve<IInterpolationConfig>();
+                    return !interpolationConfig.DynamicMeshes;
+                });
+
+            Container.BindInterfacesAndSelfTo<ExpandingTerrainMeshPool>()
+                .AsSingle()
+                .When(c =>
+                {
+                    var interpolationConfig = c.Container.Resolve<IInterpolationConfig>();
+                    return interpolationConfig.DynamicMeshes;
                 });
 
             Container.BindInterfacesAndSelfTo<FrameData2iProvider>()

@@ -47,17 +47,12 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
                 .Returns<Vector3i>(pos => cube[pos]);
 
             var triangles = new List<Triangle3i>();
-            var meshMock = new Mock<ITerrainMesh>();
+            var meshMock = new Mock<IPooledTerrainMesh>();
             meshMock.Setup(o => o.AddTriangle(It.IsAny<Vector3f>(), It.IsAny<Vector3f>(), It.IsAny<Vector3f>()))
                 .Callback<Vector3f, Vector3f, Vector3f>((a, b, c) =>
                 {
                     triangles.Add(new Triangle3i(a.RoundToVector3i(), b.RoundToVector3i(), c.RoundToVector3i()));
                 });
-            var mesh = meshMock.Object;
-
-            var pooledMeshMock = new Mock<IPooledTerrainMesh>();
-            pooledMeshMock.Setup(o => o.Mesh)
-                .Returns(() => mesh);
 
             var terrainConfig = new Mock<ITerrainConfig>();
             terrainConfig.Setup(o => o.CellInGroupCount)
@@ -65,7 +60,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 
             var mesher = new TerrainMesher3b(terrainConfig.Object, sampler);
             mesher.Initialize(imageMock.Object);
-            mesher.InitializeGroup(new Vector3i(0, 0, 0), pooledMeshMock.Object);
+            mesher.InitializeGroup(new Vector3i(0, 0, 0), meshMock.Object);
 
             mesher.AddCell(new Vector3i(0, 0, 0));
             return triangles;

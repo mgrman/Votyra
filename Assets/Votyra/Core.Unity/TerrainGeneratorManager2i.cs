@@ -41,12 +41,11 @@ namespace Votyra.Core
         private readonly TaskFactory _taskFactory = new TaskFactory();
         private readonly ITerrainConfig _terrainConfig;
         private readonly ITerrainMesher2f _terrainMesher;
-        private readonly ITerrainUVPostProcessor _uvPostProcessor;
-        private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
+        protected readonly ITerrainMeshPool _terrainMeshPool;
 
         private Task _waitForTask = Task.CompletedTask;
 
-        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IProfiler profiler, IFrameDataProvider2i frameDataProvider, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, IInterpolationConfig interpolationConfig, ITerrainMesher2f terrainMesher)
+        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IProfiler profiler, IFrameDataProvider2i frameDataProvider, IInterpolationConfig interpolationConfig, ITerrainMesher2f terrainMesher)
         {
             _gameObjectFactory = gameObjectFactory;
             _logger = logger;
@@ -54,8 +53,6 @@ namespace Votyra.Core
             _cellInGroupCount = _terrainConfig.CellInGroupCount.XY();
             _profiler = profiler;
             _frameDataProvider = frameDataProvider;
-            _vertexPostProcessor = vertexPostProcessor;
-            _uvPostProcessor = uvPostProcessor;
             _interpolationConfig = interpolationConfig;
             _terrainMesher = terrainMesher;
 
@@ -142,17 +139,9 @@ namespace Votyra.Core
         private IPooledTerrainMesh CreatePooledTerrainMesh()
         {
             IPooledTerrainMesh pooledMesh;
-            if (_interpolationConfig.DynamicMeshes)
-            {
-                pooledMesh = PooledTerrainMeshContainer<ExpandingUnityTerrainMesh>.CreateDirty();
-            }
-            else
-            {
-                var triangleCount = _cellInGroupCount.AreaSum() * 2 * _interpolationConfig.MeshSubdivision * _interpolationConfig.MeshSubdivision;
-                pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedUnityTerrainMesh2i>.CreateDirty(triangleCount);
-            }
+            var triangleCount = _cellInGroupCount.AreaSum() * 2 * _interpolationConfig.MeshSubdivision * _interpolationConfig.MeshSubdivision;
+            pooledMesh = _terrainMeshPool.Get(triangleCount);
 
-            pooledMesh.Mesh.Initialize(_vertexPostProcessor == null ? (Func<Vector3f, Vector3f>) null : _vertexPostProcessor.PostProcessVertex, _uvPostProcessor == null ? (Func<Vector2f, Vector2f>) null : _uvPostProcessor.ProcessUV);
             return pooledMesh;
         }
     }
@@ -195,7 +184,7 @@ namespace Votyra.Core
             UpdateTerrainMesh(context);
             if (_token.IsCancellationRequested)
                 return;
-            UpdateUnityMesh(_pooledMesh.Mesh);
+            UpdateUnityMesh(_pooledMesh);
         }
     }
 
@@ -244,7 +233,7 @@ namespace Votyra.Core
             await UniTask.SwitchToMainThread();
             if (_token.IsCancellationRequested)
                 return;
-            UpdateUnityMesh(_pooledMesh.Mesh);
+            UpdateUnityMesh(_pooledMesh);
         }
 
         public override void Dispose()
@@ -330,9 +319,9 @@ namespace Votyra.Core
 
         protected void UpdateTerrainMesh(IFrameData2i context)
         {
-            _pooledMesh.Mesh.Reset(Area3f.FromMinAndSize((_group * context.CellInGroupCount).ToVector3f(context.RangeZ.Min), context.CellInGroupCount.ToVector3f(context.RangeZ.Size)));
-            _generateUnityMesh(_pooledMesh.Mesh, _group, context.Image, context.Mask);
-            _pooledMesh.Mesh.FinalizeMesh();
+            _pooledMesh.Reset(Area3f.FromMinAndSize((_group * context.CellInGroupCount).ToVector3f(context.RangeZ.Min), context.CellInGroupCount.ToVector3f(context.RangeZ.Size)));
+            _generateUnityMesh(_pooledMesh, _group, context.Image, context.Mask);
+            _pooledMesh.FinalizeMesh();
         }
 
         protected void UpdateUnityMesh(ITerrainMesh unityMesh)

@@ -65,8 +65,9 @@ namespace Votyra.Plannar
             var planes = planesUnity.ToPlane3f();
             planesUnity.Dispose();
 
-            foreach (var plane in planes)
+            for (var i = 0; i < planes.Count; i++)
             {
+                var plane = planes[i];
                 var dirPerp = plane.Normal.XY()
                     .Perpendicular()
                     .Normalized() * 100;

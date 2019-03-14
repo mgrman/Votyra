@@ -64,8 +64,7 @@ namespace Votyra.Core.Raycasting
         protected override Vector3f? RaycastCell(Line2f line, Vector2i cell)
         {
             var group = cell / _cellInGroupCount;
-            var pooledMesh = _manager.GetMeshForGroup(group);
-            var mesh = pooledMesh?.Mesh as FixedUnityTerrainMesh2i;
+            var mesh = _manager.GetMeshForGroup(group);
 
             if (mesh == null)
                 return null;
