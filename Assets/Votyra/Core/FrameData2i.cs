@@ -6,7 +6,7 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core
 {
-    public class FrameData2i : IFrameData2i,IPoolable<FrameData2i>
+    public class FrameData2i :IPoolableFrameData2i
     {
         private int _activeCounter;
         private IImage2f _image;
@@ -34,7 +34,7 @@ namespace Votyra.Core
         {
             _activeCounter--;
             if (_activeCounter <= 0)
-                Dispose();
+                Return();
         }
 
         public Area1f RangeZ { get; private set; }
@@ -65,13 +65,19 @@ namespace Votyra.Core
             }
         }
 
-        public void Dispose()
+        public void Return()
         {
             Image = null;
             Mask = null;
-            OnDispose?.Invoke(this);
+            OnReturn?.Invoke(this);
         }
 
-        public event Action<FrameData2i> OnDispose;
+        event Action<IPoolableFrameData> IPoolable<IPoolableFrameData>.OnReturn
+        {
+            add => OnReturn += value;
+            remove => OnReturn -= value;
+        }
+
+        public event Action<IPoolableFrameData2i> OnReturn;
     }
 }

@@ -11,9 +11,11 @@ namespace Votyra.Core.Pooling
     {
         private readonly object _lock=new object();
         private readonly Dictionary<TKey, LinkedList<TValue>> _dictionary = new Dictionary<TKey, LinkedList<TValue>>();
-
         private readonly Func<TKey, TValue> _factory;
 
+        public int PoolCount { get; private set; }
+        public int ActiveCount { get; private set; }
+        
         public PoolWithKey(Func<TKey, TValue> factory)
         {
             _factory = factory;
@@ -21,6 +23,7 @@ namespace Votyra.Core.Pooling
 
         public TValue Get(TKey key)
         {
+            ActiveCount++;
             lock (_lock)
             {
                 LinkedList<TValue> list;
@@ -37,19 +40,22 @@ namespace Votyra.Core.Pooling
                 }
                 else
                 {
+                    PoolCount--;
                     value = list.First.Value;
                     list.RemoveFirst();
                 }
 
-                value.OnDispose += Return;
+                value.OnReturn += Return;
                 return value;
             }
         }
 
         private void Return(TValue value)
         {
+            ActiveCount--;
+            PoolCount++;
             var key = value.Key;
-            value.OnDispose -= Return;
+            value.OnReturn -= Return;
             lock (_lock)
             {
                 LinkedList<TValue> list;
@@ -62,5 +68,6 @@ namespace Votyra.Core.Pooling
                 list.AddFirst(value);
             }
         }
+
     }
 }

@@ -2,7 +2,7 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {
-    public interface ITerrainMeshPool : IPool<IPooledTerrainMesh, int>
+    public interface IFrameData2iPool : IPool<IPoolableFrameData2i>
     {
     }
 }

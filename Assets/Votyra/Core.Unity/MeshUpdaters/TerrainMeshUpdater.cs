@@ -5,22 +5,23 @@ using UnityEngine.Rendering;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.TerrainMeshes;
+using Votyra.Core.Unity;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.MeshUpdaters
 {
     public static class TerrainMeshUpdater
     {
-        public static void SetUnityMesh(this ITerrainMesh triangleMesh, GameObject unityData)
+        public static void SetUnityMesh(this ITerrainMesh triangleMesh, ITerrainGameObject unityData)
         {
-            var meshFilter = unityData.GetComponent<MeshFilter>();
+            var meshFilter = unityData.MeshFilter;
             SetUnityMesh(triangleMesh, meshFilter.sharedMesh);
 
-            var meshCollider = unityData.GetComponent<MeshCollider>();
+            var meshCollider = unityData.MeshCollider;
             if (meshCollider != null)
                 meshCollider.sharedMesh = meshFilter.sharedMesh;
 
-            var boxCollider = unityData.GetComponent<BoxCollider>();
+            var boxCollider = unityData.BoxCollider;
             if (boxCollider != null)
                 SetBoxCollider(triangleMesh, boxCollider);
         }

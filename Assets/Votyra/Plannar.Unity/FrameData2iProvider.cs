@@ -22,12 +22,12 @@ namespace Votyra.Plannar
 
         private Matrix4x4f _previousCameraMatrix;
 
-        private Pool<FrameData2i> _pool=new Pool<FrameData2i>(()=>new FrameData2i());
+        private IFrameData2iPool _pool ;
 
         private readonly Plane[] _planesUnity = new Plane[6];
         private readonly Vector3[] _frustumCornersUnity = new Vector3[4];
         [Inject]
-        public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [InjectOptional] IMask2eProvider maskProvider, [Inject(Id = "root")] GameObject root)
+        public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [InjectOptional] IMask2eProvider maskProvider, [Inject(Id = "root")] GameObject root, IFrameData2iPool pool)
         {
             _image2fPostProcessor = image2FPostProcessor;
             _imageProvider = imageProvider;
@@ -35,6 +35,7 @@ namespace Votyra.Plannar
             _interpolationConfig = interpolationConfig;
             _maskProvider = maskProvider;
             _root = root;
+            _pool = pool;
             _meshTopologyDistance = _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
         }
 
@@ -60,18 +61,11 @@ namespace Votyra.Plannar
 
         private IFrameData2i GetCurrentFrameData(bool computedOnce)
         {
-            var frameData = _pool.Get();
             
             var camera = CameraUtils.MainCamera;
             var image = _imageProvider.CreateImage();
 
-            var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
-            GeometryUtility.CalculateFrustumPlanes(localToProjection, _planesUnity);
-            for (int i = 0; i < 6; i++)
-            {
-                frameData.CameraPlanes[i] = _planesUnity[i]
-                    .ToPlane3f();
-            }
+        
 
             var cameraLocalToWorldMatrix = camera.transform.localToWorldMatrix.ToMatrix4x4f();
             if (computedOnce && cameraLocalToWorldMatrix == _previousCameraMatrix && (image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero)
@@ -79,6 +73,17 @@ namespace Votyra.Plannar
 
             _previousCameraMatrix = cameraLocalToWorldMatrix;
 
+
+            var frameData = _pool.Get();
+            var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
+            GeometryUtility.CalculateFrustumPlanes(localToProjection, _planesUnity);
+            for (int i = 0; i < 6; i++)
+            {
+                frameData.CameraPlanes[i] = _planesUnity[i]
+                    .ToPlane3f();
+            }
+            
+            
             var container = _root.gameObject;
 
             image = _image2fPostProcessor?.PostProcess(image) ?? image;

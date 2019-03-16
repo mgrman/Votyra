@@ -107,12 +107,12 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        public void Dispose()
+        public void Return()
         {
-            OnDispose?.Invoke(this);
+            OnReturn?.Invoke(this);
         }
 
-        public event Action<IPooledTerrainMesh> OnDispose;
+        public event Action<IPooledTerrainMesh> OnReturn;
 
         int IPoolable<IPooledTerrainMesh, int>.Key => TriangleCapacity;
     }

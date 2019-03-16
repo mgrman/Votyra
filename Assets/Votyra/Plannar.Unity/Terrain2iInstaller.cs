@@ -141,6 +141,12 @@ namespace Votyra.Plannar.Unity
                     return interpolationConfig.DynamicMeshes;
                 });
 
+            Container.BindInterfacesAndSelfTo<TerrainGameObjectPool>()
+                .AsSingle();
+            
+            Container.BindInterfacesAndSelfTo<FrameData2iPool>()
+                .AsSingle();
+
             Container.BindInterfacesAndSelfTo<FrameData2iProvider>()
                 .AsSingle();
 
@@ -154,6 +160,11 @@ namespace Votyra.Plannar.Unity
                     return factory;
                 })
                 .AsSingle();
+
+            Container.BindInterfacesAndSelfTo<PoolStats>()
+                .FromNewComponentOn(this.gameObject)
+                .AsSingle()
+                .NonLazy();
         }
 
         private GameObject CreateNewGameObject(GameObject root, ITerrainConfig terrainConfig, IMaterialConfig materialConfig)

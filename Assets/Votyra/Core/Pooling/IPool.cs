@@ -1,8 +1,9 @@
 using System;
+using UnityEngine;
 
 namespace Votyra.Core.Pooling
 {
-    public interface IPool<out TValue, in TKey> where TKey : struct
+    public interface IPool<out TValue, in TKey> : IPool where TKey : struct
         where TValue : IPoolable<TValue, TKey>
     {
         TValue Get(TKey arg);
@@ -15,15 +16,21 @@ namespace Votyra.Core.Pooling
     }
 
 
-    public interface IPool<out TValue> 
-        where TValue : IPoolable<TValue>
+    public interface IPool<out TValue> : IPool where TValue : IPoolable<TValue>
     {
         TValue Get();
     }
 
-    public interface IPoolable<out TValue> : IDisposable
+    public interface IPoolable<out TValue>
         where TValue : IPoolable<TValue>
     {
-        event Action<TValue> OnDispose;
+        void Return();
+        event Action<TValue> OnReturn;
+    }
+
+    public interface IPool
+    {
+        int PoolCount { get; }
+        int ActiveCount { get; }
     }
 }

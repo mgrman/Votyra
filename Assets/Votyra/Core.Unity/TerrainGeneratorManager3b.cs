@@ -14,6 +14,7 @@ using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
 using Votyra.Core.TerrainGenerators;
 using Votyra.Core.TerrainMeshes;
+using Votyra.Core.Unity;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core
@@ -148,7 +149,7 @@ namespace Votyra.Core
                                     if (unityData == null)
                                         unityData = _gameObjectFactory();
 
-                                    triangleMesh.SetUnityMesh(unityData);
+                                    triangleMesh.SetUnityMesh(new TerrainGameObject(unityData));
                                     _meshFilters[group] = unityData;
                                 }
 
