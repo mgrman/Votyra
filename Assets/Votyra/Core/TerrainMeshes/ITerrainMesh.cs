@@ -7,11 +7,11 @@ namespace Votyra.Core.TerrainMeshes
 {
     public interface ITerrainMesh 
     {
-        int VertexCount { get; }
+        uint VertexCount { get; }
 
-        int TriangleCapacity { get; }
+        uint TriangleCapacity { get; }
 
-        int TriangleCount { get; }
+        uint TriangleCount { get; }
 
         IReadOnlyList<Vector3f> Vertices { get; }
         IReadOnlyList<Vector3f> Normals { get; }

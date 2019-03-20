@@ -124,7 +124,7 @@ namespace Votyra.Core.MeshUpdaters
             collider.size = triangleMesh.MeshBounds.Size.ToVector3();
         }
 
-        private static void SetMeshFormat(Mesh mesh, int vertexCount)
+        private static void SetMeshFormat(Mesh mesh, uint vertexCount)
         {
             if (vertexCount > 65000 && mesh.indexFormat != IndexFormat.UInt32)
                 mesh.indexFormat = IndexFormat.UInt32;

@@ -22,10 +22,15 @@ namespace Votyra.Plannar
 
         private Matrix4x4f _previousCameraMatrix;
 
-        private IFrameData2iPool _pool ;
+        private IFrameData2iPool _pool;
 
         private readonly Plane[] _planesUnity = new Plane[6];
         private readonly Vector3[] _frustumCornersUnity = new Vector3[4];
+
+        private byte _frameDataSubscriberCount = 0;
+
+        private event Action<ArcResource<IFrameData2i>> _frameData;
+
         [Inject]
         public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [InjectOptional] IMask2eProvider maskProvider, [Inject(Id = "root")] GameObject root, IFrameData2iPool pool)
         {
@@ -39,14 +44,23 @@ namespace Votyra.Plannar
             _meshTopologyDistance = _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
         }
 
-        public event Action<IFrameData2i> FrameData
+        public event Action<ArcResource<IFrameData2i>> FrameData
         {
             add
             {
                 _frameData += value;
-                value.Invoke(GetCurrentFrameData(false));
+                _frameDataSubscriberCount++;
+
+                var data = GetCurrentFrameData(false);
+                if (data.Value == null)
+                    return;
+                value.Invoke(data);
             }
-            remove => _frameData -= value;
+            remove
+            {
+                _frameData -= value;
+                _frameDataSubscriberCount--;
+            }
         }
 
         public void Tick()
@@ -54,18 +68,18 @@ namespace Votyra.Plannar
             var data = GetCurrentFrameData(true);
             if (data == null)
                 return;
+            
+            for (int i = 1; i < _frameDataSubscriberCount; i++)
+            {
+                data.Activate();
+            }
             _frameData?.Invoke(data);
         }
 
-        private event Action<IFrameData2i> _frameData;
-
-        private IFrameData2i GetCurrentFrameData(bool computedOnce)
+        private ArcResource<IFrameData2i> GetCurrentFrameData(bool computedOnce)
         {
-            
             var camera = CameraUtils.MainCamera;
             var image = _imageProvider.CreateImage();
-
-        
 
             var cameraLocalToWorldMatrix = camera.transform.localToWorldMatrix.ToMatrix4x4f();
             if (computedOnce && cameraLocalToWorldMatrix == _previousCameraMatrix && (image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero)
@@ -73,8 +87,8 @@ namespace Votyra.Plannar
 
             _previousCameraMatrix = cameraLocalToWorldMatrix;
 
-
-            var frameData = _pool.Get();
+            var frameDataContainer = _pool.Get();
+            var frameData = frameDataContainer.Value as IPoolableFrameData2i;
             var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
             GeometryUtility.CalculateFrustumPlanes(localToProjection, _planesUnity);
             for (int i = 0; i < 6; i++)
@@ -82,8 +96,7 @@ namespace Votyra.Plannar
                 frameData.CameraPlanes[i] = _planesUnity[i]
                     .ToPlane3f();
             }
-            
-            
+
             var container = _root.gameObject;
 
             image = _image2fPostProcessor?.PostProcess(image) ?? image;
@@ -95,7 +108,8 @@ namespace Votyra.Plannar
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, _frustumCornersUnity);
             for (var i = 0; i < _frustumCornersUnity.Length; i++)
             {
-                frameData.CameraFrustumCorners[i] = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(_frustumCornersUnity[i].ToVector3f()));
+                frameData.CameraFrustumCorners[i] = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(_frustumCornersUnity[i]
+                    .ToVector3f()));
             }
 
             var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
@@ -105,14 +119,15 @@ namespace Votyra.Plannar
                 .ToVector3f();
             var cameraDirection = _root.transform.InverseTransformDirection(camera.transform.forward)
                 .ToVector3f();
-            
+
             frameData.CameraRay = new Ray3f(cameraPosition, cameraDirection);
             frameData.Image = image;
             frameData.Mask = mask;
             frameData.InvalidatedArea = invalidatedArea;
             frameData.CellInGroupCount = _terrainConfig.CellInGroupCount.XY();
             frameData.MeshSubdivision = _interpolationConfig.MeshSubdivision;
-            return frameData;
+
+            return frameDataContainer;
         }
     }
 }

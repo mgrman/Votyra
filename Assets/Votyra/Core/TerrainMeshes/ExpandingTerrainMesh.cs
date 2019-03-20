@@ -5,7 +5,7 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core.TerrainMeshes
 {
-    public class ExpandingTerrainMesh : IPooledTerrainMesh
+    public class ExpandingTerrainMesh : ITerrainMesh
     {
         private readonly Func<Vector3f, Vector3f> _vertexPostProcessor;
         private readonly Func<Vector2f, Vector2f> _uVAdjustor;
@@ -22,9 +22,9 @@ namespace Votyra.Core.TerrainMeshes
         public IReadOnlyList<Vector3f> Normals => _normals;
         public IReadOnlyList<Vector2f> UV => _uv;
         public IReadOnlyList<int> Indices => _indices;
-        public int TriangleCapacity => _vertices.Capacity / 3;
-        public int TriangleCount => VertexCount / 3;
-        public int VertexCount => _vertices.Count;
+        public uint TriangleCapacity => (uint)_vertices.Capacity / 3;
+        public uint TriangleCount => VertexCount / 3;
+        public uint VertexCount => (uint) _vertices.Count;
 
         public ExpandingTerrainMesh(Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
@@ -76,17 +76,17 @@ namespace Votyra.Core.TerrainMeshes
             _maxZ = Math.Max(_maxZ, posB.Z);
             _maxZ = Math.Max(_maxZ, posC.Z);
 
-            _indices.Add(VertexCount);
+            _indices.Add((int)VertexCount);
             _vertices.Add(posA);
             _uv.Add(uvA);
             _normals.Add(normal);
 
-            _indices.Add(VertexCount);
+            _indices.Add((int) VertexCount);
             _vertices.Add(posB);
             _uv.Add(uvB);
             _normals.Add(normal);
 
-            _indices.Add(VertexCount);
+            _indices.Add((int) VertexCount);
             _vertices.Add(posC);
             _uv.Add(uvC);
             _normals.Add(normal);
@@ -106,14 +106,5 @@ namespace Votyra.Core.TerrainMeshes
                 yield return new Triangle3f(a, b, c);
             }
         }
-
-        public void Return()
-        {
-            OnReturn?.Invoke(this);
-        }
-
-        public event Action<IPooledTerrainMesh> OnReturn;
-
-        int IPoolable<IPooledTerrainMesh, int>.Key => TriangleCapacity;
     }
 }

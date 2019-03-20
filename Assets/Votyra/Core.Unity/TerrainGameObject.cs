@@ -8,28 +8,28 @@ namespace Votyra.Core.Unity
 {
     public class TerrainGameObject : ITerrainGameObject
     {
-        public TerrainGameObject(GameObject go)
+        private Func<GameObject> _factory;
+        public TerrainGameObject(Func<GameObject> factory)
         {
-            GameObject = go;
-            MeshFilter = go.GetComponent<MeshFilter>();
-            MeshCollider = go.GetComponent<MeshCollider>();
-            BoxCollider = go.GetComponent<BoxCollider>();
+            _factory = factory;
         }
 
-        public GameObject GameObject { get; }
-        public MeshFilter MeshFilter { get; }
-        public MeshCollider MeshCollider { get; }
-        public BoxCollider BoxCollider { get; }
-
-        public void Return()
+        public void InitializeOnMainThread()
         {
-            MainThreadUtils.RunOnMainThreadAsync(() =>
+            if (GameObject != null)
             {
-                GameObject.SetActive(false);
-            });
-            OnReturn?.Invoke(this);
+                return;
+            }
+            GameObject = _factory();
+            MeshFilter = GameObject.GetComponent<MeshFilter>();
+            MeshCollider = GameObject.GetComponent<MeshCollider>();
+            BoxCollider = GameObject.GetComponent<BoxCollider>();
         }
 
-        public event Action<ITerrainGameObject> OnReturn;
+        public GameObject GameObject { get; private set; }
+        public MeshFilter MeshFilter { get; private set; }
+        public MeshCollider MeshCollider { get; private set; }
+        public BoxCollider BoxCollider { get; private set; }
+
     }
 }

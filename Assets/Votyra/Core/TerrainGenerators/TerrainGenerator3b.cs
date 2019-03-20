@@ -3,6 +3,7 @@ using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators
 {
@@ -19,7 +20,7 @@ namespace Votyra.Core.TerrainGenerators
             _cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        public void Generate(Vector3i group, IImage3b image, IPooledTerrainMesh pooledTerrainMesh)
+        public void Generate(Vector3i group, IImage3b image, ITerrainMesh pooledTerrainMesh)
         {
             using (_profiler.Start("init"))
             {

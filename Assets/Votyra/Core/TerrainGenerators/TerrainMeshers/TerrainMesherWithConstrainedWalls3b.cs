@@ -48,7 +48,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         private readonly IImageSampler3 _imageSampler;
         protected Vector3i groupPosition;
         protected Vector3i groupSize;
-        protected IPooledTerrainMesh pooledMesh;
+        protected ITerrainMesh pooledMesh;
 
         public TerrainMesherWithConstrainedWalls3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
@@ -87,7 +87,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             }
         }
 
-        public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
+        public void InitializeGroup(Vector3i group, ITerrainMesh cleanPooledMesh)
         {
             var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount)
                 .ToArea3f();

@@ -20,7 +20,7 @@ namespace Votyra.Core.Pooling
 
         private static Func<ITerrainGameObject> CreateMeshFunc(Func<GameObject> gameObjectFactory)
         {
-            return () => new TerrainGameObject(gameObjectFactory());
+            return () => new TerrainGameObject(gameObjectFactory);
         }
     }
 }

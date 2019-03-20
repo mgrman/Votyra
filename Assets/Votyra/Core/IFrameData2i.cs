@@ -4,7 +4,7 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core
 {
-    public interface IPoolableFrameData2i : IFrameData2i, IPoolableFrameData, IPoolable<IPoolableFrameData2i>
+    public interface IPoolableFrameData2i : IFrameData2i, IPoolableFrameData
     {
         IImage2f Image { get; set; }
         IMask2e Mask { get; set; }

@@ -47,7 +47,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
                 .Returns<Vector3i>(pos => cube[pos]);
 
             var triangles = new List<Triangle3i>();
-            var meshMock = new Mock<IPooledTerrainMesh>();
+            var meshMock = new Mock<ITerrainMesh>();
             meshMock.Setup(o => o.AddTriangle(It.IsAny<Vector3f>(), It.IsAny<Vector3f>(), It.IsAny<Vector3f>()))
                 .Callback<Vector3f, Vector3f, Vector3f>((a, b, c) =>
                 {

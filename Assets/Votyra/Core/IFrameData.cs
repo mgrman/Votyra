@@ -4,7 +4,7 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core
 {
-    public interface IPoolableFrameData : IFrameData, IPoolable<IPoolableFrameData>
+    public interface IPoolableFrameData : IFrameData
     {
         Ray3f CameraRay { get; set; }
 
@@ -17,9 +17,5 @@ namespace Votyra.Core
         Ray3f CameraRay { get; }
         IReadOnlyList<Plane3f> CameraPlanes { get; }
         IReadOnlyList<Vector3f> CameraFrustumCorners { get; }
-
-        void Activate();
-
-        void Deactivate();
     }
 }

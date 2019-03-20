@@ -14,6 +14,10 @@ namespace Votyra.Core
         private Dictionary<GameObject, IEnumerable<ConfigItem>> _cachedConfigs;
         private TerrainDataController _controller;
 
+#if UNITY_EDITOR
+        public bool showTerrainGui;
+#endif
+        
         public static IEnumerable<Type> GetConfigTypes(GameObject algorithPrefab)
         {
             var installers = algorithPrefab.GetComponentInChildren<GameObjectContext>()
@@ -95,6 +99,13 @@ namespace Votyra.Core
 
         private void OnGUI()
         {
+#if UNITY_EDITOR
+            if (!showTerrainGui)
+            {
+                return;
+            }
+#endif 
+
             var anyChange = false;
             GUILayout.Label("Terrain algorithms:");
             for (var index = 0; index < _controller._availableTerrainAlgorithms.Length; index++)

@@ -79,10 +79,10 @@ namespace Votyra.Core
         {
             context?.Activate();
             GroupActions<Vector3i> groupActions = null;
-            IReadOnlyDictionary<Vector3i, IPooledTerrainMesh> results = null;
+            IReadOnlyDictionary<Vector3i, ITerrainMesh> results = null;
             try
             {
-                Func<IReadOnlyDictionary<Vector3i, IPooledTerrainMesh>> computeAction = () =>
+                Func<IReadOnlyDictionary<Vector3i, ITerrainMesh>> computeAction = () =>
                 {
                     using (_profiler.Start("Creating visible groups"))
                     {
@@ -95,11 +95,11 @@ namespace Votyra.Core
                     if (toRecompute.Any())
                         using (_profiler.Start("TerrainMeshGenerator"))
                         {
-                            var meshes = new Dictionary<Vector3i, IPooledTerrainMesh>();
+                            var meshes = new Dictionary<Vector3i, ITerrainMesh>();
 
                             foreach (var group in toRecompute)
                             {
-                                var mesh = _terrainMeshPool.Get(0);
+                                var mesh = _terrainMeshPool.GetRaw(0);
                                 _terrainGenerator.Generate(group, context.Image, mesh);
                                 meshes[group] = mesh;
                             }
@@ -149,7 +149,7 @@ namespace Votyra.Core
                                     if (unityData == null)
                                         unityData = _gameObjectFactory();
 
-                                    triangleMesh.SetUnityMesh(new TerrainGameObject(unityData));
+                                    triangleMesh.SetUnityMesh(new TerrainGameObject(()=>unityData));
                                     _meshFilters[group] = unityData;
                                 }
 

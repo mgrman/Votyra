@@ -6,30 +6,32 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {
-    public class PoolWithKey<TValue, TKey> : IPool<TValue, TKey> where TKey : struct
-        where TValue : IPoolable<TValue, TKey>
+    public class PoolWithImplicitKey<TKey, TValue> : IRawPool<TKey, TValue>
     {
         private readonly object _lock=new object();
-        private readonly Dictionary<TKey, LinkedList<TValue>> _dictionary = new Dictionary<TKey, LinkedList<TValue>>();
+        private readonly Dictionary<TKey, List<TValue>> _dictionary = new Dictionary<TKey, List<TValue>>();
         private readonly Func<TKey, TValue> _factory;
+        private readonly Func<TValue, TKey> _getKey;
+
 
         public int PoolCount { get; private set; }
         public int ActiveCount { get; private set; }
         
-        public PoolWithKey(Func<TKey, TValue> factory)
+        public PoolWithImplicitKey(Func<TKey, TValue> factory,Func<TValue,TKey> getKey)
         {
             _factory = factory;
+            _getKey = getKey;
         }
-
-        public TValue Get(TKey key)
+        
+        public TValue GetRaw(TKey key)
         {
             ActiveCount++;
             lock (_lock)
             {
-                LinkedList<TValue> list;
+                List<TValue> list;
                 if (!_dictionary.TryGetValue(key, out list))
                 {
-                    list = new LinkedList<TValue>();
+                    list = new List<TValue>();
                     _dictionary[key] = list;
                 }
 
@@ -41,31 +43,29 @@ namespace Votyra.Core.Pooling
                 else
                 {
                     PoolCount--;
-                    value = list.First.Value;
-                    list.RemoveFirst();
+                    value = list[list.Count - 1];
+                    list.RemoveAt(list.Count - 1);
                 }
 
-                value.OnReturn += Return;
                 return value;
             }
         }
 
-        private void Return(TValue value)
+        public void ReturnRaw(TValue value)
         {
             ActiveCount--;
             PoolCount++;
-            var key = value.Key;
-            value.OnReturn -= Return;
+            var key = _getKey(value);
             lock (_lock)
             {
-                LinkedList<TValue> list;
+                List<TValue> list;
                 if (!_dictionary.TryGetValue(key, out list))
                 {
-                    list = new LinkedList<TValue>();
+                    list = new List<TValue>();
                     _dictionary[key] = list;
                 }
 
-                list.AddFirst(value);
+                list.Add(value);
             }
         }
 

@@ -8,7 +8,6 @@ namespace Votyra.Core
 {
     public class FrameData2i :IPoolableFrameData2i
     {
-        private int _activeCounter;
         private IImage2f _image;
         private IMask2e _mask;
 
@@ -25,17 +24,6 @@ namespace Votyra.Core
         IReadOnlyList<Plane3f> IFrameData.CameraPlanes => CameraPlanes;
         IReadOnlyList<Vector3f> IFrameData.CameraFrustumCorners => CameraFrustumCorners;
 
-        public void Activate()
-        {
-            _activeCounter++;
-        }
-
-        public void Deactivate()
-        {
-            _activeCounter--;
-            if (_activeCounter <= 0)
-                Return();
-        }
 
         public Area1f RangeZ { get; private set; }
         public Range2i InvalidatedArea { get; set; }
@@ -64,20 +52,5 @@ namespace Votyra.Core
                 (_mask as IInitializableImage)?.StartUsing();
             }
         }
-
-        public void Return()
-        {
-            Image = null;
-            Mask = null;
-            OnReturn?.Invoke(this);
-        }
-
-        event Action<IPoolableFrameData> IPoolable<IPoolableFrameData>.OnReturn
-        {
-            add => OnReturn += value;
-            remove => OnReturn -= value;
-        }
-
-        public event Action<IPoolableFrameData2i> OnReturn;
     }
 }

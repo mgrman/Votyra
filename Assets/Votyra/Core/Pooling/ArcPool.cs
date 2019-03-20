@@ -6,43 +6,43 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {
-    public class Pool<TValue> : IRawPool<TValue>
+    public class ArcPool<TValue> : IArcPool<TValue>
     {
         private readonly object _lock=new object();
-        private readonly List<TValue> _list = new List<TValue>();
+        private readonly List<ArcResource<TValue>> _list = new List<ArcResource<TValue>>();
         private readonly Func<TValue> _factory;
-
 
         public int PoolCount { get; private set; }
         public int ActiveCount { get; private set; }
         
-        public Pool(Func<TValue> factory)
+        public ArcPool(Func<TValue> factory)
         {
             _factory = factory;
         }
 
-        public TValue GetRaw()
+        public ArcResource<TValue> Get()
         {
             ActiveCount++;
             lock (_lock)
             {
-                TValue value;
+                ArcResource<TValue> value;
                 if (_list.Count == 0)
                 {
-                    value = _factory();
+                    value = new ArcResource<TValue>( _factory(),ReturnRaw);
                 }
                 else
                 {
                     PoolCount--;
-                    value = _list[_list.Count - 1];
-                    _list.RemoveAt(_list.Count - 1);
+                    value = _list[_list.Count-1];
+                    _list.RemoveAt(_list.Count-1);
                 }
 
+                value.Activate();
                 return value;
             }
         }
 
-        public void ReturnRaw(TValue value)
+        public void ReturnRaw(ArcResource<TValue> value)
         {
             ActiveCount--;
             PoolCount++;

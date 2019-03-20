@@ -9,14 +9,14 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {
-    public class FrameData2iPool : Pool<IPoolableFrameData2i>, IFrameData2iPool
+    public class FrameData2iPool : ArcPool<IFrameData2i>, IFrameData2iPool
     {
         public FrameData2iPool()
             : base(Create)
         {
         }
 
-        private static IPoolableFrameData2i Create()
+        private static IFrameData2i Create()
         {
             return new FrameData2i();
         }

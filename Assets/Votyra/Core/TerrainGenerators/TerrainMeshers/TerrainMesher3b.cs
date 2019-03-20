@@ -22,7 +22,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         private readonly IImageSampler3 _imageSampler;
         protected Vector3i groupPosition;
         protected Vector3i groupSize;
-        protected IPooledTerrainMesh pooledMesh;
+        protected ITerrainMesh pooledMesh;
 
         public TerrainMesher3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
@@ -55,7 +55,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             // or maybe postProcessing?
         }
 
-        public void InitializeGroup(Vector3i group, IPooledTerrainMesh cleanPooledMesh)
+        public void InitializeGroup(Vector3i group, ITerrainMesh cleanPooledMesh)
         {
             var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount)
                 .ToArea3f();
@@ -66,7 +66,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             pooledMesh.Reset(Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f()));
         }
 
-        public IPooledTerrainMesh GetResultingMesh() => pooledMesh;
+        public ITerrainMesh GetResultingMesh() => pooledMesh;
 
         private static IReadOnlyCollection<Triangle3f> ChooseTrianglesForCell(SampledData3b data)
         {

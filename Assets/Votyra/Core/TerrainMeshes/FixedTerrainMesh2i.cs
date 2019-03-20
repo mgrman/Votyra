@@ -7,7 +7,7 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core.TerrainMeshes
 {
-    public class FixedTerrainMesh2i : IPooledTerrainMesh
+    public class FixedTerrainMesh2i : ITerrainMesh
     {
         private readonly int[] _indices;
         private readonly Vector3f[] _normals;
@@ -25,11 +25,11 @@ namespace Votyra.Core.TerrainMeshes
         public IReadOnlyList<Vector3f> Normals => _normals;
         public IReadOnlyList<Vector2f> UV => _uv;
         public IReadOnlyList<int> Indices => _indices;
-        public int TriangleCount => VertexCount / 3;
-        public int VertexCount => _vertices.Length;
-        public int TriangleCapacity => TriangleCount;
+        public uint TriangleCount => VertexCount / 3;
+        public uint VertexCount => (uint)_vertices.Length;
+        public uint TriangleCapacity => TriangleCount;
 
-        public FixedTerrainMesh2i(int triangleCapacity, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uVAdjustor)
+        public FixedTerrainMesh2i(uint triangleCapacity, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uVAdjustor)
         {
             _vertexPostProcessor = vertexPostProcessor;
             _uVAdjustor = uVAdjustor;
@@ -123,14 +123,5 @@ namespace Votyra.Core.TerrainMeshes
                 yield return new Triangle3f(a, b, c);
             }
         }
-
-        public void Return()
-        {
-            OnReturn?.Invoke(this);
-        }
-
-        public event Action<IPooledTerrainMesh> OnReturn;
-
-        int IPoolable<IPooledTerrainMesh, int>.Key => TriangleCapacity;
     }
 }

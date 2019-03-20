@@ -10,8 +10,19 @@ namespace Votyra.Core.Unity.Painting
         [Inject]
         protected IPaintingModel _paintingModel;
 
+#if UNITY_EDITOR
+        public bool showPaintingGui;
+#endif
         protected void OnGUI()
         {
+
+#if UNITY_EDITOR
+            if (!showPaintingGui)
+            {
+                return;
+            }
+#endif 
+            
             GUILayout.BeginArea(new Rect(Screen.width - 200, 0, 200, Screen.height));
 
             var newSelection = _paintingModel.SelectedPaintCommand;
