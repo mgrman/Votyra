@@ -148,8 +148,10 @@ namespace Votyra.Core.Models
 
         public {{type}} UnionWith({{type}} that)
         {
-            if (Size == {{vectorIntType}}.Zero || that.Size == {{vectorIntType}}.Zero)
-                return Zero;
+            if (Size == {{vectorIntType}}.Zero)
+                return that;
+            if (that.Size == {{vectorIntType}}.Zero)
+                return this;
 
             var min = {{vectorIntType}}Utils.Min(Min, that.Min);
             var max = {{vectorIntType}}Utils.Max(Max, that.Max);

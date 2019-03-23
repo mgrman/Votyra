@@ -1,12 +1,16 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using UnityEngine;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.GroupSelectors
 {
-    public static class GroupsByCameraVisibilitySelector2i
+    public class GroupsByCameraVisibilitySelector2i : IGroupsByCameraVisibilitySelector2i
     {
-        public static void UpdateGroupsVisibility(this IFrameData2i options, Vector2i cellInGroupCount, HashSet<Vector2i> groupsToRecompute, Action<Vector2i> onAdd, Action<Vector2i> onRemove)
+        private Range2i _previousArea=Range2i.Zero;
+        
+        public void UpdateGroupsVisibility<T>( IFrameData2i options, Vector2i cellInGroupCount, IDictionary<Vector2i, T> existingGroups, Func<Vector2i,T> create, Action<T> dispose)
         {
             if (options == null)
                 return;
@@ -29,35 +33,32 @@ namespace Votyra.Core.GroupSelectors
             var minZ = options.RangeZ.Min;
             var boundsSize = new Vector2f(cellInGroupCount.X, cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
 
-            bool HandleRemoval(Vector2i @group)
+
+            var areaToCheck = cameraBoundsGroups.UnionWith(_previousArea);
+            _previousArea = cameraBoundsGroups;
+            for (var ix = areaToCheck.Min.X; ix < areaToCheck.Max.X; ix++)
             {
-                var groupBoundsMin = (@group * cellInGroupCount).ToVector2f()
-                    .ToVector3f(minZ);
-                var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
-                var isInside = planes.TestPlanesAABB(groupBounds);
-                if (isInside)
-                    return false;
-
-                onRemove.Invoke(@group);
-                return true;
-            }
-
-            groupsToRecompute.RemoveWhere(HandleRemoval);
-
-            for (var ix = cameraBoundsGroups.Min.X; ix < cameraBoundsGroups.Max.X; ix++)
-            {
-                for (var iy = cameraBoundsGroups.Min.Y; iy < cameraBoundsGroups.Max.Y; iy++)
+                for (var iy = areaToCheck.Min.Y; iy < areaToCheck.Max.Y; iy++)
                 {
                     var group = new Vector2i(ix, iy);
                     var groupBoundsMin = (group * cellInGroupCount).ToVector2f()
                         .ToVector3f(minZ);
                     var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
-                    var isInside = planes.TestPlanesAABB(groupBounds);
-                    if (!isInside)
-                        continue;
+                    var isVisible = planes.TestPlanesAABB(groupBounds);
 
-                    if (groupsToRecompute.Add(group))
-                        onAdd.Invoke(group);
+                    T existingGroup;
+                    var isExistingGroup = existingGroups.TryGetValue(group,out existingGroup);
+                    if (!isVisible && isExistingGroup)
+                    {
+                        existingGroups.Remove(group);
+                        dispose.Invoke(existingGroup);
+                    }
+                    else if (isVisible && !isExistingGroup)
+                    {
+                       var value = create(group);
+                       existingGroups.Add(group, value);
+                       
+                    }
                 }
             }
         }

@@ -127,8 +127,10 @@ namespace Votyra.Core.Models
 
         public Range4i UnionWith(Range4i that)
         {
-            if (Size == Vector4i.Zero || that.Size == Vector4i.Zero)
-                return Zero;
+            if (Size == Vector4i.Zero)
+                return that;
+            if (that.Size == Vector4i.Zero)
+                return this;
 
             var min = Vector4iUtils.Min(Min, that.Min);
             var max = Vector4iUtils.Max(Max, that.Max);

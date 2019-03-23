@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Votyra.Core;
 using Votyra.Core.Behaviours;
+using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
@@ -21,7 +22,7 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager2i(null, null, null, null, null, null, null,null);
+            new TerrainGeneratorManager2i(null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -101,6 +102,9 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
 
+            Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2i>()
+                .AsSingle();
+
             Container.BindInterfacesAndSelfTo<BicubicTerrainMesher2f>()
                 .AsSingle()
                 .When(c =>
@@ -143,8 +147,11 @@ namespace Votyra.Plannar.Unity
 
             Container.BindInterfacesAndSelfTo<TerrainGameObjectPool>()
                 .AsSingle();
-            
+
             Container.BindInterfacesAndSelfTo<FrameData2iPool>()
+                .AsSingle();
+
+            Container.BindInterfacesAndSelfTo<TerrainGroupGeneratorManagerPool>()
                 .AsSingle();
 
             Container.BindInterfacesAndSelfTo<FrameData2iProvider>()
