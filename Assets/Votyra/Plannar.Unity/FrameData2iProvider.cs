@@ -52,7 +52,7 @@ namespace Votyra.Plannar
                 _frameDataSubscriberCount++;
 
                 var data = GetCurrentFrameData(false);
-                if (data.Value == null)
+                if (data == null)
                     return;
                 value.Invoke(data);
             }

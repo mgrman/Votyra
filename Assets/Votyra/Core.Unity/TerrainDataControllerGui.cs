@@ -96,71 +96,71 @@ namespace Votyra.Core
                 _cachedConfigs[algorithm] = items;
             }
         }
-
-        private void OnGUI()
-        {
-#if UNITY_EDITOR
-            if (!showTerrainGui)
-            {
-                return;
-            }
-#endif 
-
-            var anyChange = false;
-            GUILayout.Label("Terrain algorithms:");
-            for (var index = 0; index < _controller._availableTerrainAlgorithms.Length; index++)
-            {
-                var terrainAlgorithm = _controller._availableTerrainAlgorithms[index];
-                var isSelected = index == _controller._activeTerrainAlgorithm;
-                isSelected = GUILayout.Toggle(isSelected, terrainAlgorithm.name);
-                if (isSelected)
-                {
-                    anyChange = anyChange || _controller._activeTerrainAlgorithm != index;
-                    _controller._activeTerrainAlgorithm = index;
-                }
-            }
-
-            if (_controller._activeTerrainAlgorithm < 0 || _controller._activeTerrainAlgorithm >= _controller._availableTerrainAlgorithms.Length)
-            {
-                _controller._activeTerrainAlgorithm = 0;
-                anyChange = true;
-            }
-
-            var activeAlgorith = _controller._availableTerrainAlgorithms[_controller._activeTerrainAlgorithm];
-            if (activeAlgorith != null)
-            {
-                var newConfigValues = new Lazy<List<ConfigItem>>(() => _controller.Config.ToList());
-                foreach (var configItem in _cachedConfigs[activeAlgorith])
-                {
-                    if (!IsSupported(configItem.Type))
-                        continue;
-
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
-                    var oldConfigItem = _controller.Config?.FirstOrDefault(o => o.Id == configItem.Id && o.Type == configItem.Type);
-
-                    var oldValue = oldConfigItem?.Value;
-                    var newValue = GetNewValue(configItem.Type, oldValue);
-                    var areEqual = newValue?.Equals(oldValue) ?? oldValue?.Equals(newValue) ?? true;
-                    if (!areEqual)
-                    {
-                        if (oldConfigItem != null)
-                            newConfigValues.Value.Remove(oldConfigItem);
-                        newConfigValues.Value.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
-                        anyChange = true;
-                    }
-
-                    GUILayout.EndHorizontal();
-                }
-
-                if (newConfigValues.IsValueCreated)
-                    _controller.Config = newConfigValues.Value.ToArray();
-            }
-
-            if (anyChange)
-                if (Application.isPlaying)
-                    _controller.SendMessage("OnValidate", null, SendMessageOptions.DontRequireReceiver);
-        }
+//
+//         private void OnGUI()
+//         {
+// #if UNITY_EDITOR
+//             if (!showTerrainGui)
+//             {
+//                 return;
+//             }
+// #endif 
+//
+//             var anyChange = false;
+//             GUILayout.Label("Terrain algorithms:");
+//             for (var index = 0; index < _controller._availableTerrainAlgorithms.Length; index++)
+//             {
+//                 var terrainAlgorithm = _controller._availableTerrainAlgorithms[index];
+//                 var isSelected = index == _controller._activeTerrainAlgorithm;
+//                 isSelected = GUILayout.Toggle(isSelected, terrainAlgorithm.name);
+//                 if (isSelected)
+//                 {
+//                     anyChange = anyChange || _controller._activeTerrainAlgorithm != index;
+//                     _controller._activeTerrainAlgorithm = index;
+//                 }
+//             }
+//
+//             if (_controller._activeTerrainAlgorithm < 0 || _controller._activeTerrainAlgorithm >= _controller._availableTerrainAlgorithms.Length)
+//             {
+//                 _controller._activeTerrainAlgorithm = 0;
+//                 anyChange = true;
+//             }
+//
+//             var activeAlgorith = _controller._availableTerrainAlgorithms[_controller._activeTerrainAlgorithm];
+//             if (activeAlgorith != null)
+//             {
+//                 var newConfigValues = new Lazy<List<ConfigItem>>(() => _controller.Config.ToList());
+//                 foreach (var configItem in _cachedConfigs[activeAlgorith])
+//                 {
+//                     if (!IsSupported(configItem.Type))
+//                         continue;
+//
+//                     GUILayout.BeginHorizontal();
+//                     GUILayout.Label($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
+//                     var oldConfigItem = _controller.Config?.FirstOrDefault(o => o.Id == configItem.Id && o.Type == configItem.Type);
+//
+//                     var oldValue = oldConfigItem?.Value;
+//                     var newValue = GetNewValue(configItem.Type, oldValue);
+//                     var areEqual = newValue?.Equals(oldValue) ?? oldValue?.Equals(newValue) ?? true;
+//                     if (!areEqual)
+//                     {
+//                         if (oldConfigItem != null)
+//                             newConfigValues.Value.Remove(oldConfigItem);
+//                         newConfigValues.Value.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
+//                         anyChange = true;
+//                     }
+//
+//                     GUILayout.EndHorizontal();
+//                 }
+//
+//                 if (newConfigValues.IsValueCreated)
+//                     _controller.Config = newConfigValues.Value.ToArray();
+//             }
+//
+//             if (anyChange)
+//                 if (Application.isPlaying)
+//                     _controller.SendMessage("OnValidate", null, SendMessageOptions.DontRequireReceiver);
+//         }
 
         private bool IsSupported(Type type)
         {

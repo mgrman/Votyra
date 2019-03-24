@@ -67,9 +67,6 @@ namespace Votyra.Core
         {
             _stopped = true;
             _updatedOnce = false;
-            var gameObject = TerrainGameObject;
-            if (gameObject.GameObject != null)
-                gameObject.GameObject.SetActive(false);
         }
 
         protected abstract void UpdateGroup(ArcResource<IFrameData2i> context);
@@ -87,12 +84,13 @@ namespace Votyra.Core
             {
                 return;
             }
-            if (_gameObjectPool.GameObject == null)
+
+            if (!_gameObjectPool.IsInitialized)
             {
-                _gameObjectPool.InitializeOnMainThread();
+                _gameObjectPool.Initialize();
             }
 
-            _gameObjectPool.GameObject.SetActive(true);
+            _gameObjectPool.SetActive(true);
 
             _pooledMesh.SetUnityMesh(_gameObjectPool);
         }

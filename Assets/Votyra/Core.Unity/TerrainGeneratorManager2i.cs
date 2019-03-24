@@ -11,6 +11,7 @@ using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Profiling;
+using Votyra.Core.Queueing;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
@@ -21,19 +22,21 @@ namespace Votyra.Core
     //TODO: move to floats
     public class TerrainGeneratorManager2i : IDisposable
     {
-        public readonly Dictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new Dictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
+        private readonly Dictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new Dictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
+        private readonly object _activeGroupsLock = new object();
 
         private readonly Vector2i _cellInGroupCount;
         private readonly IFrameDataProvider2i _frameDataProvider;
         private readonly int _meshTopologyDistance;
 
         private readonly CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
-        private readonly TaskFactory _taskFactory = new TaskFactory();
         private readonly ITerrainConfig _terrainConfig;
 
         private readonly IGroupsByCameraVisibilitySelector2i _groupsByCameraVisibilitySelector2I;
 
         private Task _waitForTask = Task.CompletedTask;
+
+        private TaskQueue<ArcResource<IFrameData2i>> _backgroundUpdateQueue;
 
         public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IFrameDataProvider2i frameDataProvider, ITerrainGroupGeneratorManagerPool managerPool, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector2I)
         {
@@ -56,9 +59,12 @@ namespace Votyra.Core
             };
 
             if (_terrainConfig.Async)
+            {
+                _backgroundUpdateQueue = new TaskQueue<ArcResource<IFrameData2i>>("Main task queue",(Action<ArcResource<IFrameData2i>>) UpdateTerrain);
                 _frameDataProvider.FrameData += UpdateTerrainInBackground;
+            }
             else
-                _frameDataProvider.FrameData += UpdateTerrainInForeground;
+            _frameDataProvider.FrameData += UpdateTerrainInForeground;
         }
 
         public void Dispose()
@@ -70,52 +76,56 @@ namespace Votyra.Core
             else
                 _frameDataProvider.FrameData -= UpdateTerrainInForeground;
 
-            foreach (var pair in _activeGroups)
+            lock (_activeGroupsLock)
             {
-                pair.Value.Stop();
+                foreach (var pair in _activeGroups)
+                {
+                    pair.Value.Stop();
+                }
             }
         }
 
-        public ITerrainMesh GetMeshForGroup(Vector2i group) =>
-            _activeGroups.TryGetValue(group)
-                ?.Mesh;
+        public ITerrainMesh GetMeshForGroup(Vector2i group)
+        {
+            lock (_activeGroupsLock)
+            {
+                return _activeGroups.TryGetValue(group)
+                    ?.Mesh;
+            }
+        }
 
         private void UpdateTerrainInForeground(ArcResource<IFrameData2i> context)
         {
-            UpdateTerrain(context);
+            try
+            {
+                UpdateTerrain(context);
+            }
+            finally
+            {
+                context.Dispose();
+            }
         }
 
         private void UpdateTerrainInBackground(ArcResource<IFrameData2i> context)
         {
-            if (!_waitForTask.IsCompleted)
-            {
-                context.Dispose();
-                return;
-            }
-
-            _waitForTask = _taskFactory.StartNew(UpdateTerrain, context);
-        }
-
-        private void UpdateTerrain(object context)
-        {
-            UpdateTerrain(context as ArcResource<IFrameData2i>);
+            _backgroundUpdateQueue.QueueNew(context);
         }
 
         private void UpdateTerrain(ArcResource<IFrameData2i> context)
         {
             HandleVisibilityUpdates(context.Value);
-            foreach (var activeGroup in _activeGroups)
+            lock (_activeGroupsLock)
             {
-                activeGroup.Value.Update(context.Activate());
+                foreach (var activeGroup in _activeGroups)
+                {
+                    activeGroup.Value.Update(context.Activate());
+                }
             }
-
-            context.Dispose();
-            context = null;
         }
 
         private void HandleVisibilityUpdates(IFrameData2i context)
         {
-            _groupsByCameraVisibilitySelector2I.UpdateGroupsVisibility(context, _cellInGroupCount, _activeGroups, create, dispose);
+            _groupsByCameraVisibilitySelector2I.UpdateGroupsVisibility(context, _cellInGroupCount, _activeGroups, _activeGroupsLock, create, dispose);
         }
 
         private Func<Vector2i, ITerrainGroupGeneratorManager2i> create;

@@ -36,5 +36,14 @@ namespace Votyra.Core
 
             context.Dispose();
         }
+
+        public override void Stop()
+        {
+            base.Stop();
+            if (_gameObjectPool.IsInitialized)
+            {
+                _gameObjectPool.SetActive(false);
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace Votyra.Core.GroupSelectors
     {
         private Range2i _previousArea=Range2i.Zero;
         
-        public void UpdateGroupsVisibility<T>( IFrameData2i options, Vector2i cellInGroupCount, IDictionary<Vector2i, T> existingGroups, Func<Vector2i,T> create, Action<T> dispose)
+        public void UpdateGroupsVisibility<T>( IFrameData2i options, Vector2i cellInGroupCount, IDictionary<Vector2i, T> existingGroups, object existingGroupsLock, Func<Vector2i,T> create, Action<T> dispose)
         {
             if (options == null)
                 return;
@@ -50,14 +50,20 @@ namespace Votyra.Core.GroupSelectors
                     var isExistingGroup = existingGroups.TryGetValue(group,out existingGroup);
                     if (!isVisible && isExistingGroup)
                     {
-                        existingGroups.Remove(group);
+                        lock (existingGroupsLock)
+                        {
+                            existingGroups.Remove(group);
+                        }
+
                         dispose.Invoke(existingGroup);
                     }
                     else if (isVisible && !isExistingGroup)
                     {
                        var value = create(group);
-                       existingGroups.Add(group, value);
-                       
+                       lock (existingGroupsLock)
+                       {
+                           existingGroups.Add(group, value);
+                       }
                     }
                 }
             }
