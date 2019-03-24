@@ -52,7 +52,14 @@ namespace Votyra.Core.Images
 
         public void UpdateImage(T[,] template)
         {
-            Array.Copy(template, _image, _image.Length);
+            var size = _image.Size();
+            for (int ix = 0; ix < size.X; ix++)
+            {
+                for (int iy = 0; iy < size.Y; iy++)
+                {
+                    _image[ix, iy] = template[ix, iy];
+                }
+            }
         }
 
         public void UpdateInvalidatedArea(Range2i invalidatedArea)

@@ -52,7 +52,17 @@ namespace Votyra.Core.Images
 
         private MatrixMask2e GetNotUsedImage()
         {
-            var image = _readonlyMatrices.FirstOrDefault(o => !o.IsBeingUsed);
+            MatrixMask2e image = null;
+            for (var i = 0; i < _readonlyMatrices.Count; i++)
+            {
+                var o = _readonlyMatrices[i];
+                if (!o.IsBeingUsed)
+                {
+                    image = o;
+                    break;
+                }
+            }
+
             if (image == null)
             {
                 image = new MatrixMask2e(_editableMatrix.Size());

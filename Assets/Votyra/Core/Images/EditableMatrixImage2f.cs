@@ -57,7 +57,17 @@ namespace Votyra.Core.Images
 
         private MatrixImage2f GetNotUsedImage()
         {
-            var image = _readonlyMatrices.FirstOrDefault(o => !o.IsBeingUsed);
+            MatrixImage2f image = null;
+            for (var i = 0; i < _readonlyMatrices.Count; i++)
+            {
+                var o = _readonlyMatrices[i];
+                if (!o.IsBeingUsed)
+                {
+                    image = o;
+                    break;
+                }
+            }
+
             if (image == null)
             {
                 image = new MatrixImage2f(_editableMatrix.Size());
