@@ -20,7 +20,7 @@ using Zenject;
 namespace Votyra.Core
 {
     //TODO: move to floats
-    public class TerrainGeneratorManager2i : IDisposable
+    public class TerrainGeneratorManager2i : IDisposable, ITerrainGeneratorManager2i
     {
         private readonly Dictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new Dictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
         private readonly object _activeGroupsLock = new object();

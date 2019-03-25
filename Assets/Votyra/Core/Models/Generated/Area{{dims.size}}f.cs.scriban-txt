@@ -36,6 +36,12 @@ namespace Votyra.Core.Models
         public {{lineType}} Y1 => new {{lineType}}(X0Y1, X1Y1);
 
         {{end}}
+        
+        {{if dimSize>1}}
+        {{for dim in dims}}
+        public  Area1f {{dim}}=>Area1f.FromMinAndMax(Min.{{dim}},Max.{{dim}});
+        {{end}}
+        {{end}}
 
         private {{type}}({{vectorFloatRealType}} min, {{vectorFloatRealType}} max)
         {

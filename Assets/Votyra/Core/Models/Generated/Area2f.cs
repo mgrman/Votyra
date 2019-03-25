@@ -2,7 +2,18 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    public struct Area2f : IEquatable<Area2f>
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    public partial struct Area2f : IEquatable<Area2f>
     {
         public static readonly Area2f Zero = new Area2f();
         public static readonly Area2f All = new Area2f(Vector2fUtils.FromSame(float.MinValue / 2), Vector2fUtils.FromSame(float.MaxValue / 2));
@@ -10,8 +21,9 @@ namespace Votyra.Core.Models
         public readonly Vector2f Max;
         public readonly Vector2f Min;
 
+        
         public Vector2f X0Y0 => Min;
-        public Vector2f X0Y1 => new Vector2f(Min.X, Max.Y);
+        public Vector2f X0Y1 => new Vector2f(Min.X,Max.Y);
         public Vector2f X1Y0 => new Vector2f(Max.X, Min.Y);
         public Vector2f X1Y1 => Max;
 
@@ -19,6 +31,16 @@ namespace Votyra.Core.Models
         public Line2f X1 => new Line2f(X1Y0, X1Y1);
         public Line2f Y0 => new Line2f(X0Y0, X1Y0);
         public Line2f Y1 => new Line2f(X0Y1, X1Y1);
+
+        
+        
+        
+        
+        public  Area1f X=>Area1f.FromMinAndMax(Min.X,Max.X);
+        
+        public  Area1f Y=>Area1f.FromMinAndMax(Min.Y,Max.Y);
+        
+        
 
         private Area2f(Vector2f min, Vector2f max)
         {
@@ -37,7 +59,7 @@ namespace Votyra.Core.Models
         public static Area2f FromMinAndSize(Vector2f min, Vector2f size) => new Area2f(min, min + size);
 
         public static Area2f FromCenterAndSize(Vector2f center, Vector2f size) => new Area2f(center - size / 2, size);
-
+      
         public static Area2f FromCenterAndExtents(Vector2f center, Vector2f extents)
         {
             if (extents.AnyNegative())
@@ -51,6 +73,7 @@ namespace Votyra.Core.Models
 
         public static Area2f operator /(Area2f a, float b) => FromMinAndMax(a.Min / b, a.Max / b);
 
+        
         public static Area2f operator /(Area2f a, Vector2f b) => FromMinAndMax(a.Min / b, a.Max / b);
 
         public Area2f IntersectWith(Area2f that)
@@ -87,7 +110,7 @@ namespace Votyra.Core.Models
             return FromMinAndMax(min, max);
         }
 
-        public Area2f UnionWith(Area2f range) => FromMinAndMax(Vector2fUtils.Min(Min, range.Min), Vector2fUtils.Min(Max, range.Max));
+        public Area2f UnionWith(Area2f range) => Area2f.FromMinAndMax(Vector2fUtils.Min(Min, range.Min), Vector2fUtils.Min(Max, range.Max));
 
         public Area2f? UnionWith(Area2f? range)
         {
@@ -100,11 +123,12 @@ namespace Votyra.Core.Models
         public Area2f UnionWith(Vector2f value)
         {
             if (value < Min)
-                return FromMinAndMax(value, Max);
+                return Area2f.FromMinAndMax(value, Max);
             if (value > Max)
-                return FromMinAndMax(Min, value);
+                return Area2f.FromMinAndMax(Min, value);
             return this;
         }
+
 
         public bool Equals(Area2f other) => this == other;
 

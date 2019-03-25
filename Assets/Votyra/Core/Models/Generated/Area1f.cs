@@ -2,13 +2,28 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    public struct Area1f : IEquatable<Area1f>
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    public partial struct Area1f : IEquatable<Area1f>
     {
         public static readonly Area1f Zero = new Area1f();
         public static readonly Area1f All = new Area1f(Vector1fUtils.FromSame(float.MinValue / 2), Vector1fUtils.FromSame(float.MaxValue / 2));
 
         public readonly float Max;
         public readonly float Min;
+
+        
+        
+        
 
         private Area1f(float min, float max)
         {
@@ -27,7 +42,7 @@ namespace Votyra.Core.Models
         public static Area1f FromMinAndSize(float min, float size) => new Area1f(min, min + size);
 
         public static Area1f FromCenterAndSize(float center, float size) => new Area1f(center - size / 2, size);
-
+      
         public static Area1f FromCenterAndExtents(float center, float extents)
         {
             if (extents.AnyNegative())
@@ -41,6 +56,7 @@ namespace Votyra.Core.Models
 
         public static Area1f operator /(Area1f a, float b) => FromMinAndMax(a.Min / b, a.Max / b);
 
+        
         public Area1f IntersectWith(Area1f that)
         {
             if (Size == Vector1f.Zero || that.Size == Vector1f.Zero)
@@ -75,7 +91,7 @@ namespace Votyra.Core.Models
             return FromMinAndMax(min, max);
         }
 
-        public Area1f UnionWith(Area1f range) => FromMinAndMax(Vector1fUtils.Min(Min, range.Min), Vector1fUtils.Min(Max, range.Max));
+        public Area1f UnionWith(Area1f range) => Area1f.FromMinAndMax(Vector1fUtils.Min(Min, range.Min), Vector1fUtils.Min(Max, range.Max));
 
         public Area1f? UnionWith(Area1f? range)
         {
@@ -88,11 +104,12 @@ namespace Votyra.Core.Models
         public Area1f UnionWith(float value)
         {
             if (value < Min)
-                return FromMinAndMax(value, Max);
+                return Area1f.FromMinAndMax(value, Max);
             if (value > Max)
-                return FromMinAndMax(Min, value);
+                return Area1f.FromMinAndMax(Min, value);
             return this;
         }
+
 
         public bool Equals(Area1f other) => this == other;
 

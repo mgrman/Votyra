@@ -2,13 +2,38 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    public struct Area4f : IEquatable<Area4f>
+    
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    public partial struct Area4f : IEquatable<Area4f>
     {
         public static readonly Area4f Zero = new Area4f();
         public static readonly Area4f All = new Area4f(Vector4fUtils.FromSame(float.MinValue / 2), Vector4fUtils.FromSame(float.MaxValue / 2));
 
         public readonly Vector4f Max;
         public readonly Vector4f Min;
+
+        
+        
+        
+        
+        public  Area1f X=>Area1f.FromMinAndMax(Min.X,Max.X);
+        
+        public  Area1f Y=>Area1f.FromMinAndMax(Min.Y,Max.Y);
+        
+        public  Area1f Z=>Area1f.FromMinAndMax(Min.Z,Max.Z);
+        
+        public  Area1f W=>Area1f.FromMinAndMax(Min.W,Max.W);
+        
+        
 
         private Area4f(Vector4f min, Vector4f max)
         {
@@ -27,7 +52,7 @@ namespace Votyra.Core.Models
         public static Area4f FromMinAndSize(Vector4f min, Vector4f size) => new Area4f(min, min + size);
 
         public static Area4f FromCenterAndSize(Vector4f center, Vector4f size) => new Area4f(center - size / 2, size);
-
+      
         public static Area4f FromCenterAndExtents(Vector4f center, Vector4f extents)
         {
             if (extents.AnyNegative())
@@ -41,6 +66,7 @@ namespace Votyra.Core.Models
 
         public static Area4f operator /(Area4f a, float b) => FromMinAndMax(a.Min / b, a.Max / b);
 
+        
         public static Area4f operator /(Area4f a, Vector4f b) => FromMinAndMax(a.Min / b, a.Max / b);
 
         public Area4f IntersectWith(Area4f that)
@@ -77,7 +103,7 @@ namespace Votyra.Core.Models
             return FromMinAndMax(min, max);
         }
 
-        public Area4f UnionWith(Area4f range) => FromMinAndMax(Vector4fUtils.Min(Min, range.Min), Vector4fUtils.Min(Max, range.Max));
+        public Area4f UnionWith(Area4f range) => Area4f.FromMinAndMax(Vector4fUtils.Min(Min, range.Min), Vector4fUtils.Min(Max, range.Max));
 
         public Area4f? UnionWith(Area4f? range)
         {
@@ -90,11 +116,12 @@ namespace Votyra.Core.Models
         public Area4f UnionWith(Vector4f value)
         {
             if (value < Min)
-                return FromMinAndMax(value, Max);
+                return Area4f.FromMinAndMax(value, Max);
             if (value > Max)
-                return FromMinAndMax(Min, value);
+                return Area4f.FromMinAndMax(Min, value);
             return this;
         }
+
 
         public bool Equals(Area4f other) => this == other;
 
