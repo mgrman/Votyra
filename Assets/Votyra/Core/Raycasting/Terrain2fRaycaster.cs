@@ -29,7 +29,7 @@ namespace Votyra.Core.Raycasting
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY();
         }
 
-        public override Vector3f? Raycast(Ray3f cameraRay)
+        public override Vector3f Raycast(Ray3f cameraRay)
         {
             try
             {
@@ -58,11 +58,11 @@ namespace Votyra.Core.Raycasting
             catch (Exception ex)
             {
                 StaticLogger.LogException(ex);
-                return null;
+                return Vector3f.NaN;
             }
         }
 
-        protected override Vector3f? RaycastCell(Line2f line, Vector2i cell)
+        protected override Vector3f RaycastCell(Line2f line, Vector2i cell)
         {
             var group = GetGroup(cell);
             var mesh = _manager.GetMeshForGroup(group);
@@ -75,12 +75,12 @@ namespace Votyra.Core.Raycasting
             var toValue = GetRayValue(line.To);
             if (fromValue > boundsRange.Max && toValue > boundsRange.Max)
             {
-                return null;
+                return Vector3f.NaN;
             }
 
             if (fromValue < boundsRange.Min && toValue < boundsRange.Min)
             {
-                return null;
+                return Vector3f.NaN;
             }
 
             var vertices = mesh.Vertices;
@@ -95,7 +95,7 @@ namespace Votyra.Core.Raycasting
                     return res.Value;
             }
 
-            return null;
+            return Vector3f.NaN;
         }
 
         private Vector2i GetGroup(Vector2i cell)
@@ -105,7 +105,7 @@ namespace Votyra.Core.Raycasting
             return new Vector2i(x, y);
         }
 
-        protected Vector3f? RaycastCellUsingImage(Line2f line, Vector2i cell)
+        private Vector3f RaycastCellUsingImage(Line2f line, Vector2i cell)
         {
             var imageValueFrom = GetLinearInterpolatedValue(_image, line.From);
             var imageValueTo = GetLinearInterpolatedValue(_image, line.To);
@@ -115,7 +115,7 @@ namespace Votyra.Core.Raycasting
 
             var x = (fromRayValue - imageValueFrom) / (imageValueTo - imageValueFrom - toRayValue + fromRayValue);
             if (x < 0 || x > 1)
-                return null;
+                return Vector3f.NaN;
 
             var xy = line.From + (line.To - line.From) * x;
             return xy.ToVector3f(GetLinearInterpolatedValue(_image, xy));

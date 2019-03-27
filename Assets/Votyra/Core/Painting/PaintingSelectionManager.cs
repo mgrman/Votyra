@@ -53,18 +53,18 @@ namespace Votyra.Core.Painting
             return false;
         }
 
-        private Vector2i? GetImagePosition(Ray3f cameraRay) =>
-            _raycaster.Raycast(cameraRay)
-                ?.XY()
-                .RoundToVector2i();
-
+        
         private PaintInvocationData? GetInvocationDataFromPointer(Ray3f cameraRay)
         {
-            var imagePosition = GetImagePosition(cameraRay);
-            if (imagePosition == null)
+            var rayHit= _raycaster.Raycast(cameraRay);
+            if (rayHit.AnyNan())
+            {
                 return null;
+            }
+            var imagePosition = rayHit.XY()
+                .RoundToVector2i();
             var strength = GetMultiplier() * GetDistance();
-            return new PaintInvocationData(strength, imagePosition.Value);
+            return new PaintInvocationData(strength, imagePosition);
         }
 
         private int GetMultiplier() => _paintingModel.IsInvertModifierActive ? -1 : 1;

@@ -1,5 +1,5 @@
 using System;
-using UnityEngine.Assertions;
+using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 
@@ -20,7 +20,7 @@ namespace Votyra.Core.Raycasting
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
         }
 
-        public virtual Vector3f? Raycast(Ray3f cameraRay)
+        public virtual Vector3f Raycast(Ray3f cameraRay)
         {
             var cameraRayXY = cameraRay.XY();
 
@@ -29,14 +29,10 @@ namespace Votyra.Core.Raycasting
             var directionXYMag = directionNonNormalizedXY.Magnitude();
             var endXY = startXY + directionNonNormalizedXY.Normalized() * maxDistance;
 
-            var result = InvokeOnPath(startXY, endXY);
-
-            return result;
+            return InvokeOnPath(startXY, endXY);
         }
 
-        protected abstract Vector3f? RaycastCell(Line2f line, Vector2i cell);
-
-        private Vector3f? InvokeOnPath(Vector2f from, Vector2f to)
+        private Vector3f InvokeOnPath(Vector2f from, Vector2f to)
         {
             var direction = to - from;
 
@@ -55,7 +51,7 @@ namespace Votyra.Core.Raycasting
 
                 var area = MeshCellArea(cell);
 
-                Vector2f? intersection;
+                Vector2f intersection;
                 if (previousOffset != Y1Offset && IntersectLine(ray, area.Y0, out intersection))
                 {
                     offset = Y0Offset;
@@ -81,26 +77,33 @@ namespace Votyra.Core.Raycasting
                             else
                             {
                                 offset = Vector2i.Zero;
-                                intersection = null;
+                                intersection = new Vector2f(float.NaN,float.NaN);
                             }
                         }
                     }
                 }
 
-                if (intersection == null)
-                    return null;
+                if (intersection.AnyNan())
+                    return Vector3f.NaN;
 
-                var stop = RaycastCell(new Line2f(position, intersection.Value), cell);
-                if (stop.HasValue)
+                var stop = RaycastCell(new Line2f(position, intersection), cell);
+                if (!stop.AnyNan())
                     return stop;
 
                 cell += offset;
-                position = intersection.Value;
+                position = intersection;
             }
 
-            Assert.IsTrue(counter > 0, "InvokeOnPath used too many iterations");
-            return null;
+#if UNITY_EDITOR
+            if (counter <= 0)
+            {
+                StaticLogger.LogError("InvokeOnPath used too many iterations");
+            }
+#endif
+            return Vector3f.NaN;
         }
+
+        protected abstract Vector3f RaycastCell(Line2f line, Vector2i cell);
 
         private Vector2i FindCell(Vector2f meshPoint)
         {
@@ -123,19 +126,17 @@ namespace Votyra.Core.Raycasting
 
                 area = MeshCellArea(cell);
             }
-
-            Assert.IsTrue(counter > 0, "FindCell used too many iterations");
+#if UNITY_EDITOR
+            if (counter <= 0)
+            {
+                StaticLogger.LogError("FindCell used too many iterations");
+            }
+#endif
 
             return cell;
         }
 
-        private static bool IntersectLine(Ray2f ray, Line2f line, out Vector2f? res)
-        {
-            res = IntersectLine(ray, line);
-            return res != null;
-        }
-
-        private static Vector2f? IntersectLine(Ray2f ray, Line2f line)
+        private static bool IntersectLine(Ray2f ray, Line2f line, out Vector2f res)
         {
             /* Return intersection of two line, either infinite or line segments.
             Lines are defined as end points in line segments or as any two points in infite lines.
@@ -147,7 +148,10 @@ namespace Votyra.Core.Raycasting
 
             // If lines are perpendicular then they dont intersect:
             if (Vector2fUtils.Determinant(v1, v2) == 0)
-                return null;
+            {
+                res = default;
+                return false;
+            }
 
             // Using solved equations for intersection of parametric lines
             // we get parameter for first line where they intersect:
@@ -163,8 +167,13 @@ namespace Votyra.Core.Raycasting
             // If lines are both line segments we must check whether these lines intersect in the segments:
 
             if (rayParameter >= 0 && m >= 0 && m <= 1)
-                return ray.Origin + v1 * rayParameter;
-            return null;
+            {
+                res = ray.Origin + v1 * rayParameter;
+                return true;
+            }
+
+            res = default;
+            return false;
         }
 
         protected Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));

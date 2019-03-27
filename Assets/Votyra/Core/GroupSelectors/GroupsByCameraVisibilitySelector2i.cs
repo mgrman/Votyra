@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using UnityEngine;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.GroupSelectors

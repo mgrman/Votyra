@@ -53,6 +53,7 @@ namespace Votyra.Core.Models
     {
         public static readonly {{vectorFloatType}} One = {{ctorStart}}{{for dim in dims}}1{{sep ", "}}{{end}}{{ctorEnd}};
         public static readonly {{vectorFloatType}} Zero = {{ctorStart}}{{for dim in dims}}0{{sep ", "}}{{end}}{{ctorEnd}};
+        public static readonly {{vectorFloatType}} NaN = {{ctorStart}}{{for dim in dims}}float.NaN{{sep ", "}}{{end}}{{ctorEnd}};
 
         {{for dim in dims}}
         public readonly float {{dim}};
@@ -133,6 +134,10 @@ namespace Votyra.Core.Models
         {{end}}
 
         public static bool AnyNegative(this {{vectorFloatRealType}} @this) => {{for dim in dims}}{{dimAccess "@this" dim}}<0{{sep " || "}}{{end}};
+        
+        public static bool AnyNan(this {{vectorFloatRealType}} @this) => {{for dim in dims}}float.IsNaN({{dimAccess "@this" dim}}){{sep " || "}}{{end}};
+        
+        public static bool AnyInfinity(this {{vectorFloatRealType}} @this) => {{for dim in dims}}float.IsInfinity({{dimAccess "@this" dim}}){{sep " || "}}{{end}};
 
         public static float AreaSum(this {{vectorFloatRealType}} @this) => {{for dim in dims}}{{dimAccess "@this" dim}}{{sep " * "}}{{end}};
 

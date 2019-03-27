@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using UnityEngine;
-using Votyra.Core.Pooling;
+using Votyra.Core.Logging;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Queueing
@@ -97,8 +96,8 @@ namespace Votyra.Core.Queueing
                             }
                             catch (Exception ex)
                             {
-                                Debug.LogError($"Error in {this.GetType().GetDisplayName()} named {_name}:");
-                                Debug.LogException(ex);
+                                StaticLogger.LogError($"Error in {this.GetType().GetDisplayName()} named {_name}:");
+                                StaticLogger.LogException(ex);
                             }
                             finally
                             {
@@ -108,8 +107,8 @@ namespace Votyra.Core.Queueing
                                 }
                                 catch (Exception ex)
                                 {
-                                    Debug.LogError($"Error disposing context {activeContext.GetHashCode()} in {this.GetType().GetDisplayName()} named {_name}:");
-                                    Debug.LogException(ex);
+                                    StaticLogger.LogError($"Error disposing context {activeContext.GetHashCode()} in {this.GetType().GetDisplayName()} named {_name}:");
+                                    StaticLogger.LogException(ex);
                                 }
                             }
 
@@ -118,7 +117,7 @@ namespace Votyra.Core.Queueing
                     }
                     catch (Exception ex)
                     {
-                        Debug.LogException(ex);
+                        StaticLogger.LogException(ex);
                     }
                 });
             }

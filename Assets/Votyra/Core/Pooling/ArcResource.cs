@@ -1,10 +1,4 @@
 using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Experimental.XR.Interaction;
-using Votyra.Core.Images;
-using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 
 namespace Votyra.Core.Pooling
 {

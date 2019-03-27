@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine.Assertions;
+using Votyra.Core.Logging;
 
 namespace Votyra.Core.Pooling
 {
@@ -49,7 +49,10 @@ namespace Votyra.Core.Pooling
 
                 _list.Add(value);
 #if UNITY_EDITOR
-                Assert.AreEqual(_list.Count, PoolCount);
+                if (_list.Count != PoolCount)
+                {
+                    StaticLogger.LogError("ArcPool in inconsistent state!");
+                }
 #endif
             }
         }
