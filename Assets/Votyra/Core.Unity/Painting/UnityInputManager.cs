@@ -18,6 +18,9 @@ namespace Votyra.Core.Unity.Painting
         [Inject]
         protected List<IInputHandler> _inputHandlers;
 
+        [Inject]
+        protected ITerrainConfig _terrainConfig;
+
         private bool _invokedWithNull;
         private Ray3f _previousRay;
 
@@ -70,11 +73,19 @@ namespace Votyra.Core.Unity.Painting
             _previousRay = ray;
             var activeInputs = GetActiveInputs();
 
-            Task.Run(() =>
+            if (_terrainConfig.Async)
+            {
+                Task.Run(() =>
+                {
+                    InvokeHandlers(ray, activeInputs, _activePointerData);
+                    _processing = false;
+                });
+            }
+            else
             {
                 InvokeHandlers(ray, activeInputs, _activePointerData);
                 _processing = false;
-            });
+            }
         }
 
         private void InvokeHandlers(Ray3f ray, InputActions activeInputs, PointerEventData pointerEventData)

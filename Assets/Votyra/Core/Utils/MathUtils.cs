@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Votyra.Core.Utils
 {
@@ -9,6 +10,8 @@ namespace Votyra.Core.Utils
         public const float Rad2Deg = 57.29578f;
 
         private static readonly FastNoise _noise = new FastNoise();
+
+        public static bool IsApproximatelyEqual(this float a, float b, float eps = 0.000001f) => Math.Abs(b - a) < eps;
 
         public static int? Abs(this int? val) => val.HasValue ? Math.Abs(val.Value) : val;
 

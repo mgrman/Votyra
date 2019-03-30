@@ -26,29 +26,34 @@ namespace Votyra.Core.Painting
         public bool Update(Ray3f inputRay, InputActions activeInput)
         {
             var command = _paintingModel.SelectedPaintCommand;
-
-            if (activeInput.IsInputActive(InputActions.ExtendedModifier))
-                _paintingModel.IsExtendedModifierActive = true;
-
-            if (!activeInput.IsInputActive(InputActions.ExtendedModifier) && _previousInputActions.IsInputActive(InputActions.ExtendedModifier))
-                _paintingModel.IsExtendedModifierActive = false;
-
-            if (activeInput.IsInputActive(InputActions.InverseModifier))
-                _paintingModel.IsInvertModifierActive = true;
-
-            if (!activeInput.IsInputActive(InputActions.InverseModifier) && _previousInputActions.IsInputActive(InputActions.InverseModifier))
-                _paintingModel.IsInvertModifierActive = false;
-
-            var invocationData = GetInvocationDataFromPointer(inputRay);
-
-            if (activeInput.IsInputActive(InputActions.Action) && command != null && invocationData != null)
+            if (command != null)
             {
-                command.UpdateInvocationValues(invocationData.Value.ImagePosition, invocationData.Value.Strength);
-                _previousInputActions = activeInput;
-                return true;
+                if (activeInput.IsInputActive(InputActions.ExtendedModifier))
+                    _paintingModel.IsExtendedModifierActive = true;
+
+                if (!activeInput.IsInputActive(InputActions.ExtendedModifier) && _previousInputActions.IsInputActive(InputActions.ExtendedModifier))
+                    _paintingModel.IsExtendedModifierActive = false;
+
+                if (activeInput.IsInputActive(InputActions.InverseModifier))
+                    _paintingModel.IsInvertModifierActive = true;
+
+                if (!activeInput.IsInputActive(InputActions.InverseModifier) && _previousInputActions.IsInputActive(InputActions.InverseModifier))
+                    _paintingModel.IsInvertModifierActive = false;
+
+                if (activeInput.IsInputActive(InputActions.Action))
+                {
+                    var invocationData = GetInvocationDataFromPointer(inputRay);
+                    if (invocationData != null)
+                    {
+                        command.UpdateInvocationValues(invocationData.Value.ImagePosition, invocationData.Value.Strength);
+                        _previousInputActions = activeInput;
+                        return true;
+                    }
+                }
+
+                command.StopInvocation();
             }
 
-            command?.StopInvocation();
             _previousInputActions = activeInput;
             return false;
         }

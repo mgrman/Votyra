@@ -39,7 +39,8 @@ namespace Votyra.Core.Models
             ]}}
     {{binaryStaticFunctions = [
         {name:"Max",prefix:"Math.Max(",infix:", ",sufix:")"},
-        {name:"Min",prefix:"Math.Min(",infix:", ",sufix:")"}
+        {name:"Min",prefix:"Math.Min(",infix:", ",sufix:")"},
+        {name:"IsApproximatelyEqual",prefix:"MathUtils.IsApproximatelyEqual(",infix:", ",sufix:")", zip:" && ", type:"bool"}
         ]}}
     {{func sep}}{{if !for.last}}{{$0}}{{end}}{{end}}
     {{func dimAccess}}{{if dimSize!=1}}{{$0}}.{{$1}}{{else}}{{$0}}{{end}}{{end}}

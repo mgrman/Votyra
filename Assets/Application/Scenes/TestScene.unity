@@ -302,7 +302,7 @@ MonoBehaviour:
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
   - Id: async
-    JsonValue: true
+    JsonValue: false
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
@@ -383,6 +383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad4f4b5d62674d09a5dd6572b0aa80c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showTerrainGui: 0
 --- !u!1 &886990423
 GameObject:
   m_ObjectHideFlags: 0

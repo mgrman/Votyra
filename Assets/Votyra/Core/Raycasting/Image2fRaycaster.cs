@@ -4,7 +4,7 @@ using Votyra.Core.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Core.Raycasting
 {
-    public sealed class Image2fRaycaster : BaseRaycaster
+    public sealed class Image2fRaycaster : BaseCellRaycaster
     {
         private readonly IImage2fProvider _image2FProvider;
         private readonly IMask2eProvider _mask2EProvider;
@@ -14,7 +14,7 @@ namespace Votyra.Core.Raycasting
         private IMask2e _mask;
         private Vector2f _startXy;
 
-        public Image2fRaycaster(IImage2fProvider image2FProvider, IMask2eProvider mask2eProvider, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
+        public Image2fRaycaster(IImage2fProvider image2FProvider, IMask2eProvider mask2eProvider,ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
             : base(terrainVertexPostProcessor)
         {
             _image2FProvider = image2FProvider;
