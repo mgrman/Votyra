@@ -6,11 +6,11 @@ namespace Votyra.Core
 {
     public interface IPoolableFrameData2i : IFrameData2i, IPoolableFrameData
     {
-        IImage2f Image { get; set; }
-        IMask2e Mask { get; set; }
-        Range2i InvalidatedArea { get; set; }
-        Vector2i CellInGroupCount { get; set; }
-        int MeshSubdivision { get; set; }
+        new IImage2f Image { get; set; }
+        new IMask2e Mask { get; set; }
+        new Range2i InvalidatedArea { get; set; }
+        new Vector2i CellInGroupCount { get; set; }
+        new int MeshSubdivision { get; set; }
     }
     
     public interface IFrameData2i : IFrameData

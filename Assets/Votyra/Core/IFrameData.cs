@@ -6,10 +6,10 @@ namespace Votyra.Core
 {
     public interface IPoolableFrameData : IFrameData
     {
-        Ray3f CameraRay { get; set; }
+        new Ray3f CameraRay { get; set; }
 
-        Plane3f[] CameraPlanes { get; }
-        Vector3f[] CameraFrustumCorners { get; }
+        new Plane3f[] CameraPlanes { get; }
+        new Vector3f[] CameraFrustumCorners { get; }
     }
 
     public interface IFrameData
