@@ -10,15 +10,7 @@ namespace Votyra.Core.Raycasting
 {
     public sealed class Terrain2fRaycaster : BaseGroupRaycaster
     {
-        private Line2f _raycastLine;
-        private Vector2f _rayDirection;
-        private Vector2i _fromGroup;
-        private Vector2i _toGroup;
-        private Ray3f _cameraRay;
-        private IImage2f _image;
         private readonly ITerrainGeneratorManager2i _manager;
-        private IMask2e _mask;
-        private bool _wasValidMesh;
 
         public Terrain2fRaycaster(ITerrainConfig terrainConfig, ITerrainGeneratorManager2i manager, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
             : base(terrainConfig, terrainVertexPostProcessor)
@@ -26,34 +18,13 @@ namespace Votyra.Core.Raycasting
             _manager = manager;
         }
 
-        public override Vector3f Raycast(Ray3f cameraRay)
-        {
-            try
-            {
-                _wasValidMesh = false;
-                _cameraRay = cameraRay;
-
-                return base.Raycast(cameraRay);
-            }
-            catch (StopException)
-            {
-                return Vector3f.NaN;
-            }
-        }
-
-        protected override Vector3f RaycastGroup(Line2f line, Vector2i group)
+        protected override RaycastResult RaycastGroup(Line2f line, Vector2i group, Ray3f cameraRay)
         {
             var mesh = _manager.GetMeshForGroup(group);
 
-            if (mesh == null && _wasValidMesh)
-            {
-                throw new StopException();
-            }
-
             if (mesh == null)
-                return Vector3f.NaN;
+                return RaycastResult.NoHit;
 
-            _wasValidMesh = true;
             var vertices = mesh.Vertices;
             for (var i = 0; i < vertices.Count; i += 3)
             {
@@ -61,16 +32,12 @@ namespace Votyra.Core.Raycasting
                 var b = vertices[i + 1];
                 var c = vertices[i + 2];
                 var triangle = new Triangle3f(a, b, c);
-                var res = triangle.Intersect(_cameraRay);
+                var res = triangle.Intersect(cameraRay);
                 if (res.HasValue)
-                    return res.Value;
+                    return new RaycastResult(res.Value);
             }
 
-            return Vector3f.NaN;
-        }
-
-        private class StopException : Exception
-        {
+            return RaycastResult.NoHit;
         }
     }
 }

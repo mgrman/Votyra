@@ -10,93 +10,78 @@ namespace Votyra.Core.Raycasting
 {
     public abstract class BaseGroupRaycaster : IRaycaster
     {
-        private const float maxDistance = 500;
-
-        private static readonly Vector2i Y1Offset = new Vector2i(0, 1);
-        private static readonly Vector2i Y0Offset = new Vector2i(0, -1);
-        private static readonly Vector2i X1Offset = new Vector2i(1, 0);
-        private static readonly Vector2i X0Offset = new Vector2i(-1, 0);
+        private readonly float maxDistance = 500; //TODO get from camera
+        private readonly int maxIterations;
         private readonly ITerrainVertexPostProcessor _terrainVertexPostProcessor;
         private readonly Vector2i _cellInGroupCount;
-
-        private Line2f _raycastLine;
-        private Vector2f _rayDirection;
-        private Vector2i _fromGroup;
-        private Vector2i _toGroup;
-        private IImage2f _image;
         private readonly ITerrainGeneratorManager2i _manager;
-        private IMask2e _mask;
-        private bool _wasValidMesh;
 
         public BaseGroupRaycaster(ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
         {
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY();
+
+            maxIterations = (int) maxDistance * 10;
         }
 
         public virtual Vector3f Raycast(Ray3f cameraRay)
         {
-            _wasValidMesh = false;
-            
             var cameraRayXY = cameraRay.XY();
-            var startXY = cameraRayXY.Origin;
-            var directionNonNormalizedXY = cameraRay.Direction.XY();
-            var endXY = startXY + directionNonNormalizedXY.Normalized() * maxDistance;
+            
+            var rayOriginXY = cameraRayXY.Origin;
+            var rayDirectionXY = cameraRayXY.Direction;
+            var maxDistancePoint = cameraRay.GetPoint(maxDistance)
+                .XY();
 
-            _raycastLine = new Line2f(startXY, endXY);
-            _rayDirection = (endXY - startXY).Normalized();
-            _fromGroup = GetGroup(FindCell(startXY));
-            _toGroup = GetGroup(FindCell(endXY));
+            var fromGroup = GetGroup(FindCell(rayOriginXY));
+            var toGroup = GetGroup(FindCell(maxDistancePoint));
 
-            return RaycastGroup();
-        }
-
-        private Vector3f RaycastGroup()
-        {
-            var group = _fromGroup;
-            var position = _raycastLine.From;
-            var counter = 100;
-
-            while (group != _toGroup && counter > 0)
+            var currentGroup = fromGroup;
+            var currentPosition = rayOriginXY;
+            var currentCounter = maxIterations;
+            while (currentGroup != toGroup && currentCounter > 0)
             {
-                counter--;
-                var ray = new Ray2f(position, _rayDirection);
+                currentCounter--;
+                var ray = new Ray2f(currentPosition, rayDirectionXY);
 
-                var area = MeshGroupArea(group);
-                Side offset;
-                Line2f intersection;
-                if (!LiangBarskyClipper.Compute(area, ray, out intersection, out offset))
+                var area = MeshGroupArea(currentGroup);
+                if (!LiangBarskyClipper.Compute(area, ray, out var intersection, out var offset))
                     return Vector3f.NaN;
 
-                var foundResult = RaycastGroup(intersection, group);
-                if (!foundResult.AnyNan())
-                    return foundResult;
+                var foundResult = RaycastGroup(intersection, currentGroup, cameraRay);
+                switch (foundResult.State)
+                {
+                    case RaycastResultState.Success:
+                        return foundResult.Hit;
+                    case RaycastResultState.FullStop:
+                        return Vector3f.NaN;
+                }
 
                 if (offset.HasFlag(Side.X0))
                 {
-                    group += X0Offset;
+                    currentGroup += Vector2iUtils.MinusOneX;
                 }
 
                 if (offset.HasFlag(Side.X1))
                 {
-                    group += X1Offset;
+                    currentGroup += Vector2iUtils.PlusOneX;
                 }
 
                 if (offset.HasFlag(Side.Y0))
                 {
-                    group += Y0Offset;
+                    currentGroup += Vector2iUtils.MinusOneY;
                 }
 
                 if (offset.HasFlag(Side.Y1))
                 {
-                    group += Y1Offset;
+                    currentGroup += Vector2iUtils.PlusOneY;
                 }
 
-                position = intersection.To;
+                currentPosition = intersection.To;
             }
 
 #if UNITY_EDITOR
-            if (counter <= 0)
+            if (currentCounter <= 0)
             {
                 StaticLogger.LogError("InvokeOnPath used too many iterations");
             }
@@ -158,6 +143,34 @@ namespace Votyra.Core.Raycasting
             return new Vector2i(x, y);
         }
 
-        protected abstract Vector3f RaycastGroup(Line2f line, Vector2i group);
+        protected abstract RaycastResult RaycastGroup(Line2f line, Vector2i group, Ray3f cameraRay);
+
+        protected enum RaycastResultState
+        {
+            NoHit = 0,
+            Success = 1,
+            FullStop = 2
+        }
+
+        protected struct RaycastResult
+        {
+            private RaycastResult(Vector3f hit, RaycastResultState state)
+            {
+                Hit = hit;
+                State = state;
+            }
+
+            public RaycastResult(Vector3f hit)
+            {
+                Hit = hit;
+                State = RaycastResultState.Success;
+            }
+
+            public readonly Vector3f Hit;
+            public readonly RaycastResultState State;
+
+            public static readonly RaycastResult NoHit = new RaycastResult(Vector3f.NaN, RaycastResultState.NoHit);
+            public static readonly RaycastResult FullStop = new RaycastResult(Vector3f.NaN, RaycastResultState.FullStop);
+        }
     }
 }

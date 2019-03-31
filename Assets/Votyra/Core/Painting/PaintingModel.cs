@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Votyra.Core.Logging;
 using Votyra.Core.Painting.Commands;
 using Votyra.Core.Utils;
@@ -15,6 +16,9 @@ namespace Votyra.Core.Painting
         {
             _logger = logger;
             PaintCommands = commands;
+
+            SelectedPaintCommand = commands.OfType<IncreaseOrDecrease>()
+                .FirstOrDefault();
         }
 
         public void Dispose()

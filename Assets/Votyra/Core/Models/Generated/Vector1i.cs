@@ -11,6 +11,8 @@ namespace Votyra.Core.Models
 
     public static class Vector1iUtils
     {
+        public static readonly int PlusOneX = 1;
+        public static readonly int MinusOneX = -1;
         public static float Magnitude(this int @this) => (float) Math.Sqrt(@this.SqrMagnitude());
 
         public static float Normalized(this int @this)

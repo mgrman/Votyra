@@ -131,6 +131,14 @@ namespace Votyra.Core.Models
 
     public static class Vector3iUtils
     {
+        public static readonly Vector3i PlusOneX = new Vector3i(1, 0, 0);
+        public static readonly Vector3i MinusOneX = new Vector3i(-1, 0, 0);
+
+        public static readonly Vector3i PlusOneY = new Vector3i(0, 1, 0);
+        public static readonly Vector3i MinusOneY = new Vector3i(0, -1, 0);
+
+        public static readonly Vector3i PlusOneZ = new Vector3i(0, 0, 1);
+        public static readonly Vector3i MinusOneZ = new Vector3i(0, 0, -1);
         public static float Magnitude(this Vector3i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector3f Normalized(this Vector3i @this)

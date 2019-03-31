@@ -211,5 +211,11 @@ namespace Votyra.Core.Models
             public static {{function.type ?? vectorIntRealType}} {{function.name}}(int a, {{vectorIntRealType}} b) =>  {{if ctor}}{{ctorStart}}{{end}}{{for dim in dims}}{{function.prefix}}a{{function.infix}} {{dimAccess "b" dim}}{{function.sufix}} {{sep zip}}{{end}}{{if ctor}}{{ctorEnd}}{{end}};
             {{end}}
         {{end}}
+
+        {{for dim in dims}}
+        
+        public static readonly {{vectorIntRealType}} PlusOne{{dim}} = {{ctorStart}}{{for innerDim in dims}}{{if dim==innerDim}}1{{else}}0{{end}}{{sep ", "}}{{end}}{{ctorEnd}};
+        public static readonly {{vectorIntRealType}} MinusOne{{dim}} =  {{ctorStart}}{{for innerDim in dims}}{{if dim==innerDim}}-1{{else}}0{{end}}{{sep ", "}}{{end}}{{ctorEnd}};
+        {{end}}
     }
 }

@@ -2,7 +2,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using UnityEditor;
+using UnityEditor.Experimental;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 using File = UnityEngine.Windows.File;
 
 namespace Votyra.Core.Editor
@@ -15,6 +17,7 @@ namespace Votyra.Core.Editor
         private static string AssetsFolderPath => Application.dataPath;
 #endif
         private static readonly string RootFolder = Path.GetFullPath(Path.Combine(AssetsFolderPath, "..", "Build", "Release"));
+        private static readonly string UWPDirectory = Path.Combine(RootFolder, "UWP");
         private static readonly string Win64Directory = Path.Combine(RootFolder, "Win64");
         private static readonly string Win64Path = Path.Combine(Win64Directory, "Votyra.exe");
         private static readonly string WebGlDirectory = Path.Combine(RootFolder, "WebGL");
@@ -28,6 +31,7 @@ namespace Votyra.Core.Editor
         public static void BuildAllRelease()
         {
             BuildWin64();
+            BuildUWP();
             BuildWebGl();
             OpenFolderInExplorer();
         }
@@ -52,6 +56,30 @@ namespace Votyra.Core.Editor
 
             var cleanupDir = Path.Combine(Win64Directory, "Votyra_BackUpThisFolder_ButDontShipItWithYourGame");
             cleanupDir.TryDeleteDirectory();
+        }
+
+        [MenuItem("Build/Votyra/Build UWP (Release)")]
+        public static void BuildUWP()
+        {
+            UWPDirectory.TryDeleteDirectory();
+            EditorUserBuildSettings.wsaArchitecture = "x64";
+            EditorUserBuildSettings.wsaSubtarget = WSASubtarget.AnyDevice;
+            EditorUserBuildSettings.wsaUWPBuildType = WSAUWPBuildType.D3D;
+            EditorUserBuildSettings.wsaBuildAndRunDeployTarget = WSABuildAndRunDeployTarget.LocalMachine;
+            
+            BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, UWPDirectory, BuildTarget.WSAPlayer, BuildOptions.None);
+            
+            var processStartInfo=new ProcessStartInfo()
+            {
+                FileName = "MSBuild",
+                Arguments = $".\\{Application.productName}.sln /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms=\"x64\"",
+                WorkingDirectory = UWPDirectory,
+                RedirectStandardOutput = true
+            };
+           var process= Process.Start(processStartInfo);
+           process.WaitForExit();
+           var msBuildOutput = process.StandardOutput.ReadToEnd();
+           Debug.Log(msBuildOutput);
         }
 
         [MenuItem("Build/Votyra/Build WebGL (Release)")]

@@ -127,6 +127,11 @@ namespace Votyra.Core.Models
 
     public static class Vector2iUtils
     {
+        public static readonly Vector2i PlusOneX = new Vector2i(1, 0);
+        public static readonly Vector2i MinusOneX = new Vector2i(-1, 0);
+
+        public static readonly Vector2i PlusOneY = new Vector2i(0, 1);
+        public static readonly Vector2i MinusOneY = new Vector2i(0, -1);
         public static float Magnitude(this Vector2i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector2f Normalized(this Vector2i @this)

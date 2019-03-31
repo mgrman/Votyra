@@ -135,6 +135,17 @@ namespace Votyra.Core.Models
 
     public static class Vector4iUtils
     {
+        public static readonly Vector4i PlusOneX = new Vector4i(1, 0, 0, 0);
+        public static readonly Vector4i MinusOneX = new Vector4i(-1, 0, 0, 0);
+
+        public static readonly Vector4i PlusOneY = new Vector4i(0, 1, 0, 0);
+        public static readonly Vector4i MinusOneY = new Vector4i(0, -1, 0, 0);
+
+        public static readonly Vector4i PlusOneZ = new Vector4i(0, 0, 1, 0);
+        public static readonly Vector4i MinusOneZ = new Vector4i(0, 0, -1, 0);
+
+        public static readonly Vector4i PlusOneW = new Vector4i(0, 0, 0, 1);
+        public static readonly Vector4i MinusOneW = new Vector4i(0, 0, 0, -1);
         public static float Magnitude(this Vector4i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector4f Normalized(this Vector4i @this)

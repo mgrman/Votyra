@@ -143,6 +143,23 @@ namespace Votyra.Core.Models
 
     public static class Vector6iUtils
     {
+        public static readonly Vector6i PlusOneX0 = new Vector6i(1, 0, 0, 0, 0, 0);
+        public static readonly Vector6i MinusOneX0 = new Vector6i(-1, 0, 0, 0, 0, 0);
+
+        public static readonly Vector6i PlusOneX1 = new Vector6i(0, 1, 0, 0, 0, 0);
+        public static readonly Vector6i MinusOneX1 = new Vector6i(0, -1, 0, 0, 0, 0);
+
+        public static readonly Vector6i PlusOneX2 = new Vector6i(0, 0, 1, 0, 0, 0);
+        public static readonly Vector6i MinusOneX2 = new Vector6i(0, 0, -1, 0, 0, 0);
+
+        public static readonly Vector6i PlusOneX3 = new Vector6i(0, 0, 0, 1, 0, 0);
+        public static readonly Vector6i MinusOneX3 = new Vector6i(0, 0, 0, -1, 0, 0);
+
+        public static readonly Vector6i PlusOneX4 = new Vector6i(0, 0, 0, 0, 1, 0);
+        public static readonly Vector6i MinusOneX4 = new Vector6i(0, 0, 0, 0, -1, 0);
+
+        public static readonly Vector6i PlusOneX5 = new Vector6i(0, 0, 0, 0, 0, 1);
+        public static readonly Vector6i MinusOneX5 = new Vector6i(0, 0, 0, 0, 0, -1);
         public static float Magnitude(this Vector6i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector6f Normalized(this Vector6i @this)
