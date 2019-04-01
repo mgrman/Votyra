@@ -45,10 +45,7 @@ namespace Votyra.Core.Raycasting
                 var ray = new Ray2f(currentPosition, rayDirectionXY);
 
                 var area = MeshGroupArea(currentGroup);
-                if (!LiangBarskyClipper.Compute(area, ray, out var intersection, out var offset))
-                    return Vector3f.NaN;
-
-                var foundResult = RaycastGroup(intersection, currentGroup, cameraRay);
+                var foundResult = RaycastGroup( currentGroup, cameraRay);
                 switch (foundResult.State)
                 {
                     case RaycastResultState.Success:
@@ -57,27 +54,34 @@ namespace Votyra.Core.Raycasting
                         return Vector3f.NaN;
                 }
 
-                if (offset.HasFlag(Side.X0))
+                var intersection = IntersectionUtils.LiangBarskyClipper(area, ray);
+                if (intersection.AnyNan())
+                {
+                    return Vector3f.NaN;
+                }
+
+                var offset = IntersectionUtils.GetRectangleSegment(area, intersection);
+                if (offset.IsInSegment(RectangleSegment.X0))
                 {
                     currentGroup += Vector2iUtils.MinusOneX;
                 }
 
-                if (offset.HasFlag(Side.X1))
+                if (offset.IsInSegment(RectangleSegment.X1))
                 {
                     currentGroup += Vector2iUtils.PlusOneX;
                 }
 
-                if (offset.HasFlag(Side.Y0))
+                if (offset.IsInSegment(RectangleSegment.Y0))
                 {
                     currentGroup += Vector2iUtils.MinusOneY;
                 }
 
-                if (offset.HasFlag(Side.Y1))
+                if (offset.IsInSegment(RectangleSegment.Y1))
                 {
                     currentGroup += Vector2iUtils.PlusOneY;
                 }
 
-                currentPosition = intersection.To;
+                currentPosition = intersection;
             }
 
 #if UNITY_EDITOR
@@ -143,7 +147,7 @@ namespace Votyra.Core.Raycasting
             return new Vector2i(x, y);
         }
 
-        protected abstract RaycastResult RaycastGroup(Line2f line, Vector2i group, Ray3f cameraRay);
+        protected abstract RaycastResult RaycastGroup(Vector2i group, Ray3f cameraRay);
 
         protected enum RaycastResultState
         {

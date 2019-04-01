@@ -9,13 +9,20 @@ namespace Votyra.Core.Images.Constraints
     public class SimpleTycoonTileConstraint2i : TycoonTileConstraint2i
     {
         private static readonly IComparer<float> DefaultComparer = Comparer<float>.Default;
+        private static readonly IComparer<float> InvertedComparer = Comparer<float>.Create((a, b) => -DefaultComparer.Compare(a, b));
 
         private IComparer<float> _comparer;
         private Func<Vector2i, float> _getValue;
 
+        private readonly Func<Vector2i, float> _getMinValue;
+        private readonly Func<Vector2i, float> _getMaxValue;
+        private readonly PrioritySetQueue<Vector2i, float> _queue = new PrioritySetQueue<Vector2i, float>(EqualityComparer<Vector2i>.Default);
+
         public SimpleTycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
             : base(constraintConfig, logger)
         {
+            _getMinValue = GetMinValue;
+            _getMaxValue = GetMaxValue;
         }
 
         protected override void Constrain()
@@ -23,34 +30,43 @@ namespace Votyra.Core.Images.Constraints
             switch (_direction)
             {
                 case Direction.Up:
-                    _comparer = Comparer<float>.Create((a, b) => -DefaultComparer.Compare(a, b));
-                    _getValue = cell => _editableMatrix.SampleCell(cell)
-                        .Max;
+                    _comparer = InvertedComparer;
+                    _getValue = _getMaxValue;
                     break;
 
-                case Direction.Down:
                 default:
                     _comparer = DefaultComparer;
-                    _getValue = cell => _editableMatrix.SampleCell(cell)
-                        .Min;
+                    _getValue = _getMinValue;
                     break;
             }
 
             base.Constrain();
         }
 
+        private float GetMaxValue(Vector2i cell)
+        {
+            return _editableMatrix.SampleCell(cell)
+                .Max;
+        }
+
+        private float GetMinValue(Vector2i cell)
+        {
+            return _editableMatrix.SampleCell(cell)
+                .Min;
+        }
+
         protected override void ConstrainCell(Vector2i seedCell)
         {
-            var queue = new PrioritySetQueue<Vector2i, float>(EqualityComparer<Vector2i>.Default, _comparer);
-            queue.Add(seedCell, _getValue(seedCell));
+            _queue.Reset(_comparer);
+            _queue.Add(seedCell, _getValue(seedCell));
 
-            while (queue.Count > 0)
+            while (_queue.Count > 0)
             {
                 // #if UNITY_EDITOR
                 //                 if (!EditorApplication.isPlayingOrWillChangePlaymode)
                 //                     return;
                 // #endif
-                var cell = queue.GetFirst()
+                var cell = _queue.GetFirst()
                     .Value;
                 _invalidatedCellArea = _invalidatedCellArea.CombineWith(cell);
 
@@ -93,7 +109,7 @@ namespace Votyra.Core.Images.Constraints
                             var newCellToCheck = new Vector2i(ix, iy);
                             var newCellToCheckValue = _getValue(cell);
                             if (_editableMatrix.ContainsIndex(newCellToCheck))
-                                queue.Add(newCellToCheck, newCellToCheckValue);
+                                _queue.Add(newCellToCheck, newCellToCheckValue);
                         }
                     }
                 }

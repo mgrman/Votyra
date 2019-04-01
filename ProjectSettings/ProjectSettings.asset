@@ -540,11 +540,11 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: TycoonTerain
   metroPackageVersion: 1.0.0.0
-  metroCertificatePath: Assets\WSATestCertificate.pfx
+  metroCertificatePath: Assets/WSATestCertificate.pfx
   metroCertificatePassword: 
   metroCertificateSubject: Martin Grman
   metroCertificateIssuer: Martin Grman
-  metroCertificateNotAfter: 8061e06c54f5d501
+  metroCertificateNotAfter: 00f272a8c707d601
   metroApplicationDescription: TycoonTerain
   wsaImages: {}
   metroTileShortName: 

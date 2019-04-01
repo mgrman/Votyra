@@ -21,15 +21,13 @@ namespace Votyra.Core.Unity.Painting
         [Inject]
         protected ITerrainConfig _terrainConfig;
 
-        private bool _invokedWithNull;
-        private Ray3f _previousRay;
-
-        // private Dictionary<int, PointerEventData> _pointersDictionary;
-
         private bool _processing;
 
         [Inject(Id = "root")]
         protected GameObject _root;
+
+        private InputActions _bufferedInputs = default;
+        private bool _invokeWithNull;
 
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
         {
@@ -51,27 +49,36 @@ namespace Votyra.Core.Unity.Painting
         protected void Update()
         {
             if (_processing)
-                return;
-
-            _processing = true;
-
-            if (_activePointerData == null)
             {
-                if (!_invokedWithNull)
-                {
-                    InvokeHandlers(_previousRay, default, _activePointerData);
-                    _invokedWithNull = true;
-                }
-
-                _processing = false;
+                _bufferedInputs = GetActiveInputs(_bufferedInputs);
                 return;
             }
 
-            _invokedWithNull = false;
+            _processing = true;
 
             var ray = GetRayFromPointer(_activePointerData);
-            _previousRay = ray;
-            var activeInputs = GetActiveInputs();
+            var activeInputs = GetActiveInputs(_bufferedInputs);
+            if (!ray.Origin.AnyNan()) //action is when pointer is active
+            {
+                activeInputs |= InputActions.Action;
+            }
+
+            _bufferedInputs = default;
+
+            if (activeInputs == default)
+            {
+                if (!_invokeWithNull)
+                {
+                    _processing = false;
+                    return;
+                }
+
+                _invokeWithNull = false;
+            }
+            else
+            {
+                _invokeWithNull = true;
+            }
 
             if (_terrainConfig.Async)
             {
@@ -97,7 +104,7 @@ namespace Votyra.Core.Unity.Painting
                     var used = _inputHandlers[i]
                         .Update(ray, activeInputs);
                     if (used)
-                        pointerEventData.Use();
+                        pointerEventData?.Use();
                 }
                 catch (Exception ex)
                 {
@@ -106,17 +113,19 @@ namespace Votyra.Core.Unity.Painting
             }
         }
 
-        private static InputActions GetActiveInputs()
+        private static InputActions GetActiveInputs(InputActions previousInputs)
         {
             var activeInputs = default(InputActions);
             var inputs = EnumUtilities.GetNamesAndValues<InputActions>();
             for (var i = 0; i < inputs.Count; i++)
             {
-                activeInputs |= Input.GetButton(inputs[i]
-                    .name)
-                    ? inputs[i]
-                        .value
-                    : default;
+                var input = inputs[i];
+                if (input.value == InputActions.Action) //action is handled via active pointer
+                {
+                    continue;
+                }
+
+                activeInputs |= Input.GetButton(input.name) ? input.value : default;
             }
 
             return activeInputs;
@@ -124,6 +133,11 @@ namespace Votyra.Core.Unity.Painting
 
         private Ray3f GetRayFromPointer(PointerEventData eventData)
         {
+            if (eventData == null)
+            {
+                return new Ray3f(Vector3f.NaN, Vector3f.NaN);
+            }
+
             var ray = eventData.pressEventCamera.ScreenPointToRay(eventData.position);
 
             var cameraPosition = _root.transform.InverseTransformPoint(ray.origin)

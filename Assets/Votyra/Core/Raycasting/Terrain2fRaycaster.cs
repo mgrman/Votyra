@@ -18,7 +18,7 @@ namespace Votyra.Core.Raycasting
             _manager = manager;
         }
 
-        protected override RaycastResult RaycastGroup(Line2f line, Vector2i group, Ray3f cameraRay)
+        protected override RaycastResult RaycastGroup(Vector2i group, Ray3f cameraRay)
         {
             var mesh = _manager.GetMeshForGroup(group);
 

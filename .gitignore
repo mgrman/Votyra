@@ -278,6 +278,7 @@ ClientBin/
 *.dbproj.schemaview
 *.jfm
 *.pfx
+*.pfx.meta
 *.publishsettings
 orleans.codegen.cs
 
@@ -309,4 +310,3 @@ typings/
 
 # Rider
 /.idea
-Assets/WSATestCertificate.pfx.meta

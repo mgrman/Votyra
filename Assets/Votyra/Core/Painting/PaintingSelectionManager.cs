@@ -1,5 +1,8 @@
+using System.Linq;
+using UnityEngine;
 using Votyra.Core.InputHandling;
 using Votyra.Core.Models;
+using Votyra.Core.Painting.Commands;
 using Votyra.Core.Raycasting;
 using Votyra.Core.Utils;
 
@@ -16,15 +19,32 @@ namespace Votyra.Core.Painting
         private readonly IRaycaster _raycaster;
 
         private InputActions _previousInputActions;
+        private (InputActions action, IPaintCommand command)[] _potentionalPaintCommands;
 
         public PaintingSelectionManager(IPaintingModel paintingModel, IRaycaster raycaster)
         {
             _paintingModel = paintingModel;
             _raycaster = raycaster;
+            _potentionalPaintCommands = EnumUtilities.GetValues<InputActions>()
+                .Select(o => (o, paintingModel.PaintCommands.FirstOrDefault(cmd => cmd.GetType()
+                    .Name == o.ToString())))
+                .Where(o => o.Item2 != null)
+                .ToArray();
         }
 
         public bool Update(Ray3f inputRay, InputActions activeInput)
         {
+            bool any = false;
+            for (int i = 0; i < _potentionalPaintCommands.Length; i++)
+            {
+                var potentionalPaintCommand = _potentionalPaintCommands[i];
+                if (activeInput.IsInputActive(potentionalPaintCommand.action))
+                {
+                    _paintingModel.SelectedPaintCommand = potentionalPaintCommand.command;
+                    any = true;
+                }
+            }
+
             var command = _paintingModel.SelectedPaintCommand;
             if (command != null)
             {
@@ -46,26 +66,29 @@ namespace Votyra.Core.Painting
                     if (invocationData != null)
                     {
                         command.UpdateInvocationValues(invocationData.Value.ImagePosition, invocationData.Value.Strength);
-                        _previousInputActions = activeInput;
-                        return true;
                     }
-                }
 
-                command.StopInvocation();
+                    _previousInputActions = activeInput;
+                    any = true;
+                }
+                else
+                {
+                    command.StopInvocation();
+                }
             }
 
             _previousInputActions = activeInput;
-            return false;
+            return any;
         }
 
-        
         private PaintInvocationData? GetInvocationDataFromPointer(Ray3f cameraRay)
         {
-            var rayHit= _raycaster.Raycast(cameraRay);
+            var rayHit = _raycaster.Raycast(cameraRay);
             if (rayHit.AnyNan())
             {
                 return null;
             }
+
             var imagePosition = rayHit.XY()
                 .RoundToVector2i();
             var strength = GetMultiplier() * GetDistance();

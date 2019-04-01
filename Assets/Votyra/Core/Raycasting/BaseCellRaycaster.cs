@@ -21,7 +21,7 @@ namespace Votyra.Core.Raycasting
         private Vector2i _fromCell;
         private Vector2i _toCell;
 
-        protected BaseCellRaycaster(ITerrainVertexPostProcessor terrainVertexPostProcessor )
+        protected BaseCellRaycaster(ITerrainVertexPostProcessor terrainVertexPostProcessor)
         {
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
         }
@@ -53,36 +53,39 @@ namespace Votyra.Core.Raycasting
                 var ray = new Ray2f(position, _rayDirection);
 
                 var area = MeshCellArea(cell);
-                Side offset;
-                Line2f intersection;
-                if (!LiangBarskyClipper.Compute(area, ray, out intersection, out offset))
+                var intersection = IntersectionUtils.LiangBarskyClipper(area, ray);
+                if (intersection.AnyNan())
+                {
                     return Vector3f.NaN;
+                }
 
-                var stop = RaycastCell(intersection, cell);
+                var offset = IntersectionUtils.GetRectangleSegment(area, intersection);
+
+                var stop = RaycastCell(new Line2f(position, intersection), cell);
                 if (!stop.AnyNan())
                     return stop;
 
-                if (offset.HasFlag(Side.X0))
+                if (offset.HasFlag(RectangleSegment.X0))
                 {
                     cell += X0Offset;
                 }
 
-                if (offset.HasFlag(Side.X1))
+                if (offset.HasFlag(RectangleSegment.X1))
                 {
                     cell += X1Offset;
                 }
 
-                if (offset.HasFlag(Side.Y0))
+                if (offset.HasFlag(RectangleSegment.Y0))
                 {
                     cell += Y0Offset;
                 }
 
-                if (offset.HasFlag(Side.Y1))
+                if (offset.HasFlag(RectangleSegment.Y1))
                 {
                     cell += Y1Offset;
                 }
 
-                position = intersection.To;
+                position = intersection;
             }
 
 #if UNITY_EDITOR

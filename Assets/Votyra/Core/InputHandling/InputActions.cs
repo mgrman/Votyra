@@ -12,6 +12,9 @@ namespace Votyra.Core.InputHandling
         UpDown = 1 << 5,
         Jump = 1 << 6,
         Rotate = 1 << 7,
-        Action = 1 << 8
+        Action = 1 << 8,
+        Flatten = 1 << 9,
+        IncreaseOrDecrease = 1 << 10,
+        MakeOrRemoveHole = 1 << 11
     }
 }

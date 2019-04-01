@@ -16,7 +16,8 @@ namespace Votyra.Core.Editor
 #else
         private static string AssetsFolderPath => Application.dataPath;
 #endif
-        private static readonly string RootFolder = Path.GetFullPath(Path.Combine(AssetsFolderPath, "..", "Build", "Release"));
+        private const string MSBuildPath = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\MSBuild\\15.0\\Bin\\MSBuild.exe";
+        private static readonly string RootFolder = Path.GetFullPath(Path.Combine(AssetsFolderPath, "..", "..", "Build", Application.productName, "Release"));
         private static readonly string UWPDirectory = Path.Combine(RootFolder, "UWP");
         private static readonly string Win64Directory = Path.Combine(RootFolder, "Win64");
         private static readonly string Win64Path = Path.Combine(Win64Directory, "Votyra.exe");
@@ -66,20 +67,37 @@ namespace Votyra.Core.Editor
             EditorUserBuildSettings.wsaSubtarget = WSASubtarget.AnyDevice;
             EditorUserBuildSettings.wsaUWPBuildType = WSAUWPBuildType.D3D;
             EditorUserBuildSettings.wsaBuildAndRunDeployTarget = WSABuildAndRunDeployTarget.LocalMachine;
-            
+
             BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, UWPDirectory, BuildTarget.WSAPlayer, BuildOptions.None);
-            
-            var processStartInfo=new ProcessStartInfo()
+
+            var processStartInfo = new ProcessStartInfo()
             {
-                FileName = "MSBuild",
-                Arguments = $".\\{Application.productName}.sln /p:Configuration=Release;AppxBundle=Always;AppxBundlePlatforms=\"x64\"",
+                FileName = MSBuildPath,
+                Arguments = $".\\{Application.productName}.sln /p:Platform=\"x64\" /p:BuildPlatform=\"x64\" /p:Configuration=Release /p:AppxBundlePlatforms=\"x64\" /p:AppxBundle=Always",
                 WorkingDirectory = UWPDirectory,
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
             };
-           var process= Process.Start(processStartInfo);
-           process.WaitForExit();
-           var msBuildOutput = process.StandardOutput.ReadToEnd();
-           Debug.Log(msBuildOutput);
+            var process =new Process();
+            process.StartInfo = processStartInfo;
+            process.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
+            process.ErrorDataReceived += new DataReceivedEventHandler(ErrorHandler);
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            process.WaitForExit();
+
+        }
+
+        private static void OutputHandler(object sender, DataReceivedEventArgs e)
+        {
+            Debug.Log(e.Data);
+        }
+
+        private static void ErrorHandler(object sender, DataReceivedEventArgs e)
+        {
+            Debug.LogError(e.Data);
         }
 
         [MenuItem("Build/Votyra/Build WebGL (Release)")]

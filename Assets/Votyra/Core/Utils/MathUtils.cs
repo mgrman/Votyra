@@ -12,6 +12,8 @@ namespace Votyra.Core.Utils
         private static readonly FastNoise _noise = new FastNoise();
 
         public static bool IsApproximatelyEqual(this float a, float b, float eps = 0.000001f) => Math.Abs(b - a) < eps;
+        public static bool IsApproximatelyGreaterOrEqual(this float a, float b, float eps = 0.000001f) => a > b || a.IsApproximatelyEqual(b);
+        public static bool IsApproximatelyLessOrEqual(this float a, float b, float eps = 0.000001f) => a < b || a.IsApproximatelyEqual(b);
 
         public static int? Abs(this int? val) => val.HasValue ? Math.Abs(val.Value) : val;
 
