@@ -84,6 +84,7 @@ namespace Votyra.Core.Editor
             process.StartInfo = processStartInfo;
             process.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
             process.ErrorDataReceived += new DataReceivedEventHandler(ErrorHandler);
+            process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             process.WaitForExit();
