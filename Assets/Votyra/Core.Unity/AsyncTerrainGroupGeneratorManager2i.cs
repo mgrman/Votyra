@@ -14,7 +14,7 @@ namespace Votyra.Core
     {
         private readonly TaskQueue<ArcResource<IFrameData2i>> _taskQueue;
 
-        public AsyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, ITerrainGameObject gameObjectPool, ITerrainMesh pooledMesh, Action<ITerrainMesh, Vector2i, IImage2f, IMask2e> generateUnityMesh)
+        public AsyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, ITerrainGameObject gameObjectPool, ITerrainMesh2f pooledMesh, Action<ITerrainMesh2f, Vector2i, IImage2f, IMask2e> generateUnityMesh)
             : base(cellInGroupCount, gameObjectPool, pooledMesh, generateUnityMesh)
         {
             _taskQueue = new TaskQueue<ArcResource<IFrameData2i>>("AsyncTerrainGroupGenerator",UpdateGroupAsync);

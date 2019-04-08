@@ -1,8 +1,10 @@
-﻿namespace Votyra.Core.Images
+﻿using Votyra.Core.Models;
+
+namespace Votyra.Core.Images
 {
     public class InterpolationConfig : IInterpolationConfig
     {
-        public InterpolationConfig([ConfigInject("activeAlgorithm")] IntepolationAlgorithm activeAlgorithm, [ConfigInject("dynamicMeshes")] bool dynamicMeshes, [ConfigInject("imageSubdivision")] int imageSubdivision, [ConfigInject("meshSubdivision")] int meshSubdivision)
+        public InterpolationConfig([ConfigInject("activeAlgorithm")] IntepolationAlgorithm activeAlgorithm, [ConfigInject("dynamicMeshes")] bool dynamicMeshes, [ConfigInject("imageSubdivision")] int imageSubdivision, [ConfigInject("meshSubdivision")] Vector2i meshSubdivision)
         {
             ActiveAlgorithm = activeAlgorithm;
             DynamicMeshes = dynamicMeshes;
@@ -11,7 +13,7 @@
         }
 
         public int ImageSubdivision { get; }
-        public int MeshSubdivision { get; }
+        public Vector2i MeshSubdivision { get; }
         public bool DynamicMeshes { get; }
         public IntepolationAlgorithm ActiveAlgorithm { get; }
 
@@ -33,7 +35,7 @@
             unchecked
             {
                 var hashCode = ImageSubdivision;
-                hashCode = (hashCode * 397) ^ MeshSubdivision;
+                hashCode = (hashCode * 397) ^ MeshSubdivision.GetHashCode();
                 hashCode = (hashCode * 397) ^ DynamicMeshes.GetHashCode();
                 hashCode = (hashCode * 397) ^ (int) ActiveAlgorithm;
                 return hashCode;

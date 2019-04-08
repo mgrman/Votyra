@@ -58,7 +58,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         private readonly IImageSampler3 _imageSampler;
         protected Vector3i groupPosition;
         protected Vector3i groupSize;
-        protected ITerrainMesh pooledMesh;
+        protected IGeneralMesh pooledMesh;
 
         public TerrainMesherWithWalls3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
@@ -103,7 +103,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             }
         }
 
-        public void InitializeGroup(Vector3i group, ITerrainMesh cleanPooledMesh)
+        public void InitializeGroup(Vector3i group, IGeneralMesh cleanPooledMesh)
         {
             var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount)
                 .ToArea3f();
@@ -114,7 +114,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             pooledMesh.Reset(Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f()));
         }
 
-        public ITerrainMesh GetResultingMesh() => pooledMesh;
+        public IGeneralMesh GetResultingMesh() => pooledMesh;
 
         private static Tuple<SampledData3b, IReadOnlyCollection<Triangle3f>> ChooseTrianglesForCell(SampledData3b data)
         {
@@ -152,7 +152,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             //     matrix = matrix.Inverse;
             //     var isInverted = matrix.Determinant < 0;
 
-            //     return Tuple.Create(data, TerrainMeshExtensions
+            //     return Tuple.Create(data, TerrainMeshUtilities
             //         .GetQuadTriangles(
             //             matrix.MultiplyPoint(pos_x0y0z0),
             //             matrix.MultiplyPoint(pos_x0y1z0),
@@ -175,7 +175,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
                 return Tuple.Create(data,
-                    TerrainMeshExtensions.GetQuadTriangles(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x0y1z1), matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z0), false)
+                    TerrainMeshUtilities.GetQuadTriangles(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x0y1z1), matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z0), false)
                         .ChangeOrderIfTrue(isInverted)
                         .ToArray() as IReadOnlyCollection<Triangle3f>);
             }

@@ -159,6 +159,23 @@ namespace Votyra.Core.Editor
                 newValue = EditorGUILayout.Vector3Field("", oldVector3fValue.ToVector3(), GUILayout.MaxWidth(200))
                     .ToVector3f();
             }
+            else if (typeof(Vector2i).IsAssignableFrom(type))
+            {
+                var oldVector2iValue = oldValue as Vector2i? ?? Vector2i.Zero;
+                var newVector2Value = EditorGUILayout.Vector2Field("",
+                    oldVector2iValue.ToVector2f()
+                        .ToVector2(),
+                    GUILayout.MaxWidth(200));
+                newValue = newVector2Value.ToVector2f()
+                    .RoundToVector2i();
+            }
+            else if (typeof(Vector2f).IsAssignableFrom(type))
+            {
+                var oldVector2fValue = oldValue as Vector2f? ?? Vector2f.Zero;
+
+                newValue = EditorGUILayout.Vector2Field("", oldVector2fValue.ToVector2(), GUILayout.MaxWidth(200))
+                    .ToVector2f();
+            }
             else
             {
                 var oldValueJson = JsonConvert.SerializeObject(oldValue);

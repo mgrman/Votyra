@@ -5,7 +5,7 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core.TerrainMeshes
 {
-    public class ExpandingTerrainMesh : ITerrainMesh
+    public class ExpandingTerrainMesh : IGeneralMesh
     {
         private readonly Func<Vector3f, Vector3f> _vertexPostProcessor;
         private readonly Func<Vector2f, Vector2f> _uVAdjustor;

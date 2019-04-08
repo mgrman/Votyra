@@ -124,8 +124,6 @@ namespace Votyra.Plannar
             frameData.Image = image;
             frameData.Mask = mask;
             frameData.InvalidatedArea = invalidatedArea;
-            frameData.CellInGroupCount = _terrainConfig.CellInGroupCount.XY();
-            frameData.MeshSubdivision = _interpolationConfig.MeshSubdivision;
 
             return frameDataContainer;
         }

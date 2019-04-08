@@ -49,22 +49,26 @@ namespace Votyra.Core
             {
                 var manager = managerPool.GetRaw();
                 manager.Group = g;
+
+                NewTerrain?.Invoke(g, manager.Mesh);
                 return manager;
             };
 
             dispose = (manager) =>
             {
+                var g = manager.Group;
                 manager.Stop();
                 managerPool.ReturnRaw(manager);
+                RemovedTerrain?.Invoke(g);
             };
 
             if (_terrainConfig.Async)
             {
-                _backgroundUpdateQueue = new TaskQueue<ArcResource<IFrameData2i>>("Main task queue",(Action<ArcResource<IFrameData2i>>) UpdateTerrain);
+                _backgroundUpdateQueue = new TaskQueue<ArcResource<IFrameData2i>>("Main task queue", (Action<ArcResource<IFrameData2i>>) UpdateTerrain);
                 _frameDataProvider.FrameData += UpdateTerrainInBackground;
             }
             else
-            _frameDataProvider.FrameData += UpdateTerrainInForeground;
+                _frameDataProvider.FrameData += UpdateTerrainInForeground;
         }
 
         public void Dispose()
@@ -85,7 +89,7 @@ namespace Votyra.Core
             }
         }
 
-        public ITerrainMesh GetMeshForGroup(Vector2i group)
+        public ITerrainMesh2f GetMeshForGroup(Vector2i group)
         {
             lock (_activeGroupsLock)
             {
@@ -93,6 +97,10 @@ namespace Votyra.Core
                     ?.Mesh;
             }
         }
+
+        public event Action<Vector2i, ITerrainMesh2f> NewTerrain;
+        public event Action<Vector2i, ITerrainMesh2f> ChangedTerrain;
+        public event Action<Vector2i> RemovedTerrain;
 
         private void UpdateTerrainInForeground(ArcResource<IFrameData2i> context)
         {
@@ -118,7 +126,11 @@ namespace Votyra.Core
             {
                 foreach (var activeGroup in _activeGroups)
                 {
-                    activeGroup.Value.Update(context.Activate());
+                    var updated = activeGroup.Value.Update(context.Activate());
+                    if (updated)
+                    {
+                        ChangedTerrain?.Invoke(activeGroup.Key, activeGroup.Value.Mesh);
+                    }
                 }
             }
         }

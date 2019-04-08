@@ -239,6 +239,24 @@ namespace Votyra.Core
 
                 newValue = new Vector3f(x, y, z);
             }
+            else if (typeof(Vector2i).IsAssignableFrom(type))
+            {
+                var oldVector2iValue = oldValue as Vector2i? ?? Vector2i.Zero;
+
+                var x = int.TryParse(GUILayout.TextField(oldVector2iValue.X.ToString()), out var xVal) ? xVal : 0;
+                var y = int.TryParse(GUILayout.TextField(oldVector2iValue.Y.ToString()), out var yVal) ? yVal : 0;
+
+                newValue = new Vector2i(x, y);
+            }
+            else if (typeof(Vector2f).IsAssignableFrom(type))
+            {
+                var oldVector2fValue = oldValue as Vector2f? ?? Vector2f.Zero;
+
+                var x = float.TryParse(GUILayout.TextField(oldVector2fValue.X.ToString()), out var xVal) ? xVal : 0;
+                var y = float.TryParse(GUILayout.TextField(oldVector2fValue.Y.ToString()), out var yVal) ? yVal : 0;
+
+                newValue = new Vector2f(x, y);
+            }
             else
             {
                 // var oldValueJson = JsonConvert.SerializeObject(oldValue);

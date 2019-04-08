@@ -12,7 +12,7 @@ namespace Votyra.Core.MeshUpdaters
 {
     public static class TerrainMeshUpdater
     {
-        public static void SetUnityMesh(this ITerrainMesh triangleMesh, ITerrainGameObject unityData)
+        public static void SetUnityMesh(this IMesh triangleMesh, ITerrainGameObject unityData)
         {
             var meshFilter = unityData.MeshFilter;
             SetUnityMesh(triangleMesh, meshFilter.sharedMesh);
@@ -26,7 +26,7 @@ namespace Votyra.Core.MeshUpdaters
                 SetBoxCollider(triangleMesh, boxCollider);
         }
 
-        private static void SetUnityMesh(ITerrainMesh triangleMesh, Mesh mesh)
+        private static void SetUnityMesh(IMesh triangleMesh, Mesh mesh)
         {
             SetMeshFormat(mesh, triangleMesh.VertexCount);
 
@@ -46,7 +46,7 @@ namespace Votyra.Core.MeshUpdaters
             mesh.bounds = triangleMesh.MeshBounds.ToBounds();
         }
 
-        private static void SetTriangles(ITerrainMesh triangleMesh, Mesh mesh)
+        private static void SetTriangles(IMesh triangleMesh, Mesh mesh)
         {
             if (triangleMesh.Indices is int[] indexArray)
             {
@@ -63,7 +63,7 @@ namespace Votyra.Core.MeshUpdaters
             }
         }
 
-        private static void SetUVs(ITerrainMesh triangleMesh, Mesh mesh)
+        private static void SetUVs(IMesh triangleMesh, Mesh mesh)
         {
             if (triangleMesh.UV is Vector2f[] uvArray)
             {
@@ -82,7 +82,7 @@ namespace Votyra.Core.MeshUpdaters
             }
         }
 
-        private static void SetVertices(ITerrainMesh triangleMesh, Mesh mesh)
+        private static void SetVertices(IMesh triangleMesh, Mesh mesh)
         {
             if (triangleMesh.Vertices is Vector3f[] verticesArray)
             {
@@ -100,7 +100,7 @@ namespace Votyra.Core.MeshUpdaters
             }
         }
 
-        private static void SetNormals(ITerrainMesh triangleMesh, Mesh mesh)
+        private static void SetNormals(IMesh triangleMesh, Mesh mesh)
         {
             if (triangleMesh.Normals is Vector3f[] normalsArray)
             {
@@ -118,7 +118,7 @@ namespace Votyra.Core.MeshUpdaters
             }
         }
 
-        private static void SetBoxCollider(ITerrainMesh triangleMesh, BoxCollider collider)
+        private static void SetBoxCollider(IMesh triangleMesh, BoxCollider collider)
         {
             collider.center = triangleMesh.MeshBounds.Center.ToVector3();
             collider.size = triangleMesh.MeshBounds.Size.ToVector3();

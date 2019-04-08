@@ -201,6 +201,8 @@ namespace Votyra.Core.Models
 
         public static bool AnyNan(this Vector4f @this) => float.IsNaN(@this.X) || float.IsNaN(@this.Y) || float.IsNaN(@this.Z) || float.IsNaN(@this.W);
 
+        public static bool NoNan(this Vector4f @this) => !float.IsNaN(@this.X) && !float.IsNaN(@this.Y) && !float.IsNaN(@this.Z) && !float.IsNaN(@this.W);
+
         public static bool AnyInfinity(this Vector4f @this) => float.IsInfinity(@this.X) || float.IsInfinity(@this.Y) || float.IsInfinity(@this.Z) || float.IsInfinity(@this.W);
 
         public static float AreaSum(this Vector4f @this) => @this.X * @this.Y * @this.Z * @this.W;

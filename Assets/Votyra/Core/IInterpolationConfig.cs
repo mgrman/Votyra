@@ -1,9 +1,11 @@
-﻿namespace Votyra.Core
+﻿using Votyra.Core.Models;
+
+namespace Votyra.Core
 {
     public interface IInterpolationConfig : IConfig
     {
         int ImageSubdivision { get; }
-        int MeshSubdivision { get; }
+        Vector2i MeshSubdivision { get; }
         bool DynamicMeshes { get; }
         IntepolationAlgorithm ActiveAlgorithm { get; }
     }

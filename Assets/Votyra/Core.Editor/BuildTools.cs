@@ -16,7 +16,7 @@ namespace Votyra.Core.Editor
 #else
         private static string AssetsFolderPath => Application.dataPath;
 #endif
-        private const string MSBuildPath = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\MSBuild\\15.0\\Bin\\MSBuild.exe";
+        private const string MSBuildPath = @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe";
         private static readonly string RootFolder = Path.GetFullPath(Path.Combine(AssetsFolderPath, "..", "..", "Build", Application.productName, "Release"));
         private static readonly string UWPDirectory = Path.Combine(RootFolder, "UWP");
         private static readonly string Win64Directory = Path.Combine(RootFolder, "Win64");
@@ -80,7 +80,7 @@ namespace Votyra.Core.Editor
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
-            var process =new Process();
+            var process = new Process();
             process.StartInfo = processStartInfo;
             process.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
             process.ErrorDataReceived += new DataReceivedEventHandler(ErrorHandler);
@@ -124,7 +124,7 @@ namespace Votyra.Core.Editor
         [MenuItem("Build/Votyra/Open Release folder")]
         public static void OpenFolderInExplorer()
         {
-            var proc = new Process {StartInfo = {FileName = RootFolder}};
+            var proc = new Process { StartInfo = { FileName = RootFolder } };
             proc.Start();
         }
 

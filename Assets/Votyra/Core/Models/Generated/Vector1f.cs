@@ -7,6 +7,7 @@ namespace Votyra.Core.Models
     {
         public static readonly float One = 1f;
         public static readonly float Zero = 0f;
+        public static readonly float NaN = float.NaN;
     }
 
     public static class Vector1fUtils
@@ -14,6 +15,8 @@ namespace Votyra.Core.Models
         public static bool AnyNegative(this float @this) => @this < 0;
 
         public static bool AnyNan(this float @this) => float.IsNaN(@this);
+
+        public static bool NoNan(this float @this) => !float.IsNaN(@this);
 
         public static bool AnyInfinity(this float @this) => float.IsInfinity(@this);
 

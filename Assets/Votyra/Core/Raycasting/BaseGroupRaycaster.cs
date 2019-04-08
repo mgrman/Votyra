@@ -24,10 +24,16 @@ namespace Votyra.Core.Raycasting
             maxIterations = (int) maxDistance * 10;
         }
 
+        public virtual float Raycast(Vector2f posXY)
+        {
+            var group = GetGroup(FindCell(posXY));
+            return RaycastGroup(group, posXY);
+        }
+
         public virtual Vector3f Raycast(Ray3f cameraRay)
         {
             var cameraRayXY = cameraRay.XY();
-            
+
             var rayOriginXY = cameraRayXY.Origin;
             var rayDirectionXY = cameraRayXY.Direction;
             var maxDistancePoint = cameraRay.GetPoint(maxDistance)
@@ -45,13 +51,10 @@ namespace Votyra.Core.Raycasting
                 var ray = new Ray2f(currentPosition, rayDirectionXY);
 
                 var area = MeshGroupArea(currentGroup);
-                var foundResult = RaycastGroup( currentGroup, cameraRay);
-                switch (foundResult.State)
+                var foundResult = RaycastGroup(currentGroup, cameraRay);
+                if (foundResult.NoNan())
                 {
-                    case RaycastResultState.Success:
-                        return foundResult.Hit;
-                    case RaycastResultState.FullStop:
-                        return Vector3f.NaN;
+                    return foundResult;
                 }
 
                 var intersection = IntersectionUtils.LiangBarskyClipper(area, ray);
@@ -147,34 +150,8 @@ namespace Votyra.Core.Raycasting
             return new Vector2i(x, y);
         }
 
-        protected abstract RaycastResult RaycastGroup(Vector2i group, Ray3f cameraRay);
+        protected abstract Vector3f RaycastGroup(Vector2i group, Ray3f cameraRay);
 
-        protected enum RaycastResultState
-        {
-            NoHit = 0,
-            Success = 1,
-            FullStop = 2
-        }
-
-        protected struct RaycastResult
-        {
-            private RaycastResult(Vector3f hit, RaycastResultState state)
-            {
-                Hit = hit;
-                State = state;
-            }
-
-            public RaycastResult(Vector3f hit)
-            {
-                Hit = hit;
-                State = RaycastResultState.Success;
-            }
-
-            public readonly Vector3f Hit;
-            public readonly RaycastResultState State;
-
-            public static readonly RaycastResult NoHit = new RaycastResult(Vector3f.NaN, RaycastResultState.NoHit);
-            public static readonly RaycastResult FullStop = new RaycastResult(Vector3f.NaN, RaycastResultState.FullStop);
-        }
+        protected abstract float RaycastGroup(Vector2i group, Vector2f posXY);
     }
 }

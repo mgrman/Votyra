@@ -20,7 +20,7 @@ namespace Votyra.Core.TerrainGenerators
             _cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        public void Generate(Vector3i group, IImage3b image, ITerrainMesh pooledTerrainMesh)
+        public void Generate(Vector3i group, IImage3b image, IGeneralMesh pooledTerrainMesh)
         {
             using (_profiler.Start("init"))
             {

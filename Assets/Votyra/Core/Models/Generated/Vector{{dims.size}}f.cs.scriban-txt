@@ -119,6 +119,7 @@ namespace Votyra.Core.Models
         {
             public static readonly {{vectorFloatRealType}} One =1f;
             public static readonly {{vectorFloatRealType}} Zero = 0f;
+            public static readonly {{vectorFloatRealType}} NaN = float.NaN;
         }
     
     {{end}}
@@ -137,6 +138,8 @@ namespace Votyra.Core.Models
         public static bool AnyNegative(this {{vectorFloatRealType}} @this) => {{for dim in dims}}{{dimAccess "@this" dim}}<0{{sep " || "}}{{end}};
         
         public static bool AnyNan(this {{vectorFloatRealType}} @this) => {{for dim in dims}}float.IsNaN({{dimAccess "@this" dim}}){{sep " || "}}{{end}};
+        
+        public static bool NoNan(this {{vectorFloatRealType}} @this) => {{for dim in dims}}!float.IsNaN({{dimAccess "@this" dim}}){{sep " && "}}{{end}};
         
         public static bool AnyInfinity(this {{vectorFloatRealType}} @this) => {{for dim in dims}}float.IsInfinity({{dimAccess "@this" dim}}){{sep " || "}}{{end}};
 

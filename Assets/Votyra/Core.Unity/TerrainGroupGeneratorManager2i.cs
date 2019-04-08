@@ -11,10 +11,10 @@ namespace Votyra.Core
 {
     public abstract class TerrainGroupGeneratorManager2i : ITerrainGroupGeneratorManager2i
     {
-        protected readonly Action<ITerrainMesh, Vector2i, IImage2f, IMask2e> _generateUnityMesh;
+        protected readonly Action<ITerrainMesh2f, Vector2i, IImage2f, IMask2e> _generateUnityMesh;
         protected Vector2i _group;
         protected readonly Vector2i _cellInGroupCount;
-        protected readonly ITerrainMesh _pooledMesh;
+        protected readonly ITerrainMesh2f _pooledMesh;
         protected Range2i _range;
         protected readonly ITerrainGameObject _gameObjectPool;
 
@@ -34,7 +34,7 @@ namespace Votyra.Core
         private bool _updatedOnce;
         private bool _stopped;
 
-        public TerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, ITerrainGameObject gameObject, ITerrainMesh pooledMesh, Action<ITerrainMesh, Vector2i, IImage2f, IMask2e> generateUnityMesh)
+        public TerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, ITerrainGameObject gameObject, ITerrainMesh2f pooledMesh, Action<ITerrainMesh2f, Vector2i, IImage2f, IMask2e> generateUnityMesh)
         {
             _gameObjectPool = gameObject;
             _cellInGroupCount = cellInGroupCount;
@@ -46,21 +46,22 @@ namespace Votyra.Core
         protected bool IsStopped => _stopped;
 
         public ITerrainGameObject TerrainGameObject => _gameObjectPool;
-        public ITerrainMesh Mesh => _pooledMesh;
+        public ITerrainMesh2f Mesh => _pooledMesh;
 
-        public void Update(ArcResource<IFrameData2i> context)
+        public bool Update(ArcResource<IFrameData2i> context)
         {
             _stopped = false;
 
             if (_updatedOnce && !context.Value.InvalidatedArea.Overlaps(_range))
             {
                 context.Dispose();
-                return;
+                return false;
             }
 
             _updatedOnce = true;
 
             UpdateGroup(context);
+            return true;
         }
 
         public virtual void Stop()

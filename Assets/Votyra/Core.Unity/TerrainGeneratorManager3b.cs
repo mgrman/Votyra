@@ -33,9 +33,9 @@ namespace Votyra.Core
         protected readonly IProfiler _profiler;
         protected readonly ITerrainConfig _terrainConfig;
         protected readonly ITerrainGenerator3b _terrainGenerator;
-        protected readonly ITerrainMeshPool _terrainMeshPool;
+        protected readonly IGeneralMeshPool _terrainMeshPool;
 
-        public TerrainGeneratorManager3b(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector3b groupsSelector, ITerrainGenerator3b terrainGenerator, IProfiler profiler, IFrameDataProvider3b frameDataProvider, ITerrainMeshPool terrainMeshPool)
+        public TerrainGeneratorManager3b(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector3b groupsSelector, ITerrainGenerator3b terrainGenerator, IProfiler profiler, IFrameDataProvider3b frameDataProvider, IGeneralMeshPool terrainMeshPool)
         {
             _gameObjectFactory = gameObjectFactory;
             _logger = logger;
@@ -79,10 +79,10 @@ namespace Votyra.Core
         {
             context?.Activate();
             GroupActions<Vector3i> groupActions = null;
-            IReadOnlyDictionary<Vector3i, ITerrainMesh> results = null;
+            IReadOnlyDictionary<Vector3i, IGeneralMesh> results = null;
             try
             {
-                Func<IReadOnlyDictionary<Vector3i, ITerrainMesh>> computeAction = () =>
+                Func<IReadOnlyDictionary<Vector3i, IGeneralMesh>> computeAction = () =>
                 {
                     using (_profiler.Start("Creating visible groups"))
                     {
@@ -95,7 +95,7 @@ namespace Votyra.Core
                     if (toRecompute.Any())
                         using (_profiler.Start("TerrainMeshGenerator"))
                         {
-                            var meshes = new Dictionary<Vector3i, ITerrainMesh>();
+                            var meshes = new Dictionary<Vector3i, IGeneralMesh>();
 
                             foreach (var group in toRecompute)
                             {

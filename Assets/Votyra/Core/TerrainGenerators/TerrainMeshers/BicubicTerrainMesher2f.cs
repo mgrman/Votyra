@@ -10,7 +10,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         private const float MaskLimit = 0f;
 
         private readonly Vector2i _cellInGroupCount;
-        private readonly int _subdivision;
+        private readonly Vector2i _subdivision;
 
         public BicubicTerrainMesher2f(ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig)
         {
@@ -18,11 +18,11 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             _subdivision = interpolationConfig.MeshSubdivision;
         }
 
-        public void GetResultingMesh(ITerrainMesh mesh, Vector2i group, IImage2f image, IMask2e mask)
+        public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image, IMask2e mask)
         {
-            var poolableValuesToFill = PoolableMatrix2<Vector3f>.CreateDirty(new Vector2i(_subdivision + 1, _subdivision + 1));
+            var poolableValuesToFill = PoolableMatrix2<float>.CreateDirty(new Vector2i(_subdivision.X + 1, _subdivision.Y + 1));
             var valuesToFill = poolableValuesToFill.RawMatrix;
-            var poolableMaskToFill = PoolableMatrix2<float>.CreateDirty(new Vector2i(_subdivision + 1, _subdivision + 1));
+            var poolableMaskToFill = PoolableMatrix2<MaskValues>.CreateDirty(new Vector2i(_subdivision.X + 1, _subdivision.Y + 1));
             var maskToFill = poolableMaskToFill.RawMatrix;
 
             var groupPosition = _cellInGroupCount * group;
@@ -84,25 +84,25 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     var maskInterMat_x3y2 = mask_x2y2.x1y0.IsHole() ? -1 : 1;
                     var maskInterMat_x3y3 = mask_x2y2.x1y1.IsHole() ? -1 : 1;
 
-                    for (var ix = 0; ix < _subdivision + 1; ix++)
+                    for (var ix = 0; ix < _subdivision.X + 1; ix++)
                     {
-                        for (var iy = 0; iy < _subdivision + 1; iy++)
+                        for (var iy = 0; iy < _subdivision.Y + 1; iy++)
                         {
-                            var pos = new Vector2f(step * ix, step * iy);
+                            var pos = new Vector2f(step.X * ix, step.Y * iy);
 
                             var maskCol0 = Intepolate(maskInterMat_x0y0, maskInterMat_x1y0, maskInterMat_x2y0, maskInterMat_x3y0, pos.X);
                             var maskCol1 = Intepolate(maskInterMat_x0y1, maskInterMat_x1y1, maskInterMat_x2y1, maskInterMat_x3y1, pos.X);
                             var maskCol2 = Intepolate(maskInterMat_x0y2, maskInterMat_x1y2, maskInterMat_x2y2, maskInterMat_x3y2, pos.X);
                             var maskCol3 = Intepolate(maskInterMat_x0y3, maskInterMat_x1y3, maskInterMat_x2y3, maskInterMat_x3y3, pos.X);
                             var maskValue = Intepolate(maskCol0, maskCol1, maskCol2, maskCol3, pos.Y);
-                            maskToFill[ix, iy] = maskValue;
+                            maskToFill[ix, iy] = maskValue >= MaskLimit ? MaskValues.Terrain:MaskValues.Hole;
 
                             var valueCol0 = Intepolate(valuesInterMat_x0y0, valuesInterMat_x1y0, valuesInterMat_x2y0, valuesInterMat_x3y0, pos.X);
                             var valueCol1 = Intepolate(valuesInterMat_x0y1, valuesInterMat_x1y1, valuesInterMat_x2y1, valuesInterMat_x3y1, pos.X);
                             var valueCol2 = Intepolate(valuesInterMat_x0y2, valuesInterMat_x1y2, valuesInterMat_x2y2, valuesInterMat_x3y2, pos.X);
                             var valueCol3 = Intepolate(valuesInterMat_x0y3, valuesInterMat_x1y3, valuesInterMat_x2y3, valuesInterMat_x3y3, pos.X);
                             var value = Intepolate(valueCol0, valueCol1, valueCol2, valueCol3, pos.Y);
-                            valuesToFill[ix, iy] = (pos + cell).ToVector3f(value);
+                            valuesToFill[ix, iy] = value;
 
                             if (ix > 0 && iy > 0)
                             {
@@ -110,12 +110,15 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                                 var x00y05 = valuesToFill[ix - 1 + 0, iy - 1 + 1];
                                 var x05y00 = valuesToFill[ix - 1 + 1, iy - 1 + 0];
                                 var x05y05 = valuesToFill[ix - 1 + 1, iy - 1 + 1];
-                                var x00y00Mask = maskToFill[ix - 1 + 0, iy - 1 + 0] >= MaskLimit;
-                                var x00y05Mask = maskToFill[ix - 1 + 0, iy - 1 + 1] >= MaskLimit;
-                                var x05y00Mask = maskToFill[ix - 1 + 1, iy - 1 + 0] >= MaskLimit;
-                                var x05y05Mask = maskToFill[ix - 1 + 1, iy - 1 + 1] >= MaskLimit;
+                                var x00y00Mask = maskToFill[ix - 1 + 0, iy - 1 + 0];
+                                var x00y05Mask = maskToFill[ix - 1 + 0, iy - 1 + 1];
+                                var x05y00Mask = maskToFill[ix - 1 + 1, iy - 1 + 0];
+                                var x05y05Mask = maskToFill[ix - 1 + 1, iy - 1 + 1];
 
-                                mesh.AddQuad(x00y00Mask ? x00y00 : (Vector3f?) null, x00y05Mask ? x00y05 : (Vector3f?) null, x05y00Mask ? x05y00 : (Vector3f?) null, x05y05Mask ? x05y05 : (Vector3f?) null);
+                                var subcellValue = new SampledData2f(x00y00, x00y05, x05y00, x05y05);
+                                var subcellMask = new SampledMask2e(x00y00Mask, x00y05Mask, x05y00Mask, x05y05Mask);
+
+                                mesh.AddCell(cellInGroup,new Vector2i(ix-1,iy-1), subcellValue, subcellMask);
                             }
                         }
                     }

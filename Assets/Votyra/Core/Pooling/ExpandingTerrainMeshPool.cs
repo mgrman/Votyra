@@ -9,18 +9,18 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {
-    public class ExpandingTerrainMeshPool : Pool<ITerrainMesh>, ITerrainMeshPool
+    public class ExpandingTerrainMeshPool : Pool<IGeneralMesh>, IGeneralMeshPool
     {
         public ExpandingTerrainMeshPool(ITerrainVertexPostProcessor vertexPostProcessor = null, ITerrainUVPostProcessor uvAdjustor = null)
             : base(CreateMeshFunc(vertexPostProcessor == null ? (Func<Vector3f, Vector3f>) null : vertexPostProcessor.PostProcessVertex, uvAdjustor == null ? (Func<Vector2f, Vector2f>) null : uvAdjustor.ProcessUV))
         {
         }
 
-        private static Func<ITerrainMesh> CreateMeshFunc(Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
+        private static Func<IGeneralMesh> CreateMeshFunc(Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
             return () => new ExpandingTerrainMesh(vertexPostProcessor, uvAdjustor);
         }
 
-        public ITerrainMesh  GetRaw(uint arg) => GetRaw();
+        public IGeneralMesh GetRaw(uint arg) => GetRaw();
     }
 }

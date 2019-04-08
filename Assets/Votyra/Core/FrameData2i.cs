@@ -27,8 +27,6 @@ namespace Votyra.Core
 
         public Area1f RangeZ { get; private set; }
         public Range2i InvalidatedArea { get; set; }
-        public Vector2i CellInGroupCount { get; set; }
-        public int MeshSubdivision { get; set; }
 
         public IImage2f Image
         {

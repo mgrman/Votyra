@@ -11,6 +11,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         void Initialize(IImage3b image);
 
-        void InitializeGroup(Vector3i group, ITerrainMesh pooledTerrainMesh);
+        void InitializeGroup(Vector3i group, IGeneralMesh pooledTerrainMesh);
     }
 }

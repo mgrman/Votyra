@@ -113,14 +113,6 @@ namespace Votyra.Plannar.Unity
                     return interpolationConfig.MeshSubdivision > 1 && interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic;
                 });
 
-            Container.BindInterfacesAndSelfTo<DynamicTerrainMesher2f>()
-                .AsSingle()
-                .When(c =>
-                {
-                    var interpolationConfig = c.Container.Resolve<IInterpolationConfig>();
-                    return interpolationConfig.ImageSubdivision > 1 && interpolationConfig.MeshSubdivision == 1;
-                });
-
             Container.BindInterfacesAndSelfTo<TerrainMesher2f>()
                 .AsSingle()
                 .When(c =>
@@ -172,6 +164,11 @@ namespace Votyra.Plannar.Unity
                 .FromNewComponentOn(this.gameObject)
                 .AsSingle()
                 .NonLazy();
+            
+            Container.BindInterfacesAndSelfTo<TerrainPopulator>()
+                .AsSingle()
+                .NonLazy();
+
         }
 
         private GameObject CreateNewGameObject(GameObject root, ITerrainConfig terrainConfig, IMaterialConfig materialConfig)

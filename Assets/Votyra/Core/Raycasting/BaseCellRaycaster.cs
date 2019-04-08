@@ -41,6 +41,11 @@ namespace Votyra.Core.Raycasting
             return RaycastGroup();
         }
 
+        public virtual float Raycast(Vector2f position)
+        {
+           return RaycastCell(position);
+        }
+
         private Vector3f RaycastGroup()
         {
             var cell = _fromCell;
@@ -61,7 +66,7 @@ namespace Votyra.Core.Raycasting
 
                 var offset = IntersectionUtils.GetRectangleSegment(area, intersection);
 
-                var stop = RaycastCell(new Line2f(position, intersection), cell);
+                var stop = RaycastCell(new Line2f(position, intersection));
                 if (!stop.AnyNan())
                     return stop;
 
@@ -97,8 +102,10 @@ namespace Votyra.Core.Raycasting
             return Vector3f.NaN;
         }
 
-        protected abstract Vector3f RaycastCell(Line2f line, Vector2i cell);
+        protected abstract Vector3f RaycastCell(Line2f line);
 
+        protected abstract float RaycastCell(Vector2f point);
+        
         private Vector2i FindCell(Vector2f meshPoint)
         {
             var cell = meshPoint.FloorToVector2i();

@@ -45,7 +45,7 @@ namespace Votyra.Core.Raycasting
             return result;
         }
 
-        protected override Vector3f RaycastCell(Line2f line, Vector2i cell)
+        protected override Vector3f RaycastCell(Line2f line)
         {
             var imageValueFrom = GetLinearInterpolatedValue(_image, line.From);
             var imageValueTo = GetLinearInterpolatedValue(_image, line.To);
@@ -59,6 +59,11 @@ namespace Votyra.Core.Raycasting
 
             var xy = line.From + (line.To - line.From) * x;
             return xy.ToVector3f(GetLinearInterpolatedValue(_image, xy));
+        }
+
+        protected override float RaycastCell(Vector2f point)
+        {
+            return GetLinearInterpolatedValue(_image, point);
         }
 
         private float GetRayValue(Vector2f point)

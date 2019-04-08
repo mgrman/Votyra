@@ -10,7 +10,7 @@ namespace Votyra.Core
 {
     public class SyncTerrainGroupGeneratorManager2i : TerrainGroupGeneratorManager2i
     {
-        public SyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, ITerrainGameObject gameObjectPool, ITerrainMesh pooledMesh, Action<ITerrainMesh, Vector2i, IImage2f, IMask2e> generateUnityMesh)
+        public SyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, ITerrainGameObject gameObjectPool, ITerrainMesh2f pooledMesh, Action<ITerrainMesh2f, Vector2i, IImage2f, IMask2e> generateUnityMesh)
             : base(cellInGroupCount, gameObjectPool, pooledMesh, generateUnityMesh)
         {
         }
