@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -120,6 +121,10 @@ namespace Votyra.Core.Editor
             {
                 newValue = EditorGUILayout.ObjectField(oldValue as Object, type, true, GUILayout.MaxWidth(200));
             }
+            // else if (type.GetCustomAttribute<SerializableAttribute>()!=null)
+            // {
+            //     newValue = EditorGUILayout.(oldValue , type, true, GUILayout.MaxWidth(200));
+            // }
             else if (typeof(bool).IsAssignableFrom(type))
             {
                 var oldBoolValue = oldValue as bool? ?? false;
@@ -129,6 +134,11 @@ namespace Votyra.Core.Editor
             {
                 var oldIntValue = oldValue as int? ?? 0;
                 newValue = EditorGUILayout.IntField(oldIntValue, GUILayout.MaxWidth(200));
+            }
+            else if (typeof(uint).IsAssignableFrom(type))
+            {
+                var oldIntValue = oldValue as uint? ?? 0;
+                newValue = (uint) EditorGUILayout.IntField((int) oldIntValue, GUILayout.MaxWidth(200));
             }
             else if (typeof(float).IsAssignableFrom(type))
             {
@@ -176,18 +186,68 @@ namespace Votyra.Core.Editor
                 newValue = EditorGUILayout.Vector2Field("", oldVector2fValue.ToVector2(), GUILayout.MaxWidth(200))
                     .ToVector2f();
             }
+            else if (typeof(Area1f).IsAssignableFrom(type))
+            {
+                var oldVector2fValue = oldValue as Area1f? ?? Area1f.Zero;
+
+                var res = EditorGUILayout.Vector2Field("", new Vector2(oldVector2fValue.Min, oldVector2fValue.Max), GUILayout.MaxWidth(200));
+
+                newValue = Area1f.FromMinAndMax(res.x, res.y);
+            }
+            else if (type.IsArray)
+            {
+                var elementType = type.GetElementType();
+
+                EditorGUILayout.BeginVertical();
+
+                var add = GUILayout.Button("Add");
+
+                var newList = Activator.CreateInstance(typeof(List<>).MakeGenericType(elementType)) as IList;
+
+                if (oldValue != null)
+                {
+                    foreach (var item in (oldValue as IEnumerable))
+                    {
+                        if (!GUILayout.Button("Remove"))
+                        {
+                            var newItemValue = GetNewValue(elementType, item);
+                            newList.Add(newItemValue);
+                        }
+                    }
+                }
+
+                if (add)
+                {
+                    newList.Add(Activator.CreateInstance(elementType));
+                }
+
+                EditorGUILayout.EndVertical();
+
+                var method = typeof(Enumerable).GetMethod("ToArray", BindingFlags.Public | BindingFlags.Static);
+                method = method.MakeGenericMethod(elementType);
+
+                newValue = method.Invoke(null, new[] {newList});
+            }
             else
             {
-                var oldValueJson = JsonConvert.SerializeObject(oldValue);
-                var newJsonValue = EditorGUILayout.TextArea(oldValueJson, GUILayout.MaxWidth(200));
-                try
+                var props = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+
+                foreach (var prop in props)
                 {
-                    newValue = JsonConvert.DeserializeObject(newJsonValue, type);
+                    prop.SetValue(oldValue, GetNewValue(prop.FieldType, prop.GetValue(oldValue)));
                 }
-                catch
-                {
-                    newValue = null;
-                }
+
+                newValue = oldValue;
+                // var oldValueJson = JsonConvert.SerializeObject(oldValue);
+                // var newJsonValue = EditorGUILayout.TextArea(oldValueJson, GUILayout.MaxWidth(200));
+                // try
+                // {
+                //     newValue = JsonConvert.DeserializeObject(newJsonValue, type);
+                // }
+                // catch
+                // {
+                //     newValue = null;
+                // }
             }
 
             return newValue;

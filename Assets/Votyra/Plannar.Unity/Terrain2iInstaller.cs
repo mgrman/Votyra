@@ -165,10 +165,13 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
             
-            Container.BindInterfacesAndSelfTo<TerrainPopulator>()
+            Container.BindInterfacesAndSelfTo<PopulatorConfig>()
+                .AsSingle();
+            
+            Container.BindInterfacesAndSelfTo<TerrainPopulatorManager>()
+                .FromNewComponentOn(this.gameObject)
                 .AsSingle()
                 .NonLazy();
-
         }
 
         private GameObject CreateNewGameObject(GameObject root, ITerrainConfig terrainConfig, IMaterialConfig materialConfig)
