@@ -370,7 +370,7 @@ MonoBehaviour:
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
   - Id: meshSubdivision
-    JsonValue: '{"X":1,"Y":1}'
+    JsonValue: '{"X":4,"Y":4}'
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValues: []
@@ -382,7 +382,7 @@ MonoBehaviour:
     - {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
     - {fileID: 2100000, guid: 7deb4a72cc430de4c903d4e2db9afdb8, type: 2}
   - Id: scaleFactor
-    JsonValue: 0
+    JsonValue: 1
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
