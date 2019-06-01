@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 
 namespace Votyra.Core.Models
 {
@@ -24,14 +25,20 @@ namespace Votyra.Core.Models
 
         public Area1f Y => Area1f.FromMinAndMax(Min.Y, Max.Y);
 
+        [JsonConstructor]
         private Area2f(Vector2f min, Vector2f max)
         {
             Min = min;
             Max = max;
         }
 
+        [JsonIgnore]
         public Vector2f Center => (Max + Min) / 2f;
+
+        [JsonIgnore]
         public Vector2f Size => Max - Min;
+
+        [JsonIgnore]
         public Vector2f Extents => Size / 2;
 
         public float DiagonalLength => Size.Magnitude();
