@@ -186,6 +186,12 @@ namespace Votyra.Core.Editor
                 newValue = EditorGUILayout.Vector2Field("", oldVector2fValue.ToVector2(), GUILayout.MaxWidth(200))
                     .ToVector2f();
             }
+            else if (typeof(AnimationCurve).IsAssignableFrom(type))
+            {
+                var oldAnimationCurveValue = oldValue as AnimationCurve ?? new AnimationCurve();
+
+                newValue = EditorGUILayout.CurveField("", oldAnimationCurveValue, GUILayout.MaxWidth(200));
+            }
             else if (typeof(Area1f).IsAssignableFrom(type))
             {
                 var oldVector2fValue = oldValue as Area1f? ?? Area1f.Zero;

@@ -31,7 +31,12 @@ namespace Votyra.Plannar.Unity
 
         [SerializeField]
         public uint CountPerGroup;
-        // public Area1f UniformScaleVariance { get; set; }
+
+        [SerializeField]
+        public Area1f UniformScaleVariance;
+
+        [SerializeField]
+        public AnimationCurve HeightCurve;
 
     }
 }

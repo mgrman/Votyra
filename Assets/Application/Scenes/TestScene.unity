@@ -318,7 +318,7 @@ MonoBehaviour:
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
   - Id: cellInGroupCount
-    JsonValue: '{"X":5,"Y":5,"Z":5}'
+    JsonValue: '{"X":20,"Y":20,"Z":20}'
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValues: []
@@ -375,11 +375,15 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     UnityValues: []
   - Id: populationConfigItems
-    JsonValue: '[{"Mesh":0,"Material":1,"CountPerGroup":1}]'
+    JsonValue: '[{"Mesh":0,"Material":1,"CountPerGroup":30,"UniformScaleVariance":{"Max":1.5,"Min":0.2,"DiagonalLength":1.3},"HeightCurve":{"keys":[{"time":0.0,"value":0.0,"inTangent":0.254687339,"outTangent":0.254687339,"inWeight":0.0,"outWeight":0.333333343,"weightedMode":0,"tangentMode":34},{"time":3.93683672,"value":1.00266242,"inTangent":0.254687339,"outTangent":0.254687339,"inWeight":0.333333343,"outWeight":0.0,"weightedMode":0,"tangentMode":34}],"length":2,"preWrapMode":8,"postWrapMode":8}},{"Mesh":2,"Material":3,"CountPerGroup":70,"UniformScaleVariance":{"Max":0.5,"Min":0.01,"DiagonalLength":0.49},"HeightCurve":{"keys":[{"time":0.0,"value":1.0,"inTangent":0.0,"outTangent":0.0,"inWeight":0.0,"outWeight":0.0,"weightedMode":0,"tangentMode":34},{"time":1.0,"value":1.0,"inTangent":0.0,"outTangent":0.0,"inWeight":0.0,"outWeight":0.0,"weightedMode":0,"tangentMode":34}],"length":2,"preWrapMode":8,"postWrapMode":8}},{"Mesh":4,"Material":5,"CountPerGroup":20,"UniformScaleVariance":{"Max":0.15,"Min":0.03,"DiagonalLength":0.120000005},"HeightCurve":{"keys":[{"time":0.0,"value":1.00473022,"inTangent":-0.330051422,"outTangent":-0.330051422,"inWeight":0.0,"outWeight":0.333333343,"weightedMode":0,"tangentMode":34},{"time":3.05259132,"value":-0.00278183818,"inTangent":-0.330051422,"outTangent":-0.330051422,"inWeight":0.333333343,"outWeight":0.0,"weightedMode":0,"tangentMode":34}],"length":2,"preWrapMode":8,"postWrapMode":8}}]'
     TypeAssemblyQualifiedName: Votyra.Plannar.Unity.PopulatorConfigItem[], Votyra.Plannar.Unity,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     UnityValues:
     - {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+    - {fileID: 2100000, guid: 4bb0a7b33f1379c44b8a0ff4b6a6a3e5, type: 2}
+    - {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    - {fileID: 2100000, guid: 256fe6f47af75d748845ce4c0bc8a428, type: 2}
+    - {fileID: -1824792854035055013, guid: a67774379b39320489107a461854ee95, type: 3}
     - {fileID: 2100000, guid: 7deb4a72cc430de4c903d4e2db9afdb8, type: 2}
   - Id: scaleFactor
     JsonValue: 1

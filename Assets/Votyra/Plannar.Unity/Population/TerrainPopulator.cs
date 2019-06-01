@@ -16,50 +16,66 @@ namespace Votyra.Plannar.Unity
         private GameObject _root;
         private Vector2i _cellInGroupCount;
 
-        private Pool<Matrix4x4[]> _pool;
+        private Pool<List<Matrix4x4>> _pool;
 
-        private Dictionary<Vector2i, Matrix4x4[]> _trees = new Dictionary<Vector2i, Matrix4x4[]>();
-        
-        
-        private Mesh _mesh;
-        
-        private Material _material;
+        private Dictionary<Vector2i, List<Matrix4x4>> _trees = new Dictionary<Vector2i, List<Matrix4x4>>();
 
-        public void Initialize(ITerrainGeneratorManager2i manager, ITerrainConfig config, PopulatorConfigItem populatorConfig, [Inject(Id = "root")] GameObject root)
+        private int _index;
+        private PopulatorConfigItem _populatorConfig;
+
+        public void Initialize(ITerrainGeneratorManager2i manager, ITerrainConfig config, PopulatorConfigItem populatorConfig, int index, [Inject(Id = "root")] GameObject root)
         {
+            
             _root = root;
             manager.ChangedTerrain += ChangedTerrain;
             manager.RemovedTerrain += RemovedTerrain;
             _cellInGroupCount = config.CellInGroupCount.XY();
 
-            _pool = new Pool<Matrix4x4[]>(() => new Matrix4x4[populatorConfig.CountPerGroup]);
-            _mesh = populatorConfig.Mesh;
-            _material = populatorConfig.Material;
+            _pool = new Pool<List<Matrix4x4>>(() => new List<Matrix4x4>((int) populatorConfig.CountPerGroup));
+            _populatorConfig = populatorConfig;
+            _index = index;
         }
 
         private void Update()
         {
             foreach (var groupTrees in _trees.Values)
             {
-                Graphics.DrawMeshInstanced(_mesh, 0, _material, groupTrees, groupTrees.Length);
+                Graphics.DrawMeshInstanced(_populatorConfig.Mesh, 0, _populatorConfig.Material, groupTrees);
             }
         }
 
         private void ChangedTerrain(Vector2i group, ITerrainMesh2f terrain)
         {
             var list = _trees.TryGetValue(group) ?? _pool.GetRaw();
-            var rnd = new Random(group.X + group.Y * _cellInGroupCount.X);
-            for (int i = 0; i < list.Length; i++)
+            list.Clear();
+
+            int seed;
+            unchecked
+            {
+                seed = (group.X + group.Y * _cellInGroupCount.X) * _index;
+            }
+
+            var rnd = new Random(seed);
+            for (int i = 0; i < _populatorConfig.CountPerGroup; i++)
             {
                 var posLocalXY = terrain.MeshBounds.Min.XY() + new Vector2f((float) rnd.NextDouble() * _cellInGroupCount.X, (float) rnd.NextDouble() * _cellInGroupCount.Y);
 
                 var value = terrain.Raycast(posLocalXY);
-                var posLocal = new Vector3(posLocalXY.X, posLocalXY.Y, value + 1.5f);
+
+                var heightProb = _populatorConfig.HeightCurve.Evaluate(value);
+                if (rnd.NextDouble() > heightProb)
+                {
+                    continue;
+                }
+                
+                var posLocal = new Vector3(posLocalXY.X, posLocalXY.Y, value);
                 var posWorld = _root.transform.TransformPoint(posLocal);
 
-                var scale = (float) rnd.NextDouble() / 0.4f + 0.8f;
+                var scale = (float) rnd.NextDouble() * _populatorConfig.UniformScaleVariance.Size + _populatorConfig.UniformScaleVariance.Min;
+                var rotation = (float) (rnd.NextDouble() * 360);
 
-                list[i] = Matrix4x4.TRS(posWorld, Quaternion.identity, new Vector3(scale, scale, scale));
+                var res = Matrix4x4.TRS(posWorld, Quaternion.Euler(0, rotation, 0), new Vector3(scale, scale, scale));
+                list.Add(res);
             }
 
             _trees[group] = list;

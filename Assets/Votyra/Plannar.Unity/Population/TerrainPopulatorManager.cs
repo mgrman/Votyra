@@ -16,12 +16,13 @@ namespace Votyra.Plannar.Unity
         [Inject]
         public void Initialize(ITerrainGeneratorManager2i manager, ITerrainConfig config, IPopulatorConfig populatorConfig, [Inject(Id = "root")] GameObject root)
         {
-            foreach (var configItem in populatorConfig.ConfigItems)
+            for (var i = 0; i < populatorConfig.ConfigItems.Length; i++)
             {
-                var go=new GameObject();
+                var configItem = populatorConfig.ConfigItems[i];
+                var go = new GameObject();
                 go.transform.SetParent(transform);
-                var populator=go.AddComponent<TerrainPopulator>();
-                populator.Initialize(manager,config,configItem,root);
+                var populator = go.AddComponent<TerrainPopulator>();
+                populator.Initialize(manager, config, configItem, i, root);
             }
         }
     }
