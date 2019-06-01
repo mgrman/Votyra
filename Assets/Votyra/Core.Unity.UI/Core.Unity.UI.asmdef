@@ -1,0 +1,17 @@
+{
+    "name": "Core.Unity.UI",
+    "references": [
+        "GUID:2bafac87e7f4b9b418d9448d219b01ab",
+        "GUID:0d8beb7f090555447a6cf5ce9e54dbb4",
+        "GUID:bd1ceb336a8c7414c908768f04797e71",
+        "GUID:9a2c0c3450dbafe4e915645cd2d5296e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

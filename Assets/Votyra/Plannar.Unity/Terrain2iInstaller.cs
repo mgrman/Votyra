@@ -71,10 +71,6 @@ namespace Votyra.Plannar.Unity
                 .WithId("root")
                 .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<UnityInputManager>()
-                .FromNewComponentOnGameObjectWithID("root")
-                .AsSingle()
-                .NonLazy();
             Container.BindInterfacesAndSelfTo<Terrain2fRaycaster>()
                 .AsSingle()
                 .NonLazy();

@@ -4,8 +4,7 @@
         "Votyra.Core",
         "UniRx",
         "Zenject",
-        "UniRx.Async",
-        "Unity.ugui"
+        "UniRx.Async"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
