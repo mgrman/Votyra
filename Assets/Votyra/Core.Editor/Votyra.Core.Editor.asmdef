@@ -8,18 +8,26 @@
         "Votyra.Core.Unity",
         "UniRx.Async",
         "UniRx.Async.Editor",
-        "UnityZip"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "UnityZip",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "Scriban.dll",
+        "Newtonsoft.Json.dll",
+        "Moq.dll",
+        "Zenject-usage.dll"
+    ],
     "autoReferenced": false,
-    "defineConstraints": []
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": []
 }

@@ -4,14 +4,15 @@
         "Votyra.Core",
         "UniRx",
         "Zenject",
-        "UniRx.Async"
+        "UniRx.Async",
+        "Unity.ugui"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": []
 }
