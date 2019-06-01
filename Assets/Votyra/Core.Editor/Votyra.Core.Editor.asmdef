@@ -2,15 +2,13 @@
     "name": "Votyra.Core.Editor",
     "references": [
         "Votyra.Core",
-        "UniRx",
+        "Votyra.Core.Unity",
         "Zenject",
         "Zenject-Editor",
-        "Votyra.Core.Unity",
+        "UniRx",
         "UniRx.Async",
         "UniRx.Async.Editor",
-        "UnityZip",
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityZip"
     ],
     "includePlatforms": [
         "Editor"
