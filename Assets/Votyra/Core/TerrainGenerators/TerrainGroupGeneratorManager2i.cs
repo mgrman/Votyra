@@ -1,11 +1,8 @@
 using System;
-using System.Threading;
 using Votyra.Core.Images;
-using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
-using Votyra.Core.Unity;
 
 namespace Votyra.Core
 {
@@ -16,7 +13,6 @@ namespace Votyra.Core
         protected readonly Vector2i _cellInGroupCount;
         protected readonly ITerrainMesh2f _pooledMesh;
         protected Range2i _range;
-        protected readonly ITerrainGameObject _gameObjectPool;
 
         public Vector2i Group
         {
@@ -34,9 +30,8 @@ namespace Votyra.Core
         private bool _updatedOnce;
         private bool _stopped;
 
-        public TerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, ITerrainGameObject gameObject, ITerrainMesh2f pooledMesh, Action<ITerrainMesh2f, Vector2i, IImage2f, IMask2e> generateUnityMesh)
+        public TerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, ITerrainMesh2f pooledMesh, Action<ITerrainMesh2f, Vector2i, IImage2f, IMask2e> generateUnityMesh)
         {
-            _gameObjectPool = gameObject;
             _cellInGroupCount = cellInGroupCount;
 
             _pooledMesh = pooledMesh;
@@ -44,24 +39,23 @@ namespace Votyra.Core
         }
 
         protected bool IsStopped => _stopped;
-
-        public ITerrainGameObject TerrainGameObject => _gameObjectPool;
+        
         public ITerrainMesh2f Mesh => _pooledMesh;
 
-        public bool Update(ArcResource<IFrameData2i> context)
+        public void Update(ArcResource<IFrameData2i> context, Action<Vector2i, ITerrainMesh2f> onFinish)
         {
             _stopped = false;
 
             if (_updatedOnce && !context.Value.InvalidatedArea.Overlaps(_range))
             {
                 context.Dispose();
-                return false;
+                return ;
             }
 
             _updatedOnce = true;
 
-            UpdateGroup(context);
-            return true;
+            UpdateGroup(context, onFinish);
+            return ;
         }
 
         public virtual void Stop()
@@ -70,30 +64,13 @@ namespace Votyra.Core
             _updatedOnce = false;
         }
 
-        protected abstract void UpdateGroup(ArcResource<IFrameData2i> context);
+        protected abstract void UpdateGroup(ArcResource<IFrameData2i> context, Action<Vector2i, ITerrainMesh2f> onFinish);
 
         protected void UpdateTerrainMesh(IFrameData2i context)
         {
             _pooledMesh.Reset(Area3f.FromMinAndSize((_group * _cellInGroupCount).ToVector3f(context.RangeZ.Min), _cellInGroupCount.ToVector3f(context.RangeZ.Size)));
             _generateUnityMesh(_pooledMesh, _group, context.Image, context.Mask);
             _pooledMesh.FinalizeMesh();
-        }
-
-        protected void UpdateUnityMesh()
-        {
-            if (IsStopped)
-            {
-                return;
-            }
-
-            if (!_gameObjectPool.IsInitialized)
-            {
-                _gameObjectPool.Initialize();
-            }
-
-            _gameObjectPool.SetActive(true);
-
-            _pooledMesh.SetUnityMesh(_gameObjectPool);
         }
     }
 }

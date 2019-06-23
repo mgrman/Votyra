@@ -1,21 +1,13 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.Assertions;
 using Votyra.Core.GroupSelectors;
-using Votyra.Core.ImageSamplers;
-using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
-using Votyra.Core.Profiling;
 using Votyra.Core.Queueing;
-using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
-using Zenject;
 
 namespace Votyra.Core
 {
@@ -38,6 +30,27 @@ namespace Votyra.Core
 
         private TaskQueue<ArcResource<IFrameData2i>> _backgroundUpdateQueue;
 
+        private event Action<Vector2i, ITerrainMesh2f> _newTerrain;
+
+        public event Action<Vector2i, ITerrainMesh2f> NewTerrain
+        {
+            add
+            {
+                _newTerrain += value;
+                foreach (var activeGroup in _activeGroups)
+                {
+                    value?.Invoke(activeGroup.Key, activeGroup.Value.Mesh);
+                }
+            }
+            remove
+            {
+                _newTerrain -= value;
+            }
+        }
+
+        public event Action<Vector2i, ITerrainMesh2f> ChangedTerrain;
+        public event Action<Vector2i> RemovedTerrain;
+
         public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IFrameDataProvider2i frameDataProvider, ITerrainGroupGeneratorManagerPool managerPool, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector2I)
         {
             _terrainConfig = terrainConfig;
@@ -50,7 +63,7 @@ namespace Votyra.Core
                 var manager = managerPool.GetRaw();
                 manager.Group = g;
 
-                NewTerrain?.Invoke(g, manager.Mesh);
+                _newTerrain?.Invoke(g, manager.Mesh);
                 return manager;
             };
 
@@ -98,10 +111,6 @@ namespace Votyra.Core
             }
         }
 
-        public event Action<Vector2i, ITerrainMesh2f> NewTerrain;
-        public event Action<Vector2i, ITerrainMesh2f> ChangedTerrain;
-        public event Action<Vector2i> RemovedTerrain;
-
         private void UpdateTerrainInForeground(ArcResource<IFrameData2i> context)
         {
             try
@@ -126,13 +135,14 @@ namespace Votyra.Core
             {
                 foreach (var activeGroup in _activeGroups)
                 {
-                    var updated = activeGroup.Value.Update(context.Activate());
-                    if (updated)
-                    {
-                        ChangedTerrain?.Invoke(activeGroup.Key, activeGroup.Value.Mesh);
-                    }
+                    activeGroup.Value.Update(context.Activate(), OnChangedTerrain);
                 }
             }
+        }
+
+        private void OnChangedTerrain(Vector2i group, ITerrainMesh2f mesh)
+        {
+            ChangedTerrain?.Invoke(group, mesh);
         }
 
         private void HandleVisibilityUpdates(IFrameData2i context)

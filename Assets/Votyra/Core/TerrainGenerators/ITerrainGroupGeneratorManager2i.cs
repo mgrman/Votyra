@@ -1,7 +1,7 @@
+using System;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainMeshes;
-using Votyra.Core.Unity;
 
 namespace Votyra.Core
 {
@@ -9,8 +9,7 @@ namespace Votyra.Core
     {
         void Stop();
         Vector2i Group { get; set; }
-        ITerrainGameObject TerrainGameObject { get; }
         ITerrainMesh2f Mesh { get; }
-        bool Update(ArcResource<IFrameData2i> context);
+        void Update(ArcResource<IFrameData2i> context, Action<Vector2i, ITerrainMesh2f> onFinish);
     }
 }

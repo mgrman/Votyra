@@ -135,6 +135,9 @@ namespace Votyra.Plannar.Unity
 
             Container.BindInterfacesAndSelfTo<TerrainGameObjectPool>()
                 .AsSingle();
+            Container.BindInterfacesAndSelfTo<TerrainMeshManager>()
+                .AsSingle()
+                .NonLazy();
 
             Container.BindInterfacesAndSelfTo<FrameData2iPool>()
                 .AsSingle();
