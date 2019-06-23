@@ -80,7 +80,7 @@ namespace Votyra.Core.Unity.Painting
                 _invokeWithNull = true;
             }
 
-            if (_terrainConfig.Async)
+            if (_terrainConfig.AsyncInput)
             {
                 Task.Run(() =>
                 {

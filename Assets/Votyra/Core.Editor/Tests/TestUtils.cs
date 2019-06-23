@@ -72,7 +72,7 @@ namespace Votyra.Core
             var syncContextName = unitySyncContext?.GetType()
                 .FullName ?? "<null>";
             if (syncContextName != "UnityEngine.UnitySynchronizationContext")
-                throw new AssertionException($"Async task cannot be tested with {syncContextName} as SynchronizationContext! UnitySynchronizationContext is required!");
+                throw new AssertionException($"AsyncTerrainGeneration task cannot be tested with {syncContextName} as SynchronizationContext! UnitySynchronizationContext is required!");
         }
 
         private static Action GetExecSyncContextAction(SynchronizationContext syncContext)
@@ -80,7 +80,7 @@ namespace Votyra.Core
             var execMethod = syncContext.GetType()
                 .GetMethod("Exec", BindingFlags.Instance | BindingFlags.NonPublic);
             if (execMethod == null)
-                throw new AssertionException("Async task cannot be tested without Exec() method on UnitySynchronizationContext!");
+                throw new AssertionException("AsyncTerrainGeneration task cannot be tested without Exec() method on UnitySynchronizationContext!");
             var execAction = (Action) execMethod.CreateDelegate(typeof(Action), syncContext);
             return execAction;
         }

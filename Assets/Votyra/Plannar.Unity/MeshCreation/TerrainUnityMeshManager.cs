@@ -16,10 +16,10 @@ namespace Votyra.Plannar.Unity
         private readonly Dictionary<Vector2i, ITerrainGameObject> _unityMeshes = new Dictionary<Vector2i, ITerrainGameObject>();
         private readonly Dictionary<Vector2i, ITerrainMesh2f> _coreMeshes = new Dictionary<Vector2i, ITerrainMesh2f>();
 
-        private ITerrainGeneratorManager2i _manager;
+        private IUnityTerrainGeneratorManager2i _manager;
         private ITerrainGameObjectPool _gameObjectPool;
 
-        public TerrainUnityMeshManager(ITerrainGeneratorManager2i manager, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root")] GameObject root)
+        public TerrainUnityMeshManager(IUnityTerrainGeneratorManager2i manager, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root")] GameObject root)
         {
             _manager = manager;
             _gameObjectPool = gameObjectPool;
@@ -32,13 +32,6 @@ namespace Votyra.Plannar.Unity
         {
             var pooledGameObject = _unityMeshes[group];
             var mesh = _coreMeshes[group];
-
-            if (!pooledGameObject.IsInitialized)
-            {
-                pooledGameObject.Initialize();
-            }
-
-            pooledGameObject.SetActive(true);
 
             mesh.SetUnityMesh(pooledGameObject);
         }
@@ -54,15 +47,21 @@ namespace Votyra.Plannar.Unity
 
         private void NewTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
-            _unityMeshes[group] = _gameObjectPool.GetRaw();
+            var pooledGameObject = _gameObjectPool.GetRaw();
+            if (!pooledGameObject.IsInitialized)
+                pooledGameObject.Initialize();
+            pooledGameObject.SetActive(true);
+            mesh.SetUnityMesh(pooledGameObject);
+
+            _unityMeshes[group] = pooledGameObject;
             _coreMeshes[group] = mesh;
         }
 
         public void Dispose()
         {
-            _manager.NewTerrain += NewTerrain;
-            _manager.ChangedTerrain += ChangedTerrain;
-            _manager.RemovedTerrain += RemovedTerrain;
+            _manager.NewTerrain -= NewTerrain;
+            _manager.ChangedTerrain -= ChangedTerrain;
+            _manager.RemovedTerrain -= RemovedTerrain;
         }
     }
 }

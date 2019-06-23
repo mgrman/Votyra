@@ -16,11 +16,7 @@ namespace Votyra.Core
         {
             var cellInGroupCount = terrainConfig.CellInGroupCount.XY();
 
-            Func<ITerrainGroupGeneratorManager2i> managerFactory;
-            if (terrainConfig.Async)
-                managerFactory = () => new AsyncTerrainGroupGeneratorManager2i(cellInGroupCount, terrainMeshPool.GetRaw(), terrainMesher.GetResultingMesh);
-            else
-                managerFactory = () => new SyncTerrainGroupGeneratorManager2i(cellInGroupCount, terrainMeshPool.GetRaw(), terrainMesher.GetResultingMesh);
+            Func<ITerrainGroupGeneratorManager2i> managerFactory= () => new TerrainGroupGeneratorManager2i(cellInGroupCount, terrainMeshPool.GetRaw(), terrainMesher.GetResultingMesh);
 
             return managerFactory;
         }

@@ -7,7 +7,6 @@ namespace Votyra.Core
 {
     public interface ITerrainGroupGeneratorManager2i
     {
-        void Stop();
         Vector2i Group { get; set; }
         ITerrainMesh2f Mesh { get; }
         void Update(ArcResource<IFrameData2i> context, Action<Vector2i> onFinish);

@@ -332,8 +332,13 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
-  - Id: async
-    JsonValue: false
+  - Id: asyncTerrainGeneration
+    JsonValue: true
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: asyncInput
+    JsonValue: true
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
@@ -388,6 +393,11 @@ MonoBehaviour:
   - Id: scaleFactor
     JsonValue: 1
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: async
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
   - Id: wallSquishFactor

@@ -8,6 +8,7 @@ namespace Votyra.Core
         bool FlipTriangles { get; }
         bool UseMeshCollider { get; }
         bool DrawBounds { get; }
-        bool Async { get; }
+        bool AsyncTerrainGeneration { get; }
+        bool AsyncInput { get; }
     }
 }

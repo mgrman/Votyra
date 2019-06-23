@@ -65,7 +65,7 @@ namespace Votyra.Core
                 try
                 {
                     var context = _frameDataProvider.GetCurrentFrameData(_meshFilters);
-                    await UpdateTerrain(context, _terrainConfig.Async, _onDestroyCts.Token);
+                    await UpdateTerrain(context, _terrainConfig.AsyncTerrainGeneration, _onDestroyCts.Token);
                 }
                 catch (Exception ex)
                 {

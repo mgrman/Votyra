@@ -11,7 +11,6 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core
 {
-    //TODO: move to floats
     public class TerrainGeneratorManager2i : IDisposable, ITerrainGeneratorManager2i
     {
         private readonly Dictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new Dictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
@@ -26,11 +25,11 @@ namespace Votyra.Core
 
         private readonly IGroupsByCameraVisibilitySelector2i _groupsByCameraVisibilitySelector2I;
 
-        private Task _waitForTask = Task.CompletedTask;
-
-        private TaskQueue<ArcResource<IFrameData2i>> _backgroundUpdateQueue;
+        private IWorkQueue<ArcResource<IFrameData2i>> _frameWorkQueue;
+        private IWorkQueue<Vector2i, GroupUpdateData> _groupWorkQueue;
 
         private event Action<Vector2i, ITerrainMesh2f> _newTerrain;
+        private event Action<Vector2i> _changedTerrain;
 
         public event Action<Vector2i, ITerrainMesh2f> NewTerrain
         {
@@ -48,7 +47,22 @@ namespace Votyra.Core
             }
         }
 
-        public event Action<Vector2i> ChangedTerrain;
+        public event Action<Vector2i> ChangedTerrain
+        {
+            add
+            {
+                _changedTerrain += value;
+                foreach (var activeGroup in _activeGroups)
+                {
+                    value?.Invoke(activeGroup.Key);
+                }
+            }
+            remove
+            {
+                _changedTerrain -= value;
+            }
+        }
+
         public event Action<Vector2i> RemovedTerrain;
 
         public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IFrameDataProvider2i frameDataProvider, ITerrainGroupGeneratorManagerPool managerPool, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector2I)
@@ -70,36 +84,31 @@ namespace Votyra.Core
             dispose = (manager) =>
             {
                 var g = manager.Group;
-                manager.Stop();
                 managerPool.ReturnRaw(manager);
                 RemovedTerrain?.Invoke(g);
             };
 
-            if (_terrainConfig.Async)
+            if (_terrainConfig.AsyncTerrainGeneration)
             {
-                _backgroundUpdateQueue = new TaskQueue<ArcResource<IFrameData2i>>("Main task queue", (Action<ArcResource<IFrameData2i>>) UpdateTerrain);
-                _frameDataProvider.FrameData += UpdateTerrainInBackground;
+                _frameWorkQueue = new LastValueTaskQueue<ArcResource<IFrameData2i>>("Main task queue", UpdateTerrain);
+
+                // TODO still problem with several updates on same group being called at the same time
+                _groupWorkQueue = new ParalelTaskQueue<Vector2i,GroupUpdateData>("Main group queue", GroupUpdate);
             }
             else
-                _frameDataProvider.FrameData += UpdateTerrainInForeground;
+            {
+                _frameWorkQueue = new ImmediateQueue<ArcResource<IFrameData2i>>(UpdateTerrain);
+                _groupWorkQueue = new ImmediateQueue<Vector2i, GroupUpdateData>(GroupUpdate);
+            }
+
+            _frameDataProvider.FrameData += QueueUpdateTerrain;
         }
 
         public void Dispose()
         {
             _onDestroyCts.Cancel();
 
-            if (_terrainConfig.Async)
-                _frameDataProvider.FrameData -= UpdateTerrainInBackground;
-            else
-                _frameDataProvider.FrameData -= UpdateTerrainInForeground;
-
-            lock (_activeGroupsLock)
-            {
-                foreach (var pair in _activeGroups)
-                {
-                    pair.Value.Stop();
-                }
-            }
+            _frameDataProvider.FrameData -= QueueUpdateTerrain;
         }
 
         public ITerrainMesh2f GetMeshForGroup(Vector2i group)
@@ -111,21 +120,9 @@ namespace Votyra.Core
             }
         }
 
-        private void UpdateTerrainInForeground(ArcResource<IFrameData2i> context)
+        private void QueueUpdateTerrain(ArcResource<IFrameData2i> context)
         {
-            try
-            {
-                UpdateTerrain(context);
-            }
-            finally
-            {
-                context.Dispose();
-            }
-        }
-
-        private void UpdateTerrainInBackground(ArcResource<IFrameData2i> context)
-        {
-            _backgroundUpdateQueue.QueueNew(context);
+            _frameWorkQueue.QueueNew(context);
         }
 
         private void UpdateTerrain(ArcResource<IFrameData2i> context)
@@ -135,14 +132,20 @@ namespace Votyra.Core
             {
                 foreach (var activeGroup in _activeGroups)
                 {
-                    activeGroup.Value.Update(context.Activate(), OnChangedTerrain);
+                    context.Activate();
+                    _groupWorkQueue.QueueNew(activeGroup.Key, new GroupUpdateData(context, activeGroup.Value));
                 }
             }
         }
 
+        private void GroupUpdate(GroupUpdateData data)
+        {
+            data.Manager.Update(data.Context, OnChangedTerrain);
+        }
+
         private void OnChangedTerrain(Vector2i group)
         {
-            ChangedTerrain?.Invoke(group);
+            _changedTerrain?.Invoke(group);
         }
 
         private void HandleVisibilityUpdates(IFrameData2i context)
@@ -152,5 +155,22 @@ namespace Votyra.Core
 
         private Func<Vector2i, ITerrainGroupGeneratorManager2i> create;
         private Action<ITerrainGroupGeneratorManager2i> dispose;
+
+        private struct GroupUpdateData : IDisposable
+        {
+            public GroupUpdateData(ArcResource<IFrameData2i> context, ITerrainGroupGeneratorManager2i manager)
+            {
+                this.Context = context;
+                this.Manager = manager;
+            }
+
+            public ArcResource<IFrameData2i> Context { get; }
+            public ITerrainGroupGeneratorManager2i Manager { get; }
+
+            public void Dispose()
+            {
+                Context?.Dispose();
+            }
+        }
     }
 }

@@ -171,6 +171,9 @@ namespace Votyra.Plannar.Unity
                 .FromNewComponentOn(this.gameObject)
                 .AsSingle()
                 .NonLazy();
+            
+            Container.BindInterfacesAndSelfTo<UnityTerrainGeneratorManager2i>()
+                .AsSingle();
         }
 
         private GameObject CreateNewGameObject(GameObject root, ITerrainConfig terrainConfig, IMaterialConfig materialConfig)

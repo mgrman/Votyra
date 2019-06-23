@@ -5,48 +5,41 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Queueing
 {
-    public class TaskQueue<T> where T : class, IDisposable
+    public class LastValueTaskQueue<T> : IWorkQueue<T> where T : IDisposable
     {
         private readonly string _name;
-        private readonly Func<T, Task> _updateAsyncFunction;
         private readonly Action<T> _updateFunction;
         private bool _stopped;
         private object _taskLock = new object();
         private bool _activeTask;
-        private T _queuedUpdate = null;
+        private (bool HasValue, T Value) _queuedUpdate = (false, default);
 
-        private void DisposeAndSet(T value)
+        private void DisposeAndSet(bool hasValue, T value)
         {
             lock (_taskLock)
             {
-                if (_queuedUpdate != null)
+                if (_queuedUpdate.HasValue)
                 {
-                    _queuedUpdate.Dispose();
+                    _queuedUpdate.Value?.Dispose();
                 }
 
-                _queuedUpdate = value;
+                _queuedUpdate = (hasValue, value);
             }
         }
 
-        private T GetQueued()
+        private (bool, T) GetQueued()
         {
-            T activeContext;
+            (bool, T) activeContext;
             lock (_taskLock)
             {
                 activeContext = _queuedUpdate;
-                _queuedUpdate = null;
+                _queuedUpdate = (false, default);
             }
 
             return activeContext;
         }
 
-        public TaskQueue(string name, Func<T, Task> updateFunction)
-        {
-            _name = name;
-            _updateAsyncFunction = updateFunction;
-        }
-
-        public TaskQueue(string name, Action<T> updateFunction)
+        public LastValueTaskQueue(string name, Action<T> updateFunction)
         {
             _name = name;
             _updateFunction = updateFunction;
@@ -57,7 +50,7 @@ namespace Votyra.Core.Queueing
             bool startNewTask;
             lock (_taskLock)
             {
-                DisposeAndSet(context);
+                DisposeAndSet(true, context);
                 startNewTask = !_activeTask;
                 _activeTask = true;
             }
@@ -71,11 +64,11 @@ namespace Votyra.Core.Queueing
                         int counter = 0;
                         while (true)
                         {
-                            T activeContext;
+                            (bool HasValue, T Value) activeContext;
                             lock (_taskLock)
                             {
                                 activeContext = GetQueued();
-                                _activeTask = activeContext != null;
+                                _activeTask = activeContext.HasValue;
                                 if (!_activeTask)
                                 {
                                     return;
@@ -84,15 +77,7 @@ namespace Votyra.Core.Queueing
 
                             try
                             {
-                                if (_updateAsyncFunction != null)
-                                {
-                                    await _updateAsyncFunction(activeContext);
-                                }
-                                
-                                if (_updateFunction != null)
-                                {
-                                    _updateFunction(activeContext);
-                                }
+                                _updateFunction(activeContext.Value);
                             }
                             catch (Exception ex)
                             {
@@ -103,7 +88,7 @@ namespace Votyra.Core.Queueing
                             {
                                 try
                                 {
-                                    activeContext.Dispose();
+                                    activeContext.Value.Dispose();
                                 }
                                 catch (Exception ex)
                                 {
@@ -125,7 +110,7 @@ namespace Votyra.Core.Queueing
 
         public void Stop()
         {
-            DisposeAndSet(null);
+            DisposeAndSet(false, default);
         }
     }
 }

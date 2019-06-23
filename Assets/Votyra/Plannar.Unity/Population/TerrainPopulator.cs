@@ -25,18 +25,19 @@ namespace Votyra.Plannar.Unity
         
         private readonly Dictionary<Vector2i, ITerrainMesh2f> _coreMeshes = new Dictionary<Vector2i, ITerrainMesh2f>();
 
-        public void Initialize(ITerrainGeneratorManager2i manager, ITerrainConfig config, PopulatorConfigItem populatorConfig, int index, [Inject(Id = "root")] GameObject root)
+        public void Initialize(IUnityTerrainGeneratorManager2i manager, ITerrainConfig config, PopulatorConfigItem populatorConfig, int index, [Inject(Id = "root")] GameObject root)
         {
             
             _root = root;
-            manager.NewTerrain += NewTerrain;
-            manager.ChangedTerrain += ChangedTerrain;
-            manager.RemovedTerrain += RemovedTerrain;
             _cellInGroupCount = config.CellInGroupCount.XY();
 
             _pool = new Pool<List<Matrix4x4>>(() => new List<Matrix4x4>((int) populatorConfig.CountPerGroup));
             _populatorConfig = populatorConfig;
             _index = index;
+            
+            manager.NewTerrain += NewTerrain;
+            manager.ChangedTerrain += ChangedTerrain;
+            manager.RemovedTerrain += RemovedTerrain;
         }
 
         private void NewTerrain(Vector2i arg1, ITerrainMesh2f arg2)
