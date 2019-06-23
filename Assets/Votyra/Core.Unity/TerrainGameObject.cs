@@ -2,8 +2,6 @@ using System;
 using System.Threading.Tasks;
 using UniRx.Async;
 using UnityEngine;
-using Votyra.Core.Pooling;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Unity
 {

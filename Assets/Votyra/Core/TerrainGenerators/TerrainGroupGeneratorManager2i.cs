@@ -42,7 +42,7 @@ namespace Votyra.Core
         
         public ITerrainMesh2f Mesh => _pooledMesh;
 
-        public void Update(ArcResource<IFrameData2i> context, Action<Vector2i, ITerrainMesh2f> onFinish)
+        public void Update(ArcResource<IFrameData2i> context, Action<Vector2i> onFinish)
         {
             _stopped = false;
 
@@ -55,7 +55,6 @@ namespace Votyra.Core
             _updatedOnce = true;
 
             UpdateGroup(context, onFinish);
-            return ;
         }
 
         public virtual void Stop()
@@ -64,7 +63,7 @@ namespace Votyra.Core
             _updatedOnce = false;
         }
 
-        protected abstract void UpdateGroup(ArcResource<IFrameData2i> context, Action<Vector2i, ITerrainMesh2f> onFinish);
+        protected abstract void UpdateGroup(ArcResource<IFrameData2i> context, Action<Vector2i> onFinish);
 
         protected void UpdateTerrainMesh(IFrameData2i context)
         {

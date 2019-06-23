@@ -11,14 +11,15 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    public class TerrainMeshManager : IDisposable
+    public class TerrainUnityMeshManager : IDisposable
     {
-        private readonly Dictionary<Vector2i, ITerrainGameObject> _pooledGameObjects = new Dictionary<Vector2i, ITerrainGameObject>();
-        
+        private readonly Dictionary<Vector2i, ITerrainGameObject> _unityMeshes = new Dictionary<Vector2i, ITerrainGameObject>();
+        private readonly Dictionary<Vector2i, ITerrainMesh2f> _coreMeshes = new Dictionary<Vector2i, ITerrainMesh2f>();
+
         private ITerrainGeneratorManager2i _manager;
         private ITerrainGameObjectPool _gameObjectPool;
 
-        public TerrainMeshManager(ITerrainGeneratorManager2i manager, ITerrainConfig config, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root")] GameObject root)
+        public TerrainUnityMeshManager(ITerrainGeneratorManager2i manager, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root")] GameObject root)
         {
             _manager = manager;
             _gameObjectPool = gameObjectPool;
@@ -27,9 +28,10 @@ namespace Votyra.Plannar.Unity
             _manager.RemovedTerrain += RemovedTerrain;
         }
 
-        private void ChangedTerrain(Vector2i arg1, ITerrainMesh2f mesh)
+        private void ChangedTerrain(Vector2i group)
         {
-            var pooledGameObject = _pooledGameObjects[arg1];
+            var pooledGameObject = _unityMeshes[group];
+            var mesh = _coreMeshes[group];
 
             if (!pooledGameObject.IsInitialized)
             {
@@ -41,15 +43,19 @@ namespace Votyra.Plannar.Unity
             mesh.SetUnityMesh(pooledGameObject);
         }
 
-        private void RemovedTerrain(Vector2i arg1)
+        private void RemovedTerrain(Vector2i group)
         {
-            var pooledGameObject = _pooledGameObjects[arg1];
+            var pooledGameObject = _unityMeshes[group];
             _gameObjectPool.ReturnRaw(pooledGameObject);
+
+            _unityMeshes.Remove(group);
+            _coreMeshes.Remove(group);
         }
 
-        private void NewTerrain(Vector2i arg1, ITerrainMesh2f arg2)
+        private void NewTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
-            _pooledGameObjects[arg1] = _gameObjectPool.GetRaw();
+            _unityMeshes[group] = _gameObjectPool.GetRaw();
+            _coreMeshes[group] = mesh;
         }
 
         public void Dispose()

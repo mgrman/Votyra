@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using UnityEngineObject = UnityEngine.Object;
 
 namespace Votyra.Core
 {
@@ -22,7 +19,7 @@ namespace Votyra.Core
         public string TypeAssemblyQualifiedName;
 
         [SerializeField]
-        public Object[] UnityValues;
+        public UnityEngineObject[] UnityValues;
 
         private JsonSerializerSettings _settings;
 

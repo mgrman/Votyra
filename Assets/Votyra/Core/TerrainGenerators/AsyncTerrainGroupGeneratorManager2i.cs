@@ -18,7 +18,7 @@ namespace Votyra.Core
             _taskQueue = new TaskQueue<Data>("AsyncTerrainGroupGenerator", UpdateGroupAsync);
         }
 
-        protected override void UpdateGroup(ArcResource<IFrameData2i> context, Action<Vector2i, ITerrainMesh2f> onFinish)
+        protected override void UpdateGroup(ArcResource<IFrameData2i> context, Action<Vector2i> onFinish)
         {
             _taskQueue.QueueNew(new Data(context, onFinish));
         }
@@ -28,7 +28,7 @@ namespace Votyra.Core
             if (data.Context.Value != null)
             {
                 UpdateTerrainMesh(data.Context.Value);
-                data.OnFinish?.Invoke(_group, Mesh);
+                data.OnFinish?.Invoke(_group);
             }
         }
 
@@ -40,7 +40,7 @@ namespace Votyra.Core
 
         private class Data : IDisposable
         {
-            public Data(ArcResource<IFrameData2i> context, Action<Vector2i, ITerrainMesh2f> onFinish)
+            public Data(ArcResource<IFrameData2i> context, Action<Vector2i> onFinish)
             {
                 Context = context;
                 OnFinish = onFinish;
@@ -48,7 +48,7 @@ namespace Votyra.Core
 
             public ArcResource<IFrameData2i> Context { get; }
 
-            public Action<Vector2i, ITerrainMesh2f> OnFinish { get; }
+            public Action<Vector2i> OnFinish { get; }
 
             public void Dispose()
             {

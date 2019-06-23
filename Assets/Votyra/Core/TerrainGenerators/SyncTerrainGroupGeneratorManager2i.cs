@@ -13,7 +13,7 @@ namespace Votyra.Core
         {
         }
 
-        protected override void UpdateGroup(ArcResource<IFrameData2i> context, Action<Vector2i, ITerrainMesh2f> onFinish)
+        protected override void UpdateGroup(ArcResource<IFrameData2i> context, Action<Vector2i> onFinish)
         {
             if (IsStopped)
             {
@@ -27,7 +27,7 @@ namespace Votyra.Core
             }
 
             context.Dispose();
-            onFinish?.Invoke(_group,Mesh);
+            onFinish?.Invoke(_group);
         }
     }
 }

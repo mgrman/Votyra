@@ -48,7 +48,7 @@ namespace Votyra.Core
             }
         }
 
-        public event Action<Vector2i, ITerrainMesh2f> ChangedTerrain;
+        public event Action<Vector2i> ChangedTerrain;
         public event Action<Vector2i> RemovedTerrain;
 
         public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IFrameDataProvider2i frameDataProvider, ITerrainGroupGeneratorManagerPool managerPool, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector2I)
@@ -140,9 +140,9 @@ namespace Votyra.Core
             }
         }
 
-        private void OnChangedTerrain(Vector2i group, ITerrainMesh2f mesh)
+        private void OnChangedTerrain(Vector2i group)
         {
-            ChangedTerrain?.Invoke(group, mesh);
+            ChangedTerrain?.Invoke(group);
         }
 
         private void HandleVisibilityUpdates(IFrameData2i context)

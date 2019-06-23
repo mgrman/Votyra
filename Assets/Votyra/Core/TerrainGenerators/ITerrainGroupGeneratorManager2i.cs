@@ -10,6 +10,6 @@ namespace Votyra.Core
         void Stop();
         Vector2i Group { get; set; }
         ITerrainMesh2f Mesh { get; }
-        void Update(ArcResource<IFrameData2i> context, Action<Vector2i, ITerrainMesh2f> onFinish);
+        void Update(ArcResource<IFrameData2i> context, Action<Vector2i> onFinish);
     }
 }
