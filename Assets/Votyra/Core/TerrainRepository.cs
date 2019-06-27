@@ -15,6 +15,7 @@ namespace Votyra.Core
     public struct RepositoryChange<TKey, TValue>
     {
         public RepositoryChange(RepositorActionType action, TKey @group, TValue newMesh)
+        {
             Action = action;
             Group = @group;
             NewMesh = newMesh;
