@@ -89,6 +89,9 @@ namespace Votyra.Core
 
         private void UpdateGroup(GroupUpdateData data)
         {
+             // TODO problem here, since by the time the method finishes the group can go out of sight.
+             // maybe need to be able to "lock" the group while updating, but also the terrainMesh should not be returned to pool until this method finishes.
+             
             if (!_meshRepository.Contains(data.Group))
             {
                 return;

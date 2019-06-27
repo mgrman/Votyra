@@ -6,6 +6,40 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core
 {
+    public enum RepositorActionType
+    {
+        New,
+        Changed,
+        Removed
+    }
+    public struct RepositoryChange<TKey, TValue>
+    {
+        public RepositoryChange(RepositorActionType action, TKey @group, TValue newMesh)
+            Action = action;
+            Group = @group;
+            NewMesh = newMesh;
+        }
+
+        public readonly RepositorActionType Action;
+        public readonly TKey Group;
+        public readonly TValue NewMesh;
+
+        public static RepositoryChange<TKey, TValue> New(TKey group, TValue newMesh)
+        {
+            return new RepositoryChange<TKey, TValue>(RepositorActionType.New, group, newMesh);
+        }
+
+        public static RepositoryChange<TKey, TValue> Changed(TKey group)
+        {
+            return new RepositoryChange<TKey, TValue>(RepositorActionType.Changed, group, default);
+        }
+
+        public static RepositoryChange<TKey, TValue> Removed(TKey group)
+        {
+            return new RepositoryChange<TKey, TValue>(RepositorActionType.Removed, group, default);
+        }
+    }
+    
     public class TerrainRepository<TKey, TValue> : ITerrainRepository<TKey, TValue> where TKey : struct
     {
         private readonly Dictionary<TKey, TValue> _activeGroups = new Dictionary<TKey, TValue>();
@@ -16,42 +50,23 @@ namespace Votyra.Core
             ContainsKeyFunc = Contains;
         }
 
-        private event Action<TKey, TValue> _newTerrain;
-        private event Action<TKey> _changedTerrain;
+        private event Action<RepositoryChange<TKey, TValue>> _terrainChange;
 
-        public event Action<TKey, TValue> NewTerrain
+        public event Action<RepositoryChange<TKey, TValue>> TerrainChange
         {
             add
             {
-                _newTerrain += value;
+                _terrainChange += value;
                 foreach (var activeGroup in _activeGroups)
                 {
-                    value?.Invoke(activeGroup.Key, activeGroup.Value);
+                    value?.Invoke(RepositoryChange<TKey, TValue>.New(activeGroup.Key, activeGroup.Value));
                 }
             }
             remove
             {
-                _newTerrain -= value;
+                _terrainChange -= value;
             }
         }
-
-        public event Action<TKey> ChangedTerrain
-        {
-            add
-            {
-                _changedTerrain += value;
-                foreach (var activeGroup in _activeGroups)
-                {
-                    value?.Invoke(activeGroup.Key);
-                }
-            }
-            remove
-            {
-                _changedTerrain -= value;
-            }
-        }
-
-        public event Action<TKey> RemovedTerrain;
 
         public bool Contains(TKey key)
         {
@@ -70,7 +85,7 @@ namespace Votyra.Core
                 _activeGroups.Add(key, value);
             }
 
-            _newTerrain?.Invoke(key, value);
+            _terrainChange?.Invoke(RepositoryChange<TKey, TValue>.New(key, value));
         }
 
         public TValue Remove(TKey key)
@@ -86,13 +101,13 @@ namespace Votyra.Core
                 _activeGroups.Remove(key);
             }
 
-            RemovedTerrain?.Invoke(key);
+            _terrainChange?.Invoke(RepositoryChange<TKey, TValue>.Removed(key));
             return value;
         }
 
         public void TriggerUpdate(TKey key)
         {
-            _changedTerrain?.Invoke(key);
+            _terrainChange?.Invoke(RepositoryChange<TKey, TValue>.Changed(key));
         }
 
         public TValue TryGetValue(TKey key)

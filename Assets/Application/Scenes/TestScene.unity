@@ -380,16 +380,10 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     UnityValues: []
   - Id: populationConfigItems
-    JsonValue: '[{"Mesh":0,"Material":1,"CountPerGroup":30,"UniformScaleVariance":{"Max":1.5,"Min":0.2,"DiagonalLength":1.3},"HeightCurve":{"keys":[{"time":0.0,"value":0.0,"inTangent":0.254687339,"outTangent":0.254687339,"inWeight":0.0,"outWeight":0.333333343,"weightedMode":0,"tangentMode":34},{"time":3.93683672,"value":1.00266242,"inTangent":0.254687339,"outTangent":0.254687339,"inWeight":0.333333343,"outWeight":0.0,"weightedMode":0,"tangentMode":34}],"length":2,"preWrapMode":8,"postWrapMode":8}},{"Mesh":2,"Material":3,"CountPerGroup":70,"UniformScaleVariance":{"Max":0.5,"Min":0.01,"DiagonalLength":0.49},"HeightCurve":{"keys":[{"time":0.0,"value":1.0,"inTangent":0.0,"outTangent":0.0,"inWeight":0.0,"outWeight":0.0,"weightedMode":0,"tangentMode":34},{"time":1.0,"value":1.0,"inTangent":0.0,"outTangent":0.0,"inWeight":0.0,"outWeight":0.0,"weightedMode":0,"tangentMode":34}],"length":2,"preWrapMode":8,"postWrapMode":8}},{"Mesh":4,"Material":5,"CountPerGroup":20,"UniformScaleVariance":{"Max":0.15,"Min":0.03,"DiagonalLength":0.120000005},"HeightCurve":{"keys":[{"time":0.0,"value":1.00473022,"inTangent":-0.330051422,"outTangent":-0.330051422,"inWeight":0.0,"outWeight":0.333333343,"weightedMode":0,"tangentMode":34},{"time":3.05259132,"value":-0.00278183818,"inTangent":-0.330051422,"outTangent":-0.330051422,"inWeight":0.333333343,"outWeight":0.0,"weightedMode":0,"tangentMode":34}],"length":2,"preWrapMode":8,"postWrapMode":8}}]'
+    JsonValue: '[]'
     TypeAssemblyQualifiedName: Votyra.Plannar.Unity.PopulatorConfigItem[], Votyra.Plannar.Unity,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    UnityValues:
-    - {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-    - {fileID: 2100000, guid: 4bb0a7b33f1379c44b8a0ff4b6a6a3e5, type: 2}
-    - {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-    - {fileID: 2100000, guid: 256fe6f47af75d748845ce4c0bc8a428, type: 2}
-    - {fileID: -1824792854035055013, guid: a67774379b39320489107a461854ee95, type: 3}
-    - {fileID: 2100000, guid: 7deb4a72cc430de4c903d4e2db9afdb8, type: 2}
+    UnityValues: []
   - Id: scaleFactor
     JsonValue: 1
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
@@ -785,6 +779,238 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1196365547}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1288497522
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1288497527}
+  - component: {fileID: 1288497526}
+  - component: {fileID: 1288497525}
+  - component: {fileID: 1288497524}
+  - component: {fileID: 1288497523}
+  m_Layer: 0
+  m_Name: Terrain (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1288497523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1288497522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad4f4b5d62674d09a5dd6572b0aa80c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showTerrainGui: 0
+--- !u!114 &1288497524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1288497522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 411b2da090ebf0f4b81c1510a2b4eed7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _activeTerrainAlgorithm: 0
+  _availableTerrainAlgorithms:
+  - {fileID: 1101794731832008, guid: f4f93c13563af724e9805d1070d56d88, type: 3}
+  - {fileID: 1101794731832008, guid: a3fa91a0e395d7643bf043b4c7bfd4fd, type: 3}
+  - {fileID: 1486076317952450, guid: 0841d94987abc0b4a8ba679f64d5e225, type: 3}
+  - {fileID: 1116526748462952, guid: 4745140159b29fb48b5525d1c5f2b1c9, type: 3}
+  - {fileID: 1196856220923246, guid: aceb0ac05c491864c81c036fe42468f2, type: 3}
+  - {fileID: 1196856220923246, guid: af727f8a56b1bb740a7f6c600fb6516f, type: 3}
+  Config:
+  - Id: imageSize
+    JsonValue: '{"X":100,"Y":100,"Z":100}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: initialData
+    JsonValue: 0
+    TypeAssemblyQualifiedName: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues:
+    - {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
+  - Id: initialDataScale
+    JsonValue: '{"X":1.0,"Y":1.0,"Z":20.0}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3f, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: zeroFromInitialStateIsNull
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: cellInGroupCount
+    JsonValue: '{"X":20,"Y":20,"Z":20}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: flipTriangles
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: drawBounds
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: asyncTerrainGeneration
+    JsonValue: true
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: asyncInput
+    JsonValue: true
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: useMeshCollider
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: material
+    JsonValue: 0
+    TypeAssemblyQualifiedName: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues:
+    - {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
+  - Id: materialWalls
+    JsonValue: 0
+    TypeAssemblyQualifiedName: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues:
+    - {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
+  - Id: activeAlgorithm
+    JsonValue: 2
+    TypeAssemblyQualifiedName: Votyra.Core.IntepolationAlgorithm, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: dynamicMeshes
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: imageSubdivision
+    JsonValue: 1
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: meshSubdivision
+    JsonValue: '{"X":4,"Y":4}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: populationConfigItems
+    JsonValue: '[{"Mesh":0,"Material":1,"CountPerGroup":30,"UniformScaleVariance":{"Max":1.5,"Min":0.2,"DiagonalLength":1.3},"HeightCurve":{"keys":[{"time":0.0,"value":0.0,"inTangent":0.254687339,"outTangent":0.254687339,"inWeight":0.0,"outWeight":0.333333343,"weightedMode":0,"tangentMode":34},{"time":3.93683672,"value":1.00266242,"inTangent":0.254687339,"outTangent":0.254687339,"inWeight":0.333333343,"outWeight":0.0,"weightedMode":0,"tangentMode":34}],"length":2,"preWrapMode":8,"postWrapMode":8}},{"Mesh":2,"Material":3,"CountPerGroup":70,"UniformScaleVariance":{"Max":0.5,"Min":0.01,"DiagonalLength":0.49},"HeightCurve":{"keys":[{"time":0.0,"value":1.0,"inTangent":0.0,"outTangent":0.0,"inWeight":0.0,"outWeight":0.0,"weightedMode":0,"tangentMode":34},{"time":1.0,"value":1.0,"inTangent":0.0,"outTangent":0.0,"inWeight":0.0,"outWeight":0.0,"weightedMode":0,"tangentMode":34}],"length":2,"preWrapMode":8,"postWrapMode":8}},{"Mesh":4,"Material":5,"CountPerGroup":20,"UniformScaleVariance":{"Max":0.15,"Min":0.03,"DiagonalLength":0.120000005},"HeightCurve":{"keys":[{"time":0.0,"value":1.00473022,"inTangent":-0.330051422,"outTangent":-0.330051422,"inWeight":0.0,"outWeight":0.333333343,"weightedMode":0,"tangentMode":34},{"time":3.05259132,"value":-0.00278183818,"inTangent":-0.330051422,"outTangent":-0.330051422,"inWeight":0.333333343,"outWeight":0.0,"weightedMode":0,"tangentMode":34}],"length":2,"preWrapMode":8,"postWrapMode":8}}]'
+    TypeAssemblyQualifiedName: Votyra.Plannar.Unity.PopulatorConfigItem[], Votyra.Plannar.Unity,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    UnityValues:
+    - {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+    - {fileID: 2100000, guid: 4bb0a7b33f1379c44b8a0ff4b6a6a3e5, type: 2}
+    - {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    - {fileID: 2100000, guid: 256fe6f47af75d748845ce4c0bc8a428, type: 2}
+    - {fileID: -1824792854035055013, guid: a67774379b39320489107a461854ee95, type: 3}
+    - {fileID: 2100000, guid: 7deb4a72cc430de4c903d4e2db9afdb8, type: 2}
+  - Id: scaleFactor
+    JsonValue: 1
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: async
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: wallSquishFactor
+    JsonValue: 0.0
+    TypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: meshSubdivision
+    JsonValue: 0
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: subdivision
+    JsonValue: 0
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: noiseScale
+    JsonValue: '{"X":0.0,"Y":0.0,"Z":0.0}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3f, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: maskLimit
+    JsonValue: 0.0
+    TypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: ensureFlat
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+--- !u!114 &1288497525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1288497522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 544505c1b6d43924ca9e1a2f0a8c160c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1288497526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1288497522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08eca9f7688a0a24685b89133b020c8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scriptableObjectInstallers: []
+  _monoInstallers:
+  - {fileID: 1288497525}
+  _installerPrefabs: []
+  _autoRun: 1
+  _kernel: {fileID: 0}
+--- !u!4 &1288497527
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1288497522}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1545882206
 GameObject:

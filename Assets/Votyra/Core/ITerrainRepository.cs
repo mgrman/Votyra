@@ -5,9 +5,7 @@ namespace Votyra.Core
 {
     public interface ITerrainRepository<TKey, TValue> where TKey : struct
     {
-        event Action<TKey, TValue> NewTerrain;
-        event Action<TKey> ChangedTerrain;
-        event Action<TKey> RemovedTerrain;
+        event Action<RepositoryChange<TKey, TValue>> TerrainChange;
         void Add(TKey key, TValue value);
         TValue Remove(TKey key);
         void TriggerUpdate(TKey key);

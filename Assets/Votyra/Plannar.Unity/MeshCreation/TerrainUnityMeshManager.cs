@@ -30,6 +30,7 @@ namespace Votyra.Plannar.Unity
 
         private void ChangedTerrain(Vector2i group)
         {
+            Debug.Log("Changed "+group);
             var pooledGameObject = _unityMeshes[group];
             var mesh = _coreMeshes[group];
 
@@ -38,6 +39,7 @@ namespace Votyra.Plannar.Unity
 
         private void RemovedTerrain(Vector2i group)
         {
+            Debug.Log("Removed " + group);
             var pooledGameObject = _unityMeshes[group];
             _gameObjectPool.ReturnRaw(pooledGameObject);
 
@@ -47,6 +49,7 @@ namespace Votyra.Plannar.Unity
 
         private void NewTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
+            Debug.Log("New     " + group);
             var pooledGameObject = _gameObjectPool.GetRaw();
             if (!pooledGameObject.IsInitialized)
                 pooledGameObject.Initialize();
