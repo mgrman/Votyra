@@ -16,6 +16,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image, IMask2e mask)
         {
+            var range = Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(image.RangeZ.Min), _cellInGroupCount.ToVector3f(image.RangeZ.Size));
+            mesh.Reset(range);
+            
             var groupPosition = _cellInGroupCount * group;
             for (var ix = 0; ix < _cellInGroupCount.X; ix++)
             {

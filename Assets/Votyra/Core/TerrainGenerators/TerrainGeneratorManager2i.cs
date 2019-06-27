@@ -121,11 +121,6 @@ namespace Votyra.Core
                     return;
                 }
 
-                var rangeZ = context.Value.RangeZ;
-                var range = rangeXY.ToArea3fFromMinMax(rangeZ.Min, rangeZ.Max);
-
-                terrainMesh.Reset(range);
-
                 _terrainMesher.GetResultingMesh(terrainMesh, data.Group, context.Value.Image, context.Value.Mask);
                 terrainMesh.FinalizeMesh();
             }
