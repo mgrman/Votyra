@@ -7,11 +7,12 @@ namespace Votyra.Core
     {
         event Action<RepositoryChange<TKey, TValue>> TerrainChange;
         void Add(TKey key, TValue value);
-        TValue Remove(TKey key);
-        void TriggerUpdate(TKey key);
+        void Remove(TKey key);
+        void Unlock(TKey key);
         TValue TryGetValue(TKey key);
         void Select<TResult>(Func<TKey, TValue, TResult> func,List<TResult> cache);
         bool Contains(TKey key);
         Func<TKey, bool> ContainsKeyFunc { get; }
+        bool Lock(TKey key);
     }
 }

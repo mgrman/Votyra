@@ -8,6 +8,7 @@ using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Queueing;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core
@@ -43,6 +44,7 @@ namespace Votyra.Core
             _terrainMeshPool = terrainMeshPool;
             _terrainMesher = terrainMesher;
             _meshRepository = repository;
+            _meshRepository.TerrainChange += MeshRepositoryOnTerrainChange;
 
             _onGroupBecameVisibleDelegate = OnGroupBecameVisible;
             _onGroupStoppedBeingVisibleDelegate = OnGroupStoppedBeingVisible;
@@ -59,6 +61,16 @@ namespace Votyra.Core
             }
 
             _frameDataProvider.FrameData += _frameWorkQueue.QueueNew;
+        }
+
+        private void MeshRepositoryOnTerrainChange(RepositoryChange<Vector2i, ITerrainMesh2f> obj)
+        {
+            switch (obj.Action)
+            {
+                case RepositorActionType.Removed:
+                    _terrainMeshPool.ReturnRaw(obj.Mesh);
+                    break;
+            }
         }
 
         public void Dispose()
@@ -89,39 +101,47 @@ namespace Votyra.Core
 
         private void UpdateGroup(GroupUpdateData data)
         {
-             // TODO problem here, since by the time the method finishes the group can go out of sight.
-             // maybe need to be able to "lock" the group while updating, but also the terrainMesh should not be returned to pool until this method finishes.
-             
-            if (!_meshRepository.Contains(data.Group))
-            {
-                return;
-            }
             var context = data.Context;
-            var terrainMesh = data.Mesh;
-            var forceUpdate = data.ForceUpdate;
-            var rangeXY = Range2i.FromMinAndSize(data.Group * _cellInGroupCount, _cellInGroupCount);
-            if (!forceUpdate && !context.Value.InvalidatedArea.Overlaps(rangeXY))
+            bool locked = false;
+            try
+            {
+                // TODO problem here, since by the time the method finishes the group can go out of sight.
+                // maybe need to be able to "lock" the group while updating, but also the terrainMesh should not be returned to pool until this method finishes.
+                var terrainMesh = data.Mesh;
+                var forceUpdate = data.ForceUpdate;
+                var rangeXY = Range2i.FromMinAndSize(data.Group * _cellInGroupCount, _cellInGroupCount);
+                if (!forceUpdate && !context.Value.InvalidatedArea.Overlaps(rangeXY))
+                {
+                    return;
+                }
+
+                locked = _meshRepository.Lock(data.Group);
+                if (!locked)
+                {
+                    return;
+                }
+
+                var rangeZ = context.Value.RangeZ;
+                var range = rangeXY.ToArea3fFromMinMax(rangeZ.Min, rangeZ.Max);
+
+                terrainMesh.Reset(range);
+
+                _terrainMesher.GetResultingMesh(terrainMesh, data.Group, context.Value.Image, context.Value.Mask);
+                terrainMesh.FinalizeMesh();
+            }
+            finally
             {
                 context.Dispose();
-                return;
+                if (locked)
+                {
+                    _meshRepository.Unlock(data.Group);
+                }
             }
-
-            var rangeZ = context.Value.RangeZ;
-            var range = rangeXY.ToArea3fFromMinMax(rangeZ.Min, rangeZ.Max);
-
-            terrainMesh.Reset(range);
-
-            _terrainMesher.GetResultingMesh(terrainMesh, data.Group, context.Value.Image, context.Value.Mask);
-            terrainMesh.FinalizeMesh();
-
-            context.Dispose();
-            _meshRepository.TriggerUpdate(data.Group);
         }
 
         private void OnGroupStoppedBeingVisible(Vector2i group)
         {
-            var terrainMesh = _meshRepository.Remove(group);
-            _terrainMeshPool.ReturnRaw(terrainMesh);
+            _meshRepository.Remove(group);
         }
     }
 }

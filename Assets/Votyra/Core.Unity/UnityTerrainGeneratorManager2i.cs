@@ -43,7 +43,7 @@ namespace Votyra.Core
                         _queue.Enqueue(arg);
                         lock (_activeTerrainsLock)
                         {
-                            _activeTerrains.Add(arg.Group, arg.NewMesh);
+                            _activeTerrains.Add(arg.Group, arg.Mesh);
                         }
 
                         break;
@@ -72,7 +72,7 @@ namespace Votyra.Core
                 switch (valueTuple.Action)
                 {
                     case RepositorActionType.New:
-                        _newTerrain?.Invoke(valueTuple.Group, valueTuple.NewMesh);
+                        _newTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
                         break;
                     case RepositorActionType.Changed:
                         _changedTerrain?.Invoke(valueTuple.Group);
