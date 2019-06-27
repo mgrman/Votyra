@@ -6,9 +6,4 @@ namespace Votyra.Core.Queueing
     {
         void QueueNew(T context);
     }
-
-    public interface IWorkQueue<TKey, TValue>
-    {
-        void QueueNew(TKey key, TValue context);
-    }
 }

@@ -23,17 +23,17 @@ namespace Votyra.Core
             Removed
         }
 
-        private List<(ActionType, Vector2i, ITerrainMesh2f)> _queue = new List<(ActionType, Vector2i, ITerrainMesh2f)>(10);
-        private readonly ITerrainGeneratorManager2i _manager;
+        private Queue<(ActionType, Vector2i, ITerrainMesh2f)> _queue = new Queue<(ActionType, Vector2i, ITerrainMesh2f)>(10);
+        private readonly ITerrainRepository2i _manager;
 
         private Dictionary<Vector2i, ITerrainMesh2f> _activeTerrains = new Dictionary<Vector2i, ITerrainMesh2f>();
-        
+
         private event Action<Vector2i, ITerrainMesh2f> _newTerrain;
         private Action<Vector2i> _changedTerrain;
 
         private object _activeTerrainsLock => (_activeTerrains as ICollection).SyncRoot;
 
-        public UnityTerrainGeneratorManager2i(ITerrainGeneratorManager2i manager)
+        public UnityTerrainGeneratorManager2i(ITerrainRepository2i manager)
         {
             _manager = manager;
             _manager.NewTerrain += OnNewTerrain;
@@ -43,7 +43,7 @@ namespace Votyra.Core
 
         private void OnRemovedTerrain(Vector2i arg1)
         {
-            _queue.Add((ActionType.Removed, arg1, null));
+            _queue.Enqueue((ActionType.Removed, arg1, null));
             lock (_activeTerrainsLock)
             {
                 _activeTerrains.Remove(arg1);
@@ -52,12 +52,12 @@ namespace Votyra.Core
 
         private void OnChangedTerrain(Vector2i arg1)
         {
-            _queue.Add((ActionType.Changed, arg1, null));
+            _queue.Enqueue((ActionType.Changed, arg1, null));
         }
 
         private void OnNewTerrain(Vector2i arg1, ITerrainMesh2f arg2)
         {
-            _queue.Add((ActionType.New, arg1, arg2));
+            _queue.Enqueue((ActionType.New, arg1, arg2));
             lock (_activeTerrainsLock)
             {
                 _activeTerrains.Add(arg1, arg2);
@@ -66,9 +66,9 @@ namespace Votyra.Core
 
         public void Tick()
         {
-            for (var i = 0; i < _queue.Count; i++)
+            while (_queue.Count > 0)
             {
-                var valueTuple = _queue[i];
+                var valueTuple = _queue.Dequeue();
                 switch (valueTuple.Item1)
                 {
                     case ActionType.New:
@@ -119,7 +119,7 @@ namespace Votyra.Core
                 _changedTerrain -= value;
             }
         }
-        
+
         public event Action<Vector2i> RemovedTerrain;
     }
 }

@@ -2,19 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 using Votyra.Core.GroupSelectors;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Queueing;
-using Votyra.Core.TerrainMeshes;
+using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core
 {
-    public class TerrainGeneratorManager2i : IDisposable, ITerrainGeneratorManager2i
+    public class TerrainGeneratorManager2i : IDisposable
     {
-        private readonly Dictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new Dictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
-        private readonly object _activeGroupsLock = new object();
+        private readonly ITerrainRepository2i _meshRepository;
 
         private readonly Vector2i _cellInGroupCount;
         private readonly IFrameDataProvider2i _frameDataProvider;
@@ -24,153 +24,101 @@ namespace Votyra.Core
         private readonly ITerrainConfig _terrainConfig;
 
         private readonly IGroupsByCameraVisibilitySelector2i _groupsByCameraVisibilitySelector2I;
+        private readonly ITerrainMesh2iPool _terrainMeshPool;
+        private readonly ITerrainMesher2f _terrainMesher;
 
-        private IWorkQueue<ArcResource<IFrameData2i>> _frameWorkQueue;
-        private IWorkQueue<Vector2i, GroupUpdateData> _groupWorkQueue;
+        private readonly IWorkQueue<ArcResource<IFrameData2i>> _frameWorkQueue;
+        private readonly IWorkQueue<GroupUpdateData> _groupWorkQueue;
 
-        private event Action<Vector2i, ITerrainMesh2f> _newTerrain;
-        private event Action<Vector2i> _changedTerrain;
+        private readonly Action<Vector2i, ArcResource<IFrameData2i>> _onGroupBecameVisibleDelegate;
+        private readonly Action<Vector2i> _onGroupStoppedBeingVisibleDelegate;
+        private readonly List<GroupUpdateData> _updateDateCache = new List<GroupUpdateData>();
 
-        public event Action<Vector2i, ITerrainMesh2f> NewTerrain
-        {
-            add
-            {
-                _newTerrain += value;
-                foreach (var activeGroup in _activeGroups)
-                {
-                    value?.Invoke(activeGroup.Key, activeGroup.Value.Mesh);
-                }
-            }
-            remove
-            {
-                _newTerrain -= value;
-            }
-        }
-
-        public event Action<Vector2i> ChangedTerrain
-        {
-            add
-            {
-                _changedTerrain += value;
-                foreach (var activeGroup in _activeGroups)
-                {
-                    value?.Invoke(activeGroup.Key);
-                }
-            }
-            remove
-            {
-                _changedTerrain -= value;
-            }
-        }
-
-        public event Action<Vector2i> RemovedTerrain;
-
-        public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IFrameDataProvider2i frameDataProvider, ITerrainGroupGeneratorManagerPool managerPool, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector2I)
+        public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IFrameDataProvider2i frameDataProvider, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector2I, ITerrainMesh2iPool terrainMeshPool, ITerrainMesher2f terrainMesher, ITerrainRepository2i repository)
         {
             _terrainConfig = terrainConfig;
             _cellInGroupCount = _terrainConfig.CellInGroupCount.XY();
             _frameDataProvider = frameDataProvider;
             _groupsByCameraVisibilitySelector2I = groupsByCameraVisibilitySelector2I;
+            _terrainMeshPool = terrainMeshPool;
+            _terrainMesher = terrainMesher;
+            _meshRepository = repository;
 
-            create = (g) =>
-            {
-                var manager = managerPool.GetRaw();
-                manager.Group = g;
-
-                _newTerrain?.Invoke(g, manager.Mesh);
-                return manager;
-            };
-
-            dispose = (manager) =>
-            {
-                var g = manager.Group;
-                managerPool.ReturnRaw(manager);
-                RemovedTerrain?.Invoke(g);
-            };
+            _onGroupBecameVisibleDelegate = OnGroupBecameVisible;
+            _onGroupStoppedBeingVisibleDelegate = OnGroupStoppedBeingVisible;
 
             if (_terrainConfig.AsyncTerrainGeneration)
             {
-                _frameWorkQueue = new LastValueTaskQueue<ArcResource<IFrameData2i>>("Main task queue", UpdateTerrain);
-
-                // TODO still problem with several updates on same group being called at the same time
-                _groupWorkQueue = new ParalelTaskQueue<Vector2i,GroupUpdateData>("Main group queue", GroupUpdate);
+                _frameWorkQueue = new LastValueTaskQueue<ArcResource<IFrameData2i>>("Main task queue", EnqueueTerrainUpdates);
+                _groupWorkQueue = new PerGroupTaskQueue("Main group queue", UpdateGroup);
             }
             else
             {
-                _frameWorkQueue = new ImmediateQueue<ArcResource<IFrameData2i>>(UpdateTerrain);
-                _groupWorkQueue = new ImmediateQueue<Vector2i, GroupUpdateData>(GroupUpdate);
+                _frameWorkQueue = new ImmediateQueue<ArcResource<IFrameData2i>>(EnqueueTerrainUpdates);
+                _groupWorkQueue = new ImmediateQueue<GroupUpdateData>(UpdateGroup);
             }
 
-            _frameDataProvider.FrameData += QueueUpdateTerrain;
+            _frameDataProvider.FrameData += _frameWorkQueue.QueueNew;
         }
 
         public void Dispose()
         {
             _onDestroyCts.Cancel();
 
-            _frameDataProvider.FrameData -= QueueUpdateTerrain;
+            _frameDataProvider.FrameData -= _frameWorkQueue.QueueNew;
         }
 
-        public ITerrainMesh2f GetMeshForGroup(Vector2i group)
+        private void EnqueueTerrainUpdates(ArcResource<IFrameData2i> context)
         {
-            lock (_activeGroupsLock)
+            _groupsByCameraVisibilitySelector2I.UpdateGroupsVisibility(context, _cellInGroupCount, _meshRepository.ContainsKeyFunc, _onGroupBecameVisibleDelegate, _onGroupStoppedBeingVisibleDelegate);
+
+            _meshRepository.Select((group, mesh) => new GroupUpdateData(group, context, mesh, false), _updateDateCache);
+            foreach (var activeGroup in _updateDateCache)
             {
-                return _activeGroups.TryGetValue(group)
-                    ?.Mesh;
+                context.Activate();
+                _groupWorkQueue.QueueNew(activeGroup);
             }
         }
 
-        private void QueueUpdateTerrain(ArcResource<IFrameData2i> context)
+        private void OnGroupBecameVisible(Vector2i group, ArcResource<IFrameData2i> data)
         {
-            _frameWorkQueue.QueueNew(context);
+            var terrainMesh = _terrainMeshPool.GetRaw();
+            _meshRepository.Add(group, terrainMesh);
+            _groupWorkQueue.QueueNew(new GroupUpdateData(group, data, terrainMesh, true));
         }
 
-        private void UpdateTerrain(ArcResource<IFrameData2i> context)
+        private void UpdateGroup(GroupUpdateData data)
         {
-            HandleVisibilityUpdates(context.Value);
-            lock (_activeGroupsLock)
+            if (!_meshRepository.Contains(data.Group))
             {
-                foreach (var activeGroup in _activeGroups)
-                {
-                    context.Activate();
-                    _groupWorkQueue.QueueNew(activeGroup.Key, new GroupUpdateData(context, activeGroup.Value));
-                }
+                return;
             }
-        }
-
-        private void GroupUpdate(GroupUpdateData data)
-        {
-            data.Manager.Update(data.Context, OnChangedTerrain);
-        }
-
-        private void OnChangedTerrain(Vector2i group)
-        {
-            _changedTerrain?.Invoke(group);
-        }
-
-        private void HandleVisibilityUpdates(IFrameData2i context)
-        {
-            _groupsByCameraVisibilitySelector2I.UpdateGroupsVisibility(context, _cellInGroupCount, _activeGroups, _activeGroupsLock, create, dispose);
-        }
-
-        private Func<Vector2i, ITerrainGroupGeneratorManager2i> create;
-        private Action<ITerrainGroupGeneratorManager2i> dispose;
-
-        private struct GroupUpdateData : IDisposable
-        {
-            public GroupUpdateData(ArcResource<IFrameData2i> context, ITerrainGroupGeneratorManager2i manager)
+            var context = data.Context;
+            var terrainMesh = data.Mesh;
+            var forceUpdate = data.ForceUpdate;
+            var rangeXY = Range2i.FromMinAndSize(data.Group * _cellInGroupCount, _cellInGroupCount);
+            if (!forceUpdate && !context.Value.InvalidatedArea.Overlaps(rangeXY))
             {
-                this.Context = context;
-                this.Manager = manager;
+                context.Dispose();
+                return;
             }
 
-            public ArcResource<IFrameData2i> Context { get; }
-            public ITerrainGroupGeneratorManager2i Manager { get; }
+            var rangeZ = context.Value.RangeZ;
+            var range = rangeXY.ToArea3fFromMinMax(rangeZ.Min, rangeZ.Max);
 
-            public void Dispose()
-            {
-                Context?.Dispose();
-            }
+            terrainMesh.Reset(range);
+
+            _terrainMesher.GetResultingMesh(terrainMesh, data.Group, context.Value.Image, context.Value.Mask);
+            terrainMesh.FinalizeMesh();
+
+            context.Dispose();
+            _meshRepository.TriggerUpdate(data.Group);
+        }
+
+        private void OnGroupStoppedBeingVisible(Vector2i group)
+        {
+            var terrainMesh = _meshRepository.Remove(group);
+            _terrainMeshPool.ReturnRaw(terrainMesh);
         }
     }
 }

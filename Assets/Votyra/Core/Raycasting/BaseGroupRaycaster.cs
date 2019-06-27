@@ -14,7 +14,7 @@ namespace Votyra.Core.Raycasting
         private readonly int maxIterations;
         private readonly ITerrainVertexPostProcessor _terrainVertexPostProcessor;
         private readonly Vector2i _cellInGroupCount;
-        private readonly ITerrainGeneratorManager2i _manager;
+        private readonly ITerrainRepository2i _manager;
 
         public BaseGroupRaycaster(ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
         {

@@ -10,9 +10,9 @@ namespace Votyra.Core.Raycasting
 {
     public sealed class Terrain2fRaycaster : BaseGroupRaycaster
     {
-        private readonly ITerrainGeneratorManager2i _manager;
+        private readonly ITerrainRepository2i _manager;
 
-        public Terrain2fRaycaster(ITerrainConfig terrainConfig, ITerrainGeneratorManager2i manager, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
+        public Terrain2fRaycaster(ITerrainConfig terrainConfig, ITerrainRepository2i manager, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
             : base(terrainConfig, terrainVertexPostProcessor)
         {
             _manager = manager;
@@ -20,7 +20,7 @@ namespace Votyra.Core.Raycasting
 
         protected override Vector3f RaycastGroup(Vector2i group, Ray3f cameraRay)
         {
-            var mesh = _manager.GetMeshForGroup(group);
+            var mesh = _manager.TryGetValue(group);
 
             if (mesh == null)
                 return Vector3f.NaN;
@@ -42,7 +42,7 @@ namespace Votyra.Core.Raycasting
 
         protected override float RaycastGroup(Vector2i @group, Vector2f posXY)
         {
-            var mesh = _manager.GetMeshForGroup(group);
+            var mesh = _manager.TryGetValue(group);
 
             if (mesh == null)
                 return Vector1f.NaN;
