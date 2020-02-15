@@ -7,18 +7,15 @@ namespace Votyra.Core.Queueing
 {
     public class LastValueTaskQueue<T> : IWorkQueue<T> where T : IDisposable
     {
-        private readonly string _name;
-        private readonly Action<T> _updateFunction;
         private bool _stopped;
         private object _taskLock = new object();
         private bool _activeTask;
         private (bool HasValue, T Value) _queuedUpdate = (false, default);
         private TaskFactory _taskFactory;
+        public event Action<T> DoWork;
 
-        public LastValueTaskQueue(string name, Action<T> updateFunction)
+        public LastValueTaskQueue()
         {
-            _name = name;
-            _updateFunction = updateFunction;
             _taskFactory = new TaskFactory();
         }
 
@@ -58,11 +55,11 @@ namespace Votyra.Core.Queueing
 
                     try
                     {
-                        _updateFunction(activeContext.Value);
+                        DoWork?.Invoke(activeContext.Value);
                     }
                     catch (Exception ex)
                     {
-                        StaticLogger.LogError($"Error in {this.GetType().GetDisplayName()} named {_name}:");
+                        StaticLogger.LogError($"Error in {this.GetType().GetDisplayName()}:");
                         StaticLogger.LogException(ex);
                     }
                     finally
@@ -73,7 +70,7 @@ namespace Votyra.Core.Queueing
                         }
                         catch (Exception ex)
                         {
-                            StaticLogger.LogError($"Error disposing context {activeContext.GetHashCode()} in {this.GetType().GetDisplayName()} named {_name}:");
+                            StaticLogger.LogError($"Error disposing context {activeContext.GetHashCode()} in {this.GetType().GetDisplayName()}:");
                             StaticLogger.LogException(ex);
                         }
                     }

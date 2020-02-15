@@ -17,6 +17,7 @@ namespace Votyra.Core
             CameraFrustumCorners = new Vector3f[4];
         }
 
+        public Vector2i CellInGroupCount { get; set; }
         public Ray3f CameraRay { get; set; }
         public Plane3f[] CameraPlanes { get; }
         public Vector3f[] CameraFrustumCorners { get; }

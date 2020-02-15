@@ -1,5 +1,4 @@
 using System.Linq;
-using UnityEngine;
 using Votyra.Core.InputHandling;
 using Votyra.Core.Models;
 using Votyra.Core.Painting.Commands;

@@ -10,6 +10,7 @@ using Votyra.Core.Models;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
 using Votyra.Core.Pooling;
+using Votyra.Core.Queueing;
 using Votyra.Core.Raycasting;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.TerrainMeshes;
@@ -23,7 +24,7 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager2i(null, null, null, null,null,null);
+            new TerrainGeneratorManager2i(null, null, null, null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -142,7 +143,7 @@ namespace Votyra.Plannar.Unity
 
             Container.BindInterfacesAndSelfTo<FrameData2iPool>()
                 .AsSingle();
-            
+
             Container.BindInterfacesAndSelfTo<FrameData2iProvider>()
                 .AsSingle();
 
@@ -161,20 +162,52 @@ namespace Votyra.Plannar.Unity
                 .FromNewComponentOn(this.gameObject)
                 .AsSingle()
                 .NonLazy();
-            
+
             Container.BindInterfacesAndSelfTo<PopulatorConfig>()
                 .AsSingle();
-            
+
             Container.BindInterfacesAndSelfTo<TerrainPopulatorManager>()
                 .FromNewComponentOn(this.gameObject)
                 .AsSingle()
                 .NonLazy();
-            
+
             Container.BindInterfacesAndSelfTo<UnityTerrainGeneratorManager2i>()
                 .AsSingle();
 
             Container.BindInterfacesAndSelfTo<TerrainRepository2i>()
                 .AsSingle();
+
+            Container.BindInterfacesAndSelfTo<LastValueTaskQueue<ArcResource<IFrameData2i>>>()
+                .AsSingle()
+                .When(c =>
+                {
+                    var terrainConfig = c.Container.Resolve<ITerrainConfig>();
+                    return terrainConfig.AsyncTerrainGeneration;
+                });
+
+            Container.BindInterfacesAndSelfTo<PerGroupTaskQueue>()
+                .AsSingle()
+                .When(c =>
+                {
+                    var terrainConfig = c.Container.Resolve<ITerrainConfig>();
+                    return terrainConfig.AsyncTerrainGeneration;
+                });
+
+            Container.BindInterfacesAndSelfTo<ImmediateQueue<ArcResource<IFrameData2i>>>()
+                .AsSingle()
+                .When(c =>
+                {
+                    var terrainConfig = c.Container.Resolve<ITerrainConfig>();
+                    return !terrainConfig.AsyncTerrainGeneration;
+                });
+
+            Container.BindInterfacesAndSelfTo<ImmediateQueue<GroupUpdateData>>()
+                .AsSingle()
+                .When(c =>
+                {
+                    var terrainConfig = c.Container.Resolve<ITerrainConfig>();
+                    return !terrainConfig.AsyncTerrainGeneration;
+                });
         }
 
         private GameObject CreateNewGameObject(GameObject root, ITerrainConfig terrainConfig, IMaterialConfig materialConfig)

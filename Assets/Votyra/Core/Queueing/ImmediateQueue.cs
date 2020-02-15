@@ -4,18 +4,17 @@ namespace Votyra.Core.Queueing
 {
     public class ImmediateQueue<T> : IWorkQueue<T>
     {
-        private readonly Action<T> _updateFunction;
+        public event Action<T> DoWork;
 
-        public ImmediateQueue(Action<T> updateFunction)
+        public ImmediateQueue()
         {
-            _updateFunction = updateFunction;
         }
 
         public void QueueNew(T context)
         {
             try
             {
-                _updateFunction(context);
+                DoWork?.Invoke(context);
             }
             finally
             {

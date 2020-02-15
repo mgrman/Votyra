@@ -6,14 +6,12 @@ namespace Votyra.Core.Queueing
 {
     public class ParalelTaskQueue<T> : IWorkQueue<T> where T : IDisposable
     {
-        private readonly string _name;
-        private readonly Action<T> _updateFunction;
         private readonly TaskFactory _taskFactory;
+        
+        public event Action<T> DoWork;
 
-        public ParalelTaskQueue(string name, Action<T> updateFunction)
+        public ParalelTaskQueue()
         {
-            _name = name;
-            _updateFunction = updateFunction;
             _taskFactory = new TaskFactory();
         }
 
@@ -27,7 +25,7 @@ namespace Votyra.Core.Queueing
             var context = (T) arg;
             try
             {
-                _updateFunction(context);
+                DoWork?.Invoke(context);
             }
             catch (Exception ex)
             {

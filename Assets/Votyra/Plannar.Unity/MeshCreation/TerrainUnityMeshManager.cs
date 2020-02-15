@@ -14,7 +14,6 @@ namespace Votyra.Plannar.Unity
     public class TerrainUnityMeshManager : IDisposable
     {
         private readonly Dictionary<Vector2i, ITerrainGameObject> _unityMeshes = new Dictionary<Vector2i, ITerrainGameObject>();
-        private readonly Dictionary<Vector2i, ITerrainMesh2f> _coreMeshes = new Dictionary<Vector2i, ITerrainMesh2f>();
 
         private IUnityTerrainGeneratorManager2i _manager;
         private ITerrainGameObjectPool _gameObjectPool;
@@ -28,23 +27,21 @@ namespace Votyra.Plannar.Unity
             _manager.RemovedTerrain += RemovedTerrain;
         }
 
-        private void ChangedTerrain(Vector2i group)
+        private void ChangedTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
             Debug.Log("Changed "+group);
             var pooledGameObject = _unityMeshes[group];
-            var mesh = _coreMeshes[group];
 
             mesh.SetUnityMesh(pooledGameObject);
         }
 
-        private void RemovedTerrain(Vector2i group)
+        private void RemovedTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
             Debug.Log("Removed " + group);
             var pooledGameObject = _unityMeshes[group];
             _gameObjectPool.ReturnRaw(pooledGameObject);
 
             _unityMeshes.Remove(group);
-            _coreMeshes.Remove(group);
         }
 
         private void NewTerrain(Vector2i group, ITerrainMesh2f mesh)
@@ -57,7 +54,6 @@ namespace Votyra.Plannar.Unity
             mesh.SetUnityMesh(pooledGameObject);
 
             _unityMeshes[group] = pooledGameObject;
-            _coreMeshes[group] = mesh;
         }
 
         public void Dispose()

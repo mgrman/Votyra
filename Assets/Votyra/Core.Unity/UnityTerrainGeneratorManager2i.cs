@@ -1,15 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using UniRx.Async;
-using Votyra.Core.GroupSelectors;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
-using Votyra.Core.Queueing;
 using Votyra.Core.TerrainMeshes;
-using Votyra.Core.Utils;
 using Zenject;
 
 namespace Votyra.Core
@@ -23,7 +16,7 @@ namespace Votyra.Core
         private Dictionary<Vector2i, ITerrainMesh2f> _activeTerrains = new Dictionary<Vector2i, ITerrainMesh2f>();
 
         private event Action<Vector2i, ITerrainMesh2f> _newTerrain;
-        private Action<Vector2i> _changedTerrain;
+        private Action<Vector2i, ITerrainMesh2f> _changedTerrain;
 
         private object _activeTerrainsLock => (_activeTerrains as ICollection).SyncRoot;
 
@@ -75,10 +68,10 @@ namespace Votyra.Core
                         _newTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
                         break;
                     case RepositorActionType.Changed:
-                        _changedTerrain?.Invoke(valueTuple.Group);
+                        _changedTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
                         break;
                     case RepositorActionType.Removed:
-                        RemovedTerrain?.Invoke(valueTuple.Group);
+                        RemovedTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -104,14 +97,14 @@ namespace Votyra.Core
             }
         }
 
-        public event Action<Vector2i> ChangedTerrain
+        public event Action<Vector2i, ITerrainMesh2f> ChangedTerrain
         {
             add
             {
                 _changedTerrain += value;
                 foreach (var activeGroup in _activeTerrains)
                 {
-                    value?.Invoke(activeGroup.Key);
+                    value?.Invoke(activeGroup.Key,activeGroup.Value);
                 }
             }
             remove
@@ -120,6 +113,6 @@ namespace Votyra.Core
             }
         }
 
-        public event Action<Vector2i> RemovedTerrain;
+        public event Action<Vector2i, ITerrainMesh2f> RemovedTerrain;
     }
 }

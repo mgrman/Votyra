@@ -240,6 +240,7 @@ namespace Votyra.Core.Editor
 
                 foreach (var prop in props)
                 {
+                    EditorGUILayout.LabelField($"{prop.Name}[{prop.FieldType.Name}]", GUILayout.MinWidth(150));
                     prop.SetValue(oldValue, GetNewValue(prop.FieldType, prop.GetValue(oldValue)));
                 }
 

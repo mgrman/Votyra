@@ -8,7 +8,7 @@ namespace Votyra.Core
     public interface IUnityTerrainGeneratorManager2i
     {
         event Action<Vector2i, ITerrainMesh2f> NewTerrain;
-        event Action<Vector2i> ChangedTerrain;
-        event Action<Vector2i> RemovedTerrain;
+        event Action<Vector2i, ITerrainMesh2f> ChangedTerrain;
+        event Action<Vector2i, ITerrainMesh2f> RemovedTerrain;
     }
 }

@@ -2,8 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace Application.Scripts
-{
+
     public class TestMesh : MonoBehaviour
     {
         public void Update()
@@ -30,4 +29,3 @@ namespace Application.Scripts
             }
         }
     }
-}

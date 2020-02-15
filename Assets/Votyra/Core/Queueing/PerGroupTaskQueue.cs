@@ -9,17 +9,15 @@ namespace Votyra.Core.Queueing
 {
     public class PerGroupTaskQueue : IWorkQueue<GroupUpdateData>
     {
-        private readonly string _name;
-        private readonly Action<GroupUpdateData> _updateFunction;
         private readonly TaskFactory _taskFactory;
         private readonly Dictionary<Vector2i, GroupUpdateData> _queuedUpdates = new Dictionary<Vector2i, GroupUpdateData>();
         private readonly HashSet<Vector2i> _updateTasks = new HashSet<Vector2i>();
         private readonly object _taskLock = new object();
+        
+        public event Action<GroupUpdateData> DoWork;
 
-        public PerGroupTaskQueue(string name, Action<GroupUpdateData> updateFunction)
+        public PerGroupTaskQueue()
         {
-            _name = name;
-            _updateFunction = updateFunction;
             _taskFactory = new TaskFactory();
         }
 
@@ -82,11 +80,11 @@ namespace Votyra.Core.Queueing
 
                     try
                     {
-                        _updateFunction(activeContext);
+                        DoWork?.Invoke(activeContext);
                     }
                     catch (Exception ex)
                     {
-                        StaticLogger.LogError($"Error in {this.GetType().GetDisplayName()} named {_name}:");
+                        StaticLogger.LogError($"Error in {this.GetType().GetDisplayName()}:");
                         StaticLogger.LogException(ex);
                     }
                     finally
@@ -97,7 +95,7 @@ namespace Votyra.Core.Queueing
                         }
                         catch (Exception ex)
                         {
-                            StaticLogger.LogError($"Error disposing context {activeContext.GetHashCode()} in {this.GetType().GetDisplayName()} named {_name}:");
+                            StaticLogger.LogError($"Error disposing context {activeContext.GetHashCode()} in {this.GetType().GetDisplayName()}:");
                             StaticLogger.LogException(ex);
                         }
                     }

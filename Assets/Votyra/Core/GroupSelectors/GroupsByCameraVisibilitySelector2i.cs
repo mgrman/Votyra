@@ -8,8 +8,14 @@ namespace Votyra.Core.GroupSelectors
     public class GroupsByCameraVisibilitySelector2i : IGroupsByCameraVisibilitySelector2i
     {
         private Range2i _previousArea = Range2i.Zero;
+        private readonly Vector2i _cellInGroupCount;
 
-        public void UpdateGroupsVisibility(ArcResource<IFrameData2i> optionsResource, Vector2i cellInGroupCount, Func<Vector2i,bool> wasVisible,  Action<Vector2i, ArcResource<IFrameData2i>> onGroupBecameVisible, Action<Vector2i> onGroupNotVisibleAnyMore)
+        public GroupsByCameraVisibilitySelector2i(ITerrainConfig config)
+        {
+            _cellInGroupCount = config.CellInGroupCount.XY();
+        }
+
+        public void UpdateGroupsVisibility(ArcResource<IFrameData2i> optionsResource, Func<Vector2i, bool> wasVisible, Action<Vector2i, ArcResource<IFrameData2i>> onGroupBecameVisible, Action<Vector2i> onGroupNotVisibleAnyMore)
         {
             var options = optionsResource.Value;
             if (options == null)
@@ -28,10 +34,10 @@ namespace Votyra.Core.GroupSelectors
                 localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
 
-            var cameraBoundsGroups = (localCameraBounds / cellInGroupCount.ToVector2f()).RoundToContain();
+            var cameraBoundsGroups = (localCameraBounds / _cellInGroupCount.ToVector2f()).RoundToContain();
 
             var minZ = options.RangeZ.Min;
-            var boundsSize = new Vector2f(cellInGroupCount.X, cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
+            var boundsSize = new Vector2f(_cellInGroupCount.X, _cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
 
             var areaToCheck = cameraBoundsGroups.UnionWith(_previousArea);
             _previousArea = cameraBoundsGroups;
@@ -40,7 +46,7 @@ namespace Votyra.Core.GroupSelectors
                 for (var iy = areaToCheck.Min.Y; iy < areaToCheck.Max.Y; iy++)
                 {
                     var group = new Vector2i(ix, iy);
-                    var groupBoundsMin = (group * cellInGroupCount).ToVector2f()
+                    var groupBoundsMin = (group * _cellInGroupCount).ToVector2f()
                         .ToVector3f(minZ);
                     var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
                     var isVisible = planes.TestPlanesAABB(groupBounds);
