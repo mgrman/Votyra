@@ -1,5 +1,5 @@
 {
-    "name": "Votyra.Core.Editor",
+    "name": "Votyra.Core.Editor.Tests",
     "references": [
         "Votyra.Core",
         "Votyra.Core.Unity",
@@ -24,7 +24,9 @@
         "Zenject-usage.dll"
     ],
     "autoReferenced": false,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }
