@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Votyra.Core.InputHandling;
 using Votyra.Core.Models;
 using Votyra.Core.Painting;
+using Votyra.Core.Painting.Commands;
+using Votyra.Core.Raycasting;
 using Votyra.Core.Utils;
 using Zenject;
 
@@ -13,123 +16,173 @@ namespace Votyra.Core.Unity.Painting
 {
     public class UnityInputManager : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
-        private PointerEventData _activePointerData;
+        private readonly List<ActionData> _activePointerDatas = new List<ActionData>();
 
         [Inject]
-        protected List<IInputHandler> _inputHandlers;
+        protected IPaintingModel _paintingModel;
 
         [Inject]
         protected ITerrainConfig _terrainConfig;
+
+        [Inject]
+        protected IRaycaster _raycaster;
 
         private bool _processing;
 
         [Inject(Id = "root")]
         protected GameObject _root;
 
-        private InputActions _bufferedInputs = default;
         private bool _invokeWithNull;
+        private int _strength;
 
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
         {
             if (GUIUtility.hotControl != 0)
                 return;
 
-            if (_activePointerData != null)
+            var isFlat = Input.GetKey(KeyCode.LeftShift);
+            var isHole = Input.GetKey(KeyCode.LeftShift);
+
+            string cmdName;
+            if (isFlat)
+            {
+                cmdName = KnownCommands.Flatten;
+            }
+            else if (isHole)
+            {
+                cmdName = KnownCommands.MakeOrRemoveHole;
+            }
+            else
+            {
+                cmdName = KnownCommands.IncreaseOrDecrease;
+            }
+
+            var factory = _paintingModel.PaintCommandFactories.FirstOrDefault(o => o.Action == cmdName);
+            if (factory == null)
+            {
                 return;
-            _activePointerData = eventData;
+            }
+
+            var cmd = factory.Create();
+
+            _activePointerDatas.Add(new ActionData(eventData, cmd));
         }
 
         void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
         {
-            if (_activePointerData != eventData)
-                return;
-            _activePointerData = null;
+            for (var i = 0; i < _activePointerDatas.Count; i++)
+            {
+                var activePointerData = _activePointerDatas[i];
+
+                if (activePointerData.EventData == eventData)
+                {
+                    activePointerData.Command.Dispose();
+                    _activePointerDatas.RemoveAt(i);
+                    return;
+                }
+            }
         }
 
         protected void Update()
         {
             if (_processing)
             {
-                _bufferedInputs = GetActiveInputs(_bufferedInputs);
+                return;
+            }
+
+            if (_activePointerDatas.Count == 0)
+            {
                 return;
             }
 
             _processing = true;
 
-            var ray = GetRayFromPointer(_activePointerData);
-            var activeInputs = GetActiveInputs(_bufferedInputs);
-            if (!ray.Origin.AnyNan()) //action is when pointer is active
-            {
-                activeInputs |= InputActions.Action;
-            }
+            _strength = GetMultiplier() * GetDistance();
 
-            _bufferedInputs = default;
-
-            if (activeInputs == default)
+            for (var i = 0; i < _activePointerDatas.Count; i++)
             {
-                if (!_invokeWithNull)
-                {
-                    _processing = false;
-                    return;
-                }
-
-                _invokeWithNull = false;
-            }
-            else
-            {
-                _invokeWithNull = true;
+                var data = _activePointerDatas[i];
+                data.Ray = GetRayFromPointer(data.EventData);
             }
 
             if (_terrainConfig.AsyncInput)
             {
                 Task.Run(() =>
                 {
-                    InvokeHandlers(ray, activeInputs, _activePointerData);
-                    _processing = false;
+                    try
+                    {
+                        ProcessInputs();
+                        _processing = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogException(ex);
+                    }
                 });
             }
             else
             {
-                InvokeHandlers(ray, activeInputs, _activePointerData);
+                ProcessInputs();
                 _processing = false;
             }
         }
 
-        private void InvokeHandlers(Ray3f ray, InputActions activeInputs, PointerEventData pointerEventData)
+        private void ProcessInputs()
         {
-            for (var i = 0; i < _inputHandlers.Count; i++)
+            for (var i = 0; i < _activePointerDatas.Count; i++)
             {
-                try
-                {
-                    var used = _inputHandlers[i]
-                        .Update(ray, activeInputs);
-                    if (used)
-                        pointerEventData?.Use();
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogException(ex);
-                }
+                var activePointerData = _activePointerDatas[i];
+
+                var pointer = activePointerData.EventData;
+                var cmd = activePointerData.Command;
+                var ray = activePointerData.Ray;
+
+                var cell = _raycaster.Raycast(ray)
+                    .XY()
+                    .RoundToVector2i();
+                cmd.UpdateInvocationValues(cell, _strength);
             }
         }
 
-        private static InputActions GetActiveInputs(InputActions previousInputs)
-        {
-            var activeInputs = default(InputActions);
-            var inputs = EnumUtilities.GetNamesAndValues<InputActions>();
-            for (var i = 0; i < inputs.Count; i++)
-            {
-                var input = inputs[i];
-                if (input.value == InputActions.Action) //action is handled via active pointer
-                {
-                    continue;
-                }
+        private int GetMultiplier() => Input.GetMouseButton(1) ? -1 : 1;
 
-                activeInputs |= Input.GetButton(input.name) ? input.value : default;
-            }
-
-            return activeInputs;
-        }
+        private int GetDistance() => Input.GetKey(KeyCode.LeftShift) ? 3 : 1;
+        //
+        // private void InvokeHandlers(Ray3f ray, InputActions activeInputs, PointerEventData pointerEventData)
+        // {
+        //     for (var i = 0; i < _inputHandlers.Count; i++)
+        //     {
+        //         try
+        //         {
+        //             var used = _inputHandlers[i]
+        //                 .Update(ray, activeInputs);
+        //             if (used)
+        //                 pointerEventData?.Use();
+        //         }
+        //         catch (Exception ex)
+        //         {
+        //             Debug.LogException(ex);
+        //         }
+        //     }
+        // }
+        //
+        // private static InputActions GetActiveInputs(InputActions previousInputs)
+        // {
+        //     var activeInputs = default(InputActions);
+        //     var inputs = EnumUtilities.GetNamesAndValues<InputActions>();
+        //     for (var i = 0; i < inputs.Count; i++)
+        //     {
+        //         var input = inputs[i];
+        //         if (input.value == InputActions.Action) //action is handled via active pointer
+        //         {
+        //             continue;
+        //         }
+        //
+        //         activeInputs |= Input.GetButton(input.name) ? input.value : default;
+        //     }
+        //
+        //     return activeInputs;
+        // }
 
         private Ray3f GetRayFromPointer(PointerEventData eventData)
         {
@@ -151,5 +204,20 @@ namespace Votyra.Core.Unity.Painting
 
             return cameraRay;
         }
+    }
+
+    internal class ActionData
+    {
+        public ActionData(PointerEventData eventData, IPaintCommand command)
+        {
+            EventData = eventData;
+            Command = command;
+        }
+
+        public PointerEventData EventData { get; }
+
+        public IPaintCommand Command { get; }
+
+        public Ray3f Ray { get; set; }
     }
 }

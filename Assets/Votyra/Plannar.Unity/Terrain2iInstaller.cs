@@ -6,15 +6,12 @@ using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
-using Votyra.Core.Models;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
 using Votyra.Core.Pooling;
 using Votyra.Core.Queueing;
 using Votyra.Core.Raycasting;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
-using Votyra.Core.TerrainMeshes;
-using Votyra.Core.Unity.Painting;
 using Votyra.Core.Utils;
 using Zenject;
 
@@ -76,23 +73,16 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<Terrain2fRaycaster>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<PaintingSelectionManager>()
-                .AsSingle()
-                .NonLazy();
             Container.BindInterfacesAndSelfTo<PaintingModel>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<Flatten>()
+            Container.BindInterfacesAndSelfTo<FlattenFactory>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<IncreaseOrDecrease>()
+            Container.BindInterfacesAndSelfTo<IncreaseOrDecreaseFactory>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<MakeOrRemoveHole>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<PaintingGui>()
-                .FromNewComponentOn(gameObject)
+            Container.BindInterfacesAndSelfTo<MakeOrRemoveHoleFactory>()
                 .AsSingle()
                 .NonLazy();
 

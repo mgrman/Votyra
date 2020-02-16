@@ -91,6 +91,10 @@ namespace Votyra.Core.Editor
                 EditorGUILayout.LabelField("Unused", EditorStyles.boldLabel);
                 foreach (var configItem in oldConfigValues.ToArray())
                 {
+                    if (configItem.Type == null)
+                    {
+                        continue;
+                    }
                     EditorGUILayout.BeginHorizontal();
                     var delete = GUILayout.Button("✘", GUILayout.Width(20));
                     EditorGUILayout.LabelField($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
@@ -144,6 +148,11 @@ namespace Votyra.Core.Editor
             {
                 var oldFloatValue = oldValue as float? ?? 0;
                 newValue = EditorGUILayout.FloatField(oldFloatValue, GUILayout.MaxWidth(200));
+            }
+            else if (typeof(string).IsAssignableFrom(type))
+            {
+                var oldStringValue = oldValue as string;
+                newValue = EditorGUILayout.TextField( oldStringValue, GUILayout.MaxWidth(200));
             }
             else if (type.IsEnum)
             {

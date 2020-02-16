@@ -7,30 +7,16 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Painting
 {
-    public class PaintingModel : IPaintingModel, IDisposable
+    public class PaintingModel : IPaintingModel
     {
         private readonly IThreadSafeLogger _logger;
         private IPaintCommand _selectedPaintCommand;
 
-        public PaintingModel(List<IPaintCommand> commands, IThreadSafeLogger logger)
+        public PaintingModel(List<IPaintCommandFactory> paintCommandFactories, IThreadSafeLogger logger)
         {
             _logger = logger;
-            PaintCommands = commands;
-
-            SelectedPaintCommand = commands.OfType<IncreaseOrDecrease>()
-                .FirstOrDefault();
+            PaintCommandFactories = paintCommandFactories;
         }
-
-        public void Dispose()
-        {
-            SelectedPaintCommand.TryDispose();
-        }
-
-        public IReadOnlyList<IPaintCommand> PaintCommands { get; }
-
-        public IPaintCommand SelectedPaintCommand { get; set; }
-
-        public bool IsExtendedModifierActive { get; set; }
-        public bool IsInvertModifierActive { get; set; }
+        public IReadOnlyList<IPaintCommandFactory> PaintCommandFactories { get; }
     }
 }

@@ -6,7 +6,7 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Painting.Commands
 {
-    public abstract class PaintCommand : IPaintCommand
+    public class PaintCommand : IPaintCommand
     {
         private static readonly TimeSpan ClickDelay = TimeSpan.FromSeconds(0.2);
         private readonly IEditableImage2f _editableImage;
@@ -103,5 +103,10 @@ namespace Votyra.Core.Painting.Commands
         protected virtual float Invoke(float value, int localStrength) => value;
 
         protected virtual MaskValues Invoke(MaskValues value, int localStrength) => value;
+
+        public void Dispose()
+        {
+            StopInvocation();
+        }
     }
 }
