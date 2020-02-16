@@ -37,10 +37,10 @@ namespace Votyra.Core.MeshUpdaters
 
             SetVertices(triangleMesh, mesh);
             SetNormals(triangleMesh, mesh);
+            SetUVs(triangleMesh, mesh);
 
             if (reinitializeMesh)
             {
-                SetUVs(triangleMesh, mesh);
                 SetTriangles(triangleMesh, mesh);
             }
 
