@@ -41,7 +41,7 @@ namespace Votyra.Core.Unity.Painting
                 return;
 
             var isFlat = Input.GetKey(KeyCode.LeftShift);
-            var isHole = Input.GetKey(KeyCode.LeftShift);
+            var isHole = Input.GetKey(KeyCode.LeftControl);
 
             string cmdName;
             if (isFlat)
@@ -146,7 +146,7 @@ namespace Votyra.Core.Unity.Painting
 
         private int GetMultiplier() => Input.GetMouseButton(1) ? -1 : 1;
 
-        private int GetDistance() => Input.GetKey(KeyCode.LeftShift) ? 3 : 1;
+        private int GetDistance() => Input.GetKey(KeyCode.LeftAlt) ? 3 : 1;
         //
         // private void InvokeHandlers(Ray3f ray, InputActions activeInputs, PointerEventData pointerEventData)
         // {
