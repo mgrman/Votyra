@@ -69,6 +69,11 @@ namespace Votyra.Plannar.Unity
 
                 var value = terrain.Raycast(posLocalXY);
 
+                if (value.AnyNan())
+                {
+                    continue;
+                }
+
                 var heightProb = _populatorConfig.HeightCurve.Evaluate(value);
                 if (rnd.NextDouble() > heightProb)
                 {
