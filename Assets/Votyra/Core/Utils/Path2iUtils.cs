@@ -95,7 +95,7 @@ namespace Votyra.Core.Utils
 
         private static void InvokeOnPathHorizontal(Vector2i from, Vector2i to, Action<Vector2i> action)
         {
-            var y = from.X;
+            var y = from.Y;
             var signX = Math.Sign(to.X - from.X);
             for (var x = from.X + signX; x != to.X; x += signX)
             {

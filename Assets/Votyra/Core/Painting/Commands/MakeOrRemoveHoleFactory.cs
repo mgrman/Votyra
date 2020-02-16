@@ -19,6 +19,7 @@ namespace Votyra.Core.Painting.Commands
         }
 
         public string Action => KnownCommands.MakeOrRemoveHole;
+        
         public IPaintCommand Create() => new MakeOrRemoveHole(_editableImage, _editableMask, _logger);
     }
 }

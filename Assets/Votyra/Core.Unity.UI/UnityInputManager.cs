@@ -137,9 +137,17 @@ namespace Votyra.Core.Unity.Painting
                 var cmd = activePointerData.Command;
                 var ray = activePointerData.Ray;
 
-                var cell = _raycaster.Raycast(ray)
+                var rayHit = _raycaster.Raycast(ray);
+
+                if (rayHit.AnyNan())
+                {
+                    continue;
+                }
+                
+                var cell = rayHit
                     .XY()
                     .RoundToVector2i();
+                
                 cmd.UpdateInvocationValues(cell, _strength);
             }
         }
