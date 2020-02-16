@@ -40,8 +40,8 @@ namespace Votyra.Core.Unity.Painting
             if (GUIUtility.hotControl != 0)
                 return;
 
-            var isFlat = Input.GetKey(KeyCode.LeftShift);
-            var isHole = Input.GetKey(KeyCode.LeftControl);
+            var isFlat = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+            var isHole = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
 
             string cmdName;
             if (isFlat)
@@ -146,43 +146,7 @@ namespace Votyra.Core.Unity.Painting
 
         private int GetMultiplier() => Input.GetMouseButton(1) ? -1 : 1;
 
-        private int GetDistance() => Input.GetKey(KeyCode.LeftAlt) ? 3 : 1;
-        //
-        // private void InvokeHandlers(Ray3f ray, InputActions activeInputs, PointerEventData pointerEventData)
-        // {
-        //     for (var i = 0; i < _inputHandlers.Count; i++)
-        //     {
-        //         try
-        //         {
-        //             var used = _inputHandlers[i]
-        //                 .Update(ray, activeInputs);
-        //             if (used)
-        //                 pointerEventData?.Use();
-        //         }
-        //         catch (Exception ex)
-        //         {
-        //             Debug.LogException(ex);
-        //         }
-        //     }
-        // }
-        //
-        // private static InputActions GetActiveInputs(InputActions previousInputs)
-        // {
-        //     var activeInputs = default(InputActions);
-        //     var inputs = EnumUtilities.GetNamesAndValues<InputActions>();
-        //     for (var i = 0; i < inputs.Count; i++)
-        //     {
-        //         var input = inputs[i];
-        //         if (input.value == InputActions.Action) //action is handled via active pointer
-        //         {
-        //             continue;
-        //         }
-        //
-        //         activeInputs |= Input.GetButton(input.name) ? input.value : default;
-        //     }
-        //
-        //     return activeInputs;
-        // }
+        private int GetDistance() => (Input.GetKey(KeyCode.LeftAlt)|| Input.GetKey(KeyCode.RightAlt)) ? 3 : 1;
 
         private Ray3f GetRayFromPointer(PointerEventData eventData)
         {
