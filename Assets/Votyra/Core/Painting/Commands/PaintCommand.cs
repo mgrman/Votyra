@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
@@ -29,13 +30,19 @@ namespace Votyra.Core.Painting.Commands
 
         public virtual void UpdateInvocationValues(Vector2i cell, int maxStrength)
         {
-            if (DateTime.Now < _clickLimit && (_lastInvocation == null || (_lastInvocation.Value - cell).ManhattanMagnitude() < 3))
+            var now = DateTime.UtcNow;
+            if (now < _clickLimit && (_lastInvocation == null || (_lastInvocation.Value - cell).ManhattanMagnitude() < 3))
+            {
                 return;
+            }
 
             if (_lastInvocation == null)
-                _clickLimit = DateTime.Now + ClickDelay;
+            {
+                _clickLimit = now + ClickDelay;
+            }
 
             _maxStrength = maxStrength;
+
             Path2iUtils.InvokeOnPath(_lastInvocation, cell, Invoke);
 
             _lastInvocation = cell;
@@ -45,6 +52,7 @@ namespace Votyra.Core.Painting.Commands
         {
             OnInvocationStopping();
             _lastInvocation = null;
+            _clickLimit = DateTime.MinValue;
         }
 
         protected void Invoke(Vector2i cell)
@@ -55,7 +63,7 @@ namespace Votyra.Core.Painting.Commands
 
         protected void Invoke(Vector2i cell, int maxStrength)
         {
-            // _logger.LogMessage($"invoke on {cell}");
+             _logger.LogMessage($"invoke on {cell}");
             var absStrength = Math.Abs(maxStrength);
             var absExtents = absStrength - 1;
 

@@ -4,7 +4,7 @@ namespace Votyra.Core.Images
 {
     public class TerrainConfig : ITerrainConfig
     {
-        public TerrainConfig([ConfigInject("cellInGroupCount")] Vector3i cellInGroupCount, [ConfigInject("flipTriangles")] bool flipTriangles, [ConfigInject("drawBounds")] bool drawBounds, [ConfigInject("asyncTerrainGeneration")] bool asyncTerrainGeneration, [ConfigInject("asyncInput")] bool asyncInput, [ConfigInject("useMeshCollider")] bool useMeshCollider)
+        public TerrainConfig([ConfigInject("cellInGroupCount")] Vector3i cellInGroupCount, [ConfigInject("flipTriangles")] bool flipTriangles, [ConfigInject("drawBounds")] bool drawBounds, [ConfigInject("asyncTerrainGeneration")] bool asyncTerrainGeneration, [ConfigInject("asyncInput")] bool asyncInput, [ConfigInject("colliderType")] ColliderType colliderType)
         {
             CellInGroupCount = cellInGroupCount;
             FlipTriangles = flipTriangles;
@@ -15,13 +15,13 @@ namespace Votyra.Core.Images
 #else
             AsyncTerrainGeneration = asyncTerrainGeneration;
             AsyncInput = asyncInput;
-            UseMeshCollider = useMeshCollider;
 #endif
+            ColliderType = colliderType;
         }
 
         public Vector3i CellInGroupCount { get; }
         public bool FlipTriangles { get; }
-        public bool UseMeshCollider { get; }
+        public ColliderType ColliderType { get; }
         public bool DrawBounds { get; }
         public bool AsyncTerrainGeneration { get; }
         public bool AsyncInput { get; }
@@ -36,14 +36,14 @@ namespace Votyra.Core.Images
                 return false;
             var that = obj as TerrainConfig;
 
-            return CellInGroupCount == that.CellInGroupCount && FlipTriangles == that.FlipTriangles && DrawBounds == that.DrawBounds && AsyncTerrainGeneration == that.AsyncTerrainGeneration && UseMeshCollider == that.UseMeshCollider;
+            return CellInGroupCount == that.CellInGroupCount && FlipTriangles == that.FlipTriangles && DrawBounds == that.DrawBounds && AsyncTerrainGeneration == that.AsyncTerrainGeneration && ColliderType == that.ColliderType;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return CellInGroupCount.GetHashCode() + FlipTriangles.GetHashCode() * 3 + DrawBounds.GetHashCode() * 7 + AsyncTerrainGeneration.GetHashCode() * 13 + UseMeshCollider.GetHashCode() * 13;
+                return CellInGroupCount.GetHashCode() + FlipTriangles.GetHashCode() * 3 + DrawBounds.GetHashCode() * 7 + AsyncTerrainGeneration.GetHashCode() * 13 + ColliderType.GetHashCode() * 13;
             }
         }
     }

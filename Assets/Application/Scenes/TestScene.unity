@@ -347,10 +347,10 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
-  - Id: useMeshCollider
-    JsonValue: false
-    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
+  - Id: colliderType
+    JsonValue: 0
+    TypeAssemblyQualifiedName: Votyra.Core.ColliderType, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
     UnityValues: []
   - Id: material
     JsonValue: 0
@@ -380,7 +380,7 @@ MonoBehaviour:
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
   - Id: meshSubdivision
-    JsonValue: '{"X":4,"Y":4}'
+    JsonValue: '{"X":1,"Y":1}'
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValues: []
@@ -396,7 +396,7 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
-  - Id: async
+  - Id: useMeshCollider
     JsonValue: false
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
@@ -404,6 +404,11 @@ MonoBehaviour:
   - Id: wallSquishFactor
     JsonValue: 0.0
     TypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: async
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
   - Id: meshSubdivision

@@ -215,10 +215,19 @@ namespace Votyra.Plannar.Unity
 
             var meshFilter = go.GetOrAddComponent<MeshFilter>();
             go.AddComponentIfMissing<MeshRenderer>();
-            if (terrainConfig.UseMeshCollider)
-                go.AddComponentIfMissing<MeshCollider>();
-            else
-                go.AddComponentIfMissing<BoxCollider>();
+            switch (terrainConfig.ColliderType)
+            {
+                case ColliderType.None:
+                    break;
+                case ColliderType.Box:
+                    go.AddComponentIfMissing<BoxCollider>();
+                    break;
+                case ColliderType.Mesh:
+                    go.AddComponentIfMissing<MeshCollider>();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             if (meshFilter.sharedMesh == null)
                 meshFilter.mesh = new Mesh();

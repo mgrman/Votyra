@@ -14,10 +14,8 @@ using Zenject;
 
 namespace Votyra.Core.Unity.Painting
 {
-    public class UnityInputManager : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+    public class UnityInputManager : MonoBehaviour
     {
-        private readonly List<ActionData> _activePointerDatas = new List<ActionData>();
-
         [Inject]
         protected IPaintingModel _paintingModel;
 
@@ -35,10 +33,82 @@ namespace Votyra.Core.Unity.Painting
         private bool _invokeWithNull;
         private int _strength;
 
-        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
+        private string _lastActiveCommand;
+        private IPaintCommand _activeCommand;
+
+        protected void Update()
         {
-            if (GUIUtility.hotControl != 0)
+            if (_processing)
+            {
                 return;
+            }
+
+            _processing = true;
+            var cmdName = GetActiveCommand();
+            var activeCommand = _activeCommand;
+            if (cmdName != _lastActiveCommand)
+            {
+                activeCommand?.Dispose();
+                activeCommand = InstantiateCommand(cmdName);
+                _activeCommand = activeCommand;
+                _lastActiveCommand = cmdName;
+            }
+
+            if (activeCommand == null)
+            {
+                _processing = false;
+                return;
+            }
+            
+            _strength = GetMultiplier() * GetDistance();
+            var ray = GetRayFromPointer(Input.mousePosition, Camera.main);
+            if (_terrainConfig.AsyncInput)
+            {
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        ProcessInputs(ray, activeCommand);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogException(ex);
+                    }
+                    finally
+                    {
+                        _processing = false;
+                    }
+                });
+            }
+            else
+            {
+                ProcessInputs(ray, activeCommand);
+                _processing = false;
+            }
+        }
+
+        private IPaintCommand InstantiateCommand(string cmdName)
+        {
+            if (cmdName == null)
+            {
+                return null;
+            }
+
+            var factory = _paintingModel.PaintCommandFactories.FirstOrDefault(o => o.Action == cmdName);
+            if (factory == null)
+            {
+                return null;
+            }
+
+            return factory.Create();
+        }
+
+        private static string GetActiveCommand()
+        {
+            if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1))
+            {
+                return null;
+            }
 
             var isFlat = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
             var isHole = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
@@ -57,113 +127,31 @@ namespace Votyra.Core.Unity.Painting
                 cmdName = KnownCommands.IncreaseOrDecrease;
             }
 
-            var factory = _paintingModel.PaintCommandFactories.FirstOrDefault(o => o.Action == cmdName);
-            if (factory == null)
+            return cmdName;
+        }
+
+        private void ProcessInputs(Ray3f ray, IPaintCommand cmd)
+        {
+            var rayHit = _raycaster.Raycast(ray);
+
+            if (rayHit.AnyNan())
             {
                 return;
             }
 
-            var cmd = factory.Create();
+            var cell = rayHit.XY()
+                .RoundToVector2i();
 
-            _activePointerDatas.Add(new ActionData(eventData, cmd));
-        }
-
-        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-        {
-            for (var i = 0; i < _activePointerDatas.Count; i++)
-            {
-                var activePointerData = _activePointerDatas[i];
-
-                if (activePointerData.EventData == eventData)
-                {
-                    activePointerData.Command.Dispose();
-                    _activePointerDatas.RemoveAt(i);
-                    return;
-                }
-            }
-        }
-
-        protected void Update()
-        {
-            if (_processing)
-            {
-                return;
-            }
-
-            if (_activePointerDatas.Count == 0)
-            {
-                return;
-            }
-
-            _processing = true;
-
-            _strength = GetMultiplier() * GetDistance();
-
-            for (var i = 0; i < _activePointerDatas.Count; i++)
-            {
-                var data = _activePointerDatas[i];
-                data.Ray = GetRayFromPointer(data.EventData);
-            }
-
-            if (_terrainConfig.AsyncInput)
-            {
-                Task.Run(() =>
-                {
-                    try
-                    {
-                        ProcessInputs();
-                        _processing = false;
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.LogException(ex);
-                    }
-                });
-            }
-            else
-            {
-                ProcessInputs();
-                _processing = false;
-            }
-        }
-
-        private void ProcessInputs()
-        {
-            for (var i = 0; i < _activePointerDatas.Count; i++)
-            {
-                var activePointerData = _activePointerDatas[i];
-
-                var pointer = activePointerData.EventData;
-                var cmd = activePointerData.Command;
-                var ray = activePointerData.Ray;
-
-                var rayHit = _raycaster.Raycast(ray);
-
-                if (rayHit.AnyNan())
-                {
-                    continue;
-                }
-                
-                var cell = rayHit
-                    .XY()
-                    .RoundToVector2i();
-                
-                cmd.UpdateInvocationValues(cell, _strength);
-            }
+            cmd.UpdateInvocationValues(cell, _strength);
         }
 
         private int GetMultiplier() => Input.GetMouseButton(1) ? -1 : 1;
 
-        private int GetDistance() => (Input.GetKey(KeyCode.LeftAlt)|| Input.GetKey(KeyCode.RightAlt)) ? 3 : 1;
+        private int GetDistance() => (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) ? 3 : 1;
 
-        private Ray3f GetRayFromPointer(PointerEventData eventData)
+        private Ray3f GetRayFromPointer(Vector3 screenPosition, Camera camera)
         {
-            if (eventData == null)
-            {
-                return new Ray3f(Vector3f.NaN, Vector3f.NaN);
-            }
-
-            var ray = eventData.pressEventCamera.ScreenPointToRay(eventData.position);
+            var ray = camera.ScreenPointToRay(screenPosition);
 
             var cameraPosition = _root.transform.InverseTransformPoint(ray.origin)
                 .ToVector3f();
@@ -172,24 +160,7 @@ namespace Votyra.Core.Unity.Painting
 
             var cameraRay = new Ray3f(cameraPosition, cameraDirection);
 
-            Debug.DrawRay(_root.transform.TransformPoint(cameraRay.Origin.ToVector3()), _root.transform.TransformDirection(cameraRay.Direction.ToVector3()) * 100, Color.red);
-
             return cameraRay;
         }
-    }
-
-    internal class ActionData
-    {
-        public ActionData(PointerEventData eventData, IPaintCommand command)
-        {
-            EventData = eventData;
-            Command = command;
-        }
-
-        public PointerEventData EventData { get; }
-
-        public IPaintCommand Command { get; }
-
-        public Ray3f Ray { get; set; }
     }
 }

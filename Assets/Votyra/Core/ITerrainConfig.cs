@@ -6,9 +6,16 @@ namespace Votyra.Core
     {
         Vector3i CellInGroupCount { get; }
         bool FlipTriangles { get; }
-        bool UseMeshCollider { get; }
+        ColliderType ColliderType { get; }
         bool DrawBounds { get; }
         bool AsyncTerrainGeneration { get; }
         bool AsyncInput { get; }
+    }
+
+    public enum ColliderType
+    {
+        None,
+        Box,
+        Mesh
     }
 }
