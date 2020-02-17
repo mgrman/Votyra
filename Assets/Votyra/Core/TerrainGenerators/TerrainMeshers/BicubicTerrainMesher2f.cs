@@ -37,10 +37,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     var cellInGroup = new Vector2i(iix, iiy);
 
                     var cell = cellInGroup + groupPosition;
-                    var maskData = mask.SampleCell(cell);
-                    if (maskData.GetHoleCount() == 4)
-                        return;
-
+                    
                     var step = 1.0f / _subdivision;
 
                     var data_x0y0 = image.SampleCell(cell - Vector2i.One + new Vector2i(0, 0));
