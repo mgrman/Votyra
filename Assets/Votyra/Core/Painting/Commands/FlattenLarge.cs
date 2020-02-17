@@ -1,7 +1,5 @@
-using System;
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Painting.Commands
 {
@@ -17,7 +15,6 @@ namespace Votyra.Core.Painting.Commands
 
     public class FlattenLarge : PaintCommand
     {
-        private const float smoothSpeedRelative = 0.2f;
         private float? _centerValue;
 
         public FlattenLarge()
@@ -37,6 +34,6 @@ namespace Votyra.Core.Painting.Commands
             base.PrepareWithClickedValue(clickedValue);
         }
 
-        protected override float Invoke(float value, int strength) => (MathUtils.Lerp(_centerValue ?? 0f, value, smoothSpeedRelative) - value) * Math.Sign(strength) + value;
+        protected override float Invoke(float value, int strength) => _centerValue ?? value;
     }
 }
