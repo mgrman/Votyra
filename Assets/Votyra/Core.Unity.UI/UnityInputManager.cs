@@ -118,9 +118,9 @@ namespace Votyra.Core.Unity.Painting
             if (isFlat)
             {
                 if (isLarge)
-                    cmdName = KnownCommands.Flatten;
-                else
                     cmdName = KnownCommands.FlattenLarge;
+                else
+                    cmdName = KnownCommands.Flatten;
             }
             else if (isHole)
             {

@@ -15,7 +15,6 @@ namespace Votyra.Core.Painting.Commands
 
     public class Flatten : PaintCommand
     {
-        private const float smoothSpeedRelative = 0.2f;
         private float? _centerValue;
 
         public Flatten()
