@@ -11,6 +11,18 @@ namespace Votyra.Core.Painting.Commands
         {
         }
 
-        protected override MaskValues Invoke(MaskValues value, int strength) => strength < 0f ? MaskValues.Hole : MaskValues.Terrain;
+        protected override MaskValues Invoke(MaskValues value, int strength)
+        {
+            if (strength < 0)
+            {
+                return MaskValues.Hole;
+            }
+
+            if (strength > 0)
+            {
+                return MaskValues.Terrain;
+            }
+            return value;
+        }
     }
 }
