@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
@@ -7,45 +6,48 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Painting.Commands
 {
-    public class PaintCommand : IPaintCommand
+    public abstract class PaintCommand : IInitializablePaintCommand
     {
         private static readonly TimeSpan ClickDelay = TimeSpan.FromSeconds(0.2);
-        private readonly IEditableImage2f _editableImage;
-
-        private readonly IEditableMask2e _editableMask;
+        private readonly int _maxDistance;
 
         private DateTime _clickLimit;
+        private IEditableImage2f _editableImage;
+        private IEditableMask2e _editableMask;
 
         private IThreadSafeLogger _logger;
-        private int _maxStrength;
 
-        protected PaintCommand(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
+        protected PaintCommand(int maxDistance)
+        {
+            _maxDistance = maxDistance;
+        }
+
+        private Vector2i? _lastInvocation { get; set; }
+
+        public void Initialize(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
         {
             _editableImage = editableImage;
             _editableMask = editableMask;
             _logger = logger;
         }
 
-        private Vector2i? _lastInvocation { get; set; }
-
-        public virtual void UpdateInvocationValues(Vector2i cell, int maxStrength)
+        public virtual void UpdateInvocationValues(Vector2i cell)
         {
             var now = DateTime.UtcNow;
             if (now < _clickLimit && (_lastInvocation == null || (_lastInvocation.Value - cell).ManhattanMagnitude() < 3))
-            {
                 return;
-            }
 
             if (_lastInvocation == null)
-            {
                 _clickLimit = now + ClickDelay;
-            }
-
-            _maxStrength = maxStrength;
 
             Path2iUtils.InvokeOnPath(_lastInvocation, cell, Invoke);
 
             _lastInvocation = cell;
+        }
+
+        public void Dispose()
+        {
+            StopInvocation();
         }
 
         public void StopInvocation()
@@ -58,16 +60,10 @@ namespace Votyra.Core.Painting.Commands
         protected void Invoke(Vector2i cell)
         {
             OnNewInvocationData();
-            Invoke(cell, _maxStrength);
-        }
 
-        protected void Invoke(Vector2i cell, int maxStrength)
-        {
-             _logger.LogMessage($"invoke on {cell}");
-            var absStrength = Math.Abs(maxStrength);
-            var absExtents = absStrength - 1;
+            _logger.LogMessage($"invoke on {cell}");
 
-            var requestedArea = Range2i.FromMinAndMax(cell - (absStrength - 1), cell + (absStrength - 1) + 1);
+            var requestedArea = Range2i.FromMinAndMax(cell - _maxDistance, cell + _maxDistance+1);
             using (var image = _editableImage.RequestAccess(requestedArea))
             {
                 using (var mask = _editableMask?.RequestAccess(requestedArea))
@@ -87,7 +83,7 @@ namespace Votyra.Core.Painting.Commands
                             var ox = index.X - cell.X;
                             var oy = index.Y - cell.Y;
 
-                            var cellStrength = (absStrength - Math.Max(Math.Abs(ox), Math.Abs(oy))) * Math.Sign(maxStrength);
+                            var cellStrength = Math.Max(Math.Abs(ox), Math.Abs(oy));
                             image[index] = Invoke(image[index], cellStrength);
                             mask[index] = Invoke(mask[index], cellStrength);
                         }
@@ -111,10 +107,5 @@ namespace Votyra.Core.Painting.Commands
         protected virtual float Invoke(float value, int localStrength) => value;
 
         protected virtual MaskValues Invoke(MaskValues value, int localStrength) => value;
-
-        public void Dispose()
-        {
-            StopInvocation();
-        }
     }
 }

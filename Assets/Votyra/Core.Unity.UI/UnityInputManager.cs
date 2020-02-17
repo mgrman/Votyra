@@ -31,7 +31,6 @@ namespace Votyra.Core.Unity.Painting
         protected GameObject _root;
 
         private bool _invokeWithNull;
-        private int _strength;
 
         private string _lastActiveCommand;
         private IPaintCommand _activeCommand;
@@ -59,8 +58,7 @@ namespace Votyra.Core.Unity.Painting
                 _processing = false;
                 return;
             }
-            
-            _strength = GetMultiplier() * GetDistance();
+
             var ray = GetRayFromPointer(Input.mousePosition, Camera.main);
             if (_terrainConfig.AsyncInput)
             {
@@ -112,19 +110,51 @@ namespace Votyra.Core.Unity.Painting
 
             var isFlat = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
             var isHole = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+            var isInverse = Input.GetMouseButton(1);
+
+            var isLarge = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
 
             string cmdName;
             if (isFlat)
             {
-                cmdName = KnownCommands.Flatten;
+                if (isLarge)
+                    cmdName = KnownCommands.Flatten;
+                else
+                    cmdName = KnownCommands.FlattenLarge;
             }
             else if (isHole)
             {
-                cmdName = KnownCommands.MakeOrRemoveHole;
+                if (isInverse)
+                {
+                    if (isLarge)
+                        cmdName = KnownCommands.RemoveHoleLarge;
+                    else
+                        cmdName = KnownCommands.RemoveHole;
+                }
+                else
+                {
+                    if (isLarge)
+                        cmdName = KnownCommands.MakeHoleLarge;
+                    else
+                        cmdName = KnownCommands.MakeHole;
+                }
             }
             else
             {
-                cmdName = KnownCommands.IncreaseOrDecrease;
+                if (isInverse)
+                {
+                    if (isLarge)
+                        cmdName = KnownCommands.DecreaseLarge;
+                    else
+                        cmdName = KnownCommands.Decrease;
+                }
+                else
+                {
+                    if (isLarge)
+                        cmdName = KnownCommands.IncreaseLarge;
+                    else
+                        cmdName = KnownCommands.Increase;
+                }
             }
 
             return cmdName;
@@ -142,12 +172,8 @@ namespace Votyra.Core.Unity.Painting
             var cell = rayHit.XY()
                 .RoundToVector2i();
 
-            cmd.UpdateInvocationValues(cell, _strength);
+            cmd.UpdateInvocationValues(cell);
         }
-
-        private int GetMultiplier() => Input.GetMouseButton(1) ? -1 : 1;
-
-        private int GetDistance() => (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) ? 3 : 1;
 
         private Ray3f GetRayFromPointer(Vector3 screenPosition, Camera camera)
         {

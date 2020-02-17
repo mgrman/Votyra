@@ -5,6 +5,6 @@ namespace Votyra.Core.Painting.Commands
 {
     public interface IPaintCommand : IDisposable
     {
-        void UpdateInvocationValues(Vector2i cell, int strength);
+        void UpdateInvocationValues(Vector2i cell);
     }
 }

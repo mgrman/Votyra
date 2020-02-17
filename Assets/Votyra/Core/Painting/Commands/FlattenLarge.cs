@@ -5,23 +5,23 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Painting.Commands
 {
-    public class FlattenFactory : BaseFactory<Flatten>
+    public class FlattenLargeFactory : BaseFactory<FlattenLarge>
     {
-        public FlattenFactory(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
+        public FlattenLargeFactory(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
             : base(editableImage, editableMask, logger)
         {
         }
 
-        public override string Action => KnownCommands.Flatten;
+        public override string Action => KnownCommands.FlattenLarge;
     }
 
-    public class Flatten : PaintCommand
+    public class FlattenLarge : PaintCommand
     {
         private const float smoothSpeedRelative = 0.2f;
         private float? _centerValue;
 
-        public Flatten()
-            : base(0)
+        public FlattenLarge()
+            : base(2)
         {
         }
 

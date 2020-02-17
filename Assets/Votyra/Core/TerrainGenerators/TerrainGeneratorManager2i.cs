@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Votyra.Core.GroupSelectors;
+using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.Queueing;
@@ -114,6 +115,11 @@ namespace Votyra.Core
 
                 _terrainMesher.GetResultingMesh(terrainMesh, data.Group, context.Value.Image, context.Value.Mask);
                 terrainMesh.FinalizeMesh();
+            }
+            catch (Exception ex)
+            {
+                StaticLogger.LogException(ex);
+                throw;
             }
             finally
             {

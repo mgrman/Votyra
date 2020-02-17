@@ -76,13 +76,34 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<PaintingModel>()
                 .AsSingle()
                 .NonLazy();
+            Container.BindInterfacesAndSelfTo<IncreaseFactory>()
+                .AsSingle()
+                .NonLazy();
+            Container.BindInterfacesAndSelfTo<IncreaseLargeFactory>()
+                .AsSingle()
+                .NonLazy();
+            Container.BindInterfacesAndSelfTo<DecreaseFactory>()
+                .AsSingle()
+                .NonLazy();
+            Container.BindInterfacesAndSelfTo<DecreaseLargeFactory>()
+                .AsSingle()
+                .NonLazy();
             Container.BindInterfacesAndSelfTo<FlattenFactory>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<IncreaseOrDecreaseFactory>()
+            Container.BindInterfacesAndSelfTo<FlattenLargeFactory>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<MakeOrRemoveHoleFactory>()
+            Container.BindInterfacesAndSelfTo<MakeHoleFactory>()
+                .AsSingle()
+                .NonLazy();
+            Container.BindInterfacesAndSelfTo<MakeHoleLargeFactory>()
+                .AsSingle()
+                .NonLazy();
+            Container.BindInterfacesAndSelfTo<RemoveHoleFactory>()
+                .AsSingle()
+                .NonLazy();
+            Container.BindInterfacesAndSelfTo<RemoveHoleLargeFactory>()
                 .AsSingle()
                 .NonLazy();
 
