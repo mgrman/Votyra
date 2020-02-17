@@ -77,7 +77,7 @@ namespace Votyra.Core.Painting.Commands
                     var max = givenArea.Max;
                     for (var ix = min.X; ix < max.X; ix++)
                     {
-                        for (var iy = min.Y; iy <= max.Y; iy++)
+                        for (var iy = min.Y; iy < max.Y; iy++)
                         {
                             var index = new Vector2i(ix, iy);
                             var ox = index.X - cell.X;
