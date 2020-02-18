@@ -17,10 +17,16 @@ namespace Votyra.Core.Editor
     [CustomEditor(typeof(TerrainDataController))]
     public class TerrainDataControllerEditor : UnityEditor.Editor
     {
+        private ReorderableList list;
+
+        private void OnEnable()
+        {
+            list = new ReorderableList(serializedObject, serializedObject.FindProperty(nameof(TerrainDataController._availableTerrainAlgorithms)), true, true, true, true);
+        }
+
         public override void OnInspectorGUI()
         {
             var controller = target as TerrainDataController;
-            var list = new ReorderableList(serializedObject, serializedObject.FindProperty(nameof(TerrainDataController._availableTerrainAlgorithms)), true, true, true, true);
             list.drawHeaderCallback = rect =>
             {
                 EditorGUI.LabelField(rect, "Terrain algorithms");
@@ -45,7 +51,7 @@ namespace Votyra.Core.Editor
             var oldConfigValues = controller.Config.ToList();
             var newConfigValues = new List<ConfigItem>();
 
-            if (controller._activeTerrainAlgorithm < 0 || controller._activeTerrainAlgorithm >= controller._availableTerrainAlgorithms.Length)
+            if (controller._activeTerrainAlgorithm < 0 || controller._activeTerrainAlgorithm >= controller._availableTerrainAlgorithms.Count)
                 controller._activeTerrainAlgorithm = 0;
 
             var activeAlgorith = controller._availableTerrainAlgorithms[controller._activeTerrainAlgorithm];

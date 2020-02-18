@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace Votyra.Core.Unity
         private GameObject _activeTerrainRoot;
 
         [SerializeField]
-        public GameObject[] _availableTerrainAlgorithms;
+        public List<GameObject> _availableTerrainAlgorithms;
 
         private Context _context;
 
