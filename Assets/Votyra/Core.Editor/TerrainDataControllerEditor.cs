@@ -54,10 +54,10 @@ namespace Votyra.Core.Editor
             if (controller._activeTerrainAlgorithm < 0 || controller._activeTerrainAlgorithm >= controller._availableTerrainAlgorithms.Count)
                 controller._activeTerrainAlgorithm = 0;
 
-            var activeAlgorith = controller._availableTerrainAlgorithms[controller._activeTerrainAlgorithm];
-            if (activeAlgorith != null)
+            var activeAlgorithm = controller._availableTerrainAlgorithms[controller._activeTerrainAlgorithm];
+            if (activeAlgorithm != null)
             {
-                var configTypes = TerrainDataControllerGui.GetConfigTypes(activeAlgorith);
+                var configTypes = TerrainDataControllerConfigUtilities.GetConfigTypes(activeAlgorithm);
                 foreach (var configType in configTypes)
                 {
                     if (configType == null)

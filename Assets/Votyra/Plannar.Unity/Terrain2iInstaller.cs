@@ -29,10 +29,6 @@ namespace Votyra.Plannar.Unity
 
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<ImageConfig>()
-                .AsSingle();
-            Container.BindInterfacesAndSelfTo<InitialImageConfig>()
-                .AsSingle();
             Container.BindInterfacesAndSelfTo<TerrainConfig>()
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<MaterialConfig>()
@@ -40,14 +36,6 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<InterpolationConfig>()
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<ConstraintConfig>()
-                .AsSingle();
-
-            Container.BindInterfacesAndSelfTo<InitialStateSetter2f>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<EditableMatrixImage2f>()
-                .AsSingle();
-            Container.BindInterfacesAndSelfTo<EditableMatrixMask2e>()
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<InterpolatedImage2iTo2fPostProcessor>()
                 .AsSingle();
@@ -69,41 +57,8 @@ namespace Votyra.Plannar.Unity
             Container.BindInstance(meshRoot)
                 .WithId("root")
                 .AsSingle();
-
+            
             Container.BindInterfacesAndSelfTo<Terrain2fRaycaster>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<PaintingModel>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<IncreaseFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<IncreaseLargeFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<DecreaseFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<DecreaseLargeFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<FlattenFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<FlattenLargeFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<MakeHoleFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<MakeHoleLargeFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<RemoveHoleFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<RemoveHoleLargeFactory>()
                 .AsSingle()
                 .NonLazy();
 
@@ -170,14 +125,6 @@ namespace Votyra.Plannar.Unity
                 .AsSingle();
 
             Container.BindInterfacesAndSelfTo<PoolStats>()
-                .FromNewComponentOn(this.gameObject)
-                .AsSingle()
-                .NonLazy();
-
-            Container.BindInterfacesAndSelfTo<PopulatorConfig>()
-                .AsSingle();
-
-            Container.BindInterfacesAndSelfTo<TerrainPopulatorManager>()
                 .FromNewComponentOn(this.gameObject)
                 .AsSingle()
                 .NonLazy();

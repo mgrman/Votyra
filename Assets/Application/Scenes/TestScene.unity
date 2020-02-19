@@ -225,10 +225,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 873199102}
-  - component: {fileID: 873199101}
+  - component: {fileID: 873199106}
   - component: {fileID: 873199100}
   - component: {fileID: 873199103}
-  - component: {fileID: 873199104}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -248,24 +247,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 544505c1b6d43924ca9e1a2f0a8c160c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &873199101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 873199099}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08eca9f7688a0a24685b89133b020c8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _scriptableObjectInstallers: []
-  _monoInstallers:
-  - {fileID: 873199100}
-  _installerPrefabs: []
-  _autoRun: 1
-  _kernel: {fileID: 0}
 --- !u!4 &873199102
 Transform:
   m_ObjectHideFlags: 0
@@ -294,34 +275,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _activeTerrainAlgorithm: 0
   _availableTerrainAlgorithms:
-  - {fileID: 1101794731832008, guid: f4f93c13563af724e9805d1070d56d88, type: 3}
-  - {fileID: 1101794731832008, guid: a3fa91a0e395d7643bf043b4c7bfd4fd, type: 3}
-  - {fileID: 1486076317952450, guid: 0841d94987abc0b4a8ba679f64d5e225, type: 3}
-  - {fileID: 1116526748462952, guid: 4745140159b29fb48b5525d1c5f2b1c9, type: 3}
-  - {fileID: 1196856220923246, guid: aceb0ac05c491864c81c036fe42468f2, type: 3}
-  - {fileID: 1196856220923246, guid: af727f8a56b1bb740a7f6c600fb6516f, type: 3}
+  - {fileID: 4163952302159912191, guid: c51e97775a9e0ce41b4913fa75fda31b, type: 3}
+  - {fileID: 3926197049184543636, guid: c00341aabdc0e5f40b37ea9f3daaed9b, type: 3}
+  - {fileID: 8890270034281676390, guid: e7f321b7ef238044aad27b25f91eefb9, type: 3}
   Config:
-  - Id: imageSize
-    JsonValue: '{"X":100,"Y":100,"Z":100}'
-    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    UnityValues: []
-  - Id: initialData
-    JsonValue: 0
-    TypeAssemblyQualifiedName: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    UnityValues:
-    - {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
-  - Id: initialDataScale
-    JsonValue: '{"X":1.0,"Y":1.0,"Z":20.0}'
-    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3f, Votyra.Core, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    UnityValues: []
-  - Id: zeroFromInitialStateIsNull
-    JsonValue: false
-    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    UnityValues: []
   - Id: cellInGroupCount
     JsonValue: '{"X":20,"Y":20,"Z":20}'
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
@@ -391,19 +348,40 @@ MonoBehaviour:
     UnityValues:
     - {fileID: -1824792854035055013, guid: a67774379b39320489107a461854ee95, type: 3}
     - {fileID: 2100000, guid: 256fe6f47af75d748845ce4c0bc8a428, type: 2}
+  - Id: imageSize
+    JsonValue: '{"X":100,"Y":100,"Z":100}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: initialData
+    JsonValue: 0
+    TypeAssemblyQualifiedName: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues:
+    - {fileID: 2800000, guid: 713fee76f3989bc4d9ec137a061f88c4, type: 3}
+  - Id: initialDataScale
+    JsonValue: '{"X":1.0,"Y":1.0,"Z":20.0}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3f, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: zeroFromInitialStateIsNull
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
   - Id: scaleFactor
     JsonValue: 1
     TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
-  - Id: useMeshCollider
-    JsonValue: false
-    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    UnityValues: []
   - Id: wallSquishFactor
     JsonValue: 0.0
     TypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: useMeshCollider
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
   - Id: async
@@ -436,7 +414,7 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
---- !u!114 &873199104
+--- !u!114 &873199106
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -445,10 +423,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 873199099}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad4f4b5d62674d09a5dd6572b0aa80c3, type: 3}
+  m_Script: {fileID: 11500000, guid: 544e499a01074a4197d18998a04b7c0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showTerrainGui: 0
+  _scriptableObjectInstallers: []
+  _monoInstallers:
+  - {fileID: 873199100}
+  _installerPrefabs: []
+  _autoRun: 1
+  _kernel: {fileID: 0}
 --- !u!1 &886990423
 GameObject:
   m_ObjectHideFlags: 0
