@@ -11,8 +11,6 @@ namespace Votyra.Core.Unity
         public override void InstallBindings()
         {
             MainThreadDispatcher.Initialize();
-            Container.BindInterfacesAndSelfTo<TerrainManagerModel>()
-                .AsSingle();
 
             StaticLogger.LoggerImplementation = CreateLogger("StaticLogger", null);
             Container.Bind<IThreadSafeLogger>()

@@ -1,6 +1,6 @@
 ﻿namespace Votyra.Core
 {
-    public interface IConfig
+    public interface ISharedConfig
     {
     }
 }

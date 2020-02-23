@@ -2,7 +2,7 @@
 
 namespace Votyra.Core
 {
-    public interface IMaterialConfig : IConfig
+    public interface IMaterialConfig : ISharedConfig
     {
         Material Material { get; }
         Material MaterialWalls { get; }

@@ -5,7 +5,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Plannar.Unity
 {
-    public interface IPopulatorConfig : IConfig
+    public interface IPopulatorConfig : ISharedConfig
     {
         PopulatorConfigItem[] ConfigItems { get; }
     }

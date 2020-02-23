@@ -2,7 +2,7 @@
 
 namespace Votyra.Core
 {
-    public interface IInterpolationConfig : IConfig
+    public interface IInterpolationConfig : ISharedConfig
     {
         int ImageSubdivision { get; }
         Vector2i MeshSubdivision { get; }

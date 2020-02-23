@@ -10,85 +10,57 @@ using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Unity;
 using Votyra.Core.Utils;
+using Zenject;
 using Object = UnityEngine.Object;
 
 namespace Votyra.Core.Editor
 {
-    [CustomEditor(typeof(TerrainDataController))]
+    [CustomEditor(typeof(TerrainDataConfigInstaller))]
     public class TerrainDataControllerEditor : UnityEditor.Editor
     {
-        private ReorderableList list;
-
-        private void OnEnable()
-        {
-            list = new ReorderableList(serializedObject, serializedObject.FindProperty(nameof(TerrainDataController._availableTerrainAlgorithms)), true, true, true, true);
-        }
-
         public override void OnInspectorGUI()
         {
-            var controller = target as TerrainDataController;
-            list.drawHeaderCallback = rect =>
-            {
-                EditorGUI.LabelField(rect, "Terrain algorithms");
-            };
-            list.drawElementCallback = (rect, index, isActive, isFocused) =>
-            {
-                var element = list.serializedProperty.GetArrayElementAtIndex(index);
-                rect.y += 2;
-                var isSelected = index == controller._activeTerrainAlgorithm;
-
-                isSelected = EditorGUI.Toggle(new Rect(rect.x, rect.y, 20, EditorGUIUtility.singleLineHeight), GUIContent.none, isSelected, EditorStyles.radioButton);
-                if (isSelected)
-                    controller._activeTerrainAlgorithm = index;
-
-                EditorGUI.PropertyField(new Rect(rect.x + 20, rect.y, rect.width - 20, EditorGUIUtility.singleLineHeight), element, GUIContent.none);
-            };
-            serializedObject.Update();
-            list.DoLayoutList();
-            serializedObject.ApplyModifiedProperties();
+            var controller = target as TerrainDataConfigInstaller;
 
             Undo.RecordObject(controller, "Test");
             var oldConfigValues = controller.Config.ToList();
             var newConfigValues = new List<ConfigItem>();
 
-            if (controller._activeTerrainAlgorithm < 0 || controller._activeTerrainAlgorithm >= controller._availableTerrainAlgorithms.Count)
-                controller._activeTerrainAlgorithm = 0;
+            var configTypes = controller.transform.Cast<Transform>()
+                .SelectMany(o => GetConfigTypes(o.gameObject))
+                .Concat(GetConfigTypes(controller.gameObject))
+                .Distinct();
 
-            var activeAlgorithm = controller._availableTerrainAlgorithms[controller._activeTerrainAlgorithm];
-            if (activeAlgorithm != null)
+            foreach (var configType in configTypes)
             {
-                var configTypes = TerrainDataControllerConfigUtilities.GetConfigTypes(activeAlgorithm);
-                foreach (var configType in configTypes)
+                if (configType == null)
+                    continue;
+                var ctors = configType.GetConstructors();
+
+                var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null)).SelectMany(o => o.GetParameters()
+                    .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()
+                            ?.Id as string,
+                        p.ParameterType,
+                        null))
+                    .Where(a => a.Id != null));
+
+                if (!configItems.Any())
+                    continue;
+
+                EditorGUILayout.LabelField($"{configType.Name}", EditorStyles.boldLabel);
+                foreach (var configItem in configItems)
                 {
-                    if (configType == null)
-                        continue;
-                    var ctors = configType.GetConstructors();
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
+                    var oldConfigItem = oldConfigValues?.FirstOrDefault(o => o.Id == configItem.Id && o.Type == configItem.Type);
 
-                    var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null)).SelectMany(o => o.GetParameters()
-                        .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()
-                                ?.Id as string,
-                            p.ParameterType,
-                            null))
-                        .Where(a => a.Id != null));
+                    if (oldConfigItem != null)
+                        oldConfigValues.Remove(oldConfigItem);
+                    var oldValue = oldConfigItem?.Value;
+                    var newValue = GetNewValue(configItem.Type, oldValue);
 
-                    if (!configItems.Any())
-                        continue;
-
-                    EditorGUILayout.LabelField($"{configType.Name}", EditorStyles.boldLabel);
-                    foreach (var configItem in configItems)
-                    {
-                        EditorGUILayout.BeginHorizontal();
-                        EditorGUILayout.LabelField($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
-                        var oldConfigItem = oldConfigValues?.FirstOrDefault(o => o.Id == configItem.Id && o.Type == configItem.Type);
-
-                        if (oldConfigItem != null)
-                            oldConfigValues.Remove(oldConfigItem);
-                        var oldValue = oldConfigItem?.Value;
-                        var newValue = GetNewValue(configItem.Type, oldValue);
-
-                        newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
-                        EditorGUILayout.EndHorizontal();
-                    }
+                    newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
+                    EditorGUILayout.EndHorizontal();
                 }
             }
 
@@ -101,6 +73,7 @@ namespace Votyra.Core.Editor
                     {
                         continue;
                     }
+
                     EditorGUILayout.BeginHorizontal();
                     var delete = GUILayout.Button("✘", GUILayout.Width(20));
                     EditorGUILayout.LabelField($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
@@ -158,7 +131,7 @@ namespace Votyra.Core.Editor
             else if (typeof(string).IsAssignableFrom(type))
             {
                 var oldStringValue = oldValue as string;
-                newValue = EditorGUILayout.TextField( oldStringValue, GUILayout.MaxWidth(200));
+                newValue = EditorGUILayout.TextField(oldStringValue, GUILayout.MaxWidth(200));
             }
             else if (type.IsEnum)
             {
@@ -274,5 +247,69 @@ namespace Votyra.Core.Editor
 
             return newValue;
         }
+        
+        
+        private static IEnumerable<Type> GetConfigTypes(GameObject algorithmPrefab)
+        {
+            IEnumerable<IInstaller> installers;
+
+            var autoContext = algorithmPrefab.GetComponent<AutoGameObjectContext>();
+            if (autoContext != null)
+            {
+                installers = autoContext.GetInstallers();
+            }
+            else
+            {
+                var context = algorithmPrefab.GetComponent<GameObjectContext>();
+                installers = context.Installers;
+            }
+
+            var container = new DiContainer(false);
+            var tempGameObject = new GameObject();
+            try
+            {
+                foreach (var installer in installers)
+                {
+                    var tempInstallerGo = tempGameObject.AddComponent(installer.GetType());
+                    var tempInstaller = tempInstallerGo.GetComponentInChildren<MonoInstallerBase>(true);
+
+                    try
+                    {
+                        container.Inject(tempInstaller, new object[0]);
+                        tempInstaller.InstallBindings();
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        UnityEngine.Object.DestroyImmediate(tempInstaller);
+                    }
+                }
+
+                container.FlushBindings();
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(tempGameObject);
+            }
+
+            var types = new List<Type>();
+            foreach (var provider in container.AllProviders)
+            {
+                try
+                {
+                    var instanceType = provider.GetInstanceType(new InjectContext(container, typeof(object)));
+                    types.Add(instanceType);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
+            }
+
+            return types;
+        }
+        
     }
 }
