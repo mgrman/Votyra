@@ -83,7 +83,6 @@ namespace Votyra.Core.Editor
                         oldConfigValues.Remove(oldConfigItem);
                     var oldValue = oldConfigItem?.Value;
                     var newValue = GetNewValue(configItem.Type, oldValue);
-
                     if (!delete)
                         newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
                     EditorGUILayout.EndHorizontal();
@@ -93,7 +92,6 @@ namespace Votyra.Core.Editor
             controller.Config = newConfigValues.ToArray();
             if (Application.isPlaying)
                 controller.SendMessage("OnValidate", null, SendMessageOptions.DontRequireReceiver);
-            EditorUtility.SetDirty(controller);
         }
 
         private object GetNewValue(Type type, object oldValue)
@@ -247,8 +245,7 @@ namespace Votyra.Core.Editor
 
             return newValue;
         }
-        
-        
+
         private static IEnumerable<Type> GetConfigTypes(GameObject algorithmPrefab)
         {
             IEnumerable<IInstaller> installers;
@@ -310,6 +307,5 @@ namespace Votyra.Core.Editor
 
             return types;
         }
-        
     }
 }

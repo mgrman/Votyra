@@ -52,12 +52,6 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
 
-            var meshRoot = new GameObject("MeshRoot");
-            meshRoot.transform.SetParent(transform, false);
-            Container.BindInstance(meshRoot)
-                .WithId("root")
-                .AsSingle();
-            
             Container.BindInterfacesAndSelfTo<Terrain2fRaycaster>()
                 .AsSingle()
                 .NonLazy();
