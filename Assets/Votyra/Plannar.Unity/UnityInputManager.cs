@@ -25,6 +25,9 @@ namespace Votyra.Core.Unity.Painting
         [Inject]
         protected IRaycaster _raycaster;
 
+        [Inject]
+        protected ILayerConfig _layerConfig;
+
         private bool _processing;
 
         [Inject(Id = "root")]
@@ -101,9 +104,14 @@ namespace Votyra.Core.Unity.Painting
             return factory.Create();
         }
 
-        private static string GetActiveCommand()
+        private string GetActiveCommand()
         {
             if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1))
+            {
+                return null;
+            }
+
+            if (!Input.GetKey((KeyCode) _layerConfig.Layer))
             {
                 return null;
             }

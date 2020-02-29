@@ -201,12 +201,13 @@ PrefabInstance:
     - target: {fileID: 2371060890106292127, guid: e7f321b7ef238044aad27b25f91eefb9,
         type: 3}
       propertyPath: Config.Array.data[3].JsonValue
-      value: 0
+      value: 257
       objectReference: {fileID: 0}
     - target: {fileID: 2371060890106292127, guid: e7f321b7ef238044aad27b25f91eefb9,
         type: 3}
       propertyPath: Config.Array.data[3].TypeAssemblyQualifiedName
-      value: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      value: Votyra.Core.LayerId, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 2371060890106292127, guid: e7f321b7ef238044aad27b25f91eefb9,
         type: 3}
@@ -822,6 +823,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a97f5f52728240859c56c1cef624e5f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &924943414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 924943410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66fab5b8d1ad19a4a81ed774beb42adb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1002470549
 GameObject:
   m_ObjectHideFlags: 0
@@ -1262,7 +1275,7 @@ PrefabInstance:
     - target: {fileID: 1816078959379114316, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1842212477422973739, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -1352,7 +1365,7 @@ PrefabInstance:
     - target: {fileID: 5210709633626304712, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7083725303454532870, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -1414,12 +1427,13 @@ PrefabInstance:
     - target: {fileID: 7083725303454532870, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[3].JsonValue
-      value: 1
+      value: 258
       objectReference: {fileID: 0}
     - target: {fileID: 7083725303454532870, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[3].TypeAssemblyQualifiedName
-      value: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      value: Votyra.Core.LayerId, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7083725303454532870, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}

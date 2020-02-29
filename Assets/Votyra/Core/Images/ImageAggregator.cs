@@ -9,7 +9,7 @@ namespace Votyra.Core.Images
     public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2i
     {
         private readonly IImageConfig _imageConfig;
-        private SortedDictionary<int, EditableMatrixImage2f> _images = new SortedDictionary<int, EditableMatrixImage2f>();
+        private SortedDictionary<LayerId, EditableMatrixImage2f> _images = new SortedDictionary<LayerId, EditableMatrixImage2f>();
         private MatrixImageAccessor _lastLayerImage;
 
         public ImageAggregator(IImageConfig imageConfig)
@@ -17,18 +17,18 @@ namespace Votyra.Core.Images
             _imageConfig = imageConfig;
         }
 
-        public void Initialize(int layer, List<IImageConstraint2i> constraints)
+        public void Initialize(LayerId layer, List<IImageConstraint2i> constraints)
         {
             _images[layer] = new EditableMatrixImage2f(_imageConfig, constraints);
         }
 
-        public IImage2f CreateImage(int layer) =>
+        public IImage2f CreateImage(LayerId layer) =>
             _images[layer]
                 .CreateImage();
 
-        public IEditableImageAccessor2f RequestAccess(int layer, Range2i area)
+        public IEditableImageAccessor2f RequestAccess(LayerId layer, Range2i area)
         {
-            var layerAccesors = new SortedDictionary<int, IEditableImageAccessor2f>();
+            var layerAccesors = new SortedDictionary<LayerId, IEditableImageAccessor2f>();
 
             foreach (var image in _images)
             {
@@ -41,10 +41,10 @@ namespace Votyra.Core.Images
 
         private class MatrixImageAccessor : IEditableImageAccessor2f
         {
-            public readonly int _layer;
-            public SortedDictionary<int, IEditableImageAccessor2f> _layerAccesors;
+            public readonly LayerId _layer;
+            public SortedDictionary<LayerId, IEditableImageAccessor2f> _layerAccesors;
 
-            public MatrixImageAccessor(int layer, SortedDictionary<int, IEditableImageAccessor2f> layerAccesors)
+            public MatrixImageAccessor(LayerId layer, SortedDictionary<LayerId, IEditableImageAccessor2f> layerAccesors)
             {
                 _layer = layer;
                 _layerAccesors = layerAccesors;

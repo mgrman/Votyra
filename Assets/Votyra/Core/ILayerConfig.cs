@@ -5,6 +5,13 @@ namespace Votyra.Core
 {
     public interface ILayerConfig : ISharedConfig
     {
-        int Layer { get; }
+        LayerId Layer { get; }
+    }
+
+    public enum LayerId
+    {
+        Rock = 257,
+        Earth = 258,
+        Sand = 259
     }
 }

@@ -4,11 +4,11 @@ namespace Votyra.Core.Images
 {
     public class LayerConfig : ILayerConfig
     {
-        public LayerConfig([ConfigInject("layer")] int layer)
+        public LayerConfig([ConfigInject("layer")] LayerId layer)
         {
             Layer = layer;
         }
 
-        public int Layer { get; }
+        public LayerId Layer { get; }
     }
 }
