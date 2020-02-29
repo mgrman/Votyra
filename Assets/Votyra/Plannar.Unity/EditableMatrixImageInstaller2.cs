@@ -3,11 +3,11 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    public class EditableMatrixImageInstaller : MonoInstaller
+    public class EditableMatrixImageInstaller2 : MonoInstaller
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<EditableMatrixImage2f>()
+            Container.BindInterfacesAndSelfTo<AggregatableImage2f>()
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<EditableMatrixMask2e>()
                 .AsSingle();

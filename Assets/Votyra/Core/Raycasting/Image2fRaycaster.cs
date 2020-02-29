@@ -14,8 +14,8 @@ namespace Votyra.Core.Raycasting
         private IMask2e _mask;
         private Vector2f _startXy;
 
-        public Image2fRaycaster(IImage2fProvider image2FProvider, IMask2eProvider mask2eProvider,ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
-            : base(terrainVertexPostProcessor)
+        public Image2fRaycaster(IImage2fProvider image2FProvider, IMask2eProvider mask2eProvider, ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
+            : base(terrainVertexPostProcessor, raycasterAggregator)
         {
             _image2FProvider = image2FProvider;
             _mask2EProvider = mask2eProvider;

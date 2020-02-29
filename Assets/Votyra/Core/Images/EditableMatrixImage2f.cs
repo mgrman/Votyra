@@ -7,7 +7,7 @@ namespace Votyra.Core.Images
 {
     public class EditableMatrixImage2f : IImage2fProvider, IEditableImage2f
     {
-        private readonly IImageConstraint2i _constraint;
+        private readonly IImageConstraint2i[] _constraints;
         private readonly float[,] _editableMatrix;
 
         private readonly IImage2fPostProcessor _image2fPostProcessor;
@@ -17,9 +17,17 @@ namespace Votyra.Core.Images
         private Range2i? _invalidatedArea;
         private MatrixImage2f _preparedImage;
 
-        public EditableMatrixImage2f(IImageConfig imageConfig, IImageConstraint2i constraint = null)
+        public EditableMatrixImage2f(IImageConfig imageConfig, List<IImageConstraint2i> constraints)
         {
-            _constraint = constraint;
+            _constraints = constraints.SelectMany(o => o.Priorities.Select(p => new {p, o}))
+                .OrderBy(o => o.p)
+                .Select(o => o.o)
+                .ToArray();
+            foreach (var constraint in _constraints)
+            {
+                constraint.Initialize(this);
+            }
+
             _editableMatrix = new float[imageConfig.ImageSize.X, imageConfig.ImageSize.Y];
             _editableRangeZ = Area1f.FromMinAndMax(_editableMatrix[0, 0], _editableMatrix[0, 0]);
         }
@@ -79,13 +87,22 @@ namespace Votyra.Core.Images
 
         private void FixImage(Range2i invalidatedImageArea, Direction direction)
         {
-            _invalidatedArea = _invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
+            if (_invalidatedArea == null)
+            {
+                invalidatedImageArea = _invalidatedArea.Value.CombineWith(invalidatedImageArea);
+            }
 
-            if (_constraint == null)
-                return;
+            _invalidatedArea = invalidatedImageArea;
 
-            var newInvalidatedImageArea = _constraint.FixImage(_editableMatrix, invalidatedImageArea, direction);
-            _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedImageArea) ?? newInvalidatedImageArea;
+            
+
+            for (int i = 0; i < _constraints.Length; i++)
+            {
+                var newInvalidatedImageArea = _constraints[i]
+                    .FixImage(this, _editableMatrix, invalidatedImageArea, direction);
+                invalidatedImageArea = invalidatedImageArea.CombineWith(newInvalidatedImageArea);
+                _invalidatedArea = invalidatedImageArea;
+            }
         }
 
         private class MatrixImageAccessor : IEditableImageAccessor2f

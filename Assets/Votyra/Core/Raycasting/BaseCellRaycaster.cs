@@ -21,9 +21,10 @@ namespace Votyra.Core.Raycasting
         private Vector2i _fromCell;
         private Vector2i _toCell;
 
-        protected BaseCellRaycaster(ITerrainVertexPostProcessor terrainVertexPostProcessor)
+        protected BaseCellRaycaster(ITerrainVertexPostProcessor terrainVertexPostProcessor, IRaycasterAggregator raycasterAggregator = null)
         {
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
+            raycasterAggregator?.Attach(this);
         }
 
         public virtual Vector3f Raycast(Ray3f cameraRay)

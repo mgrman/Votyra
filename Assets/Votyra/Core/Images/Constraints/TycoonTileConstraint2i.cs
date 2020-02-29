@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
@@ -13,6 +14,8 @@ namespace Votyra.Core.Images.Constraints
         protected Direction _direction;
         protected float[,] _editableMatrix;
         protected Range2i _invalidatedCellArea;
+
+        public IEnumerable<int> Priorities => new[] {0};
 
         public TycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
         {
@@ -44,15 +47,20 @@ namespace Votyra.Core.Images.Constraints
             }
         }
 
-        public Range2i FixImage(float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        void IImageConstraint2i.Initialize(IEditableImage2f image)
         {
-            _invalidatedCellArea = invalidatedImageArea.ExtendBothDirections(2);
+        }
+
+        public Range2i FixImage(IEditableImage2f _, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        {
+            _invalidatedCellArea = invalidatedImageArea.ExtendBothDirections(3);
             if (direction != Direction.Up && direction != Direction.Down)
                 direction = Direction.Down;
 
             _direction = direction;
             _editableMatrix = editableMatrix;
             Constrain();
+            _invalidatedCellArea = _invalidatedCellArea.ExtendBothDirections(2);
             return _invalidatedCellArea;
         }
 

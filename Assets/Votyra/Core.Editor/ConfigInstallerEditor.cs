@@ -15,22 +15,20 @@ using Object = UnityEngine.Object;
 
 namespace Votyra.Core.Editor
 {
-    [CustomEditor(typeof(TerrainDataConfigInstaller))]
-    public class TerrainDataControllerEditor : UnityEditor.Editor
+    [CustomEditor(typeof(ConfigInstaller))]
+    public class ConfigInstallerEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
-            var controller = target as TerrainDataConfigInstaller;
+            var controller = target as ConfigInstaller;
 
             Undo.RecordObject(controller, "Test");
-            var oldConfigValues = controller.Config.ToList();
+            var oldConfigValues = controller.Config?.ToList() ?? new List<ConfigItem>();
             var newConfigValues = new List<ConfigItem>();
 
-            var configTypes = controller.transform.Cast<Transform>()
-                .SelectMany(o => GetConfigTypes(o.gameObject))
-                .Concat(GetConfigTypes(controller.gameObject))
-                .Distinct();
+            var configTypes = GetConfigTypes(controller.gameObject);
 
+            bool isChanged = false;
             foreach (var configType in configTypes)
             {
                 if (configType == null)
@@ -57,8 +55,8 @@ namespace Votyra.Core.Editor
                     if (oldConfigItem != null)
                         oldConfigValues.Remove(oldConfigItem);
                     var oldValue = oldConfigItem?.Value;
-                    var newValue = GetNewValue(configItem.Type, oldValue);
-
+                    var configItemChange = GetNewValue(configItem.Type, oldValue, out var newValue);
+                    isChanged = isChanged || configItemChange;
                     newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
                     EditorGUILayout.EndHorizontal();
                 }
@@ -82,54 +80,71 @@ namespace Votyra.Core.Editor
                     if (oldConfigItem != null)
                         oldConfigValues.Remove(oldConfigItem);
                     var oldValue = oldConfigItem?.Value;
-                    var newValue = GetNewValue(configItem.Type, oldValue);
+                    var configItemChange= GetNewValue(configItem.Type, oldValue, out var newValue);
                     if (!delete)
+                    {
                         newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
+                        isChanged = isChanged || configItemChange;
+                    }
+                    else
+                    {
+                        isChanged = true;
+                    }
+
                     EditorGUILayout.EndHorizontal();
                 }
             }
 
             controller.Config = newConfigValues.ToArray();
-            if (Application.isPlaying)
-                controller.SendMessage("OnValidate", null, SendMessageOptions.DontRequireReceiver);
+            if (isChanged)
+            {
+                EditorUtility.SetDirty(controller);
+            }
         }
 
-        private object GetNewValue(Type type, object oldValue)
+        private bool GetNewValue(Type type, object oldValue, out object newValue)
         {
-            object newValue;
-
             if (typeof(Object).IsAssignableFrom(type))
             {
-                newValue = EditorGUILayout.ObjectField(oldValue as Object, type, true, GUILayout.MaxWidth(200));
+                var oldUnityObject = oldValue as Object;
+                var newUnityObject = EditorGUILayout.ObjectField(oldUnityObject, type, true, GUILayout.MaxWidth(200));
+                newValue = newUnityObject;
+                return oldUnityObject != newUnityObject;
             }
-            // else if (type.GetCustomAttribute<SerializableAttribute>()!=null)
-            // {
-            //     newValue = EditorGUILayout.(oldValue , type, true, GUILayout.MaxWidth(200));
-            // }
             else if (typeof(bool).IsAssignableFrom(type))
             {
                 var oldBoolValue = oldValue as bool? ?? false;
-                newValue = EditorGUILayout.Toggle(oldBoolValue, GUILayout.MaxWidth(200));
+                var newBoolValue = EditorGUILayout.Toggle(oldBoolValue, GUILayout.MaxWidth(200));
+                newValue = newBoolValue;
+                return newBoolValue != oldBoolValue;
             }
             else if (typeof(int).IsAssignableFrom(type))
             {
                 var oldIntValue = oldValue as int? ?? 0;
-                newValue = EditorGUILayout.IntField(oldIntValue, GUILayout.MaxWidth(200));
+                var newIntValue = EditorGUILayout.IntField(oldIntValue, GUILayout.MaxWidth(200));
+                newValue = newIntValue;
+                return newIntValue != oldIntValue;
             }
             else if (typeof(uint).IsAssignableFrom(type))
             {
                 var oldIntValue = oldValue as uint? ?? 0;
-                newValue = (uint) EditorGUILayout.IntField((int) oldIntValue, GUILayout.MaxWidth(200));
+                var newIntValue = (uint) EditorGUILayout.IntField((int) oldIntValue, GUILayout.MaxWidth(200));
+                newValue = newIntValue;
+                return newIntValue != oldIntValue;
             }
             else if (typeof(float).IsAssignableFrom(type))
             {
                 var oldFloatValue = oldValue as float? ?? 0;
-                newValue = EditorGUILayout.FloatField(oldFloatValue, GUILayout.MaxWidth(200));
+                var newFloatValue = EditorGUILayout.FloatField(oldFloatValue, GUILayout.MaxWidth(200));
+                newValue = newFloatValue;
+                return newFloatValue != oldFloatValue;
             }
             else if (typeof(string).IsAssignableFrom(type))
             {
                 var oldStringValue = oldValue as string;
-                newValue = EditorGUILayout.TextField(oldStringValue, GUILayout.MaxWidth(200));
+                var newStringValue = EditorGUILayout.TextField(oldStringValue, GUILayout.MaxWidth(200));
+                newValue = newStringValue;
+                return newStringValue != oldStringValue;
             }
             else if (type.IsEnum)
             {
@@ -137,57 +152,69 @@ namespace Votyra.Core.Editor
                     ? oldValue as Enum
                     : Enum.GetValues(type)
                         .GetValue(0) as Enum;
-                newValue = EditorGUILayout.EnumPopup(oldEnumValue, GUILayout.MaxWidth(200));
+                var newEnumValue = EditorGUILayout.EnumPopup(oldEnumValue, GUILayout.MaxWidth(200));
+                newValue = newEnumValue;
+                return !newEnumValue.Equals(oldEnumValue);
             }
             else if (typeof(Vector3i).IsAssignableFrom(type))
             {
                 var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
-                var newVector3Value = EditorGUILayout.Vector3Field("",
-                    oldVector3iValue.ToVector3f()
-                        .ToVector3(),
-                    GUILayout.MaxWidth(200));
-                newValue = newVector3Value.ToVector3f()
+                var newVector3iValue = EditorGUILayout.Vector3Field("",
+                        oldVector3iValue.ToVector3f()
+                            .ToVector3(),
+                        GUILayout.MaxWidth(200))
+                    .ToVector3f()
                     .RoundToVector3i();
+                newValue = newVector3iValue;
+                return newVector3iValue != oldVector3iValue;
             }
             else if (typeof(Vector3f).IsAssignableFrom(type))
             {
                 var oldVector3fValue = oldValue as Vector3f? ?? Vector3f.Zero;
-                newValue = EditorGUILayout.Vector3Field("", oldVector3fValue.ToVector3(), GUILayout.MaxWidth(200))
+                var newVector3fValue = EditorGUILayout.Vector3Field("", oldVector3fValue.ToVector3(), GUILayout.MaxWidth(200))
                     .ToVector3f();
+                newValue = newVector3fValue;
+                return newVector3fValue != oldVector3fValue;
             }
             else if (typeof(Vector2i).IsAssignableFrom(type))
             {
                 var oldVector2iValue = oldValue as Vector2i? ?? Vector2i.Zero;
-                var newVector2Value = EditorGUILayout.Vector2Field("",
-                    oldVector2iValue.ToVector2f()
-                        .ToVector2(),
-                    GUILayout.MaxWidth(200));
-                newValue = newVector2Value.ToVector2f()
+                var newVector2iValue = EditorGUILayout.Vector2Field("",
+                        oldVector2iValue.ToVector2f()
+                            .ToVector2(),
+                        GUILayout.MaxWidth(200))
+                    .ToVector2f()
                     .RoundToVector2i();
+                newValue = newVector2iValue;
+                return newVector2iValue != oldVector2iValue;
             }
             else if (typeof(Vector2f).IsAssignableFrom(type))
             {
                 var oldVector2fValue = oldValue as Vector2f? ?? Vector2f.Zero;
-
-                newValue = EditorGUILayout.Vector2Field("", oldVector2fValue.ToVector2(), GUILayout.MaxWidth(200))
+                var newVector2fValue = EditorGUILayout.Vector2Field("", oldVector2fValue.ToVector2(), GUILayout.MaxWidth(200))
                     .ToVector2f();
+                newValue = newVector2fValue;
+                return newVector2fValue != oldVector2fValue;
             }
             else if (typeof(AnimationCurve).IsAssignableFrom(type))
             {
-                var oldAnimationCurveValue = oldValue as AnimationCurve ?? new AnimationCurve();
-
-                newValue = EditorGUILayout.CurveField("", oldAnimationCurveValue, GUILayout.MaxWidth(200));
+                var oldAnimationCurveValue = oldValue as AnimationCurve;
+                var newAnimationCurveValue = EditorGUILayout.CurveField("", oldAnimationCurveValue ?? new AnimationCurve(), GUILayout.MaxWidth(200));
+                newValue = newAnimationCurveValue;
+                return !(newAnimationCurveValue?.Equals(oldAnimationCurveValue) ?? oldAnimationCurveValue == null);
             }
             else if (typeof(Area1f).IsAssignableFrom(type))
             {
-                var oldVector2fValue = oldValue as Area1f? ?? Area1f.Zero;
+                var oldArea1fValue = oldValue as Area1f?;
 
-                var res = EditorGUILayout.Vector2Field("", new Vector2(oldVector2fValue.Min, oldVector2fValue.Max), GUILayout.MaxWidth(200));
-
-                newValue = Area1f.FromMinAndMax(res.x, res.y);
+                var tempVector2 = EditorGUILayout.Vector2Field("", new Vector2(oldArea1fValue?.Min ?? 0, oldArea1fValue?.Max ?? 0), GUILayout.MaxWidth(200));
+                var newArea1fValue = Area1f.FromMinAndMax(tempVector2.x, tempVector2.y);
+                newValue = newArea1fValue;
+                return oldArea1fValue == null || !newArea1fValue.Equals(oldArea1fValue.Value);
             }
             else if (type.IsArray)
             {
+                var change = false;
                 var elementType = type.GetElementType();
 
                 EditorGUILayout.BeginVertical();
@@ -202,8 +229,13 @@ namespace Votyra.Core.Editor
                     {
                         if (!GUILayout.Button("Remove"))
                         {
-                            var newItemValue = GetNewValue(elementType, item);
+                            var itemChange = GetNewValue(elementType, item, out var newItemValue);
+                            change = change || itemChange;
                             newList.Add(newItemValue);
+                        }
+                        else
+                        {
+                            change = true;
                         }
                     }
                 }
@@ -211,6 +243,7 @@ namespace Votyra.Core.Editor
                 if (add)
                 {
                     newList.Add(Activator.CreateInstance(elementType));
+                    change = true;
                 }
 
                 EditorGUILayout.EndVertical();
@@ -219,31 +252,25 @@ namespace Votyra.Core.Editor
                 method = method.MakeGenericMethod(elementType);
 
                 newValue = method.Invoke(null, new[] {newList});
+                return change;
             }
             else
             {
+                var change = false;
                 var props = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
 
                 foreach (var prop in props)
                 {
                     EditorGUILayout.LabelField($"{prop.Name}[{prop.FieldType.Name}]", GUILayout.MinWidth(150));
-                    prop.SetValue(oldValue, GetNewValue(prop.FieldType, prop.GetValue(oldValue)));
+                    var oldFieldValue = prop.GetValue(oldValue);
+                    var propChange = GetNewValue(prop.FieldType, oldFieldValue, out var newFieldValue);
+                    prop.SetValue(oldValue, newFieldValue);
+                    change = change || propChange;
                 }
 
                 newValue = oldValue;
-                // var oldValueJson = JsonConvert.SerializeObject(oldValue);
-                // var newJsonValue = EditorGUILayout.TextArea(oldValueJson, GUILayout.MaxWidth(200));
-                // try
-                // {
-                //     newValue = JsonConvert.DeserializeObject(newJsonValue, type);
-                // }
-                // catch
-                // {
-                //     newValue = null;
-                // }
+                return change;
             }
-
-            return newValue;
         }
 
         private static IEnumerable<Type> GetConfigTypes(GameObject algorithmPrefab)

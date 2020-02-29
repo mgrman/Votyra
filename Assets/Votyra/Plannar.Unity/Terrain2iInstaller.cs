@@ -29,14 +29,6 @@ namespace Votyra.Plannar.Unity
 
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<TerrainConfig>()
-                .AsSingle();
-            Container.BindInterfacesAndSelfTo<MaterialConfig>()
-                .AsSingle();
-            Container.BindInterfacesAndSelfTo<InterpolationConfig>()
-                .AsSingle();
-            Container.BindInterfacesAndSelfTo<ConstraintConfig>()
-                .AsSingle();
             Container.BindInterfacesAndSelfTo<InterpolatedImage2iTo2fPostProcessor>()
                 .AsSingle();
 

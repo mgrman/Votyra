@@ -16,9 +16,10 @@ namespace Votyra.Core.Raycasting
         private readonly Vector2i _cellInGroupCount;
         private readonly ITerrainRepository2i _manager;
 
-        public BaseGroupRaycaster(ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
+        public BaseGroupRaycaster(ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator=null)
         {
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
+            raycasterAggregator?.Attach(this);
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY();
 
             maxIterations = (int) maxDistance * 10;

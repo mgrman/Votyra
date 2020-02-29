@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
+using Votyra.Core.Utils;
 using UnityEngineObject = UnityEngine.Object;
 
 namespace Votyra.Core
@@ -19,7 +21,7 @@ namespace Votyra.Core
         public string TypeAssemblyQualifiedName;
 
         [SerializeField]
-        public UnityEngineObject[] UnityValues;
+        public List<UnityEngineObject> UnityValues;
 
         private JsonSerializerSettings _settings;
 
@@ -49,10 +51,10 @@ namespace Votyra.Core
 
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
-                writer.WriteValue(_parent.UnityValues?.Length ?? 0);
-                _parent.UnityValues = _parent.UnityValues ?? Array.Empty<UnityEngine.Object>();
-                _parent.UnityValues = _parent.UnityValues.Concat(new[] {value as UnityEngine.Object})
-                    .ToArray();
+                writer.WriteValue(_parent.UnityValues?.Count ?? 0);
+
+                _parent.UnityValues = _parent.UnityValues ?? new List<UnityEngineObject>();
+                _parent.UnityValues.Add(value as UnityEngine.Object);
             }
 
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -61,8 +63,9 @@ namespace Votyra.Core
                 {
                     if (reader.ValueType == typeof(long))
                     {
-                        var index = (long) reader.Value;
-                        return _parent.UnityValues[index];
+                        var index = (int) ((long) reader.Value);
+                        var obj = _parent.UnityValues[index] as UnityEngine.Object;
+                        return obj == null ? null : obj;
                     }
                     else
                     {
@@ -104,8 +107,8 @@ namespace Votyra.Core
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogException(ex);
-                    return null;
+                    Debug.LogError($"Problem '{ex.Message}' deserializing '{JsonValue}'.");
+                    throw;
                 }
             }
         }
@@ -114,7 +117,8 @@ namespace Votyra.Core
         {
             if (that == null)
                 return false;
-            return Id == that.Id && Type == that.Type && (UnityValues ?? Array.Empty<UnityEngine.Object>()).SequenceEqual(that.UnityValues ?? Array.Empty<UnityEngine.Object>()) && JsonValue == that.JsonValue;
+            return Id == that.Id && Type == that.Type && UnityValues.EmptyIfNull()
+                .SequenceEqual(that.UnityValues.EmptyIfNull()) && JsonValue == that.JsonValue;
         }
 
         public override bool Equals(object obj)

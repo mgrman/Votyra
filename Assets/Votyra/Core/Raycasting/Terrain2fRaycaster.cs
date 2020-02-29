@@ -12,8 +12,8 @@ namespace Votyra.Core.Raycasting
     {
         private readonly ITerrainRepository2i _manager;
 
-        public Terrain2fRaycaster(ITerrainConfig terrainConfig, ITerrainRepository2i manager, ITerrainVertexPostProcessor terrainVertexPostProcessor = null)
-            : base(terrainConfig, terrainVertexPostProcessor)
+        public Terrain2fRaycaster(ITerrainConfig terrainConfig, ITerrainRepository2i manager, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator=null)
+            : base(terrainConfig, terrainVertexPostProcessor, raycasterAggregator)
         {
             _manager = manager;
         }
