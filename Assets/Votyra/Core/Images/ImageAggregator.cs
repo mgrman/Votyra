@@ -10,6 +10,7 @@ namespace Votyra.Core.Images
     {
         private readonly IImageConfig _imageConfig;
         private SortedDictionary<LayerId, EditableMatrixImage2f> _images = new SortedDictionary<LayerId, EditableMatrixImage2f>();
+        private SortedDictionary<LayerId, EditableMatrixMask2e> _masks = new SortedDictionary<LayerId, EditableMatrixMask2e>();
         private MatrixImageAccessor _lastLayerImage;
 
         public ImageAggregator(IImageConfig imageConfig)
@@ -20,22 +21,32 @@ namespace Votyra.Core.Images
         public void Initialize(LayerId layer, List<IImageConstraint2i> constraints)
         {
             _images[layer] = new EditableMatrixImage2f(_imageConfig, constraints);
+            _masks[layer] = new EditableMatrixMask2e(_imageConfig);
         }
 
         public IImage2f CreateImage(LayerId layer) =>
             _images[layer]
                 .CreateImage();
 
+        public IMask2e CreateMask(LayerId layer) =>
+            _masks[layer]
+                .CreateMask();
+
         public IEditableImageAccessor2f RequestAccess(LayerId layer, Range2i area)
         {
             var layerAccesors = new SortedDictionary<LayerId, IEditableImageAccessor2f>();
-
             foreach (var image in _images)
             {
                 layerAccesors[image.Key] = image.Value.RequestAccess(area);
             }
 
-            _lastLayerImage = new MatrixImageAccessor(layer, layerAccesors);
+            var layerMaskAccesors = new SortedDictionary<LayerId, IEditableMaskAccessor2e>();
+            foreach (var mask in _masks)
+            {
+                layerMaskAccesors[mask.Key] = mask.Value.RequestAccess(area);
+            }
+
+            _lastLayerImage = new MatrixImageAccessor(layer, layerAccesors, layerMaskAccesors);
             return _lastLayerImage;
         }
 
@@ -43,11 +54,13 @@ namespace Votyra.Core.Images
         {
             public readonly LayerId _layer;
             public SortedDictionary<LayerId, IEditableImageAccessor2f> _layerAccesors;
+            public SortedDictionary<LayerId, IEditableMaskAccessor2e> _layerMaskAccesors;
 
-            public MatrixImageAccessor(LayerId layer, SortedDictionary<LayerId, IEditableImageAccessor2f> layerAccesors)
+            public MatrixImageAccessor(LayerId layer, SortedDictionary<LayerId, IEditableImageAccessor2f> layerAccesors, SortedDictionary<LayerId, IEditableMaskAccessor2e> layerMaskAccesors)
             {
                 _layer = layer;
                 _layerAccesors = layerAccesors;
+                _layerMaskAccesors = layerMaskAccesors;
             }
 
             public Range2i Area =>

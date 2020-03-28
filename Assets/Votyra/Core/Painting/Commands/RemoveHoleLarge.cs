@@ -4,7 +4,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Painting.Commands
 {
-    public class RemoveHoleLargeFactory : BaseFactory<RemoveHoleLarge>
+    public class RemoveHoleLargeFactory : BaseHoleFactory<RemoveHoleLarge>
     {
         public RemoveHoleLargeFactory(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
             : base(editableImage, editableMask, logger)
@@ -14,7 +14,7 @@ namespace Votyra.Core.Painting.Commands
         public override string Action => KnownCommands.RemoveHoleLarge;
     }
 
-    public class RemoveHoleLarge : PaintCommand
+    public class RemoveHoleLarge : HolePaintCommand
     {
         public RemoveHoleLarge()
             : base(2)

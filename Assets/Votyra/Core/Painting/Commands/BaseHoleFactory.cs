@@ -3,14 +3,16 @@ using Votyra.Core.Logging;
 
 namespace Votyra.Core.Painting.Commands
 {
-    public abstract class BaseFactory<T> : IPaintCommandFactory where T : IInitializablePaintCommand, new()
+    public abstract class BaseHoleFactory<T> : IPaintCommandFactory where T : IInitializableHolePaintCommand, new()
     {
         private readonly IEditableImage2f _editableImage;
+        private readonly IEditableMask2e _editableMask;
         private readonly IThreadSafeLogger _logger;
 
-        protected BaseFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
+        protected BaseHoleFactory(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
         {
             _editableImage = editableImage;
+            _editableMask = editableMask;
             _logger = logger;
         }
 
@@ -19,7 +21,7 @@ namespace Votyra.Core.Painting.Commands
         public IPaintCommand Create()
         {
             var cmd = new T();
-            cmd.Initialize(_editableImage, _logger);
+            cmd.Initialize(_editableImage, _editableMask, _logger);
             return cmd;
         }
     }

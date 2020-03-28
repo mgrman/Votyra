@@ -25,7 +25,7 @@ namespace Votyra.Core.Unity.Painting
         [Inject]
         protected IRaycaster _raycaster;
 
-        [Inject]
+        [InjectOptional]
         protected ILayerConfig _layerConfig;
 
         private bool _processing;
@@ -111,9 +111,12 @@ namespace Votyra.Core.Unity.Painting
                 return null;
             }
 
-            if (!Input.GetKey((KeyCode) _layerConfig.Layer))
+            if (_layerConfig != null)
             {
-                return null;
+                if (!Input.GetKey((KeyCode) _layerConfig.Layer))
+                {
+                    return null;
+                }
             }
 
             var isFlat = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);

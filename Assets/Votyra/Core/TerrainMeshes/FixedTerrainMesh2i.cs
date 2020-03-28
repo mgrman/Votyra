@@ -83,6 +83,10 @@ namespace Votyra.Core.TerrainMeshes
 
         public float Raycast(Vector2f posXY)
         {
+            if (_vertices == null)
+            {
+                return Vector1f.NaN;
+            }
             var posRelative = posXY - _meshBoundsXY.Min.XY();
             
             var cellInGroup = (posRelative).FloorToVector2i();

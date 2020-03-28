@@ -1,4 +1,5 @@
 using UnityEngine;
+using Votyra.Core.Images;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
 using Votyra.Core.Unity.Painting;
@@ -36,18 +37,18 @@ namespace Votyra.Plannar.Unity
             Container.BindInterfacesAndSelfTo<FlattenLargeFactory>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<MakeHoleFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<MakeHoleLargeFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<RemoveHoleFactory>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<RemoveHoleLargeFactory>()
-                .AsSingle()
-                .NonLazy();
-        }
+        //     Container.BindInterfacesAndSelfTo<MakeHoleFactory>()
+        //         .AsSingle()
+        //         .NonLazy();
+        //     Container.BindInterfacesAndSelfTo<MakeHoleLargeFactory>()
+        //         .AsSingle()
+        //         .NonLazy();
+        //     Container.BindInterfacesAndSelfTo<RemoveHoleFactory>()
+        //         .AsSingle()
+        //         .NonLazy();
+        //     Container.BindInterfacesAndSelfTo<RemoveHoleLargeFactory>()
+        //         .AsSingle()
+        //         .NonLazy();
+         }
     }
 }

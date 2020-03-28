@@ -4,7 +4,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Painting.Commands
 {
-    public class MakeHoleFactory : BaseFactory<MakeHole>
+    public class MakeHoleFactory : BaseHoleFactory<MakeHole>
     {
         public MakeHoleFactory(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
             : base(editableImage, editableMask, logger)
@@ -14,7 +14,7 @@ namespace Votyra.Core.Painting.Commands
         public override string Action => KnownCommands.MakeHole;
     }
 
-    public class MakeHole : PaintCommand
+    public class MakeHole : HolePaintCommand
     {
         public MakeHole()
             : base(0)
