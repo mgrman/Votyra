@@ -37,7 +37,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     var cellInGroup = new Vector2i(iix, iiy);
 
                     var cell = cellInGroup + groupPosition;
-                    
+
                     var step = 1.0f / _subdivision;
 
                     var data_x0y0 = image.SampleCell(cell - Vector2i.One + new Vector2i(0, 0));
@@ -95,7 +95,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                             var maskCol2 = Intepolate(maskInterMat_x0y2, maskInterMat_x1y2, maskInterMat_x2y2, maskInterMat_x3y2, pos.X);
                             var maskCol3 = Intepolate(maskInterMat_x0y3, maskInterMat_x1y3, maskInterMat_x2y3, maskInterMat_x3y3, pos.X);
                             var maskValue = Intepolate(maskCol0, maskCol1, maskCol2, maskCol3, pos.Y);
-                            maskToFill[ix, iy] = maskValue >= MaskLimit ? MaskValues.Terrain:MaskValues.Hole;
+                            maskToFill[ix, iy] = maskValue >= MaskLimit ? MaskValues.Terrain : MaskValues.Hole;
 
                             var valueCol0 = Intepolate(valuesInterMat_x0y0, valuesInterMat_x1y0, valuesInterMat_x2y0, valuesInterMat_x3y0, pos.X);
                             var valueCol1 = Intepolate(valuesInterMat_x0y1, valuesInterMat_x1y1, valuesInterMat_x2y1, valuesInterMat_x3y1, pos.X);
@@ -118,7 +118,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                                 var subcellValue = new SampledData2f(x00y00, x00y05, x05y00, x05y05);
                                 var subcellMask = new SampledMask2e(x00y00Mask, x00y05Mask, x05y00Mask, x05y05Mask);
 
-                                mesh.AddCell(cellInGroup,new Vector2i(ix-1,iy-1), subcellValue, subcellMask);
+                                mesh.AddCell(cellInGroup, new Vector2i(ix - 1, iy - 1), subcellValue, subcellMask);
                             }
                         }
                     }
@@ -141,15 +141,23 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             // Get degree-1 coefficients
             float c1s1;
             if (dys0 * dys1 <= 0)
+            {
                 c1s1 = 0;
+            }
             else
+            {
                 c1s1 = 6f / (3f / dys0 + 3f / dys1);
+            }
 
             float c1s2;
             if (dys1 * dys2 <= 0)
+            {
                 c1s2 = 0;
+            }
             else
+            {
                 c1s2 = 6f / (3f / dys1 + 3f / dys2);
+            }
 
             // Get degree-2 and degree-3 coefficients
             var c3s1 = c1s1 + c1s2 - dys1 - dys1;

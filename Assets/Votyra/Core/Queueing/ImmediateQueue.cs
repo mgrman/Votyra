@@ -6,10 +6,6 @@ namespace Votyra.Core.Queueing
     {
         public event Action<T> DoWork;
 
-        public ImmediateQueue()
-        {
-        }
-
         public void QueueNew(T context)
         {
             try

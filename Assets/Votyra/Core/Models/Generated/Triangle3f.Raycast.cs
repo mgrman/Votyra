@@ -50,7 +50,9 @@ namespace Votyra.Core.Models
 
             //if determinant is near zero, ray lies in plane of triangle otherwise not
             if (det > -float.Epsilon && det < float.Epsilon)
+            {
                 return Vector3f.NaN;
+            }
 
             invDet = 1.0f / det;
 
@@ -62,7 +64,9 @@ namespace Votyra.Core.Models
 
             //Check for ray hit
             if (u < 0 || u > 1)
+            {
                 return Vector3f.NaN;
+            }
 
             //Prepare to test v parameter
             q = Vector3fUtils.Cross(t, e1);
@@ -72,11 +76,15 @@ namespace Votyra.Core.Models
 
             //Check for ray hit
             if (v < 0 || u + v > 1)
+            {
                 return Vector3f.NaN;
+            }
 
             var rayDistance = Vector3fUtils.Dot(e2, q) * invDet;
             if (rayDistance > float.Epsilon)
+            {
                 return ray.GetPoint(rayDistance);
+            }
 
             // No hit at all
             return Vector3f.NaN;
@@ -86,14 +94,20 @@ namespace Votyra.Core.Models
         {
             var dot = DotWithObserver(observer);
             if (dot == 0f)
+            {
                 throw new InvalidOperationException($"Wrong observer! Observer '{observer}' cannot be used with triangle '{this}'.");
+            }
+
             return dot >= 0;
         }
 
         public Triangle3f EnsureCCW(Vector3f observer)
         {
             if (IsCCW(observer))
+            {
                 return this;
+            }
+
             return GetReversedOrder();
         }
     }

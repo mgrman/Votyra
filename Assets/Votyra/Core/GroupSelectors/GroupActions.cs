@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.GroupSelectors
@@ -14,6 +13,7 @@ namespace Votyra.Core.GroupSelectors
         }
 
         public IReadOnlyCollection<TKey> ToRecompute { get; }
+
         public IReadOnlyCollection<TKey> ToKeep { get; }
 
         public void Dispose()

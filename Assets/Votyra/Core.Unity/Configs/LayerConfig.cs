@@ -1,6 +1,4 @@
-﻿using Votyra.Core.Models;
-
-namespace Votyra.Core.Images
+﻿namespace Votyra.Core.Images
 {
     public class LayerConfig : ILayerConfig
     {

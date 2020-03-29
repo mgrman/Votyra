@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 
 namespace Votyra.Core.TerrainMeshes
 {
-    public interface IGeneralMesh: IMesh 
+    public interface IGeneralMesh : IMesh
     {
         void Reset(Area3f area);
 

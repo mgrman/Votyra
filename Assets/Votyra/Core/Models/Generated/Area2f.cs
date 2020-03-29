@@ -12,13 +12,19 @@ namespace Votyra.Core.Models
         public readonly Vector2f Min;
 
         public Vector2f X0Y0 => Min;
+
         public Vector2f X0Y1 => new Vector2f(Min.X, Max.Y);
+
         public Vector2f X1Y0 => new Vector2f(Max.X, Min.Y);
+
         public Vector2f X1Y1 => Max;
 
         public Line2f X0 => new Line2f(X0Y0, X0Y1);
+
         public Line2f X1 => new Line2f(X1Y0, X1Y1);
+
         public Line2f Y0 => new Line2f(X0Y0, X1Y0);
+
         public Line2f Y1 => new Line2f(X0Y1, X1Y1);
 
         public Area1f X => Area1f.FromMinAndMax(Min.X, Max.X);
@@ -52,7 +58,10 @@ namespace Votyra.Core.Models
         public static Area2f FromCenterAndExtents(Vector2f center, Vector2f extents)
         {
             if (extents.AnyNegative())
+            {
                 throw new InvalidOperationException($"When creating {nameof(Area2f)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
+            }
+
             return new Area2f(center - extents, center + extents);
         }
 
@@ -67,7 +76,9 @@ namespace Votyra.Core.Models
         public Area2f IntersectWith(Area2f that)
         {
             if (Size == Vector2f.Zero || that.Size == Vector2f.Zero)
+            {
                 return Zero;
+            }
 
             var min = Vector2fUtils.Max(Min, that.Min);
             var max = Vector2fUtils.Max(Vector2fUtils.Min(Max, that.Max), min);
@@ -88,10 +99,14 @@ namespace Votyra.Core.Models
         public Area2f CombineWith(Area2f that)
         {
             if (Size == Vector2f.Zero)
+            {
                 return that;
+            }
 
             if (that.Size == Vector2f.Zero)
+            {
                 return this;
+            }
 
             var min = Vector2fUtils.Min(Min, that.Min);
             var max = Vector2fUtils.Max(Max, that.Max);
@@ -103,7 +118,9 @@ namespace Votyra.Core.Models
         public Area2f? UnionWith(Area2f? range)
         {
             if (range == null)
+            {
                 return this;
+            }
 
             return UnionWith(range.Value);
         }
@@ -111,9 +128,15 @@ namespace Votyra.Core.Models
         public Area2f UnionWith(Vector2f value)
         {
             if (value < Min)
+            {
                 return FromMinAndMax(value, Max);
+            }
+
             if (value > Max)
+            {
                 return FromMinAndMax(Min, value);
+            }
+
             return this;
         }
 
@@ -122,7 +145,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Area2f))
+            {
                 return false;
+            }
 
             return Equals((Area2f) obj);
         }

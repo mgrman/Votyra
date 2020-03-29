@@ -11,7 +11,10 @@ namespace Votyra.Core.Models.ObjectPool
         public BaseKeyObjectPool(int limit, Func<TKey, T> objectGenerator)
         {
             if (objectGenerator == null)
+            {
                 throw new ArgumentNullException("objectGenerator");
+            }
+
             _objectGenerator = objectGenerator;
 
             _limit = Math.Max(limit, 1);
@@ -38,7 +41,9 @@ namespace Votyra.Core.Models.ObjectPool
         {
             var objectPool = GetPool(key);
             if (objectPool.Count < _limit)
+            {
                 objectPool.Add(obj);
+            }
         }
 
         protected abstract List<T> GetPool(TKey key);

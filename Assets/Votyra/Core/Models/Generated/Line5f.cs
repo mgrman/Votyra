@@ -18,7 +18,10 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
+            {
                 return false;
+            }
+
             return obj is Line5f other && Equals(other);
         }
 

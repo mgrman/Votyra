@@ -55,16 +55,15 @@ namespace Votyra.Core.Raycasting
 
             var x = (fromRayValue - imageValueFrom) / (imageValueTo - imageValueFrom - toRayValue + fromRayValue);
             if (x < 0 || x > 1)
+            {
                 return Vector3f.NaN;
+            }
 
             var xy = line.From + (line.To - line.From) * x;
             return xy.ToVector3f(GetLinearInterpolatedValue(_image, xy));
         }
 
-        protected override float RaycastCell(Vector2f point)
-        {
-            return GetLinearInterpolatedValue(_image, point);
-        }
+        protected override float RaycastCell(Vector2f point) => GetLinearInterpolatedValue(_image, point);
 
         private float GetRayValue(Vector2f point)
         {

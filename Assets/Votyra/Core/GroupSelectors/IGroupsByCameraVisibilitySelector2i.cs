@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 

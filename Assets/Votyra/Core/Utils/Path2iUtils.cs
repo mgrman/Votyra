@@ -45,10 +45,16 @@ namespace Votyra.Core.Utils
             {
                 var position = new Vector2i(x, y);
                 if (position != from)
+                {
                     action(position);
+                }
+
                 error = error + deltaErr;
                 if (!(error >= 0.5))
+                {
                     continue;
+                }
+
                 y = y + Math.Sign(deltaY);
                 error = error - 1.0f;
             }
@@ -70,10 +76,16 @@ namespace Votyra.Core.Utils
             {
                 var position = new Vector2i(x, y);
                 if (position != from)
+                {
                     action(position);
+                }
+
                 error = error + deltaErr;
                 if (!(error >= 0.5))
+                {
                     continue;
+                }
+
                 x = x + Math.Sign(deltaX);
                 error = error - 1.0f;
             }

@@ -7,6 +7,7 @@ namespace Votyra.Core.Profiling
     public static class UnityProfilerAggregator
     {
         private static readonly object _lock = new object();
+
         private static Dictionary<System.Tuple<Object, string>, double> Values { get; } = new Dictionary<System.Tuple<Object, string>, double>();
 
         public static void Add(Object owner, string name, double ms)

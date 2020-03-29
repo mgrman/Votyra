@@ -42,8 +42,11 @@ namespace Votyra.Core.Images
         }
 
         public IImage2f ImageA { get; }
+
         public IImage2f ImageB { get; }
+
         public Operations Operation { get; }
+
         public Area1f RangeZ { get; }
 
         public float Sample(Vector2i point)

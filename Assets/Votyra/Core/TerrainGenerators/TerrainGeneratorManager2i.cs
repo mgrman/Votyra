@@ -13,26 +13,26 @@ namespace Votyra.Core
 {
     public class TerrainGeneratorManager2i : IDisposable
     {
-        private readonly ITerrainRepository2i _meshRepository;
+        private readonly Vector2i _cellInGroupCount;
 
         private readonly IFrameDataProvider2i _frameDataProvider;
+
+        private readonly IWorkQueue<ArcResource<IFrameData2i>> _frameWorkQueue;
+
+        private readonly IGroupsByCameraVisibilitySelector2i _groupsByCameraVisibilitySelector2I;
+        private readonly IWorkQueue<GroupUpdateData> _groupWorkQueue;
+        private readonly ITerrainRepository2i _meshRepository;
         private readonly int _meshTopologyDistance;
 
         private readonly CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
-        private readonly IGroupsByCameraVisibilitySelector2i _groupsByCameraVisibilitySelector2I;
-        private readonly ITerrainMesh2iPool _terrainMeshPool;
-        private readonly ITerrainMesher2f _terrainMesher;
-
-        private readonly IWorkQueue<ArcResource<IFrameData2i>> _frameWorkQueue;
-        private readonly IWorkQueue<GroupUpdateData> _groupWorkQueue;
-
         private readonly Action<Vector2i, ArcResource<IFrameData2i>> _onGroupBecameVisibleDelegate;
         private readonly Action<Vector2i> _onGroupStoppedBeingVisibleDelegate;
+        private readonly ITerrainMesher2f _terrainMesher;
+        private readonly ITerrainMesh2iPool _terrainMeshPool;
         private readonly List<GroupUpdateData> _updateDateCache = new List<GroupUpdateData>();
-        private readonly Vector2i _cellInGroupCount;
 
-        public TerrainGeneratorManager2i(ITerrainConfig terrainConfig,IFrameDataProvider2i frameDataProvider, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector2I, ITerrainMesh2iPool terrainMeshPool, ITerrainMesher2f terrainMesher, ITerrainRepository2i repository, IWorkQueue<ArcResource<IFrameData2i>> frameWorkQueue, IWorkQueue<GroupUpdateData> groupWorkQueue)
+        public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IFrameDataProvider2i frameDataProvider, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector2I, ITerrainMesh2iPool terrainMeshPool, ITerrainMesher2f terrainMesher, ITerrainRepository2i repository, IWorkQueue<ArcResource<IFrameData2i>> frameWorkQueue, IWorkQueue<GroupUpdateData> groupWorkQueue)
         {
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY();
             _frameDataProvider = frameDataProvider;
@@ -53,6 +53,15 @@ namespace Votyra.Core
             _frameDataProvider.FrameData += _frameWorkQueue.QueueNew;
         }
 
+        public void Dispose()
+        {
+            _onDestroyCts.Cancel();
+            _frameWorkQueue.DoWork -= EnqueueTerrainUpdates;
+            _groupWorkQueue.DoWork -= UpdateGroup;
+
+            _frameDataProvider.FrameData -= _frameWorkQueue.QueueNew;
+        }
+
         private void MeshRepositoryOnTerrainChange(RepositoryChange<Vector2i, ITerrainMesh2f> obj)
         {
             switch (obj.Action)
@@ -61,15 +70,6 @@ namespace Votyra.Core
                     _terrainMeshPool.ReturnRaw(obj.Mesh);
                     break;
             }
-        }
-
-        public void Dispose()
-        {
-            _onDestroyCts.Cancel();
-            _frameWorkQueue.DoWork -= EnqueueTerrainUpdates;
-            _groupWorkQueue.DoWork -= UpdateGroup;
-
-            _frameDataProvider.FrameData -= _frameWorkQueue.QueueNew;
         }
 
         private void EnqueueTerrainUpdates(ArcResource<IFrameData2i> context)
@@ -94,7 +94,7 @@ namespace Votyra.Core
         private void UpdateGroup(GroupUpdateData data)
         {
             var context = data.Context;
-            bool locked = false;
+            var locked = false;
             try
             {
                 // TODO problem here, since by the time the method finishes the group can go out of sight.

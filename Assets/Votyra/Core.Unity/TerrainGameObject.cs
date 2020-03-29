@@ -62,8 +62,11 @@ namespace Votyra.Core.Unity
         }
 
         public GameObject GameObject { get; private set; }
+
         public MeshFilter MeshFilter { get; private set; }
+
         public MeshCollider MeshCollider { get; private set; }
+
         public BoxCollider BoxCollider { get; private set; }
     }
 }

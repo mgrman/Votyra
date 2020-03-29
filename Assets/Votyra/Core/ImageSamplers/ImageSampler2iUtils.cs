@@ -32,7 +32,10 @@ namespace Votyra.Core.ImageSamplers
         public static SampledMask2e SampleCell(this IMask2e mask, Vector2i cell)
         {
             if (mask == null)
+            {
                 return new SampledMask2e(MaskValues.Terrain, MaskValues.Terrain, MaskValues.Terrain, MaskValues.Terrain);
+            }
+
             var x0y0 = mask.Sample(cell);
             var x0y1 = mask.Sample(new Vector2i(cell.X, cell.Y + 1));
             var x1y0 = mask.Sample(new Vector2i(cell.X + 1, cell.Y));

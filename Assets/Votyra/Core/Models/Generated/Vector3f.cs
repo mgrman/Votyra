@@ -143,7 +143,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Vector3f))
+            {
                 return false;
+            }
 
             return Equals((Vector3f) obj);
         }

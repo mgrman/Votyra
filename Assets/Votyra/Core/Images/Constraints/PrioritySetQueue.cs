@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 
 namespace Votyra.Core.Images.Constraints
 {
     public class PrioritySetQueue<TValue, TPriority>
     {
-        private  IComparer<TPriority> _priorityOrderComparer;
+        private readonly Pool<LinkedListNode<PrioritisedValue>> _emptyNodes = new Pool<LinkedListNode<PrioritisedValue>>(() => new LinkedListNode<PrioritisedValue>(default));
         private readonly LinkedList<PrioritisedValue> _queue;
         private readonly IEqualityComparer<TValue> _valueEqualityComparer;
-        private readonly Pool<LinkedListNode<PrioritisedValue>> _emptyNodes=new Pool<LinkedListNode<PrioritisedValue>>(()=>new LinkedListNode<PrioritisedValue>(default));
+        private IComparer<TPriority> _priorityOrderComparer;
 
         public PrioritySetQueue(IEqualityComparer<TValue> valueEqualityComparer)
         {
@@ -19,7 +17,7 @@ namespace Votyra.Core.Images.Constraints
             _queue = new LinkedList<PrioritisedValue>();
         }
 
-        public PrioritySetQueue(IEnumerable<TValue> initialValue, IEqualityComparer<TValue> @valueEqualityComparer, Func<TValue, TPriority> func, IComparer<TPriority> create)
+        public PrioritySetQueue(IEnumerable<TValue> initialValue, IEqualityComparer<TValue> valueEqualityComparer, Func<TValue, TPriority> func, IComparer<TPriority> create)
         {
             _valueEqualityComparer = valueEqualityComparer;
             _queue = new LinkedList<PrioritisedValue>();
@@ -27,7 +25,7 @@ namespace Votyra.Core.Images.Constraints
 
             foreach (var value in initialValue)
             {
-                Add(value,func(value));
+                Add(value, func(value));
             }
         }
 
@@ -71,18 +69,21 @@ namespace Votyra.Core.Images.Constraints
             }
 
             if (!addded)
+            {
                 _queue.AddLast(GetNode(newCellToCheck, newCellToCheckValue));
+            }
         }
 
         public void Reset(IComparer<TPriority> priorityOrderComparer)
         {
             _priorityOrderComparer = priorityOrderComparer;
             var node = _queue.First;
-            while (node !=null)
+            while (node != null)
             {
                 _emptyNodes.ReturnRaw(node);
                 node = node.Next;
             }
+
             _queue.Clear();
         }
 
@@ -95,15 +96,12 @@ namespace Votyra.Core.Images.Constraints
         private LinkedListNode<PrioritisedValue> GetNode(TValue newCellToCheck, TPriority newCellToCheckValue)
         {
             var value = GetValue(newCellToCheck, newCellToCheckValue);
-            LinkedListNode<PrioritisedValue> node = _emptyNodes.GetRaw();
+            var node = _emptyNodes.GetRaw();
             node.Value = value;
             return node;
         }
 
-        private PrioritisedValue GetValue(TValue newCellToCheck, TPriority newCellToCheckValue)
-        {
-            return new PrioritisedValue(newCellToCheck, newCellToCheckValue);
-        }
+        private PrioritisedValue GetValue(TValue newCellToCheck, TPriority newCellToCheckValue) => new PrioritisedValue(newCellToCheck, newCellToCheckValue);
 
         public struct PrioritisedValue
         {

@@ -11,6 +11,8 @@ namespace Votyra.Core
     [Serializable]
     public class ConfigItem : IEquatable<ConfigItem>
     {
+        private JsonSerializerSettings _settings;
+
         [SerializeField]
         public string Id;
 
@@ -22,8 +24,6 @@ namespace Votyra.Core
 
         [SerializeField]
         public List<UnityEngineObject> UnityValues;
-
-        private JsonSerializerSettings _settings;
 
         public ConfigItem()
         {
@@ -38,47 +38,6 @@ namespace Votyra.Core
             TypeAssemblyQualifiedName = type?.AssemblyQualifiedName;
 
             JsonValue = JsonConvert.SerializeObject(value, _settings);
-        }
-
-        public class ObjectConverter : JsonConverter
-        {
-            private ConfigItem _parent;
-
-            public ObjectConverter(ConfigItem parent)
-            {
-                _parent = parent;
-            }
-
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-            {
-                writer.WriteValue(_parent.UnityValues?.Count ?? 0);
-
-                _parent.UnityValues = _parent.UnityValues ?? new List<UnityEngineObject>();
-                _parent.UnityValues.Add(value as UnityEngine.Object);
-            }
-
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-            {
-                try
-                {
-                    if (reader.ValueType == typeof(long))
-                    {
-                        var index = (int) ((long) reader.Value);
-                        var obj = _parent.UnityValues[index] as UnityEngine.Object;
-                        return obj == null ? null : obj;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-                catch
-                {
-                    throw;
-                }
-            }
-
-            public override bool CanConvert(Type objectType) => typeof(UnityEngine.Object).IsAssignableFrom(objectType);
         }
 
         public Type Type
@@ -116,7 +75,10 @@ namespace Votyra.Core
         public bool Equals(ConfigItem that)
         {
             if (that == null)
+            {
                 return false;
+            }
+
             return Id == that.Id && Type == that.Type && UnityValues.EmptyIfNull()
                 .SequenceEqual(that.UnityValues.EmptyIfNull()) && JsonValue == that.JsonValue;
         }
@@ -130,5 +92,37 @@ namespace Votyra.Core
         public override int GetHashCode() => Id.GetHashCode();
 
         public override string ToString() => $"CONFIG {Id}({Type.Name}): {JsonValue}";
+
+        public class ObjectConverter : JsonConverter
+        {
+            private readonly ConfigItem _parent;
+
+            public ObjectConverter(ConfigItem parent)
+            {
+                _parent = parent;
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                writer.WriteValue(_parent.UnityValues?.Count ?? 0);
+
+                _parent.UnityValues = _parent.UnityValues ?? new List<UnityEngineObject>();
+                _parent.UnityValues.Add(value as UnityEngineObject);
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                if (reader.ValueType == typeof(long))
+                {
+                    var index = (int) (long) reader.Value;
+                    var obj = _parent.UnityValues[index];
+                    return obj == null ? null : obj;
+                }
+
+                return null;
+            }
+
+            public override bool CanConvert(Type objectType) => typeof(UnityEngineObject).IsAssignableFrom(objectType);
+        }
     }
 }

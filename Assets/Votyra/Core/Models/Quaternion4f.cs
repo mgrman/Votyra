@@ -50,7 +50,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Quaternion4f))
+            {
                 return false;
+            }
 
             return Equals((Quaternion4f) obj);
         }

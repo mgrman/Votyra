@@ -8,9 +8,13 @@ namespace Votyra.Core.TerrainMeshes
         public static void AddTriangle(this ICollection<Triangle3f> mesh, Vector3f a, Vector3f b, Vector3f c, bool inverted)
         {
             if (inverted)
+            {
                 mesh.Add(new Triangle3f(c, b, a));
+            }
             else
+            {
                 mesh.Add(new Triangle3f(a, b, c));
+            }
         }
 
         //
@@ -61,6 +65,7 @@ namespace Votyra.Core.TerrainMeshes
                 yield return new Triangle3f(x1y0, x1y1, x0y1);
             }
         }
+
         //
         // public static void AddWall(this ITerrainMesh mesh, Vector3f? a, Vector3f? b, Vector3f? b_lower, Vector3f? a_lower)
         // {

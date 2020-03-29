@@ -39,81 +39,107 @@ namespace Votyra.Core.Models
         public static Vector5i operator *(Vector5i a, Vector5i b) => new Vector5i(a.X0 * b.X0, a.X1 * b.X1, a.X2 * b.X2, a.X3 * b.X3, a.X4 * b.X4);
 
         public static Vector5i operator *(Vector5i a, int b) => new Vector5i(a.X0 * b, a.X1 * b, a.X2 * b, a.X3 * b, a.X4 * b);
+
         public static Vector5i operator *(int a, Vector5i b) => new Vector5i(a * b.X0, a * b.X1, a * b.X2, a * b.X3, a * b.X4);
 
         public static Vector5i operator +(Vector5i a, Vector5i b) => new Vector5i(a.X0 + b.X0, a.X1 + b.X1, a.X2 + b.X2, a.X3 + b.X3, a.X4 + b.X4);
 
         public static Vector5i operator +(Vector5i a, int b) => new Vector5i(a.X0 + b, a.X1 + b, a.X2 + b, a.X3 + b, a.X4 + b);
+
         public static Vector5i operator +(int a, Vector5i b) => new Vector5i(a + b.X0, a + b.X1, a + b.X2, a + b.X3, a + b.X4);
 
         public static Vector5i operator -(Vector5i a, Vector5i b) => new Vector5i(a.X0 - b.X0, a.X1 - b.X1, a.X2 - b.X2, a.X3 - b.X3, a.X4 - b.X4);
 
         public static Vector5i operator -(Vector5i a, int b) => new Vector5i(a.X0 - b, a.X1 - b, a.X2 - b, a.X3 - b, a.X4 - b);
+
         public static Vector5i operator -(int a, Vector5i b) => new Vector5i(a - b.X0, a - b.X1, a - b.X2, a - b.X3, a - b.X4);
 
         public static Vector5i operator /(Vector5i a, Vector5i b) => new Vector5i(a.X0 / b.X0, a.X1 / b.X1, a.X2 / b.X2, a.X3 / b.X3, a.X4 / b.X4);
 
         public static Vector5i operator /(Vector5i a, int b) => new Vector5i(a.X0 / b, a.X1 / b, a.X2 / b, a.X3 / b, a.X4 / b);
+
         public static Vector5i operator /(int a, Vector5i b) => new Vector5i(a / b.X0, a / b.X1, a / b.X2, a / b.X3, a / b.X4);
 
         public static Vector5i operator %(Vector5i a, Vector5i b) => new Vector5i(a.X0 % b.X0, a.X1 % b.X1, a.X2 % b.X2, a.X3 % b.X3, a.X4 % b.X4);
 
         public static Vector5i operator %(Vector5i a, int b) => new Vector5i(a.X0 % b, a.X1 % b, a.X2 % b, a.X3 % b, a.X4 % b);
+
         public static Vector5i operator %(int a, Vector5i b) => new Vector5i(a % b.X0, a % b.X1, a % b.X2, a % b.X3, a % b.X4);
 
         public static bool operator <(Vector5i a, Vector5i b) => a.X0 < b.X0 && a.X1 < b.X1 && a.X2 < b.X2 && a.X3 < b.X3 && a.X4 < b.X4;
 
         public static bool operator <(Vector5i a, int b) => a.X0 < b && a.X1 < b && a.X2 < b && a.X3 < b && a.X4 < b;
+
         public static bool operator <(int a, Vector5i b) => a < b.X0 && a < b.X1 && a < b.X2 && a < b.X3 && a < b.X4;
 
         public static bool operator >(Vector5i a, Vector5i b) => a.X0 > b.X0 && a.X1 > b.X1 && a.X2 > b.X2 && a.X3 > b.X3 && a.X4 > b.X4;
 
         public static bool operator >(Vector5i a, int b) => a.X0 > b && a.X1 > b && a.X2 > b && a.X3 > b && a.X4 > b;
+
         public static bool operator >(int a, Vector5i b) => a > b.X0 && a > b.X1 && a > b.X2 && a > b.X3 && a > b.X4;
 
         public static bool operator <=(Vector5i a, Vector5i b) => a.X0 <= b.X0 && a.X1 <= b.X1 && a.X2 <= b.X2 && a.X3 <= b.X3 && a.X4 <= b.X4;
 
         public static bool operator <=(Vector5i a, int b) => a.X0 <= b && a.X1 <= b && a.X2 <= b && a.X3 <= b && a.X4 <= b;
+
         public static bool operator <=(int a, Vector5i b) => a <= b.X0 && a <= b.X1 && a <= b.X2 && a <= b.X3 && a <= b.X4;
 
         public static bool operator >=(Vector5i a, Vector5i b) => a.X0 >= b.X0 && a.X1 >= b.X1 && a.X2 >= b.X2 && a.X3 >= b.X3 && a.X4 >= b.X4;
 
         public static bool operator >=(Vector5i a, int b) => a.X0 >= b && a.X1 >= b && a.X2 >= b && a.X3 >= b && a.X4 >= b;
+
         public static bool operator >=(int a, Vector5i b) => a >= b.X0 && a >= b.X1 && a >= b.X2 && a >= b.X3 && a >= b.X4;
 
         public static bool operator ==(Vector5i a, Vector5i b) => a.X0 == b.X0 && a.X1 == b.X1 && a.X2 == b.X2 && a.X3 == b.X3 && a.X4 == b.X4;
 
         public static bool operator ==(Vector5i a, int b) => a.X0 == b && a.X1 == b && a.X2 == b && a.X3 == b && a.X4 == b;
+
         public static bool operator ==(int a, Vector5i b) => a == b.X0 && a == b.X1 && a == b.X2 && a == b.X3 && a == b.X4;
 
         public static bool operator !=(Vector5i a, Vector5i b) => a.X0 != b.X0 || a.X1 != b.X1 || a.X2 != b.X2 || a.X3 != b.X3 || a.X4 != b.X4;
 
         public static bool operator !=(Vector5i a, int b) => a.X0 != b || a.X1 != b || a.X2 != b || a.X3 != b || a.X4 != b;
+
         public static bool operator !=(int a, Vector5i b) => a != b.X0 || a != b.X1 || a != b.X2 || a != b.X3 || a != b.X4;
 
         public static Vector5f operator *(Vector5i a, Vector5f b) => new Vector5f(a.X0 * b.X0, a.X1 * b.X1, a.X2 * b.X2, a.X3 * b.X3, a.X4 * b.X4);
+
         public static Vector5f operator *(Vector5f a, Vector5i b) => new Vector5f(a.X0 * b.X0, a.X1 * b.X1, a.X2 * b.X2, a.X3 * b.X3, a.X4 * b.X4);
+
         public static Vector5f operator *(Vector5i a, float b) => new Vector5f(a.X0 * b, a.X1 * b, a.X2 * b, a.X3 * b, a.X4 * b);
+
         public static Vector5f operator *(float a, Vector5i b) => new Vector5f(a * b.X0, a * b.X1, a * b.X2, a * b.X3, a * b.X4);
 
         public static Vector5f operator +(Vector5i a, Vector5f b) => new Vector5f(a.X0 + b.X0, a.X1 + b.X1, a.X2 + b.X2, a.X3 + b.X3, a.X4 + b.X4);
+
         public static Vector5f operator +(Vector5f a, Vector5i b) => new Vector5f(a.X0 + b.X0, a.X1 + b.X1, a.X2 + b.X2, a.X3 + b.X3, a.X4 + b.X4);
+
         public static Vector5f operator +(Vector5i a, float b) => new Vector5f(a.X0 + b, a.X1 + b, a.X2 + b, a.X3 + b, a.X4 + b);
+
         public static Vector5f operator +(float a, Vector5i b) => new Vector5f(a + b.X0, a + b.X1, a + b.X2, a + b.X3, a + b.X4);
 
         public static Vector5f operator -(Vector5i a, Vector5f b) => new Vector5f(a.X0 - b.X0, a.X1 - b.X1, a.X2 - b.X2, a.X3 - b.X3, a.X4 - b.X4);
+
         public static Vector5f operator -(Vector5f a, Vector5i b) => new Vector5f(a.X0 - b.X0, a.X1 - b.X1, a.X2 - b.X2, a.X3 - b.X3, a.X4 - b.X4);
+
         public static Vector5f operator -(Vector5i a, float b) => new Vector5f(a.X0 - b, a.X1 - b, a.X2 - b, a.X3 - b, a.X4 - b);
+
         public static Vector5f operator -(float a, Vector5i b) => new Vector5f(a - b.X0, a - b.X1, a - b.X2, a - b.X3, a - b.X4);
 
         public static Vector5f operator /(Vector5i a, Vector5f b) => new Vector5f(a.X0 / b.X0, a.X1 / b.X1, a.X2 / b.X2, a.X3 / b.X3, a.X4 / b.X4);
+
         public static Vector5f operator /(Vector5f a, Vector5i b) => new Vector5f(a.X0 / b.X0, a.X1 / b.X1, a.X2 / b.X2, a.X3 / b.X3, a.X4 / b.X4);
+
         public static Vector5f operator /(Vector5i a, float b) => new Vector5f(a.X0 / b, a.X1 / b, a.X2 / b, a.X3 / b, a.X4 / b);
+
         public static Vector5f operator /(float a, Vector5i b) => new Vector5f(a / b.X0, a / b.X1, a / b.X2, a / b.X3, a / b.X4);
 
         public static Vector5f operator %(Vector5i a, Vector5f b) => new Vector5f(a.X0 % b.X0, a.X1 % b.X1, a.X2 % b.X2, a.X3 % b.X3, a.X4 % b.X4);
+
         public static Vector5f operator %(Vector5f a, Vector5i b) => new Vector5f(a.X0 % b.X0, a.X1 % b.X1, a.X2 % b.X2, a.X3 % b.X3, a.X4 % b.X4);
+
         public static Vector5f operator %(Vector5i a, float b) => new Vector5f(a.X0 % b, a.X1 % b, a.X2 % b, a.X3 % b, a.X4 % b);
+
         public static Vector5f operator %(float a, Vector5i b) => new Vector5f(a % b.X0, a % b.X1, a % b.X2, a % b.X3, a % b.X4);
 
         public bool Equals(Vector5i other) => this == other;
@@ -121,7 +147,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Vector5i))
+            {
                 return false;
+            }
 
             return Equals((Vector5i) obj);
         }
@@ -153,6 +181,7 @@ namespace Votyra.Core.Models
 
         public static readonly Vector5i PlusOneX4 = new Vector5i(0, 0, 0, 0, 1);
         public static readonly Vector5i MinusOneX4 = new Vector5i(0, 0, 0, 0, -1);
+
         public static float Magnitude(this Vector5i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector5f Normalized(this Vector5i @this)
@@ -234,24 +263,29 @@ namespace Votyra.Core.Models
         public static Vector5f ToVector5f(this Vector5i @this) => new Vector5f(@this.X0, @this.X1, @this.X2, @this.X3, @this.X4);
 
         public static Range5i ToRange5i(this Vector5i @this) => Range5i.FromMinAndSize(Vector5i.Zero, @this);
+
         public static Area5i ToArea5i(this Vector5i @this) => Area5i.FromMinAndSize(Vector5i.Zero, @this);
 
         public static Vector6i ToVector6i(this Vector5i @this, int x6) => new Vector6i(@this.X0, @this.X1, @this.X2, @this.X3, @this.X4, x6);
+
         public static Vector6f ToVector6f(this Vector5i @this, float x6) => new Vector6f(@this.X0, @this.X1, @this.X2, @this.X3, @this.X4, x6);
 
         public static Vector5i Max(Vector5i a, Vector5i b) => new Vector5i(Math.Max(a.X0, b.X0), Math.Max(a.X1, b.X1), Math.Max(a.X2, b.X2), Math.Max(a.X3, b.X3), Math.Max(a.X4, b.X4));
 
         public static Vector5i Max(Vector5i a, int b) => new Vector5i(Math.Max(a.X0, b), Math.Max(a.X1, b), Math.Max(a.X2, b), Math.Max(a.X3, b), Math.Max(a.X4, b));
+
         public static Vector5i Max(int a, Vector5i b) => new Vector5i(Math.Max(a, b.X0), Math.Max(a, b.X1), Math.Max(a, b.X2), Math.Max(a, b.X3), Math.Max(a, b.X4));
 
         public static Vector5i Min(Vector5i a, Vector5i b) => new Vector5i(Math.Min(a.X0, b.X0), Math.Min(a.X1, b.X1), Math.Min(a.X2, b.X2), Math.Min(a.X3, b.X3), Math.Min(a.X4, b.X4));
 
         public static Vector5i Min(Vector5i a, int b) => new Vector5i(Math.Min(a.X0, b), Math.Min(a.X1, b), Math.Min(a.X2, b), Math.Min(a.X3, b), Math.Min(a.X4, b));
+
         public static Vector5i Min(int a, Vector5i b) => new Vector5i(Math.Min(a, b.X0), Math.Min(a, b.X1), Math.Min(a, b.X2), Math.Min(a, b.X3), Math.Min(a, b.X4));
 
         public static Vector5i DivideUp(Vector5i a, Vector5i b) => new Vector5i(a.X0.DivideUp(b.X0), a.X1.DivideUp(b.X1), a.X2.DivideUp(b.X2), a.X3.DivideUp(b.X3), a.X4.DivideUp(b.X4));
 
         public static Vector5i DivideUp(Vector5i a, int b) => new Vector5i(a.X0.DivideUp(b), a.X1.DivideUp(b), a.X2.DivideUp(b), a.X3.DivideUp(b), a.X4.DivideUp(b));
+
         public static Vector5i DivideUp(int a, Vector5i b) => new Vector5i(a.DivideUp(b.X0), a.DivideUp(b.X1), a.DivideUp(b.X2), a.DivideUp(b.X3), a.DivideUp(b.X4));
     }
 }

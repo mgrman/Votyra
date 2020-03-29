@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Votyra.Core.Logging;
 using Votyra.Core.Painting.Commands;
-using Votyra.Core.Utils;
 
 namespace Votyra.Core.Painting
 {
@@ -17,6 +14,7 @@ namespace Votyra.Core.Painting
             _logger = logger;
             PaintCommandFactories = paintCommandFactories;
         }
+
         public IReadOnlyList<IPaintCommandFactory> PaintCommandFactories { get; }
     }
 }

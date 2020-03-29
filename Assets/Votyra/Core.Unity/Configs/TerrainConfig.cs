@@ -20,10 +20,15 @@ namespace Votyra.Core.Images
         }
 
         public Vector3i CellInGroupCount { get; }
+
         public bool FlipTriangles { get; }
+
         public ColliderType ColliderType { get; }
+
         public bool DrawBounds { get; }
+
         public bool AsyncTerrainGeneration { get; }
+
         public bool AsyncInput { get; }
 
         public static bool operator ==(TerrainConfig a, TerrainConfig b) => a?.Equals(b) ?? b?.Equals(a) ?? true;
@@ -33,7 +38,10 @@ namespace Votyra.Core.Images
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
+            {
                 return false;
+            }
+
             var that = obj as TerrainConfig;
 
             return CellInGroupCount == that.CellInGroupCount && FlipTriangles == that.FlipTriangles && DrawBounds == that.DrawBounds && AsyncTerrainGeneration == that.AsyncTerrainGeneration && ColliderType == that.ColliderType;

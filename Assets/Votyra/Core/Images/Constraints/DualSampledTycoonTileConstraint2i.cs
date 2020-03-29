@@ -13,7 +13,9 @@ namespace Votyra.Core.Images.Constraints
         protected override void ConstrainCell(Vector2i cell)
         {
             if (cell % 2 == Vector2i.One)
+            {
                 base.ConstrainCell(cell);
+            }
         }
     }
 }

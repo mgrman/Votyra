@@ -14,7 +14,9 @@ namespace Votyra.Core
             set
             {
                 if (EqualityComparer<T>.Default.Equals(_value, value))
+                {
                     return;
+                }
 
                 _value = value;
                 OnNext(value);

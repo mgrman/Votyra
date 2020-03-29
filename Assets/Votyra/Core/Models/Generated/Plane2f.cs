@@ -36,7 +36,9 @@ namespace Votyra.Core.Models
                 var radius = Vector2fUtils.Dot(boundsExtent, n);
 
                 if (distance + radius < 0)
+                {
                     return false;
+                }
 
                 planesCount++;
             }

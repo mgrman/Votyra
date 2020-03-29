@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Votyra.Core.Images;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core
@@ -24,10 +23,15 @@ namespace Votyra.Core
         }
 
         public Ray3f CameraRay { get; }
+
         public IReadOnlyList<Plane3f> CameraPlanes { get; }
+
         public IReadOnlyList<Vector3f> CameraFrustumCorners { get; }
+
         public IReadOnlySet<Vector3i> ExistingGroups { get; }
+
         public IImage3b Image { get; }
+
         public Range3i InvalidatedArea_imageSpace { get; }
 
         public void Activate()
@@ -39,7 +43,9 @@ namespace Votyra.Core
         {
             _activeCounter--;
             if (_activeCounter <= 0)
+            {
                 Dispose();
+            }
         }
 
         private void Dispose()

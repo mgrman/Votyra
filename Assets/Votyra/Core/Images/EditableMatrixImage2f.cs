@@ -19,7 +19,11 @@ namespace Votyra.Core.Images
 
         public EditableMatrixImage2f(IImageConfig imageConfig, List<IImageConstraint2i> constraints)
         {
-            _constraints = constraints.SelectMany(o => o.Priorities.Select(p => new {p, o}))
+            _constraints = constraints.SelectMany(o => o.Priorities.Select(p => new
+                {
+                    p,
+                    o
+                }))
                 .OrderBy(o => o.p)
                 .Select(o => o.o)
                 .ToArray();
@@ -94,9 +98,7 @@ namespace Votyra.Core.Images
 
             _invalidatedArea = invalidatedImageArea;
 
-            
-
-            for (int i = 0; i < _constraints.Length; i++)
+            for (var i = 0; i < _constraints.Length; i++)
             {
                 var newInvalidatedImageArea = _constraints[i]
                     .FixImage(this, _editableMatrix, invalidatedImageArea, direction);

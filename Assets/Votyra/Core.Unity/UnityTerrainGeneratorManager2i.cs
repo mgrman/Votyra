@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Votyra.Core.Models;
-using Votyra.Core.Models.ObjectPool;
 using Votyra.Core.TerrainMeshes;
 using Zenject;
 
@@ -11,43 +9,17 @@ namespace Votyra.Core
 {
     public class UnityTerrainGeneratorManager2i : ITickable, IUnityTerrainGeneratorManager2i
     {
-        private Queue<RepositoryChange<Vector2i, ITerrainMesh2f>> _queue = new Queue<RepositoryChange<Vector2i, ITerrainMesh2f>>(10);
-        private object _queueLock = new object();
         private readonly ITerrainRepository2i _manager;
 
-        private ConcurrentDictionary<Vector2i, ITerrainMesh2f> _activeTerrains = new ConcurrentDictionary<Vector2i, ITerrainMesh2f>();
-
-        private event Action<Vector2i, ITerrainMesh2f> _newTerrain;
+        private readonly ConcurrentDictionary<Vector2i, ITerrainMesh2f> _activeTerrains = new ConcurrentDictionary<Vector2i, ITerrainMesh2f>();
         private Action<Vector2i, ITerrainMesh2f> _changedTerrain;
-        
+        private readonly Queue<RepositoryChange<Vector2i, ITerrainMesh2f>> _queue = new Queue<RepositoryChange<Vector2i, ITerrainMesh2f>>(10);
+        private readonly object _queueLock = new object();
+
         public UnityTerrainGeneratorManager2i(ITerrainRepository2i manager)
         {
             _manager = manager;
             _manager.TerrainChange += OnTerrainChange;
-        }
-
-        private void OnTerrainChange(RepositoryChange<Vector2i, ITerrainMesh2f> arg)
-        {
-            lock (_queueLock)
-            {
-                switch (arg.Action)
-                {
-                    case RepositorActionType.New:
-                        _queue.Enqueue(arg);
-                        _activeTerrains.TryAdd(arg.Group, arg.Mesh);
-
-                        break;
-                    case RepositorActionType.Changed:
-                        _queue.Enqueue(arg);
-                        break;
-                    case RepositorActionType.Removed:
-                        _queue.Enqueue(arg);
-                        _activeTerrains.TryRemove(arg.Group, out var _);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
         }
 
         public void Tick()
@@ -84,10 +56,7 @@ namespace Votyra.Core
                     value?.Invoke(activeGroup.Key, activeGroup.Value);
                 }
             }
-            remove
-            {
-                _newTerrain -= value;
-            }
+            remove => _newTerrain -= value;
         }
 
         public event Action<Vector2i, ITerrainMesh2f> ChangedTerrain
@@ -100,12 +69,35 @@ namespace Votyra.Core
                     value?.Invoke(activeGroup.Key, activeGroup.Value);
                 }
             }
-            remove
-            {
-                _changedTerrain -= value;
-            }
+            remove => _changedTerrain -= value;
         }
 
         public event Action<Vector2i, ITerrainMesh2f> RemovedTerrain;
+
+        private event Action<Vector2i, ITerrainMesh2f> _newTerrain;
+
+        private void OnTerrainChange(RepositoryChange<Vector2i, ITerrainMesh2f> arg)
+        {
+            lock (_queueLock)
+            {
+                switch (arg.Action)
+                {
+                    case RepositorActionType.New:
+                        _queue.Enqueue(arg);
+                        _activeTerrains.TryAdd(arg.Group, arg.Mesh);
+
+                        break;
+                    case RepositorActionType.Changed:
+                        _queue.Enqueue(arg);
+                        break;
+                    case RepositorActionType.Removed:
+                        _queue.Enqueue(arg);
+                        _activeTerrains.TryRemove(arg.Group, out var _);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
     }
 }

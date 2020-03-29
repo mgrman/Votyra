@@ -14,6 +14,7 @@ namespace Votyra.Core.Images
         public Vector3f Offset { get; }
 
         public Vector3f Scale { get; }
+
         public Area1f RangeZ => Area1f.FromMinAndMax(Offset.Z, Offset.Z + Scale.Z);
 
         public float Sample(Vector2i point)

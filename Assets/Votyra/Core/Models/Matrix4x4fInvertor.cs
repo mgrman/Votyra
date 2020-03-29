@@ -66,9 +66,13 @@ namespace Votyra.Core.Models
                 for (var j = 0; j < n; ++j)
                 {
                     if (i == perm[j])
+                    {
                         b[j] = 1.0;
+                    }
                     else
+                    {
                         b[j] = 0.0;
+                    }
                 }
 
                 var x = Helper(lum, b); //
@@ -140,6 +144,7 @@ namespace Votyra.Core.Models
 
                 var xjj = lum[j][j];
                 if (xjj != 0.0)
+                {
                     for (var i = j + 1; i < n; ++i)
                     {
                         var xij = lum[i][j] / xjj;
@@ -149,6 +154,7 @@ namespace Votyra.Core.Models
                             lum[i][k] -= xij * lum[j][k];
                         }
                     }
+                }
             } // j
 
             return toggle;

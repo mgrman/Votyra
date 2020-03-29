@@ -1,4 +1,3 @@
-
 using Votyra.Core.Images;
 using Votyra.Core.Raycasting;
 using Zenject;
@@ -11,7 +10,7 @@ namespace Votyra.Core.Unity
         {
             Container.BindInterfacesAndSelfTo<ImageAggregator>()
                 .AsSingle();
-            
+
             Container.BindInterfacesAndSelfTo<AggregatorRaycaster>()
                 .AsSingle();
         }

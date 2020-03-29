@@ -151,7 +151,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Vector5f))
+            {
                 return false;
+            }
 
             return Equals((Vector5f) obj);
         }

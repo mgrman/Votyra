@@ -17,7 +17,10 @@ namespace Votyra.Core.Utils
                 {
                     //Debug.Log("Overriding with AsyncTerainGeneratorService");
                     if (property is IDisposable)
+                    {
                         (property as IDisposable).Dispose();
+                    }
+
                     property = new T();
                 }
             }

@@ -11,7 +11,9 @@ namespace Votyra.Core.Utils
         private static readonly FastNoise _noise = new FastNoise();
 
         public static bool IsApproximatelyEqual(this float a, float b, float eps = 0.000001f) => Math.Abs(b - a) < eps;
+
         public static bool IsApproximatelyGreaterOrEqual(this float a, float b, float eps = 0.000001f) => a > b || a.IsApproximatelyEqual(b);
+
         public static bool IsApproximatelyLessOrEqual(this float a, float b, float eps = 0.000001f) => a < b || a.IsApproximatelyEqual(b);
 
         public static int? Abs(this int? val) => val.HasValue ? Math.Abs(val.Value) : val;
@@ -29,22 +31,40 @@ namespace Votyra.Core.Utils
         public static int CeilToInt(this float f)
         {
             if (float.IsPositiveInfinity(f))
+            {
                 return int.MaxValue;
+            }
+
             if (float.IsNegativeInfinity(f))
+            {
                 return int.MinValue;
+            }
+
             if (float.IsNaN(f))
+            {
                 return 0;
+            }
+
             return (int) Math.Ceiling(f);
         }
 
         public static int CeilToInt(this double f)
         {
             if (double.IsPositiveInfinity(f))
+            {
                 return int.MaxValue;
+            }
+
             if (double.IsNegativeInfinity(f))
+            {
                 return int.MinValue;
+            }
+
             if (double.IsNaN(f))
+            {
                 return 0;
+            }
+
             return (int) Math.Ceiling(f);
         }
 
@@ -53,22 +73,40 @@ namespace Votyra.Core.Utils
         public static int FloorToInt(this float f)
         {
             if (float.IsPositiveInfinity(f))
+            {
                 return int.MaxValue;
+            }
+
             if (float.IsNegativeInfinity(f))
+            {
                 return int.MinValue;
+            }
+
             if (float.IsNaN(f))
+            {
                 return 0;
+            }
+
             return (int) Math.Floor(f);
         }
 
         public static int FloorToInt(this double f)
         {
             if (double.IsPositiveInfinity(f))
+            {
                 return int.MaxValue;
+            }
+
             if (double.IsNegativeInfinity(f))
+            {
                 return int.MinValue;
+            }
+
             if (double.IsNaN(f))
+            {
                 return 0;
+            }
+
             return (int) Math.Floor(f);
         }
 
@@ -91,22 +129,40 @@ namespace Votyra.Core.Utils
         public static int RoundToInt(this float f)
         {
             if (float.IsPositiveInfinity(f))
+            {
                 return int.MaxValue;
+            }
+
             if (float.IsNegativeInfinity(f))
+            {
                 return int.MinValue;
+            }
+
             if (float.IsNaN(f))
+            {
                 return 0;
+            }
+
             return (int) Math.Round(f);
         }
 
         public static int RoundToInt(this double f)
         {
             if (double.IsPositiveInfinity(f))
+            {
                 return int.MaxValue;
+            }
+
             if (double.IsNegativeInfinity(f))
+            {
                 return int.MinValue;
+            }
+
             if (double.IsNaN(f))
+            {
                 return 0;
+            }
+
             return (int) Math.Round(f);
         }
 

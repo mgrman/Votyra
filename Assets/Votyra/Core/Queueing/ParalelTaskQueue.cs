@@ -7,13 +7,13 @@ namespace Votyra.Core.Queueing
     public class ParalelTaskQueue<T> : IWorkQueue<T> where T : IDisposable
     {
         private readonly TaskFactory _taskFactory;
-        
-        public event Action<T> DoWork;
 
         public ParalelTaskQueue()
         {
             _taskFactory = new TaskFactory();
         }
+
+        public event Action<T> DoWork;
 
         public void QueueNew(T context)
         {

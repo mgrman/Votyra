@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Models.ObjectPool;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.TerrainMeshes;
 
@@ -18,7 +15,7 @@ namespace Votyra.Core.Pooling
 
         private static Func<FixedTerrainMesh2i> CreateMeshFunc(Vector2i meshSubdivision, Vector2i cellInGroupCount, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
-            return () => new FixedTerrainMesh2i( meshSubdivision, cellInGroupCount, vertexPostProcessor, uvAdjustor);
+            return () => new FixedTerrainMesh2i(meshSubdivision, cellInGroupCount, vertexPostProcessor, uvAdjustor);
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Votyra.Core.Editor
 #else
         private static string AssetsFolderPath => Application.dataPath;
 #endif
+
         private const string MSBuildPath = @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe";
         private static readonly string RootFolder = Path.GetFullPath(Path.Combine(AssetsFolderPath, "..", "..", "Build", Application.productName, "Release"));
         private static readonly string UWPDirectory = Path.Combine(RootFolder, "UWP");

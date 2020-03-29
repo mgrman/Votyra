@@ -35,81 +35,107 @@ namespace Votyra.Core.Models
         public static Vector4i operator *(Vector4i a, Vector4i b) => new Vector4i(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
 
         public static Vector4i operator *(Vector4i a, int b) => new Vector4i(a.X * b, a.Y * b, a.Z * b, a.W * b);
+
         public static Vector4i operator *(int a, Vector4i b) => new Vector4i(a * b.X, a * b.Y, a * b.Z, a * b.W);
 
         public static Vector4i operator +(Vector4i a, Vector4i b) => new Vector4i(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
 
         public static Vector4i operator +(Vector4i a, int b) => new Vector4i(a.X + b, a.Y + b, a.Z + b, a.W + b);
+
         public static Vector4i operator +(int a, Vector4i b) => new Vector4i(a + b.X, a + b.Y, a + b.Z, a + b.W);
 
         public static Vector4i operator -(Vector4i a, Vector4i b) => new Vector4i(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
 
         public static Vector4i operator -(Vector4i a, int b) => new Vector4i(a.X - b, a.Y - b, a.Z - b, a.W - b);
+
         public static Vector4i operator -(int a, Vector4i b) => new Vector4i(a - b.X, a - b.Y, a - b.Z, a - b.W);
 
         public static Vector4i operator /(Vector4i a, Vector4i b) => new Vector4i(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
 
         public static Vector4i operator /(Vector4i a, int b) => new Vector4i(a.X / b, a.Y / b, a.Z / b, a.W / b);
+
         public static Vector4i operator /(int a, Vector4i b) => new Vector4i(a / b.X, a / b.Y, a / b.Z, a / b.W);
 
         public static Vector4i operator %(Vector4i a, Vector4i b) => new Vector4i(a.X % b.X, a.Y % b.Y, a.Z % b.Z, a.W % b.W);
 
         public static Vector4i operator %(Vector4i a, int b) => new Vector4i(a.X % b, a.Y % b, a.Z % b, a.W % b);
+
         public static Vector4i operator %(int a, Vector4i b) => new Vector4i(a % b.X, a % b.Y, a % b.Z, a % b.W);
 
         public static bool operator <(Vector4i a, Vector4i b) => a.X < b.X && a.Y < b.Y && a.Z < b.Z && a.W < b.W;
 
         public static bool operator <(Vector4i a, int b) => a.X < b && a.Y < b && a.Z < b && a.W < b;
+
         public static bool operator <(int a, Vector4i b) => a < b.X && a < b.Y && a < b.Z && a < b.W;
 
         public static bool operator >(Vector4i a, Vector4i b) => a.X > b.X && a.Y > b.Y && a.Z > b.Z && a.W > b.W;
 
         public static bool operator >(Vector4i a, int b) => a.X > b && a.Y > b && a.Z > b && a.W > b;
+
         public static bool operator >(int a, Vector4i b) => a > b.X && a > b.Y && a > b.Z && a > b.W;
 
         public static bool operator <=(Vector4i a, Vector4i b) => a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z && a.W <= b.W;
 
         public static bool operator <=(Vector4i a, int b) => a.X <= b && a.Y <= b && a.Z <= b && a.W <= b;
+
         public static bool operator <=(int a, Vector4i b) => a <= b.X && a <= b.Y && a <= b.Z && a <= b.W;
 
         public static bool operator >=(Vector4i a, Vector4i b) => a.X >= b.X && a.Y >= b.Y && a.Z >= b.Z && a.W >= b.W;
 
         public static bool operator >=(Vector4i a, int b) => a.X >= b && a.Y >= b && a.Z >= b && a.W >= b;
+
         public static bool operator >=(int a, Vector4i b) => a >= b.X && a >= b.Y && a >= b.Z && a >= b.W;
 
         public static bool operator ==(Vector4i a, Vector4i b) => a.X == b.X && a.Y == b.Y && a.Z == b.Z && a.W == b.W;
 
         public static bool operator ==(Vector4i a, int b) => a.X == b && a.Y == b && a.Z == b && a.W == b;
+
         public static bool operator ==(int a, Vector4i b) => a == b.X && a == b.Y && a == b.Z && a == b.W;
 
         public static bool operator !=(Vector4i a, Vector4i b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z || a.W != b.W;
 
         public static bool operator !=(Vector4i a, int b) => a.X != b || a.Y != b || a.Z != b || a.W != b;
+
         public static bool operator !=(int a, Vector4i b) => a != b.X || a != b.Y || a != b.Z || a != b.W;
 
         public static Vector4f operator *(Vector4i a, Vector4f b) => new Vector4f(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
+
         public static Vector4f operator *(Vector4f a, Vector4i b) => new Vector4f(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
+
         public static Vector4f operator *(Vector4i a, float b) => new Vector4f(a.X * b, a.Y * b, a.Z * b, a.W * b);
+
         public static Vector4f operator *(float a, Vector4i b) => new Vector4f(a * b.X, a * b.Y, a * b.Z, a * b.W);
 
         public static Vector4f operator +(Vector4i a, Vector4f b) => new Vector4f(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
+
         public static Vector4f operator +(Vector4f a, Vector4i b) => new Vector4f(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
+
         public static Vector4f operator +(Vector4i a, float b) => new Vector4f(a.X + b, a.Y + b, a.Z + b, a.W + b);
+
         public static Vector4f operator +(float a, Vector4i b) => new Vector4f(a + b.X, a + b.Y, a + b.Z, a + b.W);
 
         public static Vector4f operator -(Vector4i a, Vector4f b) => new Vector4f(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
+
         public static Vector4f operator -(Vector4f a, Vector4i b) => new Vector4f(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
+
         public static Vector4f operator -(Vector4i a, float b) => new Vector4f(a.X - b, a.Y - b, a.Z - b, a.W - b);
+
         public static Vector4f operator -(float a, Vector4i b) => new Vector4f(a - b.X, a - b.Y, a - b.Z, a - b.W);
 
         public static Vector4f operator /(Vector4i a, Vector4f b) => new Vector4f(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
+
         public static Vector4f operator /(Vector4f a, Vector4i b) => new Vector4f(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
+
         public static Vector4f operator /(Vector4i a, float b) => new Vector4f(a.X / b, a.Y / b, a.Z / b, a.W / b);
+
         public static Vector4f operator /(float a, Vector4i b) => new Vector4f(a / b.X, a / b.Y, a / b.Z, a / b.W);
 
         public static Vector4f operator %(Vector4i a, Vector4f b) => new Vector4f(a.X % b.X, a.Y % b.Y, a.Z % b.Z, a.W % b.W);
+
         public static Vector4f operator %(Vector4f a, Vector4i b) => new Vector4f(a.X % b.X, a.Y % b.Y, a.Z % b.Z, a.W % b.W);
+
         public static Vector4f operator %(Vector4i a, float b) => new Vector4f(a.X % b, a.Y % b, a.Z % b, a.W % b);
+
         public static Vector4f operator %(float a, Vector4i b) => new Vector4f(a % b.X, a % b.Y, a % b.Z, a % b.W);
 
         public bool Equals(Vector4i other) => this == other;
@@ -117,7 +143,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Vector4i))
+            {
                 return false;
+            }
 
             return Equals((Vector4i) obj);
         }
@@ -146,6 +174,7 @@ namespace Votyra.Core.Models
 
         public static readonly Vector4i PlusOneW = new Vector4i(0, 0, 0, 1);
         public static readonly Vector4i MinusOneW = new Vector4i(0, 0, 0, -1);
+
         public static float Magnitude(this Vector4i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector4f Normalized(this Vector4i @this)
@@ -209,27 +238,33 @@ namespace Votyra.Core.Models
         public static Vector4f ToVector4f(this Vector4i @this) => new Vector4f(@this.X, @this.Y, @this.Z, @this.W);
 
         public static Range4i ToRange4i(this Vector4i @this) => Range4i.FromMinAndSize(Vector4i.Zero, @this);
+
         public static Area4i ToArea4i(this Vector4i @this) => Area4i.FromMinAndSize(Vector4i.Zero, @this);
 
         public static Vector5i ToVector5i(this Vector4i @this, int x5) => new Vector5i(@this.X, @this.Y, @this.Z, @this.W, x5);
+
         public static Vector5f ToVector5f(this Vector4i @this, float x5) => new Vector5f(@this.X, @this.Y, @this.Z, @this.W, x5);
 
         public static Vector6i ToVector6i(this Vector4i @this, int x5, int x6) => new Vector6i(@this.X, @this.Y, @this.Z, @this.W, x5, x6);
+
         public static Vector6f ToVector6f(this Vector4i @this, float x5, float x6) => new Vector6f(@this.X, @this.Y, @this.Z, @this.W, x5, x6);
 
         public static Vector4i Max(Vector4i a, Vector4i b) => new Vector4i(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y), Math.Max(a.Z, b.Z), Math.Max(a.W, b.W));
 
         public static Vector4i Max(Vector4i a, int b) => new Vector4i(Math.Max(a.X, b), Math.Max(a.Y, b), Math.Max(a.Z, b), Math.Max(a.W, b));
+
         public static Vector4i Max(int a, Vector4i b) => new Vector4i(Math.Max(a, b.X), Math.Max(a, b.Y), Math.Max(a, b.Z), Math.Max(a, b.W));
 
         public static Vector4i Min(Vector4i a, Vector4i b) => new Vector4i(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y), Math.Min(a.Z, b.Z), Math.Min(a.W, b.W));
 
         public static Vector4i Min(Vector4i a, int b) => new Vector4i(Math.Min(a.X, b), Math.Min(a.Y, b), Math.Min(a.Z, b), Math.Min(a.W, b));
+
         public static Vector4i Min(int a, Vector4i b) => new Vector4i(Math.Min(a, b.X), Math.Min(a, b.Y), Math.Min(a, b.Z), Math.Min(a, b.W));
 
         public static Vector4i DivideUp(Vector4i a, Vector4i b) => new Vector4i(a.X.DivideUp(b.X), a.Y.DivideUp(b.Y), a.Z.DivideUp(b.Z), a.W.DivideUp(b.W));
 
         public static Vector4i DivideUp(Vector4i a, int b) => new Vector4i(a.X.DivideUp(b), a.Y.DivideUp(b), a.Z.DivideUp(b), a.W.DivideUp(b));
+
         public static Vector4i DivideUp(int a, Vector4i b) => new Vector4i(a.DivideUp(b.X), a.DivideUp(b.Y), a.DivideUp(b.Z), a.DivideUp(b.W));
     }
 }

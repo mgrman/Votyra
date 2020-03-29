@@ -1,38 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Votyra.Core.Logging;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 
 namespace Votyra.Core.TerrainMeshes
 {
     public class FixedTerrainMesh2i : ITerrainMesh2f
     {
-        const int SubCellToTriangles = 2;
-        const int TriangleToPoints = 3;
+        private const int SubCellToTriangles = 2;
+        private const int TriangleToPoints = 3;
+        private readonly Vector2i _cellInGroupCount;
 
         private readonly int[] _indices;
+        private readonly Vector2i _meshSubdivision;
         private readonly Vector3f[] _normals;
         private readonly Vector2f[] _uv;
-        private readonly Vector3f[] _vertices;
-        private readonly Vector2i _meshSubdivision;
-        private readonly Vector2i _cellInGroupCount;
-        private readonly Func<Vector3f, Vector3f> _vertexPostProcessor;
         private readonly Func<Vector2f, Vector2f> _uVAdjustor;
-        private float _maxZ;
-        private float _minZ;
-        private Area2f _meshBoundsXY;
+        private readonly Func<Vector3f, Vector3f> _vertexPostProcessor;
+        private readonly Vector3f[] _vertices;
         private Vector2f _groupStartPosition;
-
-        public Area3f MeshBounds => Area3f.FromMinAndMax(_meshBoundsXY.Min.ToVector3f(_minZ), _meshBoundsXY.Max.ToVector3f(_maxZ));
-        public IReadOnlyList<Vector3f> Vertices => _vertices;
-        public IReadOnlyList<Vector3f> Normals => _normals;
-        public IReadOnlyList<Vector2f> UV => _uv;
-        public IReadOnlyList<int> Indices => _indices;
-        public uint TriangleCount => VertexCount / 3;
-        public uint VertexCount => (uint) _vertices.Length;
-        public uint TriangleCapacity => TriangleCount;
+        private float _maxZ;
+        private Area2f _meshBoundsXY;
+        private float _minZ;
 
         public FixedTerrainMesh2i(Vector2i meshSubdivision, Vector2i cellInGroupCount, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uVAdjustor)
         {
@@ -57,6 +45,22 @@ namespace Votyra.Core.TerrainMeshes
             _normals = new Vector3f[pointCount];
         }
 
+        public Area3f MeshBounds => Area3f.FromMinAndMax(_meshBoundsXY.Min.ToVector3f(_minZ), _meshBoundsXY.Max.ToVector3f(_maxZ));
+
+        public IReadOnlyList<Vector3f> Vertices => _vertices;
+
+        public IReadOnlyList<Vector3f> Normals => _normals;
+
+        public IReadOnlyList<Vector2f> UV => _uv;
+
+        public IReadOnlyList<int> Indices => _indices;
+
+        public uint TriangleCount => VertexCount / 3;
+
+        public uint VertexCount => (uint) _vertices.Length;
+
+        public uint TriangleCapacity => TriangleCount;
+
         public void Reset(Area3f area)
         {
             _meshBoundsXY = Area2f.FromMinAndMax(area.Min.XY(), area.Max.XY());
@@ -75,7 +79,9 @@ namespace Votyra.Core.TerrainMeshes
                 var triangle = new Triangle3f(a, b, c);
                 var res = triangle.Intersect(cameraRay);
                 if (res.NoNan())
+                {
                     return res;
+                }
             }
 
             return Vector3f.NaN;
@@ -87,9 +93,10 @@ namespace Votyra.Core.TerrainMeshes
             {
                 return Vector1f.NaN;
             }
+
             var posRelative = posXY - _meshBoundsXY.Min.XY();
-            
-            var cellInGroup = (posRelative).FloorToVector2i();
+
+            var cellInGroup = posRelative.FloorToVector2i();
             var subCell = ((posRelative - cellInGroup) * _meshSubdivision).FloorToVector2i();
 
             var subCellIndex = SubCellIndex(cellInGroup, subCell);
@@ -103,7 +110,9 @@ namespace Votyra.Core.TerrainMeshes
             var triangle = new Triangle3f(a, b, c);
             var res = triangle.BarycentricCoords(posXY);
             if (res.NoNan())
+            {
                 return res;
+            }
 
             a = _vertices[pointIndex + 3];
             b = _vertices[pointIndex + 4];
@@ -111,7 +120,9 @@ namespace Votyra.Core.TerrainMeshes
             triangle = new Triangle3f(a, b, c);
             res = triangle.BarycentricCoords(posXY);
             if (res.NoNan())
+            {
                 return res;
+            }
 
             return Vector1f.NaN;
         }
@@ -146,61 +157,65 @@ namespace Votyra.Core.TerrainMeshes
             {
                 if (!x0y0.HasValue)
                 {
-                    this.AddTriangle(triangleIndex, x1y0.Value, x1y1.Value, x0y1.Value);
+                    AddTriangle(triangleIndex, x1y0.Value, x1y1.Value, x0y1.Value);
                     triangleIndex++;
-                    this.AddEmptyTriangle(triangleIndex);
+                    AddEmptyTriangle(triangleIndex);
                 }
                 else if (!x0y1.HasValue)
                 {
-                    this.AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x1y1.Value);
+                    AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x1y1.Value);
                     triangleIndex++;
-                    this.AddEmptyTriangle(triangleIndex);
+                    AddEmptyTriangle(triangleIndex);
                 }
                 else if (!x1y0.HasValue)
                 {
-                    this.AddTriangle(triangleIndex, x1y1.Value, x0y1.Value, x0y0.Value);
+                    AddTriangle(triangleIndex, x1y1.Value, x0y1.Value, x0y0.Value);
                     triangleIndex++;
-                    this.AddEmptyTriangle(triangleIndex);
+                    AddEmptyTriangle(triangleIndex);
                 }
                 else if (!x1y1.HasValue)
                 {
-                    this.AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x0y1.Value);
+                    AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x0y1.Value);
                     triangleIndex++;
-                    this.AddEmptyTriangle(triangleIndex);
+                    AddEmptyTriangle(triangleIndex);
                 }
                 else
                 {
-                    this.AddEmptyTriangle(triangleIndex);
+                    AddEmptyTriangle(triangleIndex);
                     triangleIndex++;
-                    this.AddEmptyTriangle(triangleIndex);
+                    AddEmptyTriangle(triangleIndex);
                 }
             }
             else if (holeCount == 0)
             {
                 if (IsFlipped(x0y0.Value, x0y1.Value, x1y0.Value, x1y1.Value))
                 {
-                    this.AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x1y1.Value);
+                    AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x1y1.Value);
                     triangleIndex++;
-                    this.AddTriangle(triangleIndex, x1y1.Value, x0y1.Value, x0y0.Value);
+                    AddTriangle(triangleIndex, x1y1.Value, x0y1.Value, x0y0.Value);
                 }
                 else
                 {
-                    this.AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x0y1.Value);
+                    AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x0y1.Value);
                     triangleIndex++;
-                    this.AddTriangle(triangleIndex, x1y0.Value, x1y1.Value, x0y1.Value);
+                    AddTriangle(triangleIndex, x1y0.Value, x1y1.Value, x0y1.Value);
                 }
             }
             else
             {
-                this.AddEmptyTriangle(triangleIndex);
+                AddEmptyTriangle(triangleIndex);
                 triangleIndex++;
-                this.AddEmptyTriangle(triangleIndex);
+                AddEmptyTriangle(triangleIndex);
             }
+        }
+
+        public void FinalizeMesh()
+        {
         }
 
         private uint SubCellIndex(Vector2i cellInGroup, Vector2i subdivisionCell)
         {
-            uint cellIndex = (uint) (cellInGroup.X + cellInGroup.Y * _cellInGroupCount.X);
+            var cellIndex = (uint) (cellInGroup.X + cellInGroup.Y * _cellInGroupCount.X);
 
             uint subCellIndex;
             if (_meshSubdivision == 1)
@@ -278,10 +293,6 @@ namespace Votyra.Core.TerrainMeshes
             _uv[pointIndex] = uvC;
             _normals[pointIndex] = normal;
             pointIndex++;
-        }
-
-        public void FinalizeMesh()
-        {
         }
     }
 }

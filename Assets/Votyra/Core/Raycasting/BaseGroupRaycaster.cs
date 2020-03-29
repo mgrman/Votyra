@@ -1,22 +1,20 @@
 using System;
-using Votyra.Core.Images;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
-using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Raycasting
 {
     public abstract class BaseGroupRaycaster : IRaycaster
     {
-        private readonly float maxDistance = 500; //TODO get from camera
-        private readonly int maxIterations;
-        private readonly ITerrainVertexPostProcessor _terrainVertexPostProcessor;
         private readonly Vector2i _cellInGroupCount;
         private readonly ITerrainRepository2i _manager;
+        private readonly ITerrainVertexPostProcessor _terrainVertexPostProcessor;
+        private readonly float maxDistance = 500; //TODO get from camera
+        private readonly int maxIterations;
 
-        public BaseGroupRaycaster(ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator=null)
+        public BaseGroupRaycaster(ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
         {
             _terrainVertexPostProcessor = terrainVertexPostProcessor;
             raycasterAggregator?.Attach(this);
@@ -106,15 +104,25 @@ namespace Votyra.Core.Raycasting
             {
                 counter--;
                 if (meshPoint.X > area.Max.X)
+                {
                     cell += new Vector2i(1, 0);
+                }
                 else if (meshPoint.X < area.Min.X)
+                {
                     cell -= new Vector2i(1, 0);
+                }
                 else if (meshPoint.Y > area.Max.Y)
+                {
                     cell += new Vector2i(0, 1);
+                }
                 else if (meshPoint.Y < area.Min.Y)
+                {
                     cell -= new Vector2i(0, 1);
+                }
                 else
+                {
                     throw new InvalidOperationException();
+                }
 
                 area = MeshCellArea(cell);
             }
@@ -130,24 +138,26 @@ namespace Votyra.Core.Raycasting
 
         private Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
 
-        private Area2f MeshGroupArea(Vector2i group) =>
-            Area2f.FromMinAndMax(MeshCellArea(group * _cellInGroupCount)
-                    .Min,
-                MeshCellArea((group + Vector2i.One) * _cellInGroupCount - Vector2i.One)
-                    .Max);
+        private Area2f MeshGroupArea(Vector2i group) => Area2f.FromMinAndMax(MeshCellArea(group * _cellInGroupCount)
+                .Min,
+            MeshCellArea((group + Vector2i.One) * _cellInGroupCount - Vector2i.One)
+                .Max);
 
         private Vector2f ProcessVertex(Vector2f point)
         {
             if (_terrainVertexPostProcessor == null)
+            {
                 return point;
+            }
+
             return _terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
                 .XY();
         }
 
         private Vector2i GetGroup(Vector2i cell)
         {
-            var x = cell.X / _cellInGroupCount.X - ((cell.X < 0 && cell.X % _cellInGroupCount.X != 0) ? 1 : 0);
-            var y = cell.Y / _cellInGroupCount.Y - ((cell.Y < 0 && cell.Y % _cellInGroupCount.Y != 0) ? 1 : 0);
+            var x = cell.X / _cellInGroupCount.X - (cell.X < 0 && cell.X % _cellInGroupCount.X != 0 ? 1 : 0);
+            var y = cell.Y / _cellInGroupCount.Y - (cell.Y < 0 && cell.Y % _cellInGroupCount.Y != 0 ? 1 : 0);
             return new Vector2i(x, y);
         }
 

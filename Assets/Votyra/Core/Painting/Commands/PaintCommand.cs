@@ -33,10 +33,14 @@ namespace Votyra.Core.Painting.Commands
         {
             var now = DateTime.UtcNow;
             if (now < _clickLimit && (_lastInvocation == null || (_lastInvocation.Value - cell).ManhattanMagnitude() < 3))
+            {
                 return;
+            }
 
             if (_lastInvocation == null)
+            {
                 _clickLimit = now + ClickDelay;
+            }
 
             Path2iUtils.InvokeOnPath(_lastInvocation, cell, Invoke);
 
@@ -66,7 +70,9 @@ namespace Votyra.Core.Painting.Commands
             {
                 var givenArea = image.Area;
                 if (!givenArea.Contains(cell))
+                {
                     return;
+                }
 
                 PrepareWithClickedValue(image[cell]);
                 var min = givenArea.Min;

@@ -12,24 +12,22 @@ namespace Votyra.Plannar
     //TODO: move to floats
     public class FrameData2iProvider : IFrameDataProvider2i, ITickable
     {
+        private readonly Vector3[] _frustumCornersUnity = new Vector3[4];
         private readonly IImage2fPostProcessor _image2fPostProcessor;
         private readonly IImage2fProvider _imageProvider;
         private readonly IInterpolationConfig _interpolationConfig;
         private readonly IMask2eProvider _maskProvider;
         private readonly int _meshTopologyDistance;
+
+        private readonly Plane[] _planesUnity = new Plane[6];
         private readonly GameObject _root;
         private readonly ITerrainConfig _terrainConfig;
 
+        private byte _frameDataSubscriberCount;
+
+        private readonly IFrameData2iPool _pool;
+
         private Matrix4x4f _previousCameraMatrix;
-
-        private IFrameData2iPool _pool;
-
-        private readonly Plane[] _planesUnity = new Plane[6];
-        private readonly Vector3[] _frustumCornersUnity = new Vector3[4];
-
-        private byte _frameDataSubscriberCount = 0;
-
-        private event Action<ArcResource<IFrameData2i>> _frameData;
 
         [Inject]
         public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [InjectOptional] IMask2eProvider maskProvider, [Inject(Id = "root")] GameObject root, IFrameData2iPool pool)
@@ -53,9 +51,13 @@ namespace Votyra.Plannar
 
                 var data = GetCurrentFrameData(false);
                 if (data == null)
+                {
                     return;
+                }
+
                 value.Invoke(data);
             }
+
             remove
             {
                 _frameData -= value;
@@ -67,14 +69,19 @@ namespace Votyra.Plannar
         {
             var data = GetCurrentFrameData(true);
             if (data == null)
+            {
                 return;
-            
-            for (int i = 1; i < _frameDataSubscriberCount; i++)
+            }
+
+            for (var i = 1; i < _frameDataSubscriberCount; i++)
             {
                 data.Activate();
             }
+
             _frameData?.Invoke(data);
         }
+
+        private event Action<ArcResource<IFrameData2i>> _frameData;
 
         private ArcResource<IFrameData2i> GetCurrentFrameData(bool computedOnce)
         {
@@ -83,7 +90,9 @@ namespace Votyra.Plannar
 
             var cameraLocalToWorldMatrix = camera.transform.localToWorldMatrix.ToMatrix4x4f();
             if (computedOnce && cameraLocalToWorldMatrix == _previousCameraMatrix && (image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero)
+            {
                 return null;
+            }
 
             _previousCameraMatrix = cameraLocalToWorldMatrix;
 
@@ -91,7 +100,7 @@ namespace Votyra.Plannar
             var frameData = frameDataContainer.Value as IPoolableFrameData2i;
             var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
             GeometryUtility.CalculateFrustumPlanes(localToProjection, _planesUnity);
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 frameData.CameraPlanes[i] = _planesUnity[i]
                     .ToPlane3f();

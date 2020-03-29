@@ -87,12 +87,19 @@ namespace Votyra.Core.Models
         }
 
         public bool Data_x0y0z0 => (Data & Mask_x0y0z0) != 0;
+
         public bool Data_x0y0z1 => (Data & Mask_x0y0z1) != 0;
+
         public bool Data_x0y1z0 => (Data & Mask_x0y1z0) != 0;
+
         public bool Data_x0y1z1 => (Data & Mask_x0y1z1) != 0;
+
         public bool Data_x1y0z0 => (Data & Mask_x1y0z0) != 0;
+
         public bool Data_x1y0z1 => (Data & Mask_x1y0z1) != 0;
+
         public bool Data_x1y1z0 => (Data & Mask_x1y1z0) != 0;
+
         public bool Data_x1y1z1 => (Data & Mask_x1y1z1) != 0;
 
         public int TrueCount => NumberOfSetBits(Data);
@@ -144,21 +151,44 @@ namespace Votyra.Core.Models
         public IEnumerable<Vector3i> GetPointsWithValue(bool value)
         {
             if (Data_x0y0z0 == value)
+            {
                 yield return new Vector3i(0, 0, 0);
+            }
+
             if (Data_x0y0z1 == value)
+            {
                 yield return new Vector3i(0, 0, 1);
+            }
+
             if (Data_x0y1z0 == value)
+            {
                 yield return new Vector3i(0, 1, 0);
+            }
+
             if (Data_x0y1z1 == value)
+            {
                 yield return new Vector3i(0, 1, 1);
+            }
+
             if (Data_x1y0z0 == value)
+            {
                 yield return new Vector3i(1, 0, 0);
+            }
+
             if (Data_x1y0z1 == value)
+            {
                 yield return new Vector3i(1, 0, 1);
+            }
+
             if (Data_x1y1z0 == value)
+            {
                 yield return new Vector3i(1, 1, 0);
+            }
+
             if (Data_x1y1z1 == value)
+            {
                 yield return new Vector3i(1, 1, 1);
+            }
         }
 
         public SampledData3b GetRotatedXY(float angleDeg)
@@ -273,15 +303,16 @@ namespace Votyra.Core.Models
                             var rotatedThis = GetTransformed(finalMatrix);
 
                             if ((rotatedThis.Data & that.Data) == rotatedThis.Data)
+                            {
                                 yield return finalMatrix;
+                            }
                         }
                     }
                 }
             }
         }
 
-        public string ToCubeString() =>
-            $@"
+        public string ToCubeString() => $@"
               {(Data_x0y1z1 ? 1 : 0)}-----{(Data_x1y1z1 ? 1 : 0)}
              /|    /|
             {(Data_x0y0z1 ? 1 : 0)}-+---{(Data_x1y0z1 ? 1 : 0)} |

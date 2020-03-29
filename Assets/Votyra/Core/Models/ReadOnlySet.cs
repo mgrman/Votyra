@@ -14,13 +14,11 @@ namespace Votyra.Core.Models
 
             public bool Contains(T value) => false;
 
-            public IEnumerator<T> GetEnumerator() =>
-                Enumerable.Empty<T>()
-                    .GetEnumerator();
+            public IEnumerator<T> GetEnumerator() => Enumerable.Empty<T>()
+                .GetEnumerator();
 
-            IEnumerator IEnumerable.GetEnumerator() =>
-                Enumerable.Empty<T>()
-                    .GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => Enumerable.Empty<T>()
+                .GetEnumerator();
         }
     }
 }

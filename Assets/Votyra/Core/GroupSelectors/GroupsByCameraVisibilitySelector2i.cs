@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 
@@ -7,8 +6,8 @@ namespace Votyra.Core.GroupSelectors
 {
     public class GroupsByCameraVisibilitySelector2i : IGroupsByCameraVisibilitySelector2i
     {
-        private Range2i _previousArea = Range2i.Zero;
         private readonly Vector2i _cellInGroupCount;
+        private Range2i _previousArea = Range2i.Zero;
 
         public GroupsByCameraVisibilitySelector2i(ITerrainConfig config)
         {
@@ -19,7 +18,10 @@ namespace Votyra.Core.GroupSelectors
         {
             var options = optionsResource.Value;
             if (options == null)
+            {
                 return;
+            }
+
             var planes = options.CameraPlanes;
             var frustumCorners = options.CameraFrustumCorners;
             var cameraPosition = options.CameraRay.Origin;

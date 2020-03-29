@@ -13,14 +13,11 @@ namespace Votyra.Core.Models
         X0Y0 = X0 | Y0,
         X0Y1 = X0 | Y1,
         X1Y0 = X1 | Y0,
-        X1Y1 = X1 | Y1,
+        X1Y1 = X1 | Y1
     }
 
     public static class RectangleSideExtensions
     {
-        public static bool IsInSegment(this RectangleSegment rectangleSegment, RectangleSegment flagToCheck)
-        {
-            return (rectangleSegment & flagToCheck) != 0;
-        }
+        public static bool IsInSegment(this RectangleSegment rectangleSegment, RectangleSegment flagToCheck) => (rectangleSegment & flagToCheck) != 0;
     }
 }

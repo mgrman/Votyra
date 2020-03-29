@@ -10,13 +10,13 @@ namespace Votyra.Core.Images.Constraints
     {
         private static readonly IComparer<float> DefaultComparer = Comparer<float>.Default;
         private static readonly IComparer<float> InvertedComparer = Comparer<float>.Create((a, b) => -DefaultComparer.Compare(a, b));
+        private readonly Func<Vector2i, float> _getMaxValue;
+
+        private readonly Func<Vector2i, float> _getMinValue;
+        private readonly PrioritySetQueue<Vector2i, float> _queue = new PrioritySetQueue<Vector2i, float>(EqualityComparer<Vector2i>.Default);
 
         private IComparer<float> _comparer;
         private Func<Vector2i, float> _getValue;
-
-        private readonly Func<Vector2i, float> _getMinValue;
-        private readonly Func<Vector2i, float> _getMaxValue;
-        private readonly PrioritySetQueue<Vector2i, float> _queue = new PrioritySetQueue<Vector2i, float>(EqualityComparer<Vector2i>.Default);
 
         public SimpleTycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
             : base(constraintConfig, logger)
@@ -43,17 +43,11 @@ namespace Votyra.Core.Images.Constraints
             base.Constrain();
         }
 
-        private float GetMaxValue(Vector2i cell)
-        {
-            return _editableMatrix.SampleCell(cell)
-                .Max;
-        }
+        private float GetMaxValue(Vector2i cell) => _editableMatrix.SampleCell(cell)
+            .Max;
 
-        private float GetMinValue(Vector2i cell)
-        {
-            return _editableMatrix.SampleCell(cell)
-                .Min;
-        }
+        private float GetMinValue(Vector2i cell) => _editableMatrix.SampleCell(cell)
+            .Min;
 
         protected override void ConstrainCell(Vector2i seedCell)
         {
@@ -103,13 +97,18 @@ namespace Votyra.Core.Images.Constraints
                         for (var offsetY = -areaSize; offsetY <= areaSize; offsetY++)
                         {
                             if (offsetX == 0 && offsetY == 0)
+                            {
                                 continue;
+                            }
+
                             var ix = cell.X + offsetX;
                             var iy = cell.Y + offsetY;
                             var newCellToCheck = new Vector2i(ix, iy);
                             var newCellToCheckValue = _getValue(cell);
                             if (_editableMatrix.ContainsIndex(newCellToCheck))
+                            {
                                 _queue.Add(newCellToCheck, newCellToCheckValue);
+                            }
                         }
                     }
                 }

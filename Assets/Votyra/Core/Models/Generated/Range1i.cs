@@ -25,15 +25,23 @@ namespace Votyra.Core.Models
             Min = Vector1iUtils.Max(min, MinValue);
             Max = Vector1iUtils.Min(max, MaxValue);
             if (Size.AnyNegative())
+            {
                 throw new InvalidOperationException($"{nameof(Range1i)} '{this}' cannot have a size be zero or negative!");
+            }
+
             if (Size.AnyZero())
+            {
                 Max = Min;
+            }
         }
 
         public Range1i ExtendBothDirections(int distance)
         {
             if (IsEmpty)
+            {
                 return this;
+            }
+
             return FromMinAndMax(Min - distance, Max + distance);
         }
 
@@ -42,7 +50,10 @@ namespace Votyra.Core.Models
         public static Range1i FromMinAndSize(int min, int size)
         {
             if (size.AnyNegative())
+            {
                 throw new InvalidOperationException($"When creating {nameof(Range1i)} using min '{min}' and size '{size}', size cannot have a negative coordinate!");
+            }
+
             return new Range1i(min, min + size);
         }
 
@@ -51,21 +62,30 @@ namespace Votyra.Core.Models
         public static Range1i FromCenterAndExtents(int center, int extents)
         {
             if (extents.AnyNegative())
+            {
                 throw new InvalidOperationException($"When creating {nameof(Range1i)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
+            }
+
             return new Range1i(center - extents + 1, center + extents);
         }
 
         public Area1i? ToArea1i()
         {
             if (Size == Vector1i.Zero)
+            {
                 return null;
+            }
+
             return Area1i.FromMinAndMax(Min, Max - Vector1i.One);
         }
 
         public Area1f? ToArea1f()
         {
             if (Size == Vector1i.Zero)
+            {
                 return null;
+            }
+
             return Area1f.FromMinAndMax(Min.ToVector1f(), (Max - Vector1i.One).ToVector1f());
         }
 
@@ -78,7 +98,9 @@ namespace Votyra.Core.Models
         public bool Overlaps(Range1i that)
         {
             if (Size == Vector1i.Zero || that.Size == Vector1i.Zero)
+            {
                 return false;
+            }
 
             return Min < that.Max && that.Min < Max;
         }
@@ -86,10 +108,14 @@ namespace Votyra.Core.Models
         public Range1i CombineWith(Range1i that)
         {
             if (Size == Vector1i.Zero)
+            {
                 return that;
+            }
 
             if (that.Size == Vector1i.Zero)
+            {
                 return this;
+            }
 
             var min = Vector1iUtils.Min(Min, that.Min);
             var max = Vector1iUtils.Max(Max, that.Max);
@@ -99,7 +125,9 @@ namespace Votyra.Core.Models
         public Range1i CombineWith(int point)
         {
             if (Contains(point))
+            {
                 return this;
+            }
 
             var min = Vector1iUtils.Min(Min, point);
             var max = Vector1iUtils.Max(Max, point);
@@ -110,7 +138,9 @@ namespace Votyra.Core.Models
         public Range1i IntersectWith(Range1i that)
         {
             if (Size == Vector1i.Zero || that.Size == Vector1i.Zero)
+            {
                 return Zero;
+            }
 
             var min = Vector1iUtils.Max(Min, that.Min);
             var max = Vector1iUtils.Max(Vector1iUtils.Min(Max, that.Max), min);
@@ -121,16 +151,24 @@ namespace Votyra.Core.Models
         public Range1i UnionWith(Range1i? that)
         {
             if (that == null)
+            {
                 return this;
+            }
+
             return UnionWith(that.Value);
         }
 
         public Range1i UnionWith(Range1i that)
         {
             if (Size == Vector1i.Zero)
+            {
                 return that;
+            }
+
             if (that.Size == Vector1i.Zero)
+            {
                 return this;
+            }
 
             var min = Vector1iUtils.Min(Min, that.Min);
             var max = Vector1iUtils.Max(Max, that.Max);
@@ -145,7 +183,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Range1i))
+            {
                 return false;
+            }
 
             return Equals((Range1i) obj);
         }

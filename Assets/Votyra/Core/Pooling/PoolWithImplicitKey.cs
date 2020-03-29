@@ -1,28 +1,25 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Votyra.Core.Models.ObjectPool;
-using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.Pooling
 {
     public class PoolWithImplicitKey<TKey, TValue> : IRawPool<TKey, TValue>
     {
-        private readonly object _lock=new object();
         private readonly Dictionary<TKey, List<TValue>> _dictionary = new Dictionary<TKey, List<TValue>>();
         private readonly Func<TKey, TValue> _factory;
         private readonly Func<TValue, TKey> _getKey;
+        private readonly object _lock = new object();
 
-
-        public int PoolCount { get; private set; }
-        public int ActiveCount { get; private set; }
-        
-        public PoolWithImplicitKey(Func<TKey, TValue> factory,Func<TValue,TKey> getKey)
+        public PoolWithImplicitKey(Func<TKey, TValue> factory, Func<TValue, TKey> getKey)
         {
             _factory = factory;
             _getKey = getKey;
         }
-        
+
+        public int PoolCount { get; private set; }
+
+        public int ActiveCount { get; private set; }
+
         public TValue GetRaw(TKey key)
         {
             ActiveCount++;
@@ -68,6 +65,5 @@ namespace Votyra.Core.Pooling
                 list.Add(value);
             }
         }
-
     }
 }

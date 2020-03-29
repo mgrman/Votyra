@@ -50,7 +50,10 @@ namespace Votyra.Core.Models
         public static Area6f FromCenterAndExtents(Vector6f center, Vector6f extents)
         {
             if (extents.AnyNegative())
+            {
                 throw new InvalidOperationException($"When creating {nameof(Area6f)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
+            }
+
             return new Area6f(center - extents, center + extents);
         }
 
@@ -65,7 +68,9 @@ namespace Votyra.Core.Models
         public Area6f IntersectWith(Area6f that)
         {
             if (Size == Vector6f.Zero || that.Size == Vector6f.Zero)
+            {
                 return Zero;
+            }
 
             var min = Vector6fUtils.Max(Min, that.Min);
             var max = Vector6fUtils.Max(Vector6fUtils.Min(Max, that.Max), min);
@@ -86,10 +91,14 @@ namespace Votyra.Core.Models
         public Area6f CombineWith(Area6f that)
         {
             if (Size == Vector6f.Zero)
+            {
                 return that;
+            }
 
             if (that.Size == Vector6f.Zero)
+            {
                 return this;
+            }
 
             var min = Vector6fUtils.Min(Min, that.Min);
             var max = Vector6fUtils.Max(Max, that.Max);
@@ -101,7 +110,9 @@ namespace Votyra.Core.Models
         public Area6f? UnionWith(Area6f? range)
         {
             if (range == null)
+            {
                 return this;
+            }
 
             return UnionWith(range.Value);
         }
@@ -109,9 +120,15 @@ namespace Votyra.Core.Models
         public Area6f UnionWith(Vector6f value)
         {
             if (value < Min)
+            {
                 return FromMinAndMax(value, Max);
+            }
+
             if (value > Max)
+            {
                 return FromMinAndMax(Min, value);
+            }
+
             return this;
         }
 
@@ -120,7 +137,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Area6f))
+            {
                 return false;
+            }
 
             return Equals((Area6f) obj);
         }

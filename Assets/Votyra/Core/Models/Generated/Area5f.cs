@@ -48,7 +48,10 @@ namespace Votyra.Core.Models
         public static Area5f FromCenterAndExtents(Vector5f center, Vector5f extents)
         {
             if (extents.AnyNegative())
+            {
                 throw new InvalidOperationException($"When creating {nameof(Area5f)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
+            }
+
             return new Area5f(center - extents, center + extents);
         }
 
@@ -63,7 +66,9 @@ namespace Votyra.Core.Models
         public Area5f IntersectWith(Area5f that)
         {
             if (Size == Vector5f.Zero || that.Size == Vector5f.Zero)
+            {
                 return Zero;
+            }
 
             var min = Vector5fUtils.Max(Min, that.Min);
             var max = Vector5fUtils.Max(Vector5fUtils.Min(Max, that.Max), min);
@@ -84,10 +89,14 @@ namespace Votyra.Core.Models
         public Area5f CombineWith(Area5f that)
         {
             if (Size == Vector5f.Zero)
+            {
                 return that;
+            }
 
             if (that.Size == Vector5f.Zero)
+            {
                 return this;
+            }
 
             var min = Vector5fUtils.Min(Min, that.Min);
             var max = Vector5fUtils.Max(Max, that.Max);
@@ -99,7 +108,9 @@ namespace Votyra.Core.Models
         public Area5f? UnionWith(Area5f? range)
         {
             if (range == null)
+            {
                 return this;
+            }
 
             return UnionWith(range.Value);
         }
@@ -107,9 +118,15 @@ namespace Votyra.Core.Models
         public Area5f UnionWith(Vector5f value)
         {
             if (value < Min)
+            {
                 return FromMinAndMax(value, Max);
+            }
+
             if (value > Max)
+            {
                 return FromMinAndMax(Min, value);
+            }
+
             return this;
         }
 
@@ -118,7 +135,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Area5f))
+            {
                 return false;
+            }
 
             return Equals((Area5f) obj);
         }

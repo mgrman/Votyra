@@ -8,7 +8,9 @@ namespace Votyra.Core.Utils
         public static Task RunOrNot(Action action, bool async)
         {
             if (async)
+            {
                 return Task.Run(action);
+            }
 
             action();
             return Task.CompletedTask;

@@ -35,10 +35,14 @@ namespace Votyra.Core.Painting.Commands
         {
             var now = DateTime.UtcNow;
             if (now < _clickLimit && (_lastInvocation == null || (_lastInvocation.Value - cell).ManhattanMagnitude() < 3))
+            {
                 return;
+            }
 
             if (_lastInvocation == null)
+            {
                 _clickLimit = now + ClickDelay;
+            }
 
             Path2iUtils.InvokeOnPath(_lastInvocation, cell, Invoke);
 
@@ -63,14 +67,16 @@ namespace Votyra.Core.Painting.Commands
 
             _logger.LogMessage($"invoke on {cell}");
 
-            var requestedArea = Range2i.FromMinAndMax(cell - _maxDistance, cell + _maxDistance+1);
+            var requestedArea = Range2i.FromMinAndMax(cell - _maxDistance, cell + _maxDistance + 1);
             using (var image = _editableImage.RequestAccess(requestedArea))
             {
                 using (var mask = _editableMask?.RequestAccess(requestedArea))
                 {
                     var givenArea = image.Area.IntersectWith(mask.Area);
                     if (!givenArea.Contains(cell))
+                    {
                         return;
+                    }
 
                     PrepareWithClickedValue(image[cell]);
                     var min = givenArea.Min;

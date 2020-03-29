@@ -20,9 +20,14 @@ namespace Votyra.Core.Models
             Min = min;
             Max = max;
             if (Size.AnyNegative())
+            {
                 throw new InvalidOperationException($"{nameof(Area2i)} '{this}' cannot have a size be zero or negative!");
+            }
+
             if (Size.AnyZero())
+            {
                 Max = Min;
+            }
         }
 
         public Vector2i Size => Max - Min + Vector2i.One;
@@ -30,14 +35,20 @@ namespace Votyra.Core.Models
         public static Area2i FromCenterAndExtents(Vector2i center, Vector2i extents)
         {
             if (extents.AnyNegative())
+            {
                 throw new InvalidOperationException($"When creating {nameof(Area2i)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
+            }
+
             return new Area2i(center - extents, center + extents);
         }
 
         public static Area2i FromMinAndSize(Vector2i min, Vector2i size)
         {
             if (size.AnyNegative())
+            {
                 throw new InvalidOperationException($"When creating {nameof(Area2i)} using min '{min}' and size '{size}', size cannot have a negative coordinate!");
+            }
+
             return new Area2i(min, min + size);
         }
 
@@ -58,7 +69,9 @@ namespace Votyra.Core.Models
         public bool Overlaps(Area2i that)
         {
             if (Size == Vector2i.Zero || that.Size == Vector2i.Zero)
+            {
                 return false;
+            }
 
             return Min <= that.Max && that.Min <= Max;
         }
@@ -66,10 +79,14 @@ namespace Votyra.Core.Models
         public Area2i CombineWith(Area2i that)
         {
             if (Size == Vector2i.Zero)
+            {
                 return that;
+            }
 
             if (that.Size == Vector2i.Zero)
+            {
                 return this;
+            }
 
             var min = Vector2iUtils.Min(Min, that.Min);
             var max = Vector2iUtils.Max(Max, that.Max);
@@ -79,7 +96,9 @@ namespace Votyra.Core.Models
         public Area2i CombineWith(Vector2i point)
         {
             if (Contains(point))
+            {
                 return this;
+            }
 
             var min = Vector2iUtils.Min(Min, point);
             var max = Vector2iUtils.Max(Max, point);
@@ -90,7 +109,9 @@ namespace Votyra.Core.Models
         public Area2i IntersectWith(Area2i that)
         {
             if (Size == Vector2i.Zero || that.Size == Vector2i.Zero)
+            {
                 return Zero;
+            }
 
             var min = Vector2iUtils.Max(Min, that.Min);
             var max = Vector2iUtils.Max(Vector2iUtils.Min(Max, that.Max), min);
@@ -101,7 +122,9 @@ namespace Votyra.Core.Models
         public Area2i UnionWith(Area2i? that)
         {
             if (that == null)
+            {
                 return this;
+            }
 
             return UnionWith(that.Value);
         }
@@ -109,7 +132,9 @@ namespace Votyra.Core.Models
         public Area2i UnionWith(Area2i that)
         {
             if (Size == Vector2i.Zero || that.Size == Vector2i.Zero)
+            {
                 return Zero;
+            }
 
             var min = Vector2iUtils.Min(Min, that.Min);
             var max = Vector2iUtils.Max(Max, that.Max);
@@ -122,7 +147,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Area2i))
+            {
                 return false;
+            }
 
             return Equals((Area2i) obj);
         }

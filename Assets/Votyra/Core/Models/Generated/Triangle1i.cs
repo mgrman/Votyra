@@ -55,7 +55,9 @@ namespace Votyra.Core.Models
                 foreach (var point in x.Points)
                 {
                     if (!y.Points.Contains(point))
+                    {
                         return false;
+                    }
                 }
 
                 return true;

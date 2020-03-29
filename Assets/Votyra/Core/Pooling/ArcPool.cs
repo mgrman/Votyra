@@ -6,17 +6,18 @@ namespace Votyra.Core.Pooling
 {
     public class ArcPool<TValue> : IArcPool<TValue>
     {
-        private readonly object _lock = new object();
-        private readonly List<ArcResource<TValue>> _list = new List<ArcResource<TValue>>();
         private readonly Func<TValue> _factory;
-
-        public int PoolCount { get; private set; }
-        public int ActiveCount { get; private set; }
+        private readonly List<ArcResource<TValue>> _list = new List<ArcResource<TValue>>();
+        private readonly object _lock = new object();
 
         public ArcPool(Func<TValue> factory)
         {
             _factory = factory;
         }
+
+        public int PoolCount { get; private set; }
+
+        public int ActiveCount { get; private set; }
 
         public ArcResource<TValue> Get()
         {

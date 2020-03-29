@@ -4,10 +4,9 @@ namespace Votyra.Core.Pooling
 {
     public class ArcResource<TValue> : IDisposable
     {
-        private readonly object _lock=new object();
+        private readonly object _lock = new object();
         private readonly Action<ArcResource<TValue>> _onDispose;
         private int _activeCounter;
-        public TValue Value { get; }
 
         public ArcResource(TValue value, Action<ArcResource<TValue>> onReturn)
         {
@@ -16,14 +15,7 @@ namespace Votyra.Core.Pooling
             _activeCounter = 0;
         }
 
-        public ArcResource<TValue> Activate()
-        {
-            lock (_lock)
-            {
-                _activeCounter++;
-                return this;
-            }
-        }
+        public TValue Value { get; }
 
         public void Dispose()
         {
@@ -37,6 +29,15 @@ namespace Votyra.Core.Pooling
             if (invoke)
             {
                 _onDispose?.Invoke(this);
+            }
+        }
+
+        public ArcResource<TValue> Activate()
+        {
+            lock (_lock)
+            {
+                _activeCounter++;
+                return this;
             }
         }
     }

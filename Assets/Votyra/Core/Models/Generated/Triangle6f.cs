@@ -57,7 +57,9 @@ namespace Votyra.Core.Models
                 foreach (var xP in x.Points)
                 {
                     if (!y.Points.Any(yP => (xP - yP).SqrMagnitude() < 0.1f))
+                    {
                         return false;
+                    }
                 }
 
                 return true;
@@ -72,7 +74,10 @@ namespace Votyra.Core.Models
         public static IEnumerable<Triangle6f> ChangeOrderIfTrue(this IEnumerable<Triangle6f> triangles, bool value)
         {
             if (value)
+            {
                 return triangles.Select(o => o.GetReversedOrder());
+            }
+
             return triangles;
         }
     }

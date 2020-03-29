@@ -14,12 +14,12 @@ namespace Votyra.Core.Models
         public TileMap2i(IEnumerable<SampledData2i> templates, IThreadSafeLogger logger)
         {
             _logger = logger;
-// #if VERBOSE
-//             foreach (var template in templates)
-//             {
-//                 _logger.LogMessage($"{GetType().Name}-Template {template}");
-//             }
-// #endif
+            // #if VERBOSE
+            //             foreach (var template in templates)
+            //             {
+            //                 _logger.LogMessage($"{GetType().Name}-Template {template}");
+            //             }
+            // #endif
             Templates = templates.ToArray();
             ValueRange = Templates.RangeUnion();
 
@@ -61,7 +61,9 @@ namespace Votyra.Core.Models
 #else
             SampledData2i value;
             if (_tileMap.TryGetValue(key, out value))
+            {
                 return value;
+            }
 
             _logger.LogMessage($"{GetType().Name} missing tile {key}");
             return key;

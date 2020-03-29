@@ -7,11 +7,10 @@ namespace Votyra.Core.Models
 {
     public static class TileMap2iExtensions
     {
-        public static TileMap2i CreateExpandedTileMap2i(this IEnumerable<SampledData2i> templates, float scaleFactor, IThreadSafeLogger logger) =>
-            templates.ScaleTemplates(scaleFactor)
-                .CreateVariantsOfUmbra()
-                .ExpandRotations()
-                .CreateTileMap2i(logger);
+        public static TileMap2i CreateExpandedTileMap2i(this IEnumerable<SampledData2i> templates, float scaleFactor, IThreadSafeLogger logger) => templates.ScaleTemplates(scaleFactor)
+            .CreateVariantsOfUmbra()
+            .ExpandRotations()
+            .CreateTileMap2i(logger);
 
         public static TileMap2i CreateTileMap2i(this IEnumerable<SampledData2i> templates, IThreadSafeLogger logger) => new TileMap2i(templates, logger);
 
@@ -52,7 +51,13 @@ namespace Votyra.Core.Models
         {
             return templates.SelectMany(template =>
                 {
-                    return new[] {template, template.GetRotated(1), template.GetRotated(2), template.GetRotated(3)};
+                    return new[]
+                    {
+                        template,
+                        template.GetRotated(1),
+                        template.GetRotated(2),
+                        template.GetRotated(3)
+                    };
                 })
                 .Distinct()
                 .ToArray();

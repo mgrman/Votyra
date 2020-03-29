@@ -1,30 +1,21 @@
 using System;
 using System.Collections.Generic;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 
 namespace Votyra.Core.TerrainMeshes
 {
     public class ExpandingTerrainMesh : IGeneralMesh
     {
-        private readonly Func<Vector3f, Vector3f> _vertexPostProcessor;
-        private readonly Func<Vector2f, Vector2f> _uVAdjustor;
         private readonly List<int> _indices;
         private readonly List<Vector3f> _normals;
         private readonly List<Vector2f> _uv;
+        private readonly Func<Vector2f, Vector2f> _uVAdjustor;
+        private readonly Func<Vector3f, Vector3f> _vertexPostProcessor;
         private readonly List<Vector3f> _vertices;
         private float _maxZ;
-        private float _minZ;
 
         private Area2f _meshBoundsXY;
-        public Area3f MeshBounds => Area3f.FromMinAndMax(_meshBoundsXY.Min.ToVector3f(_minZ), _meshBoundsXY.Max.ToVector3f(_maxZ));
-        public IReadOnlyList<Vector3f> Vertices => _vertices;
-        public IReadOnlyList<Vector3f> Normals => _normals;
-        public IReadOnlyList<Vector2f> UV => _uv;
-        public IReadOnlyList<int> Indices => _indices;
-        public uint TriangleCapacity => (uint)_vertices.Capacity / 3;
-        public uint TriangleCount => VertexCount / 3;
-        public uint VertexCount => (uint) _vertices.Count;
+        private float _minZ;
 
         public ExpandingTerrainMesh(Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
@@ -35,6 +26,22 @@ namespace Votyra.Core.TerrainMeshes
             _indices = new List<int>();
             _normals = new List<Vector3f>();
         }
+
+        public Area3f MeshBounds => Area3f.FromMinAndMax(_meshBoundsXY.Min.ToVector3f(_minZ), _meshBoundsXY.Max.ToVector3f(_maxZ));
+
+        public IReadOnlyList<Vector3f> Vertices => _vertices;
+
+        public IReadOnlyList<Vector3f> Normals => _normals;
+
+        public IReadOnlyList<Vector2f> UV => _uv;
+
+        public IReadOnlyList<int> Indices => _indices;
+
+        public uint TriangleCapacity => (uint) _vertices.Capacity / 3;
+
+        public uint TriangleCount => VertexCount / 3;
+
+        public uint VertexCount => (uint) _vertices.Count;
 
         public void Reset(Area3f area)
         {
@@ -76,7 +83,7 @@ namespace Votyra.Core.TerrainMeshes
             _maxZ = Math.Max(_maxZ, posB.Z);
             _maxZ = Math.Max(_maxZ, posC.Z);
 
-            _indices.Add((int)VertexCount);
+            _indices.Add((int) VertexCount);
             _vertices.Add(posA);
             _uv.Add(uvA);
             _normals.Add(normal);

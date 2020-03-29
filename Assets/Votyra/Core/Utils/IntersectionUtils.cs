@@ -1,6 +1,5 @@
 using System;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 
 namespace Votyra.Core.Utils
 {
@@ -38,17 +37,17 @@ namespace Votyra.Core.Utils
             var lineTo = line.Origin + line.Direction;
 
             // defining variables
-            float p1 = -(lineTo.X - lineFrom.X);
-            float p2 = -p1;
-            float p3 = -(lineTo.Y - lineFrom.Y);
-            float p4 = -p3;
+            var p1 = -(lineTo.X - lineFrom.X);
+            var p2 = -p1;
+            var p3 = -(lineTo.Y - lineFrom.Y);
+            var p4 = -p3;
 
-            float q1 = lineFrom.X - area.Min.X;
-            float q2 = area.Max.X - lineFrom.X;
-            float q3 = lineFrom.Y - area.Min.Y;
-            float q4 = area.Max.Y - lineFrom.Y;
+            var q1 = lineFrom.X - area.Min.X;
+            var q2 = area.Max.X - lineFrom.X;
+            var q3 = lineFrom.Y - area.Min.Y;
+            var q4 = area.Max.Y - lineFrom.Y;
 
-            if ((p1 == 0f && q1 < 0) || (p3 == 0f && q3 < 0))
+            if (p1 == 0f && q1 < 0 || p3 == 0f && q3 < 0)
             {
                 return Vector2f.NaN;
             }
@@ -101,8 +100,8 @@ namespace Votyra.Core.Utils
                 }
             }
 
-            float xn2 = lineFrom.X + p2 * rn2;
-            float yn2 = lineFrom.Y + p4 * rn2;
+            var xn2 = lineFrom.X + p2 * rn2;
+            var yn2 = lineFrom.Y + p4 * rn2;
 
             return new Vector2f(xn2, yn2);
         }
@@ -131,9 +130,13 @@ namespace Votyra.Core.Utils
             // If line 2 have zero Y component then we must calculate parameter for line 2 differently:
             float m;
             if (v2.Y != 0)
+            {
                 m = (ray.Origin.Y + rayParameter * v1.Y - line.From.Y) / v2.Y;
+            }
             else
+            {
                 m = (ray.Origin.X + rayParameter * v1.X - line.From.X) / v2.X;
+            }
 
             // If lines are both line segments we must check whether these lines intersect in the segments:
 

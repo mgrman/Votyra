@@ -11,6 +11,7 @@ namespace Votyra.Core.Images
         }
 
         public Material Material { get; }
+
         public Material MaterialWalls { get; }
 
         public static bool operator ==(MaterialConfig a, MaterialConfig b) => a?.Equals(b) ?? b?.Equals(a) ?? true;
@@ -20,7 +21,10 @@ namespace Votyra.Core.Images
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
+            {
                 return false;
+            }
+
             var that = obj as MaterialConfig;
 
             return Material == that.Material && MaterialWalls == that.MaterialWalls;

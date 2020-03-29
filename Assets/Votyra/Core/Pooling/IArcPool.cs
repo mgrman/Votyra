@@ -8,6 +8,7 @@ namespace Votyra.Core.Pooling
     public interface IRawPool<in TKey, TValue> : IPool
     {
         TValue GetRaw(TKey arg);
+
         void ReturnRaw(TValue value);
     }
 
@@ -15,16 +16,18 @@ namespace Votyra.Core.Pooling
     {
         ArcResource<TValue> Get();
     }
-    
+
     public interface IRawPool<TValue> : IPool
     {
         TValue GetRaw();
+
         void ReturnRaw(TValue value);
     }
 
     public interface IPool
     {
         int PoolCount { get; }
+
         int ActiveCount { get; }
     }
 }

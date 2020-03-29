@@ -5,12 +5,7 @@ namespace Votyra.Core.Raycasting
 {
     public class AggregatorRaycaster : IRaycaster, IRaycasterAggregator
     {
-        private List<IRaycaster> _raycasters=new List<IRaycaster>();
-
-        public void Attach(IRaycaster raycaster)
-        {
-            _raycasters.Add(raycaster);
-        }
+        private readonly List<IRaycaster> _raycasters = new List<IRaycaster>();
 
         public Vector3f Raycast(Ray3f cameraRay)
         {
@@ -22,7 +17,8 @@ namespace Votyra.Core.Raycasting
                     return res;
                 }
             }
-            return  Vector3f.NaN;
+
+            return Vector3f.NaN;
         }
 
         public float Raycast(Vector2f cameraRay)
@@ -37,6 +33,11 @@ namespace Votyra.Core.Raycasting
             }
 
             return float.NaN;
+        }
+
+        public void Attach(IRaycaster raycaster)
+        {
+            _raycasters.Add(raycaster);
         }
     }
 }

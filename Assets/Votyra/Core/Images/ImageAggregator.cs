@@ -9,8 +9,8 @@ namespace Votyra.Core.Images
     public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2i
     {
         private readonly IImageConfig _imageConfig;
-        private SortedDictionary<LayerId, EditableMatrixImage2f> _images = new SortedDictionary<LayerId, EditableMatrixImage2f>();
-        private SortedDictionary<LayerId, EditableMatrixMask2e> _masks = new SortedDictionary<LayerId, EditableMatrixMask2e>();
+        private readonly SortedDictionary<LayerId, EditableMatrixImage2f> _images = new SortedDictionary<LayerId, EditableMatrixImage2f>();
+        private readonly SortedDictionary<LayerId, EditableMatrixMask2e> _masks = new SortedDictionary<LayerId, EditableMatrixMask2e>();
         private MatrixImageAccessor _lastLayerImage;
 
         public ImageAggregator(IImageConfig imageConfig)
@@ -18,85 +18,15 @@ namespace Votyra.Core.Images
             _imageConfig = imageConfig;
         }
 
-        public void Initialize(LayerId layer, List<IImageConstraint2i> constraints)
-        {
-            _images[layer] = new EditableMatrixImage2f(_imageConfig, constraints);
-            _masks[layer] = new EditableMatrixMask2e(_imageConfig);
-        }
-
-        public IImage2f CreateImage(LayerId layer) =>
-            _images[layer]
-                .CreateImage();
-
-        public IMask2e CreateMask(LayerId layer) =>
-            _masks[layer]
-                .CreateMask();
-
-        public IEditableImageAccessor2f RequestAccess(LayerId layer, Range2i area)
-        {
-            var layerAccesors = new SortedDictionary<LayerId, IEditableImageAccessor2f>();
-            foreach (var image in _images)
-            {
-                layerAccesors[image.Key] = image.Value.RequestAccess(area);
-            }
-
-            var layerMaskAccesors = new SortedDictionary<LayerId, IEditableMaskAccessor2e>();
-            foreach (var mask in _masks)
-            {
-                layerMaskAccesors[mask.Key] = mask.Value.RequestAccess(area);
-            }
-
-            _lastLayerImage = new MatrixImageAccessor(layer, layerAccesors, layerMaskAccesors);
-            return _lastLayerImage;
-        }
-
-        private class MatrixImageAccessor : IEditableImageAccessor2f
-        {
-            public readonly LayerId _layer;
-            public SortedDictionary<LayerId, IEditableImageAccessor2f> _layerAccesors;
-            public SortedDictionary<LayerId, IEditableMaskAccessor2e> _layerMaskAccesors;
-
-            public MatrixImageAccessor(LayerId layer, SortedDictionary<LayerId, IEditableImageAccessor2f> layerAccesors, SortedDictionary<LayerId, IEditableMaskAccessor2e> layerMaskAccesors)
-            {
-                _layer = layer;
-                _layerAccesors = layerAccesors;
-                _layerMaskAccesors = layerMaskAccesors;
-            }
-
-            public Range2i Area =>
-                _layerAccesors[_layer]
-                    .Area;
-
-            public float this[Vector2i pos]
-            {
-                get => _layerAccesors[_layer][pos];
-                set
-                {
-                    var existingValue = _layerAccesors[_layer][pos];
-                    var dif = value - existingValue;
-
-                    _layerAccesors[_layer][pos] = value;
-                    foreach (var aboveLayer in _layerAccesors.SkipWhile(o => o.Key <= _layer))
-                    {
-                        aboveLayer.Value[pos] = aboveLayer.Value[pos] + dif;
-                    }
-                }
-            }
-
-            public void Dispose()
-            {
-                foreach (var layer in _layerAccesors)
-                {
-                    layer.Value.Dispose();
-                }
-            }
-        }
-
         void IImageConstraint2i.Initialize(IEditableImage2f image)
         {
         }
 
-        IEnumerable<int> IImageConstraint2i.Priorities => new[] {int.MinValue, int.MaxValue};
+        IEnumerable<int> IImageConstraint2i.Priorities => new[]
+        {
+            int.MinValue,
+            int.MaxValue
+        };
 
         Range2i IImageConstraint2i.FixImage(IEditableImage2f image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
@@ -131,6 +61,77 @@ namespace Votyra.Core.Images
             }
 
             return invalidatedImageArea;
+        }
+
+        public void Initialize(LayerId layer, List<IImageConstraint2i> constraints)
+        {
+            _images[layer] = new EditableMatrixImage2f(_imageConfig, constraints);
+            _masks[layer] = new EditableMatrixMask2e(_imageConfig);
+        }
+
+        public IImage2f CreateImage(LayerId layer) => _images[layer]
+            .CreateImage();
+
+        public IMask2e CreateMask(LayerId layer) => _masks[layer]
+            .CreateMask();
+
+        public IEditableImageAccessor2f RequestAccess(LayerId layer, Range2i area)
+        {
+            var layerAccesors = new SortedDictionary<LayerId, IEditableImageAccessor2f>();
+            foreach (var image in _images)
+            {
+                layerAccesors[image.Key] = image.Value.RequestAccess(area);
+            }
+
+            var layerMaskAccesors = new SortedDictionary<LayerId, IEditableMaskAccessor2e>();
+            foreach (var mask in _masks)
+            {
+                layerMaskAccesors[mask.Key] = mask.Value.RequestAccess(area);
+            }
+
+            _lastLayerImage = new MatrixImageAccessor(layer, layerAccesors, layerMaskAccesors);
+            return _lastLayerImage;
+        }
+
+        private class MatrixImageAccessor : IEditableImageAccessor2f
+        {
+            public readonly LayerId _layer;
+            public readonly SortedDictionary<LayerId, IEditableImageAccessor2f> _layerAccesors;
+            public SortedDictionary<LayerId, IEditableMaskAccessor2e> _layerMaskAccesors;
+
+            public MatrixImageAccessor(LayerId layer, SortedDictionary<LayerId, IEditableImageAccessor2f> layerAccesors, SortedDictionary<LayerId, IEditableMaskAccessor2e> layerMaskAccesors)
+            {
+                _layer = layer;
+                _layerAccesors = layerAccesors;
+                _layerMaskAccesors = layerMaskAccesors;
+            }
+
+            public Range2i Area => _layerAccesors[_layer]
+                .Area;
+
+            public float this[Vector2i pos]
+            {
+                get => _layerAccesors[_layer][pos];
+                set
+                {
+                    var existingValue = _layerAccesors[_layer][pos];
+                    var dif = value - existingValue;
+
+                    _layerAccesors[_layer][pos] = value;
+                    foreach (var aboveLayer in _layerAccesors.SkipWhile(o => o.Key <= _layer))
+                    {
+                        aboveLayer.Value[pos] = aboveLayer.Value[pos] + dif;
+                    }
+                }
+            }
+
+            public void Dispose()
+            {
+                foreach (var layer in _layerAccesors)
+                {
+                    layer.Value.Dispose();
+                }
+            }
         }
     }
 }

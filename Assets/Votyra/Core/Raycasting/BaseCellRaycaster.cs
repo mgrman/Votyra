@@ -15,10 +15,10 @@ namespace Votyra.Core.Raycasting
         private static readonly Vector2i X1Offset = new Vector2i(1, 0);
         private static readonly Vector2i X0Offset = new Vector2i(-1, 0);
         private readonly ITerrainVertexPostProcessor _terrainVertexPostProcessor;
+        private Vector2i _fromCell;
 
         private Line2f _raycastLine;
         private Vector2f _rayDirection;
-        private Vector2i _fromCell;
         private Vector2i _toCell;
 
         protected BaseCellRaycaster(ITerrainVertexPostProcessor terrainVertexPostProcessor, IRaycasterAggregator raycasterAggregator = null)
@@ -42,10 +42,7 @@ namespace Votyra.Core.Raycasting
             return RaycastGroup();
         }
 
-        public virtual float Raycast(Vector2f position)
-        {
-           return RaycastCell(position);
-        }
+        public virtual float Raycast(Vector2f position) => RaycastCell(position);
 
         private Vector3f RaycastGroup()
         {
@@ -69,7 +66,9 @@ namespace Votyra.Core.Raycasting
 
                 var stop = RaycastCell(new Line2f(position, intersection));
                 if (!stop.AnyNan())
+                {
                     return stop;
+                }
 
                 if (offset.HasFlag(RectangleSegment.X0))
                 {
@@ -106,7 +105,7 @@ namespace Votyra.Core.Raycasting
         protected abstract Vector3f RaycastCell(Line2f line);
 
         protected abstract float RaycastCell(Vector2f point);
-        
+
         private Vector2i FindCell(Vector2f meshPoint)
         {
             var cell = meshPoint.FloorToVector2i();
@@ -116,15 +115,25 @@ namespace Votyra.Core.Raycasting
             {
                 counter--;
                 if (meshPoint.X > area.Max.X)
+                {
                     cell += new Vector2i(1, 0);
+                }
                 else if (meshPoint.X < area.Min.X)
+                {
                     cell -= new Vector2i(1, 0);
+                }
                 else if (meshPoint.Y > area.Max.Y)
+                {
                     cell += new Vector2i(0, 1);
+                }
                 else if (meshPoint.Y < area.Min.Y)
+                {
                     cell -= new Vector2i(0, 1);
+                }
                 else
+                {
                     throw new InvalidOperationException();
+                }
 
                 area = MeshCellArea(cell);
             }
@@ -143,7 +152,10 @@ namespace Votyra.Core.Raycasting
         private Vector2f ProcessVertex(Vector2f point)
         {
             if (_terrainVertexPostProcessor == null)
+            {
                 return point;
+            }
+
             return _terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
                 .XY();
         }

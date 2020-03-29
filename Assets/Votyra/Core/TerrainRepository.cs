@@ -12,10 +12,10 @@ namespace Votyra.Core
 
     public struct RepositoryChange<TKey, TValue>
     {
-        public RepositoryChange(RepositorActionType action, TKey @group, TValue mesh)
+        public RepositoryChange(RepositorActionType action, TKey group, TValue mesh)
         {
             Action = action;
-            Group = @group;
+            Group = group;
             Mesh = mesh;
         }
 
@@ -23,34 +23,23 @@ namespace Votyra.Core
         public readonly TKey Group;
         public readonly TValue Mesh;
 
-        public static RepositoryChange<TKey, TValue> New(TKey group, TValue mesh)
-        {
-            return new RepositoryChange<TKey, TValue>(RepositorActionType.New, group, mesh);
-        }
+        public static RepositoryChange<TKey, TValue> New(TKey group, TValue mesh) => new RepositoryChange<TKey, TValue>(RepositorActionType.New, group, mesh);
 
-        public static RepositoryChange<TKey, TValue> Changed(TKey group, TValue mesh)
-        {
-            return new RepositoryChange<TKey, TValue>(RepositorActionType.Changed, group, mesh);
-        }
+        public static RepositoryChange<TKey, TValue> Changed(TKey group, TValue mesh) => new RepositoryChange<TKey, TValue>(RepositorActionType.Changed, group, mesh);
 
-        public static RepositoryChange<TKey, TValue> Removed(TKey group, TValue mesh)
-        {
-            return new RepositoryChange<TKey, TValue>(RepositorActionType.Removed, group, mesh);
-        }
+        public static RepositoryChange<TKey, TValue> Removed(TKey group, TValue mesh) => new RepositoryChange<TKey, TValue>(RepositorActionType.Removed, group, mesh);
     }
 
     public class TerrainRepository<TKey, TValue> : ITerrainRepository<TKey, TValue> where TKey : struct
     {
         private readonly Dictionary<TKey, TValue> _activeGroups = new Dictionary<TKey, TValue>();
-        private readonly Dictionary<TKey, TValue> _lockedGroups = new Dictionary<TKey, TValue>();
         private readonly object _activeGroupsLock = new object();
+        private readonly Dictionary<TKey, TValue> _lockedGroups = new Dictionary<TKey, TValue>();
 
         public TerrainRepository()
         {
             ContainsKeyFunc = Contains;
         }
-
-        private event Action<RepositoryChange<TKey, TValue>> _terrainChange;
 
         public event Action<RepositoryChange<TKey, TValue>> TerrainChange
         {
@@ -62,10 +51,7 @@ namespace Votyra.Core
                     value?.Invoke(RepositoryChange<TKey, TValue>.New(activeGroup.Key, activeGroup.Value));
                 }
             }
-            remove
-            {
-                _terrainChange -= value;
-            }
+            remove => _terrainChange -= value;
         }
 
         public bool Contains(TKey key)
@@ -177,5 +163,7 @@ namespace Votyra.Core
                 }
             }
         }
+
+        private event Action<RepositoryChange<TKey, TValue>> _terrainChange;
     }
 }

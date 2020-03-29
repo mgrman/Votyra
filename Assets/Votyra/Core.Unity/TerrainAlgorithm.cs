@@ -11,6 +11,7 @@ namespace Votyra.Core
         }
 
         public string Name { get; }
+
         public GameObject Prefab { get; }
 
         public static bool operator ==(TerrainAlgorithm a, TerrainAlgorithm b) => a?.Equals(b) ?? b?.Equals(a) ?? true;
@@ -20,7 +21,10 @@ namespace Votyra.Core
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
+            {
                 return false;
+            }
+
             var that = obj as TerrainAlgorithm;
 
             return Name == that.Name && Prefab == that.Prefab;

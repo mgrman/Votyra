@@ -5,8 +5,8 @@ namespace Votyra.Core.Painting.Commands
 {
     public class IncreaseLargeFactory : BaseFactory<IncreaseLarge>
     {
-        public IncreaseLargeFactory(IEditableImage2f editableImage,  IThreadSafeLogger logger)
-            : base(editableImage,  logger)
+        public IncreaseLargeFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
+            : base(editableImage, logger)
         {
         }
 

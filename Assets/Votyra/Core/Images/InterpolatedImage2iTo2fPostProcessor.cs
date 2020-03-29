@@ -15,25 +15,39 @@ namespace Votyra.Core.Images
         public IImage2f PostProcess(IImage2f image)
         {
             if (_interpolationConfig.ImageSubdivision == 1)
+            {
                 return image;
+            }
 
             switch (_interpolationConfig.ActiveAlgorithm)
             {
                 case IntepolationAlgorithm.NearestNeighbour:
                     if (image is IImageInvalidatableImage2)
+                    {
                         return new NNImage2fInvalidatableWrapper(image, _interpolationConfig.ImageSubdivision);
+                    }
                     else
+                    {
                         return new NNImage2fWrapper(image, _interpolationConfig.ImageSubdivision);
+                    }
                 case IntepolationAlgorithm.Linear:
                     if (image is IImageInvalidatableImage2)
+                    {
                         return new LinearImage2fInvalidatableWrapper(image, _interpolationConfig.ImageSubdivision);
+                    }
                     else
+                    {
                         return new LinearImage2fWrapper(image, _interpolationConfig.ImageSubdivision);
+                    }
                 case IntepolationAlgorithm.Cubic:
                     if (image is IImageInvalidatableImage2)
+                    {
                         return new CubicImage2fInvalidatableWrapper(image, _interpolationConfig.ImageSubdivision);
+                    }
                     else
+                    {
                         return new CubicImage2fWrapper(image, _interpolationConfig.ImageSubdivision);
+                    }
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -135,9 +149,15 @@ namespace Votyra.Core.Images
             private int ClipMinPoint(int point)
             {
                 if (point > 0)
+                {
                     return point / _subdivision;
+                }
+
                 if (point < 0)
+                {
                     return point / _subdivision + (point % _subdivision == 0 ? 0 : -1);
+                }
+
                 return 0;
             }
 
@@ -153,15 +173,23 @@ namespace Votyra.Core.Images
                 // Get degree-1 coefficients
                 float c1s1;
                 if (dys0 * dys1 <= 0)
+                {
                     c1s1 = 0;
+                }
                 else
+                {
                     c1s1 = 6f / (3f / dys0 + 3f / dys1);
+                }
 
                 float c1s2;
                 if (dys1 * dys2 <= 0)
+                {
                     c1s2 = 0;
+                }
                 else
+                {
                     c1s2 = 6f / (3f / dys1 + 3f / dys2);
+                }
 
                 // Get degree-2 and degree-3 coefficients
                 var c3s1 = c1s1 + c1s2 - dys1 - dys1;
@@ -261,9 +289,15 @@ namespace Votyra.Core.Images
             private int ClipMinPoint(int point)
             {
                 if (point > 0)
+                {
                     return point / _subdivision;
+                }
+
                 if (point < 0)
+                {
                     return point / _subdivision + (point % _subdivision == 0 ? 0 : -1);
+                }
+
                 return 0;
             }
         }
@@ -349,9 +383,15 @@ namespace Votyra.Core.Images
             private int ClipMinPoint(int point)
             {
                 if (point > 0)
+                {
                     return point / _subdivision;
+                }
+
                 if (point < 0)
+                {
                     return point / _subdivision + (point % _subdivision == 0 ? 0 : -1);
+                }
+
                 return 0;
             }
         }

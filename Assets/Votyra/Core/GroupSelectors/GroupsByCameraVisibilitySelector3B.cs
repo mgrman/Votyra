@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 
 namespace Votyra.Core.GroupSelectors
 {
@@ -21,7 +20,9 @@ namespace Votyra.Core.GroupSelectors
         public GroupActions<Vector3i> GetGroupsToUpdate(IFrameData3b options)
         {
             if (options == null)
+            {
                 return null;
+            }
 
             var planes = options.CameraPlanes;
             var frustumCorners = options.CameraFrustumCorners;

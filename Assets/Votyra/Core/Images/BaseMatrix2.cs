@@ -1,4 +1,3 @@
-using System;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
@@ -53,9 +52,9 @@ namespace Votyra.Core.Images
         public void UpdateImage(T[,] template)
         {
             var size = _image.Size();
-            for (int ix = 0; ix < size.X; ix++)
+            for (var ix = 0; ix < size.X; ix++)
             {
-                for (int iy = 0; iy < size.Y; iy++)
+                for (var iy = 0; iy < size.Y; iy++)
                 {
                     _image[ix, iy] = template[ix, iy];
                 }

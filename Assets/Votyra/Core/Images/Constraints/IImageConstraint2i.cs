@@ -5,8 +5,10 @@ namespace Votyra.Core.Images.Constraints
 {
     public interface IImageConstraint2i
     {
-        void Initialize(IEditableImage2f image);
         IEnumerable<int> Priorities { get; }
+
+        void Initialize(IEditableImage2f image);
+
         Range2i FixImage(IEditableImage2f image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction);
     }
 }

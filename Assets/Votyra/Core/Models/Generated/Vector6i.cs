@@ -43,81 +43,107 @@ namespace Votyra.Core.Models
         public static Vector6i operator *(Vector6i a, Vector6i b) => new Vector6i(a.X0 * b.X0, a.X1 * b.X1, a.X2 * b.X2, a.X3 * b.X3, a.X4 * b.X4, a.X5 * b.X5);
 
         public static Vector6i operator *(Vector6i a, int b) => new Vector6i(a.X0 * b, a.X1 * b, a.X2 * b, a.X3 * b, a.X4 * b, a.X5 * b);
+
         public static Vector6i operator *(int a, Vector6i b) => new Vector6i(a * b.X0, a * b.X1, a * b.X2, a * b.X3, a * b.X4, a * b.X5);
 
         public static Vector6i operator +(Vector6i a, Vector6i b) => new Vector6i(a.X0 + b.X0, a.X1 + b.X1, a.X2 + b.X2, a.X3 + b.X3, a.X4 + b.X4, a.X5 + b.X5);
 
         public static Vector6i operator +(Vector6i a, int b) => new Vector6i(a.X0 + b, a.X1 + b, a.X2 + b, a.X3 + b, a.X4 + b, a.X5 + b);
+
         public static Vector6i operator +(int a, Vector6i b) => new Vector6i(a + b.X0, a + b.X1, a + b.X2, a + b.X3, a + b.X4, a + b.X5);
 
         public static Vector6i operator -(Vector6i a, Vector6i b) => new Vector6i(a.X0 - b.X0, a.X1 - b.X1, a.X2 - b.X2, a.X3 - b.X3, a.X4 - b.X4, a.X5 - b.X5);
 
         public static Vector6i operator -(Vector6i a, int b) => new Vector6i(a.X0 - b, a.X1 - b, a.X2 - b, a.X3 - b, a.X4 - b, a.X5 - b);
+
         public static Vector6i operator -(int a, Vector6i b) => new Vector6i(a - b.X0, a - b.X1, a - b.X2, a - b.X3, a - b.X4, a - b.X5);
 
         public static Vector6i operator /(Vector6i a, Vector6i b) => new Vector6i(a.X0 / b.X0, a.X1 / b.X1, a.X2 / b.X2, a.X3 / b.X3, a.X4 / b.X4, a.X5 / b.X5);
 
         public static Vector6i operator /(Vector6i a, int b) => new Vector6i(a.X0 / b, a.X1 / b, a.X2 / b, a.X3 / b, a.X4 / b, a.X5 / b);
+
         public static Vector6i operator /(int a, Vector6i b) => new Vector6i(a / b.X0, a / b.X1, a / b.X2, a / b.X3, a / b.X4, a / b.X5);
 
         public static Vector6i operator %(Vector6i a, Vector6i b) => new Vector6i(a.X0 % b.X0, a.X1 % b.X1, a.X2 % b.X2, a.X3 % b.X3, a.X4 % b.X4, a.X5 % b.X5);
 
         public static Vector6i operator %(Vector6i a, int b) => new Vector6i(a.X0 % b, a.X1 % b, a.X2 % b, a.X3 % b, a.X4 % b, a.X5 % b);
+
         public static Vector6i operator %(int a, Vector6i b) => new Vector6i(a % b.X0, a % b.X1, a % b.X2, a % b.X3, a % b.X4, a % b.X5);
 
         public static bool operator <(Vector6i a, Vector6i b) => a.X0 < b.X0 && a.X1 < b.X1 && a.X2 < b.X2 && a.X3 < b.X3 && a.X4 < b.X4 && a.X5 < b.X5;
 
         public static bool operator <(Vector6i a, int b) => a.X0 < b && a.X1 < b && a.X2 < b && a.X3 < b && a.X4 < b && a.X5 < b;
+
         public static bool operator <(int a, Vector6i b) => a < b.X0 && a < b.X1 && a < b.X2 && a < b.X3 && a < b.X4 && a < b.X5;
 
         public static bool operator >(Vector6i a, Vector6i b) => a.X0 > b.X0 && a.X1 > b.X1 && a.X2 > b.X2 && a.X3 > b.X3 && a.X4 > b.X4 && a.X5 > b.X5;
 
         public static bool operator >(Vector6i a, int b) => a.X0 > b && a.X1 > b && a.X2 > b && a.X3 > b && a.X4 > b && a.X5 > b;
+
         public static bool operator >(int a, Vector6i b) => a > b.X0 && a > b.X1 && a > b.X2 && a > b.X3 && a > b.X4 && a > b.X5;
 
         public static bool operator <=(Vector6i a, Vector6i b) => a.X0 <= b.X0 && a.X1 <= b.X1 && a.X2 <= b.X2 && a.X3 <= b.X3 && a.X4 <= b.X4 && a.X5 <= b.X5;
 
         public static bool operator <=(Vector6i a, int b) => a.X0 <= b && a.X1 <= b && a.X2 <= b && a.X3 <= b && a.X4 <= b && a.X5 <= b;
+
         public static bool operator <=(int a, Vector6i b) => a <= b.X0 && a <= b.X1 && a <= b.X2 && a <= b.X3 && a <= b.X4 && a <= b.X5;
 
         public static bool operator >=(Vector6i a, Vector6i b) => a.X0 >= b.X0 && a.X1 >= b.X1 && a.X2 >= b.X2 && a.X3 >= b.X3 && a.X4 >= b.X4 && a.X5 >= b.X5;
 
         public static bool operator >=(Vector6i a, int b) => a.X0 >= b && a.X1 >= b && a.X2 >= b && a.X3 >= b && a.X4 >= b && a.X5 >= b;
+
         public static bool operator >=(int a, Vector6i b) => a >= b.X0 && a >= b.X1 && a >= b.X2 && a >= b.X3 && a >= b.X4 && a >= b.X5;
 
         public static bool operator ==(Vector6i a, Vector6i b) => a.X0 == b.X0 && a.X1 == b.X1 && a.X2 == b.X2 && a.X3 == b.X3 && a.X4 == b.X4 && a.X5 == b.X5;
 
         public static bool operator ==(Vector6i a, int b) => a.X0 == b && a.X1 == b && a.X2 == b && a.X3 == b && a.X4 == b && a.X5 == b;
+
         public static bool operator ==(int a, Vector6i b) => a == b.X0 && a == b.X1 && a == b.X2 && a == b.X3 && a == b.X4 && a == b.X5;
 
         public static bool operator !=(Vector6i a, Vector6i b) => a.X0 != b.X0 || a.X1 != b.X1 || a.X2 != b.X2 || a.X3 != b.X3 || a.X4 != b.X4 || a.X5 != b.X5;
 
         public static bool operator !=(Vector6i a, int b) => a.X0 != b || a.X1 != b || a.X2 != b || a.X3 != b || a.X4 != b || a.X5 != b;
+
         public static bool operator !=(int a, Vector6i b) => a != b.X0 || a != b.X1 || a != b.X2 || a != b.X3 || a != b.X4 || a != b.X5;
 
         public static Vector6f operator *(Vector6i a, Vector6f b) => new Vector6f(a.X0 * b.X0, a.X1 * b.X1, a.X2 * b.X2, a.X3 * b.X3, a.X4 * b.X4, a.X5 * b.X5);
+
         public static Vector6f operator *(Vector6f a, Vector6i b) => new Vector6f(a.X0 * b.X0, a.X1 * b.X1, a.X2 * b.X2, a.X3 * b.X3, a.X4 * b.X4, a.X5 * b.X5);
+
         public static Vector6f operator *(Vector6i a, float b) => new Vector6f(a.X0 * b, a.X1 * b, a.X2 * b, a.X3 * b, a.X4 * b, a.X5 * b);
+
         public static Vector6f operator *(float a, Vector6i b) => new Vector6f(a * b.X0, a * b.X1, a * b.X2, a * b.X3, a * b.X4, a * b.X5);
 
         public static Vector6f operator +(Vector6i a, Vector6f b) => new Vector6f(a.X0 + b.X0, a.X1 + b.X1, a.X2 + b.X2, a.X3 + b.X3, a.X4 + b.X4, a.X5 + b.X5);
+
         public static Vector6f operator +(Vector6f a, Vector6i b) => new Vector6f(a.X0 + b.X0, a.X1 + b.X1, a.X2 + b.X2, a.X3 + b.X3, a.X4 + b.X4, a.X5 + b.X5);
+
         public static Vector6f operator +(Vector6i a, float b) => new Vector6f(a.X0 + b, a.X1 + b, a.X2 + b, a.X3 + b, a.X4 + b, a.X5 + b);
+
         public static Vector6f operator +(float a, Vector6i b) => new Vector6f(a + b.X0, a + b.X1, a + b.X2, a + b.X3, a + b.X4, a + b.X5);
 
         public static Vector6f operator -(Vector6i a, Vector6f b) => new Vector6f(a.X0 - b.X0, a.X1 - b.X1, a.X2 - b.X2, a.X3 - b.X3, a.X4 - b.X4, a.X5 - b.X5);
+
         public static Vector6f operator -(Vector6f a, Vector6i b) => new Vector6f(a.X0 - b.X0, a.X1 - b.X1, a.X2 - b.X2, a.X3 - b.X3, a.X4 - b.X4, a.X5 - b.X5);
+
         public static Vector6f operator -(Vector6i a, float b) => new Vector6f(a.X0 - b, a.X1 - b, a.X2 - b, a.X3 - b, a.X4 - b, a.X5 - b);
+
         public static Vector6f operator -(float a, Vector6i b) => new Vector6f(a - b.X0, a - b.X1, a - b.X2, a - b.X3, a - b.X4, a - b.X5);
 
         public static Vector6f operator /(Vector6i a, Vector6f b) => new Vector6f(a.X0 / b.X0, a.X1 / b.X1, a.X2 / b.X2, a.X3 / b.X3, a.X4 / b.X4, a.X5 / b.X5);
+
         public static Vector6f operator /(Vector6f a, Vector6i b) => new Vector6f(a.X0 / b.X0, a.X1 / b.X1, a.X2 / b.X2, a.X3 / b.X3, a.X4 / b.X4, a.X5 / b.X5);
+
         public static Vector6f operator /(Vector6i a, float b) => new Vector6f(a.X0 / b, a.X1 / b, a.X2 / b, a.X3 / b, a.X4 / b, a.X5 / b);
+
         public static Vector6f operator /(float a, Vector6i b) => new Vector6f(a / b.X0, a / b.X1, a / b.X2, a / b.X3, a / b.X4, a / b.X5);
 
         public static Vector6f operator %(Vector6i a, Vector6f b) => new Vector6f(a.X0 % b.X0, a.X1 % b.X1, a.X2 % b.X2, a.X3 % b.X3, a.X4 % b.X4, a.X5 % b.X5);
+
         public static Vector6f operator %(Vector6f a, Vector6i b) => new Vector6f(a.X0 % b.X0, a.X1 % b.X1, a.X2 % b.X2, a.X3 % b.X3, a.X4 % b.X4, a.X5 % b.X5);
+
         public static Vector6f operator %(Vector6i a, float b) => new Vector6f(a.X0 % b, a.X1 % b, a.X2 % b, a.X3 % b, a.X4 % b, a.X5 % b);
+
         public static Vector6f operator %(float a, Vector6i b) => new Vector6f(a % b.X0, a % b.X1, a % b.X2, a % b.X3, a % b.X4, a % b.X5);
 
         public bool Equals(Vector6i other) => this == other;
@@ -125,7 +151,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Vector6i))
+            {
                 return false;
+            }
 
             return Equals((Vector6i) obj);
         }
@@ -160,6 +188,7 @@ namespace Votyra.Core.Models
 
         public static readonly Vector6i PlusOneX5 = new Vector6i(0, 0, 0, 0, 0, 1);
         public static readonly Vector6i MinusOneX5 = new Vector6i(0, 0, 0, 0, 0, -1);
+
         public static float Magnitude(this Vector6i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector6f Normalized(this Vector6i @this)
@@ -263,21 +292,25 @@ namespace Votyra.Core.Models
         public static Vector6f ToVector6f(this Vector6i @this) => new Vector6f(@this.X0, @this.X1, @this.X2, @this.X3, @this.X4, @this.X5);
 
         public static Range6i ToRange6i(this Vector6i @this) => Range6i.FromMinAndSize(Vector6i.Zero, @this);
+
         public static Area6i ToArea6i(this Vector6i @this) => Area6i.FromMinAndSize(Vector6i.Zero, @this);
 
         public static Vector6i Max(Vector6i a, Vector6i b) => new Vector6i(Math.Max(a.X0, b.X0), Math.Max(a.X1, b.X1), Math.Max(a.X2, b.X2), Math.Max(a.X3, b.X3), Math.Max(a.X4, b.X4), Math.Max(a.X5, b.X5));
 
         public static Vector6i Max(Vector6i a, int b) => new Vector6i(Math.Max(a.X0, b), Math.Max(a.X1, b), Math.Max(a.X2, b), Math.Max(a.X3, b), Math.Max(a.X4, b), Math.Max(a.X5, b));
+
         public static Vector6i Max(int a, Vector6i b) => new Vector6i(Math.Max(a, b.X0), Math.Max(a, b.X1), Math.Max(a, b.X2), Math.Max(a, b.X3), Math.Max(a, b.X4), Math.Max(a, b.X5));
 
         public static Vector6i Min(Vector6i a, Vector6i b) => new Vector6i(Math.Min(a.X0, b.X0), Math.Min(a.X1, b.X1), Math.Min(a.X2, b.X2), Math.Min(a.X3, b.X3), Math.Min(a.X4, b.X4), Math.Min(a.X5, b.X5));
 
         public static Vector6i Min(Vector6i a, int b) => new Vector6i(Math.Min(a.X0, b), Math.Min(a.X1, b), Math.Min(a.X2, b), Math.Min(a.X3, b), Math.Min(a.X4, b), Math.Min(a.X5, b));
+
         public static Vector6i Min(int a, Vector6i b) => new Vector6i(Math.Min(a, b.X0), Math.Min(a, b.X1), Math.Min(a, b.X2), Math.Min(a, b.X3), Math.Min(a, b.X4), Math.Min(a, b.X5));
 
         public static Vector6i DivideUp(Vector6i a, Vector6i b) => new Vector6i(a.X0.DivideUp(b.X0), a.X1.DivideUp(b.X1), a.X2.DivideUp(b.X2), a.X3.DivideUp(b.X3), a.X4.DivideUp(b.X4), a.X5.DivideUp(b.X5));
 
         public static Vector6i DivideUp(Vector6i a, int b) => new Vector6i(a.X0.DivideUp(b), a.X1.DivideUp(b), a.X2.DivideUp(b), a.X3.DivideUp(b), a.X4.DivideUp(b), a.X5.DivideUp(b));
+
         public static Vector6i DivideUp(int a, Vector6i b) => new Vector6i(a.DivideUp(b.X0), a.DivideUp(b.X1), a.DivideUp(b.X2), a.DivideUp(b.X3), a.DivideUp(b.X4), a.DivideUp(b.X5));
     }
 }

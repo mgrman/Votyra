@@ -31,81 +31,107 @@ namespace Votyra.Core.Models
         public static Vector3i operator *(Vector3i a, Vector3i b) => new Vector3i(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
 
         public static Vector3i operator *(Vector3i a, int b) => new Vector3i(a.X * b, a.Y * b, a.Z * b);
+
         public static Vector3i operator *(int a, Vector3i b) => new Vector3i(a * b.X, a * b.Y, a * b.Z);
 
         public static Vector3i operator +(Vector3i a, Vector3i b) => new Vector3i(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 
         public static Vector3i operator +(Vector3i a, int b) => new Vector3i(a.X + b, a.Y + b, a.Z + b);
+
         public static Vector3i operator +(int a, Vector3i b) => new Vector3i(a + b.X, a + b.Y, a + b.Z);
 
         public static Vector3i operator -(Vector3i a, Vector3i b) => new Vector3i(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 
         public static Vector3i operator -(Vector3i a, int b) => new Vector3i(a.X - b, a.Y - b, a.Z - b);
+
         public static Vector3i operator -(int a, Vector3i b) => new Vector3i(a - b.X, a - b.Y, a - b.Z);
 
         public static Vector3i operator /(Vector3i a, Vector3i b) => new Vector3i(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
 
         public static Vector3i operator /(Vector3i a, int b) => new Vector3i(a.X / b, a.Y / b, a.Z / b);
+
         public static Vector3i operator /(int a, Vector3i b) => new Vector3i(a / b.X, a / b.Y, a / b.Z);
 
         public static Vector3i operator %(Vector3i a, Vector3i b) => new Vector3i(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
 
         public static Vector3i operator %(Vector3i a, int b) => new Vector3i(a.X % b, a.Y % b, a.Z % b);
+
         public static Vector3i operator %(int a, Vector3i b) => new Vector3i(a % b.X, a % b.Y, a % b.Z);
 
         public static bool operator <(Vector3i a, Vector3i b) => a.X < b.X && a.Y < b.Y && a.Z < b.Z;
 
         public static bool operator <(Vector3i a, int b) => a.X < b && a.Y < b && a.Z < b;
+
         public static bool operator <(int a, Vector3i b) => a < b.X && a < b.Y && a < b.Z;
 
         public static bool operator >(Vector3i a, Vector3i b) => a.X > b.X && a.Y > b.Y && a.Z > b.Z;
 
         public static bool operator >(Vector3i a, int b) => a.X > b && a.Y > b && a.Z > b;
+
         public static bool operator >(int a, Vector3i b) => a > b.X && a > b.Y && a > b.Z;
 
         public static bool operator <=(Vector3i a, Vector3i b) => a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
 
         public static bool operator <=(Vector3i a, int b) => a.X <= b && a.Y <= b && a.Z <= b;
+
         public static bool operator <=(int a, Vector3i b) => a <= b.X && a <= b.Y && a <= b.Z;
 
         public static bool operator >=(Vector3i a, Vector3i b) => a.X >= b.X && a.Y >= b.Y && a.Z >= b.Z;
 
         public static bool operator >=(Vector3i a, int b) => a.X >= b && a.Y >= b && a.Z >= b;
+
         public static bool operator >=(int a, Vector3i b) => a >= b.X && a >= b.Y && a >= b.Z;
 
         public static bool operator ==(Vector3i a, Vector3i b) => a.X == b.X && a.Y == b.Y && a.Z == b.Z;
 
         public static bool operator ==(Vector3i a, int b) => a.X == b && a.Y == b && a.Z == b;
+
         public static bool operator ==(int a, Vector3i b) => a == b.X && a == b.Y && a == b.Z;
 
         public static bool operator !=(Vector3i a, Vector3i b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z;
 
         public static bool operator !=(Vector3i a, int b) => a.X != b || a.Y != b || a.Z != b;
+
         public static bool operator !=(int a, Vector3i b) => a != b.X || a != b.Y || a != b.Z;
 
         public static Vector3f operator *(Vector3i a, Vector3f b) => new Vector3f(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+
         public static Vector3f operator *(Vector3f a, Vector3i b) => new Vector3f(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
+
         public static Vector3f operator *(Vector3i a, float b) => new Vector3f(a.X * b, a.Y * b, a.Z * b);
+
         public static Vector3f operator *(float a, Vector3i b) => new Vector3f(a * b.X, a * b.Y, a * b.Z);
 
         public static Vector3f operator +(Vector3i a, Vector3f b) => new Vector3f(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+
         public static Vector3f operator +(Vector3f a, Vector3i b) => new Vector3f(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+
         public static Vector3f operator +(Vector3i a, float b) => new Vector3f(a.X + b, a.Y + b, a.Z + b);
+
         public static Vector3f operator +(float a, Vector3i b) => new Vector3f(a + b.X, a + b.Y, a + b.Z);
 
         public static Vector3f operator -(Vector3i a, Vector3f b) => new Vector3f(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+
         public static Vector3f operator -(Vector3f a, Vector3i b) => new Vector3f(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+
         public static Vector3f operator -(Vector3i a, float b) => new Vector3f(a.X - b, a.Y - b, a.Z - b);
+
         public static Vector3f operator -(float a, Vector3i b) => new Vector3f(a - b.X, a - b.Y, a - b.Z);
 
         public static Vector3f operator /(Vector3i a, Vector3f b) => new Vector3f(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+
         public static Vector3f operator /(Vector3f a, Vector3i b) => new Vector3f(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
+
         public static Vector3f operator /(Vector3i a, float b) => new Vector3f(a.X / b, a.Y / b, a.Z / b);
+
         public static Vector3f operator /(float a, Vector3i b) => new Vector3f(a / b.X, a / b.Y, a / b.Z);
 
         public static Vector3f operator %(Vector3i a, Vector3f b) => new Vector3f(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
+
         public static Vector3f operator %(Vector3f a, Vector3i b) => new Vector3f(a.X % b.X, a.Y % b.Y, a.Z % b.Z);
+
         public static Vector3f operator %(Vector3i a, float b) => new Vector3f(a.X % b, a.Y % b, a.Z % b);
+
         public static Vector3f operator %(float a, Vector3i b) => new Vector3f(a % b.X, a % b.Y, a % b.Z);
 
         public bool Equals(Vector3i other) => this == other;
@@ -113,7 +139,9 @@ namespace Votyra.Core.Models
         public override bool Equals(object obj)
         {
             if (!(obj is Vector3i))
+            {
                 return false;
+            }
 
             return Equals((Vector3i) obj);
         }
@@ -139,6 +167,7 @@ namespace Votyra.Core.Models
 
         public static readonly Vector3i PlusOneZ = new Vector3i(0, 0, 1);
         public static readonly Vector3i MinusOneZ = new Vector3i(0, 0, -1);
+
         public static float Magnitude(this Vector3i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector3f Normalized(this Vector3i @this)
@@ -190,30 +219,37 @@ namespace Votyra.Core.Models
         public static Vector3f ToVector3f(this Vector3i @this) => new Vector3f(@this.X, @this.Y, @this.Z);
 
         public static Range3i ToRange3i(this Vector3i @this) => Range3i.FromMinAndSize(Vector3i.Zero, @this);
+
         public static Area3i ToArea3i(this Vector3i @this) => Area3i.FromMinAndSize(Vector3i.Zero, @this);
 
         public static Vector4i ToVector4i(this Vector3i @this, int x4) => new Vector4i(@this.X, @this.Y, @this.Z, x4);
+
         public static Vector4f ToVector4f(this Vector3i @this, float x4) => new Vector4f(@this.X, @this.Y, @this.Z, x4);
 
         public static Vector5i ToVector5i(this Vector3i @this, int x4, int x5) => new Vector5i(@this.X, @this.Y, @this.Z, x4, x5);
+
         public static Vector5f ToVector5f(this Vector3i @this, float x4, float x5) => new Vector5f(@this.X, @this.Y, @this.Z, x4, x5);
 
         public static Vector6i ToVector6i(this Vector3i @this, int x4, int x5, int x6) => new Vector6i(@this.X, @this.Y, @this.Z, x4, x5, x6);
+
         public static Vector6f ToVector6f(this Vector3i @this, float x4, float x5, float x6) => new Vector6f(@this.X, @this.Y, @this.Z, x4, x5, x6);
 
         public static Vector3i Max(Vector3i a, Vector3i b) => new Vector3i(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y), Math.Max(a.Z, b.Z));
 
         public static Vector3i Max(Vector3i a, int b) => new Vector3i(Math.Max(a.X, b), Math.Max(a.Y, b), Math.Max(a.Z, b));
+
         public static Vector3i Max(int a, Vector3i b) => new Vector3i(Math.Max(a, b.X), Math.Max(a, b.Y), Math.Max(a, b.Z));
 
         public static Vector3i Min(Vector3i a, Vector3i b) => new Vector3i(Math.Min(a.X, b.X), Math.Min(a.Y, b.Y), Math.Min(a.Z, b.Z));
 
         public static Vector3i Min(Vector3i a, int b) => new Vector3i(Math.Min(a.X, b), Math.Min(a.Y, b), Math.Min(a.Z, b));
+
         public static Vector3i Min(int a, Vector3i b) => new Vector3i(Math.Min(a, b.X), Math.Min(a, b.Y), Math.Min(a, b.Z));
 
         public static Vector3i DivideUp(Vector3i a, Vector3i b) => new Vector3i(a.X.DivideUp(b.X), a.Y.DivideUp(b.Y), a.Z.DivideUp(b.Z));
 
         public static Vector3i DivideUp(Vector3i a, int b) => new Vector3i(a.X.DivideUp(b), a.Y.DivideUp(b), a.Z.DivideUp(b));
+
         public static Vector3i DivideUp(int a, Vector3i b) => new Vector3i(a.DivideUp(b.X), a.DivideUp(b.Y), a.DivideUp(b.Z));
     }
 }

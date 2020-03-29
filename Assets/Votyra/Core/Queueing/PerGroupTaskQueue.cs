@@ -9,17 +9,17 @@ namespace Votyra.Core.Queueing
 {
     public class PerGroupTaskQueue : IWorkQueue<GroupUpdateData>
     {
-        private readonly TaskFactory _taskFactory;
         private readonly Dictionary<Vector2i, GroupUpdateData> _queuedUpdates = new Dictionary<Vector2i, GroupUpdateData>();
-        private readonly HashSet<Vector2i> _updateTasks = new HashSet<Vector2i>();
+        private readonly TaskFactory _taskFactory;
         private readonly object _taskLock = new object();
-        
-        public event Action<GroupUpdateData> DoWork;
+        private readonly HashSet<Vector2i> _updateTasks = new HashSet<Vector2i>();
 
         public PerGroupTaskQueue()
         {
             _taskFactory = new TaskFactory();
         }
+
+        public event Action<GroupUpdateData> DoWork;
 
         public void QueueNew(GroupUpdateData context)
         {
@@ -33,7 +33,7 @@ namespace Votyra.Core.Queueing
                 {
                     context = new GroupUpdateData(context.Group, context.Context, context.Mesh, true);
                 }
-                
+
                 _queuedUpdates[context.Group] = context;
 
                 startNewTask = !_updateTasks.Contains(context.Group);
@@ -61,15 +61,15 @@ namespace Votyra.Core.Queueing
         {
             try
             {
-                int counter = 0;
+                var counter = 0;
                 while (true)
                 {
                     GroupUpdateData activeContext;
                     lock (_taskLock)
                     {
-                        if (_queuedUpdates.TryGetValue(@group, out activeContext))
+                        if (_queuedUpdates.TryGetValue(group, out activeContext))
                         {
-                            _queuedUpdates.Remove(@group);
+                            _queuedUpdates.Remove(group);
                         }
                         else
                         {
@@ -84,7 +84,7 @@ namespace Votyra.Core.Queueing
                     }
                     catch (Exception ex)
                     {
-                        StaticLogger.LogError($"Error in {this.GetType().GetDisplayName()}:");
+                        StaticLogger.LogError($"Error in {GetType().GetDisplayName()}:");
                         StaticLogger.LogException(ex);
                     }
                     finally
@@ -95,7 +95,7 @@ namespace Votyra.Core.Queueing
                         }
                         catch (Exception ex)
                         {
-                            StaticLogger.LogError($"Error disposing context {activeContext.GetHashCode()} in {this.GetType().GetDisplayName()}:");
+                            StaticLogger.LogError($"Error disposing context {activeContext.GetHashCode()} in {GetType().GetDisplayName()}:");
                             StaticLogger.LogException(ex);
                         }
                     }
