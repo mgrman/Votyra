@@ -1,0 +1,5 @@
+-a:"RoslynAnalyzers\Gu.Roslyn.Extensions.dll"
+-a:"RoslynAnalyzers\ReflectionAnalyzers.dll"
+-ruleset:"RoslynAnalyzers\Ruleset.ruleset"
+-a:"RoslynAnalyzers\StyleCop.Analyzers.CodeFixes.dll"
+-a:"RoslynAnalyzers\StyleCop.Analyzers.dll"

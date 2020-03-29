@@ -152,7 +152,7 @@ artifacts/
 *.pdb
 *.pgc
 *.pgd
-*.rsp
+# *.rsp USED BY UNITY
 *.sbr
 *.tlb
 *.tli
