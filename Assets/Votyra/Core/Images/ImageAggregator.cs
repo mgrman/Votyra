@@ -131,6 +131,11 @@ namespace Votyra.Core.Images
                 {
                     layer.Value.Dispose();
                 }
+
+                foreach (var layer in _layerMaskAccesors)
+                {
+                    layer.Value.Dispose();
+                }
             }
         }
     }
