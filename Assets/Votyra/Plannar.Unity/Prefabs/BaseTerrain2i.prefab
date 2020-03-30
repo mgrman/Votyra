@@ -16,7 +16,11 @@ GameObject:
   - component: {fileID: 2331286678572162332}
   - component: {fileID: 3748296153572653252}
   - component: {fileID: 2150243981040006537}
-  - component: {fileID: 6594620316384291633}
+  - component: {fileID: 6031283159157278193}
+  - component: {fileID: 8395922183391319991}
+  - component: {fileID: 1549597117298156461}
+  - component: {fileID: 7445872853181148157}
+  - component: {fileID: 2243915988829799670}
   m_Layer: 0
   m_Name: BaseTerrain2i
   m_TagString: Untagged
@@ -51,14 +55,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers: []
-  _monoInstallers:
-  - {fileID: 114493596322238022}
-  - {fileID: 7208546496747415155}
-  - {fileID: 8186020546537987839}
-  - {fileID: 2331286678572162332}
-  - {fileID: 3748296153572653252}
-  - {fileID: 2150243981040006537}
-  - {fileID: 6594620316384291633}
+  _monoInstallers: []
   _installerPrefabs: []
   _autoRun: 1
   _kernel: {fileID: 0}
@@ -134,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50736b47b79f461da45d17e56c5fbd19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6594620316384291633
+--- !u!114 &6031283159157278193
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,10 +145,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config:
   - Id: populationConfigItems
-    JsonValue: '[]'
+    JsonValue: '[{"Mesh":0,"Material":1,"CountPerGroup":10,"UniformScaleVariance":{"Max":0.1,"Min":0.1,"DiagonalLength":0.0},"HeightCurve":{"keys":[{"time":0.0,"value":0.0,"inTangent":1.0,"outTangent":1.0,"inWeight":0.0,"outWeight":0.0,"weightedMode":0,"tangentMode":34},{"time":1.0,"value":1.0,"inTangent":1.0,"outTangent":1.0,"inWeight":0.0,"outWeight":0.0,"weightedMode":0,"tangentMode":34}],"length":2,"preWrapMode":8,"postWrapMode":8}}]'
     TypeAssemblyQualifiedName: Votyra.Plannar.Unity.PopulatorConfigItem[], Votyra.Plannar.Unity,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-    UnityValues: []
+    UnityValues:
+    - {fileID: -1824792854035055013, guid: a67774379b39320489107a461854ee95, type: 3}
+    - {fileID: 2100000, guid: 256fe6f47af75d748845ce4c0bc8a428, type: 2}
   - Id: initialData
     JsonValue: 0
     TypeAssemblyQualifiedName: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
@@ -168,3 +167,123 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
+  - Id: cellInGroupCount
+    JsonValue: '{"X":30,"Y":20,"Z":20}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: flipTriangles
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: drawBounds
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: asyncTerrainGeneration
+    JsonValue: true
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: asyncInput
+    JsonValue: true
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: colliderType
+    JsonValue: 0
+    TypeAssemblyQualifiedName: Votyra.Core.ColliderType, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: activeAlgorithm
+    JsonValue: 2
+    TypeAssemblyQualifiedName: Votyra.Core.IntepolationAlgorithm, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: dynamicMeshes
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: imageSubdivision
+    JsonValue: 1
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: meshSubdivision
+    JsonValue: '{"X":1,"Y":1}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: imageSize
+    JsonValue: '{"X":100,"Y":100,"Z":100}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: scaleFactor
+    JsonValue: 1
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: material
+    JsonValue: 0
+    TypeAssemblyQualifiedName: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues:
+    - {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
+  - Id: materialWalls
+    JsonValue: 0
+    TypeAssemblyQualifiedName: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues:
+    - {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
+--- !u!114 &8395922183391319991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101794731832008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 648dc74551f147bc90dc84f353fddfaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1549597117298156461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101794731832008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 544505c1b6d43924ca9e1a2f0a8c160c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7445872853181148157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101794731832008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 560375ba12234c4897452c2c1b3b663d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2243915988829799670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101794731832008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b630d2cc81a4ff49c226b9f82a30f46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
