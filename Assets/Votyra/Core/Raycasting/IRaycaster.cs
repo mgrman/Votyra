@@ -8,4 +8,11 @@ namespace Votyra.Core.Raycasting
 
         float Raycast(Vector2f cameraRay);
     }
+    
+    public interface IRaycasterPart
+    {
+        Vector3f Raycast(Ray3f cameraRay);
+
+        float Raycast(Vector2f cameraRay);
+    }
 }

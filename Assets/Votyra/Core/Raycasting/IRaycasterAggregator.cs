@@ -1,7 +1,7 @@
 namespace Votyra.Core.Raycasting
 {
-    public interface IRaycasterAggregator
+    public interface IRaycasterAggregator:IRaycaster
     {
-        void Attach(IRaycaster raycaster);
+        void Attach(IRaycasterPart raycaster);
     }
 }

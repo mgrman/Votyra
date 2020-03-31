@@ -573,6 +573,16 @@ PrefabInstance:
       propertyPath: Config.Array.size
       value: 16
       objectReference: {fileID: 0}
+    - target: {fileID: 2326807283186733403, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
+        type: 3}
+      propertyPath: Config.Array.data[12].UnityValues.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 484c0627c6d619e479f2d01d8b84b5e8, type: 2}
+    - target: {fileID: 2326807283186733403, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
+        type: 3}
+      propertyPath: Config.Array.data[13].UnityValues.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 484c0627c6d619e479f2d01d8b84b5e8, type: 2}
     - target: {fileID: 5346802365665421874, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
         type: 3}
       propertyPath: m_Name

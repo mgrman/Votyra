@@ -6,7 +6,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2i
+    public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2i, IMaskConstraint2e
     {
         private readonly IImageConfig _imageConfig;
         private readonly SortedDictionary<LayerId, EditableMatrixImage2f> _images = new SortedDictionary<LayerId, EditableMatrixImage2f>();
@@ -27,6 +27,71 @@ namespace Votyra.Core.Images
             int.MinValue,
             int.MaxValue
         };
+
+        void IMaskConstraint2e.Initialize(IEditableMask2e mask)
+        {
+        }
+
+        IEnumerable<int> IMaskConstraint2e.Priorities => new[]
+        {
+            int.MinValue,
+            int.MaxValue
+        };
+
+        Range2i IMaskConstraint2e.FixMask(IEditableMask2e mask, MaskValues[,] editableMatrix, Range2i invalidatedImageArea)
+        {
+            var layer = _masks.Where(o => o.Value == mask)
+                .Select(o => o.Key)
+                .FirstOrDefault();
+
+            if (layer == _masks.First()
+                .Key)
+            {
+                return invalidatedImageArea;
+            }
+
+            var belowLayer = _images.TakeWhile(o => o.Key < layer)
+                .Last()
+                .Key;
+            var belowImageAccesor = _lastLayerImage._layerAccesors[belowLayer];
+
+            var sameLayer = _images.Where(o => o.Key == layer)
+                .First()
+                .Key;
+            var sameImageAccesor = _lastLayerImage._layerAccesors[sameLayer];
+
+            invalidatedImageArea = invalidatedImageArea.CombineWith(belowImageAccesor.Area);
+            invalidatedImageArea = invalidatedImageArea.CombineWith(sameImageAccesor.Area);
+             invalidatedImageArea = invalidatedImageArea.ExtendBothDirections(2);
+
+            var min = invalidatedImageArea.Min;
+            var max = invalidatedImageArea.Max;
+            for (var ix = Math.Max(min.X, 0); ix < Math.Min(max.X, editableMatrix.GetUpperBound(0)); ix++)
+            {
+                for (var iy = Math.Max(min.Y, 0); iy < Math.Min(max.Y, editableMatrix.GetUpperBound(1)); iy++)
+                {
+                    bool any = false;
+                    for (int ox = -1; ox <= 1; ox++)
+                    {
+                        for (int oy = -1; oy <= 1; oy++)
+                        {
+                            var i = new Vector2i(ix + ox, iy + oy);
+                            var same = sameImageAccesor[i];
+                            var below = belowImageAccesor[i];
+                            if (same > below)
+                            {
+                                any = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    editableMatrix[ix, iy] = any ? MaskValues.Terrain : MaskValues.Hole;
+                }
+            }
+
+            return invalidatedImageArea;
+        }
 
         Range2i IImageConstraint2i.FixImage(IEditableImage2f image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
@@ -63,10 +128,10 @@ namespace Votyra.Core.Images
             return invalidatedImageArea;
         }
 
-        public void Initialize(LayerId layer, List<IImageConstraint2i> constraints)
+        public void Initialize(LayerId layer, List<IImageConstraint2i> constraints, List<IMaskConstraint2e> maskConstraints)
         {
             _images[layer] = new EditableMatrixImage2f(_imageConfig, constraints);
-            _masks[layer] = new EditableMatrixMask2e(_imageConfig);
+            _masks[layer] = new EditableMatrixMask2e(_imageConfig, maskConstraints, layer == LayerId.Rock ? MaskValues.Terrain : MaskValues.Hole);
         }
 
         public IImage2f CreateImage(LayerId layer) => _images[layer]
@@ -138,5 +203,7 @@ namespace Votyra.Core.Images
                 }
             }
         }
+
+        public IEnumerable<int> Priorities { get; }
     }
 }

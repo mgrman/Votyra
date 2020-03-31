@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using Votyra.Core.Images.Constraints;
 using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
@@ -12,10 +14,30 @@ namespace Votyra.Core.Images
         private readonly List<MatrixMask2e> _readonlyMatrices = new List<MatrixMask2e>();
         private Range2i? _invalidatedArea;
         private MatrixMask2e _preparedImage;
+        private IMaskConstraint2e[] _constraints;
 
-        public EditableMatrixMask2e(IImageConfig imageConfig)
+        public EditableMatrixMask2e(IImageConfig imageConfig, List<IMaskConstraint2e> constraints, MaskValues defaultValue)
         {
+            _constraints = constraints.SelectMany(o => o.Priorities.Select(p => new
+                {
+                    p,
+                    o
+                }))
+                .OrderBy(o => o.p)
+                .Select(o => o.o)
+                .ToArray();
+            foreach (var constraint in _constraints)
+            {
+                constraint.Initialize(this);
+            }
             _editableMatrix = new MaskValues[imageConfig.ImageSize.X, imageConfig.ImageSize.Y];
+            for (var ix = 0; ix < imageConfig.ImageSize.X; ix++)
+            {
+                for (var iy =0; iy < imageConfig.ImageSize.Y; iy++)
+                {
+                    _editableMatrix[ix, iy]= defaultValue;
+                }
+            }
         }
 
         private MatrixMask2e PreparedImage
@@ -73,7 +95,20 @@ namespace Votyra.Core.Images
 
         private void FixImage(Range2i invalidatedImageArea)
         {
-            _invalidatedArea = _invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
+            if (_invalidatedArea == null)
+            {
+                invalidatedImageArea = _invalidatedArea.Value.CombineWith(invalidatedImageArea);
+            }
+
+            _invalidatedArea = invalidatedImageArea;
+
+            for (var i = 0; i < _constraints.Length; i++)
+            {
+                var newInvalidatedImageArea = _constraints[i]
+                    .FixMask(this, _editableMatrix, invalidatedImageArea);
+                invalidatedImageArea = invalidatedImageArea.CombineWith(newInvalidatedImageArea);
+                _invalidatedArea = invalidatedImageArea;
+            }
         }
 
         private class MatrixImageAccessor : IEditableMaskAccessor2e

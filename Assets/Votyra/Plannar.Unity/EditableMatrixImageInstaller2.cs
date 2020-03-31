@@ -9,8 +9,6 @@ namespace Votyra.Plannar.Unity
         {
             Container.BindInterfacesAndSelfTo<AggregatableImage2f>()
                 .AsSingle();
-            Container.BindInterfacesAndSelfTo<AggregatableMask2e>()
-                .AsSingle();
         }
     }
 }

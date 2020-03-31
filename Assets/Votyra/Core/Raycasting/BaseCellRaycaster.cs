@@ -6,7 +6,7 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Raycasting
 {
-    public abstract class BaseCellRaycaster : IRaycaster
+    public abstract class BaseCellRaycaster : IRaycasterPart
     {
         protected const float maxDistance = 500;
 

@@ -6,7 +6,7 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Raycasting
 {
-    public abstract class BaseGroupRaycaster : IRaycaster
+    public abstract class BaseGroupRaycaster : IRaycasterPart
     {
         private readonly Vector2i _cellInGroupCount;
         private readonly ITerrainRepository2i _manager;

@@ -3,9 +3,9 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Raycasting
 {
-    public class AggregatorRaycaster : IRaycaster, IRaycasterAggregator
+    public class AggregatorRaycaster : IRaycasterAggregator
     {
-        private readonly List<IRaycaster> _raycasters = new List<IRaycaster>();
+        private readonly List<IRaycasterPart> _raycasters = new List<IRaycasterPart>();
 
         public Vector3f Raycast(Ray3f cameraRay)
         {
@@ -35,7 +35,7 @@ namespace Votyra.Core.Raycasting
             return float.NaN;
         }
 
-        public void Attach(IRaycaster raycaster)
+        public void Attach(IRaycasterPart raycaster)
         {
             _raycasters.Add(raycaster);
         }
