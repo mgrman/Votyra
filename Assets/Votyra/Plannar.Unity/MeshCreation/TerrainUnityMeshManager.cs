@@ -29,6 +29,11 @@ namespace Votyra.Plannar.Unity
 
         private void ChangedTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
+            if (!_unityMeshes.ContainsKey(group))
+            {
+                Debug.LogError($"Changed {group} before NewTerrain was called!");
+                return;
+            }
             Debug.Log("Changed "+group);
             var pooledGameObject = _unityMeshes[group];
 

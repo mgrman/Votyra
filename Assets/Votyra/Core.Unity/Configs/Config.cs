@@ -66,8 +66,8 @@ namespace Votyra.Core
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Problem '{ex.Message}' deserializing '{JsonValue}'.");
-                    throw;
+                    Debug.LogError($"Problem '{ex.Message}' deserializing '{JsonValue}' to type {Type} for {Id}.");
+                    return null;
                 }
             }
         }
