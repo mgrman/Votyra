@@ -122,6 +122,22 @@ namespace Votyra.Core.Utils
 
         public static int Min(this int? a, int b) => Math.Min(a ?? b, b);
 
+        public static float? Max(this float? a, float? b) => a.HasValue && b.HasValue ? Math.Max(a.Value, b.Value) : a ?? b;
+
+        public static float? Max(this float a, float? b) => Math.Max(a, b ?? a);
+
+        public static float Max(this float? a, float b) => Math.Max(a ?? b, b);
+
+        public static float Max(this float a, float b) => Math.Max(a, b);
+
+        public static float? Min(this float? a, float? b) => a.HasValue && b.HasValue ? Math.Min(a.Value, b.Value) : a ?? b;
+
+        public static float Min(this float a, float? b) => Math.Min(a, b ?? a);
+
+        public static float Min(this float? a, float b) => Math.Min(a ?? b, b);
+
+        public static float Min(this float a, float b) => Math.Min(a, b);
+
         public static float PerlinNoise(float x, float y) => _noise.GetPerlin(x, y);
 
         public static float PerlinNoise(float x, float y, float z) => _noise.GetPerlin(x, y, z);
