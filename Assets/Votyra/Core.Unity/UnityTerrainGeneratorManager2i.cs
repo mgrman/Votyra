@@ -30,6 +30,7 @@ namespace Votyra.Core
                 switch (valueTuple.Action)
                 {
                     case RepositorActionType.New:
+                        _activeTerrains.TryAdd(valueTuple.Group, valueTuple.Mesh);
                         _newTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
                         break;
                     case RepositorActionType.Changed:
@@ -37,6 +38,7 @@ namespace Votyra.Core
                         break;
                     case RepositorActionType.Removed:
                         RemovedTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
+                        _activeTerrains.TryRemove(valueTuple.Group, out var _);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -84,7 +86,6 @@ namespace Votyra.Core
                 {
                     case RepositorActionType.New:
                         _queue.Enqueue(arg);
-                        _activeTerrains.TryAdd(arg.Group, arg.Mesh);
 
                         break;
                     case RepositorActionType.Changed:
@@ -92,7 +93,6 @@ namespace Votyra.Core
                         break;
                     case RepositorActionType.Removed:
                         _queue.Enqueue(arg);
-                        _activeTerrains.TryRemove(arg.Group, out var _);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
