@@ -5,7 +5,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 {
     public class EmptyTests
     {
-        [Test,]
+        [Test]
         public void EmptyTest()
         {
             var cube = @"
@@ -21,7 +21,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             Assert.IsEmpty(triangles);
         }
 
-        [Test,]
+        [Test]
         public void FullTest()
         {
             var cube = @"

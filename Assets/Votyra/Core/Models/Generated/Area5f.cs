@@ -21,20 +21,20 @@ namespace Votyra.Core.Models
 
         public Area1f X4 => Area1f.FromMinAndMax(this.Min.X4, this.Max.X4);
 
-        [JsonConstructor,]
+        [JsonConstructor]
         private Area5f(Vector5f min, Vector5f max)
         {
             this.Min = min;
             this.Max = max;
         }
 
-        [JsonIgnore,]
+        [JsonIgnore]
         public Vector5f Center => (this.Max + this.Min) / 2f;
 
-        [JsonIgnore,]
+        [JsonIgnore]
         public Vector5f Size => this.Max - this.Min;
 
-        [JsonIgnore,]
+        [JsonIgnore]
         public Vector5f Extents => this.Size / 2;
 
         public float DiagonalLength => this.Size.Magnitude();

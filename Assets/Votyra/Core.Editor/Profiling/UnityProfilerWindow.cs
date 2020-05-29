@@ -6,7 +6,7 @@ namespace Votyra.Core.Editor.Profiling
     public class UnityProfilerWindow : EditorWindow
     {
         // Add menu named "My Window" to the Window menu
-        [MenuItem("Window/Votyra - AsyncProfiler"),]
+        [MenuItem("Window/Votyra - AsyncProfiler")]
         private static void Init()
         {
             // Get existing open window or if none, make a new one:

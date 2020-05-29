@@ -13,7 +13,7 @@ using Object = UnityEngine.Object;
 
 namespace Votyra.Core.Editor
 {
-    [CustomEditor(typeof(ConfigInstaller)),]
+    [CustomEditor(typeof(ConfigInstaller))]
     public class ConfigInstallerEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()

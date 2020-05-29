@@ -18,7 +18,7 @@ namespace Votyra.Core.Models
 
         public readonly float W;
 
-        [JsonConstructor,]
+        [JsonConstructor]
         public Vector4f(float x, float y, float z, float w)
         {
             this.X = x;

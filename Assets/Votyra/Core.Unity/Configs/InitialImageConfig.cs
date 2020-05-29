@@ -6,10 +6,10 @@ namespace Votyra.Core.Images
 {
     public class InitialImageConfig : IInitialImageConfig
     {
-        [Inject,]
-        public InitialImageConfig([ConfigInject("initialData"),]
-            Texture2D initialData, [ConfigInject("initialDataScale"),]
-            Vector3f initialDataScale, [ConfigInject("zeroFromInitialStateIsNull"),]
+        [Inject]
+        public InitialImageConfig([ConfigInject("initialData")]
+            Texture2D initialData, [ConfigInject("initialDataScale")]
+            Vector3f initialDataScale, [ConfigInject("zeroFromInitialStateIsNull")]
             bool zeroFromInitialStateIsNull)
         {
             this.InitialData = initialData;

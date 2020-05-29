@@ -19,21 +19,21 @@ namespace Votyra.Core.Unity.Painting
 
         private string lastActiveCommand;
 
-        [InjectOptional,]
+        [InjectOptional]
         private ILayerConfig layerConfig;
 
-        [Inject,]
+        [Inject]
         private IPaintingModel paintingModel;
 
         private bool processing;
 
-        [Inject,]
+        [Inject]
         private IRaycaster raycaster;
 
-        [Inject(Id = "root"),]
+        [Inject(Id = "root")]
         private GameObject root;
 
-        [Inject,]
+        [Inject]
         private ITerrainConfig terrainConfig;
 
         protected void Update()

@@ -1597,29 +1597,29 @@ namespace Votyra.Core.Utils
             }
         }
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static int FastFloor(float f) => f >= 0 ? (int)f : (int)f - 1;
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static int FastRound(float f) => f >= 0 ? (int)(f + (float)0.5) : (int)(f - (float)0.5);
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static float Lerp(float a, float b, float t) => a + (t * (b - a));
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static float InterpHermiteFunc(float t) => t * t * (3 - (2 * t));
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static float InterpQuinticFunc(float t) => t * t * t * ((t * ((t * 6) - 15)) + 10);
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static float CubicLerp(float a, float b, float c, float d, float t)
         {
             var p = d - c - (a - b);
             return (t * t * t * p) + (t * t * (a - b - p)) + (t * (c - a)) + b;
         }
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static int Hash2D(int seed, int x, int y)
         {
             var hash = seed;
@@ -1632,7 +1632,7 @@ namespace Votyra.Core.Utils
             return hash;
         }
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static int Hash3D(int seed, int x, int y, int z)
         {
             var hash = seed;
@@ -1646,7 +1646,7 @@ namespace Votyra.Core.Utils
             return hash;
         }
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static int Hash4D(int seed, int x, int y, int z, int w)
         {
             var hash = seed;
@@ -1661,7 +1661,7 @@ namespace Votyra.Core.Utils
             return hash;
         }
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static float ValCoord2D(int seed, int x, int y)
         {
             var n = seed;
@@ -1671,7 +1671,7 @@ namespace Votyra.Core.Utils
             return (n * n * n * 60493) / (float)2147483648.0;
         }
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static float ValCoord3D(int seed, int x, int y, int z)
         {
             var n = seed;
@@ -1682,7 +1682,7 @@ namespace Votyra.Core.Utils
             return (n * n * n * 60493) / (float)2147483648.0;
         }
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static float ValCoord4D(int seed, int x, int y, int z, int w)
         {
             var n = seed;
@@ -1694,7 +1694,7 @@ namespace Votyra.Core.Utils
             return (n * n * n * 60493) / (float)2147483648.0;
         }
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static float GradCoord2D(int seed, int x, int y, float xd, float yd)
         {
             var hash = seed;
@@ -1709,7 +1709,7 @@ namespace Votyra.Core.Utils
             return (xd * g.x) + (yd * g.y);
         }
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static float GradCoord3D(int seed, int x, int y, int z, float xd, float yd, float zd)
         {
             var hash = seed;
@@ -1725,7 +1725,7 @@ namespace Votyra.Core.Utils
             return (xd * g.x) + (yd * g.y) + (zd * g.z);
         }
 
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private static float GradCoord4D(int seed, int x, int y, int z, int w, float xd, float yd, float zd, float wd)
         {
             var hash = seed;
@@ -1776,7 +1776,7 @@ namespace Votyra.Core.Utils
         }
 
         // White Noise
-        [MethodImpl(FN_INLINE),]
+        [MethodImpl(FN_INLINE)]
         private int FloatCast2Int(float f)
         {
             var i = BitConverter.DoubleToInt64Bits(f);

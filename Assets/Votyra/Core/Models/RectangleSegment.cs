@@ -2,7 +2,7 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    [Flags,]
+    [Flags]
     public enum RectangleSegment : byte
     {
         None = 0,

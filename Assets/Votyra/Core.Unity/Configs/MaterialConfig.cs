@@ -4,8 +4,8 @@ namespace Votyra.Core.Images
 {
     public class MaterialConfig : IMaterialConfig
     {
-        public MaterialConfig([ConfigInject("material"),]
-            Material material, [ConfigInject("materialWalls"),]
+        public MaterialConfig([ConfigInject("material")]
+            Material material, [ConfigInject("materialWalls")]
             Material materialWalls)
         {
             this.Material = material;

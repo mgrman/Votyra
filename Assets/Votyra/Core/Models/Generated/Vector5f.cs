@@ -20,7 +20,7 @@ namespace Votyra.Core.Models
 
         public readonly float X4;
 
-        [JsonConstructor,]
+        [JsonConstructor]
         public Vector5f(float x0, float x1, float x2, float x3, float x4)
         {
             this.X0 = x0;

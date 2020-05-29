@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Votyra.Core.Models
 {
-    [Serializable,]
+    [Serializable]
     public struct UI_Vector3f
     {
         public float x;

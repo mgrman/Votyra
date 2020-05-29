@@ -2,7 +2,7 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    [Serializable,]
+    [Serializable]
     public struct UI_Vector2i
     {
         public int x;

@@ -2,7 +2,7 @@ using System;
 
 namespace Votyra.Core.InputHandling
 {
-    [Flags,]
+    [Flags]
     public enum InputModifiers : byte
     {
         None = 0,

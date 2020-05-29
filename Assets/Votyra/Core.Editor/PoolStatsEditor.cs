@@ -4,7 +4,7 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core
 {
-    [CustomEditor(typeof(PoolStats)),]
+    [CustomEditor(typeof(PoolStats))]
     public class PoolStatsEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()

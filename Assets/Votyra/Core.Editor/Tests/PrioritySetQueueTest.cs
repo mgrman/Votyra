@@ -5,10 +5,10 @@ using Votyra.Core.Models;
 
 namespace Votyra.Plannar.Editor
 {
-    [TestFixture,]
+    [TestFixture]
     public class PrioritySetQueueTest
     {
-        [Test,]
+        [Test]
         public void New_FloatAscending()
         {
             var initialValues = new Dictionary<Vector2i, float>
@@ -29,7 +29,7 @@ namespace Votyra.Plannar.Editor
             Assert.AreEqual(new Vector2i(7, 7), third.Value);
         }
 
-        [Test,]
+        [Test]
         public void New_FloatAscending_AddedToCorrectPosition()
         {
             var initialValues = new Dictionary<Vector2i, float>
@@ -54,7 +54,7 @@ namespace Votyra.Plannar.Editor
             Assert.AreEqual(new Vector2i(7, 7), fourth.Value);
         }
 
-        [Test,]
+        [Test]
         public void New_FloatDescending()
         {
             var initialValues = new Dictionary<Vector2i, float>
@@ -75,7 +75,7 @@ namespace Votyra.Plannar.Editor
             Assert.AreEqual(new Vector2i(0, 0), third.Value);
         }
 
-        [Test,]
+        [Test]
         public void New_FloatDescending_AddedToCorrectPosition()
         {
             var initialValues = new Dictionary<Vector2i, float>

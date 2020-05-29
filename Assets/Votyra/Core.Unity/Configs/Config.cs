@@ -8,21 +8,21 @@ using UnityEngineObject = UnityEngine.Object;
 
 namespace Votyra.Core
 {
-    [Serializable,]
+    [Serializable]
     public class ConfigItem : IEquatable<ConfigItem>
     {
         private JsonSerializerSettings _settings;
 
-        [SerializeField,]
+        [SerializeField]
         public string Id;
 
-        [SerializeField,]
+        [SerializeField]
         public string JsonValue;
 
-        [SerializeField,]
+        [SerializeField]
         public string TypeAssemblyQualifiedName;
 
-        [SerializeField,]
+        [SerializeField]
         public List<UnityEngineObject> UnityValues;
 
         public ConfigItem()

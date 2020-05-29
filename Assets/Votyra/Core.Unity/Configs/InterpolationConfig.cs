@@ -4,10 +4,10 @@ namespace Votyra.Core.Images
 {
     public class InterpolationConfig : IInterpolationConfig
     {
-        public InterpolationConfig([ConfigInject("activeAlgorithm"),]
-            IntepolationAlgorithm activeAlgorithm, [ConfigInject("dynamicMeshes"),]
-            bool dynamicMeshes, [ConfigInject("imageSubdivision"),]
-            int imageSubdivision, [ConfigInject("meshSubdivision"),]
+        public InterpolationConfig([ConfigInject("activeAlgorithm")]
+            IntepolationAlgorithm activeAlgorithm, [ConfigInject("dynamicMeshes")]
+            bool dynamicMeshes, [ConfigInject("imageSubdivision")]
+            int imageSubdivision, [ConfigInject("meshSubdivision")]
             Vector2i meshSubdivision)
         {
             this.ActiveAlgorithm = activeAlgorithm;

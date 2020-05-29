@@ -6,7 +6,7 @@ namespace Votyra.Core.Unity
 {
     public class ConfigInstaller : MonoInstaller
     {
-        [SerializeField,]
+        [SerializeField]
         public ConfigItem[] Config;
 
         public override void InstallBindings()

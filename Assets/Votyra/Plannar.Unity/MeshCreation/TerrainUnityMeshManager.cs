@@ -19,8 +19,8 @@ namespace Votyra.Plannar.Unity
         private readonly IUnityTerrainGeneratorManager2i manager;
         private readonly Dictionary<Vector2i, ITerrainGameObject> unityMeshes = new Dictionary<Vector2i, ITerrainGameObject>();
 
-        public TerrainUnityMeshManager(IUnityTerrainGeneratorManager2i manager, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root"),]
-            GameObject root, [InjectOptional,]
+        public TerrainUnityMeshManager(IUnityTerrainGeneratorManager2i manager, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root")]
+            GameObject root, [InjectOptional]
             ILayerConfig layerConfig)
         {
             this.manager = manager;

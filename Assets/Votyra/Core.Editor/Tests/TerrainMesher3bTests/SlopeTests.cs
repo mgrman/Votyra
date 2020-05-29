@@ -5,7 +5,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 {
     public class SlopeTests
     {
-        [Test,]
+        [Test]
         public void SlopeX0()
         {
             var cube = @"
@@ -21,7 +21,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             AssertContainsQuad(triangles, cube, x1y0z0, x1y1z0, x0y0z1, x0y1z1);
         }
 
-        [Test,]
+        [Test]
         public void SlopeX1()
         {
             var cube = @"

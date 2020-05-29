@@ -8,7 +8,7 @@ namespace Votyra.Core.Images
 {
     public class InitialStateSetter2F
     {
-        public InitialStateSetter2F(IEditableImage2f editableImage, IInitialImageConfig imageConfig, [Inject(Id = "root"),]
+        public InitialStateSetter2F(IEditableImage2f editableImage, IInitialImageConfig imageConfig, [Inject(Id = "root")]
             GameObject root)
         {
             this.FillInitialState(editableImage, imageConfig, root);

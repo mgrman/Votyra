@@ -9,7 +9,7 @@ namespace Votyra.Core
     {
         public IEnumerable<IPool> Pools { get; private set; }
 
-        [Inject,]
+        [Inject]
         public void Initialize(List<IPool> pools)
         {
             this.Pools = pools;

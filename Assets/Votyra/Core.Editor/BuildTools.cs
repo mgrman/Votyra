@@ -28,7 +28,7 @@ namespace Votyra.Core.Editor
         private static readonly string Win64DocsFile = Path.Combine(DocsFolder, "Votyra-Win.zip");
         private static readonly string WebGLDocsWasmDirectory = Path.Combine(DocsFolder, WebGlBuildDirectory);
 
-        [MenuItem("Build/Votyra/Build All (Release)"),]
+        [MenuItem("Build/Votyra/Build All (Release)")]
         public static void BuildAllRelease()
         {
             BuildWin64();
@@ -37,7 +37,7 @@ namespace Votyra.Core.Editor
             OpenFolderInExplorer();
         }
 
-        [MenuItem("Build/Votyra/Build and Update Docs"),]
+        [MenuItem("Build/Votyra/Build and Update Docs")]
         public static void BuildAllAndUpdateDocs()
         {
             BuildWin64();
@@ -49,7 +49,7 @@ namespace Votyra.Core.Editor
             DirectoryCopy(WebGLWasmDirectory, WebGLDocsWasmDirectory, true);
         }
 
-        [MenuItem("Build/Votyra/Build Win64 (Release)"),]
+        [MenuItem("Build/Votyra/Build Win64 (Release)")]
         public static void BuildWin64()
         {
             Win64Directory.TryDeleteDirectory();
@@ -59,7 +59,7 @@ namespace Votyra.Core.Editor
             cleanupDir.TryDeleteDirectory();
         }
 
-        [MenuItem("Build/Votyra/Build UWP (Release)"),]
+        [MenuItem("Build/Votyra/Build UWP (Release)")]
         public static void BuildUWP()
         {
             UWPDirectory.TryDeleteDirectory();
@@ -100,7 +100,7 @@ namespace Votyra.Core.Editor
             Debug.LogError(e.Data);
         }
 
-        [MenuItem("Build/Votyra/Build WebGL (Release)"),]
+        [MenuItem("Build/Votyra/Build WebGL (Release)")]
         public static void BuildWebGl()
         {
             var webGlPath = Path.Combine(WebGlDirectory, "Votyra");
@@ -120,7 +120,7 @@ namespace Votyra.Core.Editor
             }
         }
 
-        [MenuItem("Build/Votyra/Open Release folder"),]
+        [MenuItem("Build/Votyra/Open Release folder")]
         public static void OpenFolderInExplorer()
         {
             var proc = new Process

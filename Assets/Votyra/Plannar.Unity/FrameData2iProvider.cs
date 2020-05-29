@@ -121,9 +121,9 @@ namespace Votyra.Plannar
 #pragma warning disable SA1201
         private event Action<ArcResource<IFrameData2i>> RawFrameData;
 
-        [Inject,]
-        public FrameData2IProvider([InjectOptional,]
-            IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root"),]
+        [Inject]
+        public FrameData2IProvider([InjectOptional]
+            IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root")]
             GameObject root, IFrameData2iPool pool)
         {
             this.image2FPostProcessor = image2FPostProcessor;

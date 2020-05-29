@@ -6,7 +6,7 @@ using Votyra.Core.Unity;
 
 namespace Zenject
 {
-    [CustomEditor(typeof(AutoGameObjectContext)),]
+    [CustomEditor(typeof(AutoGameObjectContext))]
     public class AutoGameObjectContextEditor : Editor
     {
         private ReorderableList installersList;

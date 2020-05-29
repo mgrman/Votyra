@@ -2,7 +2,7 @@
 {
     public class ConstraintConfig : IConstraintConfig
     {
-        public ConstraintConfig([ConfigInject("scaleFactor"),]
+        public ConstraintConfig([ConfigInject("scaleFactor")]
             int scaleFactor)
         {
             this.ScaleFactor = scaleFactor;

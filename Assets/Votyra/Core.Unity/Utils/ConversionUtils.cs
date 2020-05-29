@@ -95,33 +95,33 @@ namespace Votyra.Core.Utils
             return target;
         }
 
-        [StructLayout(LayoutKind.Explicit),]
+        [StructLayout(LayoutKind.Explicit)]
         private struct UnionVector3
         {
-            [FieldOffset(0),]
+            [FieldOffset(0)]
             public Vector3f[] From;
 
-            [FieldOffset(0),]
+            [FieldOffset(0)]
             public readonly Vector3[] To;
         }
 
-        [StructLayout(LayoutKind.Explicit),]
+        [StructLayout(LayoutKind.Explicit)]
         private struct UnionVector2
         {
-            [FieldOffset(0),]
+            [FieldOffset(0)]
             public Vector2f[] From;
 
-            [FieldOffset(0),]
+            [FieldOffset(0)]
             public readonly Vector2[] To;
         }
 
-        [StructLayout(LayoutKind.Explicit),]
+        [StructLayout(LayoutKind.Explicit)]
         private struct UnionPlane
         {
-            [FieldOffset(0),]
+            [FieldOffset(0)]
             public Plane[] From;
 
-            [FieldOffset(0),]
+            [FieldOffset(0)]
             public readonly Plane3f[] To;
         }
 

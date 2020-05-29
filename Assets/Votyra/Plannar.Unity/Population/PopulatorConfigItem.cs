@@ -4,22 +4,22 @@ using Votyra.Core.Models;
 
 namespace Votyra.Plannar.Unity
 {
-    [Serializable,]
+    [Serializable]
     public class PopulatorConfigItem
     {
-        [SerializeField,]
+        [SerializeField]
         private uint countPerGroup;
 
-        [SerializeField,]
+        [SerializeField]
         private AnimationCurve heightCurve;
 
-        [SerializeField,]
+        [SerializeField]
         private Material material;
 
-        [SerializeField,]
+        [SerializeField]
         private Mesh mesh;
 
-        [SerializeField,]
+        [SerializeField]
         private Area1f uniformScaleVariance;
 
         public uint CountPerGroup => this.countPerGroup;

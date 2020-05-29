@@ -8,10 +8,10 @@ using Assert = UnityEngine.Assertions.Assert;
 
 namespace Votyra.Core.Editor.Tests
 {
-    [TestFixture,]
+    [TestFixture]
     public class IntersectionUtilsTest
     {
-        [Test,]
+        [Test]
         public void LiangBarskyClipper_SimpleLines_ReturnExpectedResult()
         {
             var fromI = 1;

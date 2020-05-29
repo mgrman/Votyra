@@ -6,7 +6,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
 {
     public class ParseCubeTests
     {
-        [Test,]
+        [Test]
         public void FromStringToString()
         {
             var cubeString = @"
@@ -29,7 +29,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
                         .Select(o => o.Trim())));
         }
 
-        [Test,]
+        [Test]
         public void x0y0z0()
         {
             var cubeString = @"
@@ -52,7 +52,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z1);
         }
 
-        [Test,]
+        [Test]
         public void x0y0z1()
         {
             var cubeString = @"
@@ -75,7 +75,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z1);
         }
 
-        [Test,]
+        [Test]
         public void x0y1z0()
         {
             var cubeString = @"
@@ -98,7 +98,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z1);
         }
 
-        [Test,]
+        [Test]
         public void x0y1z1()
         {
             var cubeString = @"
@@ -121,7 +121,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z1);
         }
 
-        [Test,]
+        [Test]
         public void x1y0z0()
         {
             var cubeString = @"
@@ -144,7 +144,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z1);
         }
 
-        [Test,]
+        [Test]
         public void x1y0z1()
         {
             var cubeString = @"
@@ -167,7 +167,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z1);
         }
 
-        [Test,]
+        [Test]
         public void x1y1z0()
         {
             var cubeString = @"
@@ -190,7 +190,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.IsFalse(cube.Data_x1y1z1);
         }
 
-        [Test,]
+        [Test]
         public void x1y1z1()
         {
             var cubeString = @"

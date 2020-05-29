@@ -16,7 +16,7 @@ namespace Votyra.Core.Models
 
         public readonly int Z;
 
-        [JsonConstructor,]
+        [JsonConstructor]
         public Vector3i(int x, int y, int z)
         {
             this.X = x;

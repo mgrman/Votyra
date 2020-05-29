@@ -6,10 +6,10 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core
 {
-    [TestFixture,]
+    [TestFixture]
     public class ScheduledSubjectTest
     {
-        [Test,]
+        [Test]
         public void ScheduledSubject_CircullarConnection_CombinedValueIsCorrect()
         {
             var subjectA = new BehaviorSubject<string>(null).MakeScheduledOnMainThread();

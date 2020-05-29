@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Votyra.Core.Unity
 {
-    [ExecuteInEditMode,]
+    [ExecuteInEditMode]
     public class AutoGameObjectContext : GameObjectContext
     {
         protected override void RunInternal()

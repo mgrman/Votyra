@@ -6,8 +6,8 @@ namespace Votyra.Plannar.Unity
 {
     public class TerrainPopulatorManager : MonoBehaviour
     {
-        [Inject,]
-        public void Initialize(IUnityTerrainGeneratorManager2i manager, ITerrainConfig config, IPopulatorConfig populatorConfig, [Inject(Id = "root"),]
+        [Inject]
+        public void Initialize(IUnityTerrainGeneratorManager2i manager, ITerrainConfig config, IPopulatorConfig populatorConfig, [Inject(Id = "root")]
             GameObject root)
         {
             for (var i = 0; i < populatorConfig.ConfigItems.Length; i++)
