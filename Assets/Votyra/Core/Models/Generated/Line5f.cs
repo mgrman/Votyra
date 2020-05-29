@@ -9,11 +9,11 @@ namespace Votyra.Core.Models
 
         public Line5f(Vector5f from, Vector5f to)
         {
-            From = from;
-            To = to;
+            this.From = from;
+            this.To = to;
         }
 
-        public bool Equals(Line5f other) => From.Equals(other.From) && To.Equals(other.To);
+        public bool Equals(Line5f other) => this.From.Equals(other.From) && this.To.Equals(other.To);
 
         public override bool Equals(object obj)
         {
@@ -22,17 +22,17 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return obj is Line5f other && Equals(other);
+            return obj is Line5f other && this.Equals(other);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (From.GetHashCode() * 397) ^ To.GetHashCode();
+                return (this.From.GetHashCode() * 397) ^ this.To.GetHashCode();
             }
         }
 
-        public override string ToString() => $"Origin {From} to {To}";
+        public override string ToString() => $"Origin {this.From} to {this.To}";
     }
 }

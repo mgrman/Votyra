@@ -10,45 +10,45 @@ namespace Votyra.Core
 
         public T Value
         {
-            get => _value;
+            get => this._value;
             set
             {
-                if (EqualityComparer<T>.Default.Equals(_value, value))
+                if (EqualityComparer<T>.Default.Equals(this._value, value))
                 {
                     return;
                 }
 
-                _value = value;
-                OnNext(value);
+                this._value = value;
+                this.OnNext(value);
             }
         }
 
         public void Dispose()
         {
-            OnCompleted();
+            this.OnCompleted();
         }
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            _observers.Add(observer);
-            observer.OnNext(Value);
+            this._observers.Add(observer);
+            observer.OnNext(this.Value);
             return new CallbackDisposable(this, observer);
         }
 
         public void OnCompleted()
         {
-            _observers.ForEach(o => o.OnCompleted());
-            _observers.Clear();
+            this._observers.ForEach(o => o.OnCompleted());
+            this._observers.Clear();
         }
 
         public void OnError(Exception error)
         {
-            _observers.ForEach(o => o.OnError(error));
+            this._observers.ForEach(o => o.OnError(error));
         }
 
         public void OnNext(T value)
         {
-            _observers.ForEach(o => o.OnNext(value));
+            this._observers.ForEach(o => o.OnNext(value));
         }
 
         private struct CallbackDisposable : IDisposable
@@ -58,13 +58,13 @@ namespace Votyra.Core
 
             public CallbackDisposable(SimpleSubject<T> parent, IObserver<T> observer)
             {
-                _parent = parent;
-                _observer = observer;
+                this._parent = parent;
+                this._observer = observer;
             }
 
             public void Dispose()
             {
-                _parent._observers.Remove(_observer);
+                this._parent._observers.Remove(this._observer);
             }
         }
     }

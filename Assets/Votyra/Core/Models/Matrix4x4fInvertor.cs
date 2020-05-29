@@ -28,7 +28,7 @@ namespace Votyra.Core.Models
 
             var matInvertedArrays = MatrixInverse(matArrays);
 
-            return new Matrix4x4f((float) matInvertedArrays[0][0], (float) matInvertedArrays[0][1], (float) matInvertedArrays[0][2], (float) matInvertedArrays[0][3], (float) matInvertedArrays[1][0], (float) matInvertedArrays[1][1], (float) matInvertedArrays[1][2], (float) matInvertedArrays[1][3], (float) matInvertedArrays[2][0], (float) matInvertedArrays[2][1], (float) matInvertedArrays[2][2], (float) matInvertedArrays[2][3], (float) matInvertedArrays[3][0], (float) matInvertedArrays[3][1], (float) matInvertedArrays[3][2], (float) matInvertedArrays[3][3]);
+            return new Matrix4x4f((float)matInvertedArrays[0][0], (float)matInvertedArrays[0][1], (float)matInvertedArrays[0][2], (float)matInvertedArrays[0][3], (float)matInvertedArrays[1][0], (float)matInvertedArrays[1][1], (float)matInvertedArrays[1][2], (float)matInvertedArrays[1][3], (float)matInvertedArrays[2][0], (float)matInvertedArrays[2][1], (float)matInvertedArrays[2][2], (float)matInvertedArrays[2][3], (float)matInvertedArrays[3][0], (float)matInvertedArrays[3][1], (float)matInvertedArrays[3][2], (float)matInvertedArrays[3][3]);
         }
 
         private static double[][] MatrixCreate(int rows, int cols)
@@ -114,7 +114,7 @@ namespace Votyra.Core.Models
                 perm[i] = i;
             }
 
-            for (var j = 0; j < n - 1; ++j) // process by column. note n-1
+            for (var j = 0; j < (n - 1); ++j) // process by column. note n-1
             {
                 var max = Math.Abs(lum[j][j]);
                 var piv = j;

@@ -6,54 +6,80 @@ using Zenject;
 
 namespace Votyra.Core.Images
 {
-    public class InitialStateSetter2f
+    public class InitialStateSetter2F
     {
-        public InitialStateSetter2f(IEditableImage2f editableImage, IInitialImageConfig imageConfig, [Inject(Id = "root")] GameObject root)
+        public InitialStateSetter2F(IEditableImage2f editableImage, IInitialImageConfig imageConfig, [Inject(Id = "root"),]
+            GameObject root)
         {
-            FillInitialState(editableImage, imageConfig, root);
+            this.FillInitialState(editableImage, imageConfig, root);
         }
 
         public void FillInitialState(IEditableImage2f editableImage, IInitialImageConfig imageConfig, GameObject root)
         {
             if (editableImage == null)
+            {
                 return;
+            }
+
             if (imageConfig.InitialData is Texture2D)
+            {
                 FillInitialState(editableImage, imageConfig.InitialData as Texture2D, imageConfig.InitialDataScale.Z, imageConfig.ZeroFromInitialStateIsNull);
+            }
+
             if (imageConfig.InitialData is GameObject)
+            {
                 FillInitialState(editableImage, (imageConfig.InitialData as GameObject).GetComponentsInChildren<Collider>(), imageConfig.InitialDataScale.Z, root);
+            }
+
             if (imageConfig.InitialData is Collider)
-                FillInitialState(editableImage, new[] {imageConfig.InitialData as Collider}, imageConfig.InitialDataScale.Z, root);
+            {
+                var colliderArray = new[]
+                {
+                    imageConfig.InitialData as Collider,
+                };
+                FillInitialState(editableImage, colliderArray, imageConfig.InitialDataScale.Z, root);
+            }
+
             if (imageConfig.InitialData is float[,])
+            {
                 FillInitialState(editableImage, imageConfig.InitialData as float[,], imageConfig.InitialDataScale.Z);
+            }
+
             if (imageConfig.InitialData is bool[,,])
+            {
                 FillInitialState(editableImage, imageConfig.InitialData as bool[,,], imageConfig.InitialDataScale.Z);
+            }
         }
 
         private static void FillInitialState(IEditableImage2f editableImage, Texture2D texture, float scale, bool zeroIsNull)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
-                    Range2i matrixAreaToFill;
-                    if (imageAccessor.Area == Range2i.All)
-                        matrixAreaToFill = new Vector2i(texture.width, texture.height).ToRange2i();
-                    else
-                        matrixAreaToFill = imageAccessor.Area;
+                Range2i matrixAreaToFill;
+                if (imageAccessor.Area == Range2i.All)
+                {
+                    matrixAreaToFill = new Vector2i(texture.width, texture.height).ToRange2i();
+                }
+                else
+                {
+                    matrixAreaToFill = imageAccessor.Area;
+                }
 
-                    var matrixSizeX = matrixAreaToFill.Size.X;
-                    var matrixSizeY = matrixAreaToFill.Size.Y;
+                var matrixSizeX = matrixAreaToFill.Size.X;
+                var matrixSizeY = matrixAreaToFill.Size.Y;
 
-                    var min = matrixAreaToFill.Min;
-                    for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
+                var min = matrixAreaToFill.Min;
+                for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
+                {
+                    for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
                     {
-                        for (var iy = 0; iy < matrixAreaToFill.Size.Y; iy++)
-                        {
-                            var pos = new Vector2i(ix, iy) + min;
-                            var value = texture.GetPixelBilinear((float) pos.X / matrixSizeX, (float) pos.Y / matrixSizeY)
-                                .grayscale * scale;
-                            var height = value;
-                            imageAccessor[pos] = height;
-                        }
+                        var pos = new Vector2i(ix, iy) + min;
+                        var value = texture.GetPixelBilinear((float)pos.X / matrixSizeX, (float)pos.Y / matrixSizeY)
+                            .grayscale * scale;
+                        var height = value;
+                        imageAccessor[pos] = height;
                     }
+                }
             }
         }
 
@@ -79,7 +105,10 @@ namespace Votyra.Core.Images
                             {
                                 RaycastHit hit;
                                 if (collider.Raycast(ray, out hit, bounds.Size.Z))
+                                {
                                     return Mathf.Max(0, bounds.Max.Z - hit.distance);
+                                }
+
                                 return 0;
                             })
                             .DefaultIfEmpty(0)
@@ -97,10 +126,14 @@ namespace Votyra.Core.Images
             {
                 Range2i matrixAreaToFill;
                 if (imageAccessor.Area == Range2i.All)
+                {
                     matrixAreaToFill = texture.Size()
                         .ToRange2i();
+                }
                 else
+                {
                     matrixAreaToFill = imageAccessor.Area;
+                }
 
                 var min = matrixAreaToFill.Min;
                 for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
@@ -120,11 +153,16 @@ namespace Votyra.Core.Images
             {
                 Range2i matrixAreaToFill;
                 if (imageAccessor.Area == Range2i.All)
+                {
                     matrixAreaToFill = texture.Size()
                         .XY()
                         .ToRange2i();
+                }
                 else
+                {
                     matrixAreaToFill = imageAccessor.Area;
+                }
+
                 var min = matrixAreaToFill.Min;
                 for (var ix = 0; ix < matrixAreaToFill.Size.X; ix++)
                 {

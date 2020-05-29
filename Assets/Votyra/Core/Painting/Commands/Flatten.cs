@@ -25,15 +25,15 @@ namespace Votyra.Core.Painting.Commands
         protected override void OnInvocationStopping()
         {
             base.OnInvocationStopping();
-            _centerValue = null;
+            this._centerValue = null;
         }
 
         protected override void PrepareWithClickedValue(float clickedValue)
         {
-            _centerValue = _centerValue ?? clickedValue;
+            this._centerValue = this._centerValue ?? clickedValue;
             base.PrepareWithClickedValue(clickedValue);
         }
 
-        protected override float Invoke(float value, int strength) => _centerValue ?? value;
+        protected override float Invoke(float value, int strength) => this._centerValue ?? value;
     }
 }

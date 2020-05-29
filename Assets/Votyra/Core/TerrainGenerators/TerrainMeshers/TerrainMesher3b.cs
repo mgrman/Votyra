@@ -25,28 +25,28 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public TerrainMesher3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
-            _imageSampler = imageSampler;
-            _cellInGroupCount = terrainConfig.CellInGroupCount;
+            this._imageSampler = imageSampler;
+            this._cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
         protected IImage3b Image { get; private set; }
 
         public void Initialize(IImage3b image)
         {
-            Image = image;
+            this.Image = image;
         }
 
         public void AddCell(Vector3i cellInGroup)
         {
-            var cell = cellInGroup + groupPosition;
+            var cell = cellInGroup + this.groupPosition;
 
-            var data = _imageSampler.Sample(Image, cell);
+            var data = this._imageSampler.Sample(this.Image, cell);
 
             var finalTris = DataToTriangles[data];
 
             foreach (var tri in finalTris)
             {
-                pooledMesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
+                this.pooledMesh.AddTriangle(cell + tri.A, cell + tri.B, cell + tri.C);
             }
 
             // TODO find a way to not generate thin planes
@@ -56,16 +56,16 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void InitializeGroup(Vector3i group, IGeneralMesh cleanPooledMesh)
         {
-            var bounds = Range3i.FromMinAndSize(group * _cellInGroupCount, _cellInGroupCount)
+            var bounds = Range3i.FromMinAndSize(group * this._cellInGroupCount, this._cellInGroupCount)
                 .ToArea3f();
 
-            groupPosition = _cellInGroupCount * group;
+            this.groupPosition = this._cellInGroupCount * group;
 
-            pooledMesh = cleanPooledMesh;
-            pooledMesh.Reset(Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(), _cellInGroupCount.ToVector3f()));
+            this.pooledMesh = cleanPooledMesh;
+            this.pooledMesh.Reset(Area3f.FromMinAndSize((group * this._cellInGroupCount).ToVector3f(), this._cellInGroupCount.ToVector3f()));
         }
 
-        public IGeneralMesh GetResultingMesh() => pooledMesh;
+        public IGeneralMesh GetResultingMesh() => this.pooledMesh;
 
         private static IReadOnlyCollection<Triangle3f> ChooseTrianglesForCell(SampledData3b data)
         {
@@ -87,7 +87,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             // 1-----0
 
             Matrix4x4f matrix;
-            if (data.Data == 0 || data.Data == byte.MaxValue)
+            if ((data.Data == 0) || (data.Data == byte.MaxValue))
             {
                 return Array.Empty<Triangle3f>();
             }
@@ -161,7 +161,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 return new[]
                     {
                         new Triangle3f(matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x0y0z1)),
-                        new Triangle3f(matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z0), matrix.MultiplyPoint(pos_x0y1z0))
+                        new Triangle3f(matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z0), matrix.MultiplyPoint(pos_x0y1z0)),
                     }.ChangeOrderIfTrue(isInverted)
                     .ToArray();
             }
@@ -181,7 +181,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
                 return new[]
                     {
-                        new Triangle3f(matrix.MultiplyPoint(pos_x0y1z1), matrix.MultiplyPoint(pos_x1y0z1), matrix.MultiplyPoint(pos_x1y1z0))
+                        new Triangle3f(matrix.MultiplyPoint(pos_x0y1z1), matrix.MultiplyPoint(pos_x1y0z1), matrix.MultiplyPoint(pos_x1y1z0)),
                     }.ChangeOrderIfTrue(isInverted)
                     .ToArray();
             }
@@ -202,7 +202,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 return new[]
                     {
                         new Triangle3f(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z1)),
-                        new Triangle3f(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x1y1z1), matrix.MultiplyPoint(pos_x0y1z0))
+                        new Triangle3f(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x1y1z1), matrix.MultiplyPoint(pos_x0y1z0)),
                     }.ChangeOrderIfTrue(isInverted)
                     .ToArray();
             }
@@ -222,7 +222,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 return new[]
                     {
                         new Triangle3f(matrix.MultiplyPoint(pos_x0y0z0), matrix.MultiplyPoint(pos_x1y1z0), matrix.MultiplyPoint(pos_x0y0z1)),
-                        new Triangle3f(matrix.MultiplyPoint(pos_x1y1z0), matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x0y0z1))
+                        new Triangle3f(matrix.MultiplyPoint(pos_x1y1z0), matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x0y0z1)),
                     }.ChangeOrderIfTrue(isInverted)
                     .ToArray();
             }
@@ -244,7 +244,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     {
                         new Triangle3f(matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x1y1z1)),
                         new Triangle3f(matrix.MultiplyPoint(pos_x0y0z0), matrix.MultiplyPoint(pos_x1y1z0), matrix.MultiplyPoint(pos_x1y1z1)),
-                        new Triangle3f(matrix.MultiplyPoint(pos_x0y0z0), matrix.MultiplyPoint(pos_x1y1z1), matrix.MultiplyPoint(pos_x0y0z1))
+                        new Triangle3f(matrix.MultiplyPoint(pos_x0y0z0), matrix.MultiplyPoint(pos_x1y1z1), matrix.MultiplyPoint(pos_x0y0z1)),
                     }.ChangeOrderIfTrue(isInverted)
                     .ToArray();
             }

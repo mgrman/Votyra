@@ -12,7 +12,7 @@ namespace Votyra.Core.Pooling
 
         public ArcPool(Func<TValue> factory)
         {
-            _factory = factory;
+            this._factory = factory;
         }
 
         public int PoolCount { get; private set; }
@@ -21,19 +21,19 @@ namespace Votyra.Core.Pooling
 
         public ArcResource<TValue> Get()
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                ActiveCount++;
+                this.ActiveCount++;
                 ArcResource<TValue> value;
-                if (_list.Count == 0)
+                if (this._list.Count == 0)
                 {
-                    value = new ArcResource<TValue>(_factory(), ReturnRaw);
+                    value = new ArcResource<TValue>(this._factory(), this.ReturnRaw);
                 }
                 else
                 {
-                    PoolCount--;
-                    value = _list[_list.Count - 1];
-                    _list.RemoveAt(_list.Count - 1);
+                    this.PoolCount--;
+                    value = this._list[this._list.Count - 1];
+                    this._list.RemoveAt(this._list.Count - 1);
                 }
 
                 value.Activate();
@@ -43,14 +43,14 @@ namespace Votyra.Core.Pooling
 
         public void ReturnRaw(ArcResource<TValue> value)
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                ActiveCount--;
-                PoolCount++;
+                this.ActiveCount--;
+                this.PoolCount++;
 
-                _list.Add(value);
+                this._list.Add(value);
 #if UNITY_EDITOR
-                if (_list.Count != PoolCount)
+                if (this._list.Count != this.PoolCount)
                 {
                     StaticLogger.LogError("ArcPool in inconsistent state!");
                 }

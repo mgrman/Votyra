@@ -7,8 +7,8 @@ namespace Votyra.Core.Painting
         public PaintInvocationData(int strength, Vector2i imagePosition)
             : this()
         {
-            Strength = strength;
-            ImagePosition = imagePosition;
+            this.Strength = strength;
+            this.ImagePosition = imagePosition;
         }
 
         public readonly int Strength;

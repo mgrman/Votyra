@@ -6,10 +6,10 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core
 {
-    [TestFixture]
+    [TestFixture,]
     public class ScheduledSubjectTest
     {
-        [Test]
+        [Test,]
         public void ScheduledSubject_CircullarConnection_CombinedValueIsCorrect()
         {
             var subjectA = new BehaviorSubject<string>(null).MakeScheduledOnMainThread();
@@ -19,21 +19,31 @@ namespace Votyra.Core
             subjectA.Subscribe(valueA =>
             {
                 if (valueA != null)
+                {
                     subjectB.OnNext("B_" + valueA);
+                }
                 else
+                {
                     subjectB.OnNext(null);
+                }
             });
             subjectB.Subscribe(valueB =>
             {
                 if (valueB != null)
+                {
                     subjectC.OnNext("C_" + valueB);
+                }
                 else
+                {
                     subjectC.OnNext(null);
+                }
             });
             subjectC.Subscribe(valueC =>
             {
                 if (valueC != null)
+                {
                     subjectA.OnNext(null);
+                }
             });
 
             var handlerCalls = new List<Tuple<string, string, string>>();
@@ -55,7 +65,7 @@ namespace Votyra.Core
                 Tuple.Create("A", "B_A", "C_B_A"),
                 Tuple.Create<string, string, string>(null, "B_A", "C_B_A"),
                 Tuple.Create<string, string, string>(null, null, "C_B_A"),
-                Tuple.Create<string, string, string>(null, null, null)
+                Tuple.Create<string, string, string>(null, null, null),
             };
             TestUtils.AssertListEquality(expectedResult, handlerCalls);
         }

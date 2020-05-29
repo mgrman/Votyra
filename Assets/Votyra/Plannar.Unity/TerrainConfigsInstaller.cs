@@ -8,13 +8,12 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<TerrainConfig>()
+            this.Container.BindInterfacesAndSelfTo<TerrainConfig>()
                 .AsSingle();
-            Container.BindInterfacesAndSelfTo<InterpolationConfig>()
+            this.Container.BindInterfacesAndSelfTo<InterpolationConfig>()
                 .AsSingle();
-            Container.BindInterfacesAndSelfTo<ConstraintConfig>()
+            this.Container.BindInterfacesAndSelfTo<ConstraintConfig>()
                 .AsSingle();
         }
-
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using UnityEditor;
-using UnityEditor.Experimental;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using File = UnityEngine.Windows.File;
@@ -29,7 +28,7 @@ namespace Votyra.Core.Editor
         private static readonly string Win64DocsFile = Path.Combine(DocsFolder, "Votyra-Win.zip");
         private static readonly string WebGLDocsWasmDirectory = Path.Combine(DocsFolder, WebGlBuildDirectory);
 
-        [MenuItem("Build/Votyra/Build All (Release)")]
+        [MenuItem("Build/Votyra/Build All (Release)"),]
         public static void BuildAllRelease()
         {
             BuildWin64();
@@ -38,7 +37,7 @@ namespace Votyra.Core.Editor
             OpenFolderInExplorer();
         }
 
-        [MenuItem("Build/Votyra/Build and Update Docs")]
+        [MenuItem("Build/Votyra/Build and Update Docs"),]
         public static void BuildAllAndUpdateDocs()
         {
             BuildWin64();
@@ -50,7 +49,7 @@ namespace Votyra.Core.Editor
             DirectoryCopy(WebGLWasmDirectory, WebGLDocsWasmDirectory, true);
         }
 
-        [MenuItem("Build/Votyra/Build Win64 (Release)")]
+        [MenuItem("Build/Votyra/Build Win64 (Release)"),]
         public static void BuildWin64()
         {
             Win64Directory.TryDeleteDirectory();
@@ -60,7 +59,7 @@ namespace Votyra.Core.Editor
             cleanupDir.TryDeleteDirectory();
         }
 
-        [MenuItem("Build/Votyra/Build UWP (Release)")]
+        [MenuItem("Build/Votyra/Build UWP (Release)"),]
         public static void BuildUWP()
         {
             UWPDirectory.TryDeleteDirectory();
@@ -71,7 +70,7 @@ namespace Votyra.Core.Editor
 
             BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, UWPDirectory, BuildTarget.WSAPlayer, BuildOptions.None);
 
-            var processStartInfo = new ProcessStartInfo()
+            var processStartInfo = new ProcessStartInfo
             {
                 FileName = MSBuildPath,
                 Arguments = $".\\{Application.productName}.sln /p:Platform=\"x64\" /p:BuildPlatform=\"x64\" /p:Configuration=Release /p:AppxBundlePlatforms=\"x64\" /p:AppxBundle=Always",
@@ -79,17 +78,16 @@ namespace Votyra.Core.Editor
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
             };
             var process = new Process();
             process.StartInfo = processStartInfo;
-            process.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
-            process.ErrorDataReceived += new DataReceivedEventHandler(ErrorHandler);
+            process.OutputDataReceived += OutputHandler;
+            process.ErrorDataReceived += ErrorHandler;
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             process.WaitForExit();
-
         }
 
         private static void OutputHandler(object sender, DataReceivedEventArgs e)
@@ -102,7 +100,7 @@ namespace Votyra.Core.Editor
             Debug.LogError(e.Data);
         }
 
-        [MenuItem("Build/Votyra/Build WebGL (Release)")]
+        [MenuItem("Build/Votyra/Build WebGL (Release)"),]
         public static void BuildWebGl()
         {
             var webGlPath = Path.Combine(WebGlDirectory, "Votyra");
@@ -122,23 +120,33 @@ namespace Votyra.Core.Editor
             }
         }
 
-        [MenuItem("Build/Votyra/Open Release folder")]
+        [MenuItem("Build/Votyra/Open Release folder"),]
         public static void OpenFolderInExplorer()
         {
-            var proc = new Process { StartInfo = { FileName = RootFolder } };
+            var proc = new Process
+            {
+                StartInfo =
+                {
+                    FileName = RootFolder,
+                },
+            };
             proc.Start();
         }
 
         private static void TryDeleteDirectory(this string dirPath)
         {
             if (Directory.Exists(dirPath))
+            {
                 Directory.Delete(dirPath, true);
+            }
         }
 
         private static void TryDeleteFile(this string filePath)
         {
             if (File.Exists(filePath))
+            {
                 File.Delete(filePath);
+            }
         }
 
         private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
@@ -147,12 +155,16 @@ namespace Votyra.Core.Editor
             var dir = new DirectoryInfo(sourceDirName);
 
             if (!dir.Exists)
+            {
                 throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + sourceDirName);
+            }
 
             var dirs = dir.GetDirectories();
             // If the destination directory doesn't exist, create it.
             if (!Directory.Exists(destDirName))
+            {
                 Directory.CreateDirectory(destDirName);
+            }
 
             // Get the files in the directory and copy them to the new location.
             var files = dir.GetFiles();
@@ -164,11 +176,13 @@ namespace Votyra.Core.Editor
 
             // If copying subdirectories, copy them and their contents to new location.
             if (copySubDirs)
+            {
                 foreach (var subdir in dirs)
                 {
                     var temppath = Path.Combine(destDirName, subdir.Name);
                     DirectoryCopy(subdir.FullName, temppath, copySubDirs);
                 }
+            }
         }
     }
 }

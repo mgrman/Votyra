@@ -13,34 +13,42 @@ namespace Votyra.Plannar.Unity
 {
     public class TerrainUnityMeshManager : IDisposable
     {
-        private readonly Dictionary<Vector2i, ITerrainGameObject> _unityMeshes = new Dictionary<Vector2i, ITerrainGameObject>();
+        private readonly ITerrainGameObjectPool gameObjectPool;
+        private readonly ILayerConfig layerConfig;
 
-        private IUnityTerrainGeneratorManager2i _manager;
-        private ITerrainGameObjectPool _gameObjectPool;
-        private readonly ILayerConfig _layerConfig;
+        private readonly IUnityTerrainGeneratorManager2i manager;
+        private readonly Dictionary<Vector2i, ITerrainGameObject> unityMeshes = new Dictionary<Vector2i, ITerrainGameObject>();
 
-        public TerrainUnityMeshManager(IUnityTerrainGeneratorManager2i manager, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root")]
-            GameObject root, [InjectOptional]ILayerConfig layerConfig)
+        public TerrainUnityMeshManager(IUnityTerrainGeneratorManager2i manager, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root"),]
+            GameObject root, [InjectOptional,]
+            ILayerConfig layerConfig)
         {
-            _manager = manager;
-            _gameObjectPool = gameObjectPool;
-            _layerConfig = layerConfig;
-            _manager.NewTerrain += NewTerrain;
-            _manager.ChangedTerrain += ChangedTerrain;
-            _manager.RemovedTerrain += RemovedTerrain;
+            this.manager = manager;
+            this.gameObjectPool = gameObjectPool;
+            this.layerConfig = layerConfig;
+            this.manager.NewTerrain += this.NewTerrain;
+            this.manager.ChangedTerrain += this.ChangedTerrain;
+            this.manager.RemovedTerrain += this.RemovedTerrain;
+        }
+
+        public void Dispose()
+        {
+            this.manager.NewTerrain -= this.NewTerrain;
+            this.manager.ChangedTerrain -= this.ChangedTerrain;
+            this.manager.RemovedTerrain -= this.RemovedTerrain;
         }
 
         private void ChangedTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
 #if UNITY_EDITOR
-            if (!_unityMeshes.ContainsKey(group))
+            if (!this.unityMeshes.ContainsKey(group))
             {
                 Debug.LogError($"Changed {group} before NewTerrain was called!");
                 return;
             }
 #endif
             Debug.Log("Changed " + group);
-            var pooledGameObject = _unityMeshes[group];
+            var pooledGameObject = this.unityMeshes[group];
 
             mesh.SetUnityMesh(pooledGameObject);
         }
@@ -48,23 +56,23 @@ namespace Votyra.Plannar.Unity
         private void RemovedTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
 #if UNITY_EDITOR
-            if (!_unityMeshes.ContainsKey(group))
+            if (!this.unityMeshes.ContainsKey(group))
             {
                 Debug.LogError($"RemovedTerrain {group} called without NewTerrain first!");
                 return;
             }
 #endif
             Debug.Log("Removed " + group);
-            var pooledGameObject = _unityMeshes[group];
-            _gameObjectPool.ReturnRaw(pooledGameObject);
+            var pooledGameObject = this.unityMeshes[group];
+            this.gameObjectPool.ReturnRaw(pooledGameObject);
 
-            _unityMeshes.Remove(group);
+            this.unityMeshes.Remove(group);
         }
 
         private void NewTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
 #if UNITY_EDITOR
-            if (_unityMeshes.ContainsKey(group))
+            if (this.unityMeshes.ContainsKey(group))
             {
                 Debug.LogError($"NewTerrain {group} called multiple times without RemovedTerrain after each time!");
                 return;
@@ -72,22 +80,17 @@ namespace Votyra.Plannar.Unity
 #endif
 
             Debug.Log("New     " + group);
-            var pooledGameObject = _gameObjectPool.GetRaw();
+            var pooledGameObject = this.gameObjectPool.GetRaw();
             if (!pooledGameObject.IsInitialized)
+            {
                 pooledGameObject.Initialize();
+            }
 
-            pooledGameObject.GameObject.name = $"Group_{group}_{_layerConfig?.Layer}_{this.GetHashCode()}";
+            pooledGameObject.GameObject.name = $"Group_{group}_{this.layerConfig?.Layer}_{this.GetHashCode()}";
             pooledGameObject.SetActive(true);
             mesh.SetUnityMesh(pooledGameObject);
 
-            _unityMeshes[group] = pooledGameObject;
-        }
-
-        public void Dispose()
-        {
-            _manager.NewTerrain -= NewTerrain;
-            _manager.ChangedTerrain -= ChangedTerrain;
-            _manager.RemovedTerrain -= RemovedTerrain;
+            this.unityMeshes[group] = pooledGameObject;
         }
     }
 }

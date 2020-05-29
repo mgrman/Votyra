@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Newtonsoft.Json;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Unity;
@@ -15,12 +13,12 @@ using Object = UnityEngine.Object;
 
 namespace Votyra.Core.Editor
 {
-    [CustomEditor(typeof(ConfigInstaller))]
+    [CustomEditor(typeof(ConfigInstaller)),]
     public class ConfigInstallerEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
-            var controller = target as ConfigInstaller;
+            var controller = this.target as ConfigInstaller;
 
             Undo.RecordObject(controller, "Test");
             var oldConfigValues = controller.Config?.ToList() ?? new List<ConfigItem>();
@@ -28,11 +26,14 @@ namespace Votyra.Core.Editor
 
             var configTypes = GetConfigTypes(controller.gameObject);
 
-            bool isChanged = false;
+            var isChanged = false;
             foreach (var configType in configTypes)
             {
                 if (configType == null)
+                {
                     continue;
+                }
+
                 var ctors = configType.GetConstructors();
 
                 var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null)).SelectMany(o => o.GetParameters()
@@ -43,19 +44,24 @@ namespace Votyra.Core.Editor
                     .Where(a => a.Id != null));
 
                 if (!configItems.Any())
+                {
                     continue;
+                }
 
                 EditorGUILayout.LabelField($"{configType.Name}", EditorStyles.boldLabel);
                 foreach (var configItem in configItems)
                 {
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
-                    var oldConfigItem = oldConfigValues?.FirstOrDefault(o => o.Id == configItem.Id && o.Type == configItem.Type);
+                    var oldConfigItem = oldConfigValues?.FirstOrDefault(o => (o.Id == configItem.Id) && (o.Type == configItem.Type));
 
                     if (oldConfigItem != null)
+                    {
                         oldConfigValues.Remove(oldConfigItem);
+                    }
+
                     var oldValue = oldConfigItem?.Value;
-                    var configItemChange = GetNewValue(configItem.Type, oldValue, out var newValue);
+                    var configItemChange = this.GetNewValue(configItem.Type, oldValue, out var newValue);
                     isChanged = isChanged || configItemChange;
                     newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
                     EditorGUILayout.EndHorizontal();
@@ -75,12 +81,15 @@ namespace Votyra.Core.Editor
                     EditorGUILayout.BeginHorizontal();
                     var delete = GUILayout.Button("✘", GUILayout.Width(20));
                     EditorGUILayout.LabelField($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
-                    var oldConfigItem = oldConfigValues?.FirstOrDefault(o => o.Id == configItem.Id && o.Type == configItem.Type);
+                    var oldConfigItem = oldConfigValues?.FirstOrDefault(o => (o.Id == configItem.Id) && (o.Type == configItem.Type));
 
                     if (oldConfigItem != null)
+                    {
                         oldConfigValues.Remove(oldConfigItem);
+                    }
+
                     var oldValue = oldConfigItem?.Value;
-                    var configItemChange= GetNewValue(configItem.Type, oldValue, out var newValue);
+                    var configItemChange = this.GetNewValue(configItem.Type, oldValue, out var newValue);
                     if (!delete)
                     {
                         newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
@@ -111,44 +120,50 @@ namespace Votyra.Core.Editor
                 newValue = newUnityObject;
                 return oldUnityObject != newUnityObject;
             }
-            else if (typeof(bool).IsAssignableFrom(type))
+
+            if (typeof(bool).IsAssignableFrom(type))
             {
                 var oldBoolValue = oldValue as bool? ?? false;
                 var newBoolValue = EditorGUILayout.Toggle(oldBoolValue, GUILayout.MaxWidth(200));
                 newValue = newBoolValue;
                 return newBoolValue != oldBoolValue;
             }
-            else if (typeof(int).IsAssignableFrom(type))
+
+            if (typeof(int).IsAssignableFrom(type))
             {
                 var oldIntValue = oldValue as int? ?? 0;
                 var newIntValue = EditorGUILayout.IntField(oldIntValue, GUILayout.MaxWidth(200));
                 newValue = newIntValue;
                 return newIntValue != oldIntValue;
             }
-            else if (typeof(uint).IsAssignableFrom(type))
+
+            if (typeof(uint).IsAssignableFrom(type))
             {
                 var oldIntValue = oldValue as uint? ?? 0;
-                var newIntValue = (uint) EditorGUILayout.IntField((int) oldIntValue, GUILayout.MaxWidth(200));
+                var newIntValue = (uint)EditorGUILayout.IntField((int)oldIntValue, GUILayout.MaxWidth(200));
                 newValue = newIntValue;
                 return newIntValue != oldIntValue;
             }
-            else if (typeof(float).IsAssignableFrom(type))
+
+            if (typeof(float).IsAssignableFrom(type))
             {
                 var oldFloatValue = oldValue as float? ?? 0;
                 var newFloatValue = EditorGUILayout.FloatField(oldFloatValue, GUILayout.MaxWidth(200));
                 newValue = newFloatValue;
                 return newFloatValue != oldFloatValue;
             }
-            else if (typeof(string).IsAssignableFrom(type))
+
+            if (typeof(string).IsAssignableFrom(type))
             {
                 var oldStringValue = oldValue as string;
                 var newStringValue = EditorGUILayout.TextField(oldStringValue, GUILayout.MaxWidth(200));
                 newValue = newStringValue;
                 return newStringValue != oldStringValue;
             }
-            else if (type.IsEnum)
+
+            if (type.IsEnum)
             {
-                var oldEnumValue = oldValue != null && Enum.IsDefined(type, oldValue)
+                var oldEnumValue = (oldValue != null) && Enum.IsDefined(type, oldValue)
                     ? oldValue as Enum
                     : Enum.GetValues(type)
                         .GetValue(0) as Enum;
@@ -156,7 +171,8 @@ namespace Votyra.Core.Editor
                 newValue = newEnumValue;
                 return !newEnumValue.Equals(oldEnumValue);
             }
-            else if (typeof(Vector3i).IsAssignableFrom(type))
+
+            if (typeof(Vector3i).IsAssignableFrom(type))
             {
                 var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
                 var newVector3iValue = EditorGUILayout.Vector3Field("",
@@ -168,7 +184,8 @@ namespace Votyra.Core.Editor
                 newValue = newVector3iValue;
                 return newVector3iValue != oldVector3iValue;
             }
-            else if (typeof(Vector3f).IsAssignableFrom(type))
+
+            if (typeof(Vector3f).IsAssignableFrom(type))
             {
                 var oldVector3fValue = oldValue as Vector3f? ?? Vector3f.Zero;
                 var newVector3fValue = EditorGUILayout.Vector3Field("", oldVector3fValue.ToVector3(), GUILayout.MaxWidth(200))
@@ -176,7 +193,8 @@ namespace Votyra.Core.Editor
                 newValue = newVector3fValue;
                 return newVector3fValue != oldVector3fValue;
             }
-            else if (typeof(Vector2i).IsAssignableFrom(type))
+
+            if (typeof(Vector2i).IsAssignableFrom(type))
             {
                 var oldVector2iValue = oldValue as Vector2i? ?? Vector2i.Zero;
                 var newVector2iValue = EditorGUILayout.Vector2Field("",
@@ -188,7 +206,8 @@ namespace Votyra.Core.Editor
                 newValue = newVector2iValue;
                 return newVector2iValue != oldVector2iValue;
             }
-            else if (typeof(Vector2f).IsAssignableFrom(type))
+
+            if (typeof(Vector2f).IsAssignableFrom(type))
             {
                 var oldVector2fValue = oldValue as Vector2f? ?? Vector2f.Zero;
                 var newVector2fValue = EditorGUILayout.Vector2Field("", oldVector2fValue.ToVector2(), GUILayout.MaxWidth(200))
@@ -196,23 +215,26 @@ namespace Votyra.Core.Editor
                 newValue = newVector2fValue;
                 return newVector2fValue != oldVector2fValue;
             }
-            else if (typeof(AnimationCurve).IsAssignableFrom(type))
+
+            if (typeof(AnimationCurve).IsAssignableFrom(type))
             {
                 var oldAnimationCurveValue = oldValue as AnimationCurve;
                 var newAnimationCurveValue = EditorGUILayout.CurveField("", oldAnimationCurveValue ?? new AnimationCurve(), GUILayout.MaxWidth(200));
                 newValue = newAnimationCurveValue;
-                return !(newAnimationCurveValue?.Equals(oldAnimationCurveValue) ?? oldAnimationCurveValue == null);
+                return !(newAnimationCurveValue?.Equals(oldAnimationCurveValue) ?? (oldAnimationCurveValue == null));
             }
-            else if (typeof(Area1f).IsAssignableFrom(type))
+
+            if (typeof(Area1f).IsAssignableFrom(type))
             {
                 var oldArea1fValue = oldValue as Area1f?;
 
                 var tempVector2 = EditorGUILayout.Vector2Field("", new Vector2(oldArea1fValue?.Min ?? 0, oldArea1fValue?.Max ?? 0), GUILayout.MaxWidth(200));
                 var newArea1fValue = Area1f.FromMinAndMax(tempVector2.x, tempVector2.y);
                 newValue = newArea1fValue;
-                return oldArea1fValue == null || !newArea1fValue.Equals(oldArea1fValue.Value);
+                return (oldArea1fValue == null) || !newArea1fValue.Equals(oldArea1fValue.Value);
             }
-            else if (type.IsArray)
+
+            if (type.IsArray)
             {
                 var change = false;
                 var elementType = type.GetElementType();
@@ -225,11 +247,11 @@ namespace Votyra.Core.Editor
 
                 if (oldValue != null)
                 {
-                    foreach (var item in (oldValue as IEnumerable))
+                    foreach (var item in oldValue as IEnumerable)
                     {
                         if (!GUILayout.Button("Remove"))
                         {
-                            var itemChange = GetNewValue(elementType, item, out var newItemValue);
+                            var itemChange = this.GetNewValue(elementType, item, out var newItemValue);
                             change = change || itemChange;
                             newList.Add(newItemValue);
                         }
@@ -251,7 +273,11 @@ namespace Votyra.Core.Editor
                 var method = typeof(Enumerable).GetMethod("ToArray", BindingFlags.Public | BindingFlags.Static);
                 method = method.MakeGenericMethod(elementType);
 
-                newValue = method.Invoke(null, new[] {newList});
+                newValue = method.Invoke(null,
+                    new[]
+                    {
+                        newList,
+                    });
                 return change;
             }
             else
@@ -263,7 +289,7 @@ namespace Votyra.Core.Editor
                 {
                     EditorGUILayout.LabelField($"{prop.Name}[{prop.FieldType.Name}]", GUILayout.MinWidth(150));
                     var oldFieldValue = prop.GetValue(oldValue);
-                    var propChange = GetNewValue(prop.FieldType, oldFieldValue, out var newFieldValue);
+                    var propChange = this.GetNewValue(prop.FieldType, oldFieldValue, out var newFieldValue);
                     prop.SetValue(oldValue, newFieldValue);
                     change = change || propChange;
                 }
@@ -307,7 +333,7 @@ namespace Votyra.Core.Editor
                     }
                     finally
                     {
-                        UnityEngine.Object.DestroyImmediate(tempInstaller);
+                        DestroyImmediate(tempInstaller);
                     }
                 }
 
@@ -315,7 +341,7 @@ namespace Votyra.Core.Editor
             }
             finally
             {
-                UnityEngine.Object.DestroyImmediate(tempGameObject);
+                DestroyImmediate(tempGameObject);
             }
 
             var types = new List<Type>();

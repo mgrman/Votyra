@@ -19,6 +19,6 @@ namespace Votyra.Core
     {
         None,
         Box,
-        Mesh
+        Mesh,
     }
 }

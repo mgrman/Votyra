@@ -18,16 +18,16 @@ namespace Votyra.Core.Models
 
         public readonly int W;
 
-        [JsonConstructor]
+        [JsonConstructor,]
         public Vector4i(int x, int y, int z, int w)
         {
-            X = x;
+            this.X = x;
 
-            Y = y;
+            this.Y = y;
 
-            Z = z;
+            this.Z = z;
 
-            W = w;
+            this.W = w;
         }
 
         public static Vector4i operator -(Vector4i a) => new Vector4i(-a.X, -a.Y, -a.Z, -a.W);
@@ -62,41 +62,41 @@ namespace Votyra.Core.Models
 
         public static Vector4i operator %(int a, Vector4i b) => new Vector4i(a % b.X, a % b.Y, a % b.Z, a % b.W);
 
-        public static bool operator <(Vector4i a, Vector4i b) => a.X < b.X && a.Y < b.Y && a.Z < b.Z && a.W < b.W;
+        public static bool operator <(Vector4i a, Vector4i b) => (a.X < b.X) && (a.Y < b.Y) && (a.Z < b.Z) && (a.W < b.W);
 
-        public static bool operator <(Vector4i a, int b) => a.X < b && a.Y < b && a.Z < b && a.W < b;
+        public static bool operator <(Vector4i a, int b) => (a.X < b) && (a.Y < b) && (a.Z < b) && (a.W < b);
 
-        public static bool operator <(int a, Vector4i b) => a < b.X && a < b.Y && a < b.Z && a < b.W;
+        public static bool operator <(int a, Vector4i b) => (a < b.X) && (a < b.Y) && (a < b.Z) && (a < b.W);
 
-        public static bool operator >(Vector4i a, Vector4i b) => a.X > b.X && a.Y > b.Y && a.Z > b.Z && a.W > b.W;
+        public static bool operator >(Vector4i a, Vector4i b) => (a.X > b.X) && (a.Y > b.Y) && (a.Z > b.Z) && (a.W > b.W);
 
-        public static bool operator >(Vector4i a, int b) => a.X > b && a.Y > b && a.Z > b && a.W > b;
+        public static bool operator >(Vector4i a, int b) => (a.X > b) && (a.Y > b) && (a.Z > b) && (a.W > b);
 
-        public static bool operator >(int a, Vector4i b) => a > b.X && a > b.Y && a > b.Z && a > b.W;
+        public static bool operator >(int a, Vector4i b) => (a > b.X) && (a > b.Y) && (a > b.Z) && (a > b.W);
 
-        public static bool operator <=(Vector4i a, Vector4i b) => a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z && a.W <= b.W;
+        public static bool operator <=(Vector4i a, Vector4i b) => (a.X <= b.X) && (a.Y <= b.Y) && (a.Z <= b.Z) && (a.W <= b.W);
 
-        public static bool operator <=(Vector4i a, int b) => a.X <= b && a.Y <= b && a.Z <= b && a.W <= b;
+        public static bool operator <=(Vector4i a, int b) => (a.X <= b) && (a.Y <= b) && (a.Z <= b) && (a.W <= b);
 
-        public static bool operator <=(int a, Vector4i b) => a <= b.X && a <= b.Y && a <= b.Z && a <= b.W;
+        public static bool operator <=(int a, Vector4i b) => (a <= b.X) && (a <= b.Y) && (a <= b.Z) && (a <= b.W);
 
-        public static bool operator >=(Vector4i a, Vector4i b) => a.X >= b.X && a.Y >= b.Y && a.Z >= b.Z && a.W >= b.W;
+        public static bool operator >=(Vector4i a, Vector4i b) => (a.X >= b.X) && (a.Y >= b.Y) && (a.Z >= b.Z) && (a.W >= b.W);
 
-        public static bool operator >=(Vector4i a, int b) => a.X >= b && a.Y >= b && a.Z >= b && a.W >= b;
+        public static bool operator >=(Vector4i a, int b) => (a.X >= b) && (a.Y >= b) && (a.Z >= b) && (a.W >= b);
 
-        public static bool operator >=(int a, Vector4i b) => a >= b.X && a >= b.Y && a >= b.Z && a >= b.W;
+        public static bool operator >=(int a, Vector4i b) => (a >= b.X) && (a >= b.Y) && (a >= b.Z) && (a >= b.W);
 
-        public static bool operator ==(Vector4i a, Vector4i b) => a.X == b.X && a.Y == b.Y && a.Z == b.Z && a.W == b.W;
+        public static bool operator ==(Vector4i a, Vector4i b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
 
-        public static bool operator ==(Vector4i a, int b) => a.X == b && a.Y == b && a.Z == b && a.W == b;
+        public static bool operator ==(Vector4i a, int b) => (a.X == b) && (a.Y == b) && (a.Z == b) && (a.W == b);
 
-        public static bool operator ==(int a, Vector4i b) => a == b.X && a == b.Y && a == b.Z && a == b.W;
+        public static bool operator ==(int a, Vector4i b) => (a == b.X) && (a == b.Y) && (a == b.Z) && (a == b.W);
 
-        public static bool operator !=(Vector4i a, Vector4i b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z || a.W != b.W;
+        public static bool operator !=(Vector4i a, Vector4i b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z) || (a.W != b.W);
 
-        public static bool operator !=(Vector4i a, int b) => a.X != b || a.Y != b || a.Z != b || a.W != b;
+        public static bool operator !=(Vector4i a, int b) => (a.X != b) || (a.Y != b) || (a.Z != b) || (a.W != b);
 
-        public static bool operator !=(int a, Vector4i b) => a != b.X || a != b.Y || a != b.Z || a != b.W;
+        public static bool operator !=(int a, Vector4i b) => (a != b.X) || (a != b.Y) || (a != b.Z) || (a != b.W);
 
         public static Vector4f operator *(Vector4i a, Vector4f b) => new Vector4f(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
 
@@ -147,18 +147,18 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return Equals((Vector4i) obj);
+            return this.Equals((Vector4i)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (X * 397) ^ (Y * 397) ^ (Z * 397) ^ (W * 397);
+                return (this.X * 397) ^ (this.Y * 397) ^ (this.Z * 397) ^ (this.W * 397);
             }
         }
 
-        public override string ToString() => "(" + X + "," + Y + "," + Z + "," + W + ")";
+        public override string ToString() => "(" + this.X + "," + this.Y + "," + this.Z + "," + this.W + ")";
     }
 
     public static class Vector4iUtils
@@ -175,7 +175,7 @@ namespace Votyra.Core.Models
         public static readonly Vector4i PlusOneW = new Vector4i(0, 0, 0, 1);
         public static readonly Vector4i MinusOneW = new Vector4i(0, 0, 0, -1);
 
-        public static float Magnitude(this Vector4i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
+        public static float Magnitude(this Vector4i @this) => (float)Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector4f Normalized(this Vector4i @this)
         {
@@ -183,7 +183,7 @@ namespace Votyra.Core.Models
             return magnitude <= float.Epsilon ? @this.ToVector4f() : @this / magnitude;
         }
 
-        public static float SqrMagnitude(this Vector4i @this) => @this.X * @this.X + @this.Y * @this.Y + @this.Z * @this.Z + @this.W * @this.W;
+        public static float SqrMagnitude(this Vector4i @this) => (@this.X * @this.X) + (@this.Y * @this.Y) + (@this.Z * @this.Z) + (@this.W * @this.W);
 
         public static int ManhattanMagnitude(this Vector4i @this) => @this.X + @this.Y + @this.Z + @this.W;
 
@@ -223,15 +223,15 @@ namespace Votyra.Core.Models
 
         public static Vector2i WW(this Vector4i @this) => new Vector2i(@this.W, @this.W);
 
-        public static bool AllPositive(this Vector4i @this) => @this.X > 0 && @this.Y > 0 && @this.Z > 0 && @this.W > 0;
+        public static bool AllPositive(this Vector4i @this) => (@this.X > 0) && (@this.Y > 0) && (@this.Z > 0) && (@this.W > 0);
 
-        public static bool AllZeroOrPositive(this Vector4i @this) => @this.X >= 0 && @this.Y >= 0 && @this.Z >= 0 && @this.W >= 0;
+        public static bool AllZeroOrPositive(this Vector4i @this) => (@this.X >= 0) && (@this.Y >= 0) && (@this.Z >= 0) && (@this.W >= 0);
 
-        public static bool AnyNegative(this Vector4i @this) => @this.X < 0 || @this.Y < 0 || @this.Z < 0 || @this.W < 0;
+        public static bool AnyNegative(this Vector4i @this) => (@this.X < 0) || (@this.Y < 0) || (@this.Z < 0) || (@this.W < 0);
 
-        public static bool AnyZero(this Vector4i @this) => @this.X == 0 || @this.Y == 0 || @this.Z == 0 || @this.W == 0;
+        public static bool AnyZero(this Vector4i @this) => (@this.X == 0) || (@this.Y == 0) || (@this.Z == 0) || (@this.W == 0);
 
-        public static bool AnyZeroOrNegative(this Vector4i @this) => @this.X <= 0 || @this.Y <= 0 || @this.Z <= 0 || @this.W <= 0;
+        public static bool AnyZeroOrNegative(this Vector4i @this) => (@this.X <= 0) || (@this.Y <= 0) || (@this.Z <= 0) || (@this.W <= 0);
 
         public static Vector4i FromSame(int value) => new Vector4i(value, value, value, value);
 

@@ -16,14 +16,14 @@ namespace Votyra.Core.Models
 
         public readonly int Z;
 
-        [JsonConstructor]
+        [JsonConstructor,]
         public Vector3i(int x, int y, int z)
         {
-            X = x;
+            this.X = x;
 
-            Y = y;
+            this.Y = y;
 
-            Z = z;
+            this.Z = z;
         }
 
         public static Vector3i operator -(Vector3i a) => new Vector3i(-a.X, -a.Y, -a.Z);
@@ -58,41 +58,41 @@ namespace Votyra.Core.Models
 
         public static Vector3i operator %(int a, Vector3i b) => new Vector3i(a % b.X, a % b.Y, a % b.Z);
 
-        public static bool operator <(Vector3i a, Vector3i b) => a.X < b.X && a.Y < b.Y && a.Z < b.Z;
+        public static bool operator <(Vector3i a, Vector3i b) => (a.X < b.X) && (a.Y < b.Y) && (a.Z < b.Z);
 
-        public static bool operator <(Vector3i a, int b) => a.X < b && a.Y < b && a.Z < b;
+        public static bool operator <(Vector3i a, int b) => (a.X < b) && (a.Y < b) && (a.Z < b);
 
-        public static bool operator <(int a, Vector3i b) => a < b.X && a < b.Y && a < b.Z;
+        public static bool operator <(int a, Vector3i b) => (a < b.X) && (a < b.Y) && (a < b.Z);
 
-        public static bool operator >(Vector3i a, Vector3i b) => a.X > b.X && a.Y > b.Y && a.Z > b.Z;
+        public static bool operator >(Vector3i a, Vector3i b) => (a.X > b.X) && (a.Y > b.Y) && (a.Z > b.Z);
 
-        public static bool operator >(Vector3i a, int b) => a.X > b && a.Y > b && a.Z > b;
+        public static bool operator >(Vector3i a, int b) => (a.X > b) && (a.Y > b) && (a.Z > b);
 
-        public static bool operator >(int a, Vector3i b) => a > b.X && a > b.Y && a > b.Z;
+        public static bool operator >(int a, Vector3i b) => (a > b.X) && (a > b.Y) && (a > b.Z);
 
-        public static bool operator <=(Vector3i a, Vector3i b) => a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
+        public static bool operator <=(Vector3i a, Vector3i b) => (a.X <= b.X) && (a.Y <= b.Y) && (a.Z <= b.Z);
 
-        public static bool operator <=(Vector3i a, int b) => a.X <= b && a.Y <= b && a.Z <= b;
+        public static bool operator <=(Vector3i a, int b) => (a.X <= b) && (a.Y <= b) && (a.Z <= b);
 
-        public static bool operator <=(int a, Vector3i b) => a <= b.X && a <= b.Y && a <= b.Z;
+        public static bool operator <=(int a, Vector3i b) => (a <= b.X) && (a <= b.Y) && (a <= b.Z);
 
-        public static bool operator >=(Vector3i a, Vector3i b) => a.X >= b.X && a.Y >= b.Y && a.Z >= b.Z;
+        public static bool operator >=(Vector3i a, Vector3i b) => (a.X >= b.X) && (a.Y >= b.Y) && (a.Z >= b.Z);
 
-        public static bool operator >=(Vector3i a, int b) => a.X >= b && a.Y >= b && a.Z >= b;
+        public static bool operator >=(Vector3i a, int b) => (a.X >= b) && (a.Y >= b) && (a.Z >= b);
 
-        public static bool operator >=(int a, Vector3i b) => a >= b.X && a >= b.Y && a >= b.Z;
+        public static bool operator >=(int a, Vector3i b) => (a >= b.X) && (a >= b.Y) && (a >= b.Z);
 
-        public static bool operator ==(Vector3i a, Vector3i b) => a.X == b.X && a.Y == b.Y && a.Z == b.Z;
+        public static bool operator ==(Vector3i a, Vector3i b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z);
 
-        public static bool operator ==(Vector3i a, int b) => a.X == b && a.Y == b && a.Z == b;
+        public static bool operator ==(Vector3i a, int b) => (a.X == b) && (a.Y == b) && (a.Z == b);
 
-        public static bool operator ==(int a, Vector3i b) => a == b.X && a == b.Y && a == b.Z;
+        public static bool operator ==(int a, Vector3i b) => (a == b.X) && (a == b.Y) && (a == b.Z);
 
-        public static bool operator !=(Vector3i a, Vector3i b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z;
+        public static bool operator !=(Vector3i a, Vector3i b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z);
 
-        public static bool operator !=(Vector3i a, int b) => a.X != b || a.Y != b || a.Z != b;
+        public static bool operator !=(Vector3i a, int b) => (a.X != b) || (a.Y != b) || (a.Z != b);
 
-        public static bool operator !=(int a, Vector3i b) => a != b.X || a != b.Y || a != b.Z;
+        public static bool operator !=(int a, Vector3i b) => (a != b.X) || (a != b.Y) || (a != b.Z);
 
         public static Vector3f operator *(Vector3i a, Vector3f b) => new Vector3f(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
 
@@ -143,18 +143,18 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return Equals((Vector3i) obj);
+            return this.Equals((Vector3i)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (X * 397) ^ (Y * 397) ^ (Z * 397);
+                return (this.X * 397) ^ (this.Y * 397) ^ (this.Z * 397);
             }
         }
 
-        public override string ToString() => "(" + X + "," + Y + "," + Z + ")";
+        public override string ToString() => "(" + this.X + "," + this.Y + "," + this.Z + ")";
     }
 
     public static class Vector3iUtils
@@ -168,7 +168,7 @@ namespace Votyra.Core.Models
         public static readonly Vector3i PlusOneZ = new Vector3i(0, 0, 1);
         public static readonly Vector3i MinusOneZ = new Vector3i(0, 0, -1);
 
-        public static float Magnitude(this Vector3i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
+        public static float Magnitude(this Vector3i @this) => (float)Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector3f Normalized(this Vector3i @this)
         {
@@ -176,7 +176,7 @@ namespace Votyra.Core.Models
             return magnitude <= float.Epsilon ? @this.ToVector3f() : @this / magnitude;
         }
 
-        public static float SqrMagnitude(this Vector3i @this) => @this.X * @this.X + @this.Y * @this.Y + @this.Z * @this.Z;
+        public static float SqrMagnitude(this Vector3i @this) => (@this.X * @this.X) + (@this.Y * @this.Y) + (@this.Z * @this.Z);
 
         public static int ManhattanMagnitude(this Vector3i @this) => @this.X + @this.Y + @this.Z;
 
@@ -202,19 +202,19 @@ namespace Votyra.Core.Models
 
         public static Vector2i ZZ(this Vector3i @this) => new Vector2i(@this.Z, @this.Z);
 
-        public static bool AllPositive(this Vector3i @this) => @this.X > 0 && @this.Y > 0 && @this.Z > 0;
+        public static bool AllPositive(this Vector3i @this) => (@this.X > 0) && (@this.Y > 0) && (@this.Z > 0);
 
-        public static bool AllZeroOrPositive(this Vector3i @this) => @this.X >= 0 && @this.Y >= 0 && @this.Z >= 0;
+        public static bool AllZeroOrPositive(this Vector3i @this) => (@this.X >= 0) && (@this.Y >= 0) && (@this.Z >= 0);
 
-        public static bool AnyNegative(this Vector3i @this) => @this.X < 0 || @this.Y < 0 || @this.Z < 0;
+        public static bool AnyNegative(this Vector3i @this) => (@this.X < 0) || (@this.Y < 0) || (@this.Z < 0);
 
-        public static bool AnyZero(this Vector3i @this) => @this.X == 0 || @this.Y == 0 || @this.Z == 0;
+        public static bool AnyZero(this Vector3i @this) => (@this.X == 0) || (@this.Y == 0) || (@this.Z == 0);
 
-        public static bool AnyZeroOrNegative(this Vector3i @this) => @this.X <= 0 || @this.Y <= 0 || @this.Z <= 0;
+        public static bool AnyZeroOrNegative(this Vector3i @this) => (@this.X <= 0) || (@this.Y <= 0) || (@this.Z <= 0);
 
         public static Vector3i FromSame(int value) => new Vector3i(value, value, value);
 
-        public static Vector3i Cross(Vector3i lhs, Vector3i rhs) => new Vector3i(lhs.Y * rhs.Z - lhs.Z * rhs.Y, lhs.Z * rhs.X - lhs.X * rhs.Z, lhs.X * rhs.Y - lhs.Y * rhs.X);
+        public static Vector3i Cross(Vector3i lhs, Vector3i rhs) => new Vector3i((lhs.Y * rhs.Z) - (lhs.Z * rhs.Y), (lhs.Z * rhs.X) - (lhs.X * rhs.Z), (lhs.X * rhs.Y) - (lhs.Y * rhs.X));
 
         public static Vector3f ToVector3f(this Vector3i @this) => new Vector3f(@this.X, @this.Y, @this.Z);
 

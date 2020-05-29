@@ -11,24 +11,24 @@ namespace Votyra.Core.Images
 
         protected BaseMatrix3(Vector3i size)
         {
-            _image = new T[size.X, size.Y, size.Z];
+            this._image = new T[size.X, size.Y, size.Z];
         }
 
-        public bool IsBeingUsed => _usingCounter > 0;
+        public bool IsBeingUsed => this._usingCounter > 0;
 
         public Range3i InvalidatedArea { get; private set; }
 
         public void StartUsing()
         {
-            _usingCounter++;
+            this._usingCounter++;
         }
 
         public void FinishUsing()
         {
-            _usingCounter--;
+            this._usingCounter--;
         }
 
-        public T Sample(Vector3i point) => _image.TryGet(point, default);
+        public T Sample(Vector3i point) => this._image.TryGet(point, default);
 
         public PoolableMatrix3<T> SampleArea(Range3i area)
         {
@@ -43,7 +43,7 @@ namespace Votyra.Core.Images
                     for (var iz = 0; iy < rawMatrix.SizeZ(); iz++)
                     {
                         var matPoint = new Vector3i(ix, iy, iz);
-                        rawMatrix.Set(matPoint, Sample(matPoint + min));
+                        rawMatrix.Set(matPoint, this.Sample(matPoint + min));
                     }
                 }
             }
@@ -53,12 +53,12 @@ namespace Votyra.Core.Images
 
         public void UpdateImage(T[,,] template)
         {
-            Array.Copy(template, _image, _image.Length);
+            Array.Copy(template, this._image, this._image.Length);
         }
 
         public void UpdateInvalidatedArea(Range3i invalidatedArea)
         {
-            InvalidatedArea = invalidatedArea;
+            this.InvalidatedArea = invalidatedArea;
         }
     }
 }

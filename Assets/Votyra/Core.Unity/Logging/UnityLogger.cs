@@ -12,30 +12,30 @@ namespace Votyra.Core.Logging
 
         public UnityLogger(string name, UnityEngineObject owner)
         {
-            _name = name;
-            _owner = owner;
+            this._name = name;
+            this._owner = owner;
         }
 
         public void LogMessage(object message)
         {
-            Debug.Log(Format(message), _owner);
+            Debug.Log(this.Format(message), this._owner);
         }
 
         public void LogError(object message)
         {
-            Debug.LogError(Format(message), _owner);
+            Debug.LogError(this.Format(message), this._owner);
         }
 
         public void LogException(Exception exception)
         {
-            Debug.LogException(exception, _owner);
+            Debug.LogException(exception, this._owner);
         }
 
         public void LogWarning(object message)
         {
-            Debug.LogWarning(Format(message), _owner);
+            Debug.LogWarning(this.Format(message), this._owner);
         }
 
-        private string Format(object message) => $"{message}\n{_name}";
+        private string Format(object message) => $"{message}\n{this._name}";
     }
 }

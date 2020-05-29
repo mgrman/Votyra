@@ -7,25 +7,25 @@ namespace Votyra.Core.Models
         public readonly Vector2f Origin;
         public readonly Vector2f Direction;
 
-        public Ray2f XX() => new Ray2f(Origin.XX(), Direction.XX());
+        public Ray2f XX() => new Ray2f(this.Origin.XX(), this.Direction.XX());
 
-        public Ray2f XY() => new Ray2f(Origin.XY(), Direction.XY());
+        public Ray2f XY() => new Ray2f(this.Origin.XY(), this.Direction.XY());
 
-        public Ray2f YX() => new Ray2f(Origin.YX(), Direction.YX());
+        public Ray2f YX() => new Ray2f(this.Origin.YX(), this.Direction.YX());
 
-        public Ray2f YY() => new Ray2f(Origin.YY(), Direction.YY());
+        public Ray2f YY() => new Ray2f(this.Origin.YY(), this.Direction.YY());
 
-        public Vector2f ToAt1 => Origin + Direction;
+        public Vector2f ToAt1 => this.Origin + this.Direction;
 
         public Ray2f(Vector2f origin, Vector2f direction)
         {
-            Origin = origin;
-            Direction = direction.Normalized();
+            this.Origin = origin;
+            this.Direction = direction.Normalized();
         }
 
-        public Vector2f GetPoint(float distance) => Origin + Direction * distance;
+        public Vector2f GetPoint(float distance) => this.Origin + (this.Direction * distance);
 
-        public bool Equals(Ray2f other) => Origin.Equals(other.Origin) && Direction.Equals(other.Direction);
+        public bool Equals(Ray2f other) => this.Origin.Equals(other.Origin) && this.Direction.Equals(other.Direction);
 
         public override bool Equals(object obj)
         {
@@ -34,17 +34,17 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return obj is Ray2f other && Equals(other);
+            return obj is Ray2f other && this.Equals(other);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (Origin.GetHashCode() * 397) ^ Direction.GetHashCode();
+                return (this.Origin.GetHashCode() * 397) ^ this.Direction.GetHashCode();
             }
         }
 
-        public override string ToString() => $"origin:{Origin} dir:{Direction}";
+        public override string ToString() => $"origin:{this.Origin} dir:{this.Direction}";
     }
 }

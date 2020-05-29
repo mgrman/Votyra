@@ -16,17 +16,17 @@ namespace Votyra.Core.Raycasting
 
         public BaseGroupRaycaster(ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
         {
-            _terrainVertexPostProcessor = terrainVertexPostProcessor;
+            this._terrainVertexPostProcessor = terrainVertexPostProcessor;
             raycasterAggregator?.Attach(this);
-            _cellInGroupCount = terrainConfig.CellInGroupCount.XY();
+            this._cellInGroupCount = terrainConfig.CellInGroupCount.XY();
 
-            maxIterations = (int) maxDistance * 10;
+            this.maxIterations = (int)this.maxDistance * 10;
         }
 
         public virtual float Raycast(Vector2f posXY)
         {
-            var group = GetGroup(FindCell(posXY));
-            return RaycastGroup(group, posXY);
+            var group = this.GetGroup(this.FindCell(posXY));
+            return this.RaycastGroup(group, posXY);
         }
 
         public virtual Vector3f Raycast(Ray3f cameraRay)
@@ -35,22 +35,22 @@ namespace Votyra.Core.Raycasting
 
             var rayOriginXY = cameraRayXY.Origin;
             var rayDirectionXY = cameraRayXY.Direction;
-            var maxDistancePoint = cameraRay.GetPoint(maxDistance)
+            var maxDistancePoint = cameraRay.GetPoint(this.maxDistance)
                 .XY();
 
-            var fromGroup = GetGroup(FindCell(rayOriginXY));
-            var toGroup = GetGroup(FindCell(maxDistancePoint));
+            var fromGroup = this.GetGroup(this.FindCell(rayOriginXY));
+            var toGroup = this.GetGroup(this.FindCell(maxDistancePoint));
 
             var currentGroup = fromGroup;
             var currentPosition = rayOriginXY;
-            var currentCounter = maxIterations;
-            while (currentGroup != toGroup && currentCounter > 0)
+            var currentCounter = this.maxIterations;
+            while ((currentGroup != toGroup) && (currentCounter > 0))
             {
                 currentCounter--;
                 var ray = new Ray2f(currentPosition, rayDirectionXY);
 
-                var area = MeshGroupArea(currentGroup);
-                var foundResult = RaycastGroup(currentGroup, cameraRay);
+                var area = this.MeshGroupArea(currentGroup);
+                var foundResult = this.RaycastGroup(currentGroup, cameraRay);
                 if (foundResult.NoNan())
                 {
                     return foundResult;
@@ -98,9 +98,9 @@ namespace Votyra.Core.Raycasting
         private Vector2i FindCell(Vector2f meshPoint)
         {
             var cell = meshPoint.FloorToVector2i();
-            var area = MeshCellArea(cell);
+            var area = this.MeshCellArea(cell);
             var counter = 100;
-            while (!area.Contains(meshPoint) && counter > 0)
+            while (!area.Contains(meshPoint) && (counter > 0))
             {
                 counter--;
                 if (meshPoint.X > area.Max.X)
@@ -124,7 +124,7 @@ namespace Votyra.Core.Raycasting
                     throw new InvalidOperationException();
                 }
 
-                area = MeshCellArea(cell);
+                area = this.MeshCellArea(cell);
             }
 #if UNITY_EDITOR
             if (counter <= 0)
@@ -136,28 +136,28 @@ namespace Votyra.Core.Raycasting
             return cell;
         }
 
-        private Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
+        private Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(this.ProcessVertex(new Vector2f(cell.X, cell.Y)), this.ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
 
-        private Area2f MeshGroupArea(Vector2i group) => Area2f.FromMinAndMax(MeshCellArea(group * _cellInGroupCount)
+        private Area2f MeshGroupArea(Vector2i group) => Area2f.FromMinAndMax(this.MeshCellArea(group * this._cellInGroupCount)
                 .Min,
-            MeshCellArea((group + Vector2i.One) * _cellInGroupCount - Vector2i.One)
+            this.MeshCellArea(((@group + Vector2i.One) * this._cellInGroupCount) - Vector2i.One)
                 .Max);
 
         private Vector2f ProcessVertex(Vector2f point)
         {
-            if (_terrainVertexPostProcessor == null)
+            if (this._terrainVertexPostProcessor == null)
             {
                 return point;
             }
 
-            return _terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
+            return this._terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
                 .XY();
         }
 
         private Vector2i GetGroup(Vector2i cell)
         {
-            var x = cell.X / _cellInGroupCount.X - (cell.X < 0 && cell.X % _cellInGroupCount.X != 0 ? 1 : 0);
-            var y = cell.Y / _cellInGroupCount.Y - (cell.Y < 0 && cell.Y % _cellInGroupCount.Y != 0 ? 1 : 0);
+            var x = (cell.X / this._cellInGroupCount.X) - ((cell.X < 0) && ((cell.X % this._cellInGroupCount.X) != 0) ? 1 : 0);
+            var y = (cell.Y / this._cellInGroupCount.Y) - ((cell.Y < 0) && ((cell.Y % this._cellInGroupCount.Y) != 0) ? 1 : 0);
             return new Vector2i(x, y);
         }
 

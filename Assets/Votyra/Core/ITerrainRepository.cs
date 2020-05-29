@@ -5,9 +5,9 @@ namespace Votyra.Core
 {
     public interface ITerrainRepository<TKey, TValue> where TKey : struct
     {
-        Func<TKey, bool> ContainsKeyFunc { get; }
-
         event Action<RepositoryChange<TKey, TValue>> TerrainChange;
+
+        Func<TKey, bool> ContainsKeyFunc { get; }
 
         void Add(TKey key, TValue value);
 

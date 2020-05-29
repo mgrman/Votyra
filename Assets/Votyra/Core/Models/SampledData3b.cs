@@ -8,44 +8,44 @@ namespace Votyra.Core.Models
 {
     public struct SampledData3b : IEquatable<SampledData3b>
     {
-        public const int MaskBitShift_x0y0z0 = (int) MaskBitShift.x0y0z0;
+        public const int MaskBitShift_x0y0z0 = (int)MaskBitShift.x0y0z0;
 
-        public const int MaskBitShift_x0y0z1 = (int) MaskBitShift.x0y0z1;
+        public const int MaskBitShift_x0y0z1 = (int)MaskBitShift.x0y0z1;
 
-        public const int MaskBitShift_x0y1z0 = (int) MaskBitShift.x0y1z0;
+        public const int MaskBitShift_x0y1z0 = (int)MaskBitShift.x0y1z0;
 
-        public const int MaskBitShift_x0y1z1 = (int) MaskBitShift.x0y1z1;
+        public const int MaskBitShift_x0y1z1 = (int)MaskBitShift.x0y1z1;
 
-        public const int MaskBitShift_x1y0z0 = (int) MaskBitShift.x1y0z0;
+        public const int MaskBitShift_x1y0z0 = (int)MaskBitShift.x1y0z0;
 
-        public const int MaskBitShift_x1y0z1 = (int) MaskBitShift.x1y0z1;
+        public const int MaskBitShift_x1y0z1 = (int)MaskBitShift.x1y0z1;
 
-        public const int MaskBitShift_x1y1z0 = (int) MaskBitShift.x1y1z0;
+        public const int MaskBitShift_x1y1z0 = (int)MaskBitShift.x1y1z0;
 
-        public const int MaskBitShift_x1y1z1 = (int) MaskBitShift.x1y1z1;
+        public const int MaskBitShift_x1y1z1 = (int)MaskBitShift.x1y1z1;
 
-        public const int Mask_x0y0z0 = (int) Mask.x0y0z0;
+        public const int Mask_x0y0z0 = (int)Mask.x0y0z0;
 
-        public const int Mask_x0y0z1 = (int) Mask.x0y0z1;
+        public const int Mask_x0y0z1 = (int)Mask.x0y0z1;
 
-        public const int Mask_x0y1z0 = (int) Mask.x0y1z0;
+        public const int Mask_x0y1z0 = (int)Mask.x0y1z0;
 
-        public const int Mask_x0y1z1 = (int) Mask.x0y1z1;
+        public const int Mask_x0y1z1 = (int)Mask.x0y1z1;
 
-        public const int Mask_x1y0z0 = (int) Mask.x1y0z0;
+        public const int Mask_x1y0z0 = (int)Mask.x1y0z0;
 
-        public const int Mask_x1y0z1 = (int) Mask.x1y0z1;
+        public const int Mask_x1y0z1 = (int)Mask.x1y0z1;
 
-        public const int Mask_x1y1z0 = (int) Mask.x1y1z0;
+        public const int Mask_x1y1z0 = (int)Mask.x1y1z0;
 
-        public const int Mask_x1y1z1 = (int) Mask.x1y1z1;
+        public const int Mask_x1y1z1 = (int)Mask.x1y1z1;
 
         public static readonly IEqualityComparer<SampledData3b> RotationInvariantNormallessComparer = new RotationInvariantNormallessSampledData3bComparer();
 
         public static readonly IEqualityComparer<SampledData3b> NormallessComparer = new NormallessSampledData3bComparer();
 
         public static IEnumerable<SampledData3b> AllValues = Enumerable.Range(0, byte.MaxValue + 1)
-            .Select(o => new SampledData3b((byte) o))
+            .Select(o => new SampledData3b((byte)o))
             .ToArray();
 
         public readonly byte Data;
@@ -54,12 +54,12 @@ namespace Votyra.Core.Models
 
         public SampledData3b(bool x0y0z0, bool x0y0z1, bool x0y1z0, bool x0y1z1, bool x1y0z0, bool x1y0z1, bool x1y1z0, bool x1y1z1)
         {
-            Data = (byte) ((x0y0z0 ? Mask_x0y0z0 : 0) | (x0y0z1 ? Mask_x0y0z1 : 0) | (x0y1z0 ? Mask_x0y1z0 : 0) | (x0y1z1 ? Mask_x0y1z1 : 0) | (x1y0z0 ? Mask_x1y0z0 : 0) | (x1y0z1 ? Mask_x1y0z1 : 0) | (x1y1z0 ? Mask_x1y1z0 : 0) | (x1y1z1 ? Mask_x1y1z1 : 0));
+            this.Data = (byte)((x0y0z0 ? Mask_x0y0z0 : 0) | (x0y0z1 ? Mask_x0y0z1 : 0) | (x0y1z0 ? Mask_x0y1z0 : 0) | (x0y1z1 ? Mask_x0y1z1 : 0) | (x1y0z0 ? Mask_x1y0z0 : 0) | (x1y0z1 ? Mask_x1y0z1 : 0) | (x1y1z0 ? Mask_x1y1z0 : 0) | (x1y1z1 ? Mask_x1y1z1 : 0));
         }
 
         public SampledData3b(byte data)
         {
-            Data = data;
+            this.Data = data;
         }
 
         public enum MaskBitShift
@@ -71,7 +71,7 @@ namespace Votyra.Core.Models
             x1y0z0 = 4,
             x1y0z1 = 5,
             x1y1z0 = 6,
-            x1y1z1 = 7
+            x1y1z1 = 7,
         }
 
         public enum Mask : byte
@@ -83,32 +83,32 @@ namespace Votyra.Core.Models
             x1y0z0 = 1 << MaskBitShift.x1y0z0,
             x1y0z1 = 1 << MaskBitShift.x1y0z1,
             x1y1z0 = 1 << MaskBitShift.x1y1z0,
-            x1y1z1 = 1 << MaskBitShift.x1y1z1
+            x1y1z1 = 1 << MaskBitShift.x1y1z1,
         }
 
-        public bool Data_x0y0z0 => (Data & Mask_x0y0z0) != 0;
+        public bool Data_x0y0z0 => (this.Data & Mask_x0y0z0) != 0;
 
-        public bool Data_x0y0z1 => (Data & Mask_x0y0z1) != 0;
+        public bool Data_x0y0z1 => (this.Data & Mask_x0y0z1) != 0;
 
-        public bool Data_x0y1z0 => (Data & Mask_x0y1z0) != 0;
+        public bool Data_x0y1z0 => (this.Data & Mask_x0y1z0) != 0;
 
-        public bool Data_x0y1z1 => (Data & Mask_x0y1z1) != 0;
+        public bool Data_x0y1z1 => (this.Data & Mask_x0y1z1) != 0;
 
-        public bool Data_x1y0z0 => (Data & Mask_x1y0z0) != 0;
+        public bool Data_x1y0z0 => (this.Data & Mask_x1y0z0) != 0;
 
-        public bool Data_x1y0z1 => (Data & Mask_x1y0z1) != 0;
+        public bool Data_x1y0z1 => (this.Data & Mask_x1y0z1) != 0;
 
-        public bool Data_x1y1z0 => (Data & Mask_x1y1z0) != 0;
+        public bool Data_x1y1z0 => (this.Data & Mask_x1y1z0) != 0;
 
-        public bool Data_x1y1z1 => (Data & Mask_x1y1z1) != 0;
+        public bool Data_x1y1z1 => (this.Data & Mask_x1y1z1) != 0;
 
-        public int TrueCount => NumberOfSetBits(Data);
+        public int TrueCount => this.NumberOfSetBits(this.Data);
 
         public bool this[Vector3i vec] => this[vec.X, vec.Y, vec.Z];
 
         public bool this[Vector3f vec] => this[vec.X.RoundToInt(), vec.Y.RoundToInt(), vec.Z.RoundToInt()];
 
-        public bool this[int x, int y, int z] => (Data & (1 << (x * 4 + y * 2 + z))) != 0;
+        public bool this[int x, int y, int z] => (this.Data & (1 << ((x * 4) + (y * 2) + z))) != 0;
 
         public static Matrix4x4f GetRotationMatrix(Vector3i rotationSteps, bool invert)
         {
@@ -150,42 +150,42 @@ namespace Votyra.Core.Models
 
         public IEnumerable<Vector3i> GetPointsWithValue(bool value)
         {
-            if (Data_x0y0z0 == value)
+            if (this.Data_x0y0z0 == value)
             {
                 yield return new Vector3i(0, 0, 0);
             }
 
-            if (Data_x0y0z1 == value)
+            if (this.Data_x0y0z1 == value)
             {
                 yield return new Vector3i(0, 0, 1);
             }
 
-            if (Data_x0y1z0 == value)
+            if (this.Data_x0y1z0 == value)
             {
                 yield return new Vector3i(0, 1, 0);
             }
 
-            if (Data_x0y1z1 == value)
+            if (this.Data_x0y1z1 == value)
             {
                 yield return new Vector3i(0, 1, 1);
             }
 
-            if (Data_x1y0z0 == value)
+            if (this.Data_x1y0z0 == value)
             {
                 yield return new Vector3i(1, 0, 0);
             }
 
-            if (Data_x1y0z1 == value)
+            if (this.Data_x1y0z1 == value)
             {
                 yield return new Vector3i(1, 0, 1);
             }
 
-            if (Data_x1y1z0 == value)
+            if (this.Data_x1y1z0 == value)
             {
                 yield return new Vector3i(1, 1, 0);
             }
 
-            if (Data_x1y1z1 == value)
+            if (this.Data_x1y1z1 == value)
             {
                 yield return new Vector3i(1, 1, 1);
             }
@@ -194,26 +194,26 @@ namespace Votyra.Core.Models
         public SampledData3b GetRotatedXY(float angleDeg)
         {
             var rotationMatrix = Matrix4x4f.Rotate(Quaternion4f.Euler(0, 0, angleDeg));
-            return GetTransformed(rotationMatrix);
+            return this.GetTransformed(rotationMatrix);
         }
 
         public SampledData3b GetRotatedYZ(float angleDeg)
         {
             var rotationMatrix = Matrix4x4f.Rotate(Quaternion4f.Euler(angleDeg, 0, 0));
-            return GetTransformed(rotationMatrix);
+            return this.GetTransformed(rotationMatrix);
         }
 
         public SampledData3b GetRotatedXZ(float angleDeg)
         {
             var rotationMatrix = Matrix4x4f.Rotate(Quaternion4f.Euler(0, angleDeg, 0));
-            return GetTransformed(rotationMatrix);
+            return this.GetTransformed(rotationMatrix);
         }
 
         public SampledData3b GetRotated(Vector3i rotationSteps, bool invert)
         {
             var rotationMatrix = GetRotationMatrix(rotationSteps, invert);
 
-            return GetTransformed(rotationMatrix);
+            return this.GetTransformed(rotationMatrix);
         }
 
         public SampledData3b GetTransformed(Matrix4x4f matrix) => new SampledData3b(this[matrix.MultiplyPoint(new Vector3f(0, 0, 0))], this[matrix.MultiplyPoint(new Vector3f(0, 0, 1))], this[matrix.MultiplyPoint(new Vector3f(0, 1, 0))], this[matrix.MultiplyPoint(new Vector3f(0, 1, 1))], this[matrix.MultiplyPoint(new Vector3f(1, 0, 0))], this[matrix.MultiplyPoint(new Vector3f(1, 0, 1))], this[matrix.MultiplyPoint(new Vector3f(1, 1, 0))], this[matrix.MultiplyPoint(new Vector3f(1, 1, 1))]);
@@ -222,24 +222,24 @@ namespace Votyra.Core.Models
         {
             if (obj is SampledData3b)
             {
-                var that = (SampledData3b) obj;
-                return Equals(that);
+                var that = (SampledData3b)obj;
+                return this.Equals(that);
             }
 
             return false;
         }
 
-        public override int GetHashCode() => Data;
+        public override int GetHashCode() => this.Data;
 
-        public override string ToString() => ToCubeString();
+        public override string ToString() => this.ToCubeString();
 
         public bool Equals(SampledData3b that) => this == that;
 
         public bool EqualsRotationInvariant(SampledData3b that, out Matrix4x4f matrix, bool x = true, bool y = true, bool z = true, bool invert = true)
         {
-            foreach (var tempMatrix in GetAllRotationMatrices(x, y, z, invert))
+            foreach (var tempMatrix in this.GetAllRotationMatrices(x, y, z, invert))
             {
-                var rotatedThis = GetTransformed(tempMatrix);
+                var rotatedThis = this.GetTransformed(tempMatrix);
 
                 if (NormallessComparer.Equals(rotatedThis, that))
                 {
@@ -254,9 +254,9 @@ namespace Votyra.Core.Models
 
         public bool IsContainedInRotationInvariant(SampledData3b that, out Matrix4x4f matrix, out SampledData3b rotatedData, bool x = true, bool y = true, bool z = true, bool invert = true)
         {
-            foreach (var tempMatrix in GetAllRotationMatrices(x, y, z, invert))
+            foreach (var tempMatrix in this.GetAllRotationMatrices(x, y, z, invert))
             {
-                var rotatedThis = GetTransformed(tempMatrix);
+                var rotatedThis = this.GetTransformed(tempMatrix);
 
                 if ((rotatedThis.Data & that.Data) == rotatedThis.Data)
                 {
@@ -300,7 +300,7 @@ namespace Votyra.Core.Models
                         {
                             var finalMatrix = GetRotationMatrix(new Vector3i(x, y, z), invert == 1);
 
-                            var rotatedThis = GetTransformed(finalMatrix);
+                            var rotatedThis = this.GetTransformed(finalMatrix);
 
                             if ((rotatedThis.Data & that.Data) == rotatedThis.Data)
                             {
@@ -313,12 +313,12 @@ namespace Votyra.Core.Models
         }
 
         public string ToCubeString() => $@"
-              {(Data_x0y1z1 ? 1 : 0)}-----{(Data_x1y1z1 ? 1 : 0)}
+              {(this.Data_x0y1z1 ? 1 : 0)}-----{(this.Data_x1y1z1 ? 1 : 0)}
              /|    /|
-            {(Data_x0y0z1 ? 1 : 0)}-+---{(Data_x1y0z1 ? 1 : 0)} |
-            | {(Data_x0y1z0 ? 1 : 0)}---+-{(Data_x1y1z0 ? 1 : 0)}
+            {(this.Data_x0y0z1 ? 1 : 0)}-+---{(this.Data_x1y0z1 ? 1 : 0)} |
+            | {(this.Data_x0y1z0 ? 1 : 0)}---+-{(this.Data_x1y1z0 ? 1 : 0)}
             |/    |/
-            {(Data_x0y0z0 ? 1 : 0)}-----{(Data_x1y0z0 ? 1 : 0)}
+            {(this.Data_x0y0z0 ? 1 : 0)}-----{(this.Data_x1y0z0 ? 1 : 0)}
             ";
 
         private static Vector3f ComputeNormal(float x0y0z0, float x0y0z1, float x0y1z0, float x0y1z1, float x1y0z0, float x1y0z1, float x1y1z0, float x1y1z1)
@@ -362,16 +362,16 @@ namespace Votyra.Core.Models
             switch (index % 4)
             {
                 case 0:
-                    return Data_x0y0z0;
+                    return this.Data_x0y0z0;
 
                 case 1:
-                    return Data_x1y0z0;
+                    return this.Data_x1y0z0;
 
                 case 2:
-                    return Data_x1y1z0;
+                    return this.Data_x1y1z0;
 
                 case 3:
-                    return Data_x0y1z0;
+                    return this.Data_x0y1z0;
 
                 default:
                     throw new InvalidOperationException();
@@ -383,16 +383,16 @@ namespace Votyra.Core.Models
             switch (index % 4)
             {
                 case 0:
-                    return Data_x0y0z1;
+                    return this.Data_x0y0z1;
 
                 case 1:
-                    return Data_x1y0z1;
+                    return this.Data_x1y0z1;
 
                 case 2:
-                    return Data_x1y1z1;
+                    return this.Data_x1y1z1;
 
                 case 3:
-                    return Data_x0y1z1;
+                    return this.Data_x0y1z1;
 
                 default:
                     throw new InvalidOperationException();

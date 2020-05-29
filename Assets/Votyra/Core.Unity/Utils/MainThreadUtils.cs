@@ -10,10 +10,14 @@ namespace Votyra.Core.Utils
         public static void RunOnMainThread(Action action)
         {
             if (MainThreadDispatcher.IsInMainThread)
+            {
                 action();
+            }
             else
+            {
                 RunOnMainThreadAsync(action)
                     .Wait();
+            }
         }
 
         public static Task RunOnMainThreadAsync(Action action)

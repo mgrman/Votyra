@@ -1,6 +1,5 @@
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
-using Votyra.Core.Models;
 
 namespace Votyra.Core.Painting.Commands
 {

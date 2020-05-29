@@ -2,9 +2,10 @@ namespace Votyra.Core
 {
     public class DualSampleConfig : IDualSampleConfig
     {
-        public DualSampleConfig([ConfigInject("wallSquishFactor")] float wallSquishFactor)
+        public DualSampleConfig([ConfigInject("wallSquishFactor"),]
+            float wallSquishFactor)
         {
-            WallSquishFactor = wallSquishFactor;
+            this.WallSquishFactor = wallSquishFactor;
         }
 
         public float WallSquishFactor { get; }

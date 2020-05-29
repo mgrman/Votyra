@@ -4,13 +4,14 @@ using NUnit.Framework;
 using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
+using Assert = UnityEngine.Assertions.Assert;
 
 namespace Votyra.Core.Editor.Tests
 {
-    [TestFixture]
+    [TestFixture,]
     public class IntersectionUtilsTest
     {
-        [Test]
+        [Test,]
         public void LiangBarskyClipper_SimpleLines_ReturnExpectedResult()
         {
             var fromI = 1;
@@ -27,16 +28,16 @@ namespace Votyra.Core.Editor.Tests
                 .ToArray();
 
             var startLiangBarskyClipper = DateTime.Now;
-            for (int i = 0; i < countI; i++)
+            for (var i = 0; i < countI; i++)
             {
                 var result = IntersectionUtils.LiangBarskyClipper(areas[i], lines[i]);
 
-                UnityEngine.Assertions.Assert.AreApproximatelyEqual(results[i]
+                Assert.AreApproximatelyEqual(results[i]
                         .X,
                     result.X,
                     0.0001f,
                     $"Problem in LiangBarskyClipper test {i}");
-                UnityEngine.Assertions.Assert.AreApproximatelyEqual(results[i]
+                Assert.AreApproximatelyEqual(results[i]
                         .Y,
                     result.Y,
                     0.0001f,

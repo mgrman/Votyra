@@ -9,7 +9,7 @@ namespace Votyra.Core.Raycasting
 
         public Vector3f Raycast(Ray3f cameraRay)
         {
-            foreach (var raycaster in _raycasters)
+            foreach (var raycaster in this._raycasters)
             {
                 var res = raycaster.Raycast(cameraRay);
                 if (res.NoNan())
@@ -23,7 +23,7 @@ namespace Votyra.Core.Raycasting
 
         public float Raycast(Vector2f cameraRay)
         {
-            foreach (var raycaster in _raycasters)
+            foreach (var raycaster in this._raycasters)
             {
                 var res = raycaster.Raycast(cameraRay);
                 if (res.NoNan())
@@ -37,7 +37,7 @@ namespace Votyra.Core.Raycasting
 
         public void Attach(IRaycasterPart raycaster)
         {
-            _raycasters.Add(raycaster);
+            this._raycasters.Add(raycaster);
         }
     }
 }

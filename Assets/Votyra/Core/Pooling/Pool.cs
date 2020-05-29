@@ -11,7 +11,7 @@ namespace Votyra.Core.Pooling
 
         public Pool(Func<TValue> factory)
         {
-            _factory = factory;
+            this._factory = factory;
         }
 
         public int PoolCount { get; private set; }
@@ -20,19 +20,19 @@ namespace Votyra.Core.Pooling
 
         public TValue GetRaw()
         {
-            ActiveCount++;
-            lock (_lock)
+            this.ActiveCount++;
+            lock (this._lock)
             {
                 TValue value;
-                if (_list.Count == 0)
+                if (this._list.Count == 0)
                 {
-                    value = _factory();
+                    value = this._factory();
                 }
                 else
                 {
-                    PoolCount--;
-                    value = _list[_list.Count - 1];
-                    _list.RemoveAt(_list.Count - 1);
+                    this.PoolCount--;
+                    value = this._list[this._list.Count - 1];
+                    this._list.RemoveAt(this._list.Count - 1);
                 }
 
                 return value;
@@ -41,11 +41,11 @@ namespace Votyra.Core.Pooling
 
         public void ReturnRaw(TValue value)
         {
-            ActiveCount--;
-            PoolCount++;
-            lock (_lock)
+            this.ActiveCount--;
+            this.PoolCount++;
+            lock (this._lock)
             {
-                _list.Add(value);
+                this._list.Add(value);
             }
         }
     }

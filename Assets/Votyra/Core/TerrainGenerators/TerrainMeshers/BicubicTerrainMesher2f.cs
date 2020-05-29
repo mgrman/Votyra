@@ -14,34 +14,34 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public BicubicTerrainMesher2f(ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig)
         {
-            _cellInGroupCount = terrainConfig.CellInGroupCount.XY();
-            _subdivision = interpolationConfig.MeshSubdivision;
+            this._cellInGroupCount = terrainConfig.CellInGroupCount.XY();
+            this._subdivision = interpolationConfig.MeshSubdivision;
         }
 
         public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image)
         {
-            var range = Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(image.RangeZ.Min), _cellInGroupCount.ToVector3f(image.RangeZ.Size));
+            var range = Area3f.FromMinAndSize((group * this._cellInGroupCount).ToVector3f(image.RangeZ.Min), this._cellInGroupCount.ToVector3f(image.RangeZ.Size));
             mesh.Reset(range);
 
-            var poolableValuesToFill = PoolableMatrix2<float>.CreateDirty(new Vector2i(_subdivision.X + 1, _subdivision.Y + 1));
+            var poolableValuesToFill = PoolableMatrix2<float>.CreateDirty(new Vector2i(this._subdivision.X + 1, this._subdivision.Y + 1));
             var valuesToFill = poolableValuesToFill.RawMatrix;
 
-            var groupPosition = _cellInGroupCount * group;
+            var groupPosition = this._cellInGroupCount * group;
 
-            for (var iix = 0; iix < _cellInGroupCount.X; iix++)
+            for (var iix = 0; iix < this._cellInGroupCount.X; iix++)
             {
-                for (var iiy = 0; iiy < _cellInGroupCount.Y; iiy++)
+                for (var iiy = 0; iiy < this._cellInGroupCount.Y; iiy++)
                 {
                     var cellInGroup = new Vector2i(iix, iiy);
 
                     var cell = cellInGroup + groupPosition;
 
-                    var step = 1.0f / _subdivision;
+                    var step = 1.0f / this._subdivision;
 
-                    var data_x0y0 = image.SampleCell(cell - Vector2i.One + new Vector2i(0, 0));
-                    var data_x0y2 = image.SampleCell(cell - Vector2i.One + new Vector2i(0, 2));
-                    var data_x2y0 = image.SampleCell(cell - Vector2i.One + new Vector2i(2, 0));
-                    var data_x2y2 = image.SampleCell(cell - Vector2i.One + new Vector2i(2, 2));
+                    var data_x0y0 = image.SampleCell((cell - Vector2i.One) + new Vector2i(0, 0));
+                    var data_x0y2 = image.SampleCell((cell - Vector2i.One) + new Vector2i(0, 2));
+                    var data_x2y0 = image.SampleCell((cell - Vector2i.One) + new Vector2i(2, 0));
+                    var data_x2y2 = image.SampleCell((cell - Vector2i.One) + new Vector2i(2, 2));
 
                     var valuesInterMat_x0y0 = data_x0y0.x0y0;
                     var valuesInterMat_x0y1 = data_x0y0.x0y1;
@@ -60,10 +60,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     var valuesInterMat_x3y2 = data_x2y2.x1y0;
                     var valuesInterMat_x3y3 = data_x2y2.x1y1;
 
-
-                    for (var ix = 0; ix < _subdivision.X + 1; ix++)
+                    for (var ix = 0; ix < (this._subdivision.X + 1); ix++)
                     {
-                        for (var iy = 0; iy < _subdivision.Y + 1; iy++)
+                        for (var iy = 0; iy < (this._subdivision.Y + 1); iy++)
                         {
                             var pos = new Vector2f(step.X * ix, step.Y * iy);
 
@@ -74,12 +73,12 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                             var value = Intepolate(valueCol0, valueCol1, valueCol2, valueCol3, pos.Y);
                             valuesToFill[ix, iy] = value;
 
-                            if (ix > 0 && iy > 0)
+                            if ((ix > 0) && (iy > 0))
                             {
-                                var x00y00 = valuesToFill[ix - 1 + 0, iy - 1 + 0];
-                                var x00y05 = valuesToFill[ix - 1 + 0, iy - 1 + 1];
-                                var x05y00 = valuesToFill[ix - 1 + 1, iy - 1 + 0];
-                                var x05y05 = valuesToFill[ix - 1 + 1, iy - 1 + 1];
+                                var x00y00 = valuesToFill[(ix - 1) + 0, (iy - 1) + 0];
+                                var x00y05 = valuesToFill[(ix - 1) + 0, (iy - 1) + 1];
+                                var x05y00 = valuesToFill[(ix - 1) + 1, (iy - 1) + 0];
+                                var x05y05 = valuesToFill[(ix - 1) + 1, (iy - 1) + 1];
 
                                 var subcellValue = new SampledData2f(x00y00, x00y05, x05y00, x05y05);
 
@@ -104,33 +103,33 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
             // Get degree-1 coefficients
             float c1s1;
-            if (dys0 * dys1 <= 0)
+            if ((dys0 * dys1) <= 0)
             {
                 c1s1 = 0;
             }
             else
             {
-                c1s1 = 6f / (3f / dys0 + 3f / dys1);
+                c1s1 = 6f / ((3f / dys0) + (3f / dys1));
             }
 
             float c1s2;
-            if (dys1 * dys2 <= 0)
+            if ((dys1 * dys2) <= 0)
             {
                 c1s2 = 0;
             }
             else
             {
-                c1s2 = 6f / (3f / dys1 + 3f / dys2);
+                c1s2 = 6f / ((3f / dys1) + (3f / dys2));
             }
 
             // Get degree-2 and degree-3 coefficients
-            var c3s1 = c1s1 + c1s2 - dys1 - dys1;
+            var c3s1 = (c1s1 + c1s2) - dys1 - dys1;
             var c2s1 = dys1 - c1s1 - c3s1;
 
             // Interpolate
             var diff = x12Rel;
             var diffSq = diff * diff;
-            return y1 + c1s1 * diff + c2s1 * diffSq + c3s1 * diff * diffSq;
+            return y1 + (c1s1 * diff) + (c2s1 * diffSq) + (c3s1 * diff * diffSq);
         }
     }
 }

@@ -18,34 +18,34 @@ namespace Votyra.Core.Models
 
         public readonly Vector4i Max;
 
-        public bool IsEmpty => Size == Vector4i.Zero;
+        public bool IsEmpty => this.Size == Vector4i.Zero;
 
         private Range4i(Vector4i min, Vector4i max)
         {
-            Min = Vector4iUtils.Max(min, MinValue);
-            Max = Vector4iUtils.Min(max, MaxValue);
-            if (Size.AnyNegative())
+            this.Min = Vector4iUtils.Max(min, MinValue);
+            this.Max = Vector4iUtils.Min(max, MaxValue);
+            if (this.Size.AnyNegative())
             {
                 throw new InvalidOperationException($"{nameof(Range4i)} '{this}' cannot have a size be zero or negative!");
             }
 
-            if (Size.AnyZero())
+            if (this.Size.AnyZero())
             {
-                Max = Min;
+                this.Max = this.Min;
             }
         }
 
         public Range4i ExtendBothDirections(int distance)
         {
-            if (IsEmpty)
+            if (this.IsEmpty)
             {
                 return this;
             }
 
-            return FromMinAndMax(Min - distance, Max + distance);
+            return FromMinAndMax(this.Min - distance, this.Max + distance);
         }
 
-        public Vector4i Size => Max - Min;
+        public Vector4i Size => this.Max - this.Min;
 
         public static Range4i FromMinAndSize(Vector4i min, Vector4i size)
         {
@@ -66,48 +66,48 @@ namespace Votyra.Core.Models
                 throw new InvalidOperationException($"When creating {nameof(Range4i)} from center '{center}' and extents '{extents}', extents cannot have a negative coordinate!");
             }
 
-            return new Range4i(center - extents + 1, center + extents);
+            return new Range4i((center - extents) + 1, center + extents);
         }
 
         public Area4i? ToArea4i()
         {
-            if (Size == Vector4i.Zero)
+            if (this.Size == Vector4i.Zero)
             {
                 return null;
             }
 
-            return Area4i.FromMinAndMax(Min, Max - Vector4i.One);
+            return Area4i.FromMinAndMax(this.Min, this.Max - Vector4i.One);
         }
 
         public Area4f? ToArea4f()
         {
-            if (Size == Vector4i.Zero)
+            if (this.Size == Vector4i.Zero)
             {
                 return null;
             }
 
-            return Area4f.FromMinAndMax(Min.ToVector4f(), (Max - Vector4i.One).ToVector4f());
+            return Area4f.FromMinAndMax(this.Min.ToVector4f(), (this.Max - Vector4i.One).ToVector4f());
         }
 
-        public static bool operator ==(Range4i a, Range4i b) => a.Min == b.Min && a.Max == b.Max;
+        public static bool operator ==(Range4i a, Range4i b) => (a.Min == b.Min) && (a.Max == b.Max);
 
-        public static bool operator !=(Range4i a, Range4i b) => a.Min != b.Min || a.Max != b.Max;
+        public static bool operator !=(Range4i a, Range4i b) => (a.Min != b.Min) || (a.Max != b.Max);
 
-        public bool Contains(Vector4i point) => point >= Min && point < Max;
+        public bool Contains(Vector4i point) => (point >= this.Min) && (point < this.Max);
 
         public bool Overlaps(Range4i that)
         {
-            if (Size == Vector4i.Zero || that.Size == Vector4i.Zero)
+            if ((this.Size == Vector4i.Zero) || (that.Size == Vector4i.Zero))
             {
                 return false;
             }
 
-            return Min < that.Max && that.Min < Max;
+            return (this.Min < that.Max) && (that.Min < this.Max);
         }
 
         public Range4i CombineWith(Range4i that)
         {
-            if (Size == Vector4i.Zero)
+            if (this.Size == Vector4i.Zero)
             {
                 return that;
             }
@@ -117,33 +117,33 @@ namespace Votyra.Core.Models
                 return this;
             }
 
-            var min = Vector4iUtils.Min(Min, that.Min);
-            var max = Vector4iUtils.Max(Max, that.Max);
+            var min = Vector4iUtils.Min(this.Min, that.Min);
+            var max = Vector4iUtils.Max(this.Max, that.Max);
             return FromMinAndMax(min, max);
         }
 
         public Range4i CombineWith(Vector4i point)
         {
-            if (Contains(point))
+            if (this.Contains(point))
             {
                 return this;
             }
 
-            var min = Vector4iUtils.Min(Min, point);
-            var max = Vector4iUtils.Max(Max, point);
+            var min = Vector4iUtils.Min(this.Min, point);
+            var max = Vector4iUtils.Max(this.Max, point);
 
             return FromMinAndMax(min, max);
         }
 
         public Range4i IntersectWith(Range4i that)
         {
-            if (Size == Vector4i.Zero || that.Size == Vector4i.Zero)
+            if ((this.Size == Vector4i.Zero) || (that.Size == Vector4i.Zero))
             {
                 return Zero;
             }
 
-            var min = Vector4iUtils.Max(Min, that.Min);
-            var max = Vector4iUtils.Max(Vector4iUtils.Min(Max, that.Max), min);
+            var min = Vector4iUtils.Max(this.Min, that.Min);
+            var max = Vector4iUtils.Max(Vector4iUtils.Min(this.Max, that.Max), min);
 
             return FromMinAndMax(min, max);
         }
@@ -155,12 +155,12 @@ namespace Votyra.Core.Models
                 return this;
             }
 
-            return UnionWith(that.Value);
+            return this.UnionWith(that.Value);
         }
 
         public Range4i UnionWith(Range4i that)
         {
-            if (Size == Vector4i.Zero)
+            if (this.Size == Vector4i.Zero)
             {
                 return that;
             }
@@ -170,13 +170,13 @@ namespace Votyra.Core.Models
                 return this;
             }
 
-            var min = Vector4iUtils.Min(Min, that.Min);
-            var max = Vector4iUtils.Max(Max, that.Max);
+            var min = Vector4iUtils.Min(this.Min, that.Min);
+            var max = Vector4iUtils.Max(this.Max, that.Max);
 
             return FromMinAndMax(min, max);
         }
 
-        public Area5f ToArea5fFromMinMax(float minZ, float maxZ) => Area5f.FromMinAndMax(Min.ToVector5f(minZ), Max.ToVector5f(maxZ));
+        public Area5f ToArea5fFromMinMax(float minZ, float maxZ) => Area5f.FromMinAndMax(this.Min.ToVector5f(minZ), this.Max.ToVector5f(maxZ));
 
         public bool Equals(Range4i other) => this == other;
 
@@ -187,17 +187,17 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return Equals((Range4i) obj);
+            return this.Equals((Range4i)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return Min.GetHashCode() + 7 * Max.GetHashCode();
+                return this.Min.GetHashCode() + (7 * this.Max.GetHashCode());
             }
         }
 
-        public override string ToString() => $"Range4i: min={Min} max={Max} size={Size}";
+        public override string ToString() => $"Range4i: min={this.Min} max={this.Max} size={this.Size}";
     }
 }

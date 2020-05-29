@@ -8,36 +8,36 @@ using UnityEngineObject = UnityEngine.Object;
 
 namespace Votyra.Core
 {
-    [Serializable]
+    [Serializable,]
     public class ConfigItem : IEquatable<ConfigItem>
     {
         private JsonSerializerSettings _settings;
 
-        [SerializeField]
+        [SerializeField,]
         public string Id;
 
-        [SerializeField]
+        [SerializeField,]
         public string JsonValue;
 
-        [SerializeField]
+        [SerializeField,]
         public string TypeAssemblyQualifiedName;
 
-        [SerializeField]
+        [SerializeField,]
         public List<UnityEngineObject> UnityValues;
 
         public ConfigItem()
         {
-            _settings = new JsonSerializerSettings();
-            _settings.Converters.Add(new ObjectConverter(this));
+            this._settings = new JsonSerializerSettings();
+            this._settings.Converters.Add(new ObjectConverter(this));
         }
 
         public ConfigItem(string id, Type type, object value)
             : this()
         {
-            Id = id;
-            TypeAssemblyQualifiedName = type?.AssemblyQualifiedName;
+            this.Id = id;
+            this.TypeAssemblyQualifiedName = type?.AssemblyQualifiedName;
 
-            JsonValue = JsonConvert.SerializeObject(value, _settings);
+            this.JsonValue = JsonConvert.SerializeObject(value, this._settings);
         }
 
         public Type Type
@@ -46,7 +46,7 @@ namespace Votyra.Core
             {
                 try
                 {
-                    return Type.GetType(TypeAssemblyQualifiedName);
+                    return Type.GetType(this.TypeAssemblyQualifiedName);
                 }
                 catch (Exception ex)
                 {
@@ -62,11 +62,11 @@ namespace Votyra.Core
             {
                 try
                 {
-                    return JsonConvert.DeserializeObject(JsonValue, Type, _settings);
+                    return JsonConvert.DeserializeObject(this.JsonValue, this.Type, this._settings);
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Problem '{ex.Message}' deserializing '{JsonValue}' to type {Type} for {Id}.");
+                    Debug.LogError($"Problem '{ex.Message}' deserializing '{this.JsonValue}' to type {this.Type} for {this.Id}.");
                     return null;
                 }
             }
@@ -79,19 +79,19 @@ namespace Votyra.Core
                 return false;
             }
 
-            return Id == that.Id && Type == that.Type && UnityValues.EmptyIfNull()
-                .SequenceEqual(that.UnityValues.EmptyIfNull()) && JsonValue == that.JsonValue;
+            return (this.Id == that.Id) && (this.Type == that.Type) && this.UnityValues.EmptyIfNull()
+                .SequenceEqual(that.UnityValues.EmptyIfNull()) && (this.JsonValue == that.JsonValue);
         }
 
         public override bool Equals(object obj)
         {
             var that = obj as ConfigItem;
-            return Equals(that);
+            return this.Equals(that);
         }
 
-        public override int GetHashCode() => Id.GetHashCode();
+        public override int GetHashCode() => this.Id.GetHashCode();
 
-        public override string ToString() => $"CONFIG {Id}({Type.Name}): {JsonValue}";
+        public override string ToString() => $"CONFIG {this.Id}({this.Type.Name}): {this.JsonValue}";
 
         public class ObjectConverter : JsonConverter
         {
@@ -99,23 +99,23 @@ namespace Votyra.Core
 
             public ObjectConverter(ConfigItem parent)
             {
-                _parent = parent;
+                this._parent = parent;
             }
 
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
-                writer.WriteValue(_parent.UnityValues?.Count ?? 0);
+                writer.WriteValue(this._parent.UnityValues?.Count ?? 0);
 
-                _parent.UnityValues = _parent.UnityValues ?? new List<UnityEngineObject>();
-                _parent.UnityValues.Add(value as UnityEngineObject);
+                this._parent.UnityValues = this._parent.UnityValues ?? new List<UnityEngineObject>();
+                this._parent.UnityValues.Add(value as UnityEngineObject);
             }
 
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
                 if (reader.ValueType == typeof(long))
                 {
-                    var index = (int) (long) reader.Value;
-                    var obj = _parent.UnityValues[index];
+                    var index = (int)(long)reader.Value;
+                    var obj = this._parent.UnityValues[index];
                     return obj == null ? null : obj;
                 }
 

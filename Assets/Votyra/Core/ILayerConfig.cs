@@ -9,6 +9,6 @@
     {
         Rock = 257,
         Earth = 258,
-        Sand = 259
+        Sand = 259,
     }
 }

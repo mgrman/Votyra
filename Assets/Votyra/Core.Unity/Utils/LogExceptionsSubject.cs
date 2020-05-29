@@ -20,40 +20,40 @@ namespace Votyra.Core.Models
 
         public LogExceptionsSubject(IObservable<T> subject, IThreadSafeLogger logger)
         {
-            _observable = subject;
-            _logger = logger;
+            this._observable = subject;
+            this._logger = logger;
 
-            _observer = subject as IObserver<T>;
+            this._observer = subject as IObserver<T>;
         }
 
         public void OnCompleted()
         {
-            _observer?.OnCompleted();
+            this._observer?.OnCompleted();
         }
 
         public void OnError(Exception error)
         {
-            _observer?.OnError(error);
+            this._observer?.OnError(error);
         }
 
         public void OnNext(T value)
         {
-            _observer?.OnNext(value);
+            this._observer?.OnNext(value);
         }
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            return _observable.Subscribe(Observer.Create<T>(o =>
+            return this._observable.Subscribe(Observer.Create<T>(o =>
                 {
                     try
                     {
-                        _logger.LogMessage(o);
+                        this._logger.LogMessage(o);
                         observer.OnNext(o);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogException(ex);
-                        OnError(ex);
+                        this._logger.LogException(ex);
+                        this.OnError(ex);
                     }
                 },
                 observer.OnError,

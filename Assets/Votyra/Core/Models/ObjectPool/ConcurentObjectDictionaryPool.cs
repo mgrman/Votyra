@@ -13,7 +13,7 @@ namespace Votyra.Core.Models.ObjectPool
 
         public override T GetObject(TKey key)
         {
-            lock (_accessLock)
+            lock (this._accessLock)
             {
                 return base.GetObject(key);
             }
@@ -21,7 +21,7 @@ namespace Votyra.Core.Models.ObjectPool
 
         public override void ReturnObject(T obj, TKey key)
         {
-            lock (_accessLock)
+            lock (this._accessLock)
             {
                 base.ReturnObject(obj, key);
             }

@@ -56,7 +56,7 @@ namespace Votyra.Core.Models
                         template,
                         template.GetRotated(1),
                         template.GetRotated(2),
-                        template.GetRotated(3)
+                        template.GetRotated(3),
                     };
                 })
                 .Distinct()
@@ -66,7 +66,7 @@ namespace Votyra.Core.Models
         public static Area1i RangeUnion(this IEnumerable<SampledData2i> templates)
         {
             return templates.Select(o => o.Range)
-                .Aggregate((Area1i?) null, (a, b) => a?.UnionWith(b) ?? b) ?? Area1i.Zero;
+                .Aggregate((Area1i?)null, (a, b) => a?.UnionWith(b) ?? b) ?? Area1i.Zero;
         }
 
         public static IEnumerable<SampledData2i> ScaleTemplates(this IEnumerable<SampledData2i> templates, float scale)

@@ -52,7 +52,7 @@ namespace Votyra.Core.Utils
         private static IEnumerable<T> YieldBatchElements<T>(IEnumerator<T> source, int batchSize)
         {
             yield return source.Current;
-            for (var i = 0; i < batchSize && source.MoveNext(); i++)
+            for (var i = 0; (i < batchSize) && source.MoveNext(); i++)
             {
                 yield return source.Current;
             }

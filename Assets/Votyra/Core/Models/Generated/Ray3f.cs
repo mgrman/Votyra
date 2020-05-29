@@ -7,35 +7,35 @@ namespace Votyra.Core.Models
         public readonly Vector3f Origin;
         public readonly Vector3f Direction;
 
-        public Ray2f XX() => new Ray2f(Origin.XX(), Direction.XX());
+        public Ray2f XX() => new Ray2f(this.Origin.XX(), this.Direction.XX());
 
-        public Ray2f XY() => new Ray2f(Origin.XY(), Direction.XY());
+        public Ray2f XY() => new Ray2f(this.Origin.XY(), this.Direction.XY());
 
-        public Ray2f XZ() => new Ray2f(Origin.XZ(), Direction.XZ());
+        public Ray2f XZ() => new Ray2f(this.Origin.XZ(), this.Direction.XZ());
 
-        public Ray2f YX() => new Ray2f(Origin.YX(), Direction.YX());
+        public Ray2f YX() => new Ray2f(this.Origin.YX(), this.Direction.YX());
 
-        public Ray2f YY() => new Ray2f(Origin.YY(), Direction.YY());
+        public Ray2f YY() => new Ray2f(this.Origin.YY(), this.Direction.YY());
 
-        public Ray2f YZ() => new Ray2f(Origin.YZ(), Direction.YZ());
+        public Ray2f YZ() => new Ray2f(this.Origin.YZ(), this.Direction.YZ());
 
-        public Ray2f ZX() => new Ray2f(Origin.ZX(), Direction.ZX());
+        public Ray2f ZX() => new Ray2f(this.Origin.ZX(), this.Direction.ZX());
 
-        public Ray2f ZY() => new Ray2f(Origin.ZY(), Direction.ZY());
+        public Ray2f ZY() => new Ray2f(this.Origin.ZY(), this.Direction.ZY());
 
-        public Ray2f ZZ() => new Ray2f(Origin.ZZ(), Direction.ZZ());
+        public Ray2f ZZ() => new Ray2f(this.Origin.ZZ(), this.Direction.ZZ());
 
-        public Vector3f ToAt1 => Origin + Direction;
+        public Vector3f ToAt1 => this.Origin + this.Direction;
 
         public Ray3f(Vector3f origin, Vector3f direction)
         {
-            Origin = origin;
-            Direction = direction.Normalized();
+            this.Origin = origin;
+            this.Direction = direction.Normalized();
         }
 
-        public Vector3f GetPoint(float distance) => Origin + Direction * distance;
+        public Vector3f GetPoint(float distance) => this.Origin + (this.Direction * distance);
 
-        public bool Equals(Ray3f other) => Origin.Equals(other.Origin) && Direction.Equals(other.Direction);
+        public bool Equals(Ray3f other) => this.Origin.Equals(other.Origin) && this.Direction.Equals(other.Direction);
 
         public override bool Equals(object obj)
         {
@@ -44,17 +44,17 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return obj is Ray3f other && Equals(other);
+            return obj is Ray3f other && this.Equals(other);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (Origin.GetHashCode() * 397) ^ Direction.GetHashCode();
+                return (this.Origin.GetHashCode() * 397) ^ this.Direction.GetHashCode();
             }
         }
 
-        public override string ToString() => $"origin:{Origin} dir:{Direction}";
+        public override string ToString() => $"origin:{this.Origin} dir:{this.Direction}";
     }
 }

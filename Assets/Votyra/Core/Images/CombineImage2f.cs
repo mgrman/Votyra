@@ -9,34 +9,34 @@ namespace Votyra.Core.Images
             Add,
             Subtract,
             Multiply,
-            Divide
+            Divide,
         }
 
         public CombineImage2f(IImage2f imageA, IImage2f imageB, Operations operation)
         {
-            ImageA = imageA;
-            ImageB = imageB;
-            Operation = operation;
-            switch (Operation)
+            this.ImageA = imageA;
+            this.ImageB = imageB;
+            this.Operation = operation;
+            switch (this.Operation)
             {
                 case Operations.Add:
-                    RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min + imageB.RangeZ.Min, imageA.RangeZ.Max + imageB.RangeZ.Max);
+                    this.RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min + imageB.RangeZ.Min, imageA.RangeZ.Max + imageB.RangeZ.Max);
                     break;
 
                 case Operations.Subtract:
-                    RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min - imageB.RangeZ.Min, imageA.RangeZ.Max - imageB.RangeZ.Max);
+                    this.RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min - imageB.RangeZ.Min, imageA.RangeZ.Max - imageB.RangeZ.Max);
                     break;
 
                 case Operations.Multiply:
-                    RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min * imageB.RangeZ.Min, imageA.RangeZ.Max * imageB.RangeZ.Max);
+                    this.RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min * imageB.RangeZ.Min, imageA.RangeZ.Max * imageB.RangeZ.Max);
                     break;
 
                 case Operations.Divide:
-                    RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min / imageB.RangeZ.Min, imageA.RangeZ.Max / imageB.RangeZ.Max);
+                    this.RangeZ = Area1f.FromMinAndMax(imageA.RangeZ.Min / imageB.RangeZ.Min, imageA.RangeZ.Max / imageB.RangeZ.Max);
                     break;
 
                 default:
-                    RangeZ = Area1f.Zero;
+                    this.RangeZ = Area1f.Zero;
                     break;
             }
         }
@@ -51,9 +51,9 @@ namespace Votyra.Core.Images
 
         public float Sample(Vector2i point)
         {
-            var a = ImageA.Sample(point);
-            var b = ImageB.Sample(point);
-            switch (Operation)
+            var a = this.ImageA.Sample(point);
+            var b = this.ImageB.Sample(point);
+            switch (this.Operation)
             {
                 case Operations.Add:
                     return a + b;
@@ -84,7 +84,7 @@ namespace Votyra.Core.Images
                 for (var iy = 0; iy < rawMatrix.SizeY(); iy++)
                 {
                     var matPoint = new Vector2i(ix, iy);
-                    rawMatrix.Set(matPoint, Sample(matPoint + min));
+                    rawMatrix.Set(matPoint, this.Sample(matPoint + min));
                 }
             }
 

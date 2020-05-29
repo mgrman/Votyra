@@ -8,8 +8,8 @@ namespace Votyra.Core.GroupSelectors
     {
         public GroupActions(IReadOnlyCollection<TKey> toRecompute, IReadOnlyCollection<TKey> toKeep)
         {
-            ToRecompute = toRecompute;
-            ToKeep = toKeep;
+            this.ToRecompute = toRecompute;
+            this.ToKeep = toKeep;
         }
 
         public IReadOnlyCollection<TKey> ToRecompute { get; }
@@ -18,8 +18,8 @@ namespace Votyra.Core.GroupSelectors
 
         public void Dispose()
         {
-            ToRecompute.TryDispose();
-            ToKeep.TryDispose();
+            this.ToRecompute.TryDispose();
+            this.ToKeep.TryDispose();
         }
     }
 }

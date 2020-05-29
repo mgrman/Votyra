@@ -9,10 +9,10 @@ namespace Votyra.Core
     {
         public GroupUpdateData(Vector2i group, ArcResource<IFrameData2i> context, ITerrainMesh2f mesh, bool forceUpdate)
         {
-            Group = group;
-            Context = context;
-            Mesh = mesh;
-            ForceUpdate = forceUpdate;
+            this.Group = group;
+            this.Context = context;
+            this.Mesh = mesh;
+            this.ForceUpdate = forceUpdate;
         }
 
         public Vector2i Group { get; }
@@ -25,7 +25,7 @@ namespace Votyra.Core
 
         public void Dispose()
         {
-            Context?.Dispose();
+            this.Context?.Dispose();
         }
     }
 }

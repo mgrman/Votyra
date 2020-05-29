@@ -20,18 +20,18 @@ namespace Votyra.Core.Models
 
         public readonly float X4;
 
-        [JsonConstructor]
+        [JsonConstructor,]
         public Vector5f(float x0, float x1, float x2, float x3, float x4)
         {
-            X0 = x0;
+            this.X0 = x0;
 
-            X1 = x1;
+            this.X1 = x1;
 
-            X2 = x2;
+            this.X2 = x2;
 
-            X3 = x3;
+            this.X3 = x3;
 
-            X4 = x4;
+            this.X4 = x4;
         }
 
         public static Vector5f operator -(Vector5f a) => new Vector5f(-a.X0, -a.X1, -a.X2, -a.X3, -a.X4);
@@ -86,65 +86,65 @@ namespace Votyra.Core.Models
 
         public static Vector5f operator %(int a, Vector5f b) => new Vector5f(a % b.X0, a % b.X1, a % b.X2, a % b.X3, a % b.X4);
 
-        public static bool operator <(Vector5f a, Vector5f b) => a.X0 < b.X0 && a.X1 < b.X1 && a.X2 < b.X2 && a.X3 < b.X3 && a.X4 < b.X4;
+        public static bool operator <(Vector5f a, Vector5f b) => (a.X0 < b.X0) && (a.X1 < b.X1) && (a.X2 < b.X2) && (a.X3 < b.X3) && (a.X4 < b.X4);
 
-        public static bool operator <(Vector5f a, float b) => a.X0 < b && a.X1 < b && a.X2 < b && a.X3 < b && a.X4 < b;
+        public static bool operator <(Vector5f a, float b) => (a.X0 < b) && (a.X1 < b) && (a.X2 < b) && (a.X3 < b) && (a.X4 < b);
 
-        public static bool operator <(float a, Vector5f b) => a < b.X0 && a < b.X1 && a < b.X2 && a < b.X3 && a < b.X4;
+        public static bool operator <(float a, Vector5f b) => (a < b.X0) && (a < b.X1) && (a < b.X2) && (a < b.X3) && (a < b.X4);
 
-        public static bool operator <(Vector5f a, int b) => a.X0 < b && a.X1 < b && a.X2 < b && a.X3 < b && a.X4 < b;
+        public static bool operator <(Vector5f a, int b) => (a.X0 < b) && (a.X1 < b) && (a.X2 < b) && (a.X3 < b) && (a.X4 < b);
 
-        public static bool operator <(int a, Vector5f b) => a < b.X0 && a < b.X1 && a < b.X2 && a < b.X3 && a < b.X4;
+        public static bool operator <(int a, Vector5f b) => (a < b.X0) && (a < b.X1) && (a < b.X2) && (a < b.X3) && (a < b.X4);
 
-        public static bool operator >(Vector5f a, Vector5f b) => a.X0 > b.X0 && a.X1 > b.X1 && a.X2 > b.X2 && a.X3 > b.X3 && a.X4 > b.X4;
+        public static bool operator >(Vector5f a, Vector5f b) => (a.X0 > b.X0) && (a.X1 > b.X1) && (a.X2 > b.X2) && (a.X3 > b.X3) && (a.X4 > b.X4);
 
-        public static bool operator >(Vector5f a, float b) => a.X0 > b && a.X1 > b && a.X2 > b && a.X3 > b && a.X4 > b;
+        public static bool operator >(Vector5f a, float b) => (a.X0 > b) && (a.X1 > b) && (a.X2 > b) && (a.X3 > b) && (a.X4 > b);
 
-        public static bool operator >(float a, Vector5f b) => a > b.X0 && a > b.X1 && a > b.X2 && a > b.X3 && a > b.X4;
+        public static bool operator >(float a, Vector5f b) => (a > b.X0) && (a > b.X1) && (a > b.X2) && (a > b.X3) && (a > b.X4);
 
-        public static bool operator >(Vector5f a, int b) => a.X0 > b && a.X1 > b && a.X2 > b && a.X3 > b && a.X4 > b;
+        public static bool operator >(Vector5f a, int b) => (a.X0 > b) && (a.X1 > b) && (a.X2 > b) && (a.X3 > b) && (a.X4 > b);
 
-        public static bool operator >(int a, Vector5f b) => a > b.X0 && a > b.X1 && a > b.X2 && a > b.X3 && a > b.X4;
+        public static bool operator >(int a, Vector5f b) => (a > b.X0) && (a > b.X1) && (a > b.X2) && (a > b.X3) && (a > b.X4);
 
-        public static bool operator <=(Vector5f a, Vector5f b) => a.X0 <= b.X0 && a.X1 <= b.X1 && a.X2 <= b.X2 && a.X3 <= b.X3 && a.X4 <= b.X4;
+        public static bool operator <=(Vector5f a, Vector5f b) => (a.X0 <= b.X0) && (a.X1 <= b.X1) && (a.X2 <= b.X2) && (a.X3 <= b.X3) && (a.X4 <= b.X4);
 
-        public static bool operator <=(Vector5f a, float b) => a.X0 <= b && a.X1 <= b && a.X2 <= b && a.X3 <= b && a.X4 <= b;
+        public static bool operator <=(Vector5f a, float b) => (a.X0 <= b) && (a.X1 <= b) && (a.X2 <= b) && (a.X3 <= b) && (a.X4 <= b);
 
-        public static bool operator <=(float a, Vector5f b) => a <= b.X0 && a <= b.X1 && a <= b.X2 && a <= b.X3 && a <= b.X4;
+        public static bool operator <=(float a, Vector5f b) => (a <= b.X0) && (a <= b.X1) && (a <= b.X2) && (a <= b.X3) && (a <= b.X4);
 
-        public static bool operator <=(Vector5f a, int b) => a.X0 <= b && a.X1 <= b && a.X2 <= b && a.X3 <= b && a.X4 <= b;
+        public static bool operator <=(Vector5f a, int b) => (a.X0 <= b) && (a.X1 <= b) && (a.X2 <= b) && (a.X3 <= b) && (a.X4 <= b);
 
-        public static bool operator <=(int a, Vector5f b) => a <= b.X0 && a <= b.X1 && a <= b.X2 && a <= b.X3 && a <= b.X4;
+        public static bool operator <=(int a, Vector5f b) => (a <= b.X0) && (a <= b.X1) && (a <= b.X2) && (a <= b.X3) && (a <= b.X4);
 
-        public static bool operator >=(Vector5f a, Vector5f b) => a.X0 >= b.X0 && a.X1 >= b.X1 && a.X2 >= b.X2 && a.X3 >= b.X3 && a.X4 >= b.X4;
+        public static bool operator >=(Vector5f a, Vector5f b) => (a.X0 >= b.X0) && (a.X1 >= b.X1) && (a.X2 >= b.X2) && (a.X3 >= b.X3) && (a.X4 >= b.X4);
 
-        public static bool operator >=(Vector5f a, float b) => a.X0 >= b && a.X1 >= b && a.X2 >= b && a.X3 >= b && a.X4 >= b;
+        public static bool operator >=(Vector5f a, float b) => (a.X0 >= b) && (a.X1 >= b) && (a.X2 >= b) && (a.X3 >= b) && (a.X4 >= b);
 
-        public static bool operator >=(float a, Vector5f b) => a >= b.X0 && a >= b.X1 && a >= b.X2 && a >= b.X3 && a >= b.X4;
+        public static bool operator >=(float a, Vector5f b) => (a >= b.X0) && (a >= b.X1) && (a >= b.X2) && (a >= b.X3) && (a >= b.X4);
 
-        public static bool operator >=(Vector5f a, int b) => a.X0 >= b && a.X1 >= b && a.X2 >= b && a.X3 >= b && a.X4 >= b;
+        public static bool operator >=(Vector5f a, int b) => (a.X0 >= b) && (a.X1 >= b) && (a.X2 >= b) && (a.X3 >= b) && (a.X4 >= b);
 
-        public static bool operator >=(int a, Vector5f b) => a >= b.X0 && a >= b.X1 && a >= b.X2 && a >= b.X3 && a >= b.X4;
+        public static bool operator >=(int a, Vector5f b) => (a >= b.X0) && (a >= b.X1) && (a >= b.X2) && (a >= b.X3) && (a >= b.X4);
 
-        public static bool operator ==(Vector5f a, Vector5f b) => a.X0 == b.X0 && a.X1 == b.X1 && a.X2 == b.X2 && a.X3 == b.X3 && a.X4 == b.X4;
+        public static bool operator ==(Vector5f a, Vector5f b) => (a.X0 == b.X0) && (a.X1 == b.X1) && (a.X2 == b.X2) && (a.X3 == b.X3) && (a.X4 == b.X4);
 
-        public static bool operator ==(Vector5f a, float b) => a.X0 == b && a.X1 == b && a.X2 == b && a.X3 == b && a.X4 == b;
+        public static bool operator ==(Vector5f a, float b) => (a.X0 == b) && (a.X1 == b) && (a.X2 == b) && (a.X3 == b) && (a.X4 == b);
 
-        public static bool operator ==(float a, Vector5f b) => a == b.X0 && a == b.X1 && a == b.X2 && a == b.X3 && a == b.X4;
+        public static bool operator ==(float a, Vector5f b) => (a == b.X0) && (a == b.X1) && (a == b.X2) && (a == b.X3) && (a == b.X4);
 
-        public static bool operator ==(Vector5f a, int b) => a.X0 == b && a.X1 == b && a.X2 == b && a.X3 == b && a.X4 == b;
+        public static bool operator ==(Vector5f a, int b) => (a.X0 == b) && (a.X1 == b) && (a.X2 == b) && (a.X3 == b) && (a.X4 == b);
 
-        public static bool operator ==(int a, Vector5f b) => a == b.X0 && a == b.X1 && a == b.X2 && a == b.X3 && a == b.X4;
+        public static bool operator ==(int a, Vector5f b) => (a == b.X0) && (a == b.X1) && (a == b.X2) && (a == b.X3) && (a == b.X4);
 
-        public static bool operator !=(Vector5f a, Vector5f b) => a.X0 != b.X0 || a.X1 != b.X1 || a.X2 != b.X2 || a.X3 != b.X3 || a.X4 != b.X4;
+        public static bool operator !=(Vector5f a, Vector5f b) => (a.X0 != b.X0) || (a.X1 != b.X1) || (a.X2 != b.X2) || (a.X3 != b.X3) || (a.X4 != b.X4);
 
-        public static bool operator !=(Vector5f a, float b) => a.X0 != b || a.X1 != b || a.X2 != b || a.X3 != b || a.X4 != b;
+        public static bool operator !=(Vector5f a, float b) => (a.X0 != b) || (a.X1 != b) || (a.X2 != b) || (a.X3 != b) || (a.X4 != b);
 
-        public static bool operator !=(float a, Vector5f b) => a != b.X0 || a != b.X1 || a != b.X2 || a != b.X3 || a != b.X4;
+        public static bool operator !=(float a, Vector5f b) => (a != b.X0) || (a != b.X1) || (a != b.X2) || (a != b.X3) || (a != b.X4);
 
-        public static bool operator !=(Vector5f a, int b) => a.X0 != b || a.X1 != b || a.X2 != b || a.X3 != b || a.X4 != b;
+        public static bool operator !=(Vector5f a, int b) => (a.X0 != b) || (a.X1 != b) || (a.X2 != b) || (a.X3 != b) || (a.X4 != b);
 
-        public static bool operator !=(int a, Vector5f b) => a != b.X0 || a != b.X1 || a != b.X2 || a != b.X3 || a != b.X4;
+        public static bool operator !=(int a, Vector5f b) => (a != b.X0) || (a != b.X1) || (a != b.X2) || (a != b.X3) || (a != b.X4);
 
         public bool Equals(Vector5f other) => this == other;
 
@@ -155,18 +155,18 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return Equals((Vector5f) obj);
+            return this.Equals((Vector5f)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (X0.GetHashCode() * 397) ^ (X1.GetHashCode() * 397) ^ (X2.GetHashCode() * 397) ^ (X3.GetHashCode() * 397) ^ (X4.GetHashCode() * 397);
+                return (this.X0.GetHashCode() * 397) ^ (this.X1.GetHashCode() * 397) ^ (this.X2.GetHashCode() * 397) ^ (this.X3.GetHashCode() * 397) ^ (this.X4.GetHashCode() * 397);
             }
         }
 
-        public override string ToString() => "(" + X0 + "," + X1 + "," + X2 + "," + X3 + "," + X4 + ")";
+        public override string ToString() => "(" + this.X0 + "," + this.X1 + "," + this.X2 + "," + this.X3 + "," + this.X4 + ")";
     }
 
     public static class Vector5fUtils
@@ -221,7 +221,7 @@ namespace Votyra.Core.Models
 
         public static Vector2f X4X4(this Vector5f @this) => new Vector2f(@this.X4, @this.X4);
 
-        public static bool AnyNegative(this Vector5f @this) => @this.X0 < 0 || @this.X1 < 0 || @this.X2 < 0 || @this.X3 < 0 || @this.X4 < 0;
+        public static bool AnyNegative(this Vector5f @this) => (@this.X0 < 0) || (@this.X1 < 0) || (@this.X2 < 0) || (@this.X3 < 0) || (@this.X4 < 0);
 
         public static bool AnyNan(this Vector5f @this) => float.IsNaN(@this.X0) || float.IsNaN(@this.X1) || float.IsNaN(@this.X2) || float.IsNaN(@this.X3) || float.IsNaN(@this.X4);
 
@@ -231,7 +231,7 @@ namespace Votyra.Core.Models
 
         public static float AreaSum(this Vector5f @this) => @this.X0 * @this.X1 * @this.X2 * @this.X3 * @this.X4;
 
-        public static float Magnitude(this Vector5f @this) => (float) Math.Sqrt(@this.SqrMagnitude());
+        public static float Magnitude(this Vector5f @this) => (float)Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector5f Normalized(this Vector5f @this)
         {
@@ -239,11 +239,11 @@ namespace Votyra.Core.Models
             return magnitude <= float.Epsilon ? @this : @this / magnitude;
         }
 
-        public static float SqrMagnitude(this Vector5f @this) => @this.X0 * @this.X0 + @this.X1 * @this.X1 + @this.X2 * @this.X2 + @this.X3 * @this.X3 + @this.X4 * @this.X4;
+        public static float SqrMagnitude(this Vector5f @this) => (@this.X0 * @this.X0) + (@this.X1 * @this.X1) + (@this.X2 * @this.X2) + (@this.X3 * @this.X3) + (@this.X4 * @this.X4);
 
         public static Vector5f FromSame(float value) => new Vector5f(value, value, value, value, value);
 
-        public static float Dot(Vector5f a, Vector5f b) => (float) ((double) a.X0 * b.X0 + (double) a.X1 * b.X1 + (double) a.X2 * b.X2 + (double) a.X3 * b.X3 + (double) a.X4 * b.X4);
+        public static float Dot(Vector5f a, Vector5f b) => (float)(((double)a.X0 * b.X0) + ((double)a.X1 * b.X1) + ((double)a.X2 * b.X2) + ((double)a.X3 * b.X3) + ((double)a.X4 * b.X4));
 
         public static Vector5f Ceil(this Vector5f @this) => new Vector5f(@this.X0.CeilToInt(), @this.X1.CeilToInt(), @this.X2.CeilToInt(), @this.X3.CeilToInt(), @this.X4.CeilToInt());
 

@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Votyra.Core
 {
-    [TestFixture]
+    [TestFixture,]
     public class TestUtilsTest
     {
         private async Task TestAsync()
@@ -20,14 +20,14 @@ namespace Votyra.Core
             await cts.Task;
         }
 
-        [Test]
+        [Test,]
         public void UnityAsyncTest_RunTheAsyncFunctionGiven_PropagatesThrownExceptions()
         {
             Assert.Throws<AssertionException>(() =>
             {
                 TestUtils.UnityAsyncTest(async () =>
                 {
-                    await TestAsync();
+                    await this.TestAsync();
 
                     await Task.Run(() => Thread.Sleep(100));
                     Assert.IsTrue(false);
@@ -35,13 +35,13 @@ namespace Votyra.Core
             });
         }
 
-        [Test]
+        [Test,]
         public void UnityAsyncTest_RunTheAsyncFunctionGiven_WaitsForItToFinish()
         {
             var finished = false;
             TestUtils.UnityAsyncTest(async () =>
             {
-                await TestAsync();
+                await this.TestAsync();
 
                 await Task.Run(() => Thread.Sleep(100));
                 finished = true;

@@ -11,15 +11,15 @@ namespace Votyra.Core
 
         public FrameData3b(Ray3f cameraRay, IReadOnlyList<Plane3f> cameraPlanes, IReadOnlyList<Vector3f> cameraFrustumCorners, IReadOnlySet<Vector3i> existingGroups, IImage3b image, Range3i invalidatedArea_imageSpace)
         {
-            CameraRay = cameraRay;
-            CameraPlanes = cameraPlanes;
-            CameraFrustumCorners = cameraFrustumCorners;
-            ExistingGroups = existingGroups;
-            Image = image;
+            this.CameraRay = cameraRay;
+            this.CameraPlanes = cameraPlanes;
+            this.CameraFrustumCorners = cameraFrustumCorners;
+            this.ExistingGroups = existingGroups;
+            this.Image = image;
 
-            InvalidatedArea_imageSpace = invalidatedArea_imageSpace;
+            this.InvalidatedArea_imageSpace = invalidatedArea_imageSpace;
 
-            (Image as IInitializableImage)?.StartUsing();
+            (this.Image as IInitializableImage)?.StartUsing();
         }
 
         public Ray3f CameraRay { get; }
@@ -36,23 +36,23 @@ namespace Votyra.Core
 
         public void Activate()
         {
-            _activeCounter++;
+            this._activeCounter++;
         }
 
         public void Deactivate()
         {
-            _activeCounter--;
-            if (_activeCounter <= 0)
+            this._activeCounter--;
+            if (this._activeCounter <= 0)
             {
-                Dispose();
+                this.Dispose();
             }
         }
 
         private void Dispose()
         {
-            CameraPlanes.TryDispose();
-            CameraFrustumCorners.TryDispose();
-            (Image as IInitializableImage)?.FinishUsing();
+            this.CameraPlanes.TryDispose();
+            this.CameraFrustumCorners.TryDispose();
+            (this.Image as IInitializableImage)?.FinishUsing();
         }
     }
 }

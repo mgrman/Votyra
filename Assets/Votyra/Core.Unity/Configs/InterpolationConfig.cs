@@ -4,12 +4,16 @@ namespace Votyra.Core.Images
 {
     public class InterpolationConfig : IInterpolationConfig
     {
-        public InterpolationConfig([ConfigInject("activeAlgorithm")] IntepolationAlgorithm activeAlgorithm, [ConfigInject("dynamicMeshes")] bool dynamicMeshes, [ConfigInject("imageSubdivision")] int imageSubdivision, [ConfigInject("meshSubdivision")] Vector2i meshSubdivision)
+        public InterpolationConfig([ConfigInject("activeAlgorithm"),]
+            IntepolationAlgorithm activeAlgorithm, [ConfigInject("dynamicMeshes"),]
+            bool dynamicMeshes, [ConfigInject("imageSubdivision"),]
+            int imageSubdivision, [ConfigInject("meshSubdivision"),]
+            Vector2i meshSubdivision)
         {
-            ActiveAlgorithm = activeAlgorithm;
-            DynamicMeshes = dynamicMeshes;
-            ImageSubdivision = imageSubdivision;
-            MeshSubdivision = meshSubdivision;
+            this.ActiveAlgorithm = activeAlgorithm;
+            this.DynamicMeshes = dynamicMeshes;
+            this.ImageSubdivision = imageSubdivision;
+            this.MeshSubdivision = meshSubdivision;
         }
 
         public int ImageSubdivision { get; }
@@ -20,7 +24,7 @@ namespace Votyra.Core.Images
 
         public IntepolationAlgorithm ActiveAlgorithm { get; }
 
-        protected bool Equals(InterpolationConfig other) => ImageSubdivision == other.ImageSubdivision && MeshSubdivision == other.MeshSubdivision && DynamicMeshes == other.DynamicMeshes && ActiveAlgorithm == other.ActiveAlgorithm;
+        protected bool Equals(InterpolationConfig other) => (this.ImageSubdivision == other.ImageSubdivision) && (this.MeshSubdivision == other.MeshSubdivision) && (this.DynamicMeshes == other.DynamicMeshes) && (this.ActiveAlgorithm == other.ActiveAlgorithm);
 
         public override bool Equals(object obj)
         {
@@ -34,22 +38,22 @@ namespace Votyra.Core.Images
                 return true;
             }
 
-            if (obj.GetType() != GetType())
+            if (obj.GetType() != this.GetType())
             {
                 return false;
             }
 
-            return Equals((InterpolationConfig) obj);
+            return this.Equals((InterpolationConfig)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode = ImageSubdivision;
-                hashCode = (hashCode * 397) ^ MeshSubdivision.GetHashCode();
-                hashCode = (hashCode * 397) ^ DynamicMeshes.GetHashCode();
-                hashCode = (hashCode * 397) ^ (int) ActiveAlgorithm;
+                var hashCode = this.ImageSubdivision;
+                hashCode = (hashCode * 397) ^ this.MeshSubdivision.GetHashCode();
+                hashCode = (hashCode * 397) ^ this.DynamicMeshes.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int)this.ActiveAlgorithm;
                 return hashCode;
             }
         }

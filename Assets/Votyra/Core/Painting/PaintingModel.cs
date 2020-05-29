@@ -11,8 +11,8 @@ namespace Votyra.Core.Painting
 
         public PaintingModel(List<IPaintCommandFactory> paintCommandFactories, IThreadSafeLogger logger)
         {
-            _logger = logger;
-            PaintCommandFactories = paintCommandFactories;
+            this._logger = logger;
+            this.PaintCommandFactories = paintCommandFactories;
         }
 
         public IReadOnlyList<IPaintCommandFactory> PaintCommandFactories { get; }

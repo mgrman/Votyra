@@ -12,14 +12,14 @@ namespace Votyra.Core.Utils
 
         public static bool IsApproximatelyEqual(this float a, float b, float eps = 0.000001f) => Math.Abs(b - a) < eps;
 
-        public static bool IsApproximatelyGreaterOrEqual(this float a, float b, float eps = 0.000001f) => a > b || a.IsApproximatelyEqual(b);
+        public static bool IsApproximatelyGreaterOrEqual(this float a, float b, float eps = 0.000001f) => (a > b) || a.IsApproximatelyEqual(b);
 
-        public static bool IsApproximatelyLessOrEqual(this float a, float b, float eps = 0.000001f) => a < b || a.IsApproximatelyEqual(b);
+        public static bool IsApproximatelyLessOrEqual(this float a, float b, float eps = 0.000001f) => (a < b) || a.IsApproximatelyEqual(b);
 
         public static bool IsNaN(this float val) => float.IsNaN(val);
 
         public static bool IsNotNaN(this float val) => !float.IsNaN(val);
-        
+
         public static int? Abs(this int? val) => val.HasValue ? Math.Abs(val.Value) : val;
 
         public static int Abs(this int val) => Math.Abs(val);
@@ -49,7 +49,7 @@ namespace Votyra.Core.Utils
                 return 0;
             }
 
-            return (int) Math.Ceiling(f);
+            return (int)Math.Ceiling(f);
         }
 
         public static int CeilToInt(this double f)
@@ -69,7 +69,7 @@ namespace Votyra.Core.Utils
                 return 0;
             }
 
-            return (int) Math.Ceiling(f);
+            return (int)Math.Ceiling(f);
         }
 
         public static float Clip(this float i, float min, float max) => i < min ? min : i > max ? max : i;
@@ -91,7 +91,7 @@ namespace Votyra.Core.Utils
                 return 0;
             }
 
-            return (int) Math.Floor(f);
+            return (int)Math.Floor(f);
         }
 
         public static int FloorToInt(this double f)
@@ -111,7 +111,7 @@ namespace Votyra.Core.Utils
                 return 0;
             }
 
-            return (int) Math.Floor(f);
+            return (int)Math.Floor(f);
         }
 
         public static int? Max(this int? a, int? b) => a.HasValue && b.HasValue ? Math.Max(a.Value, b.Value) : a ?? b;
@@ -163,7 +163,7 @@ namespace Votyra.Core.Utils
                 return 0;
             }
 
-            return (int) Math.Round(f);
+            return (int)Math.Round(f);
         }
 
         public static int RoundToInt(this double f)
@@ -183,15 +183,15 @@ namespace Votyra.Core.Utils
                 return 0;
             }
 
-            return (int) Math.Round(f);
+            return (int)Math.Round(f);
         }
 
-        public static int RoundToInt(this decimal f) => (int) Math.Round(f);
+        public static int RoundToInt(this decimal f) => (int)Math.Round(f);
 
-        public static int? RoundToInt(this decimal? f) => f.HasValue ? (int) Math.Round(f.Value) : (int?) null;
+        public static int? RoundToInt(this decimal? f) => f.HasValue ? (int)Math.Round(f.Value) : (int?)null;
 
-        public static float RoundToMultiple(this float val, float multiple) => (float) (Math.Round(val / multiple) * multiple);
+        public static float RoundToMultiple(this float val, float multiple) => (float)(Math.Round(val / multiple) * multiple);
 
-        public static float Lerp(float a, float b, float t) => a + (b - a) * t;
+        public static float Lerp(float a, float b, float t) => a + ((b - a) * t);
     }
 }

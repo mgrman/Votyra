@@ -1,13 +1,12 @@
 using Votyra.Core.Images;
 using Votyra.Core.Logging;
-using Votyra.Core.Models;
 
 namespace Votyra.Core.Painting.Commands
 {
     public class MakeHoleFactory : BaseFactory<MakeHole>
     {
         public MakeHoleFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
-            : base(editableImage,  logger)
+            : base(editableImage, logger)
         {
         }
 

@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using UniRx;
 using UnityEngine.Profiling;
+using Object = UnityEngine.Object;
+using Thread = System.Threading.Thread;
 
 namespace Votyra.Core.Profiling
 {
@@ -9,47 +11,51 @@ namespace Votyra.Core.Profiling
     {
         private readonly bool _calledProfiler;
 
-        private readonly UnityEngine.Object _owner;
+        private readonly Object _owner;
 
         private readonly Stopwatch _stopwatch;
 
         private string _name;
 
-        public UnityProfiler(UnityEngine.Object owner)
+        public UnityProfiler(Object owner)
         {
-            _owner = owner;
-            _stopwatch = new Stopwatch();
+            this._owner = owner;
+            this._stopwatch = new Stopwatch();
         }
 
         public IDisposable Start(string name)
         {
-            _name = name;
-            if (System.Threading.Thread.CurrentThread == UnitySyncContext.UnityThread)
+            this._name = name;
+            if (Thread.CurrentThread == UnitySyncContext.UnityThread)
             {
-                if (_owner != null)
-                    Profiler.BeginSample(name, _owner);
+                if (this._owner != null)
+                {
+                    Profiler.BeginSample(name, this._owner);
+                }
                 else
+                {
                     Profiler.BeginSample(name);
+                }
 
-                _stopwatch.Start();
-                return Disposable.Create(StopAndEndSample);
+                this._stopwatch.Start();
+                return Disposable.Create(this.StopAndEndSample);
             }
 
-            _stopwatch.Start();
-            return Disposable.Create(Stop);
+            this._stopwatch.Start();
+            return Disposable.Create(this.Stop);
         }
 
         private void StopAndEndSample()
         {
-            Stop();
+            this.Stop();
             Profiler.EndSample();
         }
 
         private void Stop()
         {
-            _stopwatch.Stop();
-            UnityProfilerAggregator.Add(_owner, _name, (double) _stopwatch.ElapsedTicks / TimeSpan.TicksPerMillisecond);
-            _stopwatch.Reset();
+            this._stopwatch.Stop();
+            UnityProfilerAggregator.Add(this._owner, this._name, (double)this._stopwatch.ElapsedTicks / TimeSpan.TicksPerMillisecond);
+            this._stopwatch.Reset();
             // UnityEngine.Debug.Log(_namePrefix + _stopwatch.ElapsedMilliseconds);
         }
     }

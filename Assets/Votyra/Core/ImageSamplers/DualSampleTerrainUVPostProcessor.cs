@@ -9,10 +9,10 @@ namespace Votyra.Core.ImageSamplers
 
         public DualSampleTerrainUVPostProcessor(IInterpolationConfig interpolationConfig)
         {
-            _subdivision = interpolationConfig.ImageSubdivision;
+            this._subdivision = interpolationConfig.ImageSubdivision;
         }
 
-        public Vector2f ProcessUV(Vector2f vertex) => (vertex / 2.0f + Offset) / _subdivision;
+        public Vector2f ProcessUV(Vector2f vertex) => ((vertex / 2.0f) + Offset) / this._subdivision;
 
         public Vector2f ReverseUV(Vector2f vertex) => (vertex - Offset) * 2.0f;
     }

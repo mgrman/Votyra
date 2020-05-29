@@ -7,23 +7,23 @@ namespace Votyra.Core.Models
     {
         public float DotWithObserver(Vector3f observer)
         {
-            var center = (A + B + C) / 3f;
-            var normal = Vector3fUtils.Cross(B - A, C - A);
+            var center = (this.A + this.B + this.C) / 3f;
+            var normal = Vector3fUtils.Cross(this.B - this.A, this.C - this.A);
             return Vector3fUtils.Dot(observer - center, normal);
         }
 
         public float BarycentricCoords(Vector2f p)
         {
-            var area = 0.5f * (-B.Y * C.X + A.Y * (-B.X + C.X) + A.X * (B.Y - C.Y) + B.X * C.Y);
+            var area = 0.5f * ((-this.B.Y * this.C.X) + (this.A.Y * (-this.B.X + this.C.X)) + (this.A.X * (this.B.Y - this.C.Y)) + (this.B.X * this.C.Y));
 
-            var a = 1f / (2f * area) * (A.Y * C.X - A.X * C.Y + (C.Y - A.Y) * p.X + (A.X - C.X) * p.Y);
+            var a = (1f / (2f * area)) * (((this.A.Y * this.C.X) - (this.A.X * this.C.Y)) + ((this.C.Y - this.A.Y) * p.X) + ((this.A.X - this.C.X) * p.Y));
 
-            var b = 1f / (2f * area) * (A.X * B.Y - A.Y * B.X + (A.Y - B.Y) * p.X + (B.X - A.X) * p.Y);
+            var b = (1f / (2f * area)) * (((this.A.X * this.B.Y) - (this.A.Y * this.B.X)) + ((this.A.Y - this.B.Y) * p.X) + ((this.B.X - this.A.X) * p.Y));
             var c = 1f - a - b;
 
             if (a.IsApproximatelyLessOrEqual(1f) && a.IsApproximatelyGreaterOrEqual(0f) && b.IsApproximatelyLessOrEqual(1f) && b.IsApproximatelyGreaterOrEqual(0f) && c.IsApproximatelyLessOrEqual(1f) && c.IsApproximatelyGreaterOrEqual(0f))
             {
-                var res = A.Z * a + B.Z * b + C.Z * c;
+                var res = (this.A.Z * a) + (this.B.Z * b) + (this.C.Z * c);
                 return res;
             }
 
@@ -39,8 +39,8 @@ namespace Votyra.Core.Models
             float det, invDet, u, v;
 
             //Find vectors for two edges sharing vertex/point p1
-            e1 = B - A;
-            e2 = C - A;
+            e1 = this.B - this.A;
+            e2 = this.C - this.A;
 
             // calculating determinant 
             p = Vector3fUtils.Cross(ray.Direction, e2);
@@ -49,7 +49,7 @@ namespace Votyra.Core.Models
             det = Vector3fUtils.Dot(e1, p);
 
             //if determinant is near zero, ray lies in plane of triangle otherwise not
-            if (det > -float.Epsilon && det < float.Epsilon)
+            if ((det > -float.Epsilon) && (det < float.Epsilon))
             {
                 return Vector3f.NaN;
             }
@@ -57,13 +57,13 @@ namespace Votyra.Core.Models
             invDet = 1.0f / det;
 
             //calculate distance from p1 to ray origin
-            t = ray.Origin - A;
+            t = ray.Origin - this.A;
 
             //Calculate u parameter
             u = Vector3fUtils.Dot(t, p) * invDet;
 
             //Check for ray hit
-            if (u < 0 || u > 1)
+            if ((u < 0) || (u > 1))
             {
                 return Vector3f.NaN;
             }
@@ -75,7 +75,7 @@ namespace Votyra.Core.Models
             v = Vector3fUtils.Dot(ray.Direction, q) * invDet;
 
             //Check for ray hit
-            if (v < 0 || u + v > 1)
+            if ((v < 0) || ((u + v) > 1))
             {
                 return Vector3f.NaN;
             }
@@ -92,7 +92,7 @@ namespace Votyra.Core.Models
 
         public bool IsCCW(Vector3f observer)
         {
-            var dot = DotWithObserver(observer);
+            var dot = this.DotWithObserver(observer);
             if (dot == 0f)
             {
                 throw new InvalidOperationException($"Wrong observer! Observer '{observer}' cannot be used with triangle '{this}'.");
@@ -103,12 +103,12 @@ namespace Votyra.Core.Models
 
         public Triangle3f EnsureCCW(Vector3f observer)
         {
-            if (IsCCW(observer))
+            if (this.IsCCW(observer))
             {
                 return this;
             }
 
-            return GetReversedOrder();
+            return this.GetReversedOrder();
         }
     }
 }

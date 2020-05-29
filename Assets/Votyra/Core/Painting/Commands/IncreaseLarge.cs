@@ -20,6 +20,6 @@ namespace Votyra.Core.Painting.Commands
         {
         }
 
-        protected override float Invoke(float value, int distance) => value + 2 - distance;
+        protected override float Invoke(float value, int distance) => (value + 2) - distance;
     }
 }

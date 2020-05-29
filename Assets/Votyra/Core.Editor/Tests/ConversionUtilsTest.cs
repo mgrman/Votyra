@@ -2,7 +2,7 @@ using NUnit.Framework;
 
 namespace Votyra.Core.Editor
 {
-    [TestFixture]
+    [TestFixture,]
     public class ConversionUtilsTest
     {
         // [Test]

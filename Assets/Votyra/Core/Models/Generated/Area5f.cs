@@ -11,39 +11,39 @@ namespace Votyra.Core.Models
         public readonly Vector5f Max;
         public readonly Vector5f Min;
 
-        public Area1f X0 => Area1f.FromMinAndMax(Min.X0, Max.X0);
+        public Area1f X0 => Area1f.FromMinAndMax(this.Min.X0, this.Max.X0);
 
-        public Area1f X1 => Area1f.FromMinAndMax(Min.X1, Max.X1);
+        public Area1f X1 => Area1f.FromMinAndMax(this.Min.X1, this.Max.X1);
 
-        public Area1f X2 => Area1f.FromMinAndMax(Min.X2, Max.X2);
+        public Area1f X2 => Area1f.FromMinAndMax(this.Min.X2, this.Max.X2);
 
-        public Area1f X3 => Area1f.FromMinAndMax(Min.X3, Max.X3);
+        public Area1f X3 => Area1f.FromMinAndMax(this.Min.X3, this.Max.X3);
 
-        public Area1f X4 => Area1f.FromMinAndMax(Min.X4, Max.X4);
+        public Area1f X4 => Area1f.FromMinAndMax(this.Min.X4, this.Max.X4);
 
-        [JsonConstructor]
+        [JsonConstructor,]
         private Area5f(Vector5f min, Vector5f max)
         {
-            Min = min;
-            Max = max;
+            this.Min = min;
+            this.Max = max;
         }
 
-        [JsonIgnore]
-        public Vector5f Center => (Max + Min) / 2f;
+        [JsonIgnore,]
+        public Vector5f Center => (this.Max + this.Min) / 2f;
 
-        [JsonIgnore]
-        public Vector5f Size => Max - Min;
+        [JsonIgnore,]
+        public Vector5f Size => this.Max - this.Min;
 
-        [JsonIgnore]
-        public Vector5f Extents => Size / 2;
+        [JsonIgnore,]
+        public Vector5f Extents => this.Size / 2;
 
-        public float DiagonalLength => Size.Magnitude();
+        public float DiagonalLength => this.Size.Magnitude();
 
         public static Area5f FromMinAndMax(Vector5f min, Vector5f max) => new Area5f(min, max);
 
         public static Area5f FromMinAndSize(Vector5f min, Vector5f size) => new Area5f(min, min + size);
 
-        public static Area5f FromCenterAndSize(Vector5f center, Vector5f size) => new Area5f(center - size / 2, size);
+        public static Area5f FromCenterAndSize(Vector5f center, Vector5f size) => new Area5f(center - (size / 2), size);
 
         public static Area5f FromCenterAndExtents(Vector5f center, Vector5f extents)
         {
@@ -55,9 +55,9 @@ namespace Votyra.Core.Models
             return new Area5f(center - extents, center + extents);
         }
 
-        public static bool operator ==(Area5f a, Area5f b) => a.Center == b.Center && a.Size == b.Size;
+        public static bool operator ==(Area5f a, Area5f b) => (a.Center == b.Center) && (a.Size == b.Size);
 
-        public static bool operator !=(Area5f a, Area5f b) => a.Center != b.Center || a.Size != b.Size;
+        public static bool operator !=(Area5f a, Area5f b) => (a.Center != b.Center) || (a.Size != b.Size);
 
         public static Area5f operator /(Area5f a, float b) => FromMinAndMax(a.Min / b, a.Max / b);
 
@@ -65,30 +65,30 @@ namespace Votyra.Core.Models
 
         public Area5f IntersectWith(Area5f that)
         {
-            if (Size == Vector5f.Zero || that.Size == Vector5f.Zero)
+            if ((this.Size == Vector5f.Zero) || (that.Size == Vector5f.Zero))
             {
                 return Zero;
             }
 
-            var min = Vector5fUtils.Max(Min, that.Min);
-            var max = Vector5fUtils.Max(Vector5fUtils.Min(Max, that.Max), min);
+            var min = Vector5fUtils.Max(this.Min, that.Min);
+            var max = Vector5fUtils.Max(Vector5fUtils.Min(this.Max, that.Max), min);
 
             return FromMinAndMax(min, max);
         }
 
-        public Area5f Encapsulate(Vector5f point) => FromMinAndMax(Vector5fUtils.Min(Min, point), Vector5fUtils.Max(Max, point));
+        public Area5f Encapsulate(Vector5f point) => FromMinAndMax(Vector5fUtils.Min(this.Min, point), Vector5fUtils.Max(this.Max, point));
 
-        public Area5f Encapsulate(Area5f bounds) => FromMinAndMax(Vector5fUtils.Min(Min, bounds.Min), Vector5fUtils.Max(Max, bounds.Max));
+        public Area5f Encapsulate(Area5f bounds) => FromMinAndMax(Vector5fUtils.Min(this.Min, bounds.Min), Vector5fUtils.Max(this.Max, bounds.Max));
 
-        public bool Contains(Vector5f point) => point >= Min && point <= Max;
+        public bool Contains(Vector5f point) => (point >= this.Min) && (point <= this.Max);
 
-        public Range5i RoundToInt() => Range5i.FromMinAndMax(Min.RoundToVector5i(), Max.RoundToVector5i());
+        public Range5i RoundToInt() => Range5i.FromMinAndMax(this.Min.RoundToVector5i(), this.Max.RoundToVector5i());
 
-        public Range5i RoundToContain() => Range5i.FromMinAndMax(Min.FloorToVector5i(), Max.CeilToVector5i());
+        public Range5i RoundToContain() => Range5i.FromMinAndMax(this.Min.FloorToVector5i(), this.Max.CeilToVector5i());
 
         public Area5f CombineWith(Area5f that)
         {
-            if (Size == Vector5f.Zero)
+            if (this.Size == Vector5f.Zero)
             {
                 return that;
             }
@@ -98,12 +98,12 @@ namespace Votyra.Core.Models
                 return this;
             }
 
-            var min = Vector5fUtils.Min(Min, that.Min);
-            var max = Vector5fUtils.Max(Max, that.Max);
+            var min = Vector5fUtils.Min(this.Min, that.Min);
+            var max = Vector5fUtils.Max(this.Max, that.Max);
             return FromMinAndMax(min, max);
         }
 
-        public Area5f UnionWith(Area5f range) => FromMinAndMax(Vector5fUtils.Min(Min, range.Min), Vector5fUtils.Min(Max, range.Max));
+        public Area5f UnionWith(Area5f range) => FromMinAndMax(Vector5fUtils.Min(this.Min, range.Min), Vector5fUtils.Min(this.Max, range.Max));
 
         public Area5f? UnionWith(Area5f? range)
         {
@@ -112,19 +112,19 @@ namespace Votyra.Core.Models
                 return this;
             }
 
-            return UnionWith(range.Value);
+            return this.UnionWith(range.Value);
         }
 
         public Area5f UnionWith(Vector5f value)
         {
-            if (value < Min)
+            if (value < this.Min)
             {
-                return FromMinAndMax(value, Max);
+                return FromMinAndMax(value, this.Max);
             }
 
-            if (value > Max)
+            if (value > this.Max)
             {
-                return FromMinAndMax(Min, value);
+                return FromMinAndMax(this.Min, value);
             }
 
             return this;
@@ -139,17 +139,17 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return Equals((Area5f) obj);
+            return this.Equals((Area5f)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return Min.GetHashCode() + 7 * Max.GetHashCode();
+                return this.Min.GetHashCode() + (7 * this.Max.GetHashCode());
             }
         }
 
-        public override string ToString() => $"Area5f: min={Min} max={Max} size={Size}";
+        public override string ToString() => $"Area5f: min={this.Min} max={this.Max} size={this.Size}";
     }
 }

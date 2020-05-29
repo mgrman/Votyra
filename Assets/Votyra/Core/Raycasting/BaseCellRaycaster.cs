@@ -23,7 +23,7 @@ namespace Votyra.Core.Raycasting
 
         protected BaseCellRaycaster(ITerrainVertexPostProcessor terrainVertexPostProcessor, IRaycasterAggregator raycasterAggregator = null)
         {
-            _terrainVertexPostProcessor = terrainVertexPostProcessor;
+            this._terrainVertexPostProcessor = terrainVertexPostProcessor;
             raycasterAggregator?.Attach(this);
         }
 
@@ -32,30 +32,30 @@ namespace Votyra.Core.Raycasting
             var cameraRayXY = cameraRay.XY();
             var startXY = cameraRayXY.Origin;
             var directionNonNormalizedXY = cameraRay.Direction.XY();
-            var endXY = startXY + directionNonNormalizedXY.Normalized() * maxDistance;
+            var endXY = startXY + (directionNonNormalizedXY.Normalized() * maxDistance);
 
-            _raycastLine = new Line2f(startXY, endXY);
-            _rayDirection = (endXY - startXY).Normalized();
-            _fromCell = FindCell(startXY);
-            _toCell = FindCell(endXY);
+            this._raycastLine = new Line2f(startXY, endXY);
+            this._rayDirection = (endXY - startXY).Normalized();
+            this._fromCell = this.FindCell(startXY);
+            this._toCell = this.FindCell(endXY);
 
-            return RaycastGroup();
+            return this.RaycastGroup();
         }
 
-        public virtual float Raycast(Vector2f position) => RaycastCell(position);
+        public virtual float Raycast(Vector2f position) => this.RaycastCell(position);
 
         private Vector3f RaycastGroup()
         {
-            var cell = _fromCell;
-            var position = _raycastLine.From;
+            var cell = this._fromCell;
+            var position = this._raycastLine.From;
             var counter = 100;
 
-            while (cell != _toCell && counter > 0)
+            while ((cell != this._toCell) && (counter > 0))
             {
                 counter--;
-                var ray = new Ray2f(position, _rayDirection);
+                var ray = new Ray2f(position, this._rayDirection);
 
-                var area = MeshCellArea(cell);
+                var area = this.MeshCellArea(cell);
                 var intersection = IntersectionUtils.LiangBarskyClipper(area, ray);
                 if (intersection.AnyNan())
                 {
@@ -64,7 +64,7 @@ namespace Votyra.Core.Raycasting
 
                 var offset = IntersectionUtils.GetRectangleSegment(area, intersection);
 
-                var stop = RaycastCell(new Line2f(position, intersection));
+                var stop = this.RaycastCell(new Line2f(position, intersection));
                 if (!stop.AnyNan())
                 {
                     return stop;
@@ -109,9 +109,9 @@ namespace Votyra.Core.Raycasting
         private Vector2i FindCell(Vector2f meshPoint)
         {
             var cell = meshPoint.FloorToVector2i();
-            var area = MeshCellArea(cell);
+            var area = this.MeshCellArea(cell);
             var counter = 100;
-            while (!area.Contains(meshPoint) && counter > 0)
+            while (!area.Contains(meshPoint) && (counter > 0))
             {
                 counter--;
                 if (meshPoint.X > area.Max.X)
@@ -135,7 +135,7 @@ namespace Votyra.Core.Raycasting
                     throw new InvalidOperationException();
                 }
 
-                area = MeshCellArea(cell);
+                area = this.MeshCellArea(cell);
             }
 #if UNITY_EDITOR
             if (counter <= 0)
@@ -147,16 +147,16 @@ namespace Votyra.Core.Raycasting
             return cell;
         }
 
-        protected Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(ProcessVertex(new Vector2f(cell.X, cell.Y)), ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
+        protected Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(this.ProcessVertex(new Vector2f(cell.X, cell.Y)), this.ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
 
         private Vector2f ProcessVertex(Vector2f point)
         {
-            if (_terrainVertexPostProcessor == null)
+            if (this._terrainVertexPostProcessor == null)
             {
                 return point;
             }
 
-            return _terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
+            return this._terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
                 .XY();
         }
     }

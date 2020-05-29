@@ -47,7 +47,7 @@ namespace Votyra.Core.Utils
             var q3 = lineFrom.Y - area.Min.Y;
             var q4 = area.Max.Y - lineFrom.Y;
 
-            if (p1 == 0f && q1 < 0 || p3 == 0f && q3 < 0)
+            if (((p1 == 0f) && (q1 < 0)) || ((p3 == 0f) && (q3 < 0)))
             {
                 return Vector2f.NaN;
             }
@@ -100,8 +100,8 @@ namespace Votyra.Core.Utils
                 }
             }
 
-            var xn2 = lineFrom.X + p2 * rn2;
-            var yn2 = lineFrom.Y + p4 * rn2;
+            var xn2 = lineFrom.X + (p2 * rn2);
+            var yn2 = lineFrom.Y + (p4 * rn2);
 
             return new Vector2f(xn2, yn2);
         }
@@ -125,24 +125,24 @@ namespace Votyra.Core.Utils
 
             // Using solved equations for intersection of parametric lines
             // we get parameter for first line where they intersect:
-            var rayParameter = (line.From.X * v2.Y + ray.Origin.Y * v2.X - line.From.Y * v2.X - ray.Origin.X * v2.Y) / (v1.X * v2.Y - v1.Y * v2.X);
+            var rayParameter = (((line.From.X * v2.Y) + (ray.Origin.Y * v2.X)) - (line.From.Y * v2.X) - (ray.Origin.X * v2.Y)) / ((v1.X * v2.Y) - (v1.Y * v2.X));
 
             // If line 2 have zero Y component then we must calculate parameter for line 2 differently:
             float m;
             if (v2.Y != 0)
             {
-                m = (ray.Origin.Y + rayParameter * v1.Y - line.From.Y) / v2.Y;
+                m = ((ray.Origin.Y + (rayParameter * v1.Y)) - line.From.Y) / v2.Y;
             }
             else
             {
-                m = (ray.Origin.X + rayParameter * v1.X - line.From.X) / v2.X;
+                m = ((ray.Origin.X + (rayParameter * v1.X)) - line.From.X) / v2.X;
             }
 
             // If lines are both line segments we must check whether these lines intersect in the segments:
 
-            if (rayParameter >= 0 && m >= 0 && m <= 1)
+            if ((rayParameter >= 0) && (m >= 0) && (m <= 1))
             {
-                res = new Line2f(ray.Origin, ray.Origin + v1 * rayParameter);
+                res = new Line2f(ray.Origin, ray.Origin + (v1 * rayParameter));
                 return true;
             }
 

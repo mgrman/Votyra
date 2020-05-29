@@ -1,9 +1,9 @@
+using System.Collections.Generic;
+using Votyra.Core.Images.Constraints;
+using Votyra.Core.Models;
+
 namespace Votyra.Core.Images
 {
-    using System.Collections.Generic;
-    using Votyra.Core.Images.Constraints;
-    using Votyra.Core.Models;
-
     public class AggregatableImage2f : IImage2fProvider, IEditableImage2f
     {
         private readonly ILayerEditableImageProvider _editableImageProvider;
@@ -11,14 +11,14 @@ namespace Votyra.Core.Images
 
         public AggregatableImage2f(ILayerConfig layerConfig, ILayerEditableImageProvider editableImageProvider, List<IImageConstraint2i> constraints)
         {
-            _layerConfig = layerConfig;
-            _editableImageProvider = editableImageProvider;
+            this._layerConfig = layerConfig;
+            this._editableImageProvider = editableImageProvider;
 
-            _editableImageProvider.Initialize(_layerConfig.Layer, constraints);
+            this._editableImageProvider.Initialize(this._layerConfig.Layer, constraints);
         }
 
-        public IEditableImageAccessor2f RequestAccess(Range2i area) => _editableImageProvider.RequestAccess(_layerConfig.Layer, area);
+        public IEditableImageAccessor2f RequestAccess(Range2i area) => this._editableImageProvider.RequestAccess(this._layerConfig.Layer, area);
 
-        public IImage2f CreateImage() => _editableImageProvider.CreateImage(_layerConfig.Layer);
+        public IImage2f CreateImage() => this._editableImageProvider.CreateImage(this._layerConfig.Layer);
     }
 }

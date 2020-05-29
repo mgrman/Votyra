@@ -1,5 +1,4 @@
 using Votyra.Core.Images;
-using Votyra.Core.Images.Constraints;
 using Zenject;
 
 namespace Votyra.Plannar.Unity
@@ -8,9 +7,8 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<MaterialConfig>()
+            this.Container.BindInterfacesAndSelfTo<MaterialConfig>()
                 .AsSingle();
         }
-
     }
 }

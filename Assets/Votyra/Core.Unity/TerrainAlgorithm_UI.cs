@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace Votyra.Core
 {
-    [Serializable]
+    [Serializable,]
     public class TerrainAlgorithm_UI
     {
-        [SerializeField]
+        [SerializeField,]
         public string Name;
 
-        [SerializeField]
+        [SerializeField,]
         public GameObject Prefab;
 
         //  User-defined conversion from double to Digit

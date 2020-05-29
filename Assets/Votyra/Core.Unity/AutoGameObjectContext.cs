@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,12 +5,12 @@ using Zenject;
 
 namespace Votyra.Core.Unity
 {
-    [ExecuteInEditMode]
+    [ExecuteInEditMode,]
     public class AutoGameObjectContext : GameObjectContext
     {
         protected override void RunInternal()
         {
-            AutoPopulateInstallers();
+            this.AutoPopulateInstallers();
             base.RunInternal();
         }
 
@@ -20,19 +19,19 @@ namespace Votyra.Core.Unity
         {
             if (!Application.isPlaying)
             {
-                AutoPopulateInstallers();
+                this.AutoPopulateInstallers();
             }
         }
 #endif
 
         private void AutoPopulateInstallers()
         {
-            Installers = GetInstallers();
+            this.Installers = this.GetInstallers();
         }
 
         public IEnumerable<MonoInstaller> GetInstallers()
         {
-            return GetComponents<MonoInstaller>()
+            return this.GetComponents<MonoInstaller>()
                 .Where(o => o.enabled);
         }
     }

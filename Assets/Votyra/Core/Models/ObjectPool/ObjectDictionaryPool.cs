@@ -10,16 +10,16 @@ namespace Votyra.Core.Models.ObjectPool
         public ObjectDictionaryPool(int limit, Func<TKey, T> objectGenerator)
             : base(limit, objectGenerator)
         {
-            _objects = new Dictionary<TKey, List<T>>();
+            this._objects = new Dictionary<TKey, List<T>>();
         }
 
         protected override List<T> GetPool(TKey key)
         {
             List<T> objectPool;
-            if (!_objects.TryGetValue(key, out objectPool))
+            if (!this._objects.TryGetValue(key, out objectPool))
             {
                 objectPool = new List<T>();
-                _objects[key] = objectPool;
+                this._objects[key] = objectPool;
             }
 
             return objectPool;

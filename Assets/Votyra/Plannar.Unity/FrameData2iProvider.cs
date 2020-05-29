@@ -9,45 +9,33 @@ using Zenject;
 
 namespace Votyra.Plannar
 {
-    //TODO: move to floats
-    public class FrameData2iProvider : IFrameDataProvider2i, ITickable
+    // TODO: move to floats
+    public class FrameData2IProvider : IFrameDataProvider2i, ITickable
     {
-        private readonly Vector3[] _frustumCornersUnity = new Vector3[4];
-        private readonly IImage2fPostProcessor _image2fPostProcessor;
-        private readonly IImage2fProvider _imageProvider;
-        private readonly IInterpolationConfig _interpolationConfig;
-        private readonly int _meshTopologyDistance;
+        private readonly Vector3[] frustumCornersUnity = new Vector3[4];
+        private readonly IImage2fPostProcessor image2FPostProcessor;
+        private readonly IImage2fProvider imageProvider;
+        private readonly IInterpolationConfig interpolationConfig;
+        private readonly int meshTopologyDistance;
 
-        private readonly Plane[] _planesUnity = new Plane[6];
-        private readonly GameObject _root;
-        private readonly ITerrainConfig _terrainConfig;
+        private readonly Plane[] planesUnity = new Plane[6];
 
-        private byte _frameDataSubscriberCount;
+        private readonly IFrameData2iPool pool;
+        private readonly GameObject root;
+        private readonly ITerrainConfig terrainConfig;
 
-        private readonly IFrameData2iPool _pool;
+        private byte frameDataSubscriberCount;
 
-        private Matrix4x4f _previousCameraMatrix;
-
-        [Inject]
-        public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root")] GameObject root, IFrameData2iPool pool)
-        {
-            _image2fPostProcessor = image2FPostProcessor;
-            _imageProvider = imageProvider;
-            _terrainConfig = terrainConfig;
-            _interpolationConfig = interpolationConfig;
-            _root = root;
-            _pool = pool;
-            _meshTopologyDistance = _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
-        }
+        private Matrix4x4f previousCameraMatrix;
 
         public event Action<ArcResource<IFrameData2i>> FrameData
         {
             add
             {
-                _frameData += value;
-                _frameDataSubscriberCount++;
+                this.RawFrameData += value;
+                this.frameDataSubscriberCount++;
 
-                var data = GetCurrentFrameData(false);
+                var data = this.GetCurrentFrameData(false);
                 if (data == null)
                 {
                     return;
@@ -58,71 +46,69 @@ namespace Votyra.Plannar
 
             remove
             {
-                _frameData -= value;
-                _frameDataSubscriberCount--;
+                this.RawFrameData -= value;
+                this.frameDataSubscriberCount--;
             }
         }
 
         public void Tick()
         {
-            var data = GetCurrentFrameData(true);
+            var data = this.GetCurrentFrameData(true);
             if (data == null)
             {
                 return;
             }
 
-            for (var i = 1; i < _frameDataSubscriberCount; i++)
+            for (var i = 1; i < this.frameDataSubscriberCount; i++)
             {
                 data.Activate();
             }
 
-            _frameData?.Invoke(data);
+            this.RawFrameData?.Invoke(data);
         }
-
-        private event Action<ArcResource<IFrameData2i>> _frameData;
 
         private ArcResource<IFrameData2i> GetCurrentFrameData(bool computedOnce)
         {
             var camera = CameraUtils.MainCamera;
-            var image = _imageProvider.CreateImage();
+            var image = this.imageProvider.CreateImage();
 
             var cameraLocalToWorldMatrix = camera.transform.localToWorldMatrix.ToMatrix4x4f();
-            if (computedOnce && cameraLocalToWorldMatrix == _previousCameraMatrix && (image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero)
+            if (computedOnce && (cameraLocalToWorldMatrix == this.previousCameraMatrix) && ((image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero))
             {
                 return null;
             }
 
-            _previousCameraMatrix = cameraLocalToWorldMatrix;
+            this.previousCameraMatrix = cameraLocalToWorldMatrix;
 
-            var frameDataContainer = _pool.Get();
+            var frameDataContainer = this.pool.Get();
             var frameData = frameDataContainer.Value as IPoolableFrameData2i;
-            var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
-            GeometryUtility.CalculateFrustumPlanes(localToProjection, _planesUnity);
+            var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * this.root.transform.localToWorldMatrix;
+            GeometryUtility.CalculateFrustumPlanes(localToProjection, this.planesUnity);
             for (var i = 0; i < 6; i++)
             {
-                frameData.CameraPlanes[i] = _planesUnity[i]
+                frameData.CameraPlanes[i] = this.planesUnity[i]
                     .ToPlane3f();
             }
 
-            var container = _root.gameObject;
+            var container = this.root.gameObject;
 
-            image = _image2fPostProcessor?.PostProcess(image) ?? image;
+            image = this.image2FPostProcessor?.PostProcess(image) ?? image;
 
             var parentContainerWorldToLocalMatrix = container.transform.worldToLocalMatrix.ToMatrix4x4f();
 
-            camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, _frustumCornersUnity);
-            for (var i = 0; i < _frustumCornersUnity.Length; i++)
+            camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, this.frustumCornersUnity);
+            for (var i = 0; i < this.frustumCornersUnity.Length; i++)
             {
-                frameData.CameraFrustumCorners[i] = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(_frustumCornersUnity[i]
+                frameData.CameraFrustumCorners[i] = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(this.frustumCornersUnity[i]
                     .ToVector3f()));
             }
 
             var invalidatedArea = (image as IImageInvalidatableImage2)?.InvalidatedArea ?? Range2i.All;
-            invalidatedArea = invalidatedArea.ExtendBothDirections(_meshTopologyDistance);
+            invalidatedArea = invalidatedArea.ExtendBothDirections(this.meshTopologyDistance);
 
-            var cameraPosition = _root.transform.InverseTransformPoint(camera.transform.position)
+            var cameraPosition = this.root.transform.InverseTransformPoint(camera.transform.position)
                 .ToVector3f();
-            var cameraDirection = _root.transform.InverseTransformDirection(camera.transform.forward)
+            var cameraDirection = this.root.transform.InverseTransformDirection(camera.transform.forward)
                 .ToVector3f();
 
             frameData.CameraRay = new Ray3f(cameraPosition, cameraDirection);
@@ -131,5 +117,23 @@ namespace Votyra.Plannar
 
             return frameDataContainer;
         }
+
+#pragma warning disable SA1201
+        private event Action<ArcResource<IFrameData2i>> RawFrameData;
+
+        [Inject,]
+        public FrameData2IProvider([InjectOptional,]
+            IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root"),]
+            GameObject root, IFrameData2iPool pool)
+        {
+            this.image2FPostProcessor = image2FPostProcessor;
+            this.imageProvider = imageProvider;
+            this.terrainConfig = terrainConfig;
+            this.interpolationConfig = interpolationConfig;
+            this.root = root;
+            this.pool = pool;
+            this.meshTopologyDistance = (this.interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic) && (this.interpolationConfig.MeshSubdivision != 1) ? 2 : 1;
+        }
+#pragma warning restore SA1201
     }
 }

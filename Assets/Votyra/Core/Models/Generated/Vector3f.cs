@@ -16,14 +16,14 @@ namespace Votyra.Core.Models
 
         public readonly float Z;
 
-        [JsonConstructor]
+        [JsonConstructor,]
         public Vector3f(float x, float y, float z)
         {
-            X = x;
+            this.X = x;
 
-            Y = y;
+            this.Y = y;
 
-            Z = z;
+            this.Z = z;
         }
 
         public static Vector3f operator -(Vector3f a) => new Vector3f(-a.X, -a.Y, -a.Z);
@@ -78,65 +78,65 @@ namespace Votyra.Core.Models
 
         public static Vector3f operator %(int a, Vector3f b) => new Vector3f(a % b.X, a % b.Y, a % b.Z);
 
-        public static bool operator <(Vector3f a, Vector3f b) => a.X < b.X && a.Y < b.Y && a.Z < b.Z;
+        public static bool operator <(Vector3f a, Vector3f b) => (a.X < b.X) && (a.Y < b.Y) && (a.Z < b.Z);
 
-        public static bool operator <(Vector3f a, float b) => a.X < b && a.Y < b && a.Z < b;
+        public static bool operator <(Vector3f a, float b) => (a.X < b) && (a.Y < b) && (a.Z < b);
 
-        public static bool operator <(float a, Vector3f b) => a < b.X && a < b.Y && a < b.Z;
+        public static bool operator <(float a, Vector3f b) => (a < b.X) && (a < b.Y) && (a < b.Z);
 
-        public static bool operator <(Vector3f a, int b) => a.X < b && a.Y < b && a.Z < b;
+        public static bool operator <(Vector3f a, int b) => (a.X < b) && (a.Y < b) && (a.Z < b);
 
-        public static bool operator <(int a, Vector3f b) => a < b.X && a < b.Y && a < b.Z;
+        public static bool operator <(int a, Vector3f b) => (a < b.X) && (a < b.Y) && (a < b.Z);
 
-        public static bool operator >(Vector3f a, Vector3f b) => a.X > b.X && a.Y > b.Y && a.Z > b.Z;
+        public static bool operator >(Vector3f a, Vector3f b) => (a.X > b.X) && (a.Y > b.Y) && (a.Z > b.Z);
 
-        public static bool operator >(Vector3f a, float b) => a.X > b && a.Y > b && a.Z > b;
+        public static bool operator >(Vector3f a, float b) => (a.X > b) && (a.Y > b) && (a.Z > b);
 
-        public static bool operator >(float a, Vector3f b) => a > b.X && a > b.Y && a > b.Z;
+        public static bool operator >(float a, Vector3f b) => (a > b.X) && (a > b.Y) && (a > b.Z);
 
-        public static bool operator >(Vector3f a, int b) => a.X > b && a.Y > b && a.Z > b;
+        public static bool operator >(Vector3f a, int b) => (a.X > b) && (a.Y > b) && (a.Z > b);
 
-        public static bool operator >(int a, Vector3f b) => a > b.X && a > b.Y && a > b.Z;
+        public static bool operator >(int a, Vector3f b) => (a > b.X) && (a > b.Y) && (a > b.Z);
 
-        public static bool operator <=(Vector3f a, Vector3f b) => a.X <= b.X && a.Y <= b.Y && a.Z <= b.Z;
+        public static bool operator <=(Vector3f a, Vector3f b) => (a.X <= b.X) && (a.Y <= b.Y) && (a.Z <= b.Z);
 
-        public static bool operator <=(Vector3f a, float b) => a.X <= b && a.Y <= b && a.Z <= b;
+        public static bool operator <=(Vector3f a, float b) => (a.X <= b) && (a.Y <= b) && (a.Z <= b);
 
-        public static bool operator <=(float a, Vector3f b) => a <= b.X && a <= b.Y && a <= b.Z;
+        public static bool operator <=(float a, Vector3f b) => (a <= b.X) && (a <= b.Y) && (a <= b.Z);
 
-        public static bool operator <=(Vector3f a, int b) => a.X <= b && a.Y <= b && a.Z <= b;
+        public static bool operator <=(Vector3f a, int b) => (a.X <= b) && (a.Y <= b) && (a.Z <= b);
 
-        public static bool operator <=(int a, Vector3f b) => a <= b.X && a <= b.Y && a <= b.Z;
+        public static bool operator <=(int a, Vector3f b) => (a <= b.X) && (a <= b.Y) && (a <= b.Z);
 
-        public static bool operator >=(Vector3f a, Vector3f b) => a.X >= b.X && a.Y >= b.Y && a.Z >= b.Z;
+        public static bool operator >=(Vector3f a, Vector3f b) => (a.X >= b.X) && (a.Y >= b.Y) && (a.Z >= b.Z);
 
-        public static bool operator >=(Vector3f a, float b) => a.X >= b && a.Y >= b && a.Z >= b;
+        public static bool operator >=(Vector3f a, float b) => (a.X >= b) && (a.Y >= b) && (a.Z >= b);
 
-        public static bool operator >=(float a, Vector3f b) => a >= b.X && a >= b.Y && a >= b.Z;
+        public static bool operator >=(float a, Vector3f b) => (a >= b.X) && (a >= b.Y) && (a >= b.Z);
 
-        public static bool operator >=(Vector3f a, int b) => a.X >= b && a.Y >= b && a.Z >= b;
+        public static bool operator >=(Vector3f a, int b) => (a.X >= b) && (a.Y >= b) && (a.Z >= b);
 
-        public static bool operator >=(int a, Vector3f b) => a >= b.X && a >= b.Y && a >= b.Z;
+        public static bool operator >=(int a, Vector3f b) => (a >= b.X) && (a >= b.Y) && (a >= b.Z);
 
-        public static bool operator ==(Vector3f a, Vector3f b) => a.X == b.X && a.Y == b.Y && a.Z == b.Z;
+        public static bool operator ==(Vector3f a, Vector3f b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z);
 
-        public static bool operator ==(Vector3f a, float b) => a.X == b && a.Y == b && a.Z == b;
+        public static bool operator ==(Vector3f a, float b) => (a.X == b) && (a.Y == b) && (a.Z == b);
 
-        public static bool operator ==(float a, Vector3f b) => a == b.X && a == b.Y && a == b.Z;
+        public static bool operator ==(float a, Vector3f b) => (a == b.X) && (a == b.Y) && (a == b.Z);
 
-        public static bool operator ==(Vector3f a, int b) => a.X == b && a.Y == b && a.Z == b;
+        public static bool operator ==(Vector3f a, int b) => (a.X == b) && (a.Y == b) && (a.Z == b);
 
-        public static bool operator ==(int a, Vector3f b) => a == b.X && a == b.Y && a == b.Z;
+        public static bool operator ==(int a, Vector3f b) => (a == b.X) && (a == b.Y) && (a == b.Z);
 
-        public static bool operator !=(Vector3f a, Vector3f b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z;
+        public static bool operator !=(Vector3f a, Vector3f b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z);
 
-        public static bool operator !=(Vector3f a, float b) => a.X != b || a.Y != b || a.Z != b;
+        public static bool operator !=(Vector3f a, float b) => (a.X != b) || (a.Y != b) || (a.Z != b);
 
-        public static bool operator !=(float a, Vector3f b) => a != b.X || a != b.Y || a != b.Z;
+        public static bool operator !=(float a, Vector3f b) => (a != b.X) || (a != b.Y) || (a != b.Z);
 
-        public static bool operator !=(Vector3f a, int b) => a.X != b || a.Y != b || a.Z != b;
+        public static bool operator !=(Vector3f a, int b) => (a.X != b) || (a.Y != b) || (a.Z != b);
 
-        public static bool operator !=(int a, Vector3f b) => a != b.X || a != b.Y || a != b.Z;
+        public static bool operator !=(int a, Vector3f b) => (a != b.X) || (a != b.Y) || (a != b.Z);
 
         public bool Equals(Vector3f other) => this == other;
 
@@ -147,18 +147,18 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return Equals((Vector3f) obj);
+            return this.Equals((Vector3f)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (X.GetHashCode() * 397) ^ (Y.GetHashCode() * 397) ^ (Z.GetHashCode() * 397);
+                return (this.X.GetHashCode() * 397) ^ (this.Y.GetHashCode() * 397) ^ (this.Z.GetHashCode() * 397);
             }
         }
 
-        public override string ToString() => "(" + X + "," + Y + "," + Z + ")";
+        public override string ToString() => "(" + this.X + "," + this.Y + "," + this.Z + ")";
     }
 
     public static class Vector3fUtils
@@ -181,7 +181,7 @@ namespace Votyra.Core.Models
 
         public static Vector2f ZZ(this Vector3f @this) => new Vector2f(@this.Z, @this.Z);
 
-        public static bool AnyNegative(this Vector3f @this) => @this.X < 0 || @this.Y < 0 || @this.Z < 0;
+        public static bool AnyNegative(this Vector3f @this) => (@this.X < 0) || (@this.Y < 0) || (@this.Z < 0);
 
         public static bool AnyNan(this Vector3f @this) => float.IsNaN(@this.X) || float.IsNaN(@this.Y) || float.IsNaN(@this.Z);
 
@@ -191,7 +191,7 @@ namespace Votyra.Core.Models
 
         public static float AreaSum(this Vector3f @this) => @this.X * @this.Y * @this.Z;
 
-        public static float Magnitude(this Vector3f @this) => (float) Math.Sqrt(@this.SqrMagnitude());
+        public static float Magnitude(this Vector3f @this) => (float)Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector3f Normalized(this Vector3f @this)
         {
@@ -199,11 +199,11 @@ namespace Votyra.Core.Models
             return magnitude <= float.Epsilon ? @this : @this / magnitude;
         }
 
-        public static float SqrMagnitude(this Vector3f @this) => @this.X * @this.X + @this.Y * @this.Y + @this.Z * @this.Z;
+        public static float SqrMagnitude(this Vector3f @this) => (@this.X * @this.X) + (@this.Y * @this.Y) + (@this.Z * @this.Z);
 
         public static Vector3f FromSame(float value) => new Vector3f(value, value, value);
 
-        public static float Dot(Vector3f a, Vector3f b) => (float) ((double) a.X * b.X + (double) a.Y * b.Y + (double) a.Z * b.Z);
+        public static float Dot(Vector3f a, Vector3f b) => (float)(((double)a.X * b.X) + ((double)a.Y * b.Y) + ((double)a.Z * b.Z));
 
         public static Vector3f Ceil(this Vector3f @this) => new Vector3f(@this.X.CeilToInt(), @this.Y.CeilToInt(), @this.Z.CeilToInt());
 
@@ -227,7 +227,7 @@ namespace Votyra.Core.Models
 
         public static Area3f ToArea3f(this Vector3f @this) => Area3f.FromMinAndSize(Vector3f.Zero, @this);
 
-        public static Vector3f Cross(Vector3f lhs, Vector3f rhs) => new Vector3f(lhs.Y * rhs.Z - lhs.Z * rhs.Y, lhs.Z * rhs.X - lhs.X * rhs.Z, lhs.X * rhs.Y - lhs.Y * rhs.X);
+        public static Vector3f Cross(Vector3f lhs, Vector3f rhs) => new Vector3f((lhs.Y * rhs.Z) - (lhs.Z * rhs.Y), (lhs.Z * rhs.X) - (lhs.X * rhs.Z), (lhs.X * rhs.Y) - (lhs.Y * rhs.X));
 
         public static Vector3f Max(Vector3f a, Vector3f b) => new Vector3f(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y), Math.Max(a.Z, b.Z));
 

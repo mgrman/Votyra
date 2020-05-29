@@ -15,14 +15,14 @@ namespace Votyra.Core.Models.ObjectPool
                 throw new ArgumentNullException("objectGenerator");
             }
 
-            _objectGenerator = objectGenerator;
+            this._objectGenerator = objectGenerator;
 
-            _limit = Math.Max(limit, 1);
+            this._limit = Math.Max(limit, 1);
         }
 
         public virtual T GetObject(TKey key)
         {
-            var objectPool = GetPool(key);
+            var objectPool = this.GetPool(key);
             T obj;
             if (objectPool.Count > 0)
             {
@@ -31,7 +31,7 @@ namespace Votyra.Core.Models.ObjectPool
             }
             else
             {
-                obj = _objectGenerator(key);
+                obj = this._objectGenerator(key);
             }
 
             return obj;
@@ -39,8 +39,8 @@ namespace Votyra.Core.Models.ObjectPool
 
         public virtual void ReturnObject(T obj, TKey key)
         {
-            var objectPool = GetPool(key);
-            if (objectPool.Count < _limit)
+            var objectPool = this.GetPool(key);
+            if (objectPool.Count < this._limit)
             {
                 objectPool.Add(obj);
             }

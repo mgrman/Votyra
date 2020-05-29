@@ -11,18 +11,18 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public TerrainMesher2f(ITerrainConfig terrainConfig)
         {
-            _cellInGroupCount = terrainConfig.CellInGroupCount.XY();
+            this._cellInGroupCount = terrainConfig.CellInGroupCount.XY();
         }
 
         public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image)
         {
-            var range = Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(image.RangeZ.Min), _cellInGroupCount.ToVector3f(image.RangeZ.Size));
+            var range = Area3f.FromMinAndSize((group * this._cellInGroupCount).ToVector3f(image.RangeZ.Min), this._cellInGroupCount.ToVector3f(image.RangeZ.Size));
             mesh.Reset(range);
 
-            var groupPosition = _cellInGroupCount * group;
-            for (var ix = 0; ix < _cellInGroupCount.X; ix++)
+            var groupPosition = this._cellInGroupCount * group;
+            for (var ix = 0; ix < this._cellInGroupCount.X; ix++)
             {
-                for (var iy = 0; iy < _cellInGroupCount.Y; iy++)
+                for (var iy = 0; iy < this._cellInGroupCount.Y; iy++)
                 {
                     var cellInGroup = new Vector2i(ix, iy);
                     var cell = cellInGroup + groupPosition;

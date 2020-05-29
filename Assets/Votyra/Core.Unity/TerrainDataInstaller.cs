@@ -13,7 +13,7 @@ namespace Votyra.Core.Unity
             MainThreadDispatcher.Initialize();
 
             StaticLogger.LoggerImplementation = CreateLogger("StaticLogger", null);
-            Container.Bind<IThreadSafeLogger>()
+            this.Container.Bind<IThreadSafeLogger>()
                 .FromMethod(context =>
                 {
                     //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
@@ -21,11 +21,11 @@ namespace Votyra.Core.Unity
                 })
                 .AsTransient();
 
-            Container.Bind<IProfiler>()
+            this.Container.Bind<IProfiler>()
                 .FromMethod(context =>
                 {
                     //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
-                    return CreateProfiler(context.ObjectInstance as Object);
+                    return this.CreateProfiler(context.ObjectInstance as Object);
                 })
                 .AsTransient();
         }

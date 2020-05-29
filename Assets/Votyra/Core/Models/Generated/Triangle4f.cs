@@ -12,29 +12,29 @@ namespace Votyra.Core.Models
 
         public Triangle4f(Vector4f a, Vector4f b, Vector4f c)
         {
-            A = a;
-            B = b;
-            C = c;
+            this.A = a;
+            this.B = b;
+            this.C = c;
         }
 
         public IEnumerable<Vector4f> Points
         {
             get
             {
-                yield return A;
-                yield return B;
-                yield return C;
+                yield return this.A;
+                yield return this.B;
+                yield return this.C;
             }
         }
 
-        public Triangle4f GetReversedOrder() => new Triangle4f(A, C, B);
+        public Triangle4f GetReversedOrder() => new Triangle4f(this.A, this.C, this.B);
 
         public override bool Equals(object obj)
         {
             if (obj is Triangle4f)
             {
-                var that = (Triangle4f) obj;
-                return A == that.A && B == that.B && C == that.C;
+                var that = (Triangle4f)obj;
+                return (this.A == that.A) && (this.B == that.B) && (this.C == that.C);
             }
 
             return false;
@@ -44,11 +44,11 @@ namespace Votyra.Core.Models
         {
             unchecked
             {
-                return A.GetHashCode() + B.GetHashCode() * 3 + C.GetHashCode() * 7;
+                return this.A.GetHashCode() + (this.B.GetHashCode() * 3) + (this.C.GetHashCode() * 7);
             }
         }
 
-        public override string ToString() => $"{A},{B},{C}";
+        public override string ToString() => $"{this.A},{this.B},{this.C}";
 
         private class TriangleInvariantComparer : IEqualityComparer<Triangle4f>
         {

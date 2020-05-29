@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -20,11 +19,15 @@ namespace Votyra.Core.MeshUpdaters
 
             var meshCollider = unityData.MeshCollider;
             if (meshCollider != null)
+            {
                 meshCollider.sharedMesh = meshFilter.sharedMesh;
+            }
 
             var boxCollider = unityData.BoxCollider;
             if (boxCollider != null)
+            {
                 SetBoxCollider(triangleMesh, boxCollider);
+            }
         }
 
         private static void SetUnityMesh(IMesh triangleMesh, Mesh mesh)
@@ -33,7 +36,9 @@ namespace Votyra.Core.MeshUpdaters
 
             var reinitializeMesh = mesh.vertexCount != triangleMesh.VertexCount;
             if (reinitializeMesh)
+            {
                 mesh.Clear();
+            }
 
             SetVertices(triangleMesh, mesh);
             SetNormals(triangleMesh, mesh);
@@ -127,10 +132,14 @@ namespace Votyra.Core.MeshUpdaters
 
         private static void SetMeshFormat(Mesh mesh, uint vertexCount)
         {
-            if (vertexCount > 65000 && mesh.indexFormat != IndexFormat.UInt32)
+            if ((vertexCount > 65000) && (mesh.indexFormat != IndexFormat.UInt32))
+            {
                 mesh.indexFormat = IndexFormat.UInt32;
-            else if (vertexCount < 65000 && mesh.indexFormat != IndexFormat.UInt16)
+            }
+            else if ((vertexCount < 65000) && (mesh.indexFormat != IndexFormat.UInt16))
+            {
                 mesh.indexFormat = IndexFormat.UInt16;
+            }
         }
     }
 }

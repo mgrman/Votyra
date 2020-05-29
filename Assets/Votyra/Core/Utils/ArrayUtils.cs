@@ -15,16 +15,16 @@ namespace Votyra.Core.Utils
 
         public static bool IsInRangeY<T>(this T[,] data, int iy) => data.IsInRange(iy, 1);
 
-        public static bool IsInRange<T>(this T[,] data, int i, int dimension) => i >= 0 && i <= data.GetUpperBound(dimension);
+        public static bool IsInRange<T>(this T[,] data, int i, int dimension) => (i >= 0) && (i <= data.GetUpperBound(dimension));
 
         public static T[] CreateNonNull<T>(T item1, T item2) where T : class
         {
-            if (item1 != default(T) && item2 != default(T))
+            if ((item1 != default(T)) && (item2 != default(T)))
             {
                 return new[]
                 {
                     item1,
-                    item2
+                    item2,
                 };
             }
 
@@ -32,7 +32,7 @@ namespace Votyra.Core.Utils
             {
                 return new[]
                 {
-                    item1
+                    item1,
                 };
             }
 
@@ -40,7 +40,7 @@ namespace Votyra.Core.Utils
             {
                 return new[]
                 {
-                    item2
+                    item2,
                 };
             }
 

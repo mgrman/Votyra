@@ -14,15 +14,26 @@ namespace Votyra.Core
         public static void AssertListEquality<T>(IList<T> expectedResult, IList<T> resultItems, IEqualityComparer<T> comparer = null)
         {
             if (comparer == null)
+            {
                 comparer = EqualityComparer<T>.Default;
+            }
+
             for (var i = 0; i < Math.Max(resultItems.Count, expectedResult.Count); i++)
             {
                 if (i >= resultItems.Count)
+                {
                     throw new AssertionException($"Expected list has more elements. Expected {expectedResult.Count}, was {resultItems.Count}. Expected:\n{string.Join(", ", expectedResult)}\n\nActual:\n{string.Join(", ", resultItems)}");
+                }
+
                 if (i >= expectedResult.Count)
+                {
                     throw new AssertionException($"Expected list has less elements. Expected {expectedResult.Count}, was {resultItems.Count}. Expected:\n{string.Join(", ", expectedResult)}\n\nActual:\n{string.Join(", ", resultItems)}");
+                }
+
                 if (!comparer.Equals(resultItems[i], expectedResult[i]))
+                {
                     throw new AssertionException($"Items as position [{i}] do not match. Expected '{expectedResult[i]}' was '{resultItems[i]}. Expected:\n{string.Join(", ", expectedResult)}\n\nActual:\n{string.Join(", ", resultItems)}");
+                }
             }
         }
 
@@ -47,7 +58,9 @@ namespace Votyra.Core
                 {
                     var ag = exception as AggregateException;
                     if (ag.InnerExceptions.Count == 1)
+                    {
                         exception = ag.InnerExceptions[0];
+                    }
                 }
 
                 ExceptionDispatchInfo.Capture(exception)
@@ -72,7 +85,9 @@ namespace Votyra.Core
             var syncContextName = unitySyncContext?.GetType()
                 .FullName ?? "<null>";
             if (syncContextName != "UnityEngine.UnitySynchronizationContext")
+            {
                 throw new AssertionException($"AsyncTerrainGeneration task cannot be tested with {syncContextName} as SynchronizationContext! UnitySynchronizationContext is required!");
+            }
         }
 
         private static Action GetExecSyncContextAction(SynchronizationContext syncContext)
@@ -80,8 +95,11 @@ namespace Votyra.Core
             var execMethod = syncContext.GetType()
                 .GetMethod("Exec", BindingFlags.Instance | BindingFlags.NonPublic);
             if (execMethod == null)
+            {
                 throw new AssertionException("AsyncTerrainGeneration task cannot be tested without Exec() method on UnitySynchronizationContext!");
-            var execAction = (Action) execMethod.CreateDelegate(typeof(Action), syncContext);
+            }
+
+            var execAction = (Action)execMethod.CreateDelegate(typeof(Action), syncContext);
             return execAction;
         }
     }

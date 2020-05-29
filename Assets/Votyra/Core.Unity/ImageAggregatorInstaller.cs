@@ -8,10 +8,10 @@ namespace Votyra.Core.Unity
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<ImageAggregator>()
+            this.Container.BindInterfacesAndSelfTo<ImageAggregator>()
                 .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<AggregatorRaycaster>()
+            this.Container.BindInterfacesAndSelfTo<AggregatorRaycaster>()
                 .AsSingle();
         }
     }

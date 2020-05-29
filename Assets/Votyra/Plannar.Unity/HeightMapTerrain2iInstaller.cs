@@ -3,11 +3,11 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    public class HeightMapTerrain2iInstaller : MonoInstaller
+    public class HeightMapTerrain2IInstaller : MonoInstaller
     {
         public override void InstallBindings()
         {
-            Container.Unbind<IImageConstraint2i>();
+            this.Container.Unbind<IImageConstraint2i>();
         }
     }
 }

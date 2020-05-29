@@ -17,6 +17,6 @@ namespace Votyra.Core
     {
         NearestNeighbour,
         Linear,
-        Cubic
+        Cubic,
     }
 }

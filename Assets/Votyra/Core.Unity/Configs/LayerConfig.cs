@@ -2,9 +2,10 @@
 {
     public class LayerConfig : ILayerConfig
     {
-        public LayerConfig([ConfigInject("layer")] LayerId layer)
+        public LayerConfig([ConfigInject("layer"),]
+            LayerId layer)
         {
-            Layer = layer;
+            this.Layer = layer;
         }
 
         public LayerId Layer { get; }

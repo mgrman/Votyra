@@ -21,52 +21,52 @@ namespace Votyra.Core.Images.Constraints
         public SimpleTycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
             : base(constraintConfig, logger)
         {
-            _getMinValue = GetMinValue;
-            _getMaxValue = GetMaxValue;
+            this._getMinValue = this.GetMinValue;
+            this._getMaxValue = this.GetMaxValue;
         }
 
         protected override void Constrain()
         {
-            switch (_direction)
+            switch (this._direction)
             {
                 case Direction.Up:
-                    _comparer = InvertedComparer;
-                    _getValue = _getMaxValue;
+                    this._comparer = InvertedComparer;
+                    this._getValue = this._getMaxValue;
                     break;
 
                 default:
-                    _comparer = DefaultComparer;
-                    _getValue = _getMinValue;
+                    this._comparer = DefaultComparer;
+                    this._getValue = this._getMinValue;
                     break;
             }
 
             base.Constrain();
         }
 
-        private float GetMaxValue(Vector2i cell) => _editableMatrix.SampleCell(cell)
+        private float GetMaxValue(Vector2i cell) => this._editableMatrix.SampleCell(cell)
             .Max;
 
-        private float GetMinValue(Vector2i cell) => _editableMatrix.SampleCell(cell)
+        private float GetMinValue(Vector2i cell) => this._editableMatrix.SampleCell(cell)
             .Min;
 
         protected override void ConstrainCell(Vector2i seedCell)
         {
-            _queue.Reset(_comparer);
-            _queue.Add(seedCell, _getValue(seedCell));
+            this._queue.Reset(this._comparer);
+            this._queue.Add(seedCell, this._getValue(seedCell));
 
-            while (_queue.Count > 0)
+            while (this._queue.Count > 0)
             {
                 // #if UNITY_EDITOR
                 //                 if (!EditorApplication.isPlayingOrWillChangePlaymode)
                 //                     return;
                 // #endif
-                var cell = _queue.GetFirst()
+                var cell = this._queue.GetFirst()
                     .Value;
-                _invalidatedCellArea = _invalidatedCellArea.CombineWith(cell);
+                this._invalidatedCellArea = this._invalidatedCellArea.CombineWith(cell);
 
-                var sample = _editableMatrix.SampleCell(cell)
+                var sample = this._editableMatrix.SampleCell(cell)
                     .ToSampledData2i();
-                var processedSample = Process(sample);
+                var processedSample = this.Process(sample);
 
                 var cell_x0y0 = cell;
                 var cell_x0y1 = new Vector2i(cell.X, cell.Y + 1);
@@ -74,19 +74,19 @@ namespace Votyra.Core.Images.Constraints
                 var cell_x1y1 = new Vector2i(cell.X + 1, cell.Y + 1);
 
                 var change = 0f;
-                if (_editableMatrix.ContainsIndex(cell_x0y0) && _editableMatrix.ContainsIndex(cell_x1y1))
+                if (this._editableMatrix.ContainsIndex(cell_x0y0) && this._editableMatrix.ContainsIndex(cell_x1y1))
                 {
-                    change += Math.Abs(_editableMatrix.Get(cell_x0y0) - processedSample.x0y0);
-                    _editableMatrix.Set(cell_x0y0, processedSample.x0y0);
+                    change += Math.Abs(this._editableMatrix.Get(cell_x0y0) - processedSample.x0y0);
+                    this._editableMatrix.Set(cell_x0y0, processedSample.x0y0);
 
-                    change += Math.Abs(_editableMatrix.Get(cell_x0y1) - processedSample.x0y1);
-                    _editableMatrix.Set(cell_x0y1, processedSample.x0y1);
+                    change += Math.Abs(this._editableMatrix.Get(cell_x0y1) - processedSample.x0y1);
+                    this._editableMatrix.Set(cell_x0y1, processedSample.x0y1);
 
-                    change += Math.Abs(_editableMatrix.Get(cell_x1y0) - processedSample.x1y0);
-                    _editableMatrix.Set(cell_x1y0, processedSample.x1y0);
+                    change += Math.Abs(this._editableMatrix.Get(cell_x1y0) - processedSample.x1y0);
+                    this._editableMatrix.Set(cell_x1y0, processedSample.x1y0);
 
-                    change += Math.Abs(_editableMatrix.Get(cell_x1y1) - processedSample.x1y1);
-                    _editableMatrix.Set(cell_x1y1, processedSample.x1y1);
+                    change += Math.Abs(this._editableMatrix.Get(cell_x1y1) - processedSample.x1y1);
+                    this._editableMatrix.Set(cell_x1y1, processedSample.x1y1);
                 }
 
                 if (change > 0f)
@@ -96,7 +96,7 @@ namespace Votyra.Core.Images.Constraints
                     {
                         for (var offsetY = -areaSize; offsetY <= areaSize; offsetY++)
                         {
-                            if (offsetX == 0 && offsetY == 0)
+                            if ((offsetX == 0) && (offsetY == 0))
                             {
                                 continue;
                             }
@@ -104,10 +104,10 @@ namespace Votyra.Core.Images.Constraints
                             var ix = cell.X + offsetX;
                             var iy = cell.Y + offsetY;
                             var newCellToCheck = new Vector2i(ix, iy);
-                            var newCellToCheckValue = _getValue(cell);
-                            if (_editableMatrix.ContainsIndex(newCellToCheck))
+                            var newCellToCheckValue = this._getValue(cell);
+                            if (this._editableMatrix.ContainsIndex(newCellToCheck))
                             {
-                                _queue.Add(newCellToCheck, newCellToCheckValue);
+                                this._queue.Add(newCellToCheck, newCellToCheckValue);
                             }
                         }
                     }

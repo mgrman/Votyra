@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 
 namespace Votyra.Core.Utils
 {
@@ -27,9 +26,9 @@ namespace Votyra.Core.Utils
             return res;
         }
 
-        public static Vector2 ToVector2(this Vector2f vector) => *(Vector2*) &vector;
+        public static Vector2 ToVector2(this Vector2f vector) => *(Vector2*)&vector;
 
-        public static Vector3 ToVector3(this Vector3f vector) => *(Vector3*) &vector;
+        public static Vector3 ToVector3(this Vector3f vector) => *(Vector3*)&vector;
 
         public static Bounds ToBounds(this Area3f bounds) => new Bounds(bounds.Center.ToVector3(), bounds.Size.ToVector3());
 
@@ -79,7 +78,7 @@ namespace Votyra.Core.Utils
             mat2.m33 = mat.m33;
             return mat2;
         }
-        
+
         private static List<TResult> ConvertListOfMatchingStructs<TSource, TResult>(this List<TSource> source, Func<TSource[], TResult[]> convert)
         {
             var target = new List<TResult>();
@@ -96,36 +95,36 @@ namespace Votyra.Core.Utils
             return target;
         }
 
-        [StructLayout(LayoutKind.Explicit)]
+        [StructLayout(LayoutKind.Explicit),]
         private struct UnionVector3
         {
-            [FieldOffset(0)]
+            [FieldOffset(0),]
             public Vector3f[] From;
 
-            [FieldOffset(0)]
+            [FieldOffset(0),]
             public readonly Vector3[] To;
         }
 
-        [StructLayout(LayoutKind.Explicit)]
+        [StructLayout(LayoutKind.Explicit),]
         private struct UnionVector2
         {
-            [FieldOffset(0)]
+            [FieldOffset(0),]
             public Vector2f[] From;
 
-            [FieldOffset(0)]
+            [FieldOffset(0),]
             public readonly Vector2[] To;
         }
 
-        [StructLayout(LayoutKind.Explicit)]
+        [StructLayout(LayoutKind.Explicit),]
         private struct UnionPlane
         {
-            [FieldOffset(0)]
+            [FieldOffset(0),]
             public Plane[] From;
 
-            [FieldOffset(0)]
+            [FieldOffset(0),]
             public readonly Plane3f[] To;
         }
-        
+
         //
         //        [StructLayout(LayoutKind.Explicit)]
         //        private struct UnionVector3
@@ -165,7 +164,7 @@ namespace Votyra.Core.Utils
                 var sizeField = typeof(List<T>).GetField("_size", BindingFlags.Instance | BindingFlags.NonPublic);
                 SizeGet = o => (int) itemsField.GetValue(o);
                 SizeSet = (o, value) => itemsField.SetValue(o, value);
-                
+
 #else
                 var itemsField = typeof(List<T>).GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
                 ItemsGet = CreateGetFieldDelegate<List<T>, T[]>(itemsField);

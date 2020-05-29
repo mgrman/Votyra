@@ -47,7 +47,7 @@ namespace Votyra.Core.Utils
         {
             Euclidean,
             Manhattan,
-            Natural
+            Natural,
         }
 
         public enum CellularReturnType
@@ -59,21 +59,21 @@ namespace Votyra.Core.Utils
             Distance2Add,
             Distance2Sub,
             Distance2Mul,
-            Distance2Div
+            Distance2Div,
         }
 
         public enum FractalType
         {
             FBM,
             Billow,
-            RigidMulti
+            RigidMulti,
         }
 
         public enum Interp
         {
             Linear,
             Hermite,
-            Quintic
+            Quintic,
         }
 
         public enum NoiseType
@@ -87,7 +87,7 @@ namespace Votyra.Core.Utils
             Cellular,
             WhiteNoise,
             Cubic,
-            CubicFractal
+            CubicFractal,
         }
 
         private const short FN_INLINE = 256; //(Int16)MethodImplOptions.AggressiveInlining;
@@ -102,23 +102,23 @@ namespace Votyra.Core.Utils
 
         private const int W_PRIME = 1013;
 
-        private const float F3 = (float) (1.0 / 3.0);
+        private const float F3 = (float)(1.0 / 3.0);
 
-        private const float G3 = (float) (1.0 / 6.0);
+        private const float G3 = (float)(1.0 / 6.0);
 
-        private const float G33 = G3 * 3 - 1;
+        private const float G33 = (G3 * 3) - 1;
 
-        private const float F2 = (float) (1.0 / 2.0);
+        private const float F2 = (float)(1.0 / 2.0);
 
-        private const float G2 = (float) (1.0 / 4.0);
+        private const float G2 = (float)(1.0 / 4.0);
 
-        private const float F4 = (float) ((2.23606797 - 1.0) / 4.0);
+        private const float F4 = (float)((2.23606797 - 1.0) / 4.0);
 
-        private const float G4 = (float) ((5.0 - 2.23606797) / 20.0);
+        private const float G4 = (float)((5.0 - 2.23606797) / 20.0);
 
-        private const float CUBIC_3D_BOUNDING = 1 / (float) (1.5 * 1.5 * 1.5);
+        private const float CUBIC_3D_BOUNDING = 1 / (float)(1.5 * 1.5 * 1.5);
 
-        private const float CUBIC_2D_BOUNDING = 1 / (float) (1.5 * 1.5);
+        private const float CUBIC_2D_BOUNDING = 1 / (float)(1.5 * 1.5);
 
         private static readonly Float2[] GRAD_2D =
         {
@@ -129,7 +129,7 @@ namespace Votyra.Core.Utils
             new Float2(0, -1),
             new Float2(-1, 0),
             new Float2(0, 1),
-            new Float2(1, 0)
+            new Float2(1, 0),
         };
 
         private static readonly Float3[] GRAD_3D =
@@ -149,7 +149,7 @@ namespace Votyra.Core.Utils
             new Float3(1, 1, 0),
             new Float3(0, -1, 1),
             new Float3(-1, 1, 0),
-            new Float3(0, -1, -1)
+            new Float3(0, -1, -1),
         };
 
         private static readonly Float2[] CELL_2D =
@@ -409,7 +409,7 @@ namespace Votyra.Core.Utils
             new Float2(-0.146637214f, -0.9891903394f),
             new Float2(-0.782318098f, 0.6228791163f),
             new Float2(-0.5039610839f, -0.8637263605f),
-            new Float2(-0.7743120191f, -0.6328039957f)
+            new Float2(-0.7743120191f, -0.6328039957f),
         };
 
         private static readonly Float3[] CELL_3D =
@@ -669,7 +669,7 @@ namespace Votyra.Core.Utils
             new Float3(-0.1842489331f, -0.9777375055f, -0.1004076743f),
             new Float3(0.0775473789f, -0.9111505856f, 0.4047110257f),
             new Float3(0.1399838409f, 0.7601631212f, -0.6344734459f),
-            new Float3(0.4484419361f, -0.845289248f, 0.2904925424f)
+            new Float3(0.4484419361f, -0.845289248f, 0.2904925424f),
         };
 
         private static readonly byte[] SIMPLEX_4D =
@@ -929,7 +929,7 @@ namespace Votyra.Core.Utils
             3,
             2,
             1,
-            0
+            0,
         };
 
         private CellularDistanceFunction m_cellularDistanceFunction = CellularDistanceFunction.Euclidean;
@@ -948,15 +948,15 @@ namespace Votyra.Core.Utils
 
         private FractalType m_fractalType = FractalType.FBM;
 
-        private float m_frequency = (float) 0.01;
+        private float m_frequency = (float)0.01;
 
-        private float m_gain = (float) 0.5;
+        private float m_gain = (float)0.5;
 
-        private float m_gradientPerturbAmp = (float) 1.0;
+        private float m_gradientPerturbAmp = (float)1.0;
 
         private Interp m_interp = Interp.Quintic;
 
-        private float m_lacunarity = (float) 2.0;
+        private float m_lacunarity = (float)2.0;
 
         private NoiseType m_noiseType = NoiseType.Simplex;
 
@@ -966,28 +966,28 @@ namespace Votyra.Core.Utils
 
         public FastNoise(int seed = 1337)
         {
-            m_seed = seed;
-            CalculateFractalBounding();
+            this.m_seed = seed;
+            this.CalculateFractalBounding();
         }
 
         // Returns a 0 float/double
         public static float GetDecimalType() => 0;
 
         // Returns the seed used by this object
-        public int GetSeed() => m_seed;
+        public int GetSeed() => this.m_seed;
 
         // Sets seed used for all noise types
         // Default: 1337
         public void SetSeed(int seed)
         {
-            m_seed = seed;
+            this.m_seed = seed;
         }
 
         // Sets frequency for all noise types
         // Default: 0.01
         public void SetFrequency(float frequency)
         {
-            m_frequency = frequency;
+            this.m_frequency = frequency;
         }
 
         // Changes the interpolation method used to smooth between noise values
@@ -999,44 +999,44 @@ namespace Votyra.Core.Utils
         // Default: Quintic
         public void SetInterp(Interp interp)
         {
-            m_interp = interp;
+            this.m_interp = interp;
         }
 
         // Sets noise return type of GetNoise(...)
         // Default: Simplex
         public void SetNoiseType(NoiseType noiseType)
         {
-            m_noiseType = noiseType;
+            this.m_noiseType = noiseType;
         }
 
         // Sets octave count for all fractal noise types
         // Default: 3
         public void SetFractalOctaves(int octaves)
         {
-            m_octaves = octaves;
-            CalculateFractalBounding();
+            this.m_octaves = octaves;
+            this.CalculateFractalBounding();
         }
 
         // Sets octave lacunarity for all fractal noise types
         // Default: 2.0
         public void SetFractalLacunarity(float lacunarity)
         {
-            m_lacunarity = lacunarity;
+            this.m_lacunarity = lacunarity;
         }
 
         // Sets octave gain for all fractal noise types
         // Default: 0.5
         public void SetFractalGain(float gain)
         {
-            m_gain = gain;
-            CalculateFractalBounding();
+            this.m_gain = gain;
+            this.CalculateFractalBounding();
         }
 
         // Sets method for combining octaves in all fractal noise types
         // Default: FBM
         public void SetFractalType(FractalType fractalType)
         {
-            m_fractalType = fractalType;
+            this.m_fractalType = fractalType;
         }
 
         // Sets return type from cellular noise calculations
@@ -1044,14 +1044,14 @@ namespace Votyra.Core.Utils
         // Default: CellValue
         public void SetCellularDistanceFunction(CellularDistanceFunction cellularDistanceFunction)
         {
-            m_cellularDistanceFunction = cellularDistanceFunction;
+            this.m_cellularDistanceFunction = cellularDistanceFunction;
         }
 
         // Sets distance function used in cellular noise calculations
         // Default: Euclidean
         public void SetCellularReturnType(CellularReturnType cellularReturnType)
         {
-            m_cellularReturnType = cellularReturnType;
+            this.m_cellularReturnType = cellularReturnType;
         }
 
         // Sets the 2 distance indicies used for distance2 return types
@@ -1060,11 +1060,11 @@ namespace Votyra.Core.Utils
         // Both indicies must be >= 0, index1 must be < 4
         public void SetCellularDistance2Indicies(int cellularDistanceIndex0, int cellularDistanceIndex1)
         {
-            m_cellularDistanceIndex0 = Math.Min(cellularDistanceIndex0, cellularDistanceIndex1);
-            m_cellularDistanceIndex1 = Math.Max(cellularDistanceIndex0, cellularDistanceIndex1);
+            this.m_cellularDistanceIndex0 = Math.Min(cellularDistanceIndex0, cellularDistanceIndex1);
+            this.m_cellularDistanceIndex1 = Math.Max(cellularDistanceIndex0, cellularDistanceIndex1);
 
-            m_cellularDistanceIndex0 = Math.Min(Math.Max(m_cellularDistanceIndex0, 0), FN_CELLULAR_INDEX_MAX);
-            m_cellularDistanceIndex1 = Math.Min(Math.Max(m_cellularDistanceIndex1, 0), FN_CELLULAR_INDEX_MAX);
+            this.m_cellularDistanceIndex0 = Math.Min(Math.Max(this.m_cellularDistanceIndex0, 0), FN_CELLULAR_INDEX_MAX);
+            this.m_cellularDistanceIndex1 = Math.Min(Math.Max(this.m_cellularDistanceIndex1, 0), FN_CELLULAR_INDEX_MAX);
         }
 
         // Sets the maximum distance a cellular point can move from it's grid position
@@ -1072,113 +1072,113 @@ namespace Votyra.Core.Utils
         // Default: 0.45
         public void SetCellularJitter(float cellularJitter)
         {
-            m_cellularJitter = cellularJitter;
+            this.m_cellularJitter = cellularJitter;
         }
 
         // Noise used to calculate a cell value if cellular return type is NoiseLookup
         // The lookup value is acquired through GetNoise() so ensure you SetNoiseType() on the noise lookup, value, gradient or simplex is recommended
         public void SetCellularNoiseLookup(FastNoise noise)
         {
-            m_cellularNoiseLookup = noise;
+            this.m_cellularNoiseLookup = noise;
         }
 
         // Sets the maximum perturb distance from original location when using GradientPerturb{Fractal}(...)
         // Default: 1.0
         public void SetGradientPerturbAmp(float gradientPerturbAmp)
         {
-            m_gradientPerturbAmp = gradientPerturbAmp;
+            this.m_gradientPerturbAmp = gradientPerturbAmp;
         }
 
         public float GetNoise(float x, float y, float z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_noiseType)
+            switch (this.m_noiseType)
             {
                 case NoiseType.Value:
-                    return SingleValue(m_seed, x, y, z);
+                    return this.SingleValue(this.m_seed, x, y, z);
 
                 case NoiseType.ValueFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleValueFractalFBM(x, y, z);
+                            return this.SingleValueFractalFBM(x, y, z);
 
                         case FractalType.Billow:
-                            return SingleValueFractalBillow(x, y, z);
+                            return this.SingleValueFractalBillow(x, y, z);
 
                         case FractalType.RigidMulti:
-                            return SingleValueFractalRigidMulti(x, y, z);
+                            return this.SingleValueFractalRigidMulti(x, y, z);
 
                         default:
                             return 0;
                     }
                 case NoiseType.Perlin:
-                    return SinglePerlin(m_seed, x, y, z);
+                    return this.SinglePerlin(this.m_seed, x, y, z);
 
                 case NoiseType.PerlinFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SinglePerlinFractalFBM(x, y, z);
+                            return this.SinglePerlinFractalFBM(x, y, z);
 
                         case FractalType.Billow:
-                            return SinglePerlinFractalBillow(x, y, z);
+                            return this.SinglePerlinFractalBillow(x, y, z);
 
                         case FractalType.RigidMulti:
-                            return SinglePerlinFractalRigidMulti(x, y, z);
+                            return this.SinglePerlinFractalRigidMulti(x, y, z);
 
                         default:
                             return 0;
                     }
                 case NoiseType.Simplex:
-                    return SingleSimplex(m_seed, x, y, z);
+                    return this.SingleSimplex(this.m_seed, x, y, z);
 
                 case NoiseType.SimplexFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleSimplexFractalFBM(x, y, z);
+                            return this.SingleSimplexFractalFBM(x, y, z);
 
                         case FractalType.Billow:
-                            return SingleSimplexFractalBillow(x, y, z);
+                            return this.SingleSimplexFractalBillow(x, y, z);
 
                         case FractalType.RigidMulti:
-                            return SingleSimplexFractalRigidMulti(x, y, z);
+                            return this.SingleSimplexFractalRigidMulti(x, y, z);
 
                         default:
                             return 0;
                     }
                 case NoiseType.Cellular:
-                    switch (m_cellularReturnType)
+                    switch (this.m_cellularReturnType)
                     {
                         case CellularReturnType.CellValue:
                         case CellularReturnType.NoiseLookup:
                         case CellularReturnType.Distance:
-                            return SingleCellular(x, y, z);
+                            return this.SingleCellular(x, y, z);
 
                         default:
-                            return SingleCellular2Edge(x, y, z);
+                            return this.SingleCellular2Edge(x, y, z);
                     }
                 case NoiseType.WhiteNoise:
-                    return GetWhiteNoise(x, y, z);
+                    return this.GetWhiteNoise(x, y, z);
 
                 case NoiseType.Cubic:
-                    return SingleCubic(m_seed, x, y, z);
+                    return this.SingleCubic(this.m_seed, x, y, z);
 
                 case NoiseType.CubicFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleCubicFractalFBM(x, y, z);
+                            return this.SingleCubicFractalFBM(x, y, z);
 
                         case FractalType.Billow:
-                            return SingleCubicFractalBillow(x, y, z);
+                            return this.SingleCubicFractalBillow(x, y, z);
 
                         case FractalType.RigidMulti:
-                            return SingleCubicFractalRigidMulti(x, y, z);
+                            return this.SingleCubicFractalRigidMulti(x, y, z);
 
                         default:
                             return 0;
@@ -1190,93 +1190,93 @@ namespace Votyra.Core.Utils
 
         public float GetNoise(float x, float y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_noiseType)
+            switch (this.m_noiseType)
             {
                 case NoiseType.Value:
-                    return SingleValue(m_seed, x, y);
+                    return this.SingleValue(this.m_seed, x, y);
 
                 case NoiseType.ValueFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleValueFractalFBM(x, y);
+                            return this.SingleValueFractalFBM(x, y);
 
                         case FractalType.Billow:
-                            return SingleValueFractalBillow(x, y);
+                            return this.SingleValueFractalBillow(x, y);
 
                         case FractalType.RigidMulti:
-                            return SingleValueFractalRigidMulti(x, y);
+                            return this.SingleValueFractalRigidMulti(x, y);
 
                         default:
                             return 0;
                     }
                 case NoiseType.Perlin:
-                    return SinglePerlin(m_seed, x, y);
+                    return this.SinglePerlin(this.m_seed, x, y);
 
                 case NoiseType.PerlinFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SinglePerlinFractalFBM(x, y);
+                            return this.SinglePerlinFractalFBM(x, y);
 
                         case FractalType.Billow:
-                            return SinglePerlinFractalBillow(x, y);
+                            return this.SinglePerlinFractalBillow(x, y);
 
                         case FractalType.RigidMulti:
-                            return SinglePerlinFractalRigidMulti(x, y);
+                            return this.SinglePerlinFractalRigidMulti(x, y);
 
                         default:
                             return 0;
                     }
                 case NoiseType.Simplex:
-                    return SingleSimplex(m_seed, x, y);
+                    return this.SingleSimplex(this.m_seed, x, y);
 
                 case NoiseType.SimplexFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleSimplexFractalFBM(x, y);
+                            return this.SingleSimplexFractalFBM(x, y);
 
                         case FractalType.Billow:
-                            return SingleSimplexFractalBillow(x, y);
+                            return this.SingleSimplexFractalBillow(x, y);
 
                         case FractalType.RigidMulti:
-                            return SingleSimplexFractalRigidMulti(x, y);
+                            return this.SingleSimplexFractalRigidMulti(x, y);
 
                         default:
                             return 0;
                     }
                 case NoiseType.Cellular:
-                    switch (m_cellularReturnType)
+                    switch (this.m_cellularReturnType)
                     {
                         case CellularReturnType.CellValue:
                         case CellularReturnType.NoiseLookup:
                         case CellularReturnType.Distance:
-                            return SingleCellular(x, y);
+                            return this.SingleCellular(x, y);
 
                         default:
-                            return SingleCellular2Edge(x, y);
+                            return this.SingleCellular2Edge(x, y);
                     }
                 case NoiseType.WhiteNoise:
-                    return GetWhiteNoise(x, y);
+                    return this.GetWhiteNoise(x, y);
 
                 case NoiseType.Cubic:
-                    return SingleCubic(m_seed, x, y);
+                    return this.SingleCubic(this.m_seed, x, y);
 
                 case NoiseType.CubicFractal:
-                    switch (m_fractalType)
+                    switch (this.m_fractalType)
                     {
                         case FractalType.FBM:
-                            return SingleCubicFractalFBM(x, y);
+                            return this.SingleCubicFractalFBM(x, y);
 
                         case FractalType.Billow:
-                            return SingleCubicFractalBillow(x, y);
+                            return this.SingleCubicFractalBillow(x, y);
 
                         case FractalType.RigidMulti:
-                            return SingleCubicFractalRigidMulti(x, y);
+                            return this.SingleCubicFractalRigidMulti(x, y);
 
                         default:
                             return 0;
@@ -1288,223 +1288,223 @@ namespace Votyra.Core.Utils
 
         public float GetWhiteNoise(float x, float y, float z, float w)
         {
-            var xi = FloatCast2Int(x);
-            var yi = FloatCast2Int(y);
-            var zi = FloatCast2Int(z);
-            var wi = FloatCast2Int(w);
+            var xi = this.FloatCast2Int(x);
+            var yi = this.FloatCast2Int(y);
+            var zi = this.FloatCast2Int(z);
+            var wi = this.FloatCast2Int(w);
 
-            return ValCoord4D(m_seed, xi, yi, zi, wi);
+            return ValCoord4D(this.m_seed, xi, yi, zi, wi);
         }
 
         public float GetWhiteNoise(float x, float y, float z)
         {
-            var xi = FloatCast2Int(x);
-            var yi = FloatCast2Int(y);
-            var zi = FloatCast2Int(z);
+            var xi = this.FloatCast2Int(x);
+            var yi = this.FloatCast2Int(y);
+            var zi = this.FloatCast2Int(z);
 
-            return ValCoord3D(m_seed, xi, yi, zi);
+            return ValCoord3D(this.m_seed, xi, yi, zi);
         }
 
         public float GetWhiteNoise(float x, float y)
         {
-            var xi = FloatCast2Int(x);
-            var yi = FloatCast2Int(y);
+            var xi = this.FloatCast2Int(x);
+            var yi = this.FloatCast2Int(y);
 
-            return ValCoord2D(m_seed, xi, yi);
+            return ValCoord2D(this.m_seed, xi, yi);
         }
 
-        public float GetWhiteNoiseInt(int x, int y, int z, int w) => ValCoord4D(m_seed, x, y, z, w);
+        public float GetWhiteNoiseInt(int x, int y, int z, int w) => ValCoord4D(this.m_seed, x, y, z, w);
 
-        public float GetWhiteNoiseInt(int x, int y, int z) => ValCoord3D(m_seed, x, y, z);
+        public float GetWhiteNoiseInt(int x, int y, int z) => ValCoord3D(this.m_seed, x, y, z);
 
-        public float GetWhiteNoiseInt(int x, int y) => ValCoord2D(m_seed, x, y);
+        public float GetWhiteNoiseInt(int x, int y) => ValCoord2D(this.m_seed, x, y);
 
         // Value Noise
         public float GetValueFractal(float x, float y, float z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleValueFractalFBM(x, y, z);
+                    return this.SingleValueFractalFBM(x, y, z);
 
                 case FractalType.Billow:
-                    return SingleValueFractalBillow(x, y, z);
+                    return this.SingleValueFractalBillow(x, y, z);
 
                 case FractalType.RigidMulti:
-                    return SingleValueFractalRigidMulti(x, y, z);
+                    return this.SingleValueFractalRigidMulti(x, y, z);
 
                 default:
                     return 0;
             }
         }
 
-        public float GetValue(float x, float y, float z) => SingleValue(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+        public float GetValue(float x, float y, float z) => this.SingleValue(this.m_seed, x * this.m_frequency, y * this.m_frequency, z * this.m_frequency);
 
         public float GetValueFractal(float x, float y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleValueFractalFBM(x, y);
+                    return this.SingleValueFractalFBM(x, y);
 
                 case FractalType.Billow:
-                    return SingleValueFractalBillow(x, y);
+                    return this.SingleValueFractalBillow(x, y);
 
                 case FractalType.RigidMulti:
-                    return SingleValueFractalRigidMulti(x, y);
+                    return this.SingleValueFractalRigidMulti(x, y);
 
                 default:
                     return 0;
             }
         }
 
-        public float GetValue(float x, float y) => SingleValue(m_seed, x * m_frequency, y * m_frequency);
+        public float GetValue(float x, float y) => this.SingleValue(this.m_seed, x * this.m_frequency, y * this.m_frequency);
 
         // Gradient Noise
         public float GetPerlinFractal(float x, float y, float z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SinglePerlinFractalFBM(x, y, z);
+                    return this.SinglePerlinFractalFBM(x, y, z);
 
                 case FractalType.Billow:
-                    return SinglePerlinFractalBillow(x, y, z);
+                    return this.SinglePerlinFractalBillow(x, y, z);
 
                 case FractalType.RigidMulti:
-                    return SinglePerlinFractalRigidMulti(x, y, z);
+                    return this.SinglePerlinFractalRigidMulti(x, y, z);
 
                 default:
                     return 0;
             }
         }
 
-        public float GetPerlin(float x, float y, float z) => SinglePerlin(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+        public float GetPerlin(float x, float y, float z) => this.SinglePerlin(this.m_seed, x * this.m_frequency, y * this.m_frequency, z * this.m_frequency);
 
         public float GetPerlinFractal(float x, float y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SinglePerlinFractalFBM(x, y);
+                    return this.SinglePerlinFractalFBM(x, y);
 
                 case FractalType.Billow:
-                    return SinglePerlinFractalBillow(x, y);
+                    return this.SinglePerlinFractalBillow(x, y);
 
                 case FractalType.RigidMulti:
-                    return SinglePerlinFractalRigidMulti(x, y);
+                    return this.SinglePerlinFractalRigidMulti(x, y);
 
                 default:
                     return 0;
             }
         }
 
-        public float GetPerlin(float x, float y) => SinglePerlin(m_seed, x * m_frequency, y * m_frequency);
+        public float GetPerlin(float x, float y) => this.SinglePerlin(this.m_seed, x * this.m_frequency, y * this.m_frequency);
 
         // Simplex Noise
         public float GetSimplexFractal(float x, float y, float z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleSimplexFractalFBM(x, y, z);
+                    return this.SingleSimplexFractalFBM(x, y, z);
 
                 case FractalType.Billow:
-                    return SingleSimplexFractalBillow(x, y, z);
+                    return this.SingleSimplexFractalBillow(x, y, z);
 
                 case FractalType.RigidMulti:
-                    return SingleSimplexFractalRigidMulti(x, y, z);
+                    return this.SingleSimplexFractalRigidMulti(x, y, z);
 
                 default:
                     return 0;
             }
         }
 
-        public float GetSimplex(float x, float y, float z) => SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+        public float GetSimplex(float x, float y, float z) => this.SingleSimplex(this.m_seed, x * this.m_frequency, y * this.m_frequency, z * this.m_frequency);
 
         public float GetSimplexFractal(float x, float y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleSimplexFractalFBM(x, y);
+                    return this.SingleSimplexFractalFBM(x, y);
 
                 case FractalType.Billow:
-                    return SingleSimplexFractalBillow(x, y);
+                    return this.SingleSimplexFractalBillow(x, y);
 
                 case FractalType.RigidMulti:
-                    return SingleSimplexFractalRigidMulti(x, y);
+                    return this.SingleSimplexFractalRigidMulti(x, y);
 
                 default:
                     return 0;
             }
         }
 
-        public float GetSimplex(float x, float y) => SingleSimplex(m_seed, x * m_frequency, y * m_frequency);
+        public float GetSimplex(float x, float y) => this.SingleSimplex(this.m_seed, x * this.m_frequency, y * this.m_frequency);
 
-        public float GetSimplex(float x, float y, float z, float w) => SingleSimplex(m_seed, x * m_frequency, y * m_frequency, z * m_frequency, w * m_frequency);
+        public float GetSimplex(float x, float y, float z, float w) => this.SingleSimplex(this.m_seed, x * this.m_frequency, y * this.m_frequency, z * this.m_frequency, w * this.m_frequency);
 
         // Cubic Noise
         public float GetCubicFractal(float x, float y, float z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleCubicFractalFBM(x, y, z);
+                    return this.SingleCubicFractalFBM(x, y, z);
 
                 case FractalType.Billow:
-                    return SingleCubicFractalBillow(x, y, z);
+                    return this.SingleCubicFractalBillow(x, y, z);
 
                 case FractalType.RigidMulti:
-                    return SingleCubicFractalRigidMulti(x, y, z);
+                    return this.SingleCubicFractalRigidMulti(x, y, z);
 
                 default:
                     return 0;
             }
         }
 
-        public float GetCubic(float x, float y, float z) => SingleCubic(m_seed, x * m_frequency, y * m_frequency, z * m_frequency);
+        public float GetCubic(float x, float y, float z) => this.SingleCubic(this.m_seed, x * this.m_frequency, y * this.m_frequency, z * this.m_frequency);
 
         public float GetCubicFractal(float x, float y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_fractalType)
+            switch (this.m_fractalType)
             {
                 case FractalType.FBM:
-                    return SingleCubicFractalFBM(x, y);
+                    return this.SingleCubicFractalFBM(x, y);
 
                 case FractalType.Billow:
-                    return SingleCubicFractalBillow(x, y);
+                    return this.SingleCubicFractalBillow(x, y);
 
                 case FractalType.RigidMulti:
-                    return SingleCubicFractalRigidMulti(x, y);
+                    return this.SingleCubicFractalRigidMulti(x, y);
 
                 default:
                     return 0;
@@ -1513,113 +1513,113 @@ namespace Votyra.Core.Utils
 
         public float GetCubic(float x, float y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            return SingleCubic(0, x, y);
+            return this.SingleCubic(0, x, y);
         }
 
         // Cellular Noise
         public float GetCellular(float x, float y, float z)
         {
-            x *= m_frequency;
-            y *= m_frequency;
-            z *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
+            z *= this.m_frequency;
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.CellValue:
                 case CellularReturnType.NoiseLookup:
                 case CellularReturnType.Distance:
-                    return SingleCellular(x, y, z);
+                    return this.SingleCellular(x, y, z);
 
                 default:
-                    return SingleCellular2Edge(x, y, z);
+                    return this.SingleCellular2Edge(x, y, z);
             }
         }
 
         public float GetCellular(float x, float y)
         {
-            x *= m_frequency;
-            y *= m_frequency;
+            x *= this.m_frequency;
+            y *= this.m_frequency;
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.CellValue:
                 case CellularReturnType.NoiseLookup:
                 case CellularReturnType.Distance:
-                    return SingleCellular(x, y);
+                    return this.SingleCellular(x, y);
 
                 default:
-                    return SingleCellular2Edge(x, y);
+                    return this.SingleCellular2Edge(x, y);
             }
         }
 
         public void GradientPerturb(ref float x, ref float y, ref float z)
         {
-            SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, ref x, ref y, ref z);
+            this.SingleGradientPerturb(this.m_seed, this.m_gradientPerturbAmp, this.m_frequency, ref x, ref y, ref z);
         }
 
         public void GradientPerturbFractal(ref float x, ref float y, ref float z)
         {
-            var seed = m_seed;
-            var amp = m_gradientPerturbAmp * m_fractalBounding;
-            var freq = m_frequency;
+            var seed = this.m_seed;
+            var amp = this.m_gradientPerturbAmp * this.m_fractalBounding;
+            var freq = this.m_frequency;
 
-            SingleGradientPerturb(seed, amp, m_frequency, ref x, ref y, ref z);
+            this.SingleGradientPerturb(seed, amp, this.m_frequency, ref x, ref y, ref z);
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                freq *= m_lacunarity;
-                amp *= m_gain;
-                SingleGradientPerturb(++seed, amp, freq, ref x, ref y, ref z);
+                freq *= this.m_lacunarity;
+                amp *= this.m_gain;
+                this.SingleGradientPerturb(++seed, amp, freq, ref x, ref y, ref z);
             }
         }
 
         public void GradientPerturb(ref float x, ref float y)
         {
-            SingleGradientPerturb(m_seed, m_gradientPerturbAmp, m_frequency, ref x, ref y);
+            this.SingleGradientPerturb(this.m_seed, this.m_gradientPerturbAmp, this.m_frequency, ref x, ref y);
         }
 
         public void GradientPerturbFractal(ref float x, ref float y)
         {
-            var seed = m_seed;
-            var amp = m_gradientPerturbAmp * m_fractalBounding;
-            var freq = m_frequency;
+            var seed = this.m_seed;
+            var amp = this.m_gradientPerturbAmp * this.m_fractalBounding;
+            var freq = this.m_frequency;
 
-            SingleGradientPerturb(seed, amp, m_frequency, ref x, ref y);
+            this.SingleGradientPerturb(seed, amp, this.m_frequency, ref x, ref y);
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                freq *= m_lacunarity;
-                amp *= m_gain;
-                SingleGradientPerturb(++seed, amp, freq, ref x, ref y);
+                freq *= this.m_lacunarity;
+                amp *= this.m_gain;
+                this.SingleGradientPerturb(++seed, amp, freq, ref x, ref y);
             }
         }
 
-        [MethodImpl(FN_INLINE)]
-        private static int FastFloor(float f) => f >= 0 ? (int) f : (int) f - 1;
+        [MethodImpl(FN_INLINE),]
+        private static int FastFloor(float f) => f >= 0 ? (int)f : (int)f - 1;
 
-        [MethodImpl(FN_INLINE)]
-        private static int FastRound(float f) => f >= 0 ? (int) (f + (float) 0.5) : (int) (f - (float) 0.5);
+        [MethodImpl(FN_INLINE),]
+        private static int FastRound(float f) => f >= 0 ? (int)(f + (float)0.5) : (int)(f - (float)0.5);
 
-        [MethodImpl(FN_INLINE)]
-        private static float Lerp(float a, float b, float t) => a + t * (b - a);
+        [MethodImpl(FN_INLINE),]
+        private static float Lerp(float a, float b, float t) => a + (t * (b - a));
 
-        [MethodImpl(FN_INLINE)]
-        private static float InterpHermiteFunc(float t) => t * t * (3 - 2 * t);
+        [MethodImpl(FN_INLINE),]
+        private static float InterpHermiteFunc(float t) => t * t * (3 - (2 * t));
 
-        [MethodImpl(FN_INLINE)]
-        private static float InterpQuinticFunc(float t) => t * t * t * (t * (t * 6 - 15) + 10);
+        [MethodImpl(FN_INLINE),]
+        private static float InterpQuinticFunc(float t) => t * t * t * ((t * ((t * 6) - 15)) + 10);
 
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private static float CubicLerp(float a, float b, float c, float d, float t)
         {
             var p = d - c - (a - b);
-            return t * t * t * p + t * t * (a - b - p) + t * (c - a) + b;
+            return (t * t * t * p) + (t * t * (a - b - p)) + (t * (c - a)) + b;
         }
 
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private static int Hash2D(int seed, int x, int y)
         {
             var hash = seed;
@@ -1632,7 +1632,7 @@ namespace Votyra.Core.Utils
             return hash;
         }
 
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private static int Hash3D(int seed, int x, int y, int z)
         {
             var hash = seed;
@@ -1646,7 +1646,7 @@ namespace Votyra.Core.Utils
             return hash;
         }
 
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private static int Hash4D(int seed, int x, int y, int z, int w)
         {
             var hash = seed;
@@ -1661,17 +1661,17 @@ namespace Votyra.Core.Utils
             return hash;
         }
 
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private static float ValCoord2D(int seed, int x, int y)
         {
             var n = seed;
             n ^= X_PRIME * x;
             n ^= Y_PRIME * y;
 
-            return n * n * n * 60493 / (float) 2147483648.0;
+            return (n * n * n * 60493) / (float)2147483648.0;
         }
 
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private static float ValCoord3D(int seed, int x, int y, int z)
         {
             var n = seed;
@@ -1679,10 +1679,10 @@ namespace Votyra.Core.Utils
             n ^= Y_PRIME * y;
             n ^= Z_PRIME * z;
 
-            return n * n * n * 60493 / (float) 2147483648.0;
+            return (n * n * n * 60493) / (float)2147483648.0;
         }
 
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private static float ValCoord4D(int seed, int x, int y, int z, int w)
         {
             var n = seed;
@@ -1691,10 +1691,10 @@ namespace Votyra.Core.Utils
             n ^= Z_PRIME * z;
             n ^= W_PRIME * w;
 
-            return n * n * n * 60493 / (float) 2147483648.0;
+            return (n * n * n * 60493) / (float)2147483648.0;
         }
 
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private static float GradCoord2D(int seed, int x, int y, float xd, float yd)
         {
             var hash = seed;
@@ -1706,10 +1706,10 @@ namespace Votyra.Core.Utils
 
             var g = GRAD_2D[hash & 7];
 
-            return xd * g.x + yd * g.y;
+            return (xd * g.x) + (yd * g.y);
         }
 
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private static float GradCoord3D(int seed, int x, int y, int z, float xd, float yd, float zd)
         {
             var hash = seed;
@@ -1722,10 +1722,10 @@ namespace Votyra.Core.Utils
 
             var g = GRAD_3D[hash & 15];
 
-            return xd * g.x + yd * g.y + zd * g.z;
+            return (xd * g.x) + (yd * g.y) + (zd * g.z);
         }
 
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private static float GradCoord4D(int seed, int x, int y, int z, int w, float xd, float yd, float zd, float wd)
         {
             var hash = seed;
@@ -1764,78 +1764,78 @@ namespace Votyra.Core.Utils
 
         private void CalculateFractalBounding()
         {
-            var amp = m_gain;
+            var amp = this.m_gain;
             float ampFractal = 1;
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
                 ampFractal += amp;
-                amp *= m_gain;
+                amp *= this.m_gain;
             }
 
-            m_fractalBounding = 1 / ampFractal;
+            this.m_fractalBounding = 1 / ampFractal;
         }
 
         // White Noise
-        [MethodImpl(FN_INLINE)]
+        [MethodImpl(FN_INLINE),]
         private int FloatCast2Int(float f)
         {
             var i = BitConverter.DoubleToInt64Bits(f);
 
-            return (int) (i ^ (i >> 32));
+            return (int)(i ^ (i >> 32));
         }
 
         private float SingleValueFractalFBM(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = SingleValue(seed, x, y, z);
+            var seed = this.m_seed;
+            var sum = this.SingleValue(seed, x, y, z);
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleValue(++seed, x, y, z) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleValue(++seed, x, y, z) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleValueFractalBillow(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = Math.Abs(SingleValue(seed, x, y, z)) * 2 - 1;
+            var seed = this.m_seed;
+            var sum = (Math.Abs(this.SingleValue(seed, x, y, z)) * 2) - 1;
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SingleValue(++seed, x, y, z)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += ((Math.Abs(this.SingleValue(++seed, x, y, z)) * 2) - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleValueFractalRigidMulti(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = 1 - Math.Abs(SingleValue(seed, x, y, z));
+            var seed = this.m_seed;
+            var sum = 1 - Math.Abs(this.SingleValue(seed, x, y, z));
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleValue(++seed, x, y, z))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleValue(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -1851,7 +1851,7 @@ namespace Votyra.Core.Utils
             var z1 = z0 + 1;
 
             float xs, ys, zs;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:
@@ -1886,52 +1886,52 @@ namespace Votyra.Core.Utils
 
         private float SingleValueFractalFBM(float x, float y)
         {
-            var seed = m_seed;
-            var sum = SingleValue(seed, x, y);
+            var seed = this.m_seed;
+            var sum = this.SingleValue(seed, x, y);
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleValue(++seed, x, y) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleValue(++seed, x, y) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleValueFractalBillow(float x, float y)
         {
-            var seed = m_seed;
-            var sum = Math.Abs(SingleValue(seed, x, y)) * 2 - 1;
+            var seed = this.m_seed;
+            var sum = (Math.Abs(this.SingleValue(seed, x, y)) * 2) - 1;
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                amp *= m_gain;
-                sum += (Math.Abs(SingleValue(++seed, x, y)) * 2 - 1) * amp;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                amp *= this.m_gain;
+                sum += ((Math.Abs(this.SingleValue(++seed, x, y)) * 2) - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleValueFractalRigidMulti(float x, float y)
         {
-            var seed = m_seed;
-            var sum = 1 - Math.Abs(SingleValue(seed, x, y));
+            var seed = this.m_seed;
+            var sum = 1 - Math.Abs(this.SingleValue(seed, x, y));
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleValue(++seed, x, y))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleValue(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -1945,7 +1945,7 @@ namespace Votyra.Core.Utils
             var y1 = y0 + 1;
 
             float xs, ys;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:
@@ -1972,56 +1972,56 @@ namespace Votyra.Core.Utils
 
         private float SinglePerlinFractalFBM(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = SinglePerlin(seed, x, y, z);
+            var seed = this.m_seed;
+            var sum = this.SinglePerlin(seed, x, y, z);
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SinglePerlin(++seed, x, y, z) * amp;
+                amp *= this.m_gain;
+                sum += this.SinglePerlin(++seed, x, y, z) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SinglePerlinFractalBillow(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = Math.Abs(SinglePerlin(seed, x, y, z)) * 2 - 1;
+            var seed = this.m_seed;
+            var sum = (Math.Abs(this.SinglePerlin(seed, x, y, z)) * 2) - 1;
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SinglePerlin(++seed, x, y, z)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += ((Math.Abs(this.SinglePerlin(++seed, x, y, z)) * 2) - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SinglePerlinFractalRigidMulti(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = 1 - Math.Abs(SinglePerlin(seed, x, y, z));
+            var seed = this.m_seed;
+            var sum = 1 - Math.Abs(this.SinglePerlin(seed, x, y, z));
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SinglePerlin(++seed, x, y, z))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SinglePerlin(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -2037,7 +2037,7 @@ namespace Votyra.Core.Utils
             var z1 = z0 + 1;
 
             float xs, ys, zs;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:
@@ -2079,53 +2079,53 @@ namespace Votyra.Core.Utils
 
         private float SinglePerlinFractalFBM(float x, float y)
         {
-            var seed = m_seed;
-            var sum = SinglePerlin(seed, x, y);
+            var seed = this.m_seed;
+            var sum = this.SinglePerlin(seed, x, y);
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SinglePerlin(++seed, x, y) * amp;
+                amp *= this.m_gain;
+                sum += this.SinglePerlin(++seed, x, y) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SinglePerlinFractalBillow(float x, float y)
         {
-            var seed = m_seed;
-            var sum = Math.Abs(SinglePerlin(seed, x, y)) * 2 - 1;
+            var seed = this.m_seed;
+            var sum = (Math.Abs(this.SinglePerlin(seed, x, y)) * 2) - 1;
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SinglePerlin(++seed, x, y)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += ((Math.Abs(this.SinglePerlin(++seed, x, y)) * 2) - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SinglePerlinFractalRigidMulti(float x, float y)
         {
-            var seed = m_seed;
-            var sum = 1 - Math.Abs(SinglePerlin(seed, x, y));
+            var seed = this.m_seed;
+            var sum = 1 - Math.Abs(this.SinglePerlin(seed, x, y));
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SinglePerlin(++seed, x, y))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SinglePerlin(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -2139,7 +2139,7 @@ namespace Votyra.Core.Utils
             var y1 = y0 + 1;
 
             float xs, ys;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:
@@ -2171,56 +2171,56 @@ namespace Votyra.Core.Utils
 
         private float SingleSimplexFractalFBM(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = SingleSimplex(seed, x, y, z);
+            var seed = this.m_seed;
+            var sum = this.SingleSimplex(seed, x, y, z);
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleSimplex(++seed, x, y, z) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleSimplex(++seed, x, y, z) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleSimplexFractalBillow(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = Math.Abs(SingleSimplex(seed, x, y, z)) * 2 - 1;
+            var seed = this.m_seed;
+            var sum = (Math.Abs(this.SingleSimplex(seed, x, y, z)) * 2) - 1;
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SingleSimplex(++seed, x, y, z)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += ((Math.Abs(this.SingleSimplex(++seed, x, y, z)) * 2) - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleSimplexFractalRigidMulti(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = 1 - Math.Abs(SingleSimplex(seed, x, y, z));
+            var seed = this.m_seed;
+            var sum = 1 - Math.Abs(this.SingleSimplex(seed, x, y, z));
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleSimplex(++seed, x, y, z))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleSimplex(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -2302,19 +2302,19 @@ namespace Votyra.Core.Utils
                 }
             }
 
-            var x1 = x0 - i1 + G3;
-            var y1 = y0 - j1 + G3;
-            var z1 = z0 - k1 + G3;
-            var x2 = x0 - i2 + F3;
-            var y2 = y0 - j2 + F3;
-            var z2 = z0 - k2 + F3;
+            var x1 = (x0 - i1) + G3;
+            var y1 = (y0 - j1) + G3;
+            var z1 = (z0 - k1) + G3;
+            var x2 = (x0 - i2) + F3;
+            var y2 = (y0 - j2) + F3;
+            var z2 = (z0 - k2) + F3;
             var x3 = x0 + G33;
             var y3 = y0 + G33;
             var z3 = z0 + G33;
 
             float n0, n1, n2, n3;
 
-            t = (float) 0.6 - x0 * x0 - y0 * y0 - z0 * z0;
+            t = (float)0.6 - (x0 * x0) - (y0 * y0) - (z0 * z0);
             if (t < 0)
             {
                 n0 = 0;
@@ -2325,7 +2325,7 @@ namespace Votyra.Core.Utils
                 n0 = t * t * GradCoord3D(seed, i, j, k, x0, y0, z0);
             }
 
-            t = (float) 0.6 - x1 * x1 - y1 * y1 - z1 * z1;
+            t = (float)0.6 - (x1 * x1) - (y1 * y1) - (z1 * z1);
             if (t < 0)
             {
                 n1 = 0;
@@ -2336,7 +2336,7 @@ namespace Votyra.Core.Utils
                 n1 = t * t * GradCoord3D(seed, i + i1, j + j1, k + k1, x1, y1, z1);
             }
 
-            t = (float) 0.6 - x2 * x2 - y2 * y2 - z2 * z2;
+            t = (float)0.6 - (x2 * x2) - (y2 * y2) - (z2 * z2);
             if (t < 0)
             {
                 n2 = 0;
@@ -2347,7 +2347,7 @@ namespace Votyra.Core.Utils
                 n2 = t * t * GradCoord3D(seed, i + i2, j + j2, k + k2, x2, y2, z2);
             }
 
-            t = (float) 0.6 - x3 * x3 - y3 * y3 - z3 * z3;
+            t = (float)0.6 - (x3 * x3) - (y3 * y3) - (z3 * z3);
             if (t < 0)
             {
                 n3 = 0;
@@ -2363,53 +2363,53 @@ namespace Votyra.Core.Utils
 
         private float SingleSimplexFractalFBM(float x, float y)
         {
-            var seed = m_seed;
-            var sum = SingleSimplex(seed, x, y);
+            var seed = this.m_seed;
+            var sum = this.SingleSimplex(seed, x, y);
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleSimplex(++seed, x, y) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleSimplex(++seed, x, y) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleSimplexFractalBillow(float x, float y)
         {
-            var seed = m_seed;
-            var sum = Math.Abs(SingleSimplex(seed, x, y)) * 2 - 1;
+            var seed = this.m_seed;
+            var sum = (Math.Abs(this.SingleSimplex(seed, x, y)) * 2) - 1;
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SingleSimplex(++seed, x, y)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += ((Math.Abs(this.SingleSimplex(++seed, x, y)) * 2) - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleSimplexFractalRigidMulti(float x, float y)
         {
-            var seed = m_seed;
-            var sum = 1 - Math.Abs(SingleSimplex(seed, x, y));
+            var seed = this.m_seed;
+            var sum = 1 - Math.Abs(this.SingleSimplex(seed, x, y));
             float amp = 1;
 
-            for (var i = 1; i < m_octaves; i++)
+            for (var i = 1; i < this.m_octaves; i++)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleSimplex(++seed, x, y))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleSimplex(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -2440,14 +2440,14 @@ namespace Votyra.Core.Utils
                 j1 = 1;
             }
 
-            var x1 = x0 - i1 + G2;
-            var y1 = y0 - j1 + G2;
-            var x2 = x0 - 1 + F2;
-            var y2 = y0 - 1 + F2;
+            var x1 = (x0 - i1) + G2;
+            var y1 = (y0 - j1) + G2;
+            var x2 = (x0 - 1) + F2;
+            var y2 = (y0 - 1) + F2;
 
             float n0, n1, n2;
 
-            t = (float) 0.5 - x0 * x0 - y0 * y0;
+            t = (float)0.5 - (x0 * x0) - (y0 * y0);
             if (t < 0)
             {
                 n0 = 0;
@@ -2458,7 +2458,7 @@ namespace Votyra.Core.Utils
                 n0 = t * t * GradCoord2D(seed, i, j, x0, y0);
             }
 
-            t = (float) 0.5 - x1 * x1 - y1 * y1;
+            t = (float)0.5 - (x1 * x1) - (y1 * y1);
             if (t < 0)
             {
                 n1 = 0;
@@ -2469,7 +2469,7 @@ namespace Votyra.Core.Utils
                 n1 = t * t * GradCoord2D(seed, i + i1, j + j1, x1, y1);
             }
 
-            t = (float) 0.5 - x2 * x2 - y2 * y2;
+            t = (float)0.5 - (x2 * x2) - (y2 * y2);
             if (t < 0)
             {
                 n2 = 0;
@@ -2522,24 +2522,24 @@ namespace Votyra.Core.Utils
             var l2 = SIMPLEX_4D[c] >= 2 ? 1 : 0;
             var l3 = SIMPLEX_4D[c] >= 1 ? 1 : 0;
 
-            var x1 = x0 - i1 + G4;
-            var y1 = y0 - j1 + G4;
-            var z1 = z0 - k1 + G4;
-            var w1 = w0 - l1 + G4;
-            var x2 = x0 - i2 + 2 * G4;
-            var y2 = y0 - j2 + 2 * G4;
-            var z2 = z0 - k2 + 2 * G4;
-            var w2 = w0 - l2 + 2 * G4;
-            var x3 = x0 - i3 + 3 * G4;
-            var y3 = y0 - j3 + 3 * G4;
-            var z3 = z0 - k3 + 3 * G4;
-            var w3 = w0 - l3 + 3 * G4;
-            var x4 = x0 - 1 + 4 * G4;
-            var y4 = y0 - 1 + 4 * G4;
-            var z4 = z0 - 1 + 4 * G4;
-            var w4 = w0 - 1 + 4 * G4;
+            var x1 = (x0 - i1) + G4;
+            var y1 = (y0 - j1) + G4;
+            var z1 = (z0 - k1) + G4;
+            var w1 = (w0 - l1) + G4;
+            var x2 = (x0 - i2) + (2 * G4);
+            var y2 = (y0 - j2) + (2 * G4);
+            var z2 = (z0 - k2) + (2 * G4);
+            var w2 = (w0 - l2) + (2 * G4);
+            var x3 = (x0 - i3) + (3 * G4);
+            var y3 = (y0 - j3) + (3 * G4);
+            var z3 = (z0 - k3) + (3 * G4);
+            var w3 = (w0 - l3) + (3 * G4);
+            var x4 = (x0 - 1) + (4 * G4);
+            var y4 = (y0 - 1) + (4 * G4);
+            var z4 = (z0 - 1) + (4 * G4);
+            var w4 = (w0 - 1) + (4 * G4);
 
-            t = (float) 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
+            t = (float)0.6 - (x0 * x0) - (y0 * y0) - (z0 * z0) - (w0 * w0);
             if (t < 0)
             {
                 n0 = 0;
@@ -2550,7 +2550,7 @@ namespace Votyra.Core.Utils
                 n0 = t * t * GradCoord4D(seed, i, j, k, l, x0, y0, z0, w0);
             }
 
-            t = (float) 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
+            t = (float)0.6 - (x1 * x1) - (y1 * y1) - (z1 * z1) - (w1 * w1);
             if (t < 0)
             {
                 n1 = 0;
@@ -2561,7 +2561,7 @@ namespace Votyra.Core.Utils
                 n1 = t * t * GradCoord4D(seed, i + i1, j + j1, k + k1, l + l1, x1, y1, z1, w1);
             }
 
-            t = (float) 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
+            t = (float)0.6 - (x2 * x2) - (y2 * y2) - (z2 * z2) - (w2 * w2);
             if (t < 0)
             {
                 n2 = 0;
@@ -2572,7 +2572,7 @@ namespace Votyra.Core.Utils
                 n2 = t * t * GradCoord4D(seed, i + i2, j + j2, k + k2, l + l2, x2, y2, z2, w2);
             }
 
-            t = (float) 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
+            t = (float)0.6 - (x3 * x3) - (y3 * y3) - (z3 * z3) - (w3 * w3);
             if (t < 0)
             {
                 n3 = 0;
@@ -2583,7 +2583,7 @@ namespace Votyra.Core.Utils
                 n3 = t * t * GradCoord4D(seed, i + i3, j + j3, k + k3, l + l3, x3, y3, z3, w3);
             }
 
-            t = (float) 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
+            t = (float)0.6 - (x4 * x4) - (y4 * y4) - (z4 * z4) - (w4 * w4);
             if (t < 0)
             {
                 n4 = 0;
@@ -2599,59 +2599,59 @@ namespace Votyra.Core.Utils
 
         private float SingleCubicFractalFBM(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = SingleCubic(seed, x, y, z);
+            var seed = this.m_seed;
+            var sum = this.SingleCubic(seed, x, y, z);
             float amp = 1;
             var i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleCubic(++seed, x, y, z) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleCubic(++seed, x, y, z) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleCubicFractalBillow(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = Math.Abs(SingleCubic(seed, x, y, z)) * 2 - 1;
+            var seed = this.m_seed;
+            var sum = (Math.Abs(this.SingleCubic(seed, x, y, z)) * 2) - 1;
             float amp = 1;
             var i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SingleCubic(++seed, x, y, z)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += ((Math.Abs(this.SingleCubic(++seed, x, y, z)) * 2) - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleCubicFractalRigidMulti(float x, float y, float z)
         {
-            var seed = m_seed;
-            var sum = 1 - Math.Abs(SingleCubic(seed, x, y, z));
+            var seed = this.m_seed;
+            var sum = 1 - Math.Abs(this.SingleCubic(seed, x, y, z));
             float amp = 1;
             var i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
-                z *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
+                z *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleCubic(++seed, x, y, z))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleCubic(++seed, x, y, z))) * amp;
             }
 
             return sum;
@@ -2682,56 +2682,56 @@ namespace Votyra.Core.Utils
 
         private float SingleCubicFractalFBM(float x, float y)
         {
-            var seed = m_seed;
-            var sum = SingleCubic(seed, x, y);
+            var seed = this.m_seed;
+            var sum = this.SingleCubic(seed, x, y);
             float amp = 1;
             var i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += SingleCubic(++seed, x, y) * amp;
+                amp *= this.m_gain;
+                sum += this.SingleCubic(++seed, x, y) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleCubicFractalBillow(float x, float y)
         {
-            var seed = m_seed;
-            var sum = Math.Abs(SingleCubic(seed, x, y)) * 2 - 1;
+            var seed = this.m_seed;
+            var sum = (Math.Abs(this.SingleCubic(seed, x, y)) * 2) - 1;
             float amp = 1;
             var i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum += (Math.Abs(SingleCubic(++seed, x, y)) * 2 - 1) * amp;
+                amp *= this.m_gain;
+                sum += ((Math.Abs(this.SingleCubic(++seed, x, y)) * 2) - 1) * amp;
             }
 
-            return sum * m_fractalBounding;
+            return sum * this.m_fractalBounding;
         }
 
         private float SingleCubicFractalRigidMulti(float x, float y)
         {
-            var seed = m_seed;
-            var sum = 1 - Math.Abs(SingleCubic(seed, x, y));
+            var seed = this.m_seed;
+            var sum = 1 - Math.Abs(this.SingleCubic(seed, x, y));
             float amp = 1;
             var i = 0;
 
-            while (++i < m_octaves)
+            while (++i < this.m_octaves)
             {
-                x *= m_lacunarity;
-                y *= m_lacunarity;
+                x *= this.m_lacunarity;
+                y *= this.m_lacunarity;
 
-                amp *= m_gain;
-                sum -= (1 - Math.Abs(SingleCubic(++seed, x, y))) * amp;
+                amp *= this.m_gain;
+                sum -= (1 - Math.Abs(this.SingleCubic(++seed, x, y))) * amp;
             }
 
             return sum;
@@ -2764,22 +2764,22 @@ namespace Votyra.Core.Utils
             float distance = 999999;
             int xc = 0, yc = 0, zc = 0;
 
-            switch (m_cellularDistanceFunction)
+            switch (this.m_cellularDistanceFunction)
             {
                 case CellularDistanceFunction.Euclidean:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            for (var zi = zr - 1; zi <= zr + 1; zi++)
+                            for (var zi = zr - 1; zi <= (zr + 1); zi++)
                             {
-                                var vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                var vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                var vecX = xi - x + vec.x * m_cellularJitter;
-                                var vecY = yi - y + vec.y * m_cellularJitter;
-                                var vecZ = zi - z + vec.z * m_cellularJitter;
+                                var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                                var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
+                                var vecZ = (zi - z) + (vec.z * this.m_cellularJitter);
 
-                                var newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
+                                var newDistance = (vecX * vecX) + (vecY * vecY) + (vecZ * vecZ);
 
                                 if (newDistance < distance)
                                 {
@@ -2795,17 +2795,17 @@ namespace Votyra.Core.Utils
                     break;
 
                 case CellularDistanceFunction.Manhattan:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            for (var zi = zr - 1; zi <= zr + 1; zi++)
+                            for (var zi = zr - 1; zi <= (zr + 1); zi++)
                             {
-                                var vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                var vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                var vecX = xi - x + vec.x * m_cellularJitter;
-                                var vecY = yi - y + vec.y * m_cellularJitter;
-                                var vecZ = zi - z + vec.z * m_cellularJitter;
+                                var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                                var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
+                                var vecZ = (zi - z) + (vec.z * this.m_cellularJitter);
 
                                 var newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ);
 
@@ -2823,19 +2823,19 @@ namespace Votyra.Core.Utils
                     break;
 
                 case CellularDistanceFunction.Natural:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            for (var zi = zr - 1; zi <= zr + 1; zi++)
+                            for (var zi = zr - 1; zi <= (zr + 1); zi++)
                             {
-                                var vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                var vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                var vecX = xi - x + vec.x * m_cellularJitter;
-                                var vecY = yi - y + vec.y * m_cellularJitter;
-                                var vecZ = zi - z + vec.z * m_cellularJitter;
+                                var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                                var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
+                                var vecZ = (zi - z) + (vec.z * this.m_cellularJitter);
 
-                                var newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
+                                var newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + ((vecX * vecX) + (vecY * vecY) + (vecZ * vecZ));
 
                                 if (newDistance < distance)
                                 {
@@ -2851,14 +2851,14 @@ namespace Votyra.Core.Utils
                     break;
             }
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.CellValue:
-                    return ValCoord3D(m_seed, xc, yc, zc);
+                    return ValCoord3D(this.m_seed, xc, yc, zc);
 
                 case CellularReturnType.NoiseLookup:
-                    var vec = CELL_3D[Hash3D(m_seed, xc, yc, zc) & 255];
-                    return m_cellularNoiseLookup.GetNoise(xc + vec.x * m_cellularJitter, yc + vec.y * m_cellularJitter, zc + vec.z * m_cellularJitter);
+                    var vec = CELL_3D[Hash3D(this.m_seed, xc, yc, zc) & 255];
+                    return this.m_cellularNoiseLookup.GetNoise(xc + (vec.x * this.m_cellularJitter), yc + (vec.y * this.m_cellularJitter), zc + (vec.z * this.m_cellularJitter));
 
                 case CellularReturnType.Distance:
                     return distance;
@@ -2879,27 +2879,27 @@ namespace Votyra.Core.Utils
                 999999,
                 999999,
                 999999,
-                999999
+                999999,
             };
 
-            switch (m_cellularDistanceFunction)
+            switch (this.m_cellularDistanceFunction)
             {
                 case CellularDistanceFunction.Euclidean:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            for (var zi = zr - 1; zi <= zr + 1; zi++)
+                            for (var zi = zr - 1; zi <= (zr + 1); zi++)
                             {
-                                var vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                var vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                var vecX = xi - x + vec.x * m_cellularJitter;
-                                var vecY = yi - y + vec.y * m_cellularJitter;
-                                var vecZ = zi - z + vec.z * m_cellularJitter;
+                                var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                                var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
+                                var vecZ = (zi - z) + (vec.z * this.m_cellularJitter);
 
-                                var newDistance = vecX * vecX + vecY * vecY + vecZ * vecZ;
+                                var newDistance = (vecX * vecX) + (vecY * vecY) + (vecZ * vecZ);
 
-                                for (var i = m_cellularDistanceIndex1; i > 0; i--)
+                                for (var i = this.m_cellularDistanceIndex1; i > 0; i--)
                                 {
                                     distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                                 }
@@ -2912,21 +2912,21 @@ namespace Votyra.Core.Utils
                     break;
 
                 case CellularDistanceFunction.Manhattan:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            for (var zi = zr - 1; zi <= zr + 1; zi++)
+                            for (var zi = zr - 1; zi <= (zr + 1); zi++)
                             {
-                                var vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                var vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                var vecX = xi - x + vec.x * m_cellularJitter;
-                                var vecY = yi - y + vec.y * m_cellularJitter;
-                                var vecZ = zi - z + vec.z * m_cellularJitter;
+                                var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                                var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
+                                var vecZ = (zi - z) + (vec.z * this.m_cellularJitter);
 
                                 var newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ);
 
-                                for (var i = m_cellularDistanceIndex1; i > 0; i--)
+                                for (var i = this.m_cellularDistanceIndex1; i > 0; i--)
                                 {
                                     distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                                 }
@@ -2939,21 +2939,21 @@ namespace Votyra.Core.Utils
                     break;
 
                 case CellularDistanceFunction.Natural:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            for (var zi = zr - 1; zi <= zr + 1; zi++)
+                            for (var zi = zr - 1; zi <= (zr + 1); zi++)
                             {
-                                var vec = CELL_3D[Hash3D(m_seed, xi, yi, zi) & 255];
+                                var vec = CELL_3D[Hash3D(this.m_seed, xi, yi, zi) & 255];
 
-                                var vecX = xi - x + vec.x * m_cellularJitter;
-                                var vecY = yi - y + vec.y * m_cellularJitter;
-                                var vecZ = zi - z + vec.z * m_cellularJitter;
+                                var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                                var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
+                                var vecZ = (zi - z) + (vec.z * this.m_cellularJitter);
 
-                                var newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + (vecX * vecX + vecY * vecY + vecZ * vecZ);
+                                var newDistance = Math.Abs(vecX) + Math.Abs(vecY) + Math.Abs(vecZ) + ((vecX * vecX) + (vecY * vecY) + (vecZ * vecZ));
 
-                                for (var i = m_cellularDistanceIndex1; i > 0; i--)
+                                for (var i = this.m_cellularDistanceIndex1; i > 0; i--)
                                 {
                                     distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                                 }
@@ -2966,22 +2966,22 @@ namespace Votyra.Core.Utils
                     break;
             }
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.Distance2:
-                    return distance[m_cellularDistanceIndex1];
+                    return distance[this.m_cellularDistanceIndex1];
 
                 case CellularReturnType.Distance2Add:
-                    return distance[m_cellularDistanceIndex1] + distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] + distance[this.m_cellularDistanceIndex0];
 
                 case CellularReturnType.Distance2Sub:
-                    return distance[m_cellularDistanceIndex1] - distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] - distance[this.m_cellularDistanceIndex0];
 
                 case CellularReturnType.Distance2Mul:
-                    return distance[m_cellularDistanceIndex1] * distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] * distance[this.m_cellularDistanceIndex0];
 
                 case CellularReturnType.Distance2Div:
-                    return distance[m_cellularDistanceIndex0] / distance[m_cellularDistanceIndex1];
+                    return distance[this.m_cellularDistanceIndex0] / distance[this.m_cellularDistanceIndex1];
 
                 default:
                     return 0;
@@ -2996,20 +2996,20 @@ namespace Votyra.Core.Utils
             float distance = 999999;
             int xc = 0, yc = 0;
 
-            switch (m_cellularDistanceFunction)
+            switch (this.m_cellularDistanceFunction)
             {
                 default:
                 case CellularDistanceFunction.Euclidean:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            var vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            var vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            var vecX = xi - x + vec.x * m_cellularJitter;
-                            var vecY = yi - y + vec.y * m_cellularJitter;
+                            var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                            var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
 
-                            var newDistance = vecX * vecX + vecY * vecY;
+                            var newDistance = (vecX * vecX) + (vecY * vecY);
 
                             if (newDistance < distance)
                             {
@@ -3023,14 +3023,14 @@ namespace Votyra.Core.Utils
                     break;
 
                 case CellularDistanceFunction.Manhattan:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            var vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            var vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            var vecX = xi - x + vec.x * m_cellularJitter;
-                            var vecY = yi - y + vec.y * m_cellularJitter;
+                            var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                            var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
 
                             var newDistance = Math.Abs(vecX) + Math.Abs(vecY);
 
@@ -3046,16 +3046,16 @@ namespace Votyra.Core.Utils
                     break;
 
                 case CellularDistanceFunction.Natural:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            var vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            var vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            var vecX = xi - x + vec.x * m_cellularJitter;
-                            var vecY = yi - y + vec.y * m_cellularJitter;
+                            var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                            var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
 
-                            var newDistance = Math.Abs(vecX) + Math.Abs(vecY) + (vecX * vecX + vecY * vecY);
+                            var newDistance = Math.Abs(vecX) + Math.Abs(vecY) + ((vecX * vecX) + (vecY * vecY));
 
                             if (newDistance < distance)
                             {
@@ -3069,14 +3069,14 @@ namespace Votyra.Core.Utils
                     break;
             }
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.CellValue:
-                    return ValCoord2D(m_seed, xc, yc);
+                    return ValCoord2D(this.m_seed, xc, yc);
 
                 case CellularReturnType.NoiseLookup:
-                    var vec = CELL_2D[Hash2D(m_seed, xc, yc) & 255];
-                    return m_cellularNoiseLookup.GetNoise(xc + vec.x * m_cellularJitter, yc + vec.y * m_cellularJitter);
+                    var vec = CELL_2D[Hash2D(this.m_seed, xc, yc) & 255];
+                    return this.m_cellularNoiseLookup.GetNoise(xc + (vec.x * this.m_cellularJitter), yc + (vec.y * this.m_cellularJitter));
 
                 case CellularReturnType.Distance:
                     return distance;
@@ -3096,25 +3096,25 @@ namespace Votyra.Core.Utils
                 999999,
                 999999,
                 999999,
-                999999
+                999999,
             };
 
-            switch (m_cellularDistanceFunction)
+            switch (this.m_cellularDistanceFunction)
             {
                 default:
                 case CellularDistanceFunction.Euclidean:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            var vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            var vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            var vecX = xi - x + vec.x * m_cellularJitter;
-                            var vecY = yi - y + vec.y * m_cellularJitter;
+                            var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                            var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
 
-                            var newDistance = vecX * vecX + vecY * vecY;
+                            var newDistance = (vecX * vecX) + (vecY * vecY);
 
-                            for (var i = m_cellularDistanceIndex1; i > 0; i--)
+                            for (var i = this.m_cellularDistanceIndex1; i > 0; i--)
                             {
                                 distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                             }
@@ -3126,18 +3126,18 @@ namespace Votyra.Core.Utils
                     break;
 
                 case CellularDistanceFunction.Manhattan:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            var vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            var vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            var vecX = xi - x + vec.x * m_cellularJitter;
-                            var vecY = yi - y + vec.y * m_cellularJitter;
+                            var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                            var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
 
                             var newDistance = Math.Abs(vecX) + Math.Abs(vecY);
 
-                            for (var i = m_cellularDistanceIndex1; i > 0; i--)
+                            for (var i = this.m_cellularDistanceIndex1; i > 0; i--)
                             {
                                 distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                             }
@@ -3149,18 +3149,18 @@ namespace Votyra.Core.Utils
                     break;
 
                 case CellularDistanceFunction.Natural:
-                    for (var xi = xr - 1; xi <= xr + 1; xi++)
+                    for (var xi = xr - 1; xi <= (xr + 1); xi++)
                     {
-                        for (var yi = yr - 1; yi <= yr + 1; yi++)
+                        for (var yi = yr - 1; yi <= (yr + 1); yi++)
                         {
-                            var vec = CELL_2D[Hash2D(m_seed, xi, yi) & 255];
+                            var vec = CELL_2D[Hash2D(this.m_seed, xi, yi) & 255];
 
-                            var vecX = xi - x + vec.x * m_cellularJitter;
-                            var vecY = yi - y + vec.y * m_cellularJitter;
+                            var vecX = (xi - x) + (vec.x * this.m_cellularJitter);
+                            var vecY = (yi - y) + (vec.y * this.m_cellularJitter);
 
-                            var newDistance = Math.Abs(vecX) + Math.Abs(vecY) + (vecX * vecX + vecY * vecY);
+                            var newDistance = Math.Abs(vecX) + Math.Abs(vecY) + ((vecX * vecX) + (vecY * vecY));
 
-                            for (var i = m_cellularDistanceIndex1; i > 0; i--)
+                            for (var i = this.m_cellularDistanceIndex1; i > 0; i--)
                             {
                                 distance[i] = Math.Max(Math.Min(distance[i], newDistance), distance[i - 1]);
                             }
@@ -3172,22 +3172,22 @@ namespace Votyra.Core.Utils
                     break;
             }
 
-            switch (m_cellularReturnType)
+            switch (this.m_cellularReturnType)
             {
                 case CellularReturnType.Distance2:
-                    return distance[m_cellularDistanceIndex1];
+                    return distance[this.m_cellularDistanceIndex1];
 
                 case CellularReturnType.Distance2Add:
-                    return distance[m_cellularDistanceIndex1] + distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] + distance[this.m_cellularDistanceIndex0];
 
                 case CellularReturnType.Distance2Sub:
-                    return distance[m_cellularDistanceIndex1] - distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] - distance[this.m_cellularDistanceIndex0];
 
                 case CellularReturnType.Distance2Mul:
-                    return distance[m_cellularDistanceIndex1] * distance[m_cellularDistanceIndex0];
+                    return distance[this.m_cellularDistanceIndex1] * distance[this.m_cellularDistanceIndex0];
 
                 case CellularReturnType.Distance2Div:
-                    return distance[m_cellularDistanceIndex0] / distance[m_cellularDistanceIndex1];
+                    return distance[this.m_cellularDistanceIndex0] / distance[this.m_cellularDistanceIndex1];
 
                 default:
                     return 0;
@@ -3208,7 +3208,7 @@ namespace Votyra.Core.Utils
             var z1 = z0 + 1;
 
             float xs, ys, zs;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:
@@ -3278,7 +3278,7 @@ namespace Votyra.Core.Utils
             var y1 = y0 + 1;
 
             float xs, ys;
-            switch (m_interp)
+            switch (this.m_interp)
             {
                 default:
                 case Interp.Linear:

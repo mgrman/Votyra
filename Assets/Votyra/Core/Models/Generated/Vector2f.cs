@@ -14,12 +14,12 @@ namespace Votyra.Core.Models
 
         public readonly float Y;
 
-        [JsonConstructor]
+        [JsonConstructor,]
         public Vector2f(float x, float y)
         {
-            X = x;
+            this.X = x;
 
-            Y = y;
+            this.Y = y;
         }
 
         public static Vector2f operator -(Vector2f a) => new Vector2f(-a.X, -a.Y);
@@ -74,65 +74,65 @@ namespace Votyra.Core.Models
 
         public static Vector2f operator %(int a, Vector2f b) => new Vector2f(a % b.X, a % b.Y);
 
-        public static bool operator <(Vector2f a, Vector2f b) => a.X < b.X && a.Y < b.Y;
+        public static bool operator <(Vector2f a, Vector2f b) => (a.X < b.X) && (a.Y < b.Y);
 
-        public static bool operator <(Vector2f a, float b) => a.X < b && a.Y < b;
+        public static bool operator <(Vector2f a, float b) => (a.X < b) && (a.Y < b);
 
-        public static bool operator <(float a, Vector2f b) => a < b.X && a < b.Y;
+        public static bool operator <(float a, Vector2f b) => (a < b.X) && (a < b.Y);
 
-        public static bool operator <(Vector2f a, int b) => a.X < b && a.Y < b;
+        public static bool operator <(Vector2f a, int b) => (a.X < b) && (a.Y < b);
 
-        public static bool operator <(int a, Vector2f b) => a < b.X && a < b.Y;
+        public static bool operator <(int a, Vector2f b) => (a < b.X) && (a < b.Y);
 
-        public static bool operator >(Vector2f a, Vector2f b) => a.X > b.X && a.Y > b.Y;
+        public static bool operator >(Vector2f a, Vector2f b) => (a.X > b.X) && (a.Y > b.Y);
 
-        public static bool operator >(Vector2f a, float b) => a.X > b && a.Y > b;
+        public static bool operator >(Vector2f a, float b) => (a.X > b) && (a.Y > b);
 
-        public static bool operator >(float a, Vector2f b) => a > b.X && a > b.Y;
+        public static bool operator >(float a, Vector2f b) => (a > b.X) && (a > b.Y);
 
-        public static bool operator >(Vector2f a, int b) => a.X > b && a.Y > b;
+        public static bool operator >(Vector2f a, int b) => (a.X > b) && (a.Y > b);
 
-        public static bool operator >(int a, Vector2f b) => a > b.X && a > b.Y;
+        public static bool operator >(int a, Vector2f b) => (a > b.X) && (a > b.Y);
 
-        public static bool operator <=(Vector2f a, Vector2f b) => a.X <= b.X && a.Y <= b.Y;
+        public static bool operator <=(Vector2f a, Vector2f b) => (a.X <= b.X) && (a.Y <= b.Y);
 
-        public static bool operator <=(Vector2f a, float b) => a.X <= b && a.Y <= b;
+        public static bool operator <=(Vector2f a, float b) => (a.X <= b) && (a.Y <= b);
 
-        public static bool operator <=(float a, Vector2f b) => a <= b.X && a <= b.Y;
+        public static bool operator <=(float a, Vector2f b) => (a <= b.X) && (a <= b.Y);
 
-        public static bool operator <=(Vector2f a, int b) => a.X <= b && a.Y <= b;
+        public static bool operator <=(Vector2f a, int b) => (a.X <= b) && (a.Y <= b);
 
-        public static bool operator <=(int a, Vector2f b) => a <= b.X && a <= b.Y;
+        public static bool operator <=(int a, Vector2f b) => (a <= b.X) && (a <= b.Y);
 
-        public static bool operator >=(Vector2f a, Vector2f b) => a.X >= b.X && a.Y >= b.Y;
+        public static bool operator >=(Vector2f a, Vector2f b) => (a.X >= b.X) && (a.Y >= b.Y);
 
-        public static bool operator >=(Vector2f a, float b) => a.X >= b && a.Y >= b;
+        public static bool operator >=(Vector2f a, float b) => (a.X >= b) && (a.Y >= b);
 
-        public static bool operator >=(float a, Vector2f b) => a >= b.X && a >= b.Y;
+        public static bool operator >=(float a, Vector2f b) => (a >= b.X) && (a >= b.Y);
 
-        public static bool operator >=(Vector2f a, int b) => a.X >= b && a.Y >= b;
+        public static bool operator >=(Vector2f a, int b) => (a.X >= b) && (a.Y >= b);
 
-        public static bool operator >=(int a, Vector2f b) => a >= b.X && a >= b.Y;
+        public static bool operator >=(int a, Vector2f b) => (a >= b.X) && (a >= b.Y);
 
-        public static bool operator ==(Vector2f a, Vector2f b) => a.X == b.X && a.Y == b.Y;
+        public static bool operator ==(Vector2f a, Vector2f b) => (a.X == b.X) && (a.Y == b.Y);
 
-        public static bool operator ==(Vector2f a, float b) => a.X == b && a.Y == b;
+        public static bool operator ==(Vector2f a, float b) => (a.X == b) && (a.Y == b);
 
-        public static bool operator ==(float a, Vector2f b) => a == b.X && a == b.Y;
+        public static bool operator ==(float a, Vector2f b) => (a == b.X) && (a == b.Y);
 
-        public static bool operator ==(Vector2f a, int b) => a.X == b && a.Y == b;
+        public static bool operator ==(Vector2f a, int b) => (a.X == b) && (a.Y == b);
 
-        public static bool operator ==(int a, Vector2f b) => a == b.X && a == b.Y;
+        public static bool operator ==(int a, Vector2f b) => (a == b.X) && (a == b.Y);
 
-        public static bool operator !=(Vector2f a, Vector2f b) => a.X != b.X || a.Y != b.Y;
+        public static bool operator !=(Vector2f a, Vector2f b) => (a.X != b.X) || (a.Y != b.Y);
 
-        public static bool operator !=(Vector2f a, float b) => a.X != b || a.Y != b;
+        public static bool operator !=(Vector2f a, float b) => (a.X != b) || (a.Y != b);
 
-        public static bool operator !=(float a, Vector2f b) => a != b.X || a != b.Y;
+        public static bool operator !=(float a, Vector2f b) => (a != b.X) || (a != b.Y);
 
-        public static bool operator !=(Vector2f a, int b) => a.X != b || a.Y != b;
+        public static bool operator !=(Vector2f a, int b) => (a.X != b) || (a.Y != b);
 
-        public static bool operator !=(int a, Vector2f b) => a != b.X || a != b.Y;
+        public static bool operator !=(int a, Vector2f b) => (a != b.X) || (a != b.Y);
 
         public bool Equals(Vector2f other) => this == other;
 
@@ -143,18 +143,18 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return Equals((Vector2f) obj);
+            return this.Equals((Vector2f)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (X.GetHashCode() * 397) ^ (Y.GetHashCode() * 397);
+                return (this.X.GetHashCode() * 397) ^ (this.Y.GetHashCode() * 397);
             }
         }
 
-        public override string ToString() => "(" + X + "," + Y + ")";
+        public override string ToString() => "(" + this.X + "," + this.Y + ")";
     }
 
     public static class Vector2fUtils
@@ -167,7 +167,7 @@ namespace Votyra.Core.Models
 
         public static Vector2f YY(this Vector2f @this) => new Vector2f(@this.Y, @this.Y);
 
-        public static bool AnyNegative(this Vector2f @this) => @this.X < 0 || @this.Y < 0;
+        public static bool AnyNegative(this Vector2f @this) => (@this.X < 0) || (@this.Y < 0);
 
         public static bool AnyNan(this Vector2f @this) => float.IsNaN(@this.X) || float.IsNaN(@this.Y);
 
@@ -177,7 +177,7 @@ namespace Votyra.Core.Models
 
         public static float AreaSum(this Vector2f @this) => @this.X * @this.Y;
 
-        public static float Magnitude(this Vector2f @this) => (float) Math.Sqrt(@this.SqrMagnitude());
+        public static float Magnitude(this Vector2f @this) => (float)Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector2f Normalized(this Vector2f @this)
         {
@@ -185,15 +185,15 @@ namespace Votyra.Core.Models
             return magnitude <= float.Epsilon ? @this : @this / magnitude;
         }
 
-        public static float SqrMagnitude(this Vector2f @this) => @this.X * @this.X + @this.Y * @this.Y;
+        public static float SqrMagnitude(this Vector2f @this) => (@this.X * @this.X) + (@this.Y * @this.Y);
 
         public static Vector2f Perpendicular(this Vector2f @this) => new Vector2f(@this.Y, -@this.X);
 
         public static Vector2f FromSame(float value) => new Vector2f(value, value);
 
-        public static float Dot(Vector2f a, Vector2f b) => (float) ((double) a.X * b.X + (double) a.Y * b.Y);
+        public static float Dot(Vector2f a, Vector2f b) => (float)(((double)a.X * b.X) + ((double)a.Y * b.Y));
 
-        public static double Determinant(Vector2f a, Vector2f b) => a.X * b.Y - a.Y * b.X;
+        public static double Determinant(Vector2f a, Vector2f b) => (a.X * b.Y) - (a.Y * b.X);
 
         public static Vector2f Ceil(this Vector2f @this) => new Vector2f(@this.X.CeilToInt(), @this.Y.CeilToInt());
 

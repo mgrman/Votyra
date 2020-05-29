@@ -1,20 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
-using UnityEngine;
 using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
-using Zenject;
 
 namespace Votyra.Core
 {
-    [CustomEditor(typeof(PoolStats))]
+    [CustomEditor(typeof(PoolStats)),]
     public class PoolStatsEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
-            var behaviour = (target as PoolStats);
+            var behaviour = this.target as PoolStats;
             if (behaviour == null)
             {
                 return;
@@ -43,9 +38,6 @@ namespace Votyra.Core
             }
         }
 
-        public override bool RequiresConstantRepaint()
-        {
-            return true;
-        }
+        public override bool RequiresConstantRepaint() => true;
     }
 }

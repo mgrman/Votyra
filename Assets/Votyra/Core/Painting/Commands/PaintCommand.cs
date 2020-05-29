@@ -18,55 +18,55 @@ namespace Votyra.Core.Painting.Commands
 
         protected PaintCommand(int maxDistance)
         {
-            _maxDistance = maxDistance;
+            this._maxDistance = maxDistance;
         }
 
         private Vector2i? _lastInvocation { get; set; }
 
         public void Initialize(IEditableImage2f editableImage, IThreadSafeLogger logger)
         {
-            _editableImage = editableImage;
-            _logger = logger;
+            this._editableImage = editableImage;
+            this._logger = logger;
         }
 
         public virtual void UpdateInvocationValues(Vector2i cell)
         {
             var now = DateTime.UtcNow;
-            if (now < _clickLimit && (_lastInvocation == null || (_lastInvocation.Value - cell).ManhattanMagnitude() < 3))
+            if ((now < this._clickLimit) && ((this._lastInvocation == null) || ((this._lastInvocation.Value - cell).ManhattanMagnitude() < 3)))
             {
                 return;
             }
 
-            if (_lastInvocation == null)
+            if (this._lastInvocation == null)
             {
-                _clickLimit = now + ClickDelay;
+                this._clickLimit = now + ClickDelay;
             }
 
-            Path2iUtils.InvokeOnPath(_lastInvocation, cell, Invoke);
+            Path2iUtils.InvokeOnPath(this._lastInvocation, cell, this.Invoke);
 
-            _lastInvocation = cell;
+            this._lastInvocation = cell;
         }
 
         public void Dispose()
         {
-            StopInvocation();
+            this.StopInvocation();
         }
 
         public void StopInvocation()
         {
-            OnInvocationStopping();
-            _lastInvocation = null;
-            _clickLimit = DateTime.MinValue;
+            this.OnInvocationStopping();
+            this._lastInvocation = null;
+            this._clickLimit = DateTime.MinValue;
         }
 
         protected void Invoke(Vector2i cell)
         {
-            OnNewInvocationData();
+            this.OnNewInvocationData();
 
-            _logger.LogMessage($"invoke on {cell}");
+            this._logger.LogMessage($"invoke on {cell}");
 
-            var requestedArea = Range2i.FromMinAndMax(cell - _maxDistance, cell + _maxDistance + 1);
-            using (var image = _editableImage.RequestAccess(requestedArea))
+            var requestedArea = Range2i.FromMinAndMax(cell - this._maxDistance, cell + this._maxDistance + 1);
+            using (var image = this._editableImage.RequestAccess(requestedArea))
             {
                 var givenArea = image.Area;
                 if (!givenArea.Contains(cell))
@@ -74,7 +74,7 @@ namespace Votyra.Core.Painting.Commands
                     return;
                 }
 
-                PrepareWithClickedValue(image[cell]);
+                this.PrepareWithClickedValue(image[cell]);
                 var min = givenArea.Min;
                 var max = givenArea.Max;
                 for (var ix = min.X; ix < max.X; ix++)
@@ -86,7 +86,7 @@ namespace Votyra.Core.Painting.Commands
                         var oy = index.Y - cell.Y;
 
                         var cellStrength = Math.Max(Math.Abs(ox), Math.Abs(oy));
-                        image[index] = Invoke(image[index], cellStrength);
+                        image[index] = this.Invoke(image[index], cellStrength);
                     }
                 }
             }

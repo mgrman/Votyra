@@ -1,5 +1,4 @@
 using UnityEngine;
-using Votyra.Core.Images;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
 using Votyra.Core.Unity.Painting;
@@ -7,48 +6,49 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    public class Terrain2iPaintingInstaller : MonoInstaller
+    public class Terrain2IPaintingInstaller : MonoInstaller
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<UnityInputManager>()
+            this.Container.BindInterfacesAndSelfTo<UnityInputManager>()
                 .FromNewComponentOn(c => c.Container.ResolveId<GameObject>("root"))
                 .AsSingle()
                 .NonLazy();
-            
-            Container.BindInterfacesAndSelfTo<PaintingModel>()
+
+            this.Container.BindInterfacesAndSelfTo<PaintingModel>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<IncreaseFactory>()
+            this.Container.BindInterfacesAndSelfTo<IncreaseFactory>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<IncreaseLargeFactory>()
+            this.Container.BindInterfacesAndSelfTo<IncreaseLargeFactory>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<DecreaseFactory>()
+            this.Container.BindInterfacesAndSelfTo<DecreaseFactory>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<DecreaseLargeFactory>()
+            this.Container.BindInterfacesAndSelfTo<DecreaseLargeFactory>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<FlattenFactory>()
+            this.Container.BindInterfacesAndSelfTo<FlattenFactory>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<FlattenLargeFactory>()
+            this.Container.BindInterfacesAndSelfTo<FlattenLargeFactory>()
                 .AsSingle()
                 .NonLazy();
-        //     Container.BindInterfacesAndSelfTo<MakeHoleFactory>()
-        //         .AsSingle()
-        //         .NonLazy();
-        //     Container.BindInterfacesAndSelfTo<MakeHoleLargeFactory>()
-        //         .AsSingle()
-        //         .NonLazy();
-        //     Container.BindInterfacesAndSelfTo<RemoveHoleFactory>()
-        //         .AsSingle()
-        //         .NonLazy();
-        //     Container.BindInterfacesAndSelfTo<RemoveHoleLargeFactory>()
-        //         .AsSingle()
-        //         .NonLazy();
-         }
+
+            // Container.BindInterfacesAndSelfTo<MakeHoleFactory>()
+            //         .AsSingle()
+            //         .NonLazy();
+            //     Container.BindInterfacesAndSelfTo<MakeHoleLargeFactory>()
+            //         .AsSingle()
+            //         .NonLazy();
+            //     Container.BindInterfacesAndSelfTo<RemoveHoleFactory>()
+            //         .AsSingle()
+            //         .NonLazy();
+            //     Container.BindInterfacesAndSelfTo<RemoveHoleLargeFactory>()
+            //         .AsSingle()
+            //         .NonLazy();
+        }
     }
 }

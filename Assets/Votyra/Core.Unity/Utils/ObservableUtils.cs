@@ -17,8 +17,8 @@ namespace Votyra.Core.Models
 
             public ValueWithChange(T newValue, T oldValue)
             {
-                NewValue = newValue;
-                OldValue = oldValue;
+                this.NewValue = newValue;
+                this.OldValue = oldValue;
             }
         }
     }

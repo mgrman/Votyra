@@ -14,12 +14,12 @@ namespace Votyra.Core.Models
 
         public readonly int Y;
 
-        [JsonConstructor]
+        [JsonConstructor,]
         public Vector2i(int x, int y)
         {
-            X = x;
+            this.X = x;
 
-            Y = y;
+            this.Y = y;
         }
 
         public static Vector2i operator -(Vector2i a) => new Vector2i(-a.X, -a.Y);
@@ -54,41 +54,41 @@ namespace Votyra.Core.Models
 
         public static Vector2i operator %(int a, Vector2i b) => new Vector2i(a % b.X, a % b.Y);
 
-        public static bool operator <(Vector2i a, Vector2i b) => a.X < b.X && a.Y < b.Y;
+        public static bool operator <(Vector2i a, Vector2i b) => (a.X < b.X) && (a.Y < b.Y);
 
-        public static bool operator <(Vector2i a, int b) => a.X < b && a.Y < b;
+        public static bool operator <(Vector2i a, int b) => (a.X < b) && (a.Y < b);
 
-        public static bool operator <(int a, Vector2i b) => a < b.X && a < b.Y;
+        public static bool operator <(int a, Vector2i b) => (a < b.X) && (a < b.Y);
 
-        public static bool operator >(Vector2i a, Vector2i b) => a.X > b.X && a.Y > b.Y;
+        public static bool operator >(Vector2i a, Vector2i b) => (a.X > b.X) && (a.Y > b.Y);
 
-        public static bool operator >(Vector2i a, int b) => a.X > b && a.Y > b;
+        public static bool operator >(Vector2i a, int b) => (a.X > b) && (a.Y > b);
 
-        public static bool operator >(int a, Vector2i b) => a > b.X && a > b.Y;
+        public static bool operator >(int a, Vector2i b) => (a > b.X) && (a > b.Y);
 
-        public static bool operator <=(Vector2i a, Vector2i b) => a.X <= b.X && a.Y <= b.Y;
+        public static bool operator <=(Vector2i a, Vector2i b) => (a.X <= b.X) && (a.Y <= b.Y);
 
-        public static bool operator <=(Vector2i a, int b) => a.X <= b && a.Y <= b;
+        public static bool operator <=(Vector2i a, int b) => (a.X <= b) && (a.Y <= b);
 
-        public static bool operator <=(int a, Vector2i b) => a <= b.X && a <= b.Y;
+        public static bool operator <=(int a, Vector2i b) => (a <= b.X) && (a <= b.Y);
 
-        public static bool operator >=(Vector2i a, Vector2i b) => a.X >= b.X && a.Y >= b.Y;
+        public static bool operator >=(Vector2i a, Vector2i b) => (a.X >= b.X) && (a.Y >= b.Y);
 
-        public static bool operator >=(Vector2i a, int b) => a.X >= b && a.Y >= b;
+        public static bool operator >=(Vector2i a, int b) => (a.X >= b) && (a.Y >= b);
 
-        public static bool operator >=(int a, Vector2i b) => a >= b.X && a >= b.Y;
+        public static bool operator >=(int a, Vector2i b) => (a >= b.X) && (a >= b.Y);
 
-        public static bool operator ==(Vector2i a, Vector2i b) => a.X == b.X && a.Y == b.Y;
+        public static bool operator ==(Vector2i a, Vector2i b) => (a.X == b.X) && (a.Y == b.Y);
 
-        public static bool operator ==(Vector2i a, int b) => a.X == b && a.Y == b;
+        public static bool operator ==(Vector2i a, int b) => (a.X == b) && (a.Y == b);
 
-        public static bool operator ==(int a, Vector2i b) => a == b.X && a == b.Y;
+        public static bool operator ==(int a, Vector2i b) => (a == b.X) && (a == b.Y);
 
-        public static bool operator !=(Vector2i a, Vector2i b) => a.X != b.X || a.Y != b.Y;
+        public static bool operator !=(Vector2i a, Vector2i b) => (a.X != b.X) || (a.Y != b.Y);
 
-        public static bool operator !=(Vector2i a, int b) => a.X != b || a.Y != b;
+        public static bool operator !=(Vector2i a, int b) => (a.X != b) || (a.Y != b);
 
-        public static bool operator !=(int a, Vector2i b) => a != b.X || a != b.Y;
+        public static bool operator !=(int a, Vector2i b) => (a != b.X) || (a != b.Y);
 
         public static Vector2f operator *(Vector2i a, Vector2f b) => new Vector2f(a.X * b.X, a.Y * b.Y);
 
@@ -139,18 +139,18 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return Equals((Vector2i) obj);
+            return this.Equals((Vector2i)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (X * 397) ^ (Y * 397);
+                return (this.X * 397) ^ (this.Y * 397);
             }
         }
 
-        public override string ToString() => "(" + X + "," + Y + ")";
+        public override string ToString() => "(" + this.X + "," + this.Y + ")";
     }
 
     public static class Vector2iUtils
@@ -161,7 +161,7 @@ namespace Votyra.Core.Models
         public static readonly Vector2i PlusOneY = new Vector2i(0, 1);
         public static readonly Vector2i MinusOneY = new Vector2i(0, -1);
 
-        public static float Magnitude(this Vector2i @this) => (float) Math.Sqrt(@this.SqrMagnitude());
+        public static float Magnitude(this Vector2i @this) => (float)Math.Sqrt(@this.SqrMagnitude());
 
         public static Vector2f Normalized(this Vector2i @this)
         {
@@ -169,7 +169,7 @@ namespace Votyra.Core.Models
             return magnitude <= float.Epsilon ? @this.ToVector2f() : @this / magnitude;
         }
 
-        public static float SqrMagnitude(this Vector2i @this) => @this.X * @this.X + @this.Y * @this.Y;
+        public static float SqrMagnitude(this Vector2i @this) => (@this.X * @this.X) + (@this.Y * @this.Y);
 
         public static int ManhattanMagnitude(this Vector2i @this) => @this.X + @this.Y;
 
@@ -185,15 +185,15 @@ namespace Votyra.Core.Models
 
         public static Vector2i YY(this Vector2i @this) => new Vector2i(@this.Y, @this.Y);
 
-        public static bool AllPositive(this Vector2i @this) => @this.X > 0 && @this.Y > 0;
+        public static bool AllPositive(this Vector2i @this) => (@this.X > 0) && (@this.Y > 0);
 
-        public static bool AllZeroOrPositive(this Vector2i @this) => @this.X >= 0 && @this.Y >= 0;
+        public static bool AllZeroOrPositive(this Vector2i @this) => (@this.X >= 0) && (@this.Y >= 0);
 
-        public static bool AnyNegative(this Vector2i @this) => @this.X < 0 || @this.Y < 0;
+        public static bool AnyNegative(this Vector2i @this) => (@this.X < 0) || (@this.Y < 0);
 
-        public static bool AnyZero(this Vector2i @this) => @this.X == 0 || @this.Y == 0;
+        public static bool AnyZero(this Vector2i @this) => (@this.X == 0) || (@this.Y == 0);
 
-        public static bool AnyZeroOrNegative(this Vector2i @this) => @this.X <= 0 || @this.Y <= 0;
+        public static bool AnyZeroOrNegative(this Vector2i @this) => (@this.X <= 0) || (@this.Y <= 0);
 
         public static Vector2i FromSame(int value) => new Vector2i(value, value);
 

@@ -12,8 +12,8 @@ namespace Votyra.Core.Pooling
 
         public PoolWithImplicitKey(Func<TKey, TValue> factory, Func<TValue, TKey> getKey)
         {
-            _factory = factory;
-            _getKey = getKey;
+            this._factory = factory;
+            this._getKey = getKey;
         }
 
         public int PoolCount { get; private set; }
@@ -22,24 +22,24 @@ namespace Votyra.Core.Pooling
 
         public TValue GetRaw(TKey key)
         {
-            ActiveCount++;
-            lock (_lock)
+            this.ActiveCount++;
+            lock (this._lock)
             {
                 List<TValue> list;
-                if (!_dictionary.TryGetValue(key, out list))
+                if (!this._dictionary.TryGetValue(key, out list))
                 {
                     list = new List<TValue>();
-                    _dictionary[key] = list;
+                    this._dictionary[key] = list;
                 }
 
                 TValue value;
                 if (list.Count == 0)
                 {
-                    value = _factory(key);
+                    value = this._factory(key);
                 }
                 else
                 {
-                    PoolCount--;
+                    this.PoolCount--;
                     value = list[list.Count - 1];
                     list.RemoveAt(list.Count - 1);
                 }
@@ -50,16 +50,16 @@ namespace Votyra.Core.Pooling
 
         public void ReturnRaw(TValue value)
         {
-            ActiveCount--;
-            PoolCount++;
-            var key = _getKey(value);
-            lock (_lock)
+            this.ActiveCount--;
+            this.PoolCount++;
+            var key = this._getKey(value);
+            lock (this._lock)
             {
                 List<TValue> list;
-                if (!_dictionary.TryGetValue(key, out list))
+                if (!this._dictionary.TryGetValue(key, out list))
                 {
                     list = new List<TValue>();
-                    _dictionary[key] = list;
+                    this._dictionary[key] = list;
                 }
 
                 list.Add(value);

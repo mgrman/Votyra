@@ -7,8 +7,8 @@ namespace Votyra.Core.Images
     {
         public NoiseImage3b(Vector3f offset, Vector3f scale)
         {
-            Offset = offset;
-            Scale = scale;
+            this.Offset = offset;
+            this.Scale = scale;
         }
 
         public Vector3f Offset { get; }
@@ -17,7 +17,7 @@ namespace Votyra.Core.Images
 
         public bool Sample(Vector3i point)
         {
-            var pointf = point / Scale + Offset;
+            var pointf = (point / this.Scale) + this.Offset;
 
             var valueXY = MathUtils.PerlinNoise(pointf.X, pointf.Y);
             var valueYZ = MathUtils.PerlinNoise(pointf.Y, pointf.Z);

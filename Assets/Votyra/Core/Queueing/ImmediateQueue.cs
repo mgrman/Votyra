@@ -10,7 +10,7 @@ namespace Votyra.Core.Queueing
         {
             try
             {
-                DoWork?.Invoke(context);
+                this.DoWork?.Invoke(context);
             }
             finally
             {

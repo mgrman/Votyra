@@ -15,7 +15,7 @@ namespace Votyra.Core.Queueing
 
         public LastValueTaskQueue()
         {
-            _taskFactory = new TaskFactory();
+            this._taskFactory = new TaskFactory();
         }
 
         public event Action<T> DoWork;
@@ -23,16 +23,16 @@ namespace Votyra.Core.Queueing
         public void QueueNew(T context)
         {
             bool startNewTask;
-            lock (_taskLock)
+            lock (this._taskLock)
             {
-                DisposeAndSet(true, context);
-                startNewTask = !_activeTask;
-                _activeTask = true;
+                this.DisposeAndSet(true, context);
+                startNewTask = !this._activeTask;
+                this._activeTask = true;
             }
 
             if (startNewTask)
             {
-                _taskFactory.StartNew(TaskUpdate);
+                this._taskFactory.StartNew(this.TaskUpdate);
             }
         }
 
@@ -44,11 +44,11 @@ namespace Votyra.Core.Queueing
                 while (true)
                 {
                     (bool HasValue, T Value) activeContext;
-                    lock (_taskLock)
+                    lock (this._taskLock)
                     {
-                        activeContext = GetQueued();
-                        _activeTask = activeContext.HasValue;
-                        if (!_activeTask)
+                        activeContext = this.GetQueued();
+                        this._activeTask = activeContext.HasValue;
+                        if (!this._activeTask)
                         {
                             return;
                         }
@@ -56,11 +56,11 @@ namespace Votyra.Core.Queueing
 
                     try
                     {
-                        DoWork?.Invoke(activeContext.Value);
+                        this.DoWork?.Invoke(activeContext.Value);
                     }
                     catch (Exception ex)
                     {
-                        StaticLogger.LogError($"Error in {GetType().GetDisplayName()}:");
+                        StaticLogger.LogError($"Error in {this.GetType().GetDisplayName()}:");
                         StaticLogger.LogException(ex);
                     }
                     finally
@@ -71,7 +71,7 @@ namespace Votyra.Core.Queueing
                         }
                         catch (Exception ex)
                         {
-                            StaticLogger.LogError($"Error disposing context {activeContext.GetHashCode()} in {GetType().GetDisplayName()}:");
+                            StaticLogger.LogError($"Error disposing context {activeContext.GetHashCode()} in {this.GetType().GetDisplayName()}:");
                             StaticLogger.LogException(ex);
                         }
                     }
@@ -87,24 +87,24 @@ namespace Votyra.Core.Queueing
 
         private void DisposeAndSet(bool hasValue, T value)
         {
-            lock (_taskLock)
+            lock (this._taskLock)
             {
-                if (_queuedUpdate.HasValue)
+                if (this._queuedUpdate.HasValue)
                 {
-                    _queuedUpdate.Value?.Dispose();
+                    this._queuedUpdate.Value?.Dispose();
                 }
 
-                _queuedUpdate = (hasValue, value);
+                this._queuedUpdate = (hasValue, value);
             }
         }
 
         private (bool, T) GetQueued()
         {
             (bool, T) activeContext;
-            lock (_taskLock)
+            lock (this._taskLock)
             {
-                activeContext = _queuedUpdate;
-                _queuedUpdate = (false, default);
+                activeContext = this._queuedUpdate;
+                this._queuedUpdate = (false, default);
             }
 
             return activeContext;

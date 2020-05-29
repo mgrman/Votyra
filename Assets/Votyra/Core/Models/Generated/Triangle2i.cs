@@ -12,18 +12,18 @@ namespace Votyra.Core.Models
 
         public Triangle2i(Vector2i a, Vector2i b, Vector2i c)
         {
-            A = a;
-            B = b;
-            C = c;
+            this.A = a;
+            this.B = b;
+            this.C = c;
         }
 
         public IEnumerable<Vector2i> Points
         {
             get
             {
-                yield return A;
-                yield return B;
-                yield return C;
+                yield return this.A;
+                yield return this.B;
+                yield return this.C;
             }
         }
 
@@ -31,8 +31,8 @@ namespace Votyra.Core.Models
         {
             if (obj is Triangle2i)
             {
-                var that = (Triangle2i) obj;
-                return A == that.A && B == that.B && C == that.C;
+                var that = (Triangle2i)obj;
+                return (this.A == that.A) && (this.B == that.B) && (this.C == that.C);
             }
 
             return false;
@@ -42,11 +42,11 @@ namespace Votyra.Core.Models
         {
             unchecked
             {
-                return A.GetHashCode() + B.GetHashCode() * 3 + C.GetHashCode() * 7;
+                return this.A.GetHashCode() + (this.B.GetHashCode() * 3) + (this.C.GetHashCode() * 7);
             }
         }
 
-        public override string ToString() => $"{A},{B},{C}";
+        public override string ToString() => $"{this.A},{this.B},{this.C}";
 
         private class TriangleInvariantComparer : IEqualityComparer<Triangle2i>
         {

@@ -15,53 +15,53 @@ namespace Votyra.Core.Raycasting
         public Image2fRaycaster(IImage2fProvider image2FProvider, ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
             : base(terrainVertexPostProcessor, raycasterAggregator)
         {
-            _image2FProvider = image2FProvider;
+            this._image2FProvider = image2FProvider;
         }
 
         public override Vector3f Raycast(Ray3f cameraRay)
         {
-            _image = _image2FProvider.CreateImage();
-            (_image as IInitializableImage)?.StartUsing();
+            this._image = this._image2FProvider.CreateImage();
+            (this._image as IInitializableImage)?.StartUsing();
 
-            _cameraRay = cameraRay;
+            this._cameraRay = cameraRay;
 
-            _startXy = cameraRay.XY()
+            this._startXy = cameraRay.XY()
                 .Origin;
-            _directionXyMag = cameraRay.Direction.XY()
+            this._directionXyMag = cameraRay.Direction.XY()
                 .Magnitude();
 
             var result = base.Raycast(cameraRay);
 
-            (_image as IInitializableImage)?.FinishUsing();
-            _image = null;
+            (this._image as IInitializableImage)?.FinishUsing();
+            this._image = null;
 
             return result;
         }
 
         protected override Vector3f RaycastCell(Line2f line)
         {
-            var imageValueFrom = GetLinearInterpolatedValue(_image, line.From);
-            var imageValueTo = GetLinearInterpolatedValue(_image, line.To);
+            var imageValueFrom = this.GetLinearInterpolatedValue(this._image, line.From);
+            var imageValueTo = this.GetLinearInterpolatedValue(this._image, line.To);
 
-            var fromRayValue = GetRayValue(line.From);
-            var toRayValue = GetRayValue(line.To);
+            var fromRayValue = this.GetRayValue(line.From);
+            var toRayValue = this.GetRayValue(line.To);
 
-            var x = (fromRayValue - imageValueFrom) / (imageValueTo - imageValueFrom - toRayValue + fromRayValue);
-            if (x < 0 || x > 1)
+            var x = (fromRayValue - imageValueFrom) / ((imageValueTo - imageValueFrom - toRayValue) + fromRayValue);
+            if ((x < 0) || (x > 1))
             {
                 return Vector3f.NaN;
             }
 
-            var xy = line.From + (line.To - line.From) * x;
-            return xy.ToVector3f(GetLinearInterpolatedValue(_image, xy));
+            var xy = line.From + ((line.To - line.From) * x);
+            return xy.ToVector3f(this.GetLinearInterpolatedValue(this._image, xy));
         }
 
-        protected override float RaycastCell(Vector2f point) => GetLinearInterpolatedValue(_image, point);
+        protected override float RaycastCell(Vector2f point) => this.GetLinearInterpolatedValue(this._image, point);
 
         private float GetRayValue(Vector2f point)
         {
-            var p = (point - _startXy).Magnitude() / _directionXyMag;
-            return _cameraRay.Origin.Z + _cameraRay.Direction.Z * p;
+            var p = (point - this._startXy).Magnitude() / this._directionXyMag;
+            return this._cameraRay.Origin.Z + (this._cameraRay.Direction.Z * p);
         }
 
         private float GetLinearInterpolatedValue(IImage2f image, Vector2f pos)
@@ -78,7 +78,7 @@ namespace Votyra.Core.Raycasting
             var x1y0 = image.Sample(pos_x1y0);
             var x1y1 = image.Sample(pos_x1y1);
 
-            return (1f - fraction.X) * (1f - fraction.Y) * x0y0 + fraction.X * (1f - fraction.Y) * x1y0 + (1f - fraction.X) * fraction.Y * x0y1 + fraction.X * fraction.Y * x1y1;
+            return ((1f - fraction.X) * (1f - fraction.Y) * x0y0) + (fraction.X * (1f - fraction.Y) * x1y0) + ((1f - fraction.X) * fraction.Y * x0y1) + (fraction.X * fraction.Y * x1y1);
         }
     }
 }

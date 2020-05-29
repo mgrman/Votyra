@@ -48,37 +48,37 @@ namespace Votyra.Core.Models
             this.m33 = m33;
         }
 
-        public float Determinant => m03 * m12 * m21 * m30 - m02 * m13 * m21 * m30 - m03 * m11 * m22 * m30 + m01 * m13 * m22 * m30 + m02 * m11 * m23 * m30 - m01 * m12 * m23 * m30 - m03 * m12 * m20 * m31 + m02 * m13 * m20 * m31 + m03 * m10 * m22 * m31 - m00 * m13 * m22 * m31 - m02 * m10 * m23 * m31 + m00 * m12 * m23 * m31 + m03 * m11 * m20 * m32 - m01 * m13 * m20 * m32 - m03 * m10 * m21 * m32 + m00 * m13 * m21 * m32 + m01 * m10 * m23 * m32 - m00 * m11 * m23 * m32 - m02 * m11 * m20 * m33 + m01 * m12 * m20 * m33 + m02 * m10 * m21 * m33 - m00 * m12 * m21 * m33 - m01 * m10 * m22 * m33 + m00 * m11 * m22 * m33;
+        public float Determinant => ((((((((((((this.m03 * this.m12 * this.m21 * this.m30) - (this.m02 * this.m13 * this.m21 * this.m30) - (this.m03 * this.m11 * this.m22 * this.m30)) + (this.m01 * this.m13 * this.m22 * this.m30) + (this.m02 * this.m11 * this.m23 * this.m30)) - (this.m01 * this.m12 * this.m23 * this.m30) - (this.m03 * this.m12 * this.m20 * this.m31)) + (this.m02 * this.m13 * this.m20 * this.m31) + (this.m03 * this.m10 * this.m22 * this.m31)) - (this.m00 * this.m13 * this.m22 * this.m31) - (this.m02 * this.m10 * this.m23 * this.m31)) + (this.m00 * this.m12 * this.m23 * this.m31) + (this.m03 * this.m11 * this.m20 * this.m32)) - (this.m01 * this.m13 * this.m20 * this.m32) - (this.m03 * this.m10 * this.m21 * this.m32)) + (this.m00 * this.m13 * this.m21 * this.m32) + (this.m01 * this.m10 * this.m23 * this.m32)) - (this.m00 * this.m11 * this.m23 * this.m32) - (this.m02 * this.m11 * this.m20 * this.m33)) + (this.m01 * this.m12 * this.m20 * this.m33) + (this.m02 * this.m10 * this.m21 * this.m33)) - (this.m00 * this.m12 * this.m21 * this.m33) - (this.m01 * this.m10 * this.m22 * this.m33)) + (this.m00 * this.m11 * this.m22 * this.m33);
 
         public Matrix4x4f Inverse => this.Invert();
 
         public static Matrix4x4f operator *(Matrix4x4f lhs, Matrix4x4f rhs)
         {
-            var m00 = lhs.m00 * rhs.m00 + lhs.m01 * rhs.m10 + lhs.m02 * rhs.m20 + lhs.m03 * rhs.m30;
-            var m01 = lhs.m00 * rhs.m01 + lhs.m01 * rhs.m11 + lhs.m02 * rhs.m21 + lhs.m03 * rhs.m31;
-            var m02 = lhs.m00 * rhs.m02 + lhs.m01 * rhs.m12 + lhs.m02 * rhs.m22 + lhs.m03 * rhs.m32;
-            var m03 = lhs.m00 * rhs.m03 + lhs.m01 * rhs.m13 + lhs.m02 * rhs.m23 + lhs.m03 * rhs.m33;
-            var m10 = lhs.m10 * rhs.m00 + lhs.m11 * rhs.m10 + lhs.m12 * rhs.m20 + lhs.m13 * rhs.m30;
-            var m11 = lhs.m10 * rhs.m01 + lhs.m11 * rhs.m11 + lhs.m12 * rhs.m21 + lhs.m13 * rhs.m31;
-            var m12 = lhs.m10 * rhs.m02 + lhs.m11 * rhs.m12 + lhs.m12 * rhs.m22 + lhs.m13 * rhs.m32;
-            var m13 = lhs.m10 * rhs.m03 + lhs.m11 * rhs.m13 + lhs.m12 * rhs.m23 + lhs.m13 * rhs.m33;
-            var m20 = lhs.m20 * rhs.m00 + lhs.m21 * rhs.m10 + lhs.m22 * rhs.m20 + lhs.m23 * rhs.m30;
-            var m21 = lhs.m20 * rhs.m01 + lhs.m21 * rhs.m11 + lhs.m22 * rhs.m21 + lhs.m23 * rhs.m31;
-            var m22 = lhs.m20 * rhs.m02 + lhs.m21 * rhs.m12 + lhs.m22 * rhs.m22 + lhs.m23 * rhs.m32;
-            var m23 = lhs.m20 * rhs.m03 + lhs.m21 * rhs.m13 + lhs.m22 * rhs.m23 + lhs.m23 * rhs.m33;
-            var m30 = lhs.m30 * rhs.m00 + lhs.m31 * rhs.m10 + lhs.m32 * rhs.m20 + lhs.m33 * rhs.m30;
-            var m31 = lhs.m30 * rhs.m01 + lhs.m31 * rhs.m11 + lhs.m32 * rhs.m21 + lhs.m33 * rhs.m31;
-            var m32 = lhs.m30 * rhs.m02 + lhs.m31 * rhs.m12 + lhs.m32 * rhs.m22 + lhs.m33 * rhs.m32;
-            var m33 = lhs.m30 * rhs.m03 + lhs.m31 * rhs.m13 + lhs.m32 * rhs.m23 + lhs.m33 * rhs.m33;
+            var m00 = (lhs.m00 * rhs.m00) + (lhs.m01 * rhs.m10) + (lhs.m02 * rhs.m20) + (lhs.m03 * rhs.m30);
+            var m01 = (lhs.m00 * rhs.m01) + (lhs.m01 * rhs.m11) + (lhs.m02 * rhs.m21) + (lhs.m03 * rhs.m31);
+            var m02 = (lhs.m00 * rhs.m02) + (lhs.m01 * rhs.m12) + (lhs.m02 * rhs.m22) + (lhs.m03 * rhs.m32);
+            var m03 = (lhs.m00 * rhs.m03) + (lhs.m01 * rhs.m13) + (lhs.m02 * rhs.m23) + (lhs.m03 * rhs.m33);
+            var m10 = (lhs.m10 * rhs.m00) + (lhs.m11 * rhs.m10) + (lhs.m12 * rhs.m20) + (lhs.m13 * rhs.m30);
+            var m11 = (lhs.m10 * rhs.m01) + (lhs.m11 * rhs.m11) + (lhs.m12 * rhs.m21) + (lhs.m13 * rhs.m31);
+            var m12 = (lhs.m10 * rhs.m02) + (lhs.m11 * rhs.m12) + (lhs.m12 * rhs.m22) + (lhs.m13 * rhs.m32);
+            var m13 = (lhs.m10 * rhs.m03) + (lhs.m11 * rhs.m13) + (lhs.m12 * rhs.m23) + (lhs.m13 * rhs.m33);
+            var m20 = (lhs.m20 * rhs.m00) + (lhs.m21 * rhs.m10) + (lhs.m22 * rhs.m20) + (lhs.m23 * rhs.m30);
+            var m21 = (lhs.m20 * rhs.m01) + (lhs.m21 * rhs.m11) + (lhs.m22 * rhs.m21) + (lhs.m23 * rhs.m31);
+            var m22 = (lhs.m20 * rhs.m02) + (lhs.m21 * rhs.m12) + (lhs.m22 * rhs.m22) + (lhs.m23 * rhs.m32);
+            var m23 = (lhs.m20 * rhs.m03) + (lhs.m21 * rhs.m13) + (lhs.m22 * rhs.m23) + (lhs.m23 * rhs.m33);
+            var m30 = (lhs.m30 * rhs.m00) + (lhs.m31 * rhs.m10) + (lhs.m32 * rhs.m20) + (lhs.m33 * rhs.m30);
+            var m31 = (lhs.m30 * rhs.m01) + (lhs.m31 * rhs.m11) + (lhs.m32 * rhs.m21) + (lhs.m33 * rhs.m31);
+            var m32 = (lhs.m30 * rhs.m02) + (lhs.m31 * rhs.m12) + (lhs.m32 * rhs.m22) + (lhs.m33 * rhs.m32);
+            var m33 = (lhs.m30 * rhs.m03) + (lhs.m31 * rhs.m13) + (lhs.m32 * rhs.m23) + (lhs.m33 * rhs.m33);
             return new Matrix4x4f(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
         }
 
         public static Vector4f operator *(Matrix4x4f lhs, Vector4f v)
         {
-            var x = (float) (lhs.m00 * (double) v.X + lhs.m01 * (double) v.Y + lhs.m02 * (double) v.Z + lhs.m03 * (double) v.W);
-            var y = (float) (lhs.m10 * (double) v.X + lhs.m11 * (double) v.Y + lhs.m12 * (double) v.Z + lhs.m13 * (double) v.W);
-            var z = (float) (lhs.m20 * (double) v.X + lhs.m21 * (double) v.Y + lhs.m22 * (double) v.Z + lhs.m23 * (double) v.W);
-            var w = (float) (lhs.m30 * (double) v.X + lhs.m31 * (double) v.Y + lhs.m32 * (double) v.Z + lhs.m33 * (double) v.W);
+            var x = (float)((lhs.m00 * (double)v.X) + (lhs.m01 * (double)v.Y) + (lhs.m02 * (double)v.Z) + (lhs.m03 * (double)v.W));
+            var y = (float)((lhs.m10 * (double)v.X) + (lhs.m11 * (double)v.Y) + (lhs.m12 * (double)v.Z) + (lhs.m13 * (double)v.W));
+            var z = (float)((lhs.m20 * (double)v.X) + (lhs.m21 * (double)v.Y) + (lhs.m22 * (double)v.Z) + (lhs.m23 * (double)v.W));
+            var w = (float)((lhs.m30 * (double)v.X) + (lhs.m31 * (double)v.Y) + (lhs.m32 * (double)v.Z) + (lhs.m33 * (double)v.W));
             return new Vector4f(x, y, z, w);
         }
 
@@ -119,7 +119,7 @@ namespace Votyra.Core.Models
             return new Matrix4x4f(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
         }
 
-        public static bool operator ==(Matrix4x4f lhs, Matrix4x4f rhs) => lhs.GetColumn(0) == rhs.GetColumn(0) && lhs.GetColumn(1) == rhs.GetColumn(1) && lhs.GetColumn(2) == rhs.GetColumn(2) && lhs.GetColumn(3) == rhs.GetColumn(3);
+        public static bool operator ==(Matrix4x4f lhs, Matrix4x4f rhs) => (lhs.GetColumn(0) == rhs.GetColumn(0)) && (lhs.GetColumn(1) == rhs.GetColumn(1)) && (lhs.GetColumn(2) == rhs.GetColumn(2)) && (lhs.GetColumn(3) == rhs.GetColumn(3));
 
         public static bool operator !=(Matrix4x4f lhs, Matrix4x4f rhs) => !(lhs == rhs);
 
@@ -128,16 +128,16 @@ namespace Votyra.Core.Models
             switch (i)
             {
                 case 0:
-                    return new Vector4f(m00, m10, m20, m30);
+                    return new Vector4f(this.m00, this.m10, this.m20, this.m30);
 
                 case 1:
-                    return new Vector4f(m01, m11, m21, m31);
+                    return new Vector4f(this.m01, this.m11, this.m21, this.m31);
 
                 case 2:
-                    return new Vector4f(m02, m12, m22, m32);
+                    return new Vector4f(this.m02, this.m12, this.m22, this.m32);
 
                 case 3:
-                    return new Vector4f(m03, m13, m23, m33);
+                    return new Vector4f(this.m03, this.m13, this.m23, this.m33);
 
                 default:
                     throw new InvalidOperationException($"Unsuported column '{i}'! Column must be between 0-3.");
@@ -146,10 +146,10 @@ namespace Votyra.Core.Models
 
         public Vector3f MultiplyPoint(Vector3f v)
         {
-            var x = (float) (m00 * (double) v.X + m01 * (double) v.Y + m02 * (double) v.Z) + m03;
-            var y = (float) (m10 * (double) v.X + m11 * (double) v.Y + m12 * (double) v.Z) + m13;
-            var z = (float) (m20 * (double) v.X + m21 * (double) v.Y + m22 * (double) v.Z) + m23;
-            var num = 1f / ((float) (m30 * (double) v.X + m31 * (double) v.Y + m32 * (double) v.Z) + m33);
+            var x = (float)((this.m00 * (double)v.X) + (this.m01 * (double)v.Y) + (this.m02 * (double)v.Z)) + this.m03;
+            var y = (float)((this.m10 * (double)v.X) + (this.m11 * (double)v.Y) + (this.m12 * (double)v.Z)) + this.m13;
+            var z = (float)((this.m20 * (double)v.X) + (this.m21 * (double)v.Y) + (this.m22 * (double)v.Z)) + this.m23;
+            var num = 1f / ((float)((this.m30 * (double)v.X) + (this.m31 * (double)v.Y) + (this.m32 * (double)v.Z)) + this.m33);
             x *= num;
             y *= num;
             z *= num;
@@ -158,24 +158,24 @@ namespace Votyra.Core.Models
 
         public Vector3f MultiplyPoint3x4(Vector3f v)
         {
-            var x = (float) (m00 * (double) v.X + m01 * (double) v.Y + m02 * (double) v.Z) + m03;
-            var y = (float) (m10 * (double) v.X + m11 * (double) v.Y + m12 * (double) v.Z) + m13;
-            var z = (float) (m20 * (double) v.X + m21 * (double) v.Y + m22 * (double) v.Z) + m23;
+            var x = (float)((this.m00 * (double)v.X) + (this.m01 * (double)v.Y) + (this.m02 * (double)v.Z)) + this.m03;
+            var y = (float)((this.m10 * (double)v.X) + (this.m11 * (double)v.Y) + (this.m12 * (double)v.Z)) + this.m13;
+            var z = (float)((this.m20 * (double)v.X) + (this.m21 * (double)v.Y) + (this.m22 * (double)v.Z)) + this.m23;
             return new Vector3f(x, y, z);
         }
 
         public Vector3f MultiplyVector(Vector3f v)
         {
-            var x = (float) (m00 * (double) v.X + m01 * (double) v.Y + m02 * (double) v.Z);
-            var y = (float) (m10 * (double) v.X + m11 * (double) v.Y + m12 * (double) v.Z);
-            var z = (float) (m20 * (double) v.X + m21 * (double) v.Y + m22 * (double) v.Z);
+            var x = (float)((this.m00 * (double)v.X) + (this.m01 * (double)v.Y) + (this.m02 * (double)v.Z));
+            var y = (float)((this.m10 * (double)v.X) + (this.m11 * (double)v.Y) + (this.m12 * (double)v.Z));
+            var z = (float)((this.m20 * (double)v.X) + (this.m21 * (double)v.Y) + (this.m22 * (double)v.Z));
             return new Vector3f(x, y, z);
         }
 
-        public override int GetHashCode() => GetColumn(0)
-            .GetHashCode() ^ (GetColumn(1)
-            .GetHashCode() << 2) ^ (GetColumn(2)
-            .GetHashCode() >> 2) ^ (GetColumn(3)
+        public override int GetHashCode() => this.GetColumn(0)
+            .GetHashCode() ^ (this.GetColumn(1)
+            .GetHashCode() << 2) ^ (this.GetColumn(2)
+            .GetHashCode() >> 2) ^ (this.GetColumn(3)
             .GetHashCode() >> 1);
 
         public override bool Equals(object other)
@@ -185,10 +185,10 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            var that = (Matrix4x4f) other;
+            var that = (Matrix4x4f)other;
             return this == that;
         }
 
-        public override string ToString() => string.Format("{0:F5}\t{1:F5}\t{2:F5}\t{3:F5}\n{4:F5}\t{5:F5}\t{6:F5}\t{7:F5}\n{8:F5}\t{9:F5}\t{10:F5}\t{11:F5}\n{12:F5}\t{13:F5}\t{14:F5}\t{15:F5}\n", m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
+        public override string ToString() => string.Format("{0:F5}\t{1:F5}\t{2:F5}\t{3:F5}\n{4:F5}\t{5:F5}\t{6:F5}\t{7:F5}\n{8:F5}\t{9:F5}\t{10:F5}\t{11:F5}\n{12:F5}\t{13:F5}\t{14:F5}\t{15:F5}\n", this.m00, this.m01, this.m02, this.m03, this.m10, this.m11, this.m12, this.m13, this.m20, this.m21, this.m22, this.m23, this.m30, this.m31, this.m32, this.m33);
     }
 }

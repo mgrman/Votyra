@@ -10,11 +10,11 @@ namespace Votyra.Core.Models
 
         public Plane1f(float inNormal, float d)
         {
-            Normal = inNormal.Normalized();
-            Distance = d;
+            this.Normal = inNormal.Normalized();
+            this.Distance = d;
         }
 
-        public float GetDistanceToPoint(float inPt) => Vector1fUtils.Dot(Normal, inPt) + Distance;
+        public float GetDistanceToPoint(float inPt) => Vector1fUtils.Dot(this.Normal, inPt) + this.Distance;
     }
 
     public static class Plane1fExtensions
@@ -35,7 +35,7 @@ namespace Votyra.Core.Models
                 var distance = p.GetDistanceToPoint(boundsCenter);
                 var radius = Vector1fUtils.Dot(boundsExtent, n);
 
-                if (distance + radius < 0)
+                if ((distance + radius) < 0)
                 {
                     return false;
                 }

@@ -7,10 +7,10 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<InitialStateSetter2f>()
+            this.Container.BindInterfacesAndSelfTo<InitialStateSetter2F>()
                 .AsSingle()
                 .NonLazy();
-            Container.BindInterfacesAndSelfTo<InitialImageConfig>()
+            this.Container.BindInterfacesAndSelfTo<InitialImageConfig>()
                 .AsSingle();
         }
     }

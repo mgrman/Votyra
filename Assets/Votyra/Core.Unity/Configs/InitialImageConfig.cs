@@ -6,13 +6,15 @@ namespace Votyra.Core.Images
 {
     public class InitialImageConfig : IInitialImageConfig
     {
-        [Inject]
-        public InitialImageConfig([ConfigInject("initialData")] Texture2D initialData, [ConfigInject("initialDataScale")] Vector3f initialDataScale, [ConfigInject("zeroFromInitialStateIsNull")]
+        [Inject,]
+        public InitialImageConfig([ConfigInject("initialData"),]
+            Texture2D initialData, [ConfigInject("initialDataScale"),]
+            Vector3f initialDataScale, [ConfigInject("zeroFromInitialStateIsNull"),]
             bool zeroFromInitialStateIsNull)
         {
-            InitialData = initialData;
-            InitialDataScale = initialDataScale;
-            ZeroFromInitialStateIsNull = zeroFromInitialStateIsNull;
+            this.InitialData = initialData;
+            this.InitialDataScale = initialDataScale;
+            this.ZeroFromInitialStateIsNull = zeroFromInitialStateIsNull;
         }
 
         public object InitialData { get; }
@@ -27,21 +29,21 @@ namespace Votyra.Core.Images
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType())
+            if ((obj == null) || (this.GetType() != obj.GetType()))
             {
                 return false;
             }
 
             var that = obj as InitialImageConfig;
 
-            return InitialData == that.InitialData && InitialDataScale == that.InitialDataScale;
+            return (this.InitialData == that.InitialData) && (this.InitialDataScale == that.InitialDataScale);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return InitialData?.GetHashCode() ?? 0 + InitialDataScale.GetHashCode() * 7;
+                return this.InitialData?.GetHashCode() ?? (0 + (this.InitialDataScale.GetHashCode() * 7));
             }
         }
     }

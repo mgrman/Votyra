@@ -13,7 +13,7 @@ namespace Votyra.Core.Images
         {
             var allFalse = true;
             var allTrue = true;
-            range = range.IntersectWith(_image.Range());
+            range = range.IntersectWith(this._image.Range());
             var min = range.Min;
             for (var ix = 0; ix < range.Size.X; ix++)
             {
@@ -21,7 +21,7 @@ namespace Votyra.Core.Images
                 {
                     for (var iz = 0; iz < range.Size.Z; iz++)
                     {
-                        var value = _image[ix + min.X, iy + min.Y, iz + min.Z];
+                        var value = this._image[ix + min.X, iy + min.Y, iz + min.Z];
                         allFalse = allFalse && !value;
                         allTrue = allTrue && value;
                     }

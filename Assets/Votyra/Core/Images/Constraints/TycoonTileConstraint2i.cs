@@ -17,9 +17,9 @@ namespace Votyra.Core.Images.Constraints
 
         public TycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
         {
-            _logger = logger;
-            _scaleFactor = constraintConfig.ScaleFactor;
-            if (_scaleFactor != _tileMapScaleFactor)
+            this._logger = logger;
+            this._scaleFactor = constraintConfig.ScaleFactor;
+            if (this._scaleFactor != _tileMapScaleFactor)
             {
                 _tileMap = new[]
                 {
@@ -39,15 +39,15 @@ namespace Votyra.Core.Images.Constraints
                     new SampledData2i(-1, 0, 0, 0),
 
                     //slopeDiagonal
-                    new SampledData2i(0, -1, -1, 0)
-                }.CreateExpandedTileMap2i(_scaleFactor, _logger);
-                _tileMapScaleFactor = _scaleFactor;
+                    new SampledData2i(0, -1, -1, 0),
+                }.CreateExpandedTileMap2i(this._scaleFactor, this._logger);
+                _tileMapScaleFactor = this._scaleFactor;
             }
         }
 
         public IEnumerable<int> Priorities => new[]
         {
-            0
+            0,
         };
 
         void IImageConstraint2i.Initialize(IEditableImage2f image)
@@ -56,28 +56,28 @@ namespace Votyra.Core.Images.Constraints
 
         public Range2i FixImage(IEditableImage2f _, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
-            _invalidatedCellArea = invalidatedImageArea.ExtendBothDirections(3);
-            if (direction != Direction.Up && direction != Direction.Down)
+            this._invalidatedCellArea = invalidatedImageArea.ExtendBothDirections(3);
+            if ((direction != Direction.Up) && (direction != Direction.Down))
             {
                 direction = Direction.Down;
             }
 
-            _direction = direction;
-            _editableMatrix = editableMatrix;
-            Constrain();
-            _invalidatedCellArea = _invalidatedCellArea.ExtendBothDirections(2);
-            return _invalidatedCellArea;
+            this._direction = direction;
+            this._editableMatrix = editableMatrix;
+            this.Constrain();
+            this._invalidatedCellArea = this._invalidatedCellArea.ExtendBothDirections(2);
+            return this._invalidatedCellArea;
         }
 
         protected virtual void Constrain()
         {
-            var min = _invalidatedCellArea.Min;
-            var max = _invalidatedCellArea.Max;
+            var min = this._invalidatedCellArea.Min;
+            var max = this._invalidatedCellArea.Max;
             for (var ix = min.X; ix < max.X; ix++)
             {
                 for (var iy = min.Y; iy <= max.Y; iy++)
                 {
-                    ConstrainCell(new Vector2i(ix, iy));
+                    this.ConstrainCell(new Vector2i(ix, iy));
                 }
             }
         }
@@ -86,33 +86,33 @@ namespace Votyra.Core.Images.Constraints
         {
             var cell_x0y0 = cell;
             var cell_x1y1 = new Vector2i(cell.X + 1, cell.Y + 1);
-            if (!_editableMatrix.ContainsIndex(cell_x0y0) || !_editableMatrix.ContainsIndex(cell_x1y1))
+            if (!this._editableMatrix.ContainsIndex(cell_x0y0) || !this._editableMatrix.ContainsIndex(cell_x1y1))
             {
                 return;
             }
 
-            var sample = _editableMatrix.SampleCell(cell)
+            var sample = this._editableMatrix.SampleCell(cell)
                 .ToSampledData2i();
-            var processedSample = Process(sample);
+            var processedSample = this.Process(sample);
 
             var cell_x0y1 = new Vector2i(cell.X, cell.Y + 1);
             var cell_x1y0 = new Vector2i(cell.X + 1, cell.Y);
 
-            _editableMatrix.Set(cell_x0y0, processedSample.x0y0);
-            _editableMatrix.Set(cell_x0y1, processedSample.x0y1);
-            _editableMatrix.Set(cell_x1y0, processedSample.x1y0);
-            _editableMatrix.Set(cell_x1y1, processedSample.x1y1);
+            this._editableMatrix.Set(cell_x0y0, processedSample.x0y0);
+            this._editableMatrix.Set(cell_x0y1, processedSample.x0y1);
+            this._editableMatrix.Set(cell_x1y0, processedSample.x1y0);
+            this._editableMatrix.Set(cell_x1y1, processedSample.x1y1);
         }
 
         protected SampledData2i Process(SampledData2i sampleData)
         {
-            switch (_direction)
+            switch (this._direction)
             {
                 case Direction.Up:
-                    return ProcessUp(sampleData);
+                    return this.ProcessUp(sampleData);
 
                 case Direction.Down:
-                    return ProcessDown(sampleData);
+                    return this.ProcessDown(sampleData);
 
                 case Direction.Unknown:
                 default:
@@ -120,14 +120,14 @@ namespace Votyra.Core.Images.Constraints
             }
         }
 
-        protected SampledData2i ProcessDown(SampledData2i sampleData) => -ProcessInner(-sampleData);
+        protected SampledData2i ProcessDown(SampledData2i sampleData) => -this.ProcessInner(-sampleData);
 
-        protected SampledData2i ProcessUp(SampledData2i sampleData) => ProcessInner(sampleData);
+        protected SampledData2i ProcessUp(SampledData2i sampleData) => this.ProcessInner(sampleData);
 
         private SampledData2i ProcessInner(SampledData2i sampleData)
         {
             var height = sampleData.Max;
-            var normalizedHeightData = (sampleData - height).ClipMin(-2 * _scaleFactor);
+            var normalizedHeightData = (sampleData - height).ClipMin(-2 * this._scaleFactor);
             var choosenTemplateTile = _tileMap.GetTile(normalizedHeightData);
             return choosenTemplateTile + height;
         }

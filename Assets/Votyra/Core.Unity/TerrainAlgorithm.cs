@@ -6,8 +6,8 @@ namespace Votyra.Core
     {
         public TerrainAlgorithm(string name, GameObject prefab)
         {
-            Name = name;
-            Prefab = prefab;
+            this.Name = name;
+            this.Prefab = prefab;
         }
 
         public string Name { get; }
@@ -20,21 +20,21 @@ namespace Votyra.Core
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType())
+            if ((obj == null) || (this.GetType() != obj.GetType()))
             {
                 return false;
             }
 
             var that = obj as TerrainAlgorithm;
 
-            return Name == that.Name && Prefab == that.Prefab;
+            return (this.Name == that.Name) && (this.Prefab == that.Prefab);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return Name.GetHashCode() + Prefab.GetHashCode() * 7;
+                return this.Name.GetHashCode() + (this.Prefab.GetHashCode() * 7);
             }
         }
     }

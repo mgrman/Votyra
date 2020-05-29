@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Votyra.Core.Models
 {
-    [Serializable]
+    [Serializable,]
     public struct UI_Vector3f
     {
         public float x;
@@ -25,15 +25,18 @@ namespace Votyra.Core.Models
 
         public static implicit operator UI_Vector3f(Vector3f value) => new UI_Vector3f(value.X, value.Y, value.Z);
 
-        public static bool operator ==(UI_Vector3f a, UI_Vector3f b) => a.x == b.x && a.y == b.y && a.z == b.z;
+        public static bool operator ==(UI_Vector3f a, UI_Vector3f b) => (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
 
-        public static bool operator !=(UI_Vector3f a, UI_Vector3f b) => a.x != b.x || a.y != b.y || a.z != b.z;
+        public static bool operator !=(UI_Vector3f a, UI_Vector3f b) => (a.x != b.x) || (a.y != b.y) || (a.z != b.z);
 
         public override bool Equals(object obj)
         {
             if (!(obj is UI_Vector3f))
+            {
                 return false;
-            var that = (UI_Vector3f) obj;
+            }
+
+            var that = (UI_Vector3f)obj;
 
             return this == that;
         }
@@ -42,7 +45,7 @@ namespace Votyra.Core.Models
         {
             unchecked
             {
-                return x.GetHashCode() + y.GetHashCode() * 7 + z.GetHashCode() * 13;
+                return this.x.GetHashCode() + (this.y.GetHashCode() * 7) + (this.z.GetHashCode() * 13);
             }
         }
     }

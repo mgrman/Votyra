@@ -16,18 +16,18 @@ namespace Votyra.Core.Images
 
         public EditableMatrixImage3b(IImageConfig imageConfig, IImageConstraint3b constraint = null)
         {
-            _constraint = constraint;
-            _editableMatrix = new bool[imageConfig.ImageSize.X, imageConfig.ImageSize.Y, imageConfig.ImageSize.Z];
+            this._constraint = constraint;
+            this._editableMatrix = new bool[imageConfig.ImageSize.X, imageConfig.ImageSize.Y, imageConfig.ImageSize.Z];
         }
 
         private MatrixImage3b PreparedImage
         {
-            get => _preparedImage;
+            get => this._preparedImage;
             set
             {
-                _preparedImage?.FinishUsing();
-                _preparedImage = value;
-                _preparedImage?.StartUsing();
+                this._preparedImage?.FinishUsing();
+                this._preparedImage = value;
+                this._preparedImage?.StartUsing();
             }
         }
 
@@ -35,29 +35,29 @@ namespace Votyra.Core.Images
 
         public IImage3b CreateImage()
         {
-            if (_invalidatedArea == Range3i.Zero && PreparedImage.InvalidatedArea == Range3i.Zero)
+            if ((this._invalidatedArea == Range3i.Zero) && (this.PreparedImage.InvalidatedArea == Range3i.Zero))
             {
             }
-            else if (_invalidatedArea.HasValue || PreparedImage == null)
+            else if (this._invalidatedArea.HasValue || (this.PreparedImage == null))
             {
-                _invalidatedArea = _invalidatedArea ?? _editableMatrix.Range();
+                this._invalidatedArea = this._invalidatedArea ?? this._editableMatrix.Range();
 
-                PreparedImage = GetNotUsedImage();
-                PreparedImage.UpdateImage(_editableMatrix);
-                PreparedImage.UpdateInvalidatedArea(_invalidatedArea.Value);
-                _invalidatedArea = Range3i.Zero;
+                this.PreparedImage = this.GetNotUsedImage();
+                this.PreparedImage.UpdateImage(this._editableMatrix);
+                this.PreparedImage.UpdateInvalidatedArea(this._invalidatedArea.Value);
+                this._invalidatedArea = Range3i.Zero;
             }
 
-            return PreparedImage;
+            return this.PreparedImage;
         }
 
         private MatrixImage3b GetNotUsedImage()
         {
-            var image = _readonlyMatrices.FirstOrDefault(o => !o.IsBeingUsed);
+            var image = this._readonlyMatrices.FirstOrDefault(o => !o.IsBeingUsed);
             if (image == null)
             {
-                image = new MatrixImage3b(_editableMatrix.Size());
-                _readonlyMatrices.Add(image);
+                image = new MatrixImage3b(this._editableMatrix.Size());
+                this._readonlyMatrices.Add(image);
             }
 
             return image;
@@ -65,15 +65,15 @@ namespace Votyra.Core.Images
 
         private void FixImage(Range3i invalidatedImageArea, Direction direction)
         {
-            _invalidatedArea = _invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
+            this._invalidatedArea = this._invalidatedArea?.CombineWith(invalidatedImageArea) ?? invalidatedImageArea;
 
-            if (_constraint == null)
+            if (this._constraint == null)
             {
                 return;
             }
 
-            var newInvalidatedImageArea = _constraint.FixImage(_editableMatrix, invalidatedImageArea, direction);
-            _invalidatedArea = _invalidatedArea?.CombineWith(newInvalidatedImageArea) ?? newInvalidatedImageArea;
+            var newInvalidatedImageArea = this._constraint.FixImage(this._editableMatrix, invalidatedImageArea, direction);
+            this._invalidatedArea = this._invalidatedArea?.CombineWith(newInvalidatedImageArea) ?? newInvalidatedImageArea;
         }
 
         private class MatrixImageAccessor : IEditableImageAccessor3b
@@ -84,28 +84,28 @@ namespace Votyra.Core.Images
 
             public MatrixImageAccessor(EditableMatrixImage3b editableImage, Range3i area)
             {
-                _editableMatrix = editableImage._editableMatrix;
-                _editableImage = editableImage;
-                Area = area.IntersectWith(editableImage._editableMatrix.Range());
+                this._editableMatrix = editableImage._editableMatrix;
+                this._editableImage = editableImage;
+                this.Area = area.IntersectWith(editableImage._editableMatrix.Range());
             }
 
             public Range3i Area { get; }
 
             public bool this[Vector3i pos]
             {
-                get => _editableMatrix[pos.X, pos.Y, pos.Z];
+                get => this._editableMatrix[pos.X, pos.Y, pos.Z];
                 set
                 {
-                    var existingValue = _editableMatrix[pos.X, pos.Y, pos.Z];
-                    _changeCounter += (value ? 1 : 0) - (existingValue ? 1 : 0);
-                    _editableMatrix[pos.X, pos.Y, pos.Z] = value;
+                    var existingValue = this._editableMatrix[pos.X, pos.Y, pos.Z];
+                    this._changeCounter += (value ? 1 : 0) - (existingValue ? 1 : 0);
+                    this._editableMatrix[pos.X, pos.Y, pos.Z] = value;
                 }
             }
 
             public void Dispose()
             {
-                var direction = _changeCounter > 0 ? Direction.Up : _changeCounter < 0 ? Direction.Down : Direction.Unknown;
-                _editableImage.FixImage(Area, direction);
+                var direction = this._changeCounter > 0 ? Direction.Up : this._changeCounter < 0 ? Direction.Down : Direction.Unknown;
+                this._editableImage.FixImage(this.Area, direction);
             }
         }
     }

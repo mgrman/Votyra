@@ -4,10 +4,7 @@ using Votyra.Core;
 using Votyra.Core.Behaviours;
 using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
-using Votyra.Core.Images.Constraints;
 using Votyra.Core.ImageSamplers;
-using Votyra.Core.Painting;
-using Votyra.Core.Painting.Commands;
 using Votyra.Core.Pooling;
 using Votyra.Core.Queueing;
 using Votyra.Core.Raycasting;
@@ -17,7 +14,7 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    public class Terrain2iInstaller : MonoInstaller
+    public class Terrain2IInstaller : MonoInstaller
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
@@ -29,49 +26,49 @@ namespace Votyra.Plannar.Unity
 
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<InterpolatedImage2iTo2fPostProcessor>()
+            this.Container.BindInterfacesAndSelfTo<InterpolatedImage2iTo2fPostProcessor>()
                 .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<InterpolatedUVPostProcessorStep>()
+            this.Container.BindInterfacesAndSelfTo<InterpolatedUVPostProcessorStep>()
                 .AsSingle()
                 .When(c =>
                 {
                     var config = c.Container.Resolve<IInterpolationConfig>();
                     return config.ImageSubdivision > 1;
                 });
-            Container.Bind<ScaleAdjustor>()
+            this.Container.Bind<ScaleAdjustor>()
                 .ToSelf()
                 .AsSingle()
                 .NonLazy();
 
-            Container.BindInterfacesAndSelfTo<Terrain2fRaycaster>()
+            this.Container.BindInterfacesAndSelfTo<Terrain2fRaycaster>()
                 .AsSingle()
                 .NonLazy();
 
-            Container.BindInterfacesAndSelfTo<TerrainGeneratorManager2i>()
+            this.Container.BindInterfacesAndSelfTo<TerrainGeneratorManager2i>()
                 .AsSingle()
                 .NonLazy();
 
-            Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2i>()
+            this.Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2i>()
                 .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<BicubicTerrainMesher2f>()
+            this.Container.BindInterfacesAndSelfTo<BicubicTerrainMesher2f>()
                 .AsSingle()
                 .When(c =>
                 {
                     var interpolationConfig = c.Container.Resolve<IInterpolationConfig>();
-                    return interpolationConfig.MeshSubdivision > 1 && interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic;
+                    return (interpolationConfig.MeshSubdivision > 1) && (interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic);
                 });
 
-            Container.BindInterfacesAndSelfTo<TerrainMesher2f>()
+            this.Container.BindInterfacesAndSelfTo<TerrainMesher2f>()
                 .AsSingle()
                 .When(c =>
                 {
                     var interpolationConfig = c.Container.Resolve<IInterpolationConfig>();
-                    return interpolationConfig.MeshSubdivision == 1 && interpolationConfig.ImageSubdivision == 1;
+                    return (interpolationConfig.MeshSubdivision == 1) && (interpolationConfig.ImageSubdivision == 1);
                 });
 
-            Container.BindInterfacesAndSelfTo<FixedTerrainMeshPool>()
+            this.Container.BindInterfacesAndSelfTo<FixedTerrainMeshPool>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -79,7 +76,7 @@ namespace Votyra.Plannar.Unity
                     return !interpolationConfig.DynamicMeshes;
                 });
 
-            Container.BindInterfacesAndSelfTo<ExpandingTerrainMeshPool>()
+            this.Container.BindInterfacesAndSelfTo<ExpandingTerrainMeshPool>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -87,41 +84,41 @@ namespace Votyra.Plannar.Unity
                     return interpolationConfig.DynamicMeshes;
                 });
 
-            Container.BindInterfacesAndSelfTo<TerrainGameObjectPool>()
+            this.Container.BindInterfacesAndSelfTo<TerrainGameObjectPool>()
                 .AsSingle();
-            Container.BindInterfacesAndSelfTo<TerrainUnityMeshManager>()
+            this.Container.BindInterfacesAndSelfTo<TerrainUnityMeshManager>()
                 .AsSingle()
                 .NonLazy();
 
-            Container.BindInterfacesAndSelfTo<FrameData2iPool>()
+            this.Container.BindInterfacesAndSelfTo<FrameData2iPool>()
                 .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<FrameData2iProvider>()
+            this.Container.BindInterfacesAndSelfTo<FrameData2IProvider>()
                 .AsSingle();
 
-            Container.Bind<Func<GameObject>>()
+            this.Container.Bind<Func<GameObject>>()
                 .FromMethod(context =>
                 {
                     var root = context.Container.ResolveId<GameObject>("root");
                     var terrainConfig = context.Container.Resolve<ITerrainConfig>();
                     var materialConfig = context.Container.Resolve<IMaterialConfig>();
-                    Func<GameObject> factory = () => CreateNewGameObject(root, terrainConfig, materialConfig);
+                    Func<GameObject> factory = () => this.CreateNewGameObject(root, terrainConfig, materialConfig);
                     return factory;
                 })
                 .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<PoolStats>()
+            this.Container.BindInterfacesAndSelfTo<PoolStats>()
                 .FromNewComponentOn(this.gameObject)
                 .AsSingle()
                 .NonLazy();
 
-            Container.BindInterfacesAndSelfTo<UnityTerrainGeneratorManager2i>()
+            this.Container.BindInterfacesAndSelfTo<UnityTerrainGeneratorManager2i>()
                 .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<TerrainRepository2i>()
+            this.Container.BindInterfacesAndSelfTo<TerrainRepository2i>()
                 .AsSingle();
 
-            Container.BindInterfacesAndSelfTo<LastValueTaskQueue<ArcResource<IFrameData2i>>>()
+            this.Container.BindInterfacesAndSelfTo<LastValueTaskQueue<ArcResource<IFrameData2i>>>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -129,7 +126,7 @@ namespace Votyra.Plannar.Unity
                     return terrainConfig.AsyncTerrainGeneration;
                 });
 
-            Container.BindInterfacesAndSelfTo<PerGroupTaskQueue>()
+            this.Container.BindInterfacesAndSelfTo<PerGroupTaskQueue>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -137,7 +134,7 @@ namespace Votyra.Plannar.Unity
                     return terrainConfig.AsyncTerrainGeneration;
                 });
 
-            Container.BindInterfacesAndSelfTo<ImmediateQueue<ArcResource<IFrameData2i>>>()
+            this.Container.BindInterfacesAndSelfTo<ImmediateQueue<ArcResource<IFrameData2i>>>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -145,7 +142,7 @@ namespace Votyra.Plannar.Unity
                     return !terrainConfig.AsyncTerrainGeneration;
                 });
 
-            Container.BindInterfacesAndSelfTo<ImmediateQueue<GroupUpdateData>>()
+            this.Container.BindInterfacesAndSelfTo<ImmediateQueue<GroupUpdateData>>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -159,7 +156,10 @@ namespace Votyra.Plannar.Unity
             var go = new GameObject();
             go.transform.SetParent(root.transform, false);
             if (terrainConfig.DrawBounds)
+            {
                 go.AddComponent<DrawBounds>();
+            }
+
             var meshRenderer = go.GetOrAddComponent<MeshRenderer>();
             meshRenderer.materials = ArrayUtils.CreateNonNull(materialConfig.Material, materialConfig.MaterialWalls);
 
@@ -184,7 +184,9 @@ namespace Votyra.Plannar.Unity
             }
 
             if (meshFilter.sharedMesh == null)
+            {
                 meshFilter.mesh = new Mesh();
+            }
 
             var mesh = meshFilter.sharedMesh;
             mesh.MarkDynamic();
@@ -194,7 +196,8 @@ namespace Votyra.Plannar.Unity
 
         private class ScaleAdjustor
         {
-            public ScaleAdjustor(IInterpolationConfig interpolationConfig, [Inject(Id = "root")] GameObject root)
+            public ScaleAdjustor(IInterpolationConfig interpolationConfig, [Inject(Id = "root"),]
+                GameObject root)
             {
                 var scale = 1f / interpolationConfig.ImageSubdivision;
 

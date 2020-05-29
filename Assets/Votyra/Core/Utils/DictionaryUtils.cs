@@ -6,7 +6,7 @@ namespace Votyra.Core.Utils
     {
         public static TValue TryGetValue<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key) where TValue : class => dict.TryGetValue(key, out var temp) ? temp : null;
 
-        public static TValue? TryGetValueN<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key) where TValue : struct => dict.TryGetValue(key, out var temp) ? temp : (TValue?) null;
+        public static TValue? TryGetValueN<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key) where TValue : struct => dict.TryGetValue(key, out var temp) ? temp : (TValue?)null;
 
         public static TValue TryRemoveAndReturnValue<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) where TValue : class
         {

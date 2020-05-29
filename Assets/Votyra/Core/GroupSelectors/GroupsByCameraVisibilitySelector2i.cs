@@ -11,7 +11,7 @@ namespace Votyra.Core.GroupSelectors
 
         public GroupsByCameraVisibilitySelector2i(ITerrainConfig config)
         {
-            _cellInGroupCount = config.CellInGroupCount.XY();
+            this._cellInGroupCount = config.CellInGroupCount.XY();
         }
 
         public void UpdateGroupsVisibility(ArcResource<IFrameData2i> optionsResource, Func<Vector2i, bool> wasVisible, Action<Vector2i, ArcResource<IFrameData2i>> onGroupBecameVisible, Action<Vector2i> onGroupNotVisibleAnyMore)
@@ -36,19 +36,19 @@ namespace Votyra.Core.GroupSelectors
                 localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
 
-            var cameraBoundsGroups = (localCameraBounds / _cellInGroupCount.ToVector2f()).RoundToContain();
+            var cameraBoundsGroups = (localCameraBounds / this._cellInGroupCount.ToVector2f()).RoundToContain();
 
             var minZ = options.RangeZ.Min;
-            var boundsSize = new Vector2f(_cellInGroupCount.X, _cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
+            var boundsSize = new Vector2f(this._cellInGroupCount.X, this._cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
 
-            var areaToCheck = cameraBoundsGroups.UnionWith(_previousArea);
-            _previousArea = cameraBoundsGroups;
+            var areaToCheck = cameraBoundsGroups.UnionWith(this._previousArea);
+            this._previousArea = cameraBoundsGroups;
             for (var ix = areaToCheck.Min.X; ix < areaToCheck.Max.X; ix++)
             {
                 for (var iy = areaToCheck.Min.Y; iy < areaToCheck.Max.Y; iy++)
                 {
                     var group = new Vector2i(ix, iy);
-                    var groupBoundsMin = (group * _cellInGroupCount).ToVector2f()
+                    var groupBoundsMin = (group * this._cellInGroupCount).ToVector2f()
                         .ToVector3f(minZ);
                     var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
                     var isVisible = planes.TestPlanesAABB(groupBounds);

@@ -10,8 +10,8 @@ namespace Votyra.Core
 
         public FrameData2i()
         {
-            CameraPlanes = new Plane3f[6];
-            CameraFrustumCorners = new Vector3f[4];
+            this.CameraPlanes = new Plane3f[6];
+            this.CameraFrustumCorners = new Vector3f[4];
         }
 
         public Vector2i CellInGroupCount { get; set; }
@@ -22,9 +22,9 @@ namespace Votyra.Core
 
         public Vector3f[] CameraFrustumCorners { get; }
 
-        IReadOnlyList<Plane3f> IFrameData.CameraPlanes => CameraPlanes;
+        IReadOnlyList<Plane3f> IFrameData.CameraPlanes => this.CameraPlanes;
 
-        IReadOnlyList<Vector3f> IFrameData.CameraFrustumCorners => CameraFrustumCorners;
+        IReadOnlyList<Vector3f> IFrameData.CameraFrustumCorners => this.CameraFrustumCorners;
 
         public Area1f RangeZ { get; private set; }
 
@@ -32,13 +32,13 @@ namespace Votyra.Core
 
         public IImage2f Image
         {
-            get => _image;
+            get => this._image;
             set
             {
-                (_image as IInitializableImage)?.FinishUsing();
-                _image = value;
-                (_image as IInitializableImage)?.StartUsing();
-                RangeZ = _image?.RangeZ ?? Area1f.Zero;
+                (this._image as IInitializableImage)?.FinishUsing();
+                this._image = value;
+                (this._image as IInitializableImage)?.StartUsing();
+                this.RangeZ = this._image?.RangeZ ?? Area1f.Zero;
             }
         }
     }

@@ -8,8 +8,8 @@ namespace Votyra.Core.Unity
         public override void InstallBindings()
         {
             var meshRoot = new GameObject("MeshRoot");
-            meshRoot.transform.SetParent(transform, false);
-            Container.BindInstance(meshRoot)
+            meshRoot.transform.SetParent(this.transform, false);
+            this.Container.BindInstance(meshRoot)
                 .WithId("root")
                 .AsSingle();
         }

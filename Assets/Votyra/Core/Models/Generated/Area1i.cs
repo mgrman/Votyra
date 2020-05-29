@@ -7,7 +7,7 @@ namespace Votyra.Core.Models
     /// </summary>
     public struct Area1i : IEquatable<Area1i>
     {
-        public static readonly Area1i All = new Area1i(Vector1iUtils.FromSame(int.MinValue / 2), Vector1iUtils.FromSame(int.MaxValue / 2 - 1));
+        public static readonly Area1i All = new Area1i(Vector1iUtils.FromSame(int.MinValue / 2), Vector1iUtils.FromSame((int.MaxValue / 2) - 1));
 
         public static readonly Area1i Zero = new Area1i();
 
@@ -17,20 +17,20 @@ namespace Votyra.Core.Models
 
         private Area1i(int min, int max)
         {
-            Min = min;
-            Max = max;
-            if (Size.AnyNegative())
+            this.Min = min;
+            this.Max = max;
+            if (this.Size.AnyNegative())
             {
                 throw new InvalidOperationException($"{nameof(Area1i)} '{this}' cannot have a size be zero or negative!");
             }
 
-            if (Size.AnyZero())
+            if (this.Size.AnyZero())
             {
-                Max = Min;
+                this.Max = this.Min;
             }
         }
 
-        public int Size => Max - Min + Vector1i.One;
+        public int Size => (this.Max - this.Min) + Vector1i.One;
 
         public static Area1i FromCenterAndExtents(int center, int extents)
         {
@@ -54,31 +54,31 @@ namespace Votyra.Core.Models
 
         public static Area1i FromMinAndMax(int min, int max) => new Area1i(min, max);
 
-        public static bool operator ==(Area1i a, Area1i b) => a.Min == b.Min && a.Max == b.Max;
+        public static bool operator ==(Area1i a, Area1i b) => (a.Min == b.Min) && (a.Max == b.Max);
 
-        public static bool operator !=(Area1i a, Area1i b) => a.Min != b.Min || a.Max != b.Max;
+        public static bool operator !=(Area1i a, Area1i b) => (a.Min != b.Min) || (a.Max != b.Max);
 
-        public Area1i ExtendBothDirections(int distance) => FromMinAndMax(Min - distance, Max + distance);
+        public Area1i ExtendBothDirections(int distance) => FromMinAndMax(this.Min - distance, this.Max + distance);
 
-        public Range1i ToRange1i() => Range1i.FromMinAndMax(Min, Max + Vector1i.One);
+        public Range1i ToRange1i() => Range1i.FromMinAndMax(this.Min, this.Max + Vector1i.One);
 
-        public Area1f ToArea1f() => Area1f.FromMinAndMax(Min.ToVector1f(), Max.ToVector1f());
+        public Area1f ToArea1f() => Area1f.FromMinAndMax(this.Min.ToVector1f(), this.Max.ToVector1f());
 
-        public bool Contains(int point) => point >= Min && point <= Max;
+        public bool Contains(int point) => (point >= this.Min) && (point <= this.Max);
 
         public bool Overlaps(Area1i that)
         {
-            if (Size == Vector1i.Zero || that.Size == Vector1i.Zero)
+            if ((this.Size == Vector1i.Zero) || (that.Size == Vector1i.Zero))
             {
                 return false;
             }
 
-            return Min <= that.Max && that.Min <= Max;
+            return (this.Min <= that.Max) && (that.Min <= this.Max);
         }
 
         public Area1i CombineWith(Area1i that)
         {
-            if (Size == Vector1i.Zero)
+            if (this.Size == Vector1i.Zero)
             {
                 return that;
             }
@@ -88,33 +88,33 @@ namespace Votyra.Core.Models
                 return this;
             }
 
-            var min = Vector1iUtils.Min(Min, that.Min);
-            var max = Vector1iUtils.Max(Max, that.Max);
+            var min = Vector1iUtils.Min(this.Min, that.Min);
+            var max = Vector1iUtils.Max(this.Max, that.Max);
             return FromMinAndMax(min, max);
         }
 
         public Area1i CombineWith(int point)
         {
-            if (Contains(point))
+            if (this.Contains(point))
             {
                 return this;
             }
 
-            var min = Vector1iUtils.Min(Min, point);
-            var max = Vector1iUtils.Max(Max, point);
+            var min = Vector1iUtils.Min(this.Min, point);
+            var max = Vector1iUtils.Max(this.Max, point);
 
             return FromMinAndMax(min, max);
         }
 
         public Area1i IntersectWith(Area1i that)
         {
-            if (Size == Vector1i.Zero || that.Size == Vector1i.Zero)
+            if ((this.Size == Vector1i.Zero) || (that.Size == Vector1i.Zero))
             {
                 return Zero;
             }
 
-            var min = Vector1iUtils.Max(Min, that.Min);
-            var max = Vector1iUtils.Max(Vector1iUtils.Min(Max, that.Max), min);
+            var min = Vector1iUtils.Max(this.Min, that.Min);
+            var max = Vector1iUtils.Max(Vector1iUtils.Min(this.Max, that.Max), min);
 
             return FromMinAndMax(min, max);
         }
@@ -126,18 +126,18 @@ namespace Votyra.Core.Models
                 return this;
             }
 
-            return UnionWith(that.Value);
+            return this.UnionWith(that.Value);
         }
 
         public Area1i UnionWith(Area1i that)
         {
-            if (Size == Vector1i.Zero || that.Size == Vector1i.Zero)
+            if ((this.Size == Vector1i.Zero) || (that.Size == Vector1i.Zero))
             {
                 return Zero;
             }
 
-            var min = Vector1iUtils.Min(Min, that.Min);
-            var max = Vector1iUtils.Max(Max, that.Max);
+            var min = Vector1iUtils.Min(this.Min, that.Min);
+            var max = Vector1iUtils.Max(this.Max, that.Max);
 
             return FromMinAndMax(min, max);
         }
@@ -151,17 +151,17 @@ namespace Votyra.Core.Models
                 return false;
             }
 
-            return Equals((Area1i) obj);
+            return this.Equals((Area1i)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return Min.GetHashCode() + 7 * Max.GetHashCode();
+                return this.Min.GetHashCode() + (7 * this.Max.GetHashCode());
             }
         }
 
-        public override string ToString() => $"Area1i: min={Min} max={Max} size={Size}";
+        public override string ToString() => $"Area1i: min={this.Min} max={this.Max} size={this.Size}";
     }
 }

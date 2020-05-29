@@ -11,15 +11,15 @@ namespace Votyra.Core.Models.ObjectPool
         public ObjectListPool(int limit, Func<TKey, T> objectGenerator, Func<TKey, TKey, bool> comparer)
             : base(limit, objectGenerator)
         {
-            _comparer = comparer;
+            this._comparer = comparer;
         }
 
         protected override List<T> GetPool(TKey key)
         {
             List<T> objectPool = null;
-            foreach (var container in _containers)
+            foreach (var container in this._containers)
             {
-                if (_comparer(key, container.key))
+                if (this._comparer(key, container.key))
                 {
                     objectPool = container.list;
                     break;
@@ -30,7 +30,7 @@ namespace Votyra.Core.Models.ObjectPool
             {
                 var container = new Container(key);
                 objectPool = container.list;
-                _containers.Add(container);
+                this._containers.Add(container);
             }
 
             return objectPool;
@@ -44,7 +44,7 @@ namespace Votyra.Core.Models.ObjectPool
             public Container(TKey key)
             {
                 this.key = key;
-                list = new List<T>();
+                this.list = new List<T>();
             }
         }
     }

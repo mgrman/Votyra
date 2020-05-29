@@ -5,13 +5,18 @@ using Votyra.Core.Models;
 
 namespace Votyra.Plannar.Editor
 {
-    [TestFixture]
+    [TestFixture,]
     public class PrioritySetQueueTest
     {
-        [Test]
+        [Test,]
         public void New_FloatAscending()
         {
-            var initialValues = new Dictionary<Vector2i, float> {{new Vector2i(1, 1), 1}, {new Vector2i(0, 0), 0}, {new Vector2i(7, 7), 7}};
+            var initialValues = new Dictionary<Vector2i, float>
+            {
+                {new Vector2i(1, 1), 1},
+                {new Vector2i(0, 0), 0},
+                {new Vector2i(7, 7), 7},
+            };
 
             var queue = new PrioritySetQueue<Vector2i, float>(initialValues.Keys, EqualityComparer<Vector2i>.Default, o => initialValues[o], Comparer<float>.Create((a, b) => a.CompareTo(b)));
 
@@ -24,10 +29,15 @@ namespace Votyra.Plannar.Editor
             Assert.AreEqual(new Vector2i(7, 7), third.Value);
         }
 
-        [Test]
+        [Test,]
         public void New_FloatAscending_AddedToCorrectPosition()
         {
-            var initialValues = new Dictionary<Vector2i, float> {{new Vector2i(1, 1), 1}, {new Vector2i(0, 0), 0}, {new Vector2i(7, 7), 7}};
+            var initialValues = new Dictionary<Vector2i, float>
+            {
+                {new Vector2i(1, 1), 1},
+                {new Vector2i(0, 0), 0},
+                {new Vector2i(7, 7), 7},
+            };
 
             var queue = new PrioritySetQueue<Vector2i, float>(initialValues.Keys, EqualityComparer<Vector2i>.Default, o => initialValues[o], Comparer<float>.Create((a, b) => a.CompareTo(b)));
 
@@ -44,10 +54,15 @@ namespace Votyra.Plannar.Editor
             Assert.AreEqual(new Vector2i(7, 7), fourth.Value);
         }
 
-        [Test]
+        [Test,]
         public void New_FloatDescending()
         {
-            var initialValues = new Dictionary<Vector2i, float> {{new Vector2i(1, 1), 1}, {new Vector2i(0, 0), 0}, {new Vector2i(7, 7), 7}};
+            var initialValues = new Dictionary<Vector2i, float>
+            {
+                {new Vector2i(1, 1), 1},
+                {new Vector2i(0, 0), 0},
+                {new Vector2i(7, 7), 7},
+            };
 
             var queue = new PrioritySetQueue<Vector2i, float>(initialValues.Keys, EqualityComparer<Vector2i>.Default, o => initialValues[o], Comparer<float>.Create((a, b) => -a.CompareTo(b)));
 
@@ -60,10 +75,15 @@ namespace Votyra.Plannar.Editor
             Assert.AreEqual(new Vector2i(0, 0), third.Value);
         }
 
-        [Test]
+        [Test,]
         public void New_FloatDescending_AddedToCorrectPosition()
         {
-            var initialValues = new Dictionary<Vector2i, float> {{new Vector2i(1, 1), 1}, {new Vector2i(0, 0), 0}, {new Vector2i(7, 7), 7}};
+            var initialValues = new Dictionary<Vector2i, float>
+            {
+                {new Vector2i(1, 1), 1},
+                {new Vector2i(0, 0), 0},
+                {new Vector2i(7, 7), 7},
+            };
 
             var queue = new PrioritySetQueue<Vector2i, float>(initialValues.Keys, EqualityComparer<Vector2i>.Default, o => initialValues[o], Comparer<float>.Create((a, b) => -a.CompareTo(b)));
 

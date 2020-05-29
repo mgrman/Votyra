@@ -4,9 +4,10 @@ namespace Votyra.Core.Images
 {
     public class ImageConfig : IImageConfig
     {
-        public ImageConfig([ConfigInject("imageSize")] Vector3i imageSize)
+        public ImageConfig([ConfigInject("imageSize"),]
+            Vector3i imageSize)
         {
-            ImageSize = imageSize;
+            this.ImageSize = imageSize;
         }
 
         public Vector3i ImageSize { get; }
@@ -17,16 +18,16 @@ namespace Votyra.Core.Images
 
         public override bool Equals(object obj)
         {
-            if (obj == null || GetType() != obj.GetType())
+            if ((obj == null) || (this.GetType() != obj.GetType()))
             {
                 return false;
             }
 
             var that = obj as ImageConfig;
 
-            return ImageSize == that.ImageSize;
+            return this.ImageSize == that.ImageSize;
         }
 
-        public override int GetHashCode() => ImageSize.GetHashCode();
+        public override int GetHashCode() => this.ImageSize.GetHashCode();
     }
 }

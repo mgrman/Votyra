@@ -22,7 +22,7 @@ namespace Votyra.Core.Models
 
         public static float AreaSum(this float @this) => @this;
 
-        public static float Magnitude(this float @this) => (float) Math.Sqrt(@this.SqrMagnitude());
+        public static float Magnitude(this float @this) => (float)Math.Sqrt(@this.SqrMagnitude());
 
         public static float Normalized(this float @this)
         {
@@ -34,7 +34,7 @@ namespace Votyra.Core.Models
 
         public static float FromSame(float value) => value;
 
-        public static float Dot(float a, float b) => (float) ((double) a * b);
+        public static float Dot(float a, float b) => (float)((double)a * b);
 
         public static float Ceil(this float @this) => @this.CeilToInt();
 

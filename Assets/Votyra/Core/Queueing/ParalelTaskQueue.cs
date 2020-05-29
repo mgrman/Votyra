@@ -10,22 +10,22 @@ namespace Votyra.Core.Queueing
 
         public ParalelTaskQueue()
         {
-            _taskFactory = new TaskFactory();
+            this._taskFactory = new TaskFactory();
         }
 
         public event Action<T> DoWork;
 
         public void QueueNew(T context)
         {
-            _taskFactory.StartNew(TaskUpdate, context);
+            this._taskFactory.StartNew(this.TaskUpdate, context);
         }
 
         private void TaskUpdate(object arg)
         {
-            var context = (T) arg;
+            var context = (T)arg;
             try
             {
-                DoWork?.Invoke(context);
+                this.DoWork?.Invoke(context);
             }
             catch (Exception ex)
             {

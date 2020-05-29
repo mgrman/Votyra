@@ -13,28 +13,28 @@ namespace Votyra.Core.Images.Constraints
 
         public PrioritySetQueue(IEqualityComparer<TValue> valueEqualityComparer)
         {
-            _valueEqualityComparer = valueEqualityComparer;
-            _queue = new LinkedList<PrioritisedValue>();
+            this._valueEqualityComparer = valueEqualityComparer;
+            this._queue = new LinkedList<PrioritisedValue>();
         }
 
         public PrioritySetQueue(IEnumerable<TValue> initialValue, IEqualityComparer<TValue> valueEqualityComparer, Func<TValue, TPriority> func, IComparer<TPriority> create)
         {
-            _valueEqualityComparer = valueEqualityComparer;
-            _queue = new LinkedList<PrioritisedValue>();
-            Reset(create);
+            this._valueEqualityComparer = valueEqualityComparer;
+            this._queue = new LinkedList<PrioritisedValue>();
+            this.Reset(create);
 
             foreach (var value in initialValue)
             {
-                Add(value, func(value));
+                this.Add(value, func(value));
             }
         }
 
-        public int Count => _queue.Count;
+        public int Count => this._queue.Count;
 
         public PrioritisedValue GetFirst()
         {
-            var cellWithValue = _queue.First;
-            RemoveNode(cellWithValue);
+            var cellWithValue = this._queue.First;
+            this.RemoveNode(cellWithValue);
 
             return cellWithValue.Value;
         }
@@ -42,26 +42,26 @@ namespace Votyra.Core.Images.Constraints
         public void Add(TValue newCellToCheck, TPriority newCellToCheckValue)
         {
             var addded = false;
-            var node = _queue.First;
+            var node = this._queue.First;
             while (node != null)
             {
-                var isOldToRemove = _valueEqualityComparer.Equals(node.Value.Value, newCellToCheck);
-                var isNewToBeAddedBeforeCurrent = _priorityOrderComparer.Compare(node.Value.Priority, newCellToCheckValue) > 0 && !addded; //node.Value.Value < newCellToCheckValue && !addded;
+                var isOldToRemove = this._valueEqualityComparer.Equals(node.Value.Value, newCellToCheck);
+                var isNewToBeAddedBeforeCurrent = (this._priorityOrderComparer.Compare(node.Value.Priority, newCellToCheckValue) > 0) && !addded; //node.Value.Value < newCellToCheckValue && !addded;
 
                 if (isOldToRemove && isNewToBeAddedBeforeCurrent)
                 {
-                    node.Value = GetValue(newCellToCheck, newCellToCheckValue);
+                    node.Value = this.GetValue(newCellToCheck, newCellToCheckValue);
                     addded = true;
                     break;
                 }
 
                 if (isOldToRemove)
                 {
-                    RemoveNode(node);
+                    this.RemoveNode(node);
                 }
                 else if (isNewToBeAddedBeforeCurrent)
                 {
-                    _queue.AddBefore(node, GetNode(newCellToCheck, newCellToCheckValue));
+                    this._queue.AddBefore(node, this.GetNode(newCellToCheck, newCellToCheckValue));
                     addded = true;
                 }
 
@@ -70,33 +70,33 @@ namespace Votyra.Core.Images.Constraints
 
             if (!addded)
             {
-                _queue.AddLast(GetNode(newCellToCheck, newCellToCheckValue));
+                this._queue.AddLast(this.GetNode(newCellToCheck, newCellToCheckValue));
             }
         }
 
         public void Reset(IComparer<TPriority> priorityOrderComparer)
         {
-            _priorityOrderComparer = priorityOrderComparer;
-            var node = _queue.First;
+            this._priorityOrderComparer = priorityOrderComparer;
+            var node = this._queue.First;
             while (node != null)
             {
-                _emptyNodes.ReturnRaw(node);
+                this._emptyNodes.ReturnRaw(node);
                 node = node.Next;
             }
 
-            _queue.Clear();
+            this._queue.Clear();
         }
 
         private void RemoveNode(LinkedListNode<PrioritisedValue> node)
         {
-            _emptyNodes.ReturnRaw(node);
-            _queue.Remove(node);
+            this._emptyNodes.ReturnRaw(node);
+            this._queue.Remove(node);
         }
 
         private LinkedListNode<PrioritisedValue> GetNode(TValue newCellToCheck, TPriority newCellToCheckValue)
         {
-            var value = GetValue(newCellToCheck, newCellToCheckValue);
-            var node = _emptyNodes.GetRaw();
+            var value = this.GetValue(newCellToCheck, newCellToCheckValue);
+            var node = this._emptyNodes.GetRaw();
             node.Value = value;
             return node;
         }
@@ -110,8 +110,8 @@ namespace Votyra.Core.Images.Constraints
 
             public PrioritisedValue(TValue pos, TPriority value)
             {
-                Value = pos;
-                Priority = value;
+                this.Value = pos;
+                this.Priority = value;
             }
         }
     }

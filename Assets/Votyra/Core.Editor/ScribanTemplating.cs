@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Votyra.Core.Editor
 {
-    [InitializeOnLoad]
+    [InitializeOnLoad,]
     public static class ScribanTemplating
     {
 #if UNITY_EDITOR_WIN
@@ -20,7 +20,14 @@ namespace Votyra.Core.Editor
 #endif
 
         private const uint MaxDimCount = 6;
-        private static readonly IReadOnlyList<string> KnownDimensionName = new[] {"X", "Y", "Z", "W"};
+
+        private static readonly IReadOnlyList<string> KnownDimensionName = new[]
+        {
+            "X",
+            "Y",
+            "Z",
+            "W",
+        };
 
         static ScribanTemplating()
         {
@@ -41,7 +48,7 @@ namespace Votyra.Core.Editor
             ExpandTemplate(e.FullPath);
         }
 
-        [MenuItem("Build/Votyra/Expand Scriban Templates")]
+        [MenuItem("Build/Votyra/Expand Scriban Templates"),]
         public static void ExpandScribanTemplates()
         {
             var scribanFiles = Directory.EnumerateFiles(AssetsFolderPath, "*.scriban-txt", SearchOption.AllDirectories);
@@ -84,7 +91,7 @@ namespace Votyra.Core.Editor
                                     .ToArray()
                                 : Enumerable.Range(0, dimCount)
                                     .Select(o => $"X{o}")
-                                    .ToArray()
+                                    .ToArray(),
                         };
                         var expandedFileName = fileNameTemplate.Render(data);
 

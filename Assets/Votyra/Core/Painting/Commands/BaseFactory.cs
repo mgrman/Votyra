@@ -10,8 +10,8 @@ namespace Votyra.Core.Painting.Commands
 
         protected BaseFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
         {
-            _editableImage = editableImage;
-            _logger = logger;
+            this._editableImage = editableImage;
+            this._logger = logger;
         }
 
         public abstract string Action { get; }
@@ -19,7 +19,7 @@ namespace Votyra.Core.Painting.Commands
         public IPaintCommand Create()
         {
             var cmd = new T();
-            cmd.Initialize(_editableImage, _logger);
+            cmd.Initialize(this._editableImage, this._logger);
             return cmd;
         }
     }

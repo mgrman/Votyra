@@ -10,9 +10,9 @@ namespace Votyra.Core.Pooling
 
         public ArcResource(TValue value, Action<ArcResource<TValue>> onReturn)
         {
-            Value = value;
-            _onDispose = onReturn;
-            _activeCounter = 0;
+            this.Value = value;
+            this._onDispose = onReturn;
+            this._activeCounter = 0;
         }
 
         public TValue Value { get; }
@@ -20,23 +20,23 @@ namespace Votyra.Core.Pooling
         public void Dispose()
         {
             bool invoke;
-            lock (_lock)
+            lock (this._lock)
             {
-                _activeCounter--;
-                invoke = _activeCounter <= 0;
+                this._activeCounter--;
+                invoke = this._activeCounter <= 0;
             }
 
             if (invoke)
             {
-                _onDispose?.Invoke(this);
+                this._onDispose?.Invoke(this);
             }
         }
 
         public ArcResource<TValue> Activate()
         {
-            lock (_lock)
+            lock (this._lock)
             {
-                _activeCounter++;
+                this._activeCounter++;
                 return this;
             }
         }

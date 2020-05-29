@@ -17,49 +17,61 @@ namespace Votyra.Core.Models
 
         public ScheduledSubject(ISubject<T> subject)
         {
-            _scheduler = Scheduler.MainThread;
-            _observable = subject;
+            this._scheduler = Scheduler.MainThread;
+            this._observable = subject;
 
-            _observer = subject;
+            this._observer = subject;
         }
 
         public void OnCompleted()
         {
             if (MainThreadDispatcher.IsInMainThread)
-                _observer.OnCompleted();
+            {
+                this._observer.OnCompleted();
+            }
             else
-                _scheduler.Schedule(() =>
+            {
+                this._scheduler.Schedule(() =>
                 {
-                    _observer.OnCompleted();
+                    this._observer.OnCompleted();
                 });
+            }
         }
 
         public void OnError(Exception error)
         {
             if (MainThreadDispatcher.IsInMainThread)
-                _observer.OnError(error);
+            {
+                this._observer.OnError(error);
+            }
             else
-                _scheduler.Schedule(() =>
+            {
+                this._scheduler.Schedule(() =>
                 {
-                    _observer.OnError(error);
+                    this._observer.OnError(error);
                 });
+            }
         }
 
         public void OnNext(T value)
         {
             if (MainThreadDispatcher.IsInMainThread)
-                _observer.OnNext(value);
+            {
+                this._observer.OnNext(value);
+            }
             else
-                ScheduledOnNext(value);
+            {
+                this.ScheduledOnNext(value);
+            }
         }
 
-        public IDisposable Subscribe(IObserver<T> observer) => _observable.Subscribe(observer);
+        public IDisposable Subscribe(IObserver<T> observer) => this._observable.Subscribe(observer);
 
         private void ScheduledOnNext(T value)
         {
-            _scheduler.Schedule(() =>
+            this._scheduler.Schedule(() =>
             {
-                _observer.OnNext(value);
+                this._observer.OnNext(value);
             });
         }
     }

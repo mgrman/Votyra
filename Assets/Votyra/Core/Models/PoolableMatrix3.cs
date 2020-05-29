@@ -10,14 +10,14 @@ namespace Votyra.Core.Models
 
         private PoolableMatrix3(Vector3i matrixSize)
         {
-            RawMatrix = new T[matrixSize.X, matrixSize.Y, matrixSize.Z];
+            this.RawMatrix = new T[matrixSize.X, matrixSize.Y, matrixSize.Z];
         }
 
-        private Vector3i Size => RawMatrix.Size();
+        private Vector3i Size => this.RawMatrix.Size();
 
         public void Dispose()
         {
-            Pool.ReturnObject(this, Size);
+            Pool.ReturnObject(this, this.Size);
         }
 
         public static PoolableMatrix3<T> CreateDirty(Vector3i matrixSize)

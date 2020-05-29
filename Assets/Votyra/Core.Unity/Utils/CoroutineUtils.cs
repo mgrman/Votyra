@@ -19,7 +19,9 @@ namespace Votyra.Core.Utils
                 get
                 {
                     if (_instance == null)
+                    {
                         _instance = new GameObject(nameof(CoroutineRunner)).AddComponent<CoroutineRunner>();
+                    }
 
                     return _instance;
                 }

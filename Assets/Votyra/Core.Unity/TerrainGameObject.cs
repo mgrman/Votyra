@@ -11,54 +11,54 @@ namespace Votyra.Core.Unity
 
         public TerrainGameObject(Func<GameObject> factory)
         {
-            _factory = factory;
+            this._factory = factory;
         }
 
-        public bool IsInitialized => GameObject != null;
+        public bool IsInitialized => this.GameObject != null;
 
         public void Initialize()
         {
-            if (IsInitialized)
+            if (this.IsInitialized)
             {
                 throw new InvalidOperationException();
             }
 
-            GameObject = _factory();
-            MeshFilter = GameObject.GetComponent<MeshFilter>();
-            MeshCollider = GameObject.GetComponent<MeshCollider>();
-            BoxCollider = GameObject.GetComponent<BoxCollider>();
+            this.GameObject = this._factory();
+            this.MeshFilter = this.GameObject.GetComponent<MeshFilter>();
+            this.MeshCollider = this.GameObject.GetComponent<MeshCollider>();
+            this.BoxCollider = this.GameObject.GetComponent<BoxCollider>();
         }
 
         public async Task InitializeAsync()
         {
-            if (IsInitialized)
+            if (this.IsInitialized)
             {
                 throw new InvalidOperationException();
             }
 
             await UniTask.SwitchToMainThread();
-            Initialize();
+            this.Initialize();
         }
 
         public void SetActive(bool isActive)
         {
-            if (!IsInitialized)
+            if (!this.IsInitialized)
             {
                 throw new InvalidOperationException();
             }
 
-            GameObject.SetActive(isActive);
+            this.GameObject.SetActive(isActive);
         }
 
         public async Task SetActiveAsync(bool isActive)
         {
-            if (!IsInitialized)
+            if (!this.IsInitialized)
             {
                 throw new InvalidOperationException();
             }
 
             await UniTask.SwitchToMainThread();
-            SetActive(isActive);
+            this.SetActive(isActive);
         }
 
         public GameObject GameObject { get; private set; }

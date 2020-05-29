@@ -13,23 +13,23 @@ namespace Votyra.Core.Models
 
         public TileMap2i(IEnumerable<SampledData2i> templates, IThreadSafeLogger logger)
         {
-            _logger = logger;
+            this._logger = logger;
             // #if VERBOSE
             //             foreach (var template in templates)
             //             {
             //                 _logger.LogMessage($"{GetType().Name}-Template {template}");
             //             }
             // #endif
-            Templates = templates.ToArray();
-            ValueRange = Templates.RangeUnion();
+            this.Templates = templates.ToArray();
+            this.ValueRange = this.Templates.RangeUnion();
 
-            _tileMap = SampledData2i.GenerateAllValuesWithHoles(ValueRange)
+            this._tileMap = SampledData2i.GenerateAllValuesWithHoles(this.ValueRange)
                 .ToDictionary(inputValue => inputValue,
                     inputValue =>
                     {
                         var choosenTemplateTile = default(SampledData2i);
                         float choosenTemplateTileDiff = int.MaxValue;
-                        foreach (var tile in Templates)
+                        foreach (var tile in this.Templates)
                         {
                             var value = SampledData2i.Dif(tile, inputValue);
                             if (value < choosenTemplateTileDiff)
@@ -43,9 +43,9 @@ namespace Votyra.Core.Models
                     });
 
 #if VERBOSE
-            foreach (var pair in _tileMap)
+            foreach (var pair in this._tileMap)
             {
-                _logger.LogMessage($"{GetType().Name} {pair.Key} => {pair.Value}");
+                this._logger.LogMessage($"{this.GetType().Name} {pair.Key} => {pair.Value}");
             }
 #endif
         }
@@ -60,12 +60,12 @@ namespace Votyra.Core.Models
             return _tileMap[key];
 #else
             SampledData2i value;
-            if (_tileMap.TryGetValue(key, out value))
+            if (this._tileMap.TryGetValue(key, out value))
             {
                 return value;
             }
 
-            _logger.LogMessage($"{GetType().Name} missing tile {key}");
+            this._logger.LogMessage($"{this.GetType().Name} missing tile {key}");
             return key;
 #endif
         }

@@ -5,7 +5,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
 {
     public class RotationTests
     {
-        [Test]
+        [Test,]
         public void x0y0z0()
         {
             var initialCubeString = @"
@@ -32,7 +32,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.AreEqual(expectedCube, rotatedCube);
         }
 
-        [Test]
+        [Test,]
         public void xy0z1()
         {
             var initialCubeString = @"
@@ -59,7 +59,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.AreEqual(expectedCube, rotatedCube);
         }
 
-        [Test]
+        [Test,]
         public void xy0z2()
         {
             var initialCubeString = @"
@@ -86,7 +86,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.AreEqual(expectedCube, rotatedCube);
         }
 
-        [Test]
+        [Test,]
         public void xy0z3()
         {
             var initialCubeString = @"
@@ -113,7 +113,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             Assert.AreEqual(expectedCube, rotatedCube);
         }
 
-        [Test]
+        [Test,]
         public void xy0z0Inv()
         {
             var initialCubeString = @"

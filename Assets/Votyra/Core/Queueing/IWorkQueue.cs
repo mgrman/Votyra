@@ -4,8 +4,8 @@ namespace Votyra.Core.Queueing
 {
     public interface IWorkQueue<T>
     {
-        void QueueNew(T context);
-
         event Action<T> DoWork;
+
+        void QueueNew(T context);
     }
 }

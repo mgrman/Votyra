@@ -16,22 +16,22 @@ namespace Votyra.Core.Models.ObjectPool
                 throw new ArgumentNullException("objectGenerator");
             }
 
-            _objects = new List<T>();
-            _objectGenerator = objectGenerator;
-            _limit = limit;
+            this._objects = new List<T>();
+            this._objectGenerator = objectGenerator;
+            this._limit = limit;
         }
 
         public virtual T GetObject()
         {
             T obj;
-            if (_objects.Count > 0)
+            if (this._objects.Count > 0)
             {
-                obj = _objects[_objects.Count - 1];
-                _objects.RemoveAt(_objects.Count - 1);
+                obj = this._objects[this._objects.Count - 1];
+                this._objects.RemoveAt(this._objects.Count - 1);
             }
             else
             {
-                obj = _objectGenerator();
+                obj = this._objectGenerator();
             }
 
             return obj;
@@ -39,9 +39,9 @@ namespace Votyra.Core.Models.ObjectPool
 
         public virtual void ReturnObject(T obj)
         {
-            if (_objects.Count < _limit)
+            if (this._objects.Count < this._limit)
             {
-                _objects.Add(obj);
+                this._objects.Add(obj);
             }
         }
     }

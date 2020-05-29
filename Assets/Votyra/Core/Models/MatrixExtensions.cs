@@ -20,7 +20,7 @@ namespace Votyra.Core.Models
 
         public static Range3i Range<T>(this T[,,] matrix) => Range3i.FromMinAndMax(new Vector3i(matrix.GetLowerBound(0), matrix.GetLowerBound(1), matrix.GetLowerBound(2)), new Vector3i(matrix.GetUpperBound(0) + 1, matrix.GetUpperBound(1) + 1, matrix.GetUpperBound(2) + 1));
 
-        public static bool ContainsIndex<T>(this T[,] matrix, Vector2i index) => index.X >= 0 && index.Y >= 0 && index.X < matrix.SizeX() && index.Y < matrix.SizeY();
+        public static bool ContainsIndex<T>(this T[,] matrix, Vector2i index) => (index.X >= 0) && (index.Y >= 0) && (index.X < matrix.SizeX()) && (index.Y < matrix.SizeY());
 
         public static T TryGet<T>(this T[,] matrix, Vector2i i, T defaultValue) => matrix.ContainsIndex(i) ? matrix[i.X, i.Y] : defaultValue;
 
@@ -39,7 +39,7 @@ namespace Votyra.Core.Models
 
         public static void Set<T>(this T[,] matrix, Vector2i i, T value) => matrix[i.X, i.Y] = value;
 
-        public static bool ContainsIndex<T>(this T[,,] matrix, Vector3i index) => index.X >= 0 && index.Y >= 0 && index.Z >= 0 && index.X < matrix.SizeX() && index.Y < matrix.SizeY() && index.Z < matrix.SizeZ();
+        public static bool ContainsIndex<T>(this T[,,] matrix, Vector3i index) => (index.X >= 0) && (index.Y >= 0) && (index.Z >= 0) && (index.X < matrix.SizeX()) && (index.Y < matrix.SizeY()) && (index.Z < matrix.SizeZ());
 
         public static T TryGet<T>(this T[,,] matrix, Vector3i i, T defaultValue) => matrix.ContainsIndex(i) ? matrix[i.X, i.Y, i.Z] : defaultValue;
 

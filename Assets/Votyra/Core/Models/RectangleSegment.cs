@@ -2,7 +2,7 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    [Flags]
+    [Flags,]
     public enum RectangleSegment : byte
     {
         None = 0,
@@ -13,7 +13,7 @@ namespace Votyra.Core.Models
         X0Y0 = X0 | Y0,
         X0Y1 = X0 | Y1,
         X1Y0 = X1 | Y0,
-        X1Y1 = X1 | Y1
+        X1Y1 = X1 | Y1,
     }
 
     public static class RectangleSideExtensions

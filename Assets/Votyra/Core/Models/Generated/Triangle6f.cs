@@ -12,29 +12,29 @@ namespace Votyra.Core.Models
 
         public Triangle6f(Vector6f a, Vector6f b, Vector6f c)
         {
-            A = a;
-            B = b;
-            C = c;
+            this.A = a;
+            this.B = b;
+            this.C = c;
         }
 
         public IEnumerable<Vector6f> Points
         {
             get
             {
-                yield return A;
-                yield return B;
-                yield return C;
+                yield return this.A;
+                yield return this.B;
+                yield return this.C;
             }
         }
 
-        public Triangle6f GetReversedOrder() => new Triangle6f(A, C, B);
+        public Triangle6f GetReversedOrder() => new Triangle6f(this.A, this.C, this.B);
 
         public override bool Equals(object obj)
         {
             if (obj is Triangle6f)
             {
-                var that = (Triangle6f) obj;
-                return A == that.A && B == that.B && C == that.C;
+                var that = (Triangle6f)obj;
+                return (this.A == that.A) && (this.B == that.B) && (this.C == that.C);
             }
 
             return false;
@@ -44,11 +44,11 @@ namespace Votyra.Core.Models
         {
             unchecked
             {
-                return A.GetHashCode() + B.GetHashCode() * 3 + C.GetHashCode() * 7;
+                return this.A.GetHashCode() + (this.B.GetHashCode() * 3) + (this.C.GetHashCode() * 7);
             }
         }
 
-        public override string ToString() => $"{A},{B},{C}";
+        public override string ToString() => $"{this.A},{this.B},{this.C}";
 
         private class TriangleInvariantComparer : IEqualityComparer<Triangle6f>
         {

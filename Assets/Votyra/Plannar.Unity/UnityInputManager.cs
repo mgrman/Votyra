@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using Votyra.Core.InputHandling;
 using Votyra.Core.Models;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
@@ -16,60 +13,61 @@ namespace Votyra.Core.Unity.Painting
 {
     public class UnityInputManager : MonoBehaviour
     {
-        [Inject]
-        protected IPaintingModel _paintingModel;
+        private IPaintCommand activeCommand;
 
-        [Inject]
-        protected ITerrainConfig _terrainConfig;
+        private bool invokeWithNull;
 
-        [Inject]
-        protected IRaycaster _raycaster;
+        private string lastActiveCommand;
 
-        [InjectOptional]
-        protected ILayerConfig _layerConfig;
+        [InjectOptional,]
+        private ILayerConfig layerConfig;
 
-        private bool _processing;
+        [Inject,]
+        private IPaintingModel paintingModel;
 
-        [Inject(Id = "root")]
-        protected GameObject _root;
+        private bool processing;
 
-        private bool _invokeWithNull;
+        [Inject,]
+        private IRaycaster raycaster;
 
-        private string _lastActiveCommand;
-        private IPaintCommand _activeCommand;
+        [Inject(Id = "root"),]
+        private GameObject root;
+
+        [Inject,]
+        private ITerrainConfig terrainConfig;
 
         protected void Update()
         {
-            if (_processing)
+            if (this.processing)
             {
                 return;
             }
 
-            _processing = true;
-            var cmdName = GetActiveCommand();
-            var activeCommand = _activeCommand;
-            if (cmdName != _lastActiveCommand)
+            this.processing = true;
+            var cmdName = this.GetActiveCommand();
+            var activeCommand = this.activeCommand;
+            if (cmdName != this.lastActiveCommand)
             {
                 activeCommand?.Dispose();
-                activeCommand = InstantiateCommand(cmdName);
-                _activeCommand = activeCommand;
-                _lastActiveCommand = cmdName;
+                activeCommand = this.InstantiateCommand(cmdName);
+                this.activeCommand = activeCommand;
+                this.lastActiveCommand = cmdName;
             }
 
             if (activeCommand == null)
             {
-                _processing = false;
+                this.processing = false;
                 return;
             }
 
-            var ray = GetRayFromPointer(Input.mousePosition, Camera.main);
-            if (_terrainConfig.AsyncInput)
+            var ray = this.GetRayFromPointer(Input.mousePosition, Camera.main);
+            if (this.terrainConfig.AsyncInput)
             {
                 Task.Run(() =>
                 {
                     try
                     {
-                        ProcessInputs(ray, activeCommand);
+                        this.ProcessInputs(ray, activeCommand);
                     }
                     catch (Exception ex)
                     {
@@ -77,14 +75,14 @@ namespace Votyra.Core.Unity.Painting
                     }
                     finally
                     {
-                        _processing = false;
+                        this.processing = false;
                     }
                 });
             }
             else
             {
-                ProcessInputs(ray, activeCommand);
-                _processing = false;
+                this.ProcessInputs(ray, activeCommand);
+                this.processing = false;
             }
         }
 
@@ -95,7 +93,7 @@ namespace Votyra.Core.Unity.Painting
                 return null;
             }
 
-            var factory = _paintingModel.PaintCommandFactories.FirstOrDefault(o => o.Action == cmdName);
+            var factory = this.paintingModel.PaintCommandFactories.FirstOrDefault(o => o.Action == cmdName);
             if (factory == null)
             {
                 return null;
@@ -111,9 +109,9 @@ namespace Votyra.Core.Unity.Painting
                 return null;
             }
 
-            if (_layerConfig != null)
+            if (this.layerConfig != null)
             {
-                if (!Input.GetKey((KeyCode) _layerConfig.Layer))
+                if (!Input.GetKey((KeyCode)this.layerConfig.Layer))
                 {
                     return null;
                 }
@@ -129,25 +127,37 @@ namespace Votyra.Core.Unity.Painting
             if (isFlat)
             {
                 if (isLarge)
+                {
                     cmdName = KnownCommands.FlattenLarge;
+                }
                 else
+                {
                     cmdName = KnownCommands.Flatten;
+                }
             }
             else if (isHole)
             {
                 if (isInverse)
                 {
                     if (isLarge)
+                    {
                         cmdName = KnownCommands.RemoveHoleLarge;
+                    }
                     else
+                    {
                         cmdName = KnownCommands.RemoveHole;
+                    }
                 }
                 else
                 {
                     if (isLarge)
+                    {
                         cmdName = KnownCommands.MakeHoleLarge;
+                    }
                     else
+                    {
                         cmdName = KnownCommands.MakeHole;
+                    }
                 }
             }
             else
@@ -155,16 +165,24 @@ namespace Votyra.Core.Unity.Painting
                 if (isInverse)
                 {
                     if (isLarge)
+                    {
                         cmdName = KnownCommands.DecreaseLarge;
+                    }
                     else
+                    {
                         cmdName = KnownCommands.Decrease;
+                    }
                 }
                 else
                 {
                     if (isLarge)
+                    {
                         cmdName = KnownCommands.IncreaseLarge;
+                    }
                     else
+                    {
                         cmdName = KnownCommands.Increase;
+                    }
                 }
             }
 
@@ -173,7 +191,7 @@ namespace Votyra.Core.Unity.Painting
 
         private void ProcessInputs(Ray3f ray, IPaintCommand cmd)
         {
-            var rayHit = _raycaster.Raycast(ray);
+            var rayHit = this.raycaster.Raycast(ray);
 
             if (rayHit.AnyNan())
             {
@@ -190,9 +208,9 @@ namespace Votyra.Core.Unity.Painting
         {
             var ray = camera.ScreenPointToRay(screenPosition);
 
-            var cameraPosition = _root.transform.InverseTransformPoint(ray.origin)
+            var cameraPosition = this.root.transform.InverseTransformPoint(ray.origin)
                 .ToVector3f();
-            var cameraDirection = _root.transform.InverseTransformDirection(ray.direction)
+            var cameraDirection = this.root.transform.InverseTransformDirection(ray.direction)
                 .ToVector3f();
 
             var cameraRay = new Ray3f(cameraPosition, cameraDirection);

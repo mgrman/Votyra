@@ -16,7 +16,7 @@ namespace Votyra.Core.Images
         {
             base.UpdateImage(template);
 
-            RangeZ = rangeZ;
+            this.RangeZ = rangeZ;
         }
     }
 }
