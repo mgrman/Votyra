@@ -7,9 +7,4 @@ namespace Votyra.Core.Painting.Commands
     {
         void Initialize(IEditableImage2f editableImage, IThreadSafeLogger logger);
     }
-
-    public interface IInitializableHolePaintCommand : IPaintCommand
-    {
-        void Initialize(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger);
-    }
 }

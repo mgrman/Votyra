@@ -16,6 +16,10 @@ namespace Votyra.Core.Utils
 
         public static bool IsApproximatelyLessOrEqual(this float a, float b, float eps = 0.000001f) => a < b || a.IsApproximatelyEqual(b);
 
+        public static bool IsNaN(this float val) => float.IsNaN(val);
+
+        public static bool IsNotNaN(this float val) => !float.IsNaN(val);
+        
         public static int? Abs(this int? val) => val.HasValue ? Math.Abs(val.Value) : val;
 
         public static int Abs(this int val) => Math.Abs(val);

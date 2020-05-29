@@ -14,7 +14,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             _cellInGroupCount = terrainConfig.CellInGroupCount.XY();
         }
 
-        public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image, IMask2e mask)
+        public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image)
         {
             var range = Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(image.RangeZ.Min), _cellInGroupCount.ToVector3f(image.RangeZ.Size));
             mesh.Reset(range);
@@ -27,8 +27,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     var cellInGroup = new Vector2i(ix, iy);
                     var cell = cellInGroup + groupPosition;
                     var data = image.SampleCell(cell);
-                    var maskData = mask.SampleCell(cell);
-                    mesh.AddCell(cellInGroup, Vector2i.Zero, data, maskData);
+                    mesh.AddCell(cellInGroup, Vector2i.Zero, data);
                 }
             }
         }

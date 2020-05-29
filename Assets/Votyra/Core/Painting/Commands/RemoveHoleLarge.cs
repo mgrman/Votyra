@@ -4,10 +4,10 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Painting.Commands
 {
-    public class RemoveHoleLargeFactory : BaseHoleFactory<RemoveHoleLarge>
+    public class RemoveHoleLargeFactory : BaseFactory<RemoveHoleLarge>
     {
-        public RemoveHoleLargeFactory(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
-            : base(editableImage, editableMask, logger)
+        public RemoveHoleLargeFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
+            : base(editableImage, logger)
         {
         }
 
@@ -21,6 +21,6 @@ namespace Votyra.Core.Painting.Commands
         {
         }
 
-        protected override MaskValues Invoke(MaskValues value, int distance) => MaskValues.Terrain;
+        protected override float Invoke(float value, int distance) => 0;
     }
 }

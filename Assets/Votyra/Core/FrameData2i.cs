@@ -7,7 +7,6 @@ namespace Votyra.Core
     public class FrameData2i : IPoolableFrameData2i
     {
         private IImage2f _image;
-        private IMask2e _mask;
 
         public FrameData2i()
         {
@@ -40,17 +39,6 @@ namespace Votyra.Core
                 _image = value;
                 (_image as IInitializableImage)?.StartUsing();
                 RangeZ = _image?.RangeZ ?? Area1f.Zero;
-            }
-        }
-
-        public IMask2e Mask
-        {
-            get => _mask;
-            set
-            {
-                (_mask as IInitializableImage)?.FinishUsing();
-                _mask = value;
-                (_mask as IInitializableImage)?.StartUsing();
             }
         }
     }

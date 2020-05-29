@@ -7,16 +7,12 @@ namespace Votyra.Core
     {
         new IImage2f Image { get; set; }
 
-        new IMask2e Mask { get; set; }
-
         new Range2i InvalidatedArea { get; set; }
     }
 
     public interface IFrameData2i : IFrameData
     {
         IImage2f Image { get; }
-
-        IMask2e Mask { get; }
 
         Area1f RangeZ { get; }
 

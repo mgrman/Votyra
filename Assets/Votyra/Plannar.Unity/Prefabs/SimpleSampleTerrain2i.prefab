@@ -74,7 +74,7 @@ PrefabInstance:
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
       propertyPath: Config.Array.data[14].UnityValues.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
@@ -84,7 +84,7 @@ PrefabInstance:
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
       propertyPath: Config.Array.data[16].UnityValues.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
@@ -94,23 +94,23 @@ PrefabInstance:
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
       propertyPath: Config.Array.data[14].Id
-      value: meshSubdivision
+      value: material
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
       propertyPath: Config.Array.data[14].JsonValue
-      value: '{"X":1,"Y":1}'
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
       propertyPath: Config.Array.data[14].TypeAssemblyQualifiedName
-      value: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+      value: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
       propertyPath: Config.Array.data[15].Id
-      value: material
+      value: materialWalls
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
@@ -126,33 +126,32 @@ PrefabInstance:
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
       propertyPath: Config.Array.data[16].Id
-      value: materialWalls
-      objectReference: {fileID: 0}
-    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
-        type: 3}
-      propertyPath: Config.Array.data[16].JsonValue
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
-        type: 3}
-      propertyPath: Config.Array.data[16].TypeAssemblyQualifiedName
-      value: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null
-      objectReference: {fileID: 0}
-    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
-        type: 3}
-      propertyPath: Config.Array.data[17].Id
       value: scaleFactor
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[17].JsonValue
+      propertyPath: Config.Array.data[16].JsonValue
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[17].TypeAssemblyQualifiedName
+      propertyPath: Config.Array.data[16].TypeAssemblyQualifiedName
       value: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      objectReference: {fileID: 0}
+    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
+        type: 3}
+      propertyPath: Config.Array.data[17].Id
+      value: flipTriangles
+      objectReference: {fileID: 0}
+    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
+        type: 3}
+      propertyPath: Config.Array.data[17].JsonValue
+      value: false
+      objectReference: {fileID: 0}
+    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
+        type: 3}
+      propertyPath: Config.Array.data[17].TypeAssemblyQualifiedName
+      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
@@ -193,99 +192,100 @@ PrefabInstance:
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
       propertyPath: Config.Array.data[6].Id
-      value: flipTriangles
-      objectReference: {fileID: 0}
-    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
-        type: 3}
-      propertyPath: Config.Array.data[7].Id
       value: drawBounds
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[7].JsonValue
-      value: false
-      objectReference: {fileID: 0}
-    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
-        type: 3}
-      propertyPath: Config.Array.data[8].Id
+      propertyPath: Config.Array.data[7].Id
       value: asyncTerrainGeneration
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[9].Id
-      value: asyncInput
-      objectReference: {fileID: 0}
-    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
-        type: 3}
-      propertyPath: Config.Array.data[9].JsonValue
+      propertyPath: Config.Array.data[7].JsonValue
       value: true
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[9].TypeAssemblyQualifiedName
-      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      propertyPath: Config.Array.data[8].Id
+      value: asyncInput
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[10].Id
+      propertyPath: Config.Array.data[9].Id
       value: colliderType
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[10].JsonValue
+      propertyPath: Config.Array.data[9].JsonValue
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[10].TypeAssemblyQualifiedName
+      propertyPath: Config.Array.data[9].TypeAssemblyQualifiedName
       value: Votyra.Core.ColliderType, Votyra.Core, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[11].Id
+      propertyPath: Config.Array.data[10].Id
       value: activeAlgorithm
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[11].JsonValue
+      propertyPath: Config.Array.data[10].JsonValue
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[11].TypeAssemblyQualifiedName
+      propertyPath: Config.Array.data[10].TypeAssemblyQualifiedName
       value: Votyra.Core.IntepolationAlgorithm, Votyra.Core, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[12].Id
+      propertyPath: Config.Array.data[11].Id
       value: dynamicMeshes
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[12].JsonValue
+      propertyPath: Config.Array.data[11].JsonValue
       value: false
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[12].TypeAssemblyQualifiedName
+      propertyPath: Config.Array.data[11].TypeAssemblyQualifiedName
       value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[13].Id
+      propertyPath: Config.Array.data[12].Id
       value: imageSubdivision
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[13].JsonValue
+      propertyPath: Config.Array.data[12].JsonValue
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}
-      propertyPath: Config.Array.data[13].TypeAssemblyQualifiedName
+      propertyPath: Config.Array.data[12].TypeAssemblyQualifiedName
       value: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      objectReference: {fileID: 0}
+    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
+        type: 3}
+      propertyPath: Config.Array.data[13].Id
+      value: meshSubdivision
+      objectReference: {fileID: 0}
+    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
+        type: 3}
+      propertyPath: Config.Array.data[13].JsonValue
+      value: '{"X":1,"Y":1}'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6031283159157278193, guid: f4f93c13563af724e9805d1070d56d88,
+        type: 3}
+      propertyPath: Config.Array.data[13].TypeAssemblyQualifiedName
+      value: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 6362411585990583003, guid: f4f93c13563af724e9805d1070d56d88,
         type: 3}

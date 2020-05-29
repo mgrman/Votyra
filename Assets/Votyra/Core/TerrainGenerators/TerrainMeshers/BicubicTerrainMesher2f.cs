@@ -18,15 +18,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             _subdivision = interpolationConfig.MeshSubdivision;
         }
 
-        public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image, IMask2e mask)
+        public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image)
         {
             var range = Area3f.FromMinAndSize((group * _cellInGroupCount).ToVector3f(image.RangeZ.Min), _cellInGroupCount.ToVector3f(image.RangeZ.Size));
             mesh.Reset(range);
 
             var poolableValuesToFill = PoolableMatrix2<float>.CreateDirty(new Vector2i(_subdivision.X + 1, _subdivision.Y + 1));
             var valuesToFill = poolableValuesToFill.RawMatrix;
-            var poolableMaskToFill = PoolableMatrix2<MaskValues>.CreateDirty(new Vector2i(_subdivision.X + 1, _subdivision.Y + 1));
-            var maskToFill = poolableMaskToFill.RawMatrix;
 
             var groupPosition = _cellInGroupCount * group;
 
@@ -62,40 +60,12 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     var valuesInterMat_x3y2 = data_x2y2.x1y0;
                     var valuesInterMat_x3y3 = data_x2y2.x1y1;
 
-                    var mask_x0y0 = mask.SampleCell(cell - Vector2i.One + new Vector2i(0, 0));
-                    var mask_x0y2 = mask.SampleCell(cell - Vector2i.One + new Vector2i(0, 2));
-                    var mask_x2y0 = mask.SampleCell(cell - Vector2i.One + new Vector2i(2, 0));
-                    var mask_x2y2 = mask.SampleCell(cell - Vector2i.One + new Vector2i(2, 2));
-
-                    var maskInterMat_x0y0 = mask_x0y0.x0y0.IsHole() ? -1 : 1;
-                    var maskInterMat_x0y1 = mask_x0y0.x0y1.IsHole() ? -1 : 1;
-                    var maskInterMat_x0y2 = mask_x0y2.x0y0.IsHole() ? -1 : 1;
-                    var maskInterMat_x0y3 = mask_x0y2.x0y1.IsHole() ? -1 : 1;
-                    var maskInterMat_x1y0 = mask_x0y0.x1y0.IsHole() ? -1 : 1;
-                    var maskInterMat_x1y1 = mask_x0y0.x1y1.IsHole() ? -1 : 1;
-                    var maskInterMat_x1y2 = mask_x0y2.x1y0.IsHole() ? -1 : 1;
-                    var maskInterMat_x1y3 = mask_x0y2.x1y1.IsHole() ? -1 : 1;
-                    var maskInterMat_x2y0 = mask_x2y0.x0y0.IsHole() ? -1 : 1;
-                    var maskInterMat_x2y1 = mask_x2y0.x0y1.IsHole() ? -1 : 1;
-                    var maskInterMat_x2y2 = mask_x2y2.x0y0.IsHole() ? -1 : 1;
-                    var maskInterMat_x2y3 = mask_x2y2.x0y1.IsHole() ? -1 : 1;
-                    var maskInterMat_x3y0 = mask_x2y0.x1y0.IsHole() ? -1 : 1;
-                    var maskInterMat_x3y1 = mask_x2y0.x1y1.IsHole() ? -1 : 1;
-                    var maskInterMat_x3y2 = mask_x2y2.x1y0.IsHole() ? -1 : 1;
-                    var maskInterMat_x3y3 = mask_x2y2.x1y1.IsHole() ? -1 : 1;
 
                     for (var ix = 0; ix < _subdivision.X + 1; ix++)
                     {
                         for (var iy = 0; iy < _subdivision.Y + 1; iy++)
                         {
                             var pos = new Vector2f(step.X * ix, step.Y * iy);
-
-                            var maskCol0 = Intepolate(maskInterMat_x0y0, maskInterMat_x1y0, maskInterMat_x2y0, maskInterMat_x3y0, pos.X);
-                            var maskCol1 = Intepolate(maskInterMat_x0y1, maskInterMat_x1y1, maskInterMat_x2y1, maskInterMat_x3y1, pos.X);
-                            var maskCol2 = Intepolate(maskInterMat_x0y2, maskInterMat_x1y2, maskInterMat_x2y2, maskInterMat_x3y2, pos.X);
-                            var maskCol3 = Intepolate(maskInterMat_x0y3, maskInterMat_x1y3, maskInterMat_x2y3, maskInterMat_x3y3, pos.X);
-                            var maskValue = Intepolate(maskCol0, maskCol1, maskCol2, maskCol3, pos.Y);
-                            maskToFill[ix, iy] = maskValue >= MaskLimit ? MaskValues.Terrain : MaskValues.Hole;
 
                             var valueCol0 = Intepolate(valuesInterMat_x0y0, valuesInterMat_x1y0, valuesInterMat_x2y0, valuesInterMat_x3y0, pos.X);
                             var valueCol1 = Intepolate(valuesInterMat_x0y1, valuesInterMat_x1y1, valuesInterMat_x2y1, valuesInterMat_x3y1, pos.X);
@@ -110,15 +80,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                                 var x00y05 = valuesToFill[ix - 1 + 0, iy - 1 + 1];
                                 var x05y00 = valuesToFill[ix - 1 + 1, iy - 1 + 0];
                                 var x05y05 = valuesToFill[ix - 1 + 1, iy - 1 + 1];
-                                var x00y00Mask = maskToFill[ix - 1 + 0, iy - 1 + 0];
-                                var x00y05Mask = maskToFill[ix - 1 + 0, iy - 1 + 1];
-                                var x05y00Mask = maskToFill[ix - 1 + 1, iy - 1 + 0];
-                                var x05y05Mask = maskToFill[ix - 1 + 1, iy - 1 + 1];
 
                                 var subcellValue = new SampledData2f(x00y00, x00y05, x05y00, x05y05);
-                                var subcellMask = new SampledMask2e(x00y00Mask, x00y05Mask, x05y00Mask, x05y05Mask);
 
-                                mesh.AddCell(cellInGroup, new Vector2i(ix - 1, iy - 1), subcellValue, subcellMask);
+                                mesh.AddCell(cellInGroup, new Vector2i(ix - 1, iy - 1), subcellValue);
                             }
                         }
                     }
@@ -126,7 +91,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             }
 
             poolableValuesToFill.Dispose();
-            poolableMaskToFill.Dispose();
         }
 
         // Monotone cubic interpolation

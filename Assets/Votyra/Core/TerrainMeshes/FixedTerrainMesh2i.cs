@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Votyra.Core.Models;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainMeshes
 {
@@ -127,7 +128,7 @@ namespace Votyra.Core.TerrainMeshes
             return Vector1f.NaN;
         }
 
-        public void AddCell(Vector2i cellInGroup, Vector2i subCell, SampledData2f data, SampledMask2e maskData)
+        public void AddCell(Vector2i cellInGroup, Vector2i subCell, SampledData2f data)
         {
             Vector2f positionMin;
             Vector2f positionMax;
@@ -146,10 +147,10 @@ namespace Votyra.Core.TerrainMeshes
 
             var triangleIndex = subCellIndex * SubCellToTriangles;
 
-            var x0y0 = maskData.x0y0.IsNotHole() ? new Vector2f(positionMin.X, positionMin.Y).ToVector3f(data.x0y0) : (Vector3f?) null;
-            var x0y1 = maskData.x0y1.IsNotHole() ? new Vector2f(positionMin.X, positionMax.Y).ToVector3f(data.x0y1) : (Vector3f?) null;
-            var x1y0 = maskData.x1y0.IsNotHole() ? new Vector2f(positionMax.X, positionMin.Y).ToVector3f(data.x1y0) : (Vector3f?) null;
-            var x1y1 = maskData.x1y1.IsNotHole() ? new Vector2f(positionMax.X, positionMax.Y).ToVector3f(data.x1y1) : (Vector3f?) null;
+            var x0y0 = data.x0y0.IsNotNaN() ? new Vector2f(positionMin.X, positionMin.Y).ToVector3f(data.x0y0) : (Vector3f?) null;
+            var x0y1 = data.x0y1.IsNotNaN() ? new Vector2f(positionMin.X, positionMax.Y).ToVector3f(data.x0y1) : (Vector3f?) null;
+            var x1y0 = data.x1y0.IsNotNaN() ? new Vector2f(positionMax.X, positionMin.Y).ToVector3f(data.x1y0) : (Vector3f?) null;
+            var x1y1 = data.x1y1.IsNotNaN() ? new Vector2f(positionMax.X, positionMax.Y).ToVector3f(data.x1y1) : (Vector3f?) null;
 
             var holeCount = (x0y0.HasValue ? 0 : 1) + (x0y1.HasValue ? 0 : 1) + (x1y0.HasValue ? 0 : 1) + (x1y1.HasValue ? 0 : 1);
 
@@ -163,13 +164,19 @@ namespace Votyra.Core.TerrainMeshes
                 }
                 else if (!x0y1.HasValue)
                 {
-                    AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x1y1.Value);
+                    // TODO: edge case of edge fliping logic
+                    // TODO: make for customizable triangle flipping logic
+                    AddEmptyTriangle(triangleIndex);
+                    // AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x1y1.Value);
                     triangleIndex++;
                     AddEmptyTriangle(triangleIndex);
                 }
                 else if (!x1y0.HasValue)
                 {
-                    AddTriangle(triangleIndex, x1y1.Value, x0y1.Value, x0y0.Value);
+                    // TODO: edge case of edge fliping logic
+                    // TODO: make for customizable triangle flipping logic
+                    AddEmptyTriangle(triangleIndex);
+                    // AddTriangle(triangleIndex, x1y1.Value, x0y1.Value, x0y0.Value);
                     triangleIndex++;
                     AddEmptyTriangle(triangleIndex);
                 }

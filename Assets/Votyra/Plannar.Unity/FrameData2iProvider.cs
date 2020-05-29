@@ -16,7 +16,6 @@ namespace Votyra.Plannar
         private readonly IImage2fPostProcessor _image2fPostProcessor;
         private readonly IImage2fProvider _imageProvider;
         private readonly IInterpolationConfig _interpolationConfig;
-        private readonly IMask2eProvider _maskProvider;
         private readonly int _meshTopologyDistance;
 
         private readonly Plane[] _planesUnity = new Plane[6];
@@ -30,13 +29,12 @@ namespace Votyra.Plannar
         private Matrix4x4f _previousCameraMatrix;
 
         [Inject]
-        public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [InjectOptional] IMask2eProvider maskProvider, [Inject(Id = "root")] GameObject root, IFrameData2iPool pool)
+        public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root")] GameObject root, IFrameData2iPool pool)
         {
             _image2fPostProcessor = image2FPostProcessor;
             _imageProvider = imageProvider;
             _terrainConfig = terrainConfig;
             _interpolationConfig = interpolationConfig;
-            _maskProvider = maskProvider;
             _root = root;
             _pool = pool;
             _meshTopologyDistance = _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
@@ -110,8 +108,6 @@ namespace Votyra.Plannar
 
             image = _image2fPostProcessor?.PostProcess(image) ?? image;
 
-            var mask = _maskProvider?.CreateMask();
-
             var parentContainerWorldToLocalMatrix = container.transform.worldToLocalMatrix.ToMatrix4x4f();
 
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, _frustumCornersUnity);
@@ -121,7 +117,7 @@ namespace Votyra.Plannar
                     .ToVector3f()));
             }
 
-            var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
+            var invalidatedArea = (image as IImageInvalidatableImage2)?.InvalidatedArea ?? Range2i.All;
             invalidatedArea = invalidatedArea.ExtendBothDirections(_meshTopologyDistance);
 
             var cameraPosition = _root.transform.InverseTransformPoint(camera.transform.position)
@@ -131,7 +127,6 @@ namespace Votyra.Plannar
 
             frameData.CameraRay = new Ray3f(cameraPosition, cameraDirection);
             frameData.Image = image;
-            frameData.Mask = mask;
             frameData.InvalidatedArea = invalidatedArea;
 
             return frameDataContainer;

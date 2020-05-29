@@ -8,17 +8,17 @@ namespace Votyra.Core.Images
 {
     public class InitialStateSetter2f
     {
-        public InitialStateSetter2f(IEditableImage2f editableImage, [InjectOptional] IEditableMask2e editableMask, IInitialImageConfig imageConfig, [Inject(Id = "root")] GameObject root)
+        public InitialStateSetter2f(IEditableImage2f editableImage, IInitialImageConfig imageConfig, [Inject(Id = "root")] GameObject root)
         {
-            FillInitialState(editableImage, editableMask, imageConfig, root);
+            FillInitialState(editableImage, imageConfig, root);
         }
 
-        public void FillInitialState(IEditableImage2f editableImage, IEditableMask2e editableMask, IInitialImageConfig imageConfig, GameObject root)
+        public void FillInitialState(IEditableImage2f editableImage, IInitialImageConfig imageConfig, GameObject root)
         {
             if (editableImage == null)
                 return;
             if (imageConfig.InitialData is Texture2D)
-                FillInitialState(editableImage, editableMask, imageConfig.InitialData as Texture2D, imageConfig.InitialDataScale.Z, imageConfig.ZeroFromInitialStateIsNull);
+                FillInitialState(editableImage, imageConfig.InitialData as Texture2D, imageConfig.InitialDataScale.Z, imageConfig.ZeroFromInitialStateIsNull);
             if (imageConfig.InitialData is GameObject)
                 FillInitialState(editableImage, (imageConfig.InitialData as GameObject).GetComponentsInChildren<Collider>(), imageConfig.InitialDataScale.Z, root);
             if (imageConfig.InitialData is Collider)
@@ -29,12 +29,10 @@ namespace Votyra.Core.Images
                 FillInitialState(editableImage, imageConfig.InitialData as bool[,,], imageConfig.InitialDataScale.Z);
         }
 
-        private static void FillInitialState(IEditableImage2f editableImage, IEditableMask2e editableMask, Texture2D texture, float scale, bool zeroIsNull)
+        private static void FillInitialState(IEditableImage2f editableImage, Texture2D texture, float scale, bool zeroIsNull)
         {
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))
             {
-                using (var maskAccessor = editableMask?.RequestAccess(Range2i.All))
-                {
                     Range2i matrixAreaToFill;
                     if (imageAccessor.Area == Range2i.All)
                         matrixAreaToFill = new Vector2i(texture.width, texture.height).ToRange2i();
@@ -54,11 +52,8 @@ namespace Votyra.Core.Images
                                 .grayscale * scale;
                             var height = value;
                             imageAccessor[pos] = height;
-                            if (maskAccessor != null)
-                                maskAccessor[pos] = zeroIsNull && height == 0f ? MaskValues.Hole : MaskValues.Terrain;
                         }
                     }
-                }
             }
         }
 

@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 1549597117298156461}
   - component: {fileID: 7445872853181148157}
   - component: {fileID: 2243915988829799670}
+  - component: {fileID: 376565712103904604}
   m_Layer: 0
   m_Name: BaseTerrain2i
   m_TagString: Untagged
@@ -55,7 +56,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers: []
-  _monoInstallers: []
+  _monoInstallers:
+  - {fileID: 114493596322238022}
+  - {fileID: 7208546496747415155}
+  - {fileID: 8186020546537987839}
+  - {fileID: 2331286678572162332}
+  - {fileID: 3748296153572653252}
+  - {fileID: 2150243981040006537}
+  - {fileID: 6031283159157278193}
+  - {fileID: 8395922183391319991}
+  - {fileID: 1549597117298156461}
+  - {fileID: 7445872853181148157}
+  - {fileID: 2243915988829799670}
+  - {fileID: 376565712103904604}
   _installerPrefabs: []
   _autoRun: 1
   _kernel: {fileID: 0}
@@ -167,15 +180,15 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValues: []
+  - Id: imageSize
+    JsonValue: '{"X":100,"Y":100,"Z":100}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
   - Id: cellInGroupCount
     JsonValue: '{"X":30,"Y":20,"Z":20}'
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-    UnityValues: []
-  - Id: flipTriangles
-    JsonValue: false
-    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
     UnityValues: []
   - Id: drawBounds
     JsonValue: false
@@ -217,16 +230,6 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValues: []
-  - Id: imageSize
-    JsonValue: '{"X":100,"Y":100,"Z":100}'
-    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-    UnityValues: []
-  - Id: scaleFactor
-    JsonValue: 1
-    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    UnityValues: []
   - Id: material
     JsonValue: 0
     TypeAssemblyQualifiedName: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0,
@@ -239,6 +242,16 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
     UnityValues:
     - {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
+  - Id: scaleFactor
+    JsonValue: 1
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: flipTriangles
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
 --- !u!114 &8395922183391319991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,5 +298,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b630d2cc81a4ff49c226b9f82a30f46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &376565712103904604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101794731832008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be65f8bf2a6e41ffa01e31c235f0a2b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

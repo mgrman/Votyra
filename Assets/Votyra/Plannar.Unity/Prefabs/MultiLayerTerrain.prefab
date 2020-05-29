@@ -92,6 +92,56 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValues: []
+  - Id: cellInGroupCount
+    JsonValue: '{"X":20,"Y":20,"Z":20}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: drawBounds
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: asyncTerrainGeneration
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: asyncInput
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: colliderType
+    JsonValue: 0
+    TypeAssemblyQualifiedName: Votyra.Core.ColliderType, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: activeAlgorithm
+    JsonValue: 2
+    TypeAssemblyQualifiedName: Votyra.Core.IntepolationAlgorithm, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: dynamicMeshes
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: imageSubdivision
+    JsonValue: 1
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
+  - Id: meshSubdivision
+    JsonValue: '{"X":1,"Y":1}'
+    TypeAssemblyQualifiedName: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    UnityValues: []
+  - Id: scaleFactor
+    JsonValue: 1
+    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
+    UnityValues: []
 --- !u!114 &5346802365665421876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,7 +173,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5346802365665421874}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 560375ba12234c4897452c2c1b3b663d, type: 3}
   m_Name: 
@@ -305,10 +355,25 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4391970713280052075, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5210709633626304712, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5570653823068731776, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6818365679392277962, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7026017006557990124, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -657,12 +722,12 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.size
-      value: 17
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[1].UnityValues.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -682,12 +747,12 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[12].UnityValues.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[13].UnityValues.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -696,75 +761,81 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
+      propertyPath: Config.Array.data[2].UnityValues.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
       propertyPath: Config.Array.data[1].Id
-      value: imageSize
+      value: material
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[1].JsonValue
-      value: '{"X":100,"Y":100,"Z":100}'
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[1].TypeAssemblyQualifiedName
-      value: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+      value: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[2].Id
-      value: cellInGroupCount
+      value: materialWalls
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[2].JsonValue
-      value: '{"X":30,"Y":20,"Z":20}'
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[2].TypeAssemblyQualifiedName
-      value: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+      value: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[3].Id
-      value: flipTriangles
+      value: layer
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[4].Id
-      value: drawBounds
+      value: imageSize
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[4].JsonValue
-      value: false
+      value: '{"X":100,"Y":100,"Z":100}'
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[4].TypeAssemblyQualifiedName
-      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      value: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[5].Id
-      value: asyncTerrainGeneration
+      value: cellInGroupCount
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[5].JsonValue
-      value: false
+      value: '{"X":30,"Y":20,"Z":20}'
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[6].Id
-      value: asyncInput
+      value: flipTriangles
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[6].JsonValue
-      value: true
+      value: false
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -774,38 +845,37 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[7].Id
-      value: colliderType
+      value: drawBounds
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[7].JsonValue
-      value: 0
+      value: false
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[7].TypeAssemblyQualifiedName
-      value: Votyra.Core.ColliderType, Votyra.Core, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null
+      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[8].Id
-      value: activeAlgorithm
+      value: asyncTerrainGeneration
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[8].JsonValue
-      value: 2
+      value: false
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[9].Id
-      value: dynamicMeshes
+      value: asyncInput
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[9].JsonValue
-      value: false
+      value: true
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -815,80 +885,79 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[10].Id
-      value: imageSubdivision
+      value: colliderType
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[10].JsonValue
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[10].TypeAssemblyQualifiedName
-      value: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      value: Votyra.Core.ColliderType, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[11].Id
-      value: meshSubdivision
+      value: activeAlgorithm
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[11].JsonValue
-      value: '{"X":1,"Y":1}'
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[11].TypeAssemblyQualifiedName
-      value: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+      value: Votyra.Core.IntepolationAlgorithm, Votyra.Core, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[12].Id
-      value: material
+      value: dynamicMeshes
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[12].JsonValue
-      value: 0
+      value: false
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[12].TypeAssemblyQualifiedName
-      value: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null
+      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[13].Id
-      value: materialWalls
+      value: imageSubdivision
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[13].JsonValue
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[13].TypeAssemblyQualifiedName
-      value: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null
+      value: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[14].Id
-      value: layer
+      value: meshSubdivision
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[14].JsonValue
-      value: 257
+      value: '{"X":1,"Y":1}'
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[14].TypeAssemblyQualifiedName
-      value: Votyra.Core.LayerId, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+      value: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
@@ -965,8 +1034,7 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[8].TypeAssemblyQualifiedName
-      value: Votyra.Core.IntepolationAlgorithm, Votyra.Core, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null
+      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -986,8 +1054,30 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[5].TypeAssemblyQualifiedName
-      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      value: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
+    - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: Config.Array.data[3].JsonValue
+      value: 257
+      objectReference: {fileID: 0}
+    - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: Config.Array.data[3].TypeAssemblyQualifiedName
+      value: Votyra.Core.LayerId, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      objectReference: {fileID: 0}
+    - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: Config.Array.data[1].UnityValues.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
+    - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: Config.Array.data[2].UnityValues.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
     m_RemovedComponents:
     - {fileID: 1842212477422973739, guid: c51e97775a9e0ce41b4913fa75fda31b, type: 3}
     - {fileID: 994769827591313139, guid: c51e97775a9e0ce41b4913fa75fda31b, type: 3}
@@ -1025,7 +1115,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 5346802364682989682}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8357270108964170893}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 648dc74551f147bc90dc84f353fddfaa, type: 3}
   m_Name: 
@@ -1049,7 +1139,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 5346802364682989682}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8357270108964170893}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 560375ba12234c4897452c2c1b3b663d, type: 3}
   m_Name: 
@@ -1183,10 +1273,25 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4391970713280052075, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5210709633626304712, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5570653823068731776, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6818365679392277962, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7026017006557990124, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -1545,12 +1650,12 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.size
-      value: 16
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[1].UnityValues.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -1570,84 +1675,90 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[12].UnityValues.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[13].UnityValues.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: Config.Array.data[2].UnityValues.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[1].Id
-      value: imageSize
+      value: material
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[1].JsonValue
-      value: '{"X":100,"Y":100,"Z":100}'
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[1].TypeAssemblyQualifiedName
-      value: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+      value: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[2].Id
-      value: cellInGroupCount
+      value: materialWalls
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[2].JsonValue
-      value: '{"X":30,"Y":20,"Z":20}'
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[2].TypeAssemblyQualifiedName
-      value: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+      value: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[3].Id
-      value: flipTriangles
+      value: layer
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[4].Id
-      value: drawBounds
+      value: imageSize
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[4].JsonValue
-      value: false
+      value: '{"X":100,"Y":100,"Z":100}'
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[4].TypeAssemblyQualifiedName
-      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      value: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[5].Id
-      value: asyncTerrainGeneration
+      value: cellInGroupCount
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[5].JsonValue
-      value: false
+      value: '{"X":30,"Y":20,"Z":20}'
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[6].Id
-      value: asyncInput
+      value: flipTriangles
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[6].JsonValue
-      value: true
+      value: false
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -1657,38 +1768,37 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[7].Id
-      value: colliderType
+      value: drawBounds
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[7].JsonValue
-      value: 0
+      value: false
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[7].TypeAssemblyQualifiedName
-      value: Votyra.Core.ColliderType, Votyra.Core, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null
+      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[8].Id
-      value: activeAlgorithm
+      value: asyncTerrainGeneration
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[8].JsonValue
-      value: 2
+      value: false
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[9].Id
-      value: dynamicMeshes
+      value: asyncInput
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[9].JsonValue
-      value: false
+      value: true
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -1698,80 +1808,79 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[10].Id
-      value: imageSubdivision
+      value: colliderType
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[10].JsonValue
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[10].TypeAssemblyQualifiedName
-      value: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      value: Votyra.Core.ColliderType, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[11].Id
-      value: meshSubdivision
+      value: activeAlgorithm
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[11].JsonValue
-      value: '{"X":1,"Y":1}'
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[11].TypeAssemblyQualifiedName
-      value: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+      value: Votyra.Core.IntepolationAlgorithm, Votyra.Core, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[12].Id
-      value: material
+      value: dynamicMeshes
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[12].JsonValue
-      value: 0
+      value: false
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[12].TypeAssemblyQualifiedName
-      value: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null
+      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[13].Id
-      value: materialWalls
+      value: imageSubdivision
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[13].JsonValue
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[13].TypeAssemblyQualifiedName
-      value: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null
+      value: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[14].Id
-      value: layer
+      value: meshSubdivision
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[14].JsonValue
-      value: 258
+      value: '{"X":1,"Y":1}'
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[14].TypeAssemblyQualifiedName
-      value: Votyra.Core.LayerId, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+      value: Votyra.Core.Models.Vector2i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
@@ -1849,8 +1958,7 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[8].TypeAssemblyQualifiedName
-      value: Votyra.Core.IntepolationAlgorithm, Votyra.Core, Version=0.0.0.0, Culture=neutral,
-        PublicKeyToken=null
+      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
@@ -1870,8 +1978,30 @@ PrefabInstance:
     - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
         type: 3}
       propertyPath: Config.Array.data[5].TypeAssemblyQualifiedName
-      value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      value: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
+    - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: Config.Array.data[3].JsonValue
+      value: 258
+      objectReference: {fileID: 0}
+    - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: Config.Array.data[3].TypeAssemblyQualifiedName
+      value: Votyra.Core.LayerId, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      objectReference: {fileID: 0}
+    - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: Config.Array.data[1].UnityValues.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 484c0627c6d619e479f2d01d8b84b5e8, type: 2}
+    - target: {fileID: 7672394926947036102, guid: c51e97775a9e0ce41b4913fa75fda31b,
+        type: 3}
+      propertyPath: Config.Array.data[2].UnityValues.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 484c0627c6d619e479f2d01d8b84b5e8, type: 2}
     m_RemovedComponents:
     - {fileID: 1842212477422973739, guid: c51e97775a9e0ce41b4913fa75fda31b, type: 3}
     - {fileID: 0}
@@ -1909,7 +2039,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 5346802365805427357}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8357270110257653346}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 648dc74551f147bc90dc84f353fddfaa, type: 3}
   m_Name: 
@@ -1933,7 +2063,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 5346802365805427357}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8357270110257653346}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 560375ba12234c4897452c2c1b3b663d, type: 3}
   m_Name: 

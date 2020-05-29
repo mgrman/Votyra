@@ -113,7 +113,7 @@ namespace Votyra.Core
                     return;
                 }
 
-                _terrainMesher.GetResultingMesh(terrainMesh, data.Group, context.Value.Image, context.Value.Mask);
+                _terrainMesher.GetResultingMesh(terrainMesh, data.Group, context.Value.Image);
                 terrainMesh.FinalizeMesh();
             }
             catch (Exception ex)

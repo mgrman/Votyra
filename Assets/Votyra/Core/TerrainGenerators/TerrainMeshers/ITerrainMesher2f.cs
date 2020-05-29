@@ -6,6 +6,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public interface ITerrainMesher2f
     {
-        void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image, IMask2e mask);
+        void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image);
     }
 }

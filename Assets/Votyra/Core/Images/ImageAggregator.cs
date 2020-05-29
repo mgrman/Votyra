@@ -6,12 +6,14 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2i, IMaskConstraint2e
+    public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2i
     {
         private readonly IImageConfig _imageConfig;
-        private readonly SortedDictionary<LayerId, EditableMatrixImage2f> _images = new SortedDictionary<LayerId, EditableMatrixImage2f>();
-        private readonly SortedDictionary<LayerId, EditableMatrixMask2e> _masks = new SortedDictionary<LayerId, EditableMatrixMask2e>();
-        private MatrixImageAccessor _lastLayerImage;
+        private readonly Dictionary<LayerId, EditableMatrixImage2fCopy> _idToThickness = new Dictionary<LayerId, EditableMatrixImage2fCopy>();
+        private readonly Dictionary<LayerId, EditableMatrixImage2f> _idToSum = new Dictionary<LayerId, EditableMatrixImage2f>();
+        private readonly Dictionary<IEditableImage2f, LayerId> _thicknessToId = new Dictionary<IEditableImage2f, LayerId>();
+
+        private readonly List<LayerId> _layerOrder = new List<LayerId>();
 
         public ImageAggregator(IImageConfig imageConfig)
         {
@@ -24,183 +26,174 @@ namespace Votyra.Core.Images
 
         IEnumerable<int> IImageConstraint2i.Priorities => new[]
         {
-            int.MinValue,
             int.MaxValue
         };
-
-        void IMaskConstraint2e.Initialize(IEditableMask2e mask)
-        {
-        }
-
-        IEnumerable<int> IMaskConstraint2e.Priorities => new[]
-        {
-            int.MinValue,
-            int.MaxValue
-        };
-
-        Range2i IMaskConstraint2e.FixMask(IEditableMask2e mask, MaskValues[,] editableMatrix, Range2i invalidatedImageArea)
-        {
-            var layer = _masks.Where(o => o.Value == mask)
-                .Select(o => o.Key)
-                .FirstOrDefault();
-
-            if (layer == _masks.First()
-                .Key)
-            {
-                return invalidatedImageArea;
-            }
-
-            var belowLayer = _images.TakeWhile(o => o.Key < layer)
-                .Last()
-                .Key;
-            var belowImageAccesor = _lastLayerImage._layerAccesors[belowLayer];
-
-            var sameLayer = _images.Where(o => o.Key == layer)
-                .First()
-                .Key;
-            var sameImageAccesor = _lastLayerImage._layerAccesors[sameLayer];
-
-            invalidatedImageArea = invalidatedImageArea.CombineWith(belowImageAccesor.Area);
-            invalidatedImageArea = invalidatedImageArea.CombineWith(sameImageAccesor.Area);
-             invalidatedImageArea = invalidatedImageArea.ExtendBothDirections(2);
-
-            var min = invalidatedImageArea.Min;
-            var max = invalidatedImageArea.Max;
-            for (var ix = Math.Max(min.X, 0); ix < Math.Min(max.X, editableMatrix.GetUpperBound(0)); ix++)
-            {
-                for (var iy = Math.Max(min.Y, 0); iy < Math.Min(max.Y, editableMatrix.GetUpperBound(1)); iy++)
-                {
-                    bool any = false;
-                    for (int ox = -1; ox <= 1; ox++)
-                    {
-                        for (int oy = -1; oy <= 1; oy++)
-                        {
-                            var i = new Vector2i(ix + ox, iy + oy);
-                            var same = sameImageAccesor[i];
-                            var below = belowImageAccesor[i];
-                            if (same > below)
-                            {
-                                any = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    editableMatrix[ix, iy] = any ? MaskValues.Terrain : MaskValues.Hole;
-                }
-            }
-
-            return invalidatedImageArea;
-        }
 
         Range2i IImageConstraint2i.FixImage(IEditableImage2f image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
-            var layer = _images.Where(o => o.Value == image)
-                .Select(o => o.Key)
-                .FirstOrDefault();
+            LayerId editedLayerId = this._thicknessToId[image];
+            var index = this._layerOrder.IndexOf(editedLayerId);
 
-            if (layer == _images.First()
-                .Key)
-            {
-                return invalidatedImageArea;
-            }
-
-            var belowLayer = _images.TakeWhile(o => o.Key < layer)
-                .Last()
-                .Key;
-            var belowImageAccesor = _lastLayerImage._layerAccesors[belowLayer];
-
-            invalidatedImageArea = invalidatedImageArea.CombineWith(belowImageAccesor.Area);
+            var sumAccesors = this._idToSum.ToDictionary(o => o.Key, o => o.Value.RequestAccess(invalidatedImageArea));
+            var layerAccessors = this._idToThickness.ToDictionary(o => o.Key, o => o.Value.RequestAccess(invalidatedImageArea));
 
             var min = invalidatedImageArea.Min;
             var max = invalidatedImageArea.Max;
-            for (var ix = Math.Max(min.X, 0); ix < Math.Min(max.X, editableMatrix.GetUpperBound(0)); ix++)
+
+            if (index == 0)
             {
-                for (var iy = Math.Max(min.Y, 0); iy < Math.Min(max.Y, editableMatrix.GetUpperBound(1)); iy++)
+                var sumLayer = sumAccesors[editedLayerId];
+                for (var ix = Math.Max(min.X, 0); ix < Math.Min(max.X, editableMatrix.GetUpperBound(0)); ix++)
                 {
-                    if (editableMatrix[ix, iy] < belowImageAccesor[new Vector2i(ix, iy)])
+                    for (var iy = Math.Max(min.Y, 0); iy < Math.Min(max.Y, editableMatrix.GetUpperBound(1)); iy++)
                     {
-                        editableMatrix[ix, iy] = belowImageAccesor[new Vector2i(ix, iy)];
+                        var i = new Vector2i(ix, iy);
+                        var value= editableMatrix[ix, iy];
+                        var diff = value - sumLayer[i];
+                        sumLayer[i] = editableMatrix[ix, iy];
+
+                        for (int aboveLayerIndex = index + 1; aboveLayerIndex < this._layerOrder.Count; aboveLayerIndex++)
+                        {
+                            var valueAbove = sumAccesors[this._layerOrder[aboveLayerIndex]][i];
+                            if (!float.IsNaN(valueAbove))
+                            {
+                                sumAccesors[this._layerOrder[aboveLayerIndex]][i] = valueAbove + diff;
+                            }
+                        }
                     }
                 }
+            }
+            else
+            {
+                var sumLayer = sumAccesors[editedLayerId];
+                var sumLayerBelow = sumAccesors[this._layerOrder[index - 1]];
+                
+                // clip thickness to non-negative
+                for (var ix = Math.Max(min.X, 0); ix < Math.Min(max.X, editableMatrix.GetUpperBound(0)); ix++)
+                {
+                    for (var iy = Math.Max(min.Y, 0); iy < Math.Min(max.Y, editableMatrix.GetUpperBound(1)); iy++)
+                    {
+                        var i = new Vector2i(ix, iy);
+
+                        if (editableMatrix[ix, iy] < 0) 
+                        {
+                            editableMatrix[ix, iy] = 0;
+                        }
+                    }
+                }
+
+                for (var ix = Math.Max(min.X, 1); ix < Math.Min(max.X, editableMatrix.GetUpperBound(0)-1); ix++)
+                {
+                    for (var iy = Math.Max(min.Y, 1); iy < Math.Min(max.Y, editableMatrix.GetUpperBound(1)-1); iy++)
+                    {
+                        var i = new Vector2i(ix, iy);
+
+                        var value = editableMatrix[ix, iy];
+
+                        var sum = sumLayerBelow[i] + value;
+                        var diff = sum - sumLayer[i];
+
+                        if (value == 0)
+                        {
+                            var x0 = editableMatrix[ix - 1, iy];
+                            var x1 = editableMatrix[ix + 1, iy];
+                            var y0 = editableMatrix[ix, iy - 1];
+                            var y1 = editableMatrix[ix, iy + 1];
+                            var x0y1 = editableMatrix[ix- 1, iy + 1]; // TODO: edge case of edge fliping logic
+                            var x1y0 = editableMatrix[ix + 1, iy - 1]; // TODO: edge case of edge fliping logic
+                            if (x0 == 0 && x1 == 0 && y0 == 0 && y1 == 0 && x0y1 == 0 && x1y0 == 0)
+                            {
+                                sumLayer[i] = float.NaN;
+                            }
+                            else
+                            {
+                                sumLayer[i] = sum; // update current layer
+                            }
+                        }
+                        else
+                        {
+                            sumLayer[i] = sum; // update current layer
+                        }
+
+                        for (int aboveLayerIndex = index + 1; aboveLayerIndex < this._layerOrder.Count; aboveLayerIndex++)
+                        {
+                            var valueAbove = sumAccesors[this._layerOrder[aboveLayerIndex]][i];
+                            if (!float.IsNaN(valueAbove))
+                            {
+                                sumAccesors[this._layerOrder[aboveLayerIndex]][i] = valueAbove + diff;
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (var accessor in sumAccesors)
+            {
+                accessor.Value.Dispose();
+            }
+
+            foreach (var accessor in layerAccessors)
+            {
+                accessor.Value.Dispose();
             }
 
             return invalidatedImageArea;
         }
 
-        public void Initialize(LayerId layer, List<IImageConstraint2i> constraints, List<IMaskConstraint2e> maskConstraints)
+        public void Initialize(LayerId layer, List<IImageConstraint2i> constraints)
         {
-            _images[layer] = new EditableMatrixImage2f(_imageConfig, constraints);
-            _masks[layer] = new EditableMatrixMask2e(_imageConfig, maskConstraints, layer == LayerId.Rock ? MaskValues.Terrain : MaskValues.Hole);
+
+            var thicknessImage = new EditableMatrixImage2fCopy(_imageConfig, constraints);
+            this._thicknessToId[thicknessImage] = layer;
+            this._idToThickness[layer] = thicknessImage;
+            
+            var sumImage = new EditableMatrixImage2f(_imageConfig, new List<IImageConstraint2i>(), _layerOrder.Count ==0?0f:float.NaN);
+            this._idToSum[layer] = sumImage;
+            
+            
+            this._layerOrder.Add(layer);
         }
 
-        public IImage2f CreateImage(LayerId layer) => _images[layer]
+        public IImage2f CreateImage(LayerId layer) => this._idToSum[layer]
             .CreateImage();
-
-        public IMask2e CreateMask(LayerId layer) => _masks[layer]
-            .CreateMask();
 
         public IEditableImageAccessor2f RequestAccess(LayerId layer, Range2i area)
         {
             var layerAccesors = new SortedDictionary<LayerId, IEditableImageAccessor2f>();
-            foreach (var image in _images)
+            foreach (var image in this._idToThickness)
             {
                 layerAccesors[image.Key] = image.Value.RequestAccess(area);
             }
 
-            var layerMaskAccesors = new SortedDictionary<LayerId, IEditableMaskAccessor2e>();
-            foreach (var mask in _masks)
-            {
-                layerMaskAccesors[mask.Key] = mask.Value.RequestAccess(area);
-            }
-
-            _lastLayerImage = new MatrixImageAccessor(layer, layerAccesors, layerMaskAccesors);
-            return _lastLayerImage;
+            return new MatrixImageAccessor(layerAccesors[layer]);
         }
 
         private class MatrixImageAccessor : IEditableImageAccessor2f
         {
-            public readonly LayerId _layer;
-            public readonly SortedDictionary<LayerId, IEditableImageAccessor2f> _layerAccesors;
-            public SortedDictionary<LayerId, IEditableMaskAccessor2e> _layerMaskAccesors;
+            public readonly IEditableImageAccessor2f _layerAccesors;
 
-            public MatrixImageAccessor(LayerId layer, SortedDictionary<LayerId, IEditableImageAccessor2f> layerAccesors, SortedDictionary<LayerId, IEditableMaskAccessor2e> layerMaskAccesors)
+            public MatrixImageAccessor(IEditableImageAccessor2f layerAccesors)
             {
-                _layer = layer;
                 _layerAccesors = layerAccesors;
-                _layerMaskAccesors = layerMaskAccesors;
             }
 
-            public Range2i Area => _layerAccesors[_layer]
-                .Area;
+            public Range2i Area => _layerAccesors.Area;
 
             public float this[Vector2i pos]
             {
-                get => _layerAccesors[_layer][pos];
+                get => _layerAccesors[pos];
                 set
                 {
-                    var existingValue = _layerAccesors[_layer][pos];
+                    var existingValue = _layerAccesors[pos];
                     var dif = value - existingValue;
 
-                    _layerAccesors[_layer][pos] = value;
-                    foreach (var aboveLayer in _layerAccesors.SkipWhile(o => o.Key <= _layer))
-                    {
-                        aboveLayer.Value[pos] = aboveLayer.Value[pos] + dif;
-                    }
+                    _layerAccesors[pos] = value;
                 }
             }
 
             public void Dispose()
             {
-                foreach (var layer in _layerAccesors)
-                {
-                    layer.Value.Dispose();
-                }
-
-                foreach (var layer in _layerMaskAccesors)
-                {
-                    layer.Value.Dispose();
-                }
+                _layerAccesors.Dispose();
             }
         }
 

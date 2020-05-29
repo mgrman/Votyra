@@ -6,11 +6,9 @@ namespace Votyra.Core.Images
 {
     public interface ILayerEditableImageProvider
     {
-        void Initialize(LayerId layer, List<IImageConstraint2i> constraints, List<IMaskConstraint2e> maskConstraints);
+        void Initialize(LayerId layer, List<IImageConstraint2i> constraints);
 
         IImage2f CreateImage(LayerId layer);
-
-        IMask2e CreateMask(LayerId layer);
 
         IEditableImageAccessor2f RequestAccess(LayerId layer, Range2i area);
     }

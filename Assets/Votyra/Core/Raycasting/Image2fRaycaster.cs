@@ -7,26 +7,21 @@ namespace Votyra.Core.Raycasting
     public sealed class Image2fRaycaster : BaseCellRaycaster
     {
         private readonly IImage2fProvider _image2FProvider;
-        private readonly IMask2eProvider _mask2EProvider;
         private Ray3f _cameraRay;
         private float _directionXyMag;
         private IImage2f _image;
-        private IMask2e _mask;
         private Vector2f _startXy;
 
-        public Image2fRaycaster(IImage2fProvider image2FProvider, IMask2eProvider mask2eProvider, ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
+        public Image2fRaycaster(IImage2fProvider image2FProvider, ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
             : base(terrainVertexPostProcessor, raycasterAggregator)
         {
             _image2FProvider = image2FProvider;
-            _mask2EProvider = mask2eProvider;
         }
 
         public override Vector3f Raycast(Ray3f cameraRay)
         {
             _image = _image2FProvider.CreateImage();
             (_image as IInitializableImage)?.StartUsing();
-            _mask = _mask2EProvider.CreateMask();
-            (_mask as IInitializableImage)?.StartUsing();
 
             _cameraRay = cameraRay;
 
@@ -39,8 +34,6 @@ namespace Votyra.Core.Raycasting
 
             (_image as IInitializableImage)?.FinishUsing();
             _image = null;
-            (_mask as IInitializableImage)?.FinishUsing();
-            _mask = null;
 
             return result;
         }

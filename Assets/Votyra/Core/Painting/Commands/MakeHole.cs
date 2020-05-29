@@ -4,10 +4,10 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Painting.Commands
 {
-    public class MakeHoleFactory : BaseHoleFactory<MakeHole>
+    public class MakeHoleFactory : BaseFactory<MakeHole>
     {
-        public MakeHoleFactory(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
-            : base(editableImage, editableMask, logger)
+        public MakeHoleFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
+            : base(editableImage,  logger)
         {
         }
 
@@ -21,6 +21,6 @@ namespace Votyra.Core.Painting.Commands
         {
         }
 
-        protected override MaskValues Invoke(MaskValues value, int distance) => MaskValues.Hole;
+        protected override float Invoke(float value, int distance) => float.NaN;
     }
 }

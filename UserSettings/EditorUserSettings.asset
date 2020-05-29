@@ -5,6 +5,15 @@ EditorUserSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 4
   m_ConfigSettings:
+    RecentlyUsedScenePath-0:
+      value: 224247031146467a1d1e002b13224b19191957192f2d28353e663026eef43d14e3fe33fbd33f2d2e380be17c55701431fb1e10
+      flags: 0
+    RecentlyUsedScenePath-1:
+      value: 224247031146467a1d1e002b13224b19191957192f2d28353e662e3aeff0383dd1e63bf9eb3f0b392b10ee350a6c0871e704001fef
+      flags: 0
+    RecentlyUsedScenePath-2:
+      value: 224247031146467a1d1e002b13224b19191957192f2d28353e663026eef43d14e3fe33fbd33f2d2e380be1721130082beb
+      flags: 0
     lightmappingDeviceAndPlatform:
       value: 53
       flags: 0
@@ -18,5 +27,7 @@ EditorUserSettings:
   m_SemanticMergeMode: 2
   m_VCShowFailedCheckout: 1
   m_VCOverwriteFailedCheckoutAssets: 1
-  m_VCOverlayIcons: 1
+  m_VCProjectOverlayIcons: 1
+  m_VCHierarchyOverlayIcons: 1
+  m_VCOtherOverlayIcons: 1
   m_VCAllowAsyncUpdate: 0

@@ -6,7 +6,7 @@ namespace Votyra.Core.TerrainMeshes
     {
         void Reset(Area3f area);
 
-        void AddCell(Vector2i cellInGroup, Vector2i subCell, SampledData2f data, SampledMask2e maskData);
+        void AddCell(Vector2i cellInGroup, Vector2i subCell, SampledData2f data);
 
         void FinalizeMesh();
 

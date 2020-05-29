@@ -20,11 +20,11 @@ namespace Votyra.Plannar.Unity
         private readonly ILayerConfig _layerConfig;
 
         public TerrainUnityMeshManager(IUnityTerrainGeneratorManager2i manager, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root")]
-            GameObject root, ILayerConfig layerConfig)
+            GameObject root, [InjectOptional]ILayerConfig layerConfig)
         {
             _manager = manager;
             _gameObjectPool = gameObjectPool;
-            this._layerConfig = layerConfig;
+            _layerConfig = layerConfig;
             _manager.NewTerrain += NewTerrain;
             _manager.ChangedTerrain += ChangedTerrain;
             _manager.RemovedTerrain += RemovedTerrain;
@@ -76,7 +76,7 @@ namespace Votyra.Plannar.Unity
             if (!pooledGameObject.IsInitialized)
                 pooledGameObject.Initialize();
 
-            pooledGameObject.GameObject.name = $"Group_{group}_{_layerConfig.Layer}_{this.GetHashCode()}";
+            pooledGameObject.GameObject.name = $"Group_{group}_{_layerConfig?.Layer}_{this.GetHashCode()}";
             pooledGameObject.SetActive(true);
             mesh.SetUnityMesh(pooledGameObject);
 
