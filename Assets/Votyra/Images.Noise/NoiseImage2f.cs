@@ -4,9 +4,9 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Images.Noise
 {
-    public class NoiseImage2F : IImage2F
+    public class NoiseImage2f : IImage2f
     {
-        public NoiseImage2F(Vector3f offset, Vector3f scale)
+        public NoiseImage2f(Vector3f offset, Vector3f scale)
         {
             this.Offset = offset;
             this.Scale = scale;

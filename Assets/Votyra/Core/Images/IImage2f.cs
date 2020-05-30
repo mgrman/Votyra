@@ -2,7 +2,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public interface IImage2F
+    public interface IImage2f
     {
         Area1f RangeZ { get; }
 

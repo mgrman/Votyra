@@ -4,23 +4,23 @@ using Votyra.Core.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Core.Raycasting
 {
-    public sealed class Image2FRaycaster : BaseCellRaycaster
+    public sealed class Image2fRaycaster : BaseCellRaycaster
     {
-        private readonly IImage2FProvider image2FProvider;
+        private readonly IImage2fProvider image2fProvider;
         private Ray3f cameraRay;
         private float directionXyMag;
-        private IImage2F image;
+        private IImage2f image;
         private Vector2f startXy;
 
-        public Image2FRaycaster(IImage2FProvider image2FProvider, ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
+        public Image2fRaycaster(IImage2fProvider image2fProvider, ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
             : base(terrainVertexPostProcessor, raycasterAggregator)
         {
-            this.image2FProvider = image2FProvider;
+            this.image2fProvider = image2fProvider;
         }
 
         public override Vector3f Raycast(Ray3f cameraRay)
         {
-            this.image = this.image2FProvider.CreateImage();
+            this.image = this.image2fProvider.CreateImage();
             (this.image as IInitializableImage)?.StartUsing();
 
             this.cameraRay = cameraRay;
@@ -64,7 +64,7 @@ namespace Votyra.Core.Raycasting
             return this.cameraRay.Origin.Z + (this.cameraRay.Direction.Z * p);
         }
 
-        private float GetLinearInterpolatedValue(IImage2F image, Vector2f pos)
+        private float GetLinearInterpolatedValue(IImage2f image, Vector2f pos)
         {
             var posX0Y0 = pos.FloorToVector2i();
             var fraction = pos - posX0Y0;

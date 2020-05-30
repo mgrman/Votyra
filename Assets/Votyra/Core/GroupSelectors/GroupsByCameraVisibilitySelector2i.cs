@@ -4,17 +4,17 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core.GroupSelectors
 {
-    public class GroupsByCameraVisibilitySelector2I : IGroupsByCameraVisibilitySelector2I
+    public class GroupsByCameraVisibilitySelector2i : IGroupsByCameraVisibilitySelector2i
     {
         private readonly Vector2i cellInGroupCount;
         private Range2i previousArea = Range2i.Zero;
 
-        public GroupsByCameraVisibilitySelector2I(ITerrainConfig config)
+        public GroupsByCameraVisibilitySelector2i(ITerrainConfig config)
         {
             this.cellInGroupCount = config.CellInGroupCount.XY();
         }
 
-        public void UpdateGroupsVisibility(ArcResource<IFrameData2I> optionsResource, Func<Vector2i, bool> wasVisible, Action<Vector2i, ArcResource<IFrameData2I>> onGroupBecameVisible, Action<Vector2i> onGroupNotVisibleAnyMore)
+        public void UpdateGroupsVisibility(ArcResource<IFrameData2i> optionsResource, Func<Vector2i, bool> wasVisible, Action<Vector2i, ArcResource<IFrameData2i>> onGroupBecameVisible, Action<Vector2i> onGroupNotVisibleAnyMore)
         {
             var options = optionsResource.Value;
             if (options == null)

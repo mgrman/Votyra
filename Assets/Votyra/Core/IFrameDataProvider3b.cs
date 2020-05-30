@@ -2,8 +2,8 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core
 {
-    public interface IFrameDataProvider3B
+    public interface IFrameDataProvider3b
     {
-        IFrameData3B GetCurrentFrameData(IReadOnlySet<Vector3i> existingGroups);
+        IFrameData3b GetCurrentFrameData(IReadOnlySet<Vector3i> existingGroups);
     }
 }

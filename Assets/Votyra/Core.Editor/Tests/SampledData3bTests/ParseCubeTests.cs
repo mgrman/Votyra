@@ -18,7 +18,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             1-----0
             ";
 
-            var cube = SampledData3B.ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.AreEqual(string.Join("\n",
                     cubeString.Split('\n')
@@ -40,7 +40,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             1-----0
             ";
-            var cube = SampledData3B.ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsTrue(cube.DataX0Y0Z0);
             Assert.IsFalse(cube.DataX0Y0Z1);
@@ -63,7 +63,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3B.ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.DataX0Y0Z0);
             Assert.IsTrue(cube.DataX0Y0Z1);
@@ -86,7 +86,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3B.ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.DataX0Y0Z0);
             Assert.IsFalse(cube.DataX0Y0Z1);
@@ -109,7 +109,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3B.ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.DataX0Y0Z0);
             Assert.IsFalse(cube.DataX0Y0Z1);
@@ -132,7 +132,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----1
             ";
-            var cube = SampledData3B.ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.DataX0Y0Z0);
             Assert.IsFalse(cube.DataX0Y0Z1);
@@ -155,7 +155,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3B.ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.DataX0Y0Z0);
             Assert.IsFalse(cube.DataX0Y0Z1);
@@ -178,7 +178,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3B.ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.DataX0Y0Z0);
             Assert.IsFalse(cube.DataX0Y0Z1);
@@ -201,7 +201,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3B.ParseCube(cubeString);
+            var cube = SampledData3b.ParseCube(cubeString);
 
             Assert.IsFalse(cube.DataX0Y0Z0);
             Assert.IsFalse(cube.DataX0Y0Z1);

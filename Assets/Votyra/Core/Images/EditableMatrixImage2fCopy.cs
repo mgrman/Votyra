@@ -5,12 +5,12 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class EditableMatrixImage2FCopy : IEditableImage2F
+    public class EditableMatrixImage2fCopy : IEditableImage2f
     {
-        private readonly IImageConstraint2I[] constraints;
+        private readonly IImageConstraint2i[] constraints;
         private readonly float[,] editableMatrix;
 
-        public EditableMatrixImage2FCopy(IImageConfig imageConfig, List<IImageConstraint2I> constraints)
+        public EditableMatrixImage2fCopy(IImageConfig imageConfig, List<IImageConstraint2i> constraints)
         {
             this.constraints = constraints.SelectMany(o => o.Priorities.Select(p => new
             {
@@ -28,7 +28,7 @@ namespace Votyra.Core.Images
             this.editableMatrix = new float[imageConfig.ImageSize.X, imageConfig.ImageSize.Y];
         }
 
-        public IEditableImageAccessor2F RequestAccess(Range2i areaRequest) => new MatrixImageAccessor(this, areaRequest);
+        public IEditableImageAccessor2f RequestAccess(Range2i areaRequest) => new MatrixImageAccessor(this, areaRequest);
 
         private void FixImage(Range2i invalidatedImageArea, Direction direction)
         {
@@ -40,15 +40,15 @@ namespace Votyra.Core.Images
             }
         }
 
-        private class MatrixImageAccessor : IEditableImageAccessor2F
+        private class MatrixImageAccessor : IEditableImageAccessor2f
         {
-            private readonly EditableMatrixImage2FCopy editableImage;
+            private readonly EditableMatrixImage2fCopy editableImage;
             private readonly float[,] editableMatrix;
             private bool anyChange;
             private float changeCounter;
             private Area1f editableRangeZ;
 
-            public MatrixImageAccessor(EditableMatrixImage2FCopy editableImage, Range2i area)
+            public MatrixImageAccessor(EditableMatrixImage2fCopy editableImage, Range2i area)
             {
                 this.editableMatrix = editableImage.editableMatrix;
                 this.editableImage = editableImage;

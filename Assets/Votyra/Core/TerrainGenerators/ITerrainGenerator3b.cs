@@ -4,8 +4,8 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators
 {
-    public interface ITerrainGenerator3B
+    public interface ITerrainGenerator3b
     {
-        void Generate(Vector3i group, IImage3B image, IGeneralMesh pooledTerrainMesh);
+        void Generate(Vector3i group, IImage3b image, IGeneralMesh pooledTerrainMesh);
     }
 }

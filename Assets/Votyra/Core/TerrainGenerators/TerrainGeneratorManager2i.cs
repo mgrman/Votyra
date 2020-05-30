@@ -11,30 +11,30 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core
 {
-    public class TerrainGeneratorManager2I : IDisposable
+    public class TerrainGeneratorManager2i : IDisposable
     {
         private readonly Vector2i cellInGroupCount;
 
-        private readonly IFrameDataProvider2I frameDataProvider;
+        private readonly IFrameDataProvider2i frameDataProvider;
 
-        private readonly IWorkQueue<ArcResource<IFrameData2I>> frameWorkQueue;
+        private readonly IWorkQueue<ArcResource<IFrameData2i>> frameWorkQueue;
 
-        private readonly IGroupsByCameraVisibilitySelector2I groupsByCameraVisibilitySelector2I;
+        private readonly IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector2i;
         private readonly IWorkQueue<GroupUpdateData> groupWorkQueue;
-        private readonly ITerrainRepository2I meshRepository;
+        private readonly ITerrainRepository2i meshRepository;
         private readonly CancellationTokenSource onDestroyCts = new CancellationTokenSource();
 
-        private readonly Action<Vector2i, ArcResource<IFrameData2I>> onGroupBecameVisibleDelegate;
+        private readonly Action<Vector2i, ArcResource<IFrameData2i>> onGroupBecameVisibleDelegate;
         private readonly Action<Vector2i> onGroupStoppedBeingVisibleDelegate;
-        private readonly ITerrainMesher2F terrainMesher;
-        private readonly ITerrainMesh2IPool terrainMeshPool;
+        private readonly ITerrainMesher2f terrainMesher;
+        private readonly ITerrainMesh2iPool terrainMeshPool;
         private readonly List<GroupUpdateData> updateDateCache = new List<GroupUpdateData>();
 
-        public TerrainGeneratorManager2I(ITerrainConfig terrainConfig, IFrameDataProvider2I frameDataProvider, IGroupsByCameraVisibilitySelector2I groupsByCameraVisibilitySelector2I, ITerrainMesh2IPool terrainMeshPool, ITerrainMesher2F terrainMesher, ITerrainRepository2I repository, IWorkQueue<ArcResource<IFrameData2I>> frameWorkQueue, IWorkQueue<GroupUpdateData> groupWorkQueue)
+        public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IFrameDataProvider2i frameDataProvider, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector2i, ITerrainMesh2iPool terrainMeshPool, ITerrainMesher2f terrainMesher, ITerrainRepository2i repository, IWorkQueue<ArcResource<IFrameData2i>> frameWorkQueue, IWorkQueue<GroupUpdateData> groupWorkQueue)
         {
             this.cellInGroupCount = terrainConfig.CellInGroupCount.XY();
             this.frameDataProvider = frameDataProvider;
-            this.groupsByCameraVisibilitySelector2I = groupsByCameraVisibilitySelector2I;
+            this.groupsByCameraVisibilitySelector2i = groupsByCameraVisibilitySelector2i;
             this.terrainMeshPool = terrainMeshPool;
             this.terrainMesher = terrainMesher;
             this.meshRepository = repository;
@@ -60,7 +60,7 @@ namespace Votyra.Core
             this.frameDataProvider.FrameData -= this.frameWorkQueue.QueueNew;
         }
 
-        private void MeshRepositoryOnTerrainChange(RepositoryChange<Vector2i, ITerrainMesh2F> obj)
+        private void MeshRepositoryOnTerrainChange(RepositoryChange<Vector2i, ITerrainMesh2f> obj)
         {
             switch (obj.Action)
             {
@@ -70,9 +70,9 @@ namespace Votyra.Core
             }
         }
 
-        private void EnqueueTerrainUpdates(ArcResource<IFrameData2I> context)
+        private void EnqueueTerrainUpdates(ArcResource<IFrameData2i> context)
         {
-            this.groupsByCameraVisibilitySelector2I.UpdateGroupsVisibility(context, this.meshRepository.ContainsKeyFunc, this.onGroupBecameVisibleDelegate, this.onGroupStoppedBeingVisibleDelegate);
+            this.groupsByCameraVisibilitySelector2i.UpdateGroupsVisibility(context, this.meshRepository.ContainsKeyFunc, this.onGroupBecameVisibleDelegate, this.onGroupStoppedBeingVisibleDelegate);
 
             this.meshRepository.Select((group, mesh) => new GroupUpdateData(group, context, mesh, false), this.updateDateCache);
             foreach (var activeGroup in this.updateDateCache)
@@ -82,7 +82,7 @@ namespace Votyra.Core
             }
         }
 
-        private void OnGroupBecameVisible(Vector2i group, ArcResource<IFrameData2I> data)
+        private void OnGroupBecameVisible(Vector2i group, ArcResource<IFrameData2i> data)
         {
             var terrainMesh = this.terrainMeshPool.GetRaw();
             this.meshRepository.Add(group, terrainMesh);

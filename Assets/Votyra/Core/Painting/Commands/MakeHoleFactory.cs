@@ -5,7 +5,7 @@ namespace Votyra.Core.Painting.Commands
 {
     public class MakeHoleFactory : BaseFactory<MakeHole>
     {
-        public MakeHoleFactory(IEditableImage2F editableImage, IThreadSafeLogger logger)
+        public MakeHoleFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
             : base(editableImage, logger)
         {
         }

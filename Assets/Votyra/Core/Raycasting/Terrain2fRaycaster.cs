@@ -3,11 +3,11 @@ using Votyra.Core.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Core.Raycasting
 {
-    public sealed class Terrain2FRaycaster : BaseGroupRaycaster
+    public sealed class Terrain2fRaycaster : BaseGroupRaycaster
     {
-        private readonly ITerrainRepository2I manager;
+        private readonly ITerrainRepository2i manager;
 
-        public Terrain2FRaycaster(ITerrainConfig terrainConfig, ITerrainRepository2I manager, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
+        public Terrain2fRaycaster(ITerrainConfig terrainConfig, ITerrainRepository2i manager, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
             : base(terrainConfig, terrainVertexPostProcessor, raycasterAggregator)
         {
             this.manager = manager;

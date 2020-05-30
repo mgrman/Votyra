@@ -5,11 +5,11 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core
 {
-    public class FrameData3B : IFrameData3B
+    public class FrameData3b : IFrameData3b
     {
         private int activeCounter;
 
-        public FrameData3B(Ray3f cameraRay, IReadOnlyList<Plane3f> cameraPlanes, IReadOnlyList<Vector3f> cameraFrustumCorners, IReadOnlySet<Vector3i> existingGroups, IImage3B image, Range3i invalidatedAreaImageSpace)
+        public FrameData3b(Ray3f cameraRay, IReadOnlyList<Plane3f> cameraPlanes, IReadOnlyList<Vector3f> cameraFrustumCorners, IReadOnlySet<Vector3i> existingGroups, IImage3b image, Range3i invalidatedAreaImageSpace)
         {
             this.CameraRay = cameraRay;
             this.CameraPlanes = cameraPlanes;
@@ -30,7 +30,7 @@ namespace Votyra.Core
 
         public IReadOnlySet<Vector3i> ExistingGroups { get; }
 
-        public IImage3B Image { get; }
+        public IImage3b Image { get; }
 
         public Range3i InvalidatedAreaImageSpace { get; }
 

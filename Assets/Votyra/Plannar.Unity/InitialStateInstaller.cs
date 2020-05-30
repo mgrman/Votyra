@@ -7,7 +7,7 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
-            this.Container.BindInterfacesAndSelfTo<InitialStateSetter2F>()
+            this.Container.BindInterfacesAndSelfTo<InitialStateSetter2f>()
                 .AsSingle()
                 .NonLazy();
             this.Container.BindInterfacesAndSelfTo<InitialImageConfig>()

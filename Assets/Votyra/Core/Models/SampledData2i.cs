@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace Votyra.Core.Models
 {
-    public struct SampledData2I : IEquatable<SampledData2I>
+    public struct SampledData2i : IEquatable<SampledData2i>
     {
         public readonly int X0Y0;
         public readonly int X0Y1;
         public readonly int X1Y0;
         public readonly int X1Y1;
 
-        public SampledData2I(int x0Y0, int x0Y1, int x1Y0, int x1Y1)
+        public SampledData2i(int x0Y0, int x0Y1, int x1Y0, int x1Y1)
         {
             this.X0Y0 = x0Y0;
             this.X0Y1 = x0Y1;
@@ -33,36 +33,36 @@ namespace Votyra.Core.Models
 
         public int Min => Math.Min(this.X0Y0, Math.Min(this.X0Y1, Math.Min(this.X1Y0, this.X1Y1)));
 
-        public static SampledData2I operator -(SampledData2I a) => new SampledData2I(-a.X0Y0, -a.X0Y1, -a.X1Y0, -a.X1Y1);
+        public static SampledData2i operator -(SampledData2i a) => new SampledData2i(-a.X0Y0, -a.X0Y1, -a.X1Y0, -a.X1Y1);
 
-        public static SampledData2I operator -(SampledData2I a, int b) => new SampledData2I(a.X0Y0 - b, a.X0Y1 - b, a.X1Y0 - b, a.X1Y1 - b);
+        public static SampledData2i operator -(SampledData2i a, int b) => new SampledData2i(a.X0Y0 - b, a.X0Y1 - b, a.X1Y0 - b, a.X1Y1 - b);
 
-        public static bool operator !=(SampledData2I a, SampledData2I b) => (a.X0Y0 != b.X0Y0) && (a.X0Y1 != b.X0Y1) && (a.X1Y0 != b.X1Y0) && (a.X1Y1 != b.X1Y1);
+        public static bool operator !=(SampledData2i a, SampledData2i b) => (a.X0Y0 != b.X0Y0) && (a.X0Y1 != b.X0Y1) && (a.X1Y0 != b.X1Y0) && (a.X1Y1 != b.X1Y1);
 
         // public static SampledData2i operator -(SampledData2i a, int b)
         // {
         //     return new SampledData2i(a.x0y0 - b, a.x0y1 - b, a.x1y0 - b, a.x1y1 - b);
         // }
-        public static SampledData2I operator *(SampledData2I a, int b) => new SampledData2I(a.X0Y0 * b, a.X0Y1 * b, a.X1Y0 * b, a.X1Y1 * b);
+        public static SampledData2i operator *(SampledData2i a, int b) => new SampledData2i(a.X0Y0 * b, a.X0Y1 * b, a.X1Y0 * b, a.X1Y1 * b);
 
-        public static SampledData2I operator +(SampledData2I a, int b) => new SampledData2I(a.X0Y0 + b, a.X0Y1 + b, a.X1Y0 + b, a.X1Y1 + b);
+        public static SampledData2i operator +(SampledData2i a, int b) => new SampledData2i(a.X0Y0 + b, a.X0Y1 + b, a.X1Y0 + b, a.X1Y1 + b);
 
-        public static bool operator ==(SampledData2I a, SampledData2I b) => (a.X0Y0 == b.X0Y0) && (a.X0Y1 == b.X0Y1) && (a.X1Y0 == b.X1Y0) && (a.X1Y1 == b.X1Y1);
+        public static bool operator ==(SampledData2i a, SampledData2i b) => (a.X0Y0 == b.X0Y0) && (a.X0Y1 == b.X0Y1) && (a.X1Y0 == b.X1Y0) && (a.X1Y1 == b.X1Y1);
 
-        public SampledData2I ClipMin(int clipValue) => new SampledData2I(Math.Max(this.X0Y0, clipValue), Math.Max(this.X0Y1, clipValue), Math.Max(this.X1Y0, clipValue), Math.Max(this.X1Y1, clipValue));
+        public SampledData2i ClipMin(int clipValue) => new SampledData2i(Math.Max(this.X0Y0, clipValue), Math.Max(this.X0Y1, clipValue), Math.Max(this.X1Y0, clipValue), Math.Max(this.X1Y1, clipValue));
 
         public override bool Equals(object obj)
         {
-            if (obj is SampledData2I)
+            if (obj is SampledData2i)
             {
-                var that = (SampledData2I)obj;
+                var that = (SampledData2i)obj;
                 return this.Equals(that);
             }
 
             return false;
         }
 
-        public bool Equals(SampledData2I that) => this == that;
+        public bool Equals(SampledData2i that) => this == that;
 
         public override int GetHashCode()
         {
@@ -93,15 +93,15 @@ namespace Votyra.Core.Models
             }
         }
 
-        public SampledData2I GetRotated(int offset) => new SampledData2I(this.GetIndexedValueCw(0 + offset), this.GetIndexedValueCw(1 + offset), this.GetIndexedValueCw(3 + offset), this.GetIndexedValueCw(2 + offset));
+        public SampledData2i GetRotated(int offset) => new SampledData2i(this.GetIndexedValueCw(0 + offset), this.GetIndexedValueCw(1 + offset), this.GetIndexedValueCw(3 + offset), this.GetIndexedValueCw(2 + offset));
 
         public override string ToString() => string.Format("x0y0:{0} , x0y1:{1} , x1y0:{2} , x1y1:{3}", this.X0Y0, this.X0Y1, this.X1Y0, this.X1Y1);
 
-        public static int Dif(SampledData2I a, SampledData2I b) => Math.Abs(a.X0Y0 - b.X0Y0) + Math.Abs(a.X0Y1 - b.X0Y1) + Math.Abs(a.X1Y0 - b.X1Y0) + Math.Abs(a.X1Y1 - b.X1Y1);
+        public static int Dif(SampledData2i a, SampledData2i b) => Math.Abs(a.X0Y0 - b.X0Y0) + Math.Abs(a.X0Y1 - b.X0Y1) + Math.Abs(a.X1Y0 - b.X1Y0) + Math.Abs(a.X1Y1 - b.X1Y1);
 
-        public static IEnumerable<SampledData2I> GenerateAllValuesWithHoles(Area1i range)
+        public static IEnumerable<SampledData2i> GenerateAllValuesWithHoles(Area1i range)
         {
-            var results = new List<SampledData2I>();
+            var results = new List<SampledData2i>();
             foreach (var x0Y0 in GenerateValues(range))
             {
                 foreach (var x0Y1 in GenerateValues(range))
@@ -110,7 +110,7 @@ namespace Votyra.Core.Models
                     {
                         foreach (var x1Y1 in GenerateValues(range))
                         {
-                            results.Add(new SampledData2I(x0Y0, x0Y1, x1Y0, x1Y1));
+                            results.Add(new SampledData2i(x0Y0, x0Y1, x1Y0, x1Y1));
                         }
                     }
                 }

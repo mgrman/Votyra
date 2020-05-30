@@ -5,16 +5,16 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class TerrainMesher2F : ITerrainMesher2F
+    public class TerrainMesher2f : ITerrainMesher2f
     {
         private readonly Vector2i cellInGroupCount;
 
-        public TerrainMesher2F(ITerrainConfig terrainConfig)
+        public TerrainMesher2f(ITerrainConfig terrainConfig)
         {
             this.cellInGroupCount = terrainConfig.CellInGroupCount.XY();
         }
 
-        public void GetResultingMesh(ITerrainMesh2F mesh, Vector2i group, IImage2F image)
+        public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image)
         {
             var range = Area3f.FromMinAndSize((group * this.cellInGroupCount).ToVector3f(image.RangeZ.Min), this.cellInGroupCount.ToVector3f(image.RangeZ.Size));
             mesh.Reset(range);

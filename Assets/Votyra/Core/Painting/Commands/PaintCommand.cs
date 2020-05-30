@@ -12,7 +12,7 @@ namespace Votyra.Core.Painting.Commands
         private readonly int maxDistance;
 
         private DateTime clickLimit;
-        private IEditableImage2F editableImage;
+        private IEditableImage2f editableImage;
 
         private IThreadSafeLogger logger;
 
@@ -23,7 +23,7 @@ namespace Votyra.Core.Painting.Commands
 
         private Vector2i? LastInvocation { get; set; }
 
-        public void Initialize(IEditableImage2F editableImage, IThreadSafeLogger logger)
+        public void Initialize(IEditableImage2f editableImage, IThreadSafeLogger logger)
         {
             this.editableImage = editableImage;
             this.logger = logger;
@@ -42,7 +42,7 @@ namespace Votyra.Core.Painting.Commands
                 this.clickLimit = now + ClickDelay;
             }
 
-            Path2IUtils.InvokeOnPath(this.LastInvocation, cell, this.Invoke);
+            Path2iUtils.InvokeOnPath(this.LastInvocation, cell, this.Invoke);
 
             this.LastInvocation = cell;
         }

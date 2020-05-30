@@ -2,9 +2,9 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class MatrixImage3B : BaseMatrix3<bool>, IImage3B
+    public class MatrixImage3b : BaseMatrix3<bool>, IImage3b
     {
-        public MatrixImage3B(Vector3i size)
+        public MatrixImage3b(Vector3i size)
             : base(size)
         {
         }

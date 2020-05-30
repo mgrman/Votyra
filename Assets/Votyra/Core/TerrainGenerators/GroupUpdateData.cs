@@ -7,7 +7,7 @@ namespace Votyra.Core
 {
     public struct GroupUpdateData : IDisposable
     {
-        public GroupUpdateData(Vector2i group, ArcResource<IFrameData2I> context, ITerrainMesh2F mesh, bool forceUpdate)
+        public GroupUpdateData(Vector2i group, ArcResource<IFrameData2i> context, ITerrainMesh2f mesh, bool forceUpdate)
         {
             this.Group = group;
             this.Context = context;
@@ -17,9 +17,9 @@ namespace Votyra.Core
 
         public Vector2i Group { get; }
 
-        public ArcResource<IFrameData2I> Context { get; }
+        public ArcResource<IFrameData2i> Context { get; }
 
-        public ITerrainMesh2F Mesh { get; }
+        public ITerrainMesh2f Mesh { get; }
 
         public bool ForceUpdate { get; }
 

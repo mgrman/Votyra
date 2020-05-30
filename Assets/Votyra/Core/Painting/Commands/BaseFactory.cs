@@ -5,10 +5,10 @@ namespace Votyra.Core.Painting.Commands
 {
     public abstract class BaseFactory<T> : IPaintCommandFactory where T : IInitializablePaintCommand, new()
     {
-        private readonly IEditableImage2F editableImage;
+        private readonly IEditableImage2f editableImage;
         private readonly IThreadSafeLogger logger;
 
-        protected BaseFactory(IEditableImage2F editableImage, IThreadSafeLogger logger)
+        protected BaseFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
         {
             this.editableImage = editableImage;
             this.logger = logger;

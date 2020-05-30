@@ -2,7 +2,7 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    public class Terrain2IPopulatorInstaller : MonoInstaller
+    public class Terrain2iPopulatorInstaller : MonoInstaller
     {
         public override void InstallBindings()
         {

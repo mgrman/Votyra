@@ -5,16 +5,16 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class EditableMatrixImage2F : IImage2FProvider, IEditableImage2F
+    public class EditableMatrixImage2f : IImage2fProvider, IEditableImage2f
     {
-        private readonly IImageConstraint2I[] constraints;
+        private readonly IImageConstraint2i[] constraints;
         private readonly float[,] editableMatrix;
-        private readonly List<MatrixImage2F> readonlyMatrices = new List<MatrixImage2F>();
+        private readonly List<MatrixImage2f> readonlyMatrices = new List<MatrixImage2f>();
         private Area1f editableRangeZ;
         private Range2i? invalidatedArea;
-        private MatrixImage2F preparedImage;
+        private MatrixImage2f preparedImage;
 
-        public EditableMatrixImage2F(IImageConfig imageConfig, List<IImageConstraint2I> constraints, float defaultValue = 0f)
+        public EditableMatrixImage2f(IImageConfig imageConfig, List<IImageConstraint2i> constraints, float defaultValue = 0f)
         {
             this.constraints = constraints.SelectMany(o => o.Priorities.Select(p => new
             {
@@ -44,7 +44,7 @@ namespace Votyra.Core.Images
             this.editableRangeZ = Area1f.FromMinAndMax(defaultValue, defaultValue);
         }
 
-        private MatrixImage2F PreparedImage
+        private MatrixImage2f PreparedImage
         {
             get => this.preparedImage;
             set
@@ -55,9 +55,9 @@ namespace Votyra.Core.Images
             }
         }
 
-        public IEditableImageAccessor2F RequestAccess(Range2i areaRequest) => new MatrixImageAccessor(this, areaRequest);
+        public IEditableImageAccessor2f RequestAccess(Range2i areaRequest) => new MatrixImageAccessor(this, areaRequest);
 
-        public IImage2F CreateImage()
+        public IImage2f CreateImage()
         {
             if ((this.invalidatedArea == Range2i.Zero) && (this.PreparedImage.InvalidatedArea == Range2i.Zero))
             {
@@ -75,9 +75,9 @@ namespace Votyra.Core.Images
             return this.PreparedImage;
         }
 
-        private MatrixImage2F GetNotUsedImage()
+        private MatrixImage2f GetNotUsedImage()
         {
-            MatrixImage2F image = null;
+            MatrixImage2f image = null;
             for (var i = 0; i < this.readonlyMatrices.Count; i++)
             {
                 var o = this.readonlyMatrices[i];
@@ -90,7 +90,7 @@ namespace Votyra.Core.Images
 
             if (image == null)
             {
-                image = new MatrixImage2F(this.editableMatrix.Size());
+                image = new MatrixImage2f(this.editableMatrix.Size());
                 this.readonlyMatrices.Add(image);
             }
 
@@ -115,15 +115,15 @@ namespace Votyra.Core.Images
             }
         }
 
-        private class MatrixImageAccessor : IEditableImageAccessor2F
+        private class MatrixImageAccessor : IEditableImageAccessor2f
         {
-            private readonly EditableMatrixImage2F editableImage;
+            private readonly EditableMatrixImage2f editableImage;
             private readonly float[,] editableMatrix;
             private bool anyChange;
             private float changeCounter;
             private Area1f editableRangeZ;
 
-            public MatrixImageAccessor(EditableMatrixImage2F editableImage, Range2i area)
+            public MatrixImageAccessor(EditableMatrixImage2f editableImage, Range2i area)
             {
                 this.editableMatrix = editableImage.editableMatrix;
                 this.editableImage = editableImage;

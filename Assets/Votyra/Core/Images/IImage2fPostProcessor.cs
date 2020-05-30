@@ -1,7 +1,7 @@
 namespace Votyra.Core.Images
 {
-    public interface IImage2FPostProcessor
+    public interface IImage2fPostProcessor
     {
-        IImage2F PostProcess(IImage2F image);
+        IImage2f PostProcess(IImage2f image);
     }
 }

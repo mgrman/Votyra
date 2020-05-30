@@ -6,7 +6,7 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
-    public struct SampledData3B : IEquatable<SampledData3B>
+    public struct SampledData3b : IEquatable<SampledData3b>
     {
         public const int MaskBitShiftX0Y0Z0 = (int)MaskBitShift.X0Y0Z0;
 
@@ -40,24 +40,24 @@ namespace Votyra.Core.Models
 
         public const int MaskX1Y1Z1 = (int)Mask.X1Y1Z1;
 
-        public static readonly IEqualityComparer<SampledData3B> RotationInvariantNormallessComparer = new RotationInvariantNormallessSampledData3BComparer();
+        public static readonly IEqualityComparer<SampledData3b> RotationInvariantNormallessComparer = new RotationInvariantNormallessSampledData3bComparer();
 
-        public static readonly IEqualityComparer<SampledData3B> NormallessComparer = new NormallessSampledData3BComparer();
+        public static readonly IEqualityComparer<SampledData3b> NormallessComparer = new NormallessSampledData3bComparer();
 
-        public static IEnumerable<SampledData3B> AllValues = Enumerable.Range(0, byte.MaxValue + 1)
-            .Select(o => new SampledData3B((byte)o))
+        public static IEnumerable<SampledData3b> AllValues = Enumerable.Range(0, byte.MaxValue + 1)
+            .Select(o => new SampledData3b((byte)o))
             .ToArray();
 
         public readonly byte Data;
 
         private const string CubeRegex = @"[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*([0-9])[^0-9]*";
 
-        public SampledData3B(bool x0Y0Z0, bool x0Y0Z1, bool x0Y1Z0, bool x0Y1Z1, bool x1Y0Z0, bool x1Y0Z1, bool x1Y1Z0, bool x1Y1Z1)
+        public SampledData3b(bool x0Y0Z0, bool x0Y0Z1, bool x0Y1Z0, bool x0Y1Z1, bool x1Y0Z0, bool x1Y0Z1, bool x1Y1Z0, bool x1Y1Z1)
         {
             this.Data = (byte)((x0Y0Z0 ? MaskX0Y0Z0 : 0) | (x0Y0Z1 ? MaskX0Y0Z1 : 0) | (x0Y1Z0 ? MaskX0Y1Z0 : 0) | (x0Y1Z1 ? MaskX0Y1Z1 : 0) | (x1Y0Z0 ? MaskX1Y0Z0 : 0) | (x1Y0Z1 ? MaskX1Y0Z1 : 0) | (x1Y1Z0 ? MaskX1Y1Z0 : 0) | (x1Y1Z1 ? MaskX1Y1Z1 : 0));
         }
 
-        public SampledData3B(byte data)
+        public SampledData3b(byte data)
         {
             this.Data = data;
         }
@@ -122,11 +122,11 @@ namespace Votyra.Core.Models
             return finalMatrix;
         }
 
-        public static bool operator ==(SampledData3B a, SampledData3B b) => a.Data == b.Data;
+        public static bool operator ==(SampledData3b a, SampledData3b b) => a.Data == b.Data;
 
-        public static bool operator !=(SampledData3B a, SampledData3B b) => a.Data != b.Data;
+        public static bool operator !=(SampledData3b a, SampledData3b b) => a.Data != b.Data;
 
-        public static SampledData3B ParseCube(string cube)
+        public static SampledData3b ParseCube(string cube)
         {
             var match = Regex.Match(cube, CubeRegex);
             var valX0Y0Z0 = int.Parse(match.Groups[7]
@@ -145,7 +145,7 @@ namespace Votyra.Core.Models
                 .Value) > 0;
             var valX1Y1Z1 = int.Parse(match.Groups[2]
                 .Value) > 0;
-            return new SampledData3B(valX0Y0Z0, valX0Y0Z1, valX0Y1Z0, valX0Y1Z1, valX1Y0Z0, valX1Y0Z1, valX1Y1Z0, valX1Y1Z1);
+            return new SampledData3b(valX0Y0Z0, valX0Y0Z1, valX0Y1Z0, valX0Y1Z1, valX1Y0Z0, valX1Y0Z1, valX1Y1Z0, valX1Y1Z1);
         }
 
         public IEnumerable<Vector3i> GetPointsWithValue(bool value)
@@ -191,38 +191,38 @@ namespace Votyra.Core.Models
             }
         }
 
-        public SampledData3B GetRotatedXy(float angleDeg)
+        public SampledData3b GetRotatedXy(float angleDeg)
         {
             var rotationMatrix = Matrix4X4F.Rotate(Quaternion4F.Euler(0, 0, angleDeg));
             return this.GetTransformed(rotationMatrix);
         }
 
-        public SampledData3B GetRotatedYz(float angleDeg)
+        public SampledData3b GetRotatedYz(float angleDeg)
         {
             var rotationMatrix = Matrix4X4F.Rotate(Quaternion4F.Euler(angleDeg, 0, 0));
             return this.GetTransformed(rotationMatrix);
         }
 
-        public SampledData3B GetRotatedXz(float angleDeg)
+        public SampledData3b GetRotatedXz(float angleDeg)
         {
             var rotationMatrix = Matrix4X4F.Rotate(Quaternion4F.Euler(0, angleDeg, 0));
             return this.GetTransformed(rotationMatrix);
         }
 
-        public SampledData3B GetRotated(Vector3i rotationSteps, bool invert)
+        public SampledData3b GetRotated(Vector3i rotationSteps, bool invert)
         {
             var rotationMatrix = GetRotationMatrix(rotationSteps, invert);
 
             return this.GetTransformed(rotationMatrix);
         }
 
-        public SampledData3B GetTransformed(Matrix4X4F matrix) => new SampledData3B(this[matrix.MultiplyPoint(new Vector3f(0, 0, 0))], this[matrix.MultiplyPoint(new Vector3f(0, 0, 1))], this[matrix.MultiplyPoint(new Vector3f(0, 1, 0))], this[matrix.MultiplyPoint(new Vector3f(0, 1, 1))], this[matrix.MultiplyPoint(new Vector3f(1, 0, 0))], this[matrix.MultiplyPoint(new Vector3f(1, 0, 1))], this[matrix.MultiplyPoint(new Vector3f(1, 1, 0))], this[matrix.MultiplyPoint(new Vector3f(1, 1, 1))]);
+        public SampledData3b GetTransformed(Matrix4X4F matrix) => new SampledData3b(this[matrix.MultiplyPoint(new Vector3f(0, 0, 0))], this[matrix.MultiplyPoint(new Vector3f(0, 0, 1))], this[matrix.MultiplyPoint(new Vector3f(0, 1, 0))], this[matrix.MultiplyPoint(new Vector3f(0, 1, 1))], this[matrix.MultiplyPoint(new Vector3f(1, 0, 0))], this[matrix.MultiplyPoint(new Vector3f(1, 0, 1))], this[matrix.MultiplyPoint(new Vector3f(1, 1, 0))], this[matrix.MultiplyPoint(new Vector3f(1, 1, 1))]);
 
         public override bool Equals(object obj)
         {
-            if (obj is SampledData3B)
+            if (obj is SampledData3b)
             {
-                var that = (SampledData3B)obj;
+                var that = (SampledData3b)obj;
                 return this.Equals(that);
             }
 
@@ -233,9 +233,9 @@ namespace Votyra.Core.Models
 
         public override string ToString() => this.ToCubeString();
 
-        public bool Equals(SampledData3B that) => this == that;
+        public bool Equals(SampledData3b that) => this == that;
 
-        public bool EqualsRotationInvariant(SampledData3B that, out Matrix4X4F matrix, bool x = true, bool y = true, bool z = true, bool invert = true)
+        public bool EqualsRotationInvariant(SampledData3b that, out Matrix4X4F matrix, bool x = true, bool y = true, bool z = true, bool invert = true)
         {
             foreach (var tempMatrix in this.GetAllRotationMatrices(x, y, z, invert))
             {
@@ -252,7 +252,7 @@ namespace Votyra.Core.Models
             return false;
         }
 
-        public bool IsContainedInRotationInvariant(SampledData3B that, out Matrix4X4F matrix, out SampledData3B rotatedData, bool x = true, bool y = true, bool z = true, bool invert = true)
+        public bool IsContainedInRotationInvariant(SampledData3b that, out Matrix4X4F matrix, out SampledData3b rotatedData, bool x = true, bool y = true, bool z = true, bool invert = true)
         {
             foreach (var tempMatrix in this.GetAllRotationMatrices(x, y, z, invert))
             {
@@ -288,7 +288,7 @@ namespace Votyra.Core.Models
             }
         }
 
-        public IEnumerable<Matrix4X4F> GetAllRotationSubsets(SampledData3B that)
+        public IEnumerable<Matrix4X4F> GetAllRotationSubsets(SampledData3b that)
         {
             for (var x = 0; x < 4; x++)
             {
@@ -399,22 +399,22 @@ namespace Votyra.Core.Models
             }
         }
 
-        public class RotationInvariantNormallessSampledData3BComparer : IEqualityComparer<SampledData3B>
+        public class RotationInvariantNormallessSampledData3bComparer : IEqualityComparer<SampledData3b>
         {
-            public bool Equals(SampledData3B x, SampledData3B y)
+            public bool Equals(SampledData3b x, SampledData3b y)
             {
                 Matrix4X4F temp;
                 return x.EqualsRotationInvariant(y, out temp);
             }
 
-            public int GetHashCode(SampledData3B obj) => obj.TrueCount;
+            public int GetHashCode(SampledData3b obj) => obj.TrueCount;
         }
 
-        public class NormallessSampledData3BComparer : IEqualityComparer<SampledData3B>
+        public class NormallessSampledData3bComparer : IEqualityComparer<SampledData3b>
         {
-            public bool Equals(SampledData3B x, SampledData3B y) => x.Data == y.Data;
+            public bool Equals(SampledData3b x, SampledData3b y) => x.Data == y.Data;
 
-            public int GetHashCode(SampledData3B obj) => obj.Data;
+            public int GetHashCode(SampledData3b obj) => obj.Data;
         }
     }
 }

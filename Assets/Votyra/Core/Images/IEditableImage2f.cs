@@ -2,8 +2,8 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public interface IEditableImage2F
+    public interface IEditableImage2f
     {
-        IEditableImageAccessor2F RequestAccess(Range2i area);
+        IEditableImageAccessor2f RequestAccess(Range2i area);
     }
 }

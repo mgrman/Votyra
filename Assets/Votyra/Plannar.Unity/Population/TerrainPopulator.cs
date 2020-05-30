@@ -21,7 +21,7 @@ namespace Votyra.Plannar.Unity
         private PopulatorConfigItem populatorConfig;
         private GameObject root;
 
-        public void Initialize(IUnityTerrainGeneratorManager2I manager, ITerrainConfig config, PopulatorConfigItem populatorConfig, int index, [Inject(Id = "root")]
+        public void Initialize(IUnityTerrainGeneratorManager2i manager, ITerrainConfig config, PopulatorConfigItem populatorConfig, int index, [Inject(Id = "root")]
             GameObject root)
         {
             this.root = root;
@@ -36,7 +36,7 @@ namespace Votyra.Plannar.Unity
             manager.RemovedTerrain += this.RemovedTerrain;
         }
 
-        private void NewTerrain(Vector2i arg1, ITerrainMesh2F arg2)
+        private void NewTerrain(Vector2i arg1, ITerrainMesh2f arg2)
         {
             this.ChangedTerrain(arg1, arg2);
         }
@@ -49,7 +49,7 @@ namespace Votyra.Plannar.Unity
             }
         }
 
-        private void ChangedTerrain(Vector2i group, ITerrainMesh2F terrain)
+        private void ChangedTerrain(Vector2i group, ITerrainMesh2f terrain)
         {
             var list = this.trees.TryGetValue(group) ?? this.pool.GetRaw();
             list.Clear();
@@ -91,7 +91,7 @@ namespace Votyra.Plannar.Unity
             this.trees[group] = list;
         }
 
-        private void RemovedTerrain(Vector2i group, ITerrainMesh2F mesh)
+        private void RemovedTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
             var array = this.trees.TryRemoveAndReturnValue(group);
             if (array != null)

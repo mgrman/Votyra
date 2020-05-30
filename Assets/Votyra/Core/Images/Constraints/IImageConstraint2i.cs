@@ -3,12 +3,12 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images.Constraints
 {
-    public interface IImageConstraint2I
+    public interface IImageConstraint2i
     {
         IEnumerable<int> Priorities { get; }
 
-        void Initialize(IEditableImage2F image);
+        void Initialize(IEditableImage2f image);
 
-        Range2i FixImage(IEditableImage2F image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction);
+        Range2i FixImage(IEditableImage2f image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction);
     }
 }

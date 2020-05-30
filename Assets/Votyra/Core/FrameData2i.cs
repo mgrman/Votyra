@@ -4,11 +4,11 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core
 {
-    public class FrameData2I : IPoolableFrameData2I
+    public class FrameData2i : IPoolableFrameData2i
     {
-        private IImage2F image;
+        private IImage2f image;
 
-        public FrameData2I()
+        public FrameData2i()
         {
             this.CameraPlanes = new Plane3f[6];
             this.CameraFrustumCorners = new Vector3f[4];
@@ -30,7 +30,7 @@ namespace Votyra.Core
 
         public Range2i InvalidatedArea { get; set; }
 
-        public IImage2F Image
+        public IImage2f Image
         {
             get => this.image;
             set

@@ -258,7 +258,7 @@ namespace Votyra.Core.Editor
                         oldVector2iValue.ToVector2f()
                         .ToVector2(),
                         GUILayout.MaxWidth(200))
-                    .ToVector2F()
+                    .ToVector2f()
                     .RoundToVector2i();
                 newValue = newVector2iValue;
                 return newVector2iValue != oldVector2iValue;
@@ -268,7 +268,7 @@ namespace Votyra.Core.Editor
             {
                 var oldVector2fValue = oldValue as Vector2f? ?? Vector2f.Zero;
                 var newVector2fValue = EditorGUILayout.Vector2Field(string.Empty, oldVector2fValue.ToVector2(), GUILayout.MaxWidth(200))
-                    .ToVector2F();
+                    .ToVector2f();
                 newValue = newVector2fValue;
                 return newVector2fValue != oldVector2fValue;
             }

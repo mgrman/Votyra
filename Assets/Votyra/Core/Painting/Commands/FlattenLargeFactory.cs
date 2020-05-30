@@ -5,7 +5,7 @@ namespace Votyra.Core.Painting.Commands
 {
     public class FlattenLargeFactory : BaseFactory<FlattenLarge>
     {
-        public FlattenLargeFactory(IEditableImage2F editableImage, IThreadSafeLogger logger)
+        public FlattenLargeFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
             : base(editableImage, logger)
         {
         }

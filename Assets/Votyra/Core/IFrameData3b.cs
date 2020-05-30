@@ -3,11 +3,11 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core
 {
-    public interface IFrameData3B : IFrameData
+    public interface IFrameData3b : IFrameData
     {
         IReadOnlySet<Vector3i> ExistingGroups { get; }
 
-        IImage3B Image { get; }
+        IImage3b Image { get; }
 
         Range3i InvalidatedAreaImageSpace { get; }
 

@@ -3,16 +3,16 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class InterpolatedImage2ITo2FPostProcessor : IImage2FPostProcessor
+    public class InterpolatedImage2iTo2fPostProcessor : IImage2fPostProcessor
     {
         private readonly IInterpolationConfig interpolationConfig;
 
-        public InterpolatedImage2ITo2FPostProcessor(IInterpolationConfig interpolationConfig)
+        public InterpolatedImage2iTo2fPostProcessor(IInterpolationConfig interpolationConfig)
         {
             this.interpolationConfig = interpolationConfig;
         }
 
-        public IImage2F PostProcess(IImage2F image)
+        public IImage2f PostProcess(IImage2f image)
         {
             if (this.interpolationConfig.ImageSubdivision == 1)
             {
@@ -24,44 +24,44 @@ namespace Votyra.Core.Images
                 case IntepolationAlgorithm.NearestNeighbour:
                     if (image is IImageInvalidatableImage2)
                     {
-                        return new NnImage2FInvalidatableWrapper(image, this.interpolationConfig.ImageSubdivision);
+                        return new NnImage2fInvalidatableWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                     else
                     {
-                        return new NnImage2FWrapper(image, this.interpolationConfig.ImageSubdivision);
+                        return new NnImage2fWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                 case IntepolationAlgorithm.Linear:
                     if (image is IImageInvalidatableImage2)
                     {
-                        return new LinearImage2FInvalidatableWrapper(image, this.interpolationConfig.ImageSubdivision);
+                        return new LinearImage2fInvalidatableWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                     else
                     {
-                        return new LinearImage2FWrapper(image, this.interpolationConfig.ImageSubdivision);
+                        return new LinearImage2fWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                 case IntepolationAlgorithm.Cubic:
                     if (image is IImageInvalidatableImage2)
                     {
-                        return new CubicImage2FInvalidatableWrapper(image, this.interpolationConfig.ImageSubdivision);
+                        return new CubicImage2fInvalidatableWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                     else
                     {
-                        return new CubicImage2FWrapper(image, this.interpolationConfig.ImageSubdivision);
+                        return new CubicImage2fWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private class CubicImage2FWrapper : IImage2F, IInitializableImage
+        private class CubicImage2fWrapper : IImage2f, IInitializableImage
         {
-            private readonly IImage2F image;
+            private readonly IImage2f image;
 
             private readonly int subdivision;
             private readonly Vector2i interpolationCell = new Vector2i(int.MinValue, int.MinValue);
             private readonly float[,] interpolationMatrix = new float[4, 4];
 
-            public CubicImage2FWrapper(IImage2F image, int subdivision)
+            public CubicImage2fWrapper(IImage2f image, int subdivision)
             {
                 this.image = image;
                 this.subdivision = subdivision;
@@ -202,9 +202,9 @@ namespace Votyra.Core.Images
             }
         }
 
-        private class CubicImage2FInvalidatableWrapper : CubicImage2FWrapper, IImageInvalidatableImage2
+        private class CubicImage2fInvalidatableWrapper : CubicImage2fWrapper, IImageInvalidatableImage2
         {
-            public CubicImage2FInvalidatableWrapper(IImage2F image, int subdivision)
+            public CubicImage2fInvalidatableWrapper(IImage2f image, int subdivision)
                 : base(image, subdivision)
             {
                 var invalidatedArea = (image as IImageInvalidatableImage2).InvalidatedArea;
@@ -214,12 +214,12 @@ namespace Votyra.Core.Images
             public Range2i InvalidatedArea { get; }
         }
 
-        private class LinearImage2FWrapper : IImage2F, IInitializableImage
+        private class LinearImage2fWrapper : IImage2f, IInitializableImage
         {
-            private readonly IImage2F image;
+            private readonly IImage2f image;
             private readonly int subdivision;
 
-            public LinearImage2FWrapper(IImage2F image, int subdivision)
+            public LinearImage2fWrapper(IImage2f image, int subdivision)
             {
                 this.image = image;
                 this.subdivision = subdivision;
@@ -302,9 +302,9 @@ namespace Votyra.Core.Images
             }
         }
 
-        private class LinearImage2FInvalidatableWrapper : LinearImage2FWrapper, IImageInvalidatableImage2
+        private class LinearImage2fInvalidatableWrapper : LinearImage2fWrapper, IImageInvalidatableImage2
         {
-            public LinearImage2FInvalidatableWrapper(IImage2F image, int subdivision)
+            public LinearImage2fInvalidatableWrapper(IImage2f image, int subdivision)
                 : base(image, subdivision)
             {
                 var invalidatedArea = (image as IImageInvalidatableImage2).InvalidatedArea;
@@ -314,12 +314,12 @@ namespace Votyra.Core.Images
             public Range2i InvalidatedArea { get; }
         }
 
-        private class NnImage2FWrapper : IImage2F, IInitializableImage
+        private class NnImage2fWrapper : IImage2f, IInitializableImage
         {
-            private readonly IImage2F image;
+            private readonly IImage2f image;
             private readonly int subdivision;
 
-            public NnImage2FWrapper(IImage2F image, int subdivision)
+            public NnImage2fWrapper(IImage2f image, int subdivision)
             {
                 this.image = image;
                 this.subdivision = subdivision;
@@ -396,9 +396,9 @@ namespace Votyra.Core.Images
             }
         }
 
-        private class NnImage2FInvalidatableWrapper : NnImage2FWrapper, IImageInvalidatableImage2
+        private class NnImage2fInvalidatableWrapper : NnImage2fWrapper, IImageInvalidatableImage2
         {
-            public NnImage2FInvalidatableWrapper(IImage2F image, int subdivision)
+            public NnImage2fInvalidatableWrapper(IImage2f image, int subdivision)
                 : base(image, subdivision)
             {
                 var invalidatedArea = (image as IImageInvalidatableImage2).InvalidatedArea;

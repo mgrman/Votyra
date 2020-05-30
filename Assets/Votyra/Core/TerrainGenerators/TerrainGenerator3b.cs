@@ -6,20 +6,20 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators
 {
-    public class TerrainGenerator3B : ITerrainGenerator3B
+    public class TerrainGenerator3b : ITerrainGenerator3b
     {
         private readonly Vector3i cellInGroupCount;
-        private readonly ITerrainMesher3B mesher;
+        private readonly ITerrainMesher3b mesher;
         private readonly IProfiler profiler;
 
-        public TerrainGenerator3B(ITerrainMesher3B mesher, ITerrainConfig terrainConfig, IProfiler profiler)
+        public TerrainGenerator3b(ITerrainMesher3b mesher, ITerrainConfig terrainConfig, IProfiler profiler)
         {
             this.mesher = mesher;
             this.profiler = profiler;
             this.cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        public void Generate(Vector3i group, IImage3B image, IGeneralMesh pooledTerrainMesh)
+        public void Generate(Vector3i group, IImage3b image, IGeneralMesh pooledTerrainMesh)
         {
             using (this.profiler.Start("init"))
             {

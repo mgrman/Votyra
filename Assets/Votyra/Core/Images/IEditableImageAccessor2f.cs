@@ -3,7 +3,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public interface IEditableImageAccessor2F : IDisposable
+    public interface IEditableImageAccessor2f : IDisposable
     {
         Range2i Area { get; }
 

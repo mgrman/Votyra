@@ -3,16 +3,16 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core
 {
-    public interface IPoolableFrameData2I : IFrameData2I, IPoolableFrameData
+    public interface IPoolableFrameData2i : IFrameData2i, IPoolableFrameData
     {
-        new IImage2F Image { get; set; }
+        new IImage2f Image { get; set; }
 
         new Range2i InvalidatedArea { get; set; }
     }
 
-    public interface IFrameData2I : IFrameData
+    public interface IFrameData2i : IFrameData
     {
-        IImage2F Image { get; }
+        IImage2f Image { get; }
 
         Area1f RangeZ { get; }
 

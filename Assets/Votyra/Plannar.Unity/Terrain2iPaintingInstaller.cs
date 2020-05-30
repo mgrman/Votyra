@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    public class Terrain2IPaintingInstaller : MonoInstaller
+    public class Terrain2iPaintingInstaller : MonoInstaller
     {
         public override void InstallBindings()
         {

@@ -5,7 +5,7 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainMeshes
 {
-    public class FixedTerrainMesh2I : ITerrainMesh2F
+    public class FixedTerrainMesh2i : ITerrainMesh2f
     {
         private const int SubCellToTriangles = 2;
         private const int TriangleToPoints = 3;
@@ -23,7 +23,7 @@ namespace Votyra.Core.TerrainMeshes
         private Area2f meshBoundsXy;
         private float minZ;
 
-        public FixedTerrainMesh2I(Vector2i meshSubdivision, Vector2i cellInGroupCount, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uVAdjustor)
+        public FixedTerrainMesh2i(Vector2i meshSubdivision, Vector2i cellInGroupCount, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uVAdjustor)
         {
             this.meshSubdivision = meshSubdivision;
             this.cellInGroupCount = cellInGroupCount;
@@ -128,7 +128,7 @@ namespace Votyra.Core.TerrainMeshes
             return Vector1f.NaN;
         }
 
-        public void AddCell(Vector2i cellInGroup, Vector2i subCell, SampledData2F data)
+        public void AddCell(Vector2i cellInGroup, Vector2i subCell, SampledData2f data)
         {
             Vector2f positionMin;
             Vector2f positionMax;

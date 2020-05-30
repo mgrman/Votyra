@@ -3,12 +3,12 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    public class SimpleSampleTerrain2IInstaller : MonoInstaller
+    public class SimpleSampleTerrain2iInstaller : MonoInstaller
     {
         public override void InstallBindings()
         {
-            this.Container.Rebind<IImageConstraint2I>()
-                .To<SimpleTycoonTileConstraint2I>()
+            this.Container.Rebind<IImageConstraint2i>()
+                .To<SimpleTycoonTileConstraint2i>()
                 .AsSingle();
         }
     }

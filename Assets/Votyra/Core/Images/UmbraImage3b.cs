@@ -2,14 +2,14 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class UmbraImage3B : IImage3B
+    public class UmbraImage3b : IImage3b
     {
-        public UmbraImage3B(IImage2F imageA)
+        public UmbraImage3b(IImage2f imageA)
         {
             this.Image = imageA;
         }
 
-        public IImage2F Image { get; }
+        public IImage2f Image { get; }
 
         public bool Sample(Vector3i point) => (this.Image.Sample(new Vector2i(point.X, point.Y)) - point.Z) > 0;
 

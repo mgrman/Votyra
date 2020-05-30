@@ -4,12 +4,12 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class AggregatableImage2F : IImage2FProvider, IEditableImage2F
+    public class AggregatableImage2f : IImage2fProvider, IEditableImage2f
     {
         private readonly ILayerEditableImageProvider editableImageProvider;
         private readonly ILayerConfig layerConfig;
 
-        public AggregatableImage2F(ILayerConfig layerConfig, ILayerEditableImageProvider editableImageProvider, List<IImageConstraint2I> constraints)
+        public AggregatableImage2f(ILayerConfig layerConfig, ILayerEditableImageProvider editableImageProvider, List<IImageConstraint2i> constraints)
         {
             this.layerConfig = layerConfig;
             this.editableImageProvider = editableImageProvider;
@@ -17,8 +17,8 @@ namespace Votyra.Core.Images
             this.editableImageProvider.Initialize(this.layerConfig.Layer, constraints);
         }
 
-        public IEditableImageAccessor2F RequestAccess(Range2i area) => this.editableImageProvider.RequestAccess(this.layerConfig.Layer, area);
+        public IEditableImageAccessor2f RequestAccess(Range2i area) => this.editableImageProvider.RequestAccess(this.layerConfig.Layer, area);
 
-        public IImage2F CreateImage() => this.editableImageProvider.CreateImage(this.layerConfig.Layer);
+        public IImage2f CreateImage() => this.editableImageProvider.CreateImage(this.layerConfig.Layer);
     }
 }

@@ -6,12 +6,12 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    public class DualSampleTerrain2IInstaller : MonoInstaller
+    public class DualSampleTerrain2iInstaller : MonoInstaller
     {
         public override void InstallBindings()
         {
-            this.Container.Rebind<IImageConstraint2I>()
-                .To<DualSampledTycoonTileConstraint2I>()
+            this.Container.Rebind<IImageConstraint2i>()
+                .To<DualSampledTycoonTileConstraint2i>()
                 .AsSingle();
             this.Container.Rebind<ITerrainVertexPostProcessor>()
                 .To<WallsVertexPostProcessor>()

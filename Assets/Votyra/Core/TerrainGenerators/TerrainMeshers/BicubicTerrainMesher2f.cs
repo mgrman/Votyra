@@ -5,20 +5,20 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class BicubicTerrainMesher2F : ITerrainMesher2F
+    public class BicubicTerrainMesher2f : ITerrainMesher2f
     {
         private const float MaskLimit = 0f;
 
         private readonly Vector2i cellInGroupCount;
         private readonly Vector2i subdivision;
 
-        public BicubicTerrainMesher2F(ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig)
+        public BicubicTerrainMesher2f(ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig)
         {
             this.cellInGroupCount = terrainConfig.CellInGroupCount.XY();
             this.subdivision = interpolationConfig.MeshSubdivision;
         }
 
-        public void GetResultingMesh(ITerrainMesh2F mesh, Vector2i group, IImage2F image)
+        public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image)
         {
             var range = Area3f.FromMinAndSize((group * this.cellInGroupCount).ToVector3f(image.RangeZ.Min), this.cellInGroupCount.ToVector3f(image.RangeZ.Size));
             mesh.Reset(range);
@@ -80,7 +80,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                                 var x05Y00 = valuesToFill[(ix - 1) + 1, (iy - 1) + 0];
                                 var x05Y05 = valuesToFill[(ix - 1) + 1, (iy - 1) + 1];
 
-                                var subcellValue = new SampledData2F(x00Y00, x00Y05, x05Y00, x05Y05);
+                                var subcellValue = new SampledData2f(x00Y00, x00Y05, x05Y00, x05Y05);
 
                                 mesh.AddCell(cellInGroup, new Vector2i(ix - 1, iy - 1), subcellValue);
                             }

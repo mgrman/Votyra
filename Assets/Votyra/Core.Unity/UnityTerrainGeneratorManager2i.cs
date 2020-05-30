@@ -7,21 +7,21 @@ using Zenject;
 
 namespace Votyra.Core
 {
-    public class UnityTerrainGeneratorManager2I : ITickable, IUnityTerrainGeneratorManager2I
+    public class UnityTerrainGeneratorManager2i : ITickable, IUnityTerrainGeneratorManager2i
     {
-        private readonly ConcurrentDictionary<Vector2i, ITerrainMesh2F> activeTerrains = new ConcurrentDictionary<Vector2i, ITerrainMesh2F>();
-        private readonly ITerrainRepository2I manager;
-        private readonly Queue<RepositoryChange<Vector2i, ITerrainMesh2F>> queue = new Queue<RepositoryChange<Vector2i, ITerrainMesh2F>>(10);
+        private readonly ConcurrentDictionary<Vector2i, ITerrainMesh2f> activeTerrains = new ConcurrentDictionary<Vector2i, ITerrainMesh2f>();
+        private readonly ITerrainRepository2i manager;
+        private readonly Queue<RepositoryChange<Vector2i, ITerrainMesh2f>> queue = new Queue<RepositoryChange<Vector2i, ITerrainMesh2f>>(10);
         private readonly object queueLock = new object();
-        private Action<Vector2i, ITerrainMesh2F> changedTerrain;
+        private Action<Vector2i, ITerrainMesh2f> changedTerrain;
 
-        public UnityTerrainGeneratorManager2I(ITerrainRepository2I manager)
+        public UnityTerrainGeneratorManager2i(ITerrainRepository2i manager)
         {
             this.manager = manager;
             this.manager.TerrainChange += this.OnTerrainChange;
         }
 
-        private event Action<Vector2i, ITerrainMesh2F> RawNewTerrain;
+        private event Action<Vector2i, ITerrainMesh2f> RawNewTerrain;
 
         public void Tick()
         {
@@ -49,7 +49,7 @@ namespace Votyra.Core
             this.queue.Clear();
         }
 
-        public event Action<Vector2i, ITerrainMesh2F> NewTerrain
+        public event Action<Vector2i, ITerrainMesh2f> NewTerrain
         {
             add
             {
@@ -62,7 +62,7 @@ namespace Votyra.Core
             remove => this.RawNewTerrain -= value;
         }
 
-        public event Action<Vector2i, ITerrainMesh2F> ChangedTerrain
+        public event Action<Vector2i, ITerrainMesh2f> ChangedTerrain
         {
             add
             {
@@ -75,9 +75,9 @@ namespace Votyra.Core
             remove => this.changedTerrain -= value;
         }
 
-        public event Action<Vector2i, ITerrainMesh2F> RemovedTerrain;
+        public event Action<Vector2i, ITerrainMesh2f> RemovedTerrain;
 
-        private void OnTerrainChange(RepositoryChange<Vector2i, ITerrainMesh2F> arg)
+        private void OnTerrainChange(RepositoryChange<Vector2i, ITerrainMesh2f> arg)
         {
             lock (this.queueLock)
             {

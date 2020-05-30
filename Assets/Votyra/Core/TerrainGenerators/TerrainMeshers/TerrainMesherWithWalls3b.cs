@@ -9,16 +9,16 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class TerrainMesherWithWalls3B : ITerrainMesher3B
+    public class TerrainMesherWithWalls3b : ITerrainMesher3b
     {
         public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
-        private static readonly List<SampledData3B> DataWithoutTriangles = new List<SampledData3B>();
+        private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
 
-        private static readonly SampledData3B[] NormalizedSamples = SampledData3B.AllValues.Select(o => ChooseTrianglesForCell(o)
+        private static readonly SampledData3b[] NormalizedSamples = SampledData3b.AllValues.Select(o => ChooseTrianglesForCell(o)
                 .Item1)
             .ToArray();
 
-        private static readonly IReadOnlyCollection<Triangle3f>[] MainPlaneTriangles = SampledData3B.AllValues.Select(o => ChooseTrianglesForCell(o)
+        private static readonly IReadOnlyCollection<Triangle3f>[] MainPlaneTriangles = SampledData3b.AllValues.Select(o => ChooseTrianglesForCell(o)
                 .Item2)
             .ToArray();
 
@@ -59,15 +59,15 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         private Vector3i groupSize;
         private IGeneralMesh pooledMesh;
 
-        public TerrainMesherWithWalls3B(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
+        public TerrainMesherWithWalls3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
             this.imageSampler = imageSampler;
             this.cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        protected IImage3B Image { get; private set; }
+        protected IImage3b Image { get; private set; }
 
-        public void Initialize(IImage3B image)
+        public void Initialize(IImage3b image)
         {
             this.Image = image;
         }
@@ -115,7 +115,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public IGeneralMesh GetResultingMesh() => this.pooledMesh;
 
-        private static Tuple<SampledData3B, IReadOnlyCollection<Triangle3f>> ChooseTrianglesForCell(SampledData3B data)
+        private static Tuple<SampledData3b, IReadOnlyCollection<Triangle3f>> ChooseTrianglesForCell(SampledData3b data)
         {
             var posX0Y0Z0 = new Vector3f(0, 0, 0);
             var posX0Y0Z1 = new Vector3f(0, 0, 1);
@@ -134,7 +134,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             // |/    |/
             // 1-----0
 
-            SampledData3B rotatedTemplate;
+            SampledData3b rotatedTemplate;
 
             Matrix4X4F matrix;
             if ((data.Data == 0) || (data.Data == byte.MaxValue))
@@ -163,7 +163,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             //          .ToArray() as IReadOnlyCollection<Triangle3f>);
             // }
 
-            if (SampledData3B.ParseCube(@"
+            if (SampledData3b.ParseCube(@"
               1-----0
              /|    /|
             1-+---0 |
@@ -181,7 +181,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                         .ToArray() as IReadOnlyCollection<Triangle3f>);
             }
 
-            if (SampledData3B.ParseCube(@"
+            if (SampledData3b.ParseCube(@"
               1-----0
              /|    /|
             1-+---1 |
@@ -202,7 +202,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                         .ToArray() as IReadOnlyCollection<Triangle3f>);
             }
 
-            if (SampledData3B.ParseCube(@"
+            if (SampledData3b.ParseCube(@"
               0-----1
              /|    /|
             1-+---0 |
@@ -224,7 +224,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                         .ToArray() as IReadOnlyCollection<Triangle3f>);
             }
 
-            if (SampledData3B.ParseCube(@"
+            if (SampledData3b.ParseCube(@"
               1-----0
              /|    /|
             1-+---1 |
@@ -269,7 +269,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             //        .ToArray() as IReadOnlyCollection<Triangle3f>);
             // }
 
-            if (SampledData3B.ParseCube(@"
+            if (SampledData3b.ParseCube(@"
               0-----0
              /|    /|
             1-+---0 |
@@ -313,10 +313,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             //             */
             //                        }
 
-            return Tuple.Create(new SampledData3B(false, false, false, false, false, false, false, false), Array.Empty<Triangle3f>() as IReadOnlyCollection<Triangle3f>);
+            return Tuple.Create(new SampledData3b(false, false, false, false, false, false, false, false), Array.Empty<Triangle3f>() as IReadOnlyCollection<Triangle3f>);
         }
 
-        private static IReadOnlyCollection<Triangle3f> ChooseXWallTriangles(SampledData3B data, SampledData3B dataXMinus)
+        private static IReadOnlyCollection<Triangle3f> ChooseXWallTriangles(SampledData3b data, SampledData3b dataXMinus)
         {
             var triangles = new List<Triangle3f>();
 
@@ -354,7 +354,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return triangles;
         }
 
-        private static IReadOnlyCollection<Triangle3f> ChooseYWallTriangles(SampledData3B data, SampledData3B dataYMinus)
+        private static IReadOnlyCollection<Triangle3f> ChooseYWallTriangles(SampledData3b data, SampledData3b dataYMinus)
         {
             var triangles = new List<Triangle3f>();
 
@@ -392,7 +392,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return triangles;
         }
 
-        private static IReadOnlyCollection<Triangle3f> ChooseZWallTriangles(SampledData3B data, SampledData3B dataZMinus)
+        private static IReadOnlyCollection<Triangle3f> ChooseZWallTriangles(SampledData3b data, SampledData3b dataZMinus)
         {
             var triangles = new List<Triangle3f>();
 
@@ -432,10 +432,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         private struct SampledDataWithWall
         {
-            public readonly SampledData3B Data;
-            public readonly SampledData3B Wall;
+            public readonly SampledData3b Data;
+            public readonly SampledData3b Wall;
 
-            public SampledDataWithWall(SampledData3B data, SampledData3B wall)
+            public SampledDataWithWall(SampledData3b data, SampledData3b wall)
             {
                 this.Data = data;
                 this.Wall = wall;
@@ -445,9 +445,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             {
                 get
                 {
-                    foreach (var data in SampledData3B.AllValues)
+                    foreach (var data in SampledData3b.AllValues)
                     {
-                        foreach (var wall in SampledData3B.AllValues)
+                        foreach (var wall in SampledData3b.AllValues)
                         {
                             yield return new SampledDataWithWall(data, wall);
                         }
@@ -455,7 +455,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 }
             }
 
-            public static int GetIndexInAllValues(SampledData3B data, SampledData3B wall) => (data.Data << 8) | wall.Data;
+            public static int GetIndexInAllValues(SampledData3b data, SampledData3b wall) => (data.Data << 8) | wall.Data;
         }
     }
 }

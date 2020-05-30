@@ -5,19 +5,19 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images.Constraints
 {
-    public class TycoonTileConstraint2I : IImageConstraint2I
+    public class TycoonTileConstraint2i : IImageConstraint2i
     {
-        private static TileMap2I tileMap;
+        private static TileMap2i tileMap;
         private static int? tileMapScaleFactor;
         private readonly IThreadSafeLogger logger;
         private readonly int scaleFactor;
-        protected Range2i invalidatedCellArea { get;  set; }
+        protected Range2i invalidatedCellArea { get; set; }
 
         protected Direction direction { get; private set; }
 
         protected float[,] editableMatrix { get; private set; }
 
-        public TycoonTileConstraint2I(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
+        public TycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
         {
             this.logger = logger;
             this.scaleFactor = constraintConfig.ScaleFactor;
@@ -26,23 +26,23 @@ namespace Votyra.Core.Images.Constraints
                 tileMap = new[]
                 {
                     // plane
-                    new SampledData2I(0, 0, 0, 0),
+                    new SampledData2i(0, 0, 0, 0),
 
                     // slope
-                    new SampledData2I(-1, 0, -1, 0),
+                    new SampledData2i(-1, 0, -1, 0),
 
                     // slopeDiagonal
-                    new SampledData2I(-2, -1, -1, 0),
+                    new SampledData2i(-2, -1, -1, 0),
 
                     // partialUpSlope
-                    new SampledData2I(-1, -1, -1, 0),
+                    new SampledData2i(-1, -1, -1, 0),
 
                     // partialDownSlope
-                    new SampledData2I(-1, 0, 0, 0),
+                    new SampledData2i(-1, 0, 0, 0),
 
                     // slopeDiagonal
-                    new SampledData2I(0, -1, -1, 0),
-                }.CreateExpandedTileMap2I(this.scaleFactor, this.logger);
+                    new SampledData2i(0, -1, -1, 0),
+                }.CreateExpandedTileMap2i(this.scaleFactor, this.logger);
                 tileMapScaleFactor = this.scaleFactor;
             }
         }
@@ -52,7 +52,7 @@ namespace Votyra.Core.Images.Constraints
             0,
         };
 
-        public Range2i FixImage(IEditableImage2F _, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        public Range2i FixImage(IEditableImage2f _, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
             this.invalidatedCellArea = invalidatedImageArea.ExtendBothDirections(3);
             if ((direction != Direction.Up) && (direction != Direction.Down))
@@ -67,7 +67,7 @@ namespace Votyra.Core.Images.Constraints
             return this.invalidatedCellArea;
         }
 
-        void IImageConstraint2I.Initialize(IEditableImage2F image)
+        void IImageConstraint2i.Initialize(IEditableImage2f image)
         {
         }
 
@@ -94,7 +94,7 @@ namespace Votyra.Core.Images.Constraints
             }
 
             var sample = this.editableMatrix.SampleCell(cell)
-                .ToSampledData2I();
+                .ToSampledData2i();
             var processedSample = this.Process(sample);
 
             var cellX0Y1 = new Vector2i(cell.X, cell.Y + 1);
@@ -106,7 +106,7 @@ namespace Votyra.Core.Images.Constraints
             this.editableMatrix.Set(cellX1Y1, processedSample.X1Y1);
         }
 
-        protected SampledData2I Process(SampledData2I sampleData)
+        protected SampledData2i Process(SampledData2i sampleData)
         {
             switch (this.direction)
             {
@@ -122,11 +122,11 @@ namespace Votyra.Core.Images.Constraints
             }
         }
 
-        protected SampledData2I ProcessDown(SampledData2I sampleData) => -this.ProcessInner(-sampleData);
+        protected SampledData2i ProcessDown(SampledData2i sampleData) => -this.ProcessInner(-sampleData);
 
-        protected SampledData2I ProcessUp(SampledData2I sampleData) => this.ProcessInner(sampleData);
+        protected SampledData2i ProcessUp(SampledData2i sampleData) => this.ProcessInner(sampleData);
 
-        private SampledData2I ProcessInner(SampledData2I sampleData)
+        private SampledData2i ProcessInner(SampledData2i sampleData)
         {
             var height = sampleData.Max;
             var normalizedHeightData = (sampleData - height).ClipMin(-2 * this.scaleFactor);

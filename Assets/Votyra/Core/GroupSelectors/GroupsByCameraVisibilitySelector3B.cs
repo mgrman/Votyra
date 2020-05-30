@@ -4,20 +4,20 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.GroupSelectors
 {
-    public class GroupsByCameraVisibilitySelector3B : IGroupSelector3B
+    public class GroupsByCameraVisibilitySelector3b : IGroupSelector3b
     {
         private readonly Vector3i cellInGroupCount;
         private readonly IImageSampler3 imageSampler;
 
         private readonly HashSet<Vector3i> skippedAreas = new HashSet<Vector3i>();
 
-        public GroupsByCameraVisibilitySelector3B(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
+        public GroupsByCameraVisibilitySelector3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
             this.imageSampler = imageSampler;
             this.cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        public GroupActions<Vector3i> GetGroupsToUpdate(IFrameData3B options)
+        public GroupActions<Vector3i> GetGroupsToUpdate(IFrameData3b options)
         {
             if (options == null)
             {

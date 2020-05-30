@@ -6,7 +6,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images.Constraints
 {
-    public class SimpleTycoonTileConstraint2I : TycoonTileConstraint2I
+    public class SimpleTycoonTileConstraint2i : TycoonTileConstraint2i
     {
         private static readonly IComparer<float> DefaultComparer = Comparer<float>.Default;
         private static readonly IComparer<float> InvertedComparer = Comparer<float>.Create((a, b) => -DefaultComparer.Compare(a, b));
@@ -18,7 +18,7 @@ namespace Votyra.Core.Images.Constraints
         private IComparer<float> comparer;
         private Func<Vector2i, float> getValue;
 
-        public SimpleTycoonTileConstraint2I(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
+        public SimpleTycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
             : base(constraintConfig, logger)
         {
             this.getMinValue = this.GetMinValue;
@@ -65,7 +65,7 @@ namespace Votyra.Core.Images.Constraints
                 this.invalidatedCellArea = this.invalidatedCellArea.CombineWith(cell);
 
                 var sample = this.editableMatrix.SampleCell(cell)
-                    .ToSampledData2I();
+                    .ToSampledData2i();
                 var processedSample = this.Process(sample);
 
                 var cellX0Y0 = cell;

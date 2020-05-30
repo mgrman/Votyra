@@ -2,11 +2,11 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.TerrainMeshes
 {
-    public interface ITerrainMesh2F : IMesh
+    public interface ITerrainMesh2f : IMesh
     {
         void Reset(Area3f area);
 
-        void AddCell(Vector2i cellInGroup, Vector2i subCell, SampledData2F data);
+        void AddCell(Vector2i cellInGroup, Vector2i subCell, SampledData2f data);
 
         void FinalizeMesh();
 

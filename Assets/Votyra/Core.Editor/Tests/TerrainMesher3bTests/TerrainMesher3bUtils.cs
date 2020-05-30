@@ -40,9 +40,9 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 
         public static List<Triangle3i> Evaluate(string cubeString)
         {
-            var sampler = new SimpleImageSampler3B();
-            var imageMock = new Mock<IImage3B>();
-            var cube = SampledData3B.ParseCube(cubeString);
+            var sampler = new SimpleImageSampler3b();
+            var imageMock = new Mock<IImage3b>();
+            var cube = SampledData3b.ParseCube(cubeString);
             //            Debug.Log(cube);
             imageMock.Setup(o => o.Sample(It.IsAny<Vector3i>()))
                 .Returns<Vector3i>(pos => cube[pos]);
@@ -59,7 +59,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             terrainConfig.Setup(o => o.CellInGroupCount)
                 .Returns(new Vector3i(1, 1, 1));
 
-            var mesher = new TerrainMesher3B(terrainConfig.Object, sampler);
+            var mesher = new TerrainMesher3b(terrainConfig.Object, sampler);
             mesher.Initialize(imageMock.Object);
             mesher.InitializeGroup(new Vector3i(0, 0, 0), meshMock.Object);
 

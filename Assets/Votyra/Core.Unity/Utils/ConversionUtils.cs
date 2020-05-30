@@ -11,7 +11,7 @@ namespace Votyra.Core.Utils
 {
     public static unsafe class ConversionUtils
     {
-        public static Vector2f ToVector2F(this Vector2 vector) => new Vector2f(vector.x, vector.y);
+        public static Vector2f ToVector2f(this Vector2 vector) => new Vector2f(vector.x, vector.y);
 
         public static Vector3f ToVector3F(this Vector3 vector) => new Vector3f(vector.x, vector.y, vector.z);
 

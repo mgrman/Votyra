@@ -5,7 +5,7 @@ namespace Votyra.Core.Painting.Commands
 {
     public class RemoveHoleFactory : BaseFactory<RemoveHole>
     {
-        public RemoveHoleFactory(IEditableImage2F editableImage, IThreadSafeLogger logger)
+        public RemoveHoleFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
             : base(editableImage, logger)
         {
         }

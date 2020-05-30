@@ -16,10 +16,10 @@ namespace Votyra.Plannar.Unity
         private readonly ITerrainGameObjectPool gameObjectPool;
         private readonly ILayerConfig layerConfig;
 
-        private readonly IUnityTerrainGeneratorManager2I manager;
+        private readonly IUnityTerrainGeneratorManager2i manager;
         private readonly Dictionary<Vector2i, ITerrainGameObject> unityMeshes = new Dictionary<Vector2i, ITerrainGameObject>();
 
-        public TerrainUnityMeshManager(IUnityTerrainGeneratorManager2I manager, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root")]
+        public TerrainUnityMeshManager(IUnityTerrainGeneratorManager2i manager, ITerrainGameObjectPool gameObjectPool, [Inject(Id = "root")]
             GameObject root, [InjectOptional]
             ILayerConfig layerConfig)
         {
@@ -38,7 +38,7 @@ namespace Votyra.Plannar.Unity
             this.manager.RemovedTerrain -= this.RemovedTerrain;
         }
 
-        private void ChangedTerrain(Vector2i group, ITerrainMesh2F mesh)
+        private void ChangedTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
 #if UNITY_EDITOR
             if (!this.unityMeshes.ContainsKey(group))
@@ -53,7 +53,7 @@ namespace Votyra.Plannar.Unity
             mesh.SetUnityMesh(pooledGameObject);
         }
 
-        private void RemovedTerrain(Vector2i group, ITerrainMesh2F mesh)
+        private void RemovedTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
 #if UNITY_EDITOR
             if (!this.unityMeshes.ContainsKey(group))
@@ -69,7 +69,7 @@ namespace Votyra.Plannar.Unity
             this.unityMeshes.Remove(group);
         }
 
-        private void NewTerrain(Vector2i group, ITerrainMesh2F mesh)
+        private void NewTerrain(Vector2i group, ITerrainMesh2f mesh)
         {
 #if UNITY_EDITOR
             if (this.unityMeshes.ContainsKey(group))

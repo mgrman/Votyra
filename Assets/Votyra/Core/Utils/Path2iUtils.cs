@@ -3,7 +3,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Utils
 {
-    public static class Path2IUtils
+    public static class Path2iUtils
     {
         public static void InvokeOnPath(Vector2i? from, Vector2i to, Action<Vector2i> action)
         {

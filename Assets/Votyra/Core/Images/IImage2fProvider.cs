@@ -1,7 +1,7 @@
 namespace Votyra.Core.Images
 {
-    public interface IImage2FProvider
+    public interface IImage2fProvider
     {
-        IImage2F CreateImage();
+        IImage2f CreateImage();
     }
 }

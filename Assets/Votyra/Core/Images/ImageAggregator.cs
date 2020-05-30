@@ -6,14 +6,14 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2I
+    public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2i
     {
-        private readonly Dictionary<LayerId, EditableMatrixImage2F> idToSum = new Dictionary<LayerId, EditableMatrixImage2F>();
-        private readonly Dictionary<LayerId, EditableMatrixImage2FCopy> idToThickness = new Dictionary<LayerId, EditableMatrixImage2FCopy>();
+        private readonly Dictionary<LayerId, EditableMatrixImage2f> idToSum = new Dictionary<LayerId, EditableMatrixImage2f>();
+        private readonly Dictionary<LayerId, EditableMatrixImage2fCopy> idToThickness = new Dictionary<LayerId, EditableMatrixImage2fCopy>();
         private readonly IImageConfig imageConfig;
 
         private readonly List<LayerId> layerOrder = new List<LayerId>();
-        private readonly Dictionary<IEditableImage2F, LayerId> thicknessToId = new Dictionary<IEditableImage2F, LayerId>();
+        private readonly Dictionary<IEditableImage2f, LayerId> thicknessToId = new Dictionary<IEditableImage2f, LayerId>();
 
         public ImageAggregator(IImageConfig imageConfig)
         {
@@ -22,16 +22,16 @@ namespace Votyra.Core.Images
 
         public IEnumerable<int> Priorities { get; }
 
-        void IImageConstraint2I.Initialize(IEditableImage2F image)
+        void IImageConstraint2i.Initialize(IEditableImage2f image)
         {
         }
 
-        IEnumerable<int> IImageConstraint2I.Priorities => new[]
+        IEnumerable<int> IImageConstraint2i.Priorities => new[]
         {
             int.MaxValue,
         };
 
-        Range2i IImageConstraint2I.FixImage(IEditableImage2F image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        Range2i IImageConstraint2i.FixImage(IEditableImage2f image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
             var editedLayerId = this.thicknessToId[image];
             var index = this.layerOrder.IndexOf(editedLayerId);
@@ -142,24 +142,24 @@ namespace Votyra.Core.Images
             return invalidatedImageArea;
         }
 
-        public void Initialize(LayerId layer, List<IImageConstraint2I> constraints)
+        public void Initialize(LayerId layer, List<IImageConstraint2i> constraints)
         {
-            var thicknessImage = new EditableMatrixImage2FCopy(this.imageConfig, constraints);
+            var thicknessImage = new EditableMatrixImage2fCopy(this.imageConfig, constraints);
             this.thicknessToId[thicknessImage] = layer;
             this.idToThickness[layer] = thicknessImage;
 
-            var sumImage = new EditableMatrixImage2F(this.imageConfig, new List<IImageConstraint2I>(), this.layerOrder.Count == 0 ? 0f : float.NaN);
+            var sumImage = new EditableMatrixImage2f(this.imageConfig, new List<IImageConstraint2i>(), this.layerOrder.Count == 0 ? 0f : float.NaN);
             this.idToSum[layer] = sumImage;
 
             this.layerOrder.Add(layer);
         }
 
-        public IImage2F CreateImage(LayerId layer) => this.idToSum[layer]
+        public IImage2f CreateImage(LayerId layer) => this.idToSum[layer]
             .CreateImage();
 
-        public IEditableImageAccessor2F RequestAccess(LayerId layer, Range2i area)
+        public IEditableImageAccessor2f RequestAccess(LayerId layer, Range2i area)
         {
-            var layerAccesors = new SortedDictionary<LayerId, IEditableImageAccessor2F>();
+            var layerAccesors = new SortedDictionary<LayerId, IEditableImageAccessor2f>();
             foreach (var image in this.idToThickness)
             {
                 layerAccesors[image.Key] = image.Value.RequestAccess(area);
@@ -168,11 +168,11 @@ namespace Votyra.Core.Images
             return new MatrixImageAccessor(layerAccesors[layer]);
         }
 
-        private class MatrixImageAccessor : IEditableImageAccessor2F
+        private class MatrixImageAccessor : IEditableImageAccessor2f
         {
-            public readonly IEditableImageAccessor2F LayerAccesors;
+            public readonly IEditableImageAccessor2f LayerAccesors;
 
-            public MatrixImageAccessor(IEditableImageAccessor2F layerAccesors)
+            public MatrixImageAccessor(IEditableImageAccessor2f layerAccesors)
             {
                 this.LayerAccesors = layerAccesors;
             }

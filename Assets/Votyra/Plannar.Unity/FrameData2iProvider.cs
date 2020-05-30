@@ -10,17 +10,17 @@ using Zenject;
 namespace Votyra.Plannar
 {
     // TODO: move to floats
-    public class FrameData2IProvider : IFrameDataProvider2I, ITickable
+    public class FrameData2iProvider : IFrameDataProvider2i, ITickable
     {
         private readonly Vector3[] frustumCornersUnity = new Vector3[4];
-        private readonly IImage2FPostProcessor image2FPostProcessor;
-        private readonly IImage2FProvider imageProvider;
+        private readonly IImage2fPostProcessor image2fPostProcessor;
+        private readonly IImage2fProvider imageProvider;
         private readonly IInterpolationConfig interpolationConfig;
         private readonly int meshTopologyDistance;
 
         private readonly Plane[] planesUnity = new Plane[6];
 
-        private readonly IFrameData2IPool pool;
+        private readonly IFrameData2iPool pool;
         private readonly GameObject root;
         private readonly ITerrainConfig terrainConfig;
 
@@ -28,7 +28,7 @@ namespace Votyra.Plannar
 
         private Matrix4X4F previousCameraMatrix;
 
-        public event Action<ArcResource<IFrameData2I>> FrameData
+        public event Action<ArcResource<IFrameData2i>> FrameData
         {
             add
             {
@@ -67,7 +67,7 @@ namespace Votyra.Plannar
             this.RawFrameData?.Invoke(data);
         }
 
-        private ArcResource<IFrameData2I> GetCurrentFrameData(bool computedOnce)
+        private ArcResource<IFrameData2i> GetCurrentFrameData(bool computedOnce)
         {
             var camera = CameraUtils.MainCamera;
             var image = this.imageProvider.CreateImage();
@@ -81,7 +81,7 @@ namespace Votyra.Plannar
             this.previousCameraMatrix = cameraLocalToWorldMatrix;
 
             var frameDataContainer = this.pool.Get();
-            var frameData = frameDataContainer.Value as IPoolableFrameData2I;
+            var frameData = frameDataContainer.Value as IPoolableFrameData2i;
             var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * this.root.transform.localToWorldMatrix;
             GeometryUtility.CalculateFrustumPlanes(localToProjection, this.planesUnity);
             for (var i = 0; i < 6; i++)
@@ -92,7 +92,7 @@ namespace Votyra.Plannar
 
             var container = this.root.gameObject;
 
-            image = this.image2FPostProcessor?.PostProcess(image) ?? image;
+            image = this.image2fPostProcessor?.PostProcess(image) ?? image;
 
             var parentContainerWorldToLocalMatrix = container.transform.worldToLocalMatrix.ToMatrix4X4F();
 
@@ -119,14 +119,14 @@ namespace Votyra.Plannar
         }
 
 #pragma warning disable SA1201
-        private event Action<ArcResource<IFrameData2I>> RawFrameData;
+        private event Action<ArcResource<IFrameData2i>> RawFrameData;
 
         [Inject]
-        public FrameData2IProvider([InjectOptional]
-            IImage2FPostProcessor image2FPostProcessor, IImage2FProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root")]
-            GameObject root, IFrameData2IPool pool)
+        public FrameData2iProvider([InjectOptional]
+            IImage2fPostProcessor image2fPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root")]
+            GameObject root, IFrameData2iPool pool)
         {
-            this.image2FPostProcessor = image2FPostProcessor;
+            this.image2fPostProcessor = image2fPostProcessor;
             this.imageProvider = imageProvider;
             this.terrainConfig = terrainConfig;
             this.interpolationConfig = interpolationConfig;

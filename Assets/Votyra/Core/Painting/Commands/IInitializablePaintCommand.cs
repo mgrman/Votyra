@@ -5,6 +5,6 @@ namespace Votyra.Core.Painting.Commands
 {
     public interface IInitializablePaintCommand : IPaintCommand
     {
-        void Initialize(IEditableImage2F editableImage, IThreadSafeLogger logger);
+        void Initialize(IEditableImage2f editableImage, IThreadSafeLogger logger);
     }
 }

@@ -5,7 +5,7 @@ namespace Votyra.Core.Painting.Commands
 {
     public class DecreaseFactory : BaseFactory<Decrease>
     {
-        public DecreaseFactory(IEditableImage2F editableImage, IThreadSafeLogger logger)
+        public DecreaseFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
             : base(editableImage, logger)
         {
         }

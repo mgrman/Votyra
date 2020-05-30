@@ -14,11 +14,11 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    public class Terrain2IInstaller : MonoInstaller
+    public class Terrain2iInstaller : MonoInstaller
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager2I(null, null, null, null, null, null, null, null);
+            new TerrainGeneratorManager2i(null, null, null, null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -26,7 +26,7 @@ namespace Votyra.Plannar.Unity
 
         public override void InstallBindings()
         {
-            this.Container.BindInterfacesAndSelfTo<InterpolatedImage2ITo2FPostProcessor>()
+            this.Container.BindInterfacesAndSelfTo<InterpolatedImage2iTo2fPostProcessor>()
                 .AsSingle();
 
             this.Container.BindInterfacesAndSelfTo<InterpolatedUvPostProcessorStep>()
@@ -41,18 +41,18 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
 
-            this.Container.BindInterfacesAndSelfTo<Terrain2FRaycaster>()
+            this.Container.BindInterfacesAndSelfTo<Terrain2fRaycaster>()
                 .AsSingle()
                 .NonLazy();
 
-            this.Container.BindInterfacesAndSelfTo<TerrainGeneratorManager2I>()
+            this.Container.BindInterfacesAndSelfTo<TerrainGeneratorManager2i>()
                 .AsSingle()
                 .NonLazy();
 
-            this.Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2I>()
+            this.Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2i>()
                 .AsSingle();
 
-            this.Container.BindInterfacesAndSelfTo<BicubicTerrainMesher2F>()
+            this.Container.BindInterfacesAndSelfTo<BicubicTerrainMesher2f>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -60,7 +60,7 @@ namespace Votyra.Plannar.Unity
                     return (interpolationConfig.MeshSubdivision > 1) && (interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic);
                 });
 
-            this.Container.BindInterfacesAndSelfTo<TerrainMesher2F>()
+            this.Container.BindInterfacesAndSelfTo<TerrainMesher2f>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -90,10 +90,10 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
 
-            this.Container.BindInterfacesAndSelfTo<FrameData2IPool>()
+            this.Container.BindInterfacesAndSelfTo<FrameData2iPool>()
                 .AsSingle();
 
-            this.Container.BindInterfacesAndSelfTo<FrameData2IProvider>()
+            this.Container.BindInterfacesAndSelfTo<FrameData2iProvider>()
                 .AsSingle();
 
             this.Container.Bind<Func<GameObject>>()
@@ -112,13 +112,13 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
 
-            this.Container.BindInterfacesAndSelfTo<UnityTerrainGeneratorManager2I>()
+            this.Container.BindInterfacesAndSelfTo<UnityTerrainGeneratorManager2i>()
                 .AsSingle();
 
-            this.Container.BindInterfacesAndSelfTo<TerrainRepository2I>()
+            this.Container.BindInterfacesAndSelfTo<TerrainRepository2i>()
                 .AsSingle();
 
-            this.Container.BindInterfacesAndSelfTo<LastValueTaskQueue<ArcResource<IFrameData2I>>>()
+            this.Container.BindInterfacesAndSelfTo<LastValueTaskQueue<ArcResource<IFrameData2i>>>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -134,7 +134,7 @@ namespace Votyra.Plannar.Unity
                     return terrainConfig.AsyncTerrainGeneration;
                 });
 
-            this.Container.BindInterfacesAndSelfTo<ImmediateQueue<ArcResource<IFrameData2I>>>()
+            this.Container.BindInterfacesAndSelfTo<ImmediateQueue<ArcResource<IFrameData2i>>>()
                 .AsSingle()
                 .When(c =>
                 {

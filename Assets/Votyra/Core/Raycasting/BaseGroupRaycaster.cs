@@ -9,7 +9,7 @@ namespace Votyra.Core.Raycasting
     public abstract class BaseGroupRaycaster : IRaycasterPart
     {
         private readonly Vector2i cellInGroupCount;
-        private readonly ITerrainRepository2I manager;
+        private readonly ITerrainRepository2i manager;
         private readonly ITerrainVertexPostProcessor terrainVertexPostProcessor;
         private readonly float maxDistance = 500; // TODO get from camera
         private readonly int maxIterations;
