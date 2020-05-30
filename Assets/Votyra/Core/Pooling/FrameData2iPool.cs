@@ -1,12 +1,12 @@
 namespace Votyra.Core.Pooling
 {
-    public class FrameData2iPool : ArcPool<IFrameData2i>, IFrameData2iPool
+    public class FrameData2IPool : ArcPool<IFrameData2I>, IFrameData2IPool
     {
-        public FrameData2iPool()
+        public FrameData2IPool()
             : base(Create)
         {
         }
 
-        private static IFrameData2i Create() => new FrameData2i();
+        private static IFrameData2I Create() => new FrameData2I();
     }
 }

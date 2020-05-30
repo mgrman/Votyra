@@ -15,7 +15,7 @@ namespace Votyra.Core.TerrainMeshes
 
         IReadOnlyList<Vector3f> Normals { get; }
 
-        IReadOnlyList<Vector2f> UV { get; }
+        IReadOnlyList<Vector2f> Uv { get; }
 
         IReadOnlyList<int> Indices { get; }
 

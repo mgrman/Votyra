@@ -3,7 +3,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Utils
 {
-    public static class Path2iUtils
+    public static class Path2IUtils
     {
         public static void InvokeOnPath(Vector2i? from, Vector2i to, Action<Vector2i> action)
         {
@@ -67,7 +67,7 @@ namespace Votyra.Core.Utils
             float deltaY = to.Y - from.Y;
             float deltaX = to.X - from.X;
             var deltaErr = Math.Abs(deltaX / deltaY); // Assume deltaY != 0 (line is not vertical),
-            // 
+
             var error = 0.0f;
             var x = from.X;
             var signY = Math.Sign(to.Y - from.Y);

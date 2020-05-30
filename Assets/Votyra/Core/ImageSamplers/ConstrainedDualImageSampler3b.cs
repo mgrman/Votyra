@@ -3,7 +3,7 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.ImageSamplers
 {
-    public class ConstrainedDualImageSampler3b : IImageSampler3
+    public class ConstrainedDualImageSampler3B : IImageSampler3
     {
         public Vector3i WorldToImage(Vector3f pos) => new Vector3i((pos.X * 2).FloorToInt(), (pos.Y * 2).FloorToInt(), pos.Z.FloorToInt());
 

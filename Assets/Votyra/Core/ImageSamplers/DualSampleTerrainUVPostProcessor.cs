@@ -2,18 +2,18 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.ImageSamplers
 {
-    public class DualSampleTerrainUVPostProcessor : ITerrainUVPostProcessor
+    public class DualSampleTerrainUvPostProcessor : ITerrainUvPostProcessor
     {
         public static readonly Vector2f Offset = new Vector2f(0.25f, 0.25f);
-        private readonly float _subdivision;
+        private readonly float subdivision;
 
-        public DualSampleTerrainUVPostProcessor(IInterpolationConfig interpolationConfig)
+        public DualSampleTerrainUvPostProcessor(IInterpolationConfig interpolationConfig)
         {
-            this._subdivision = interpolationConfig.ImageSubdivision;
+            this.subdivision = interpolationConfig.ImageSubdivision;
         }
 
-        public Vector2f ProcessUV(Vector2f vertex) => ((vertex / 2.0f) + Offset) / this._subdivision;
+        public Vector2f ProcessUv(Vector2f vertex) => ((vertex / 2.0f) + Offset) / this.subdivision;
 
-        public Vector2f ReverseUV(Vector2f vertex) => (vertex - Offset) * 2.0f;
+        public Vector2f ReverseUv(Vector2f vertex) => (vertex - Offset) * 2.0f;
     }
 }

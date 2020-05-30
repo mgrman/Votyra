@@ -6,21 +6,21 @@ namespace Votyra.Core.Images.Constraints
 {
     public class PrioritySetQueue<TValue, TPriority>
     {
-        private readonly Pool<LinkedListNode<PrioritisedValue>> _emptyNodes = new Pool<LinkedListNode<PrioritisedValue>>(() => new LinkedListNode<PrioritisedValue>(default));
-        private readonly LinkedList<PrioritisedValue> _queue;
-        private readonly IEqualityComparer<TValue> _valueEqualityComparer;
-        private IComparer<TPriority> _priorityOrderComparer;
+        private readonly Pool<LinkedListNode<PrioritisedValue>> emptyNodes = new Pool<LinkedListNode<PrioritisedValue>>(() => new LinkedListNode<PrioritisedValue>(default));
+        private readonly LinkedList<PrioritisedValue> queue;
+        private readonly IEqualityComparer<TValue> valueEqualityComparer;
+        private IComparer<TPriority> priorityOrderComparer;
 
         public PrioritySetQueue(IEqualityComparer<TValue> valueEqualityComparer)
         {
-            this._valueEqualityComparer = valueEqualityComparer;
-            this._queue = new LinkedList<PrioritisedValue>();
+            this.valueEqualityComparer = valueEqualityComparer;
+            this.queue = new LinkedList<PrioritisedValue>();
         }
 
         public PrioritySetQueue(IEnumerable<TValue> initialValue, IEqualityComparer<TValue> valueEqualityComparer, Func<TValue, TPriority> func, IComparer<TPriority> create)
         {
-            this._valueEqualityComparer = valueEqualityComparer;
-            this._queue = new LinkedList<PrioritisedValue>();
+            this.valueEqualityComparer = valueEqualityComparer;
+            this.queue = new LinkedList<PrioritisedValue>();
             this.Reset(create);
 
             foreach (var value in initialValue)
@@ -29,11 +29,11 @@ namespace Votyra.Core.Images.Constraints
             }
         }
 
-        public int Count => this._queue.Count;
+        public int Count => this.queue.Count;
 
         public PrioritisedValue GetFirst()
         {
-            var cellWithValue = this._queue.First;
+            var cellWithValue = this.queue.First;
             this.RemoveNode(cellWithValue);
 
             return cellWithValue.Value;
@@ -42,11 +42,11 @@ namespace Votyra.Core.Images.Constraints
         public void Add(TValue newCellToCheck, TPriority newCellToCheckValue)
         {
             var addded = false;
-            var node = this._queue.First;
+            var node = this.queue.First;
             while (node != null)
             {
-                var isOldToRemove = this._valueEqualityComparer.Equals(node.Value.Value, newCellToCheck);
-                var isNewToBeAddedBeforeCurrent = (this._priorityOrderComparer.Compare(node.Value.Priority, newCellToCheckValue) > 0) && !addded; //node.Value.Value < newCellToCheckValue && !addded;
+                var isOldToRemove = this.valueEqualityComparer.Equals(node.Value.Value, newCellToCheck);
+                var isNewToBeAddedBeforeCurrent = (this.priorityOrderComparer.Compare(node.Value.Priority, newCellToCheckValue) > 0) && !addded; // node.Value.Value < newCellToCheckValue && !addded;
 
                 if (isOldToRemove && isNewToBeAddedBeforeCurrent)
                 {
@@ -61,7 +61,7 @@ namespace Votyra.Core.Images.Constraints
                 }
                 else if (isNewToBeAddedBeforeCurrent)
                 {
-                    this._queue.AddBefore(node, this.GetNode(newCellToCheck, newCellToCheckValue));
+                    this.queue.AddBefore(node, this.GetNode(newCellToCheck, newCellToCheckValue));
                     addded = true;
                 }
 
@@ -70,33 +70,33 @@ namespace Votyra.Core.Images.Constraints
 
             if (!addded)
             {
-                this._queue.AddLast(this.GetNode(newCellToCheck, newCellToCheckValue));
+                this.queue.AddLast(this.GetNode(newCellToCheck, newCellToCheckValue));
             }
         }
 
         public void Reset(IComparer<TPriority> priorityOrderComparer)
         {
-            this._priorityOrderComparer = priorityOrderComparer;
-            var node = this._queue.First;
+            this.priorityOrderComparer = priorityOrderComparer;
+            var node = this.queue.First;
             while (node != null)
             {
-                this._emptyNodes.ReturnRaw(node);
+                this.emptyNodes.ReturnRaw(node);
                 node = node.Next;
             }
 
-            this._queue.Clear();
+            this.queue.Clear();
         }
 
         private void RemoveNode(LinkedListNode<PrioritisedValue> node)
         {
-            this._emptyNodes.ReturnRaw(node);
-            this._queue.Remove(node);
+            this.emptyNodes.ReturnRaw(node);
+            this.queue.Remove(node);
         }
 
         private LinkedListNode<PrioritisedValue> GetNode(TValue newCellToCheck, TPriority newCellToCheckValue)
         {
             var value = this.GetValue(newCellToCheck, newCellToCheckValue);
-            var node = this._emptyNodes.GetRaw();
+            var node = this.emptyNodes.GetRaw();
             node.Value = value;
             return node;
         }

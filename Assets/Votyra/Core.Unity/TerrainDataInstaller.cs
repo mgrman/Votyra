@@ -16,7 +16,7 @@ namespace Votyra.Core.Unity
             this.Container.Bind<IThreadSafeLogger>()
                 .FromMethod(context =>
                 {
-                    //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
+                    // ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
                     return new UnityLogger(context.ObjectType.FullName, context.ObjectInstance as Object);
                 })
                 .AsTransient();
@@ -24,7 +24,7 @@ namespace Votyra.Core.Unity
             this.Container.Bind<IProfiler>()
                 .FromMethod(context =>
                 {
-                    //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
+                    // ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
                     return this.CreateProfiler(context.ObjectInstance as Object);
                 })
                 .AsTransient();

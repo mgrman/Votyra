@@ -5,11 +5,11 @@ namespace Votyra.Core.Raycasting
 {
     public class AggregatorRaycaster : IRaycasterAggregator
     {
-        private readonly List<IRaycasterPart> _raycasters = new List<IRaycasterPart>();
+        private readonly List<IRaycasterPart> raycasters = new List<IRaycasterPart>();
 
         public Vector3f Raycast(Ray3f cameraRay)
         {
-            foreach (var raycaster in this._raycasters)
+            foreach (var raycaster in this.raycasters)
             {
                 var res = raycaster.Raycast(cameraRay);
                 if (res.NoNan())
@@ -23,7 +23,7 @@ namespace Votyra.Core.Raycasting
 
         public float Raycast(Vector2f cameraRay)
         {
-            foreach (var raycaster in this._raycasters)
+            foreach (var raycaster in this.raycasters)
             {
                 var res = raycaster.Raycast(cameraRay);
                 if (res.NoNan())
@@ -37,7 +37,7 @@ namespace Votyra.Core.Raycasting
 
         public void Attach(IRaycasterPart raycaster)
         {
-            this._raycasters.Add(raycaster);
+            this.raycasters.Add(raycaster);
         }
     }
 }

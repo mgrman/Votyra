@@ -6,38 +6,38 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2i
+    public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2I
     {
-        private readonly Dictionary<LayerId, EditableMatrixImage2f> _idToSum = new Dictionary<LayerId, EditableMatrixImage2f>();
-        private readonly Dictionary<LayerId, EditableMatrixImage2fCopy> _idToThickness = new Dictionary<LayerId, EditableMatrixImage2fCopy>();
-        private readonly IImageConfig _imageConfig;
+        private readonly Dictionary<LayerId, EditableMatrixImage2F> idToSum = new Dictionary<LayerId, EditableMatrixImage2F>();
+        private readonly Dictionary<LayerId, EditableMatrixImage2FCopy> idToThickness = new Dictionary<LayerId, EditableMatrixImage2FCopy>();
+        private readonly IImageConfig imageConfig;
 
-        private readonly List<LayerId> _layerOrder = new List<LayerId>();
-        private readonly Dictionary<IEditableImage2f, LayerId> _thicknessToId = new Dictionary<IEditableImage2f, LayerId>();
+        private readonly List<LayerId> layerOrder = new List<LayerId>();
+        private readonly Dictionary<IEditableImage2F, LayerId> thicknessToId = new Dictionary<IEditableImage2F, LayerId>();
 
         public ImageAggregator(IImageConfig imageConfig)
         {
-            this._imageConfig = imageConfig;
+            this.imageConfig = imageConfig;
         }
 
         public IEnumerable<int> Priorities { get; }
 
-        void IImageConstraint2i.Initialize(IEditableImage2f image)
+        void IImageConstraint2I.Initialize(IEditableImage2F image)
         {
         }
 
-        IEnumerable<int> IImageConstraint2i.Priorities => new[]
+        IEnumerable<int> IImageConstraint2I.Priorities => new[]
         {
             int.MaxValue,
         };
 
-        Range2i IImageConstraint2i.FixImage(IEditableImage2f image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        Range2i IImageConstraint2I.FixImage(IEditableImage2F image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
-            var editedLayerId = this._thicknessToId[image];
-            var index = this._layerOrder.IndexOf(editedLayerId);
+            var editedLayerId = this.thicknessToId[image];
+            var index = this.layerOrder.IndexOf(editedLayerId);
 
-            var sumAccesors = this._idToSum.ToDictionary(o => o.Key, o => o.Value.RequestAccess(invalidatedImageArea));
-            var layerAccessors = this._idToThickness.ToDictionary(o => o.Key, o => o.Value.RequestAccess(invalidatedImageArea));
+            var sumAccesors = this.idToSum.ToDictionary(o => o.Key, o => o.Value.RequestAccess(invalidatedImageArea));
+            var layerAccessors = this.idToThickness.ToDictionary(o => o.Key, o => o.Value.RequestAccess(invalidatedImageArea));
 
             var min = invalidatedImageArea.Min;
             var max = invalidatedImageArea.Max;
@@ -54,12 +54,12 @@ namespace Votyra.Core.Images
                         var diff = value - sumLayer[i];
                         sumLayer[i] = editableMatrix[ix, iy];
 
-                        for (var aboveLayerIndex = index + 1; aboveLayerIndex < this._layerOrder.Count; aboveLayerIndex++)
+                        for (var aboveLayerIndex = index + 1; aboveLayerIndex < this.layerOrder.Count; aboveLayerIndex++)
                         {
-                            var valueAbove = sumAccesors[this._layerOrder[aboveLayerIndex]][i];
+                            var valueAbove = sumAccesors[this.layerOrder[aboveLayerIndex]][i];
                             if (!float.IsNaN(valueAbove))
                             {
-                                sumAccesors[this._layerOrder[aboveLayerIndex]][i] = valueAbove + diff;
+                                sumAccesors[this.layerOrder[aboveLayerIndex]][i] = valueAbove + diff;
                             }
                         }
                     }
@@ -68,7 +68,7 @@ namespace Votyra.Core.Images
             else
             {
                 var sumLayer = sumAccesors[editedLayerId];
-                var sumLayerBelow = sumAccesors[this._layerOrder[index - 1]];
+                var sumLayerBelow = sumAccesors[this.layerOrder[index - 1]];
 
                 // clip thickness to non-negative
                 for (var ix = Math.Max(min.X, 0); ix < Math.Min(max.X, editableMatrix.GetUpperBound(0)); ix++)
@@ -101,9 +101,9 @@ namespace Votyra.Core.Images
                             var x1 = editableMatrix[ix + 1, iy];
                             var y0 = editableMatrix[ix, iy - 1];
                             var y1 = editableMatrix[ix, iy + 1];
-                            var x0y1 = editableMatrix[ix - 1, iy + 1]; // TODO: edge case of edge fliping logic
-                            var x1y0 = editableMatrix[ix + 1, iy - 1]; // TODO: edge case of edge fliping logic
-                            if ((x0 == 0) && (x1 == 0) && (y0 == 0) && (y1 == 0) && (x0y1 == 0) && (x1y0 == 0))
+                            var x0Y1 = editableMatrix[ix - 1, iy + 1]; // TODO: edge case of edge fliping logic
+                            var x1Y0 = editableMatrix[ix + 1, iy - 1]; // TODO: edge case of edge fliping logic
+                            if ((x0 == 0) && (x1 == 0) && (y0 == 0) && (y1 == 0) && (x0Y1 == 0) && (x1Y0 == 0))
                             {
                                 sumLayer[i] = float.NaN;
                             }
@@ -117,12 +117,12 @@ namespace Votyra.Core.Images
                             sumLayer[i] = sum; // update current layer
                         }
 
-                        for (var aboveLayerIndex = index + 1; aboveLayerIndex < this._layerOrder.Count; aboveLayerIndex++)
+                        for (var aboveLayerIndex = index + 1; aboveLayerIndex < this.layerOrder.Count; aboveLayerIndex++)
                         {
-                            var valueAbove = sumAccesors[this._layerOrder[aboveLayerIndex]][i];
+                            var valueAbove = sumAccesors[this.layerOrder[aboveLayerIndex]][i];
                             if (!float.IsNaN(valueAbove))
                             {
-                                sumAccesors[this._layerOrder[aboveLayerIndex]][i] = valueAbove + diff;
+                                sumAccesors[this.layerOrder[aboveLayerIndex]][i] = valueAbove + diff;
                             }
                         }
                     }
@@ -142,25 +142,25 @@ namespace Votyra.Core.Images
             return invalidatedImageArea;
         }
 
-        public void Initialize(LayerId layer, List<IImageConstraint2i> constraints)
+        public void Initialize(LayerId layer, List<IImageConstraint2I> constraints)
         {
-            var thicknessImage = new EditableMatrixImage2fCopy(this._imageConfig, constraints);
-            this._thicknessToId[thicknessImage] = layer;
-            this._idToThickness[layer] = thicknessImage;
+            var thicknessImage = new EditableMatrixImage2FCopy(this.imageConfig, constraints);
+            this.thicknessToId[thicknessImage] = layer;
+            this.idToThickness[layer] = thicknessImage;
 
-            var sumImage = new EditableMatrixImage2f(this._imageConfig, new List<IImageConstraint2i>(), this._layerOrder.Count == 0 ? 0f : float.NaN);
-            this._idToSum[layer] = sumImage;
+            var sumImage = new EditableMatrixImage2F(this.imageConfig, new List<IImageConstraint2I>(), this.layerOrder.Count == 0 ? 0f : float.NaN);
+            this.idToSum[layer] = sumImage;
 
-            this._layerOrder.Add(layer);
+            this.layerOrder.Add(layer);
         }
 
-        public IImage2f CreateImage(LayerId layer) => this._idToSum[layer]
+        public IImage2F CreateImage(LayerId layer) => this.idToSum[layer]
             .CreateImage();
 
-        public IEditableImageAccessor2f RequestAccess(LayerId layer, Range2i area)
+        public IEditableImageAccessor2F RequestAccess(LayerId layer, Range2i area)
         {
-            var layerAccesors = new SortedDictionary<LayerId, IEditableImageAccessor2f>();
-            foreach (var image in this._idToThickness)
+            var layerAccesors = new SortedDictionary<LayerId, IEditableImageAccessor2F>();
+            foreach (var image in this.idToThickness)
             {
                 layerAccesors[image.Key] = image.Value.RequestAccess(area);
             }
@@ -168,32 +168,32 @@ namespace Votyra.Core.Images
             return new MatrixImageAccessor(layerAccesors[layer]);
         }
 
-        private class MatrixImageAccessor : IEditableImageAccessor2f
+        private class MatrixImageAccessor : IEditableImageAccessor2F
         {
-            public readonly IEditableImageAccessor2f _layerAccesors;
+            public readonly IEditableImageAccessor2F LayerAccesors;
 
-            public MatrixImageAccessor(IEditableImageAccessor2f layerAccesors)
+            public MatrixImageAccessor(IEditableImageAccessor2F layerAccesors)
             {
-                this._layerAccesors = layerAccesors;
+                this.LayerAccesors = layerAccesors;
             }
 
-            public Range2i Area => this._layerAccesors.Area;
+            public Range2i Area => this.LayerAccesors.Area;
 
             public float this[Vector2i pos]
             {
-                get => this._layerAccesors[pos];
+                get => this.LayerAccesors[pos];
                 set
                 {
-                    var existingValue = this._layerAccesors[pos];
+                    var existingValue = this.LayerAccesors[pos];
                     var dif = value - existingValue;
 
-                    this._layerAccesors[pos] = value;
+                    this.LayerAccesors[pos] = value;
                 }
             }
 
             public void Dispose()
             {
-                this._layerAccesors.Dispose();
+                this.LayerAccesors.Dispose();
             }
         }
     }

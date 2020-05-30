@@ -32,45 +32,45 @@ namespace Votyra.Core
 
     public class TerrainRepository<TKey, TValue> : ITerrainRepository<TKey, TValue> where TKey : struct
     {
-        private readonly Dictionary<TKey, TValue> _activeGroups = new Dictionary<TKey, TValue>();
-        private readonly object _activeGroupsLock = new object();
-        private readonly Dictionary<TKey, TValue> _lockedGroups = new Dictionary<TKey, TValue>();
+        private readonly Dictionary<TKey, TValue> activeGroups = new Dictionary<TKey, TValue>();
+        private readonly object activeGroupsLock = new object();
+        private readonly Dictionary<TKey, TValue> lockedGroups = new Dictionary<TKey, TValue>();
 
         public TerrainRepository()
         {
             this.ContainsKeyFunc = this.Contains;
         }
 
-        private event Action<RepositoryChange<TKey, TValue>> _terrainChange;
+        private event Action<RepositoryChange<TKey, TValue>> RawTerrainChange;
 
         public event Action<RepositoryChange<TKey, TValue>> TerrainChange
         {
             add
             {
-                this._terrainChange += value;
-                foreach (var activeGroup in this._activeGroups)
+                this.RawTerrainChange += value;
+                foreach (var activeGroup in this.activeGroups)
                 {
                     value?.Invoke(RepositoryChange<TKey, TValue>.New(activeGroup.Key, activeGroup.Value));
                 }
             }
-            remove => this._terrainChange -= value;
+            remove => this.RawTerrainChange -= value;
         }
 
         public bool Contains(TKey key)
         {
-            lock (this._activeGroupsLock)
+            lock (this.activeGroupsLock)
             {
-                return this._activeGroups.ContainsKey(key);
+                return this.activeGroups.ContainsKey(key);
             }
         }
 
         public bool Lock(TKey key)
         {
-            lock (this._activeGroupsLock)
+            lock (this.activeGroupsLock)
             {
-                if (this._activeGroups.TryGetValue(key, out var value))
+                if (this.activeGroups.TryGetValue(key, out var value))
                 {
-                    this._lockedGroups.Add(key, value);
+                    this.lockedGroups.Add(key, value);
                     return true;
                 }
             }
@@ -82,64 +82,64 @@ namespace Votyra.Core
 
         public void Add(TKey key, TValue value)
         {
-            lock (this._activeGroupsLock)
+            lock (this.activeGroupsLock)
             {
-                this._activeGroups.Add(key, value);
+                this.activeGroups.Add(key, value);
             }
 
-            this._terrainChange?.Invoke(RepositoryChange<TKey, TValue>.New(key, value));
+            this.RawTerrainChange?.Invoke(RepositoryChange<TKey, TValue>.New(key, value));
         }
 
         public void Remove(TKey key)
         {
             TValue value;
-            lock (this._activeGroupsLock)
+            lock (this.activeGroupsLock)
             {
-                if (!this._activeGroups.TryGetValue(key, out value))
+                if (!this.activeGroups.TryGetValue(key, out value))
                 {
                     return;
                 }
 
-                this._activeGroups.Remove(key);
+                this.activeGroups.Remove(key);
 
-                if (this._lockedGroups.ContainsKey(key))
+                if (this.lockedGroups.ContainsKey(key))
                 {
                     return;
                 }
             }
 
-            this._terrainChange?.Invoke(RepositoryChange<TKey, TValue>.Removed(key, value));
+            this.RawTerrainChange?.Invoke(RepositoryChange<TKey, TValue>.Removed(key, value));
         }
 
         public void Unlock(TKey key)
         {
             RepositoryChange<TKey, TValue>? toInvoke = null;
-            lock (this._activeGroupsLock)
+            lock (this.activeGroupsLock)
             {
-                if (this._activeGroups.TryGetValue(key, out var activeValue))
+                if (this.activeGroups.TryGetValue(key, out var activeValue))
                 {
                     toInvoke = RepositoryChange<TKey, TValue>.Changed(key, activeValue);
                 }
-                else if (this._lockedGroups.TryGetValue(key, out var removedLockedValue))
+                else if (this.lockedGroups.TryGetValue(key, out var removedLockedValue))
                 {
                     toInvoke = RepositoryChange<TKey, TValue>.Removed(key, removedLockedValue);
                 }
 
-                this._lockedGroups.Remove(key);
+                this.lockedGroups.Remove(key);
             }
 
             if (toInvoke.HasValue)
             {
-                this._terrainChange?.Invoke(toInvoke.Value);
+                this.RawTerrainChange?.Invoke(toInvoke.Value);
             }
         }
 
         public TValue TryGetValue(TKey key)
         {
             TValue value;
-            lock (this._activeGroupsLock)
+            lock (this.activeGroupsLock)
             {
-                if (!this._activeGroups.TryGetValue(key, out value))
+                if (!this.activeGroups.TryGetValue(key, out value))
                 {
                     return default;
                 }
@@ -150,16 +150,16 @@ namespace Votyra.Core
 
         public void Select<TResult>(Func<TKey, TValue, TResult> func, List<TResult> cache)
         {
-            lock (this._activeGroupsLock)
+            lock (this.activeGroupsLock)
             {
-                if (cache.Capacity < this._activeGroups.Count)
+                if (cache.Capacity < this.activeGroups.Count)
                 {
-                    cache.Capacity = this._activeGroups.Count;
+                    cache.Capacity = this.activeGroups.Count;
                 }
 
                 cache.Clear();
 
-                foreach (var activeGroup in this._activeGroups)
+                foreach (var activeGroup in this.activeGroups)
                 {
                     cache.Add(func(activeGroup.Key, activeGroup.Value));
                 }

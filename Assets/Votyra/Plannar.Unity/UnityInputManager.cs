@@ -14,9 +14,6 @@ namespace Votyra.Core.Unity.Painting
     public class UnityInputManager : MonoBehaviour
     {
         private IPaintCommand activeCommand;
-
-        private bool invokeWithNull;
-
         private string lastActiveCommand;
 
         [InjectOptional]
@@ -209,9 +206,9 @@ namespace Votyra.Core.Unity.Painting
             var ray = camera.ScreenPointToRay(screenPosition);
 
             var cameraPosition = this.root.transform.InverseTransformPoint(ray.origin)
-                .ToVector3f();
+                .ToVector3F();
             var cameraDirection = this.root.transform.InverseTransformDirection(ray.direction)
-                .ToVector3f();
+                .ToVector3F();
 
             var cameraRay = new Ray3f(cameraPosition, cameraDirection);
 

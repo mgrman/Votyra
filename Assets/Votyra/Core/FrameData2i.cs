@@ -4,11 +4,11 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core
 {
-    public class FrameData2i : IPoolableFrameData2i
+    public class FrameData2I : IPoolableFrameData2I
     {
-        private IImage2f _image;
+        private IImage2F image;
 
-        public FrameData2i()
+        public FrameData2I()
         {
             this.CameraPlanes = new Plane3f[6];
             this.CameraFrustumCorners = new Vector3f[4];
@@ -30,15 +30,15 @@ namespace Votyra.Core
 
         public Range2i InvalidatedArea { get; set; }
 
-        public IImage2f Image
+        public IImage2F Image
         {
-            get => this._image;
+            get => this.image;
             set
             {
-                (this._image as IInitializableImage)?.FinishUsing();
-                this._image = value;
-                (this._image as IInitializableImage)?.StartUsing();
-                this.RangeZ = this._image?.RangeZ ?? Area1f.Zero;
+                (this.image as IInitializableImage)?.FinishUsing();
+                this.image = value;
+                (this.image as IInitializableImage)?.StartUsing();
+                this.RangeZ = this.image?.RangeZ ?? Area1f.Zero;
             }
         }
     }

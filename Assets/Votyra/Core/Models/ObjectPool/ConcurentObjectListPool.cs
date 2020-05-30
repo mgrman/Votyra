@@ -4,7 +4,7 @@ namespace Votyra.Core.Models.ObjectPool
 {
     public class ConcurentObjectListPool<T, TKey> : ObjectListPool<T, TKey> where TKey : struct
     {
-        private readonly object _accessLock = new object();
+        private readonly object accessLock = new object();
 
         public ConcurentObjectListPool(int limit, Func<TKey, T> objectGenerator, Func<TKey, TKey, bool> comparer)
             : base(limit, objectGenerator, comparer)
@@ -13,7 +13,7 @@ namespace Votyra.Core.Models.ObjectPool
 
         public override T GetObject(TKey key)
         {
-            lock (this._accessLock)
+            lock (this.accessLock)
             {
                 return base.GetObject(key);
             }
@@ -21,7 +21,7 @@ namespace Votyra.Core.Models.ObjectPool
 
         public override void ReturnObject(T obj, TKey key)
         {
-            lock (this._accessLock)
+            lock (this.accessLock)
             {
                 base.ReturnObject(obj, key);
             }

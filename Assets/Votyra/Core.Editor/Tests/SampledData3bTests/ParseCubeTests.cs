@@ -18,7 +18,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             1-----0
             ";
 
-            var cube = SampledData3b.ParseCube(cubeString);
+            var cube = SampledData3B.ParseCube(cubeString);
 
             Assert.AreEqual(string.Join("\n",
                     cubeString.Split('\n')
@@ -40,16 +40,16 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             1-----0
             ";
-            var cube = SampledData3b.ParseCube(cubeString);
+            var cube = SampledData3B.ParseCube(cubeString);
 
-            Assert.IsTrue(cube.Data_x0y0z0);
-            Assert.IsFalse(cube.Data_x0y0z1);
-            Assert.IsFalse(cube.Data_x0y1z0);
-            Assert.IsFalse(cube.Data_x0y1z1);
-            Assert.IsFalse(cube.Data_x1y0z0);
-            Assert.IsFalse(cube.Data_x1y0z1);
-            Assert.IsFalse(cube.Data_x1y1z0);
-            Assert.IsFalse(cube.Data_x1y1z1);
+            Assert.IsTrue(cube.DataX0Y0Z0);
+            Assert.IsFalse(cube.DataX0Y0Z1);
+            Assert.IsFalse(cube.DataX0Y1Z0);
+            Assert.IsFalse(cube.DataX0Y1Z1);
+            Assert.IsFalse(cube.DataX1Y0Z0);
+            Assert.IsFalse(cube.DataX1Y0Z1);
+            Assert.IsFalse(cube.DataX1Y1Z0);
+            Assert.IsFalse(cube.DataX1Y1Z1);
         }
 
         [Test]
@@ -63,16 +63,16 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3b.ParseCube(cubeString);
+            var cube = SampledData3B.ParseCube(cubeString);
 
-            Assert.IsFalse(cube.Data_x0y0z0);
-            Assert.IsTrue(cube.Data_x0y0z1);
-            Assert.IsFalse(cube.Data_x0y1z0);
-            Assert.IsFalse(cube.Data_x0y1z1);
-            Assert.IsFalse(cube.Data_x1y0z0);
-            Assert.IsFalse(cube.Data_x1y0z1);
-            Assert.IsFalse(cube.Data_x1y1z0);
-            Assert.IsFalse(cube.Data_x1y1z1);
+            Assert.IsFalse(cube.DataX0Y0Z0);
+            Assert.IsTrue(cube.DataX0Y0Z1);
+            Assert.IsFalse(cube.DataX0Y1Z0);
+            Assert.IsFalse(cube.DataX0Y1Z1);
+            Assert.IsFalse(cube.DataX1Y0Z0);
+            Assert.IsFalse(cube.DataX1Y0Z1);
+            Assert.IsFalse(cube.DataX1Y1Z0);
+            Assert.IsFalse(cube.DataX1Y1Z1);
         }
 
         [Test]
@@ -86,16 +86,16 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3b.ParseCube(cubeString);
+            var cube = SampledData3B.ParseCube(cubeString);
 
-            Assert.IsFalse(cube.Data_x0y0z0);
-            Assert.IsFalse(cube.Data_x0y0z1);
-            Assert.IsTrue(cube.Data_x0y1z0);
-            Assert.IsFalse(cube.Data_x0y1z1);
-            Assert.IsFalse(cube.Data_x1y0z0);
-            Assert.IsFalse(cube.Data_x1y0z1);
-            Assert.IsFalse(cube.Data_x1y1z0);
-            Assert.IsFalse(cube.Data_x1y1z1);
+            Assert.IsFalse(cube.DataX0Y0Z0);
+            Assert.IsFalse(cube.DataX0Y0Z1);
+            Assert.IsTrue(cube.DataX0Y1Z0);
+            Assert.IsFalse(cube.DataX0Y1Z1);
+            Assert.IsFalse(cube.DataX1Y0Z0);
+            Assert.IsFalse(cube.DataX1Y0Z1);
+            Assert.IsFalse(cube.DataX1Y1Z0);
+            Assert.IsFalse(cube.DataX1Y1Z1);
         }
 
         [Test]
@@ -109,16 +109,16 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3b.ParseCube(cubeString);
+            var cube = SampledData3B.ParseCube(cubeString);
 
-            Assert.IsFalse(cube.Data_x0y0z0);
-            Assert.IsFalse(cube.Data_x0y0z1);
-            Assert.IsFalse(cube.Data_x0y1z0);
-            Assert.IsTrue(cube.Data_x0y1z1);
-            Assert.IsFalse(cube.Data_x1y0z0);
-            Assert.IsFalse(cube.Data_x1y0z1);
-            Assert.IsFalse(cube.Data_x1y1z0);
-            Assert.IsFalse(cube.Data_x1y1z1);
+            Assert.IsFalse(cube.DataX0Y0Z0);
+            Assert.IsFalse(cube.DataX0Y0Z1);
+            Assert.IsFalse(cube.DataX0Y1Z0);
+            Assert.IsTrue(cube.DataX0Y1Z1);
+            Assert.IsFalse(cube.DataX1Y0Z0);
+            Assert.IsFalse(cube.DataX1Y0Z1);
+            Assert.IsFalse(cube.DataX1Y1Z0);
+            Assert.IsFalse(cube.DataX1Y1Z1);
         }
 
         [Test]
@@ -132,16 +132,16 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----1
             ";
-            var cube = SampledData3b.ParseCube(cubeString);
+            var cube = SampledData3B.ParseCube(cubeString);
 
-            Assert.IsFalse(cube.Data_x0y0z0);
-            Assert.IsFalse(cube.Data_x0y0z1);
-            Assert.IsFalse(cube.Data_x0y1z0);
-            Assert.IsFalse(cube.Data_x0y1z1);
-            Assert.IsTrue(cube.Data_x1y0z0);
-            Assert.IsFalse(cube.Data_x1y0z1);
-            Assert.IsFalse(cube.Data_x1y1z0);
-            Assert.IsFalse(cube.Data_x1y1z1);
+            Assert.IsFalse(cube.DataX0Y0Z0);
+            Assert.IsFalse(cube.DataX0Y0Z1);
+            Assert.IsFalse(cube.DataX0Y1Z0);
+            Assert.IsFalse(cube.DataX0Y1Z1);
+            Assert.IsTrue(cube.DataX1Y0Z0);
+            Assert.IsFalse(cube.DataX1Y0Z1);
+            Assert.IsFalse(cube.DataX1Y1Z0);
+            Assert.IsFalse(cube.DataX1Y1Z1);
         }
 
         [Test]
@@ -155,16 +155,16 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3b.ParseCube(cubeString);
+            var cube = SampledData3B.ParseCube(cubeString);
 
-            Assert.IsFalse(cube.Data_x0y0z0);
-            Assert.IsFalse(cube.Data_x0y0z1);
-            Assert.IsFalse(cube.Data_x0y1z0);
-            Assert.IsFalse(cube.Data_x0y1z1);
-            Assert.IsFalse(cube.Data_x1y0z0);
-            Assert.IsTrue(cube.Data_x1y0z1);
-            Assert.IsFalse(cube.Data_x1y1z0);
-            Assert.IsFalse(cube.Data_x1y1z1);
+            Assert.IsFalse(cube.DataX0Y0Z0);
+            Assert.IsFalse(cube.DataX0Y0Z1);
+            Assert.IsFalse(cube.DataX0Y1Z0);
+            Assert.IsFalse(cube.DataX0Y1Z1);
+            Assert.IsFalse(cube.DataX1Y0Z0);
+            Assert.IsTrue(cube.DataX1Y0Z1);
+            Assert.IsFalse(cube.DataX1Y1Z0);
+            Assert.IsFalse(cube.DataX1Y1Z1);
         }
 
         [Test]
@@ -178,16 +178,16 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3b.ParseCube(cubeString);
+            var cube = SampledData3B.ParseCube(cubeString);
 
-            Assert.IsFalse(cube.Data_x0y0z0);
-            Assert.IsFalse(cube.Data_x0y0z1);
-            Assert.IsFalse(cube.Data_x0y1z0);
-            Assert.IsFalse(cube.Data_x0y1z1);
-            Assert.IsFalse(cube.Data_x1y0z0);
-            Assert.IsFalse(cube.Data_x1y0z1);
-            Assert.IsTrue(cube.Data_x1y1z0);
-            Assert.IsFalse(cube.Data_x1y1z1);
+            Assert.IsFalse(cube.DataX0Y0Z0);
+            Assert.IsFalse(cube.DataX0Y0Z1);
+            Assert.IsFalse(cube.DataX0Y1Z0);
+            Assert.IsFalse(cube.DataX0Y1Z1);
+            Assert.IsFalse(cube.DataX1Y0Z0);
+            Assert.IsFalse(cube.DataX1Y0Z1);
+            Assert.IsTrue(cube.DataX1Y1Z0);
+            Assert.IsFalse(cube.DataX1Y1Z1);
         }
 
         [Test]
@@ -201,16 +201,16 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
-            var cube = SampledData3b.ParseCube(cubeString);
+            var cube = SampledData3B.ParseCube(cubeString);
 
-            Assert.IsFalse(cube.Data_x0y0z0);
-            Assert.IsFalse(cube.Data_x0y0z1);
-            Assert.IsFalse(cube.Data_x0y1z0);
-            Assert.IsFalse(cube.Data_x0y1z1);
-            Assert.IsFalse(cube.Data_x1y0z0);
-            Assert.IsFalse(cube.Data_x1y0z1);
-            Assert.IsFalse(cube.Data_x1y1z0);
-            Assert.IsTrue(cube.Data_x1y1z1);
+            Assert.IsFalse(cube.DataX0Y0Z0);
+            Assert.IsFalse(cube.DataX0Y0Z1);
+            Assert.IsFalse(cube.DataX0Y1Z0);
+            Assert.IsFalse(cube.DataX0Y1Z1);
+            Assert.IsFalse(cube.DataX1Y0Z0);
+            Assert.IsFalse(cube.DataX1Y0Z1);
+            Assert.IsFalse(cube.DataX1Y1Z0);
+            Assert.IsTrue(cube.DataX1Y1Z1);
         }
     }
 }

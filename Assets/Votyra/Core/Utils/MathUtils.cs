@@ -8,8 +8,6 @@ namespace Votyra.Core.Utils
 
         public const float Rad2Deg = 57.29578f;
 
-        private static readonly FastNoise _noise = new FastNoise();
-
         public static bool IsApproximatelyEqual(this float a, float b, float eps = 0.000001f) => Math.Abs(b - a) < eps;
 
         public static bool IsApproximatelyGreaterOrEqual(this float a, float b, float eps = 0.000001f) => (a > b) || a.IsApproximatelyEqual(b);
@@ -141,10 +139,6 @@ namespace Votyra.Core.Utils
         public static float Min(this float? a, float b) => Math.Min(a ?? b, b);
 
         public static float Min(this float a, float b) => Math.Min(a, b);
-
-        public static float PerlinNoise(float x, float y) => _noise.GetPerlin(x, y);
-
-        public static float PerlinNoise(float x, float y, float z) => _noise.GetPerlin(x, y, z);
 
         public static int RoundToInt(this float f)
         {

@@ -2,17 +2,17 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.ImageSamplers
 {
-    public class InterpolatedUVPostProcessorStep : ITerrainUVPostProcessor
+    public class InterpolatedUvPostProcessorStep : ITerrainUvPostProcessor
     {
-        private readonly int _subdivision;
+        private readonly int subdivision;
 
-        public InterpolatedUVPostProcessorStep(IInterpolationConfig interpolationConfig)
+        public InterpolatedUvPostProcessorStep(IInterpolationConfig interpolationConfig)
         {
-            this._subdivision = interpolationConfig.ImageSubdivision;
+            this.subdivision = interpolationConfig.ImageSubdivision;
         }
 
-        public Vector2f ProcessUV(Vector2f vertex) => vertex / this._subdivision;
+        public Vector2f ProcessUv(Vector2f vertex) => vertex / this.subdivision;
 
-        public Vector2f ReverseUV(Vector2f vertex) => vertex;
+        public Vector2f ReverseUv(Vector2f vertex) => vertex;
     }
 }

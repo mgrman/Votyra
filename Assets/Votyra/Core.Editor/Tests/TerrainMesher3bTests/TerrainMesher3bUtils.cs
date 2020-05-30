@@ -26,12 +26,12 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
         {
             var contains = false;
 
-            contains = contains || (triangles.Contains(new Triangle3i(a, b, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, b, d), Triangle3i.OrderInvariantComparer)); //ab
-            contains = contains || (triangles.Contains(new Triangle3i(a, b, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, c, d), Triangle3i.OrderInvariantComparer)); //ac
-            contains = contains || (triangles.Contains(new Triangle3i(a, d, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, d, b), Triangle3i.OrderInvariantComparer)); //ad
-            contains = contains || (triangles.Contains(new Triangle3i(b, c, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(b, c, d), Triangle3i.OrderInvariantComparer)); //bc
-            contains = contains || (triangles.Contains(new Triangle3i(b, d, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(b, d, c), Triangle3i.OrderInvariantComparer)); //bd
-            contains = contains || (triangles.Contains(new Triangle3i(c, d, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(c, d, b), Triangle3i.OrderInvariantComparer)); //cd
+            contains = contains || (triangles.Contains(new Triangle3i(a, b, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, b, d), Triangle3i.OrderInvariantComparer)); // ab
+            contains = contains || (triangles.Contains(new Triangle3i(a, b, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, c, d), Triangle3i.OrderInvariantComparer)); // ac
+            contains = contains || (triangles.Contains(new Triangle3i(a, d, c), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(a, d, b), Triangle3i.OrderInvariantComparer)); // ad
+            contains = contains || (triangles.Contains(new Triangle3i(b, c, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(b, c, d), Triangle3i.OrderInvariantComparer)); // bc
+            contains = contains || (triangles.Contains(new Triangle3i(b, d, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(b, d, c), Triangle3i.OrderInvariantComparer)); // bd
+            contains = contains || (triangles.Contains(new Triangle3i(c, d, a), Triangle3i.OrderInvariantComparer) && triangles.Contains(new Triangle3i(c, d, b), Triangle3i.OrderInvariantComparer)); // cd
             if (!contains)
             {
                 throw new AssertionException($"On cube:\r\b{cube.Replace(' ', '\u00A0')}\r\nExpected collection containing quad {a},{b},{c},{d}. Actual:\r\n{(triangles.Any() ? string.Join(", ", triangles) : "<empty>")}");
@@ -40,9 +40,9 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
 
         public static List<Triangle3i> Evaluate(string cubeString)
         {
-            var sampler = new SimpleImageSampler3b();
-            var imageMock = new Mock<IImage3b>();
-            var cube = SampledData3b.ParseCube(cubeString);
+            var sampler = new SimpleImageSampler3B();
+            var imageMock = new Mock<IImage3B>();
+            var cube = SampledData3B.ParseCube(cubeString);
             //            Debug.Log(cube);
             imageMock.Setup(o => o.Sample(It.IsAny<Vector3i>()))
                 .Returns<Vector3i>(pos => cube[pos]);
@@ -59,7 +59,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             terrainConfig.Setup(o => o.CellInGroupCount)
                 .Returns(new Vector3i(1, 1, 1));
 
-            var mesher = new TerrainMesher3b(terrainConfig.Object, sampler);
+            var mesher = new TerrainMesher3B(terrainConfig.Object, sampler);
             mesher.Initialize(imageMock.Object);
             mesher.InitializeGroup(new Vector3i(0, 0, 0), meshMock.Object);
 

@@ -9,16 +9,16 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class TerrainMesherWithWalls3b : ITerrainMesher3b
+    public class TerrainMesherWithWalls3B : ITerrainMesher3B
     {
         public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
-        private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
+        private static readonly List<SampledData3B> DataWithoutTriangles = new List<SampledData3B>();
 
-        private static readonly SampledData3b[] NormalizedSamples = SampledData3b.AllValues.Select(o => ChooseTrianglesForCell(o)
+        private static readonly SampledData3B[] NormalizedSamples = SampledData3B.AllValues.Select(o => ChooseTrianglesForCell(o)
                 .Item1)
             .ToArray();
 
-        private static readonly IReadOnlyCollection<Triangle3f>[] MainPlaneTriangles = SampledData3b.AllValues.Select(o => ChooseTrianglesForCell(o)
+        private static readonly IReadOnlyCollection<Triangle3f>[] MainPlaneTriangles = SampledData3B.AllValues.Select(o => ChooseTrianglesForCell(o)
                 .Item2)
             .ToArray();
 
@@ -52,22 +52,22 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             })
             .ToArray();
 
-        private readonly Vector3i _cellInGroupCount;
+        private readonly Vector3i cellInGroupCount;
 
-        private readonly IImageSampler3 _imageSampler;
-        protected Vector3i groupPosition;
-        protected Vector3i groupSize;
-        protected IGeneralMesh pooledMesh;
+        private readonly IImageSampler3 imageSampler;
+        private Vector3i groupPosition;
+        private Vector3i groupSize;
+        private IGeneralMesh pooledMesh;
 
-        public TerrainMesherWithWalls3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
+        public TerrainMesherWithWalls3B(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)
         {
-            this._imageSampler = imageSampler;
-            this._cellInGroupCount = terrainConfig.CellInGroupCount;
+            this.imageSampler = imageSampler;
+            this.cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        protected IImage3b Image { get; private set; }
+        protected IImage3B Image { get; private set; }
 
-        public void Initialize(IImage3b image)
+        public void Initialize(IImage3B image)
         {
             this.Image = image;
         }
@@ -76,10 +76,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         {
             var cell = cellInGroup + this.groupPosition;
 
-            var data = this._imageSampler.Sample(this.Image, cell);
-            var dataXMinus = this._imageSampler.Sample(this.Image, cell + new Vector3i(-1, 0, 0));
-            var dataYMinus = this._imageSampler.Sample(this.Image, cell + new Vector3i(0, -1, 0));
-            var dataZMinus = this._imageSampler.Sample(this.Image, cell + new Vector3i(0, 0, -1));
+            var data = this.imageSampler.Sample(this.Image, cell);
+            var dataXMinus = this.imageSampler.Sample(this.Image, cell + new Vector3i(-1, 0, 0));
+            var dataYMinus = this.imageSampler.Sample(this.Image, cell + new Vector3i(0, -1, 0));
+            var dataZMinus = this.imageSampler.Sample(this.Image, cell + new Vector3i(0, 0, -1));
 
             foreach (var tri in MainPlaneTriangles[data.Data])
             {
@@ -104,29 +104,29 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public void InitializeGroup(Vector3i group, IGeneralMesh cleanPooledMesh)
         {
-            var bounds = Range3i.FromMinAndSize(group * this._cellInGroupCount, this._cellInGroupCount)
+            var bounds = Range3i.FromMinAndSize(group * this.cellInGroupCount, this.cellInGroupCount)
                 .ToArea3f();
 
-            this.groupPosition = this._cellInGroupCount * group;
+            this.groupPosition = this.cellInGroupCount * group;
 
             this.pooledMesh = cleanPooledMesh;
-            this.pooledMesh.Reset(Area3f.FromMinAndSize((group * this._cellInGroupCount).ToVector3f(), this._cellInGroupCount.ToVector3f()));
+            this.pooledMesh.Reset(Area3f.FromMinAndSize((group * this.cellInGroupCount).ToVector3f(), this.cellInGroupCount.ToVector3f()));
         }
 
         public IGeneralMesh GetResultingMesh() => this.pooledMesh;
 
-        private static Tuple<SampledData3b, IReadOnlyCollection<Triangle3f>> ChooseTrianglesForCell(SampledData3b data)
+        private static Tuple<SampledData3B, IReadOnlyCollection<Triangle3f>> ChooseTrianglesForCell(SampledData3B data)
         {
-            var pos_x0y0z0 = new Vector3f(0, 0, 0);
-            var pos_x0y0z1 = new Vector3f(0, 0, 1);
-            var pos_x0y1z0 = new Vector3f(0, 1, 0);
-            var pos_x0y1z1 = new Vector3f(0, 1, 1);
-            var pos_x1y0z0 = new Vector3f(1, 0, 0);
-            var pos_x1y0z1 = new Vector3f(1, 0, 1);
-            var pos_x1y1z0 = new Vector3f(1, 1, 0);
-            var pos_x1y1z1 = new Vector3f(1, 1, 1);
+            var posX0Y0Z0 = new Vector3f(0, 0, 0);
+            var posX0Y0Z1 = new Vector3f(0, 0, 1);
+            var posX0Y1Z0 = new Vector3f(0, 1, 0);
+            var posX0Y1Z1 = new Vector3f(0, 1, 1);
+            var posX1Y0Z0 = new Vector3f(1, 0, 0);
+            var posX1Y0Z1 = new Vector3f(1, 0, 1);
+            var posX1Y1Z0 = new Vector3f(1, 1, 0);
+            var posX1Y1Z1 = new Vector3f(1, 1, 1);
 
-            //TODO slopes might be usefull to also do only subset, since there can be some small outlier like:
+            // TODO slopes might be usefull to also do only subset, since there can be some small outlier like:
             //   1-----1
             //  /|    /|
             // 1-+---1 |
@@ -134,9 +134,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             // |/    |/
             // 1-----0
 
-            SampledData3b rotatedTemplate;
+            SampledData3B rotatedTemplate;
 
-            Matrix4x4f matrix;
+            Matrix4X4F matrix;
             if ((data.Data == 0) || (data.Data == byte.MaxValue))
             {
                 return Tuple.Create(data, Array.Empty<Triangle3f>() as IReadOnlyCollection<Triangle3f>);
@@ -163,7 +163,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             //          .ToArray() as IReadOnlyCollection<Triangle3f>);
             // }
 
-            if (SampledData3b.ParseCube(@"
+            if (SampledData3B.ParseCube(@"
               1-----0
              /|    /|
             1-+---0 |
@@ -171,17 +171,17 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             |/    |/
             1-----1
             ")
-                .EqualsRotationInvariant(data, out matrix, false, false, true, false)) //simple slope
+                .EqualsRotationInvariant(data, out matrix, false, false, true, false)) // simple slope
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
                 return Tuple.Create(data,
-                    TerrainMeshUtilities.GetQuadTriangles(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x0y1z1), matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z0), false)
+                    TerrainMeshUtilities.GetQuadTriangles(matrix.MultiplyPoint(posX0Y0Z1), matrix.MultiplyPoint(posX0Y1Z1), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX1Y1Z0), false)
                         .ChangeOrderIfTrue(isInverted)
                         .ToArray() as IReadOnlyCollection<Triangle3f>);
             }
 
-            if (SampledData3b.ParseCube(@"
+            if (SampledData3B.ParseCube(@"
               1-----0
              /|    /|
             1-+---1 |
@@ -189,20 +189,20 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             |/    |/
             1-----1
             ")
-                .EqualsRotationInvariant(data, out matrix, false, false, true, false)) //diagonal plane
+                .EqualsRotationInvariant(data, out matrix, false, false, true, false)) // diagonal plane
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
                 return Tuple.Create(data,
                     new[]
                         {
-                            new Triangle3f(matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x0y1z1)),
-                            new Triangle3f(matrix.MultiplyPoint(pos_x1y0z1), matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x0y1z1)),
+                            new Triangle3f(matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z0), matrix.MultiplyPoint(posX0Y1Z1)),
+                            new Triangle3f(matrix.MultiplyPoint(posX1Y0Z1), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z1)),
                         }.ChangeOrderIfTrue(isInverted)
                         .ToArray() as IReadOnlyCollection<Triangle3f>);
             }
 
-            if (SampledData3b.ParseCube(@"
+            if (SampledData3B.ParseCube(@"
               0-----1
              /|    /|
             1-+---0 |
@@ -210,7 +210,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             |/    |/
             1-----1
             ")
-                .EqualsRotationInvariant(data, out matrix, false, false, true, false)) //dual diagonal slope
+                .EqualsRotationInvariant(data, out matrix, false, false, true, false)) // dual diagonal slope
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
@@ -218,13 +218,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 return Tuple.Create(data,
                     new[]
                         {
-                            new Triangle3f(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x1y1z1)),
-                            new Triangle3f(matrix.MultiplyPoint(pos_x0y0z1), matrix.MultiplyPoint(pos_x1y1z1), matrix.MultiplyPoint(pos_x0y1z0)),
+                            new Triangle3f(matrix.MultiplyPoint(posX0Y0Z1), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX1Y1Z1)),
+                            new Triangle3f(matrix.MultiplyPoint(posX0Y0Z1), matrix.MultiplyPoint(posX1Y1Z1), matrix.MultiplyPoint(posX0Y1Z0)),
                         }.ChangeOrderIfTrue(isInverted)
                         .ToArray() as IReadOnlyCollection<Triangle3f>);
             }
 
-            if (SampledData3b.ParseCube(@"
+            if (SampledData3B.ParseCube(@"
               1-----0
              /|    /|
             1-+---1 |
@@ -240,7 +240,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 return Tuple.Create(rotatedTemplate,
                     new[]
                         {
-                            new Triangle3f(matrix.MultiplyPoint(pos_x0y1z1), matrix.MultiplyPoint(pos_x1y0z1), matrix.MultiplyPoint(pos_x1y1z0)),
+                            new Triangle3f(matrix.MultiplyPoint(posX0Y1Z1), matrix.MultiplyPoint(posX1Y0Z1), matrix.MultiplyPoint(posX1Y1Z0)),
                         }.ChangeOrderIfTrue(isInverted)
                         .ToArray() as IReadOnlyCollection<Triangle3f>);
             }
@@ -269,7 +269,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             //        .ToArray() as IReadOnlyCollection<Triangle3f>);
             // }
 
-            if (SampledData3b.ParseCube(@"
+            if (SampledData3B.ParseCube(@"
               0-----0
              /|    /|
             1-+---0 |
@@ -283,7 +283,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 var isInverted = matrix.Determinant < 0;
 
                 return Tuple.Create(rotatedTemplate,
-                    new Triangle3f(matrix.MultiplyPoint(pos_x1y0z0), matrix.MultiplyPoint(pos_x0y1z0), matrix.MultiplyPoint(pos_x0y0z1)).AsEnumerable()
+                    new Triangle3f(matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z0), matrix.MultiplyPoint(posX0Y0Z1)).AsEnumerable()
                         .ChangeOrderIfTrue(isInverted)
                         .ToArray() as IReadOnlyCollection<Triangle3f>);
             }
@@ -313,39 +313,39 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             //             */
             //                        }
 
-            return Tuple.Create(new SampledData3b(), Array.Empty<Triangle3f>() as IReadOnlyCollection<Triangle3f>);
+            return Tuple.Create(new SampledData3B(false, false, false, false, false, false, false, false), Array.Empty<Triangle3f>() as IReadOnlyCollection<Triangle3f>);
         }
 
-        private static IReadOnlyCollection<Triangle3f> ChooseXWallTriangles(SampledData3b data, SampledData3b dataXMinus)
+        private static IReadOnlyCollection<Triangle3f> ChooseXWallTriangles(SampledData3B data, SampledData3B dataXMinus)
         {
             var triangles = new List<Triangle3f>();
 
-            var centerXMinus = ((dataXMinus.Data_x1y0z0 ? 1 : 0) + (dataXMinus.Data_x1y0z1 ? 1 : 0) + (dataXMinus.Data_x1y1z0 ? 1 : 0) + (dataXMinus.Data_x1y1z1 ? 1 : 0)) > 2;
-            var centerX = ((data.Data_x0y0z0 ? 1 : 0) + (data.Data_x0y0z1 ? 1 : 0) + (data.Data_x0y1z0 ? 1 : 0) + (data.Data_x0y1z1 ? 1 : 0)) > 2;
+            var centerXMinus = ((dataXMinus.DataX1Y0Z0 ? 1 : 0) + (dataXMinus.DataX1Y0Z1 ? 1 : 0) + (dataXMinus.DataX1Y1Z0 ? 1 : 0) + (dataXMinus.DataX1Y1Z1 ? 1 : 0)) > 2;
+            var centerX = ((data.DataX0Y0Z0 ? 1 : 0) + (data.DataX0Y0Z1 ? 1 : 0) + (data.DataX0Y1Z0 ? 1 : 0) + (data.DataX0Y1Z1 ? 1 : 0)) > 2;
 
-            var isBottomTri = data.Data_x0y0z0 && data.Data_x0y1z0 && centerX;
-            var isBottomTriMinus = dataXMinus.Data_x1y0z0 && dataXMinus.Data_x1y1z0 && centerXMinus;
+            var isBottomTri = data.DataX0Y0Z0 && data.DataX0Y1Z0 && centerX;
+            var isBottomTriMinus = dataXMinus.DataX1Y0Z0 && dataXMinus.DataX1Y1Z0 && centerXMinus;
             if (isBottomTri != isBottomTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(0, 0, 0), new Vector3f(0, 1, 0), new Vector3f(0, 0.5f, 0.5f), isBottomTri);
             }
 
-            var isTopTri = data.Data_x0y0z1 && data.Data_x0y1z1 && centerX;
-            var isTopTriMinus = dataXMinus.Data_x1y0z1 && dataXMinus.Data_x1y1z1 && centerXMinus;
+            var isTopTri = data.DataX0Y0Z1 && data.DataX0Y1Z1 && centerX;
+            var isTopTriMinus = dataXMinus.DataX1Y0Z1 && dataXMinus.DataX1Y1Z1 && centerXMinus;
             if (isTopTri != isTopTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(0, 1, 1), new Vector3f(0, 0, 1), new Vector3f(0, 0.5f, 0.5f), isTopTri);
             }
 
-            var isLeftTri = data.Data_x0y0z0 && data.Data_x0y0z1 && centerX;
-            var isLeftTriMinus = dataXMinus.Data_x1y0z0 && dataXMinus.Data_x1y0z1 && centerXMinus;
+            var isLeftTri = data.DataX0Y0Z0 && data.DataX0Y0Z1 && centerX;
+            var isLeftTriMinus = dataXMinus.DataX1Y0Z0 && dataXMinus.DataX1Y0Z1 && centerXMinus;
             if (isLeftTri != isLeftTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(0, 0, 1), new Vector3f(0, 0, 0), new Vector3f(0, 0.5f, 0.5f), isLeftTri);
             }
 
-            var isRightTri = data.Data_x0y1z0 && data.Data_x0y1z1 && centerX;
-            var isRightTriMinus = dataXMinus.Data_x1y1z0 && dataXMinus.Data_x1y1z1 && centerXMinus;
+            var isRightTri = data.DataX0Y1Z0 && data.DataX0Y1Z1 && centerX;
+            var isRightTriMinus = dataXMinus.DataX1Y1Z0 && dataXMinus.DataX1Y1Z1 && centerXMinus;
             if (isRightTri != isRightTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(0, 1, 0), new Vector3f(0, 1, 1), new Vector3f(0, 0.5f, 0.5f), isRightTri);
@@ -354,36 +354,36 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return triangles;
         }
 
-        private static IReadOnlyCollection<Triangle3f> ChooseYWallTriangles(SampledData3b data, SampledData3b dataYMinus)
+        private static IReadOnlyCollection<Triangle3f> ChooseYWallTriangles(SampledData3B data, SampledData3B dataYMinus)
         {
             var triangles = new List<Triangle3f>();
 
-            var centerYMinus = ((dataYMinus.Data_x0y1z0 ? 1 : 0) + (dataYMinus.Data_x0y1z1 ? 1 : 0) + (dataYMinus.Data_x1y1z0 ? 1 : 0) + (dataYMinus.Data_x1y1z1 ? 1 : 0)) > 2;
-            var centerY = ((data.Data_x0y0z0 ? 1 : 0) + (data.Data_x0y0z1 ? 1 : 0) + (data.Data_x1y0z0 ? 1 : 0) + (data.Data_x1y0z1 ? 1 : 0)) > 2;
+            var centerYMinus = ((dataYMinus.DataX0Y1Z0 ? 1 : 0) + (dataYMinus.DataX0Y1Z1 ? 1 : 0) + (dataYMinus.DataX1Y1Z0 ? 1 : 0) + (dataYMinus.DataX1Y1Z1 ? 1 : 0)) > 2;
+            var centerY = ((data.DataX0Y0Z0 ? 1 : 0) + (data.DataX0Y0Z1 ? 1 : 0) + (data.DataX1Y0Z0 ? 1 : 0) + (data.DataX1Y0Z1 ? 1 : 0)) > 2;
 
-            var isBottomTri = data.Data_x0y0z0 && data.Data_x1y0z0 && centerY;
-            var isBottomTriMinus = dataYMinus.Data_x0y1z0 && dataYMinus.Data_x1y1z0 && centerYMinus;
+            var isBottomTri = data.DataX0Y0Z0 && data.DataX1Y0Z0 && centerY;
+            var isBottomTriMinus = dataYMinus.DataX0Y1Z0 && dataYMinus.DataX1Y1Z0 && centerYMinus;
             if (isBottomTri != isBottomTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(0, 0, 0), new Vector3f(1, 0, 0), new Vector3f(0.5f, 0, 0.5f), isBottomTriMinus);
             }
 
-            var isTopTri = data.Data_x0y0z1 && data.Data_x1y0z1 && centerY;
-            var isTopTriMinus = dataYMinus.Data_x0y1z1 && dataYMinus.Data_x1y1z1 && centerYMinus;
+            var isTopTri = data.DataX0Y0Z1 && data.DataX1Y0Z1 && centerY;
+            var isTopTriMinus = dataYMinus.DataX0Y1Z1 && dataYMinus.DataX1Y1Z1 && centerYMinus;
             if (isTopTri != isTopTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(1, 0, 1), new Vector3f(0, 0, 1), new Vector3f(0.5f, 0, 0.5f), isTopTriMinus);
             }
 
-            var isLeftTri = data.Data_x0y0z0 && data.Data_x0y0z1 && centerY;
-            var isLeftTriMinus = dataYMinus.Data_x0y1z0 && dataYMinus.Data_x0y1z1 && centerYMinus;
+            var isLeftTri = data.DataX0Y0Z0 && data.DataX0Y0Z1 && centerY;
+            var isLeftTriMinus = dataYMinus.DataX0Y1Z0 && dataYMinus.DataX0Y1Z1 && centerYMinus;
             if (isLeftTri != isLeftTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(0, 0, 1), new Vector3f(0, 0, 0), new Vector3f(0.5f, 0, 0.5f), isLeftTriMinus);
             }
 
-            var isRightTri = data.Data_x1y0z0 && data.Data_x1y0z1 && centerY;
-            var isRightTriMinus = dataYMinus.Data_x1y1z0 && dataYMinus.Data_x1y1z1 && centerYMinus;
+            var isRightTri = data.DataX1Y0Z0 && data.DataX1Y0Z1 && centerY;
+            var isRightTriMinus = dataYMinus.DataX1Y1Z0 && dataYMinus.DataX1Y1Z1 && centerYMinus;
             if (isRightTri != isRightTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(1, 0, 0), new Vector3f(1, 0, 1), new Vector3f(0.5f, 0, 0.5f), isRightTriMinus);
@@ -392,36 +392,36 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             return triangles;
         }
 
-        private static IReadOnlyCollection<Triangle3f> ChooseZWallTriangles(SampledData3b data, SampledData3b dataZMinus)
+        private static IReadOnlyCollection<Triangle3f> ChooseZWallTriangles(SampledData3B data, SampledData3B dataZMinus)
         {
             var triangles = new List<Triangle3f>();
 
-            var centerZMinus = ((dataZMinus.Data_x0y0z1 ? 1 : 0) + (dataZMinus.Data_x0y1z1 ? 1 : 0) + (dataZMinus.Data_x1y0z1 ? 1 : 0) + (dataZMinus.Data_x1y1z1 ? 1 : 0)) > 2;
-            var centerZ = ((data.Data_x0y0z0 ? 1 : 0) + (data.Data_x0y1z0 ? 1 : 0) + (data.Data_x1y0z0 ? 1 : 0) + (data.Data_x1y1z0 ? 1 : 0)) > 2;
+            var centerZMinus = ((dataZMinus.DataX0Y0Z1 ? 1 : 0) + (dataZMinus.DataX0Y1Z1 ? 1 : 0) + (dataZMinus.DataX1Y0Z1 ? 1 : 0) + (dataZMinus.DataX1Y1Z1 ? 1 : 0)) > 2;
+            var centerZ = ((data.DataX0Y0Z0 ? 1 : 0) + (data.DataX0Y1Z0 ? 1 : 0) + (data.DataX1Y0Z0 ? 1 : 0) + (data.DataX1Y1Z0 ? 1 : 0)) > 2;
 
-            var isBottomTri = data.Data_x0y0z0 && data.Data_x1y0z0 && centerZ;
-            var isBottomTriMinus = dataZMinus.Data_x0y0z1 && dataZMinus.Data_x1y0z1 && centerZMinus;
+            var isBottomTri = data.DataX0Y0Z0 && data.DataX1Y0Z0 && centerZ;
+            var isBottomTriMinus = dataZMinus.DataX0Y0Z1 && dataZMinus.DataX1Y0Z1 && centerZMinus;
             if (isBottomTri != isBottomTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(0, 0, 0), new Vector3f(1, 0, 0), new Vector3f(0.5f, 0.5f, 0), isBottomTri);
             }
 
-            var isTopTri = data.Data_x0y1z0 && data.Data_x1y1z0 && centerZ;
-            var isTopTriMinus = dataZMinus.Data_x0y1z1 && dataZMinus.Data_x1y1z1 && centerZMinus;
+            var isTopTri = data.DataX0Y1Z0 && data.DataX1Y1Z0 && centerZ;
+            var isTopTriMinus = dataZMinus.DataX0Y1Z1 && dataZMinus.DataX1Y1Z1 && centerZMinus;
             if (isTopTri != isTopTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(1, 1, 0), new Vector3f(0, 1, 0), new Vector3f(0.5f, 0.5f, 0), isTopTri);
             }
 
-            var isLeftTri = data.Data_x0y0z0 && data.Data_x0y1z0 && centerZ;
-            var isLeftTriMinus = dataZMinus.Data_x0y0z1 && dataZMinus.Data_x0y1z1 && centerZMinus;
+            var isLeftTri = data.DataX0Y0Z0 && data.DataX0Y1Z0 && centerZ;
+            var isLeftTriMinus = dataZMinus.DataX0Y0Z1 && dataZMinus.DataX0Y1Z1 && centerZMinus;
             if (isLeftTri != isLeftTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(0, 1, 0), new Vector3f(0, 0, 0), new Vector3f(0.5f, 0.5f, 0), isLeftTri);
             }
 
-            var isRightTri = data.Data_x1y0z0 && data.Data_x1y1z0 && centerZ;
-            var isRightTriMinus = dataZMinus.Data_x1y0z1 && dataZMinus.Data_x1y1z1 && centerZMinus;
+            var isRightTri = data.DataX1Y0Z0 && data.DataX1Y1Z0 && centerZ;
+            var isRightTriMinus = dataZMinus.DataX1Y0Z1 && dataZMinus.DataX1Y1Z1 && centerZMinus;
             if (isRightTri != isRightTriMinus)
             {
                 triangles.AddTriangle(new Vector3f(1, 0, 0), new Vector3f(1, 1, 0), new Vector3f(0.5f, 0.5f, 0), isRightTri);
@@ -432,10 +432,10 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         private struct SampledDataWithWall
         {
-            public readonly SampledData3b Data;
-            public readonly SampledData3b Wall;
+            public readonly SampledData3B Data;
+            public readonly SampledData3B Wall;
 
-            public SampledDataWithWall(SampledData3b data, SampledData3b wall)
+            public SampledDataWithWall(SampledData3B data, SampledData3B wall)
             {
                 this.Data = data;
                 this.Wall = wall;
@@ -445,9 +445,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             {
                 get
                 {
-                    foreach (var data in SampledData3b.AllValues)
+                    foreach (var data in SampledData3B.AllValues)
                     {
-                        foreach (var wall in SampledData3b.AllValues)
+                        foreach (var wall in SampledData3B.AllValues)
                         {
                             yield return new SampledDataWithWall(data, wall);
                         }
@@ -455,7 +455,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 }
             }
 
-            public static int GetIndexInAllValues(SampledData3b data, SampledData3b wall) => (data.Data << 8) | wall.Data;
+            public static int GetIndexInAllValues(SampledData3B data, SampledData3B wall) => (data.Data << 8) | wall.Data;
         }
     }
 }

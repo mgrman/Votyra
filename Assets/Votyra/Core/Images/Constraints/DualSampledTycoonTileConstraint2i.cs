@@ -3,9 +3,9 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images.Constraints
 {
-    public class DualSampledTycoonTileConstraint2i : TycoonTileConstraint2i
+    public class DualSampledTycoonTileConstraint2I : TycoonTileConstraint2I
     {
-        public DualSampledTycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
+        public DualSampledTycoonTileConstraint2I(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
             : base(constraintConfig, logger)
         {
         }

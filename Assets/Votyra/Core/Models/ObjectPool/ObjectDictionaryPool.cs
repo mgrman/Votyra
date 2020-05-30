@@ -5,21 +5,21 @@ namespace Votyra.Core.Models.ObjectPool
 {
     public class ObjectDictionaryPool<T, TKey> : BaseKeyObjectPool<T, TKey> where TKey : struct
     {
-        private readonly Dictionary<TKey, List<T>> _objects;
+        private readonly Dictionary<TKey, List<T>> objects;
 
         public ObjectDictionaryPool(int limit, Func<TKey, T> objectGenerator)
             : base(limit, objectGenerator)
         {
-            this._objects = new Dictionary<TKey, List<T>>();
+            this.objects = new Dictionary<TKey, List<T>>();
         }
 
         protected override List<T> GetPool(TKey key)
         {
             List<T> objectPool;
-            if (!this._objects.TryGetValue(key, out objectPool))
+            if (!this.objects.TryGetValue(key, out objectPool))
             {
                 objectPool = new List<T>();
-                this._objects[key] = objectPool;
+                this.objects[key] = objectPool;
             }
 
             return objectPool;

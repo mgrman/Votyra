@@ -5,13 +5,13 @@ namespace Votyra.Core.Painting.Commands
 {
     public abstract class BaseFactory<T> : IPaintCommandFactory where T : IInitializablePaintCommand, new()
     {
-        private readonly IEditableImage2f _editableImage;
-        private readonly IThreadSafeLogger _logger;
+        private readonly IEditableImage2F editableImage;
+        private readonly IThreadSafeLogger logger;
 
-        protected BaseFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
+        protected BaseFactory(IEditableImage2F editableImage, IThreadSafeLogger logger)
         {
-            this._editableImage = editableImage;
-            this._logger = logger;
+            this.editableImage = editableImage;
+            this.logger = logger;
         }
 
         public abstract string Action { get; }
@@ -19,7 +19,7 @@ namespace Votyra.Core.Painting.Commands
         public IPaintCommand Create()
         {
             var cmd = new T();
-            cmd.Initialize(this._editableImage, this._logger);
+            cmd.Initialize(this.editableImage, this.logger);
             return cmd;
         }
     }

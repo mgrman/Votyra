@@ -18,7 +18,7 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager2i(null, null, null, null, null, null, null, null);
+            new TerrainGeneratorManager2I(null, null, null, null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -26,10 +26,10 @@ namespace Votyra.Plannar.Unity
 
         public override void InstallBindings()
         {
-            this.Container.BindInterfacesAndSelfTo<InterpolatedImage2iTo2fPostProcessor>()
+            this.Container.BindInterfacesAndSelfTo<InterpolatedImage2ITo2FPostProcessor>()
                 .AsSingle();
 
-            this.Container.BindInterfacesAndSelfTo<InterpolatedUVPostProcessorStep>()
+            this.Container.BindInterfacesAndSelfTo<InterpolatedUvPostProcessorStep>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -41,18 +41,18 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
 
-            this.Container.BindInterfacesAndSelfTo<Terrain2fRaycaster>()
+            this.Container.BindInterfacesAndSelfTo<Terrain2FRaycaster>()
                 .AsSingle()
                 .NonLazy();
 
-            this.Container.BindInterfacesAndSelfTo<TerrainGeneratorManager2i>()
+            this.Container.BindInterfacesAndSelfTo<TerrainGeneratorManager2I>()
                 .AsSingle()
                 .NonLazy();
 
-            this.Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2i>()
+            this.Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2I>()
                 .AsSingle();
 
-            this.Container.BindInterfacesAndSelfTo<BicubicTerrainMesher2f>()
+            this.Container.BindInterfacesAndSelfTo<BicubicTerrainMesher2F>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -60,7 +60,7 @@ namespace Votyra.Plannar.Unity
                     return (interpolationConfig.MeshSubdivision > 1) && (interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic);
                 });
 
-            this.Container.BindInterfacesAndSelfTo<TerrainMesher2f>()
+            this.Container.BindInterfacesAndSelfTo<TerrainMesher2F>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -90,7 +90,7 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
 
-            this.Container.BindInterfacesAndSelfTo<FrameData2iPool>()
+            this.Container.BindInterfacesAndSelfTo<FrameData2IPool>()
                 .AsSingle();
 
             this.Container.BindInterfacesAndSelfTo<FrameData2IProvider>()
@@ -112,13 +112,13 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
 
-            this.Container.BindInterfacesAndSelfTo<UnityTerrainGeneratorManager2i>()
+            this.Container.BindInterfacesAndSelfTo<UnityTerrainGeneratorManager2I>()
                 .AsSingle();
 
-            this.Container.BindInterfacesAndSelfTo<TerrainRepository2i>()
+            this.Container.BindInterfacesAndSelfTo<TerrainRepository2I>()
                 .AsSingle();
 
-            this.Container.BindInterfacesAndSelfTo<LastValueTaskQueue<ArcResource<IFrameData2i>>>()
+            this.Container.BindInterfacesAndSelfTo<LastValueTaskQueue<ArcResource<IFrameData2I>>>()
                 .AsSingle()
                 .When(c =>
                 {
@@ -134,7 +134,7 @@ namespace Votyra.Plannar.Unity
                     return terrainConfig.AsyncTerrainGeneration;
                 });
 
-            this.Container.BindInterfacesAndSelfTo<ImmediateQueue<ArcResource<IFrameData2i>>>()
+            this.Container.BindInterfacesAndSelfTo<ImmediateQueue<ArcResource<IFrameData2I>>>()
                 .AsSingle()
                 .When(c =>
                 {

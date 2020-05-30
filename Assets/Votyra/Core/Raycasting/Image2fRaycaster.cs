@@ -4,44 +4,44 @@ using Votyra.Core.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Core.Raycasting
 {
-    public sealed class Image2fRaycaster : BaseCellRaycaster
+    public sealed class Image2FRaycaster : BaseCellRaycaster
     {
-        private readonly IImage2fProvider _image2FProvider;
-        private Ray3f _cameraRay;
-        private float _directionXyMag;
-        private IImage2f _image;
-        private Vector2f _startXy;
+        private readonly IImage2FProvider image2FProvider;
+        private Ray3f cameraRay;
+        private float directionXyMag;
+        private IImage2F image;
+        private Vector2f startXy;
 
-        public Image2fRaycaster(IImage2fProvider image2FProvider, ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
+        public Image2FRaycaster(IImage2FProvider image2FProvider, ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
             : base(terrainVertexPostProcessor, raycasterAggregator)
         {
-            this._image2FProvider = image2FProvider;
+            this.image2FProvider = image2FProvider;
         }
 
         public override Vector3f Raycast(Ray3f cameraRay)
         {
-            this._image = this._image2FProvider.CreateImage();
-            (this._image as IInitializableImage)?.StartUsing();
+            this.image = this.image2FProvider.CreateImage();
+            (this.image as IInitializableImage)?.StartUsing();
 
-            this._cameraRay = cameraRay;
+            this.cameraRay = cameraRay;
 
-            this._startXy = cameraRay.XY()
+            this.startXy = cameraRay.XY()
                 .Origin;
-            this._directionXyMag = cameraRay.Direction.XY()
+            this.directionXyMag = cameraRay.Direction.XY()
                 .Magnitude();
 
             var result = base.Raycast(cameraRay);
 
-            (this._image as IInitializableImage)?.FinishUsing();
-            this._image = null;
+            (this.image as IInitializableImage)?.FinishUsing();
+            this.image = null;
 
             return result;
         }
 
         protected override Vector3f RaycastCell(Line2f line)
         {
-            var imageValueFrom = this.GetLinearInterpolatedValue(this._image, line.From);
-            var imageValueTo = this.GetLinearInterpolatedValue(this._image, line.To);
+            var imageValueFrom = this.GetLinearInterpolatedValue(this.image, line.From);
+            var imageValueTo = this.GetLinearInterpolatedValue(this.image, line.To);
 
             var fromRayValue = this.GetRayValue(line.From);
             var toRayValue = this.GetRayValue(line.To);
@@ -53,32 +53,32 @@ namespace Votyra.Core.Raycasting
             }
 
             var xy = line.From + ((line.To - line.From) * x);
-            return xy.ToVector3f(this.GetLinearInterpolatedValue(this._image, xy));
+            return xy.ToVector3f(this.GetLinearInterpolatedValue(this.image, xy));
         }
 
-        protected override float RaycastCell(Vector2f point) => this.GetLinearInterpolatedValue(this._image, point);
+        protected override float RaycastCell(Vector2f point) => this.GetLinearInterpolatedValue(this.image, point);
 
         private float GetRayValue(Vector2f point)
         {
-            var p = (point - this._startXy).Magnitude() / this._directionXyMag;
-            return this._cameraRay.Origin.Z + (this._cameraRay.Direction.Z * p);
+            var p = (point - this.startXy).Magnitude() / this.directionXyMag;
+            return this.cameraRay.Origin.Z + (this.cameraRay.Direction.Z * p);
         }
 
-        private float GetLinearInterpolatedValue(IImage2f image, Vector2f pos)
+        private float GetLinearInterpolatedValue(IImage2F image, Vector2f pos)
         {
-            var pos_x0y0 = pos.FloorToVector2i();
-            var fraction = pos - pos_x0y0;
+            var posX0Y0 = pos.FloorToVector2i();
+            var fraction = pos - posX0Y0;
 
-            var pos_x0y1 = pos_x0y0 + new Vector2i(0, 1);
-            var pos_x1y0 = pos_x0y0 + new Vector2i(1, 0);
-            var pos_x1y1 = pos_x0y0 + new Vector2i(1, 1);
+            var posX0Y1 = posX0Y0 + new Vector2i(0, 1);
+            var posX1Y0 = posX0Y0 + new Vector2i(1, 0);
+            var posX1Y1 = posX0Y0 + new Vector2i(1, 1);
 
-            var x0y0 = image.Sample(pos_x0y0);
-            var x0y1 = image.Sample(pos_x0y1);
-            var x1y0 = image.Sample(pos_x1y0);
-            var x1y1 = image.Sample(pos_x1y1);
+            var x0Y0 = image.Sample(posX0Y0);
+            var x0Y1 = image.Sample(posX0Y1);
+            var x1Y0 = image.Sample(posX1Y0);
+            var x1Y1 = image.Sample(posX1Y1);
 
-            return ((1f - fraction.X) * (1f - fraction.Y) * x0y0) + (fraction.X * (1f - fraction.Y) * x1y0) + ((1f - fraction.X) * fraction.Y * x0y1) + (fraction.X * fraction.Y * x1y1);
+            return ((1f - fraction.X) * (1f - fraction.Y) * x0Y0) + (fraction.X * (1f - fraction.Y) * x1Y0) + ((1f - fraction.X) * fraction.Y * x0Y1) + (fraction.X * fraction.Y * x1Y1);
         }
     }
 }

@@ -1,18 +1,21 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Votyra.Core
 {
     [Serializable]
-    public class TerrainAlgorithm_UI
+    public class TerrainAlgorithmUi
     {
+        [FormerlySerializedAs("Name")]
         [SerializeField]
-        public string Name;
+        private string name;
 
+        [FormerlySerializedAs("Prefab")]
         [SerializeField]
-        public GameObject Prefab;
+        private GameObject prefab;
 
         //  User-defined conversion from double to Digit
-        public static implicit operator TerrainAlgorithm(TerrainAlgorithm_UI @this) => new TerrainAlgorithm(@this.Name, @this.Prefab);
+        public static implicit operator TerrainAlgorithm(TerrainAlgorithmUi @this) => new TerrainAlgorithm(@this.name, @this.prefab);
     }
 }

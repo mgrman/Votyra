@@ -37,11 +37,8 @@ namespace Votyra.Core.Editor
                 var ctors = configType.GetConstructors();
 
                 var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null)).SelectMany(o => o.GetParameters()
-                    .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()
-                            ?.Id as string,
-                        p.ParameterType,
-                        null))
-                    .Where(a => a.Id != null));
+                  .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()?.Id as string, p.ParameterType, null))
+                  .Where(a => a.Id != null));
 
                 if (!configItems.Any())
                 {
@@ -111,6 +108,66 @@ namespace Votyra.Core.Editor
             }
         }
 
+        private static IEnumerable<Type> GetConfigTypes(GameObject algorithmPrefab)
+        {
+            IEnumerable<IInstaller> installers;
+
+            var autoContext = algorithmPrefab.GetComponent<AutoGameObjectContext>();
+            if (autoContext != null)
+            {
+                installers = autoContext.GetInstallers();
+            }
+            else
+            {
+                var context = algorithmPrefab.GetComponent<GameObjectContext>();
+                installers = context.Installers;
+            }
+
+            var container = new DiContainer(false);
+            var tempGameObject = new GameObject();
+            try
+            {
+                foreach (var installer in installers)
+                {
+                    var tempInstallerGo = tempGameObject.AddComponent(installer.GetType());
+                    var tempInstaller = tempInstallerGo.GetComponentInChildren<MonoInstallerBase>(true);
+
+                    try
+                    {
+                        container.Inject(tempInstaller, new object[0]);
+                        tempInstaller.InstallBindings();
+                    }
+                    catch { }
+                    finally
+                    {
+                        DestroyImmediate(tempInstaller);
+                    }
+                }
+
+                container.FlushBindings();
+            }
+            finally
+            {
+                DestroyImmediate(tempGameObject);
+            }
+
+            var types = new List<Type>();
+            foreach (var provider in container.AllProviders)
+            {
+                try
+                {
+                    var instanceType = provider.GetInstanceType(new InjectContext(container, typeof(object)));
+                    types.Add(instanceType);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
+            }
+
+            return types;
+        }
+
         private bool GetNewValue(Type type, object oldValue, out object newValue)
         {
             if (typeof(Object).IsAssignableFrom(type))
@@ -163,10 +220,10 @@ namespace Votyra.Core.Editor
 
             if (type.IsEnum)
             {
-                var oldEnumValue = (oldValue != null) && Enum.IsDefined(type, oldValue)
-                    ? oldValue as Enum
-                    : Enum.GetValues(type)
-                        .GetValue(0) as Enum;
+                var oldEnumValue = (oldValue != null) && Enum.IsDefined(type, oldValue) ?
+                    oldValue as Enum :
+                    Enum.GetValues(type)
+                    .GetValue(0) as Enum;
                 var newEnumValue = EditorGUILayout.EnumPopup(oldEnumValue, GUILayout.MaxWidth(200));
                 newValue = newEnumValue;
                 return !newEnumValue.Equals(oldEnumValue);
@@ -175,11 +232,11 @@ namespace Votyra.Core.Editor
             if (typeof(Vector3i).IsAssignableFrom(type))
             {
                 var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
-                var newVector3iValue = EditorGUILayout.Vector3Field("",
+                var newVector3iValue = EditorGUILayout.Vector3Field(string.Empty,
                         oldVector3iValue.ToVector3f()
-                            .ToVector3(),
+                        .ToVector3(),
                         GUILayout.MaxWidth(200))
-                    .ToVector3f()
+                    .ToVector3F()
                     .RoundToVector3i();
                 newValue = newVector3iValue;
                 return newVector3iValue != oldVector3iValue;
@@ -188,8 +245,8 @@ namespace Votyra.Core.Editor
             if (typeof(Vector3f).IsAssignableFrom(type))
             {
                 var oldVector3fValue = oldValue as Vector3f? ?? Vector3f.Zero;
-                var newVector3fValue = EditorGUILayout.Vector3Field("", oldVector3fValue.ToVector3(), GUILayout.MaxWidth(200))
-                    .ToVector3f();
+                var newVector3fValue = EditorGUILayout.Vector3Field(string.Empty, oldVector3fValue.ToVector3(), GUILayout.MaxWidth(200))
+                    .ToVector3F();
                 newValue = newVector3fValue;
                 return newVector3fValue != oldVector3fValue;
             }
@@ -197,11 +254,11 @@ namespace Votyra.Core.Editor
             if (typeof(Vector2i).IsAssignableFrom(type))
             {
                 var oldVector2iValue = oldValue as Vector2i? ?? Vector2i.Zero;
-                var newVector2iValue = EditorGUILayout.Vector2Field("",
+                var newVector2iValue = EditorGUILayout.Vector2Field(string.Empty,
                         oldVector2iValue.ToVector2f()
-                            .ToVector2(),
+                        .ToVector2(),
                         GUILayout.MaxWidth(200))
-                    .ToVector2f()
+                    .ToVector2F()
                     .RoundToVector2i();
                 newValue = newVector2iValue;
                 return newVector2iValue != oldVector2iValue;
@@ -210,8 +267,8 @@ namespace Votyra.Core.Editor
             if (typeof(Vector2f).IsAssignableFrom(type))
             {
                 var oldVector2fValue = oldValue as Vector2f? ?? Vector2f.Zero;
-                var newVector2fValue = EditorGUILayout.Vector2Field("", oldVector2fValue.ToVector2(), GUILayout.MaxWidth(200))
-                    .ToVector2f();
+                var newVector2fValue = EditorGUILayout.Vector2Field(string.Empty, oldVector2fValue.ToVector2(), GUILayout.MaxWidth(200))
+                    .ToVector2F();
                 newValue = newVector2fValue;
                 return newVector2fValue != oldVector2fValue;
             }
@@ -219,7 +276,7 @@ namespace Votyra.Core.Editor
             if (typeof(AnimationCurve).IsAssignableFrom(type))
             {
                 var oldAnimationCurveValue = oldValue as AnimationCurve;
-                var newAnimationCurveValue = EditorGUILayout.CurveField("", oldAnimationCurveValue ?? new AnimationCurve(), GUILayout.MaxWidth(200));
+                var newAnimationCurveValue = EditorGUILayout.CurveField(string.Empty, oldAnimationCurveValue ?? new AnimationCurve(), GUILayout.MaxWidth(200));
                 newValue = newAnimationCurveValue;
                 return !(newAnimationCurveValue?.Equals(oldAnimationCurveValue) ?? (oldAnimationCurveValue == null));
             }
@@ -228,7 +285,7 @@ namespace Votyra.Core.Editor
             {
                 var oldArea1fValue = oldValue as Area1f?;
 
-                var tempVector2 = EditorGUILayout.Vector2Field("", new Vector2(oldArea1fValue?.Min ?? 0, oldArea1fValue?.Max ?? 0), GUILayout.MaxWidth(200));
+                var tempVector2 = EditorGUILayout.Vector2Field(string.Empty, new Vector2(oldArea1fValue?.Min ?? 0, oldArea1fValue?.Max ?? 0), GUILayout.MaxWidth(200));
                 var newArea1fValue = Area1f.FromMinAndMax(tempVector2.x, tempVector2.y);
                 newValue = newArea1fValue;
                 return (oldArea1fValue == null) || !newArea1fValue.Equals(oldArea1fValue.Value);
@@ -270,7 +327,7 @@ namespace Votyra.Core.Editor
 
                 EditorGUILayout.EndVertical();
 
-                var method = typeof(Enumerable).GetMethod("ToArray", BindingFlags.Public | BindingFlags.Static);
+                var method = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray), BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
                 method = method.MakeGenericMethod(elementType);
 
                 newValue = method.Invoke(null,
@@ -297,68 +354,6 @@ namespace Votyra.Core.Editor
                 newValue = oldValue;
                 return change;
             }
-        }
-
-        private static IEnumerable<Type> GetConfigTypes(GameObject algorithmPrefab)
-        {
-            IEnumerable<IInstaller> installers;
-
-            var autoContext = algorithmPrefab.GetComponent<AutoGameObjectContext>();
-            if (autoContext != null)
-            {
-                installers = autoContext.GetInstallers();
-            }
-            else
-            {
-                var context = algorithmPrefab.GetComponent<GameObjectContext>();
-                installers = context.Installers;
-            }
-
-            var container = new DiContainer(false);
-            var tempGameObject = new GameObject();
-            try
-            {
-                foreach (var installer in installers)
-                {
-                    var tempInstallerGo = tempGameObject.AddComponent(installer.GetType());
-                    var tempInstaller = tempInstallerGo.GetComponentInChildren<MonoInstallerBase>(true);
-
-                    try
-                    {
-                        container.Inject(tempInstaller, new object[0]);
-                        tempInstaller.InstallBindings();
-                    }
-                    catch
-                    {
-                    }
-                    finally
-                    {
-                        DestroyImmediate(tempInstaller);
-                    }
-                }
-
-                container.FlushBindings();
-            }
-            finally
-            {
-                DestroyImmediate(tempGameObject);
-            }
-
-            var types = new List<Type>();
-            foreach (var provider in container.AllProviders)
-            {
-                try
-                {
-                    var instanceType = provider.GetInstanceType(new InjectContext(container, typeof(object)));
-                    types.Add(instanceType);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogException(ex);
-                }
-            }
-
-            return types;
         }
     }
 }

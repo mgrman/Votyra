@@ -7,7 +7,7 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
-            this.Container.BindInterfacesAndSelfTo<EditableMatrixImage2f>()
+            this.Container.BindInterfacesAndSelfTo<EditableMatrixImage2F>()
                 .AsSingle();
         }
     }

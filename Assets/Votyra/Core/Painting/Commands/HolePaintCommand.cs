@@ -9,42 +9,42 @@ namespace Votyra.Core.Painting.Commands
     public abstract class HolePaintCommand : IInitializablePaintCommand
     {
         private static readonly TimeSpan ClickDelay = TimeSpan.FromSeconds(0.2);
-        private readonly int _maxDistance;
+        private readonly int maxDistance;
 
-        private DateTime _clickLimit;
-        private IEditableImage2f _editableImage;
+        private DateTime clickLimit;
+        private IEditableImage2F editableImage;
 
-        private IThreadSafeLogger _logger;
+        private IThreadSafeLogger logger;
 
         protected HolePaintCommand(int maxDistance)
         {
-            this._maxDistance = maxDistance;
+            this.maxDistance = maxDistance;
         }
 
-        private Vector2i? _lastInvocation { get; set; }
+        private Vector2i? LastInvocation { get; set; }
 
-        public void Initialize(IEditableImage2f editableImage, IThreadSafeLogger logger)
+        public void Initialize(IEditableImage2F editableImage, IThreadSafeLogger logger)
         {
-            this._editableImage = editableImage;
-            this._logger = logger;
+            this.editableImage = editableImage;
+            this.logger = logger;
         }
 
         public virtual void UpdateInvocationValues(Vector2i cell)
         {
             var now = DateTime.UtcNow;
-            if ((now < this._clickLimit) && ((this._lastInvocation == null) || ((this._lastInvocation.Value - cell).ManhattanMagnitude() < 3)))
+            if ((now < this.clickLimit) && ((this.LastInvocation == null) || ((this.LastInvocation.Value - cell).ManhattanMagnitude() < 3)))
             {
                 return;
             }
 
-            if (this._lastInvocation == null)
+            if (this.LastInvocation == null)
             {
-                this._clickLimit = now + ClickDelay;
+                this.clickLimit = now + ClickDelay;
             }
 
-            Path2iUtils.InvokeOnPath(this._lastInvocation, cell, this.Invoke);
+            Path2IUtils.InvokeOnPath(this.LastInvocation, cell, this.Invoke);
 
-            this._lastInvocation = cell;
+            this.LastInvocation = cell;
         }
 
         public void Dispose()
@@ -55,18 +55,18 @@ namespace Votyra.Core.Painting.Commands
         public void StopInvocation()
         {
             this.OnInvocationStopping();
-            this._lastInvocation = null;
-            this._clickLimit = DateTime.MinValue;
+            this.LastInvocation = null;
+            this.clickLimit = DateTime.MinValue;
         }
 
         protected void Invoke(Vector2i cell)
         {
             this.OnNewInvocationData();
 
-            this._logger.LogMessage($"invoke on {cell}");
+            this.logger.LogMessage($"invoke on {cell}");
 
-            var requestedArea = Range2i.FromMinAndMax(cell - this._maxDistance, cell + this._maxDistance + 1);
-            using (var image = this._editableImage.RequestAccess(requestedArea))
+            var requestedArea = Range2i.FromMinAndMax(cell - this.maxDistance, cell + this.maxDistance + 1);
+            using (var image = this.editableImage.RequestAccess(requestedArea))
             {
                 var givenArea = image.Area;
                 if (!givenArea.Contains(cell))

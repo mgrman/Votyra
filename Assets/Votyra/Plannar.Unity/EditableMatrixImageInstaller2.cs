@@ -7,7 +7,7 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
-            this.Container.BindInterfacesAndSelfTo<AggregatableImage2f>()
+            this.Container.BindInterfacesAndSelfTo<AggregatableImage2F>()
                 .AsSingle();
         }
     }

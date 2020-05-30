@@ -5,13 +5,13 @@ namespace Votyra.Core.Pooling
 {
     public class Pool<TValue> : IRawPool<TValue>
     {
-        private readonly Func<TValue> _factory;
-        private readonly List<TValue> _list = new List<TValue>();
-        private readonly object _lock = new object();
+        private readonly Func<TValue> factory;
+        private readonly List<TValue> list = new List<TValue>();
+        private readonly object @lock = new object();
 
         public Pool(Func<TValue> factory)
         {
-            this._factory = factory;
+            this.factory = factory;
         }
 
         public int PoolCount { get; private set; }
@@ -21,18 +21,18 @@ namespace Votyra.Core.Pooling
         public TValue GetRaw()
         {
             this.ActiveCount++;
-            lock (this._lock)
+            lock (this.@lock)
             {
                 TValue value;
-                if (this._list.Count == 0)
+                if (this.list.Count == 0)
                 {
-                    value = this._factory();
+                    value = this.factory();
                 }
                 else
                 {
                     this.PoolCount--;
-                    value = this._list[this._list.Count - 1];
-                    this._list.RemoveAt(this._list.Count - 1);
+                    value = this.list[this.list.Count - 1];
+                    this.list.RemoveAt(this.list.Count - 1);
                 }
 
                 return value;
@@ -43,9 +43,9 @@ namespace Votyra.Core.Pooling
         {
             this.ActiveCount--;
             this.PoolCount++;
-            lock (this._lock)
+            lock (this.@lock)
             {
-                this._list.Add(value);
+                this.list.Add(value);
             }
         }
     }

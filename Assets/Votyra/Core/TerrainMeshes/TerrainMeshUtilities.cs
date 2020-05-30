@@ -17,7 +17,6 @@ namespace Votyra.Core.TerrainMeshes
             }
         }
 
-        //
         // public static void AddWallAlongX(this ITerrainMesh mesh, Vector2i position, SampledData2f data, SampledMask2e maskData, SampledData2f minusYres, SampledMask2e minusYresMaskData)
         // {
         //     if (maskData.x1y0.IsNotHole() && maskData.x0y0.IsNotHole() && minusYresMaskData.x0y1.IsNotHole() && minusYresMaskData.x1y1.IsNotHole())
@@ -51,22 +50,21 @@ namespace Votyra.Core.TerrainMeshes
         //         mesh.AddEmptyTriangle();
         //     }
         // }
-        //
-        public static IEnumerable<Triangle3f> GetQuadTriangles(Vector3f x0y0, Vector3f x0y1, Vector3f x1y0, Vector3f x1y1, bool isFlipped)
+
+        public static IEnumerable<Triangle3f> GetQuadTriangles(Vector3f x0Y0, Vector3f x0Y1, Vector3f x1Y0, Vector3f x1Y1, bool isFlipped)
         {
             if (isFlipped)
             {
-                yield return new Triangle3f(x0y0, x1y0, x1y1);
-                yield return new Triangle3f(x1y1, x0y1, x0y0);
+                yield return new Triangle3f(x0Y0, x1Y0, x1Y1);
+                yield return new Triangle3f(x1Y1, x0Y1, x0Y0);
             }
             else
             {
-                yield return new Triangle3f(x0y0, x1y0, x0y1);
-                yield return new Triangle3f(x1y0, x1y1, x0y1);
+                yield return new Triangle3f(x0Y0, x1Y0, x0Y1);
+                yield return new Triangle3f(x1Y0, x1Y1, x0Y1);
             }
         }
 
-        //
         // public static void AddWall(this ITerrainMesh mesh, Vector3f? a, Vector3f? b, Vector3f? b_lower, Vector3f? a_lower)
         // {
         //     if (a.HasValue && b.HasValue && b_lower.HasValue && a_lower.HasValue)

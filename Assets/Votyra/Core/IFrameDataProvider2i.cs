@@ -3,8 +3,8 @@ using Votyra.Core.Pooling;
 
 namespace Votyra.Core
 {
-    public interface IFrameDataProvider2i
+    public interface IFrameDataProvider2I
     {
-        event Action<ArcResource<IFrameData2i>> FrameData;
+        event Action<ArcResource<IFrameData2I>> FrameData;
     }
 }

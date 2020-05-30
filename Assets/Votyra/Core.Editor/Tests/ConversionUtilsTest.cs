@@ -31,8 +31,7 @@ namespace Votyra.Core.Editor
         //         rangeI = rangeI.UnionWith(new Range1i(test, test * 2));
         //     }
         //     TimeSpan integers = DateTime.UtcNow - start;
-        //     
-        //     
+
         //     start = DateTime.UtcNow;
         //     Range1hf rangeHF = Range1hf.Default;
         //     for (int test = 0; test < tests; test++)

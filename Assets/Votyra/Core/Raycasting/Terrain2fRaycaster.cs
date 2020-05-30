@@ -3,19 +3,19 @@ using Votyra.Core.TerrainGenerators.TerrainMeshers;
 
 namespace Votyra.Core.Raycasting
 {
-    public sealed class Terrain2fRaycaster : BaseGroupRaycaster
+    public sealed class Terrain2FRaycaster : BaseGroupRaycaster
     {
-        private readonly ITerrainRepository2i _manager;
+        private readonly ITerrainRepository2I manager;
 
-        public Terrain2fRaycaster(ITerrainConfig terrainConfig, ITerrainRepository2i manager, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
+        public Terrain2FRaycaster(ITerrainConfig terrainConfig, ITerrainRepository2I manager, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
             : base(terrainConfig, terrainVertexPostProcessor, raycasterAggregator)
         {
-            this._manager = manager;
+            this.manager = manager;
         }
 
         protected override Vector3f RaycastGroup(Vector2i group, Ray3f cameraRay)
         {
-            var mesh = this._manager.TryGetValue(group);
+            var mesh = this.manager.TryGetValue(group);
 
             if (mesh == null)
             {
@@ -39,9 +39,9 @@ namespace Votyra.Core.Raycasting
             return Vector3f.NaN;
         }
 
-        protected override float RaycastGroup(Vector2i group, Vector2f posXY)
+        protected override float RaycastGroup(Vector2i group, Vector2f posXy)
         {
-            var mesh = this._manager.TryGetValue(group);
+            var mesh = this.manager.TryGetValue(group);
 
             if (mesh == null)
             {
@@ -55,7 +55,7 @@ namespace Votyra.Core.Raycasting
                 var b = vertices[i + 1];
                 var c = vertices[i + 2];
                 var triangle = new Triangle3f(a, b, c);
-                var res = triangle.BarycentricCoords(posXY);
+                var res = triangle.BarycentricCoords(posXy);
                 if (res.NoNan())
                 {
                     return res;

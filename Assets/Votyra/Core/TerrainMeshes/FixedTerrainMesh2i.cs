@@ -5,72 +5,72 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.TerrainMeshes
 {
-    public class FixedTerrainMesh2i : ITerrainMesh2f
+    public class FixedTerrainMesh2I : ITerrainMesh2F
     {
         private const int SubCellToTriangles = 2;
         private const int TriangleToPoints = 3;
-        private readonly Vector2i _cellInGroupCount;
+        private readonly Vector2i cellInGroupCount;
 
-        private readonly int[] _indices;
-        private readonly Vector2i _meshSubdivision;
-        private readonly Vector3f[] _normals;
-        private readonly Vector2f[] _uv;
-        private readonly Func<Vector2f, Vector2f> _uVAdjustor;
-        private readonly Func<Vector3f, Vector3f> _vertexPostProcessor;
-        private readonly Vector3f[] _vertices;
-        private Vector2f _groupStartPosition;
-        private float _maxZ;
-        private Area2f _meshBoundsXY;
-        private float _minZ;
+        private readonly int[] indices;
+        private readonly Vector2i meshSubdivision;
+        private readonly Vector3f[] normals;
+        private readonly Vector2f[] uv;
+        private readonly Func<Vector2f, Vector2f> uVAdjustor;
+        private readonly Func<Vector3f, Vector3f> vertexPostProcessor;
+        private readonly Vector3f[] vertices;
+        private Vector2f groupStartPosition;
+        private float maxZ;
+        private Area2f meshBoundsXy;
+        private float minZ;
 
-        public FixedTerrainMesh2i(Vector2i meshSubdivision, Vector2i cellInGroupCount, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uVAdjustor)
+        public FixedTerrainMesh2I(Vector2i meshSubdivision, Vector2i cellInGroupCount, Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uVAdjustor)
         {
-            this._meshSubdivision = meshSubdivision;
-            this._cellInGroupCount = cellInGroupCount;
-            this._vertexPostProcessor = vertexPostProcessor;
-            this._uVAdjustor = uVAdjustor;
+            this.meshSubdivision = meshSubdivision;
+            this.cellInGroupCount = cellInGroupCount;
+            this.vertexPostProcessor = vertexPostProcessor;
+            this.uVAdjustor = uVAdjustor;
 
             var cellCount = cellInGroupCount.AreaSum();
             var subCellCount = cellCount * meshSubdivision.AreaSum();
             var triangleCount = subCellCount * SubCellToTriangles;
             var pointCount = triangleCount * TriangleToPoints;
 
-            this._vertices = new Vector3f[pointCount];
-            this._uv = new Vector2f[pointCount];
-            this._indices = new int[pointCount];
-            for (var i = 0; i < this._indices.Length; i++)
+            this.vertices = new Vector3f[pointCount];
+            this.uv = new Vector2f[pointCount];
+            this.indices = new int[pointCount];
+            for (var i = 0; i < this.indices.Length; i++)
             {
-                this._indices[i] = i;
+                this.indices[i] = i;
             }
 
-            this._normals = new Vector3f[pointCount];
+            this.normals = new Vector3f[pointCount];
         }
 
-        public Area3f MeshBounds => Area3f.FromMinAndMax(this._meshBoundsXY.Min.ToVector3f(this._minZ), this._meshBoundsXY.Max.ToVector3f(this._maxZ));
+        public Area3f MeshBounds => Area3f.FromMinAndMax(this.meshBoundsXy.Min.ToVector3f(this.minZ), this.meshBoundsXy.Max.ToVector3f(this.maxZ));
 
-        public IReadOnlyList<Vector3f> Vertices => this._vertices;
+        public IReadOnlyList<Vector3f> Vertices => this.vertices;
 
-        public IReadOnlyList<Vector3f> Normals => this._normals;
+        public IReadOnlyList<Vector3f> Normals => this.normals;
 
-        public IReadOnlyList<Vector2f> UV => this._uv;
+        public IReadOnlyList<Vector2f> Uv => this.uv;
 
-        public IReadOnlyList<int> Indices => this._indices;
+        public IReadOnlyList<int> Indices => this.indices;
 
         public uint TriangleCount => this.VertexCount / 3;
 
-        public uint VertexCount => (uint)this._vertices.Length;
+        public uint VertexCount => (uint)this.vertices.Length;
 
         public uint TriangleCapacity => this.TriangleCount;
 
         public void Reset(Area3f area)
         {
-            this._meshBoundsXY = Area2f.FromMinAndMax(area.Min.XY(), area.Max.XY());
-            this._groupStartPosition = area.Min.XY();
+            this.meshBoundsXy = Area2f.FromMinAndMax(area.Min.XY(), area.Max.XY());
+            this.groupStartPosition = area.Min.XY();
         }
 
         public Vector3f Raycast(Ray3f cameraRay)
         {
-            //TODO
+            // TODO
             // Use Cell traversal
             for (var i = 0; i < this.Vertices.Count; i += 3)
             {
@@ -88,38 +88,38 @@ namespace Votyra.Core.TerrainMeshes
             return Vector3f.NaN;
         }
 
-        public float Raycast(Vector2f posXY)
+        public float Raycast(Vector2f posXy)
         {
-            if (this._vertices == null)
+            if (this.vertices == null)
             {
                 return Vector1f.NaN;
             }
 
-            var posRelative = posXY - this._meshBoundsXY.Min.XY();
+            var posRelative = posXy - this.meshBoundsXy.Min.XY();
 
             var cellInGroup = posRelative.FloorToVector2i();
-            var subCell = ((posRelative - cellInGroup) * this._meshSubdivision).FloorToVector2i();
+            var subCell = ((posRelative - cellInGroup) * this.meshSubdivision).FloorToVector2i();
 
             var subCellIndex = this.SubCellIndex(cellInGroup, subCell);
 
             var triangleIndex = subCellIndex * SubCellToTriangles;
             var pointIndex = triangleIndex * TriangleToPoints;
 
-            var a = this._vertices[pointIndex];
-            var b = this._vertices[pointIndex + 1];
-            var c = this._vertices[pointIndex + 2];
+            var a = this.vertices[pointIndex];
+            var b = this.vertices[pointIndex + 1];
+            var c = this.vertices[pointIndex + 2];
             var triangle = new Triangle3f(a, b, c);
-            var res = triangle.BarycentricCoords(posXY);
+            var res = triangle.BarycentricCoords(posXy);
             if (res.NoNan())
             {
                 return res;
             }
 
-            a = this._vertices[pointIndex + 3];
-            b = this._vertices[pointIndex + 4];
-            c = this._vertices[pointIndex + 5];
+            a = this.vertices[pointIndex + 3];
+            b = this.vertices[pointIndex + 4];
+            c = this.vertices[pointIndex + 5];
             triangle = new Triangle3f(a, b, c);
-            res = triangle.BarycentricCoords(posXY);
+            res = triangle.BarycentricCoords(posXy);
             if (res.NoNan())
             {
                 return res;
@@ -128,50 +128,51 @@ namespace Votyra.Core.TerrainMeshes
             return Vector1f.NaN;
         }
 
-        public void AddCell(Vector2i cellInGroup, Vector2i subCell, SampledData2f data)
+        public void AddCell(Vector2i cellInGroup, Vector2i subCell, SampledData2F data)
         {
             Vector2f positionMin;
             Vector2f positionMax;
-            if (this._meshSubdivision == 1)
+            if (this.meshSubdivision == 1)
             {
-                positionMin = this._groupStartPosition + cellInGroup.ToVector2f();
+                positionMin = this.groupStartPosition + cellInGroup.ToVector2f();
                 positionMax = positionMin + Vector2f.One;
             }
             else
             {
-                positionMin = this._groupStartPosition + cellInGroup.ToVector2f() + (subCell.ToVector2f() / this._meshSubdivision);
-                positionMax = positionMin + (Vector2f.One / this._meshSubdivision);
+                positionMin = this.groupStartPosition + cellInGroup.ToVector2f() + (subCell.ToVector2f() / this.meshSubdivision);
+                positionMax = positionMin + (Vector2f.One / this.meshSubdivision);
             }
 
             var subCellIndex = this.SubCellIndex(cellInGroup, subCell);
 
             var triangleIndex = subCellIndex * SubCellToTriangles;
 
-            var x0y0 = data.x0y0.IsNotNaN() ? new Vector2f(positionMin.X, positionMin.Y).ToVector3f(data.x0y0) : (Vector3f?)null;
-            var x0y1 = data.x0y1.IsNotNaN() ? new Vector2f(positionMin.X, positionMax.Y).ToVector3f(data.x0y1) : (Vector3f?)null;
-            var x1y0 = data.x1y0.IsNotNaN() ? new Vector2f(positionMax.X, positionMin.Y).ToVector3f(data.x1y0) : (Vector3f?)null;
-            var x1y1 = data.x1y1.IsNotNaN() ? new Vector2f(positionMax.X, positionMax.Y).ToVector3f(data.x1y1) : (Vector3f?)null;
+            var x0Y0 = data.X0Y0.IsNotNaN() ? new Vector2f(positionMin.X, positionMin.Y).ToVector3f(data.X0Y0) : (Vector3f?)null;
+            var x0Y1 = data.X0Y1.IsNotNaN() ? new Vector2f(positionMin.X, positionMax.Y).ToVector3f(data.X0Y1) : (Vector3f?)null;
+            var x1Y0 = data.X1Y0.IsNotNaN() ? new Vector2f(positionMax.X, positionMin.Y).ToVector3f(data.X1Y0) : (Vector3f?)null;
+            var x1Y1 = data.X1Y1.IsNotNaN() ? new Vector2f(positionMax.X, positionMax.Y).ToVector3f(data.X1Y1) : (Vector3f?)null;
 
-            var holeCount = (x0y0.HasValue ? 0 : 1) + (x0y1.HasValue ? 0 : 1) + (x1y0.HasValue ? 0 : 1) + (x1y1.HasValue ? 0 : 1);
+            var holeCount = (x0Y0.HasValue ? 0 : 1) + (x0Y1.HasValue ? 0 : 1) + (x1Y0.HasValue ? 0 : 1) + (x1Y1.HasValue ? 0 : 1);
 
             if (holeCount == 1)
             {
-                if (!x0y0.HasValue)
+                if (!x0Y0.HasValue)
                 {
-                    this.AddTriangle(triangleIndex, x1y0.Value, x1y1.Value, x0y1.Value);
+                    this.AddTriangle(triangleIndex, x1Y0.Value, x1Y1.Value, x0Y1.Value);
                     triangleIndex++;
                     this.AddEmptyTriangle(triangleIndex);
                 }
-                else if (!x0y1.HasValue)
+                else if (!x0Y1.HasValue)
                 {
                     // TODO: edge case of edge fliping logic
                     // TODO: make for customizable triangle flipping logic
                     this.AddEmptyTriangle(triangleIndex);
+
                     // AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x1y1.Value);
                     triangleIndex++;
                     this.AddEmptyTriangle(triangleIndex);
                 }
-                else if (!x1y0.HasValue)
+                else if (!x1Y0.HasValue)
                 {
                     // TODO: edge case of edge fliping logic
                     // TODO: make for customizable triangle flipping logic
@@ -180,9 +181,9 @@ namespace Votyra.Core.TerrainMeshes
                     triangleIndex++;
                     this.AddEmptyTriangle(triangleIndex);
                 }
-                else if (!x1y1.HasValue)
+                else if (!x1Y1.HasValue)
                 {
-                    this.AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x0y1.Value);
+                    this.AddTriangle(triangleIndex, x0Y0.Value, x1Y0.Value, x0Y1.Value);
                     triangleIndex++;
                     this.AddEmptyTriangle(triangleIndex);
                 }
@@ -195,17 +196,17 @@ namespace Votyra.Core.TerrainMeshes
             }
             else if (holeCount == 0)
             {
-                if (this.IsFlipped(x0y0.Value, x0y1.Value, x1y0.Value, x1y1.Value))
+                if (this.IsFlipped(x0Y0.Value, x0Y1.Value, x1Y0.Value, x1Y1.Value))
                 {
-                    this.AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x1y1.Value);
+                    this.AddTriangle(triangleIndex, x0Y0.Value, x1Y0.Value, x1Y1.Value);
                     triangleIndex++;
-                    this.AddTriangle(triangleIndex, x1y1.Value, x0y1.Value, x0y0.Value);
+                    this.AddTriangle(triangleIndex, x1Y1.Value, x0Y1.Value, x0Y0.Value);
                 }
                 else
                 {
-                    this.AddTriangle(triangleIndex, x0y0.Value, x1y0.Value, x0y1.Value);
+                    this.AddTriangle(triangleIndex, x0Y0.Value, x1Y0.Value, x0Y1.Value);
                     triangleIndex++;
-                    this.AddTriangle(triangleIndex, x1y0.Value, x1y1.Value, x0y1.Value);
+                    this.AddTriangle(triangleIndex, x1Y0.Value, x1Y1.Value, x0Y1.Value);
                 }
             }
             else
@@ -222,16 +223,16 @@ namespace Votyra.Core.TerrainMeshes
 
         private uint SubCellIndex(Vector2i cellInGroup, Vector2i subdivisionCell)
         {
-            var cellIndex = (uint)(cellInGroup.X + (cellInGroup.Y * this._cellInGroupCount.X));
+            var cellIndex = (uint)(cellInGroup.X + (cellInGroup.Y * this.cellInGroupCount.X));
 
             uint subCellIndex;
-            if (this._meshSubdivision == 1)
+            if (this.meshSubdivision == 1)
             {
                 subCellIndex = cellIndex;
             }
             else
             {
-                subCellIndex = (uint)((cellIndex * this._meshSubdivision.AreaSum()) + subdivisionCell.X + (subdivisionCell.Y * this._meshSubdivision.X));
+                subCellIndex = (uint)((cellIndex * this.meshSubdivision.AreaSum()) + subdivisionCell.X + (subdivisionCell.Y * this.meshSubdivision.X));
             }
 
             return subCellIndex;
@@ -240,38 +241,38 @@ namespace Votyra.Core.TerrainMeshes
         private void AddEmptyTriangle(uint triangleIndex)
         {
             var pointIndex = triangleIndex * TriangleToPoints;
-            this._vertices[pointIndex] = Vector3f.Zero;
-            this._uv[pointIndex] = Vector2f.Zero;
-            this._normals[pointIndex] = Vector3f.Zero;
+            this.vertices[pointIndex] = Vector3f.Zero;
+            this.uv[pointIndex] = Vector2f.Zero;
+            this.normals[pointIndex] = Vector3f.Zero;
             pointIndex++;
-            this._vertices[pointIndex] = Vector3f.Zero;
-            this._uv[pointIndex] = Vector2f.Zero;
-            this._normals[pointIndex] = Vector3f.Zero;
+            this.vertices[pointIndex] = Vector3f.Zero;
+            this.uv[pointIndex] = Vector2f.Zero;
+            this.normals[pointIndex] = Vector3f.Zero;
             pointIndex++;
-            this._vertices[pointIndex] = Vector3f.Zero;
-            this._uv[pointIndex] = Vector2f.Zero;
-            this._normals[pointIndex] = Vector3f.Zero;
+            this.vertices[pointIndex] = Vector3f.Zero;
+            this.uv[pointIndex] = Vector2f.Zero;
+            this.normals[pointIndex] = Vector3f.Zero;
         }
 
-        private bool IsFlipped(Vector3f x0y0, Vector3f x0y1, Vector3f x1y0, Vector3f x1y1) => false;
+        private bool IsFlipped(Vector3f x0Y0, Vector3f x0Y1, Vector3f x1Y0, Vector3f x1Y1) => false;
 
         private void AddTriangle(uint triangleIndex, Vector3f posA, Vector3f posB, Vector3f posC)
         {
-            if (this._vertexPostProcessor != null)
+            if (this.vertexPostProcessor != null)
             {
-                posA = this._vertexPostProcessor(posA);
-                posB = this._vertexPostProcessor(posB);
-                posC = this._vertexPostProcessor(posC);
+                posA = this.vertexPostProcessor(posA);
+                posB = this.vertexPostProcessor(posB);
+                posC = this.vertexPostProcessor(posC);
             }
 
             var uvA = posA.XY();
             var uvB = posB.XY();
             var uvC = posC.XY();
-            if (this._uVAdjustor != null)
+            if (this.uVAdjustor != null)
             {
-                uvA = this._uVAdjustor(posA.XY());
-                uvB = this._uVAdjustor(posB.XY());
-                uvC = this._uVAdjustor(posC.XY());
+                uvA = this.uVAdjustor(posA.XY());
+                uvB = this.uVAdjustor(posB.XY());
+                uvC = this.uVAdjustor(posC.XY());
             }
 
             var side1 = posB - posA;
@@ -279,26 +280,26 @@ namespace Votyra.Core.TerrainMeshes
             var normal = Vector3fUtils.Cross(side1, side2);
 
             var pointIndex = triangleIndex * TriangleToPoints;
-            this._minZ = pointIndex == 0 ? posA.Z : Math.Min(this._minZ, posA.Z);
-            this._minZ = Math.Min(this._minZ, posB.Z);
-            this._minZ = Math.Min(this._minZ, posC.Z);
-            this._maxZ = pointIndex == 0 ? posA.Z : Math.Max(this._maxZ, posA.Z);
-            this._maxZ = Math.Max(this._maxZ, posB.Z);
-            this._maxZ = Math.Max(this._maxZ, posC.Z);
+            this.minZ = pointIndex == 0 ? posA.Z : Math.Min(this.minZ, posA.Z);
+            this.minZ = Math.Min(this.minZ, posB.Z);
+            this.minZ = Math.Min(this.minZ, posC.Z);
+            this.maxZ = pointIndex == 0 ? posA.Z : Math.Max(this.maxZ, posA.Z);
+            this.maxZ = Math.Max(this.maxZ, posB.Z);
+            this.maxZ = Math.Max(this.maxZ, posC.Z);
 
-            this._vertices[pointIndex] = posA;
-            this._uv[pointIndex] = uvA;
-            this._normals[pointIndex] = normal;
+            this.vertices[pointIndex] = posA;
+            this.uv[pointIndex] = uvA;
+            this.normals[pointIndex] = normal;
             pointIndex++;
 
-            this._vertices[pointIndex] = posB;
-            this._uv[pointIndex] = uvB;
-            this._normals[pointIndex] = normal;
+            this.vertices[pointIndex] = posB;
+            this.uv[pointIndex] = uvB;
+            this.normals[pointIndex] = normal;
             pointIndex++;
 
-            this._vertices[pointIndex] = posC;
-            this._uv[pointIndex] = uvC;
-            this._normals[pointIndex] = normal;
+            this.vertices[pointIndex] = posC;
+            this.uv[pointIndex] = uvC;
+            this.normals[pointIndex] = normal;
             pointIndex++;
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Votyra.Core.Utils;
 using UnityEngineObject = UnityEngine.Object;
 
@@ -11,33 +12,45 @@ namespace Votyra.Core
     [Serializable]
     public class ConfigItem : IEquatable<ConfigItem>
     {
-        private JsonSerializerSettings _settings;
+        private JsonSerializerSettings settings;
 
+        [FormerlySerializedAs("Id")]
         [SerializeField]
-        public string Id;
+        private string id;
 
+        [FormerlySerializedAs("JsonValue")]
         [SerializeField]
-        public string JsonValue;
+        private string jsonValue;
 
+        [FormerlySerializedAs("TypeAssemblyQualifiedName")]
         [SerializeField]
-        public string TypeAssemblyQualifiedName;
+        private string typeAssemblyQualifiedName;
 
+        [FormerlySerializedAs("UnityValues")]
         [SerializeField]
-        public List<UnityEngineObject> UnityValues;
+        private List<UnityEngineObject> unityValues;
+
+        public string Id => id;
+
+        public string JsonValue => jsonValue;
+
+        public string TypeAssemblyQualifiedName => typeAssemblyQualifiedName;
+
+        public List<UnityEngineObject> UnityValues => unityValues;
 
         public ConfigItem()
         {
-            this._settings = new JsonSerializerSettings();
-            this._settings.Converters.Add(new ObjectConverter(this));
+            this.settings = new JsonSerializerSettings();
+            this.settings.Converters.Add(new ObjectConverter(this));
         }
 
         public ConfigItem(string id, Type type, object value)
             : this()
         {
-            this.Id = id;
-            this.TypeAssemblyQualifiedName = type?.AssemblyQualifiedName;
+            this.id = id;
+            this.typeAssemblyQualifiedName = type?.AssemblyQualifiedName;
 
-            this.JsonValue = JsonConvert.SerializeObject(value, this._settings);
+            this.jsonValue = JsonConvert.SerializeObject(value, this.settings);
         }
 
         public Type Type
@@ -46,7 +59,7 @@ namespace Votyra.Core
             {
                 try
                 {
-                    return Type.GetType(this.TypeAssemblyQualifiedName);
+                    return Type.GetType(this.typeAssemblyQualifiedName);
                 }
                 catch (Exception ex)
                 {
@@ -62,11 +75,11 @@ namespace Votyra.Core
             {
                 try
                 {
-                    return JsonConvert.DeserializeObject(this.JsonValue, this.Type, this._settings);
+                    return JsonConvert.DeserializeObject(this.jsonValue, this.Type, this.settings);
                 }
                 catch (Exception ex)
                 {
-                    Debug.LogError($"Problem '{ex.Message}' deserializing '{this.JsonValue}' to type {this.Type} for {this.Id}.");
+                    Debug.LogError($"Problem '{ex.Message}' deserializing '{this.jsonValue}' to type {this.Type} for {this.id}.");
                     return null;
                 }
             }
@@ -79,8 +92,8 @@ namespace Votyra.Core
                 return false;
             }
 
-            return (this.Id == that.Id) && (this.Type == that.Type) && this.UnityValues.EmptyIfNull()
-                .SequenceEqual(that.UnityValues.EmptyIfNull()) && (this.JsonValue == that.JsonValue);
+            return (this.id == that.id) && (this.Type == that.Type) && this.unityValues.EmptyIfNull()
+                .SequenceEqual(that.unityValues.EmptyIfNull()) && (this.jsonValue == that.jsonValue);
         }
 
         public override bool Equals(object obj)
@@ -89,25 +102,25 @@ namespace Votyra.Core
             return this.Equals(that);
         }
 
-        public override int GetHashCode() => this.Id.GetHashCode();
+        public override int GetHashCode() => this.id.GetHashCode();
 
-        public override string ToString() => $"CONFIG {this.Id}({this.Type.Name}): {this.JsonValue}";
+        public override string ToString() => $"CONFIG {this.id}({this.Type.Name}): {this.jsonValue}";
 
         public class ObjectConverter : JsonConverter
         {
-            private readonly ConfigItem _parent;
+            private readonly ConfigItem parent;
 
             public ObjectConverter(ConfigItem parent)
             {
-                this._parent = parent;
+                this.parent = parent;
             }
 
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
-                writer.WriteValue(this._parent.UnityValues?.Count ?? 0);
+                writer.WriteValue(this.parent.unityValues?.Count ?? 0);
 
-                this._parent.UnityValues = this._parent.UnityValues ?? new List<UnityEngineObject>();
-                this._parent.UnityValues.Add(value as UnityEngineObject);
+                this.parent.unityValues = this.parent.unityValues ?? new List<UnityEngineObject>();
+                this.parent.unityValues.Add(value as UnityEngineObject);
             }
 
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -115,7 +128,7 @@ namespace Votyra.Core
                 if (reader.ValueType == typeof(long))
                 {
                     var index = (int)(long)reader.Value;
-                    var obj = this._parent.UnityValues[index];
+                    var obj = this.parent.unityValues[index];
                     return obj == null ? null : obj;
                 }
 

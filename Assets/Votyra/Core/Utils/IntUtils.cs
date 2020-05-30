@@ -4,7 +4,7 @@ namespace Votyra.Core.Utils
     {
         public static int Clip(this int i, int min, int max) => i < min ? min : i > max ? max : i;
 
-        public static bool IsInRange(this int i, int min_inc, int max_exc) => (i >= min_inc) && (i < max_exc);
+        public static bool IsInRange(this int i, int minInc, int maxExc) => (i >= minInc) && (i < maxExc);
 
         public static int DivideUp(this int a, int b)
         {

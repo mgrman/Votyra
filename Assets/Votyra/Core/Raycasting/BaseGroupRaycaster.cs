@@ -8,46 +8,46 @@ namespace Votyra.Core.Raycasting
 {
     public abstract class BaseGroupRaycaster : IRaycasterPart
     {
-        private readonly Vector2i _cellInGroupCount;
-        private readonly ITerrainRepository2i _manager;
-        private readonly ITerrainVertexPostProcessor _terrainVertexPostProcessor;
-        private readonly float maxDistance = 500; //TODO get from camera
+        private readonly Vector2i cellInGroupCount;
+        private readonly ITerrainRepository2I manager;
+        private readonly ITerrainVertexPostProcessor terrainVertexPostProcessor;
+        private readonly float maxDistance = 500; // TODO get from camera
         private readonly int maxIterations;
 
         public BaseGroupRaycaster(ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
         {
-            this._terrainVertexPostProcessor = terrainVertexPostProcessor;
+            this.terrainVertexPostProcessor = terrainVertexPostProcessor;
             raycasterAggregator?.Attach(this);
-            this._cellInGroupCount = terrainConfig.CellInGroupCount.XY();
+            this.cellInGroupCount = terrainConfig.CellInGroupCount.XY();
 
             this.maxIterations = (int)this.maxDistance * 10;
         }
 
-        public virtual float Raycast(Vector2f posXY)
+        public virtual float Raycast(Vector2f posXy)
         {
-            var group = this.GetGroup(this.FindCell(posXY));
-            return this.RaycastGroup(group, posXY);
+            var group = this.GetGroup(this.FindCell(posXy));
+            return this.RaycastGroup(group, posXy);
         }
 
         public virtual Vector3f Raycast(Ray3f cameraRay)
         {
-            var cameraRayXY = cameraRay.XY();
+            var cameraRayXy = cameraRay.XY();
 
-            var rayOriginXY = cameraRayXY.Origin;
-            var rayDirectionXY = cameraRayXY.Direction;
+            var rayOriginXy = cameraRayXy.Origin;
+            var rayDirectionXy = cameraRayXy.Direction;
             var maxDistancePoint = cameraRay.GetPoint(this.maxDistance)
                 .XY();
 
-            var fromGroup = this.GetGroup(this.FindCell(rayOriginXY));
+            var fromGroup = this.GetGroup(this.FindCell(rayOriginXy));
             var toGroup = this.GetGroup(this.FindCell(maxDistancePoint));
 
             var currentGroup = fromGroup;
-            var currentPosition = rayOriginXY;
+            var currentPosition = rayOriginXy;
             var currentCounter = this.maxIterations;
             while ((currentGroup != toGroup) && (currentCounter > 0))
             {
                 currentCounter--;
-                var ray = new Ray2f(currentPosition, rayDirectionXY);
+                var ray = new Ray2f(currentPosition, rayDirectionXy);
 
                 var area = this.MeshGroupArea(currentGroup);
                 var foundResult = this.RaycastGroup(currentGroup, cameraRay);
@@ -138,31 +138,31 @@ namespace Votyra.Core.Raycasting
 
         private Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(this.ProcessVertex(new Vector2f(cell.X, cell.Y)), this.ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
 
-        private Area2f MeshGroupArea(Vector2i group) => Area2f.FromMinAndMax(this.MeshCellArea(group * this._cellInGroupCount)
+        private Area2f MeshGroupArea(Vector2i group) => Area2f.FromMinAndMax(this.MeshCellArea(group * this.cellInGroupCount)
                 .Min,
-            this.MeshCellArea(((@group + Vector2i.One) * this._cellInGroupCount) - Vector2i.One)
+            this.MeshCellArea(((@group + Vector2i.One) * this.cellInGroupCount) - Vector2i.One)
                 .Max);
 
         private Vector2f ProcessVertex(Vector2f point)
         {
-            if (this._terrainVertexPostProcessor == null)
+            if (this.terrainVertexPostProcessor == null)
             {
                 return point;
             }
 
-            return this._terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
+            return this.terrainVertexPostProcessor.PostProcessVertex(point.ToVector3f(0))
                 .XY();
         }
 
         private Vector2i GetGroup(Vector2i cell)
         {
-            var x = (cell.X / this._cellInGroupCount.X) - ((cell.X < 0) && ((cell.X % this._cellInGroupCount.X) != 0) ? 1 : 0);
-            var y = (cell.Y / this._cellInGroupCount.Y) - ((cell.Y < 0) && ((cell.Y % this._cellInGroupCount.Y) != 0) ? 1 : 0);
+            var x = (cell.X / this.cellInGroupCount.X) - ((cell.X < 0) && ((cell.X % this.cellInGroupCount.X) != 0) ? 1 : 0);
+            var y = (cell.Y / this.cellInGroupCount.Y) - ((cell.Y < 0) && ((cell.Y % this.cellInGroupCount.Y) != 0) ? 1 : 0);
             return new Vector2i(x, y);
         }
 
         protected abstract Vector3f RaycastGroup(Vector2i group, Ray3f cameraRay);
 
-        protected abstract float RaycastGroup(Vector2i group, Vector2f posXY);
+        protected abstract float RaycastGroup(Vector2i group, Vector2f posXy);
     }
 }

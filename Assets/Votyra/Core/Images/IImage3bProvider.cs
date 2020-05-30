@@ -1,7 +1,7 @@
 namespace Votyra.Core.Images
 {
-    public interface IImage3bProvider
+    public interface IImage3BProvider
     {
-        IImage3b CreateImage();
+        IImage3B CreateImage();
     }
 }

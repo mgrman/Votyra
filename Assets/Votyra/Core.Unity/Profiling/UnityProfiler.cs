@@ -9,39 +9,37 @@ namespace Votyra.Core.Profiling
 {
     public class UnityProfiler : IProfiler
     {
-        private readonly bool _calledProfiler;
+        private readonly Object owner;
 
-        private readonly Object _owner;
+        private readonly Stopwatch stopwatch;
 
-        private readonly Stopwatch _stopwatch;
-
-        private string _name;
+        private string name;
 
         public UnityProfiler(Object owner)
         {
-            this._owner = owner;
-            this._stopwatch = new Stopwatch();
+            this.owner = owner;
+            this.stopwatch = new Stopwatch();
         }
 
         public IDisposable Start(string name)
         {
-            this._name = name;
+            this.name = name;
             if (Thread.CurrentThread == UnitySyncContext.UnityThread)
             {
-                if (this._owner != null)
+                if (this.owner != null)
                 {
-                    Profiler.BeginSample(name, this._owner);
+                    Profiler.BeginSample(name, this.owner);
                 }
                 else
                 {
                     Profiler.BeginSample(name);
                 }
 
-                this._stopwatch.Start();
+                this.stopwatch.Start();
                 return Disposable.Create(this.StopAndEndSample);
             }
 
-            this._stopwatch.Start();
+            this.stopwatch.Start();
             return Disposable.Create(this.Stop);
         }
 
@@ -53,9 +51,9 @@ namespace Votyra.Core.Profiling
 
         private void Stop()
         {
-            this._stopwatch.Stop();
-            UnityProfilerAggregator.Add(this._owner, this._name, (double)this._stopwatch.ElapsedTicks / TimeSpan.TicksPerMillisecond);
-            this._stopwatch.Reset();
+            this.stopwatch.Stop();
+            UnityProfilerAggregator.Add(this.owner, this.name, (double)this.stopwatch.ElapsedTicks / TimeSpan.TicksPerMillisecond);
+            this.stopwatch.Reset();
             // UnityEngine.Debug.Log(_namePrefix + _stopwatch.ElapsedMilliseconds);
         }
     }

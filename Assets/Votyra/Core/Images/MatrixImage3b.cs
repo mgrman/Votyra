@@ -2,9 +2,9 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class MatrixImage3b : BaseMatrix3<bool>, IImage3b
+    public class MatrixImage3B : BaseMatrix3<bool>, IImage3B
     {
-        public MatrixImage3b(Vector3i size)
+        public MatrixImage3B(Vector3i size)
             : base(size)
         {
         }
@@ -13,7 +13,7 @@ namespace Votyra.Core.Images
         {
             var allFalse = true;
             var allTrue = true;
-            range = range.IntersectWith(this._image.Range());
+            range = range.IntersectWith(this.image.Range());
             var min = range.Min;
             for (var ix = 0; ix < range.Size.X; ix++)
             {
@@ -21,7 +21,7 @@ namespace Votyra.Core.Images
                 {
                     for (var iz = 0; iz < range.Size.Z; iz++)
                     {
-                        var value = this._image[ix + min.X, iy + min.Y, iz + min.Z];
+                        var value = this.image[ix + min.X, iy + min.Y, iz + min.Z];
                         allFalse = allFalse && !value;
                         allTrue = allTrue && value;
                     }

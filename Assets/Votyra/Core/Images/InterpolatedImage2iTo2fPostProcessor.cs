@@ -3,101 +3,101 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class InterpolatedImage2iTo2fPostProcessor : IImage2fPostProcessor
+    public class InterpolatedImage2ITo2FPostProcessor : IImage2FPostProcessor
     {
-        private readonly IInterpolationConfig _interpolationConfig;
+        private readonly IInterpolationConfig interpolationConfig;
 
-        public InterpolatedImage2iTo2fPostProcessor(IInterpolationConfig interpolationConfig)
+        public InterpolatedImage2ITo2FPostProcessor(IInterpolationConfig interpolationConfig)
         {
-            this._interpolationConfig = interpolationConfig;
+            this.interpolationConfig = interpolationConfig;
         }
 
-        public IImage2f PostProcess(IImage2f image)
+        public IImage2F PostProcess(IImage2F image)
         {
-            if (this._interpolationConfig.ImageSubdivision == 1)
+            if (this.interpolationConfig.ImageSubdivision == 1)
             {
                 return image;
             }
 
-            switch (this._interpolationConfig.ActiveAlgorithm)
+            switch (this.interpolationConfig.ActiveAlgorithm)
             {
                 case IntepolationAlgorithm.NearestNeighbour:
                     if (image is IImageInvalidatableImage2)
                     {
-                        return new NNImage2fInvalidatableWrapper(image, this._interpolationConfig.ImageSubdivision);
+                        return new NnImage2FInvalidatableWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                     else
                     {
-                        return new NNImage2fWrapper(image, this._interpolationConfig.ImageSubdivision);
+                        return new NnImage2FWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                 case IntepolationAlgorithm.Linear:
                     if (image is IImageInvalidatableImage2)
                     {
-                        return new LinearImage2fInvalidatableWrapper(image, this._interpolationConfig.ImageSubdivision);
+                        return new LinearImage2FInvalidatableWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                     else
                     {
-                        return new LinearImage2fWrapper(image, this._interpolationConfig.ImageSubdivision);
+                        return new LinearImage2FWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                 case IntepolationAlgorithm.Cubic:
                     if (image is IImageInvalidatableImage2)
                     {
-                        return new CubicImage2fInvalidatableWrapper(image, this._interpolationConfig.ImageSubdivision);
+                        return new CubicImage2FInvalidatableWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                     else
                     {
-                        return new CubicImage2fWrapper(image, this._interpolationConfig.ImageSubdivision);
+                        return new CubicImage2FWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private class CubicImage2fWrapper : IImage2f, IInitializableImage
+        private class CubicImage2FWrapper : IImage2F, IInitializableImage
         {
-            protected readonly IImage2f _image;
+            private readonly IImage2F image;
 
-            private readonly Vector2i _interpolationCell = new Vector2i(int.MinValue, int.MinValue);
-            private readonly float[,] _interpolationMatrix = new float[4, 4];
-            protected readonly int _subdivision;
+            private readonly int subdivision;
+            private readonly Vector2i interpolationCell = new Vector2i(int.MinValue, int.MinValue);
+            private readonly float[,] interpolationMatrix = new float[4, 4];
 
-            public CubicImage2fWrapper(IImage2f image, int subdivision)
+            public CubicImage2FWrapper(IImage2F image, int subdivision)
             {
-                this._image = image;
-                this._subdivision = subdivision;
-                this.RangeZ = this._image.RangeZ;
+                this.image = image;
+                this.subdivision = subdivision;
+                this.RangeZ = this.image.RangeZ;
             }
 
             public Area1f RangeZ { get; }
 
             public float Sample(Vector2i point)
             {
-                var minPoint = point / this._subdivision;
-                var fraction = (point - (minPoint * this._subdivision)) / (float)this._subdivision;
-                if (minPoint != this._interpolationCell)
+                var minPoint = point / this.subdivision;
+                var fraction = (point - (minPoint * this.subdivision)) / (float)this.subdivision;
+                if (minPoint != this.interpolationCell)
                 {
-                    this._interpolationMatrix[0, 0] = this._image.Sample(minPoint + new Vector2i(+0 - 1, +0 - 1));
-                    this._interpolationMatrix[0, 1] = this._image.Sample(minPoint + new Vector2i(+0 - 1, +1 - 1));
-                    this._interpolationMatrix[0, 2] = this._image.Sample(minPoint + new Vector2i(+0 - 1, +2 - 1));
-                    this._interpolationMatrix[0, 3] = this._image.Sample(minPoint + new Vector2i(+0 - 1, +3 - 1));
-                    this._interpolationMatrix[1, 0] = this._image.Sample(minPoint + new Vector2i(+1 - 1, +0 - 1));
-                    this._interpolationMatrix[1, 1] = this._image.Sample(minPoint + new Vector2i(+1 - 1, +1 - 1));
-                    this._interpolationMatrix[1, 2] = this._image.Sample(minPoint + new Vector2i(+1 - 1, +2 - 1));
-                    this._interpolationMatrix[1, 3] = this._image.Sample(minPoint + new Vector2i(+1 - 1, +3 - 1));
-                    this._interpolationMatrix[2, 0] = this._image.Sample(minPoint + new Vector2i(+2 - 1, +0 - 1));
-                    this._interpolationMatrix[2, 1] = this._image.Sample(minPoint + new Vector2i(+2 - 1, +1 - 1));
-                    this._interpolationMatrix[2, 2] = this._image.Sample(minPoint + new Vector2i(+2 - 1, +2 - 1));
-                    this._interpolationMatrix[2, 3] = this._image.Sample(minPoint + new Vector2i(+2 - 1, +3 - 1));
-                    this._interpolationMatrix[3, 0] = this._image.Sample(minPoint + new Vector2i(+3 - 1, +0 - 1));
-                    this._interpolationMatrix[3, 1] = this._image.Sample(minPoint + new Vector2i(+3 - 1, +1 - 1));
-                    this._interpolationMatrix[3, 2] = this._image.Sample(minPoint + new Vector2i(+3 - 1, +2 - 1));
-                    this._interpolationMatrix[3, 3] = this._image.Sample(minPoint + new Vector2i(+3 - 1, +3 - 1));
+                    this.interpolationMatrix[0, 0] = this.image.Sample(minPoint + new Vector2i(+0 - 1, +0 - 1));
+                    this.interpolationMatrix[0, 1] = this.image.Sample(minPoint + new Vector2i(+0 - 1, +1 - 1));
+                    this.interpolationMatrix[0, 2] = this.image.Sample(minPoint + new Vector2i(+0 - 1, +2 - 1));
+                    this.interpolationMatrix[0, 3] = this.image.Sample(minPoint + new Vector2i(+0 - 1, +3 - 1));
+                    this.interpolationMatrix[1, 0] = this.image.Sample(minPoint + new Vector2i(+1 - 1, +0 - 1));
+                    this.interpolationMatrix[1, 1] = this.image.Sample(minPoint + new Vector2i(+1 - 1, +1 - 1));
+                    this.interpolationMatrix[1, 2] = this.image.Sample(minPoint + new Vector2i(+1 - 1, +2 - 1));
+                    this.interpolationMatrix[1, 3] = this.image.Sample(minPoint + new Vector2i(+1 - 1, +3 - 1));
+                    this.interpolationMatrix[2, 0] = this.image.Sample(minPoint + new Vector2i(+2 - 1, +0 - 1));
+                    this.interpolationMatrix[2, 1] = this.image.Sample(minPoint + new Vector2i(+2 - 1, +1 - 1));
+                    this.interpolationMatrix[2, 2] = this.image.Sample(minPoint + new Vector2i(+2 - 1, +2 - 1));
+                    this.interpolationMatrix[2, 3] = this.image.Sample(minPoint + new Vector2i(+2 - 1, +3 - 1));
+                    this.interpolationMatrix[3, 0] = this.image.Sample(minPoint + new Vector2i(+3 - 1, +0 - 1));
+                    this.interpolationMatrix[3, 1] = this.image.Sample(minPoint + new Vector2i(+3 - 1, +1 - 1));
+                    this.interpolationMatrix[3, 2] = this.image.Sample(minPoint + new Vector2i(+3 - 1, +2 - 1));
+                    this.interpolationMatrix[3, 3] = this.image.Sample(minPoint + new Vector2i(+3 - 1, +3 - 1));
                 }
 
-                var col0 = this.Intepolate(this._interpolationMatrix[0, 0], this._interpolationMatrix[1, 0], this._interpolationMatrix[2, 0], this._interpolationMatrix[3, 0], fraction.X);
-                var col1 = this.Intepolate(this._interpolationMatrix[0, 1], this._interpolationMatrix[1, 1], this._interpolationMatrix[2, 1], this._interpolationMatrix[3, 1], fraction.X);
-                var col2 = this.Intepolate(this._interpolationMatrix[0, 2], this._interpolationMatrix[1, 2], this._interpolationMatrix[2, 2], this._interpolationMatrix[3, 2], fraction.X);
-                var col3 = this.Intepolate(this._interpolationMatrix[0, 3], this._interpolationMatrix[1, 3], this._interpolationMatrix[2, 3], this._interpolationMatrix[3, 3], fraction.X);
+                var col0 = this.Intepolate(this.interpolationMatrix[0, 0], this.interpolationMatrix[1, 0], this.interpolationMatrix[2, 0], this.interpolationMatrix[3, 0], fraction.X);
+                var col1 = this.Intepolate(this.interpolationMatrix[0, 1], this.interpolationMatrix[1, 1], this.interpolationMatrix[2, 1], this.interpolationMatrix[3, 1], fraction.X);
+                var col2 = this.Intepolate(this.interpolationMatrix[0, 2], this.interpolationMatrix[1, 2], this.interpolationMatrix[2, 2], this.interpolationMatrix[3, 2], fraction.X);
+                var col3 = this.Intepolate(this.interpolationMatrix[0, 3], this.interpolationMatrix[1, 3], this.interpolationMatrix[2, 3], this.interpolationMatrix[3, 3], fraction.X);
                 var value = this.Intepolate(col0, col1, col2, col3, fraction.Y);
                 return value;
             }
@@ -107,7 +107,7 @@ namespace Votyra.Core.Images
                 var min = this.ClipMinPoint(area.Min);
                 var max = this.ClipMinPoint(area.Max);
 
-                var offset = area.Min - (min * this._subdivision);
+                var offset = area.Min - (min * this.subdivision);
 
                 var matrix = PoolableMatrix2<float>.CreateDirty(area.Size);
                 var rawMatrix = matrix.RawMatrix;
@@ -119,11 +119,11 @@ namespace Votyra.Core.Images
                     for (var iy1 = 0; iy1 <= tempQualifier.Size.Y; iy1++)
                     {
                         var minPoint = new Vector2i(ix1, iy1) + min1;
-                        for (var ix = 0; ix < this._subdivision; ix++)
+                        for (var ix = 0; ix < this.subdivision; ix++)
                         {
-                            for (var iy = 0; iy < this._subdivision; iy++)
+                            for (var iy = 0; iy < this.subdivision; iy++)
                             {
-                                var imagePos = new Vector2i(ix + (minPoint.X * this._subdivision), iy + (minPoint.Y * this._subdivision));
+                                var imagePos = new Vector2i(ix + (minPoint.X * this.subdivision), iy + (minPoint.Y * this.subdivision));
                                 var matPos = imagePos - area.Min;
                                 rawMatrix.TrySet(matPos, this.Sample(imagePos));
                             }
@@ -136,12 +136,12 @@ namespace Votyra.Core.Images
 
             public void StartUsing()
             {
-                (this._image as IInitializableImage)?.StartUsing();
+                (this.image as IInitializableImage)?.StartUsing();
             }
 
             public void FinishUsing()
             {
-                (this._image as IInitializableImage)?.FinishUsing();
+                (this.image as IInitializableImage)?.FinishUsing();
             }
 
             private Vector2i ClipMinPoint(Vector2i point) => new Vector2i(this.ClipMinPoint(point.X), this.ClipMinPoint(point.Y));
@@ -150,12 +150,12 @@ namespace Votyra.Core.Images
             {
                 if (point > 0)
                 {
-                    return point / this._subdivision;
+                    return point / this.subdivision;
                 }
 
                 if (point < 0)
                 {
-                    return (point / this._subdivision) + ((point % this._subdivision) == 0 ? 0 : -1);
+                    return (point / this.subdivision) + ((point % this.subdivision) == 0 ? 0 : -1);
                 }
 
                 return 0;
@@ -171,40 +171,40 @@ namespace Votyra.Core.Images
                 var dys2 = y3 - y2;
 
                 // Get degree-1 coefficients
-                float c1s1;
+                float c1S1;
                 if ((dys0 * dys1) <= 0)
                 {
-                    c1s1 = 0;
+                    c1S1 = 0;
                 }
                 else
                 {
-                    c1s1 = 6f / ((3f / dys0) + (3f / dys1));
+                    c1S1 = 6f / ((3f / dys0) + (3f / dys1));
                 }
 
-                float c1s2;
+                float c1S2;
                 if ((dys1 * dys2) <= 0)
                 {
-                    c1s2 = 0;
+                    c1S2 = 0;
                 }
                 else
                 {
-                    c1s2 = 6f / ((3f / dys1) + (3f / dys2));
+                    c1S2 = 6f / ((3f / dys1) + (3f / dys2));
                 }
 
                 // Get degree-2 and degree-3 coefficients
-                var c3s1 = (c1s1 + c1s2) - dys1 - dys1;
-                var c2s1 = dys1 - c1s1 - c3s1;
+                var c3S1 = (c1S1 + c1S2) - dys1 - dys1;
+                var c2S1 = dys1 - c1S1 - c3S1;
 
                 // Interpolate
                 var diff = x12Rel;
                 var diffSq = diff * diff;
-                return y1 + (c1s1 * diff) + (c2s1 * diffSq) + (c3s1 * diff * diffSq);
+                return y1 + (c1S1 * diff) + (c2S1 * diffSq) + (c3S1 * diff * diffSq);
             }
         }
 
-        private class CubicImage2fInvalidatableWrapper : CubicImage2fWrapper, IImageInvalidatableImage2
+        private class CubicImage2FInvalidatableWrapper : CubicImage2FWrapper, IImageInvalidatableImage2
         {
-            public CubicImage2fInvalidatableWrapper(IImage2f image, int subdivision)
+            public CubicImage2FInvalidatableWrapper(IImage2F image, int subdivision)
                 : base(image, subdivision)
             {
                 var invalidatedArea = (image as IImageInvalidatableImage2).InvalidatedArea;
@@ -214,31 +214,31 @@ namespace Votyra.Core.Images
             public Range2i InvalidatedArea { get; }
         }
 
-        private class LinearImage2fWrapper : IImage2f, IInitializableImage
+        private class LinearImage2FWrapper : IImage2F, IInitializableImage
         {
-            protected readonly IImage2f _image;
-            protected readonly int _subdivision;
+            private readonly IImage2F image;
+            private readonly int subdivision;
 
-            public LinearImage2fWrapper(IImage2f image, int subdivision)
+            public LinearImage2FWrapper(IImage2F image, int subdivision)
             {
-                this._image = image;
-                this._subdivision = subdivision;
-                this.RangeZ = this._image.RangeZ;
+                this.image = image;
+                this.subdivision = subdivision;
+                this.RangeZ = this.image.RangeZ;
             }
 
             public Area1f RangeZ { get; }
 
             public float Sample(Vector2i point)
             {
-                var minPoint = point / this._subdivision;
-                var fraction = (point - (minPoint * this._subdivision)) / (float)this._subdivision;
+                var minPoint = point / this.subdivision;
+                var fraction = (point - (minPoint * this.subdivision)) / (float)this.subdivision;
 
-                var x0y0 = this._image.Sample(minPoint);
-                var x0y1 = this._image.Sample(minPoint + new Vector2i(0, 1));
-                var x1y0 = this._image.Sample(minPoint + new Vector2i(1, 0));
-                var x1y1 = this._image.Sample(minPoint + new Vector2i(1, 1));
+                var x0Y0 = this.image.Sample(minPoint);
+                var x0Y1 = this.image.Sample(minPoint + new Vector2i(0, 1));
+                var x1Y0 = this.image.Sample(minPoint + new Vector2i(1, 0));
+                var x1Y1 = this.image.Sample(minPoint + new Vector2i(1, 1));
 
-                var value = ((1f - fraction.X) * (1f - fraction.Y) * x0y0) + (fraction.X * (1f - fraction.Y) * x1y0) + ((1f - fraction.X) * fraction.Y * x0y1) + (fraction.X * fraction.Y * x1y1);
+                var value = ((1f - fraction.X) * (1f - fraction.Y) * x0Y0) + (fraction.X * (1f - fraction.Y) * x1Y0) + ((1f - fraction.X) * fraction.Y * x0Y1) + (fraction.X * fraction.Y * x1Y1);
 
                 return value;
             }
@@ -248,7 +248,7 @@ namespace Votyra.Core.Images
                 var min = this.ClipMinPoint(area.Min);
                 var max = this.ClipMinPoint(area.Max);
 
-                var offset = area.Min - (min * this._subdivision);
+                var offset = area.Min - (min * this.subdivision);
 
                 var matrix = PoolableMatrix2<float>.CreateDirty(area.Size);
                 var rawMatrix = matrix.RawMatrix;
@@ -259,11 +259,11 @@ namespace Votyra.Core.Images
                     for (var iy1 = 0; iy1 <= tempQualifier.Size.Y; iy1++)
                     {
                         var minPoint = new Vector2i(ix1, iy1) + min1;
-                        for (var ix = 0; ix < this._subdivision; ix++)
+                        for (var ix = 0; ix < this.subdivision; ix++)
                         {
-                            for (var iy = 0; iy < this._subdivision; iy++)
+                            for (var iy = 0; iy < this.subdivision; iy++)
                             {
-                                var imagePos = new Vector2i(ix + (minPoint.X * this._subdivision), iy + (minPoint.Y * this._subdivision));
+                                var imagePos = new Vector2i(ix + (minPoint.X * this.subdivision), iy + (minPoint.Y * this.subdivision));
                                 var matPos = imagePos - area.Min;
                                 rawMatrix.TrySet(matPos, this.Sample(imagePos));
                             }
@@ -276,12 +276,12 @@ namespace Votyra.Core.Images
 
             public void StartUsing()
             {
-                (this._image as IInitializableImage)?.StartUsing();
+                (this.image as IInitializableImage)?.StartUsing();
             }
 
             public void FinishUsing()
             {
-                (this._image as IInitializableImage)?.FinishUsing();
+                (this.image as IInitializableImage)?.FinishUsing();
             }
 
             private Vector2i ClipMinPoint(Vector2i point) => new Vector2i(this.ClipMinPoint(point.X), this.ClipMinPoint(point.Y));
@@ -290,21 +290,21 @@ namespace Votyra.Core.Images
             {
                 if (point > 0)
                 {
-                    return point / this._subdivision;
+                    return point / this.subdivision;
                 }
 
                 if (point < 0)
                 {
-                    return (point / this._subdivision) + ((point % this._subdivision) == 0 ? 0 : -1);
+                    return (point / this.subdivision) + ((point % this.subdivision) == 0 ? 0 : -1);
                 }
 
                 return 0;
             }
         }
 
-        private class LinearImage2fInvalidatableWrapper : LinearImage2fWrapper, IImageInvalidatableImage2
+        private class LinearImage2FInvalidatableWrapper : LinearImage2FWrapper, IImageInvalidatableImage2
         {
-            public LinearImage2fInvalidatableWrapper(IImage2f image, int subdivision)
+            public LinearImage2FInvalidatableWrapper(IImage2F image, int subdivision)
                 : base(image, subdivision)
             {
                 var invalidatedArea = (image as IImageInvalidatableImage2).InvalidatedArea;
@@ -314,26 +314,26 @@ namespace Votyra.Core.Images
             public Range2i InvalidatedArea { get; }
         }
 
-        private class NNImage2fWrapper : IImage2f, IInitializableImage
+        private class NnImage2FWrapper : IImage2F, IInitializableImage
         {
-            protected readonly IImage2f _image;
-            protected readonly int _subdivision;
+            private readonly IImage2F image;
+            private readonly int subdivision;
 
-            public NNImage2fWrapper(IImage2f image, int subdivision)
+            public NnImage2FWrapper(IImage2F image, int subdivision)
             {
-                this._image = image;
-                this._subdivision = subdivision;
-                this.RangeZ = this._image.RangeZ;
+                this.image = image;
+                this.subdivision = subdivision;
+                this.RangeZ = this.image.RangeZ;
             }
 
             public Area1f RangeZ { get; }
 
             public float Sample(Vector2i point)
             {
-                var minPoint = point / this._subdivision;
+                var minPoint = point / this.subdivision;
 
-                var x0y0 = this._image.Sample(minPoint);
-                return x0y0;
+                var x0Y0 = this.image.Sample(minPoint);
+                return x0Y0;
             }
 
             public PoolableMatrix2<float> SampleArea(Range2i area)
@@ -341,7 +341,7 @@ namespace Votyra.Core.Images
                 var min = this.ClipMinPoint(area.Min);
                 var max = this.ClipMinPoint(area.Max);
 
-                var offset = area.Min - (min * this._subdivision);
+                var offset = area.Min - (min * this.subdivision);
 
                 var matrix = PoolableMatrix2<float>.CreateDirty(area.Size);
                 var rawMatrix = matrix.RawMatrix;
@@ -353,11 +353,11 @@ namespace Votyra.Core.Images
                     for (var iy1 = 0; iy1 <= tempQualifier.Size.Y; iy1++)
                     {
                         var minPoint = new Vector2i(ix1, iy1) + min1;
-                        for (var ix = 0; ix < this._subdivision; ix++)
+                        for (var ix = 0; ix < this.subdivision; ix++)
                         {
-                            for (var iy = 0; iy < this._subdivision; iy++)
+                            for (var iy = 0; iy < this.subdivision; iy++)
                             {
-                                var imagePos = new Vector2i(ix + (minPoint.X * this._subdivision), iy + (minPoint.Y * this._subdivision));
+                                var imagePos = new Vector2i(ix + (minPoint.X * this.subdivision), iy + (minPoint.Y * this.subdivision));
                                 var matPos = imagePos - area.Min;
                                 rawMatrix.TrySet(matPos, this.Sample(imagePos));
                             }
@@ -370,12 +370,12 @@ namespace Votyra.Core.Images
 
             public void StartUsing()
             {
-                (this._image as IInitializableImage)?.StartUsing();
+                (this.image as IInitializableImage)?.StartUsing();
             }
 
             public void FinishUsing()
             {
-                (this._image as IInitializableImage)?.FinishUsing();
+                (this.image as IInitializableImage)?.FinishUsing();
             }
 
             private Vector2i ClipMinPoint(Vector2i point) => new Vector2i(this.ClipMinPoint(point.X), this.ClipMinPoint(point.Y));
@@ -384,21 +384,21 @@ namespace Votyra.Core.Images
             {
                 if (point > 0)
                 {
-                    return point / this._subdivision;
+                    return point / this.subdivision;
                 }
 
                 if (point < 0)
                 {
-                    return (point / this._subdivision) + ((point % this._subdivision) == 0 ? 0 : -1);
+                    return (point / this.subdivision) + ((point % this.subdivision) == 0 ? 0 : -1);
                 }
 
                 return 0;
             }
         }
 
-        private class NNImage2fInvalidatableWrapper : NNImage2fWrapper, IImageInvalidatableImage2
+        private class NnImage2FInvalidatableWrapper : NnImage2FWrapper, IImageInvalidatableImage2
         {
-            public NNImage2fInvalidatableWrapper(IImage2f image, int subdivision)
+            public NnImage2FInvalidatableWrapper(IImage2F image, int subdivision)
                 : base(image, subdivision)
             {
                 var invalidatedArea = (image as IImageInvalidatableImage2).InvalidatedArea;

@@ -6,24 +6,26 @@ namespace Votyra.Core.Models
     {
         private static readonly ConcurentObjectDictionaryPool<PoolableMatrix2<T>, Vector2i> Pool = new ConcurentObjectDictionaryPool<PoolableMatrix2<T>, Vector2i>(5, matrixSize => new PoolableMatrix2<T>(matrixSize));
 
-        public readonly T[,] RawMatrix;
+        private readonly T[,] rawMatrix;
+
+        public T[,] RawMatrix => rawMatrix;
 
         private PoolableMatrix2(Vector2i matrixSize)
         {
-            this.RawMatrix = new T[matrixSize.X, matrixSize.Y];
+            this.rawMatrix = new T[matrixSize.X, matrixSize.Y];
         }
 
-        private Vector2i Size => this.RawMatrix.Size();
-
-        public void Dispose()
-        {
-            Pool.ReturnObject(this, this.Size);
-        }
+        private Vector2i Size => this.rawMatrix.Size();
 
         public static PoolableMatrix2<T> CreateDirty(Vector2i matrixSize)
         {
             var obj = Pool.GetObject(matrixSize);
             return obj;
+        }
+
+        public void Dispose()
+        {
+            Pool.ReturnObject(this, this.Size);
         }
     }
 }

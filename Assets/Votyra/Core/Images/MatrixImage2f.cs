@@ -2,9 +2,9 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class MatrixImage2f : BaseMatrix2<float>, IImage2f
+    public class MatrixImage2F : BaseMatrix2<float>, IImage2F
     {
-        public MatrixImage2f(Vector2i size)
+        public MatrixImage2F(Vector2i size)
             : base(size)
         {
         }
@@ -14,7 +14,7 @@ namespace Votyra.Core.Images
         public void UpdateImage(float[,] template, Area1f rangeZ)
 
         {
-            base.UpdateImage(template);
+            this.UpdateImage(template);
 
             this.RangeZ = rangeZ;
         }

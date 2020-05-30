@@ -52,7 +52,7 @@ namespace Votyra.Core.Utils
                 return Vector2f.NaN;
             }
 
-            float rn2; //= mini(posarr, posind); // minimum of positive array
+            float rn2; // = mini(posarr, posind); // minimum of positive array
 
             if (p1 == 0f)
             {

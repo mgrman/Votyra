@@ -4,8 +4,8 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public interface ITerrainMesher2f
+    public interface ITerrainMesher2F
     {
-        void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image);
+        void GetResultingMesh(ITerrainMesh2F mesh, Vector2i group, IImage2F image);
     }
 }

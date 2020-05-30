@@ -4,39 +4,39 @@ using UnityEngine;
 namespace Votyra.Core.Models
 {
     [Serializable]
-    public struct UI_Vector3f
+    public struct UiVector3F
     {
         public float x;
         public float y;
         public float z;
 
-        public UI_Vector3f(float x, float y, float z)
+        public UiVector3F(float x, float y, float z)
         {
             this.x = x;
             this.y = y;
             this.z = z;
         }
 
-        public static implicit operator Vector3(UI_Vector3f value) => new Vector3(value.x, value.y, value.z);
+        public static implicit operator Vector3(UiVector3F value) => new Vector3(value.x, value.y, value.z);
 
-        public static implicit operator UI_Vector3f(Vector3 value) => new UI_Vector3f(value.x, value.y, value.z);
+        public static implicit operator UiVector3F(Vector3 value) => new UiVector3F(value.x, value.y, value.z);
 
-        public static implicit operator Vector3f(UI_Vector3f value) => new Vector3f(value.x, value.y, value.z);
+        public static implicit operator Vector3f(UiVector3F value) => new Vector3f(value.x, value.y, value.z);
 
-        public static implicit operator UI_Vector3f(Vector3f value) => new UI_Vector3f(value.X, value.Y, value.Z);
+        public static implicit operator UiVector3F(Vector3f value) => new UiVector3F(value.X, value.Y, value.Z);
 
-        public static bool operator ==(UI_Vector3f a, UI_Vector3f b) => (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
+        public static bool operator ==(UiVector3F a, UiVector3F b) => (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
 
-        public static bool operator !=(UI_Vector3f a, UI_Vector3f b) => (a.x != b.x) || (a.y != b.y) || (a.z != b.z);
+        public static bool operator !=(UiVector3F a, UiVector3F b) => (a.x != b.x) || (a.y != b.y) || (a.z != b.z);
 
         public override bool Equals(object obj)
         {
-            if (!(obj is UI_Vector3f))
+            if (!(obj is UiVector3F))
             {
                 return false;
             }
 
-            var that = (UI_Vector3f)obj;
+            var that = (UiVector3F)obj;
 
             return this == that;
         }

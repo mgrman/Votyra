@@ -5,11 +5,11 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core
 {
-    public class FrameData3b : IFrameData3b
+    public class FrameData3B : IFrameData3B
     {
-        private int _activeCounter;
+        private int activeCounter;
 
-        public FrameData3b(Ray3f cameraRay, IReadOnlyList<Plane3f> cameraPlanes, IReadOnlyList<Vector3f> cameraFrustumCorners, IReadOnlySet<Vector3i> existingGroups, IImage3b image, Range3i invalidatedArea_imageSpace)
+        public FrameData3B(Ray3f cameraRay, IReadOnlyList<Plane3f> cameraPlanes, IReadOnlyList<Vector3f> cameraFrustumCorners, IReadOnlySet<Vector3i> existingGroups, IImage3B image, Range3i invalidatedAreaImageSpace)
         {
             this.CameraRay = cameraRay;
             this.CameraPlanes = cameraPlanes;
@@ -17,7 +17,7 @@ namespace Votyra.Core
             this.ExistingGroups = existingGroups;
             this.Image = image;
 
-            this.InvalidatedArea_imageSpace = invalidatedArea_imageSpace;
+            this.InvalidatedAreaImageSpace = invalidatedAreaImageSpace;
 
             (this.Image as IInitializableImage)?.StartUsing();
         }
@@ -30,19 +30,19 @@ namespace Votyra.Core
 
         public IReadOnlySet<Vector3i> ExistingGroups { get; }
 
-        public IImage3b Image { get; }
+        public IImage3B Image { get; }
 
-        public Range3i InvalidatedArea_imageSpace { get; }
+        public Range3i InvalidatedAreaImageSpace { get; }
 
         public void Activate()
         {
-            this._activeCounter++;
+            this.activeCounter++;
         }
 
         public void Deactivate()
         {
-            this._activeCounter--;
-            if (this._activeCounter <= 0)
+            this.activeCounter--;
+            if (this.activeCounter <= 0)
             {
                 this.Dispose();
             }

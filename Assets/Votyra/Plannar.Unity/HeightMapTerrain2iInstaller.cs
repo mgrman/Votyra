@@ -7,7 +7,7 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
-            this.Container.Unbind<IImageConstraint2i>();
+            this.Container.Unbind<IImageConstraint2I>();
         }
     }
 }

@@ -11,18 +11,20 @@ namespace Votyra.Core.Utils
 {
     public static unsafe class ConversionUtils
     {
-        public static Vector2f ToVector2f(this Vector2 vector) => new Vector2f(vector.x, vector.y);
+        public static Vector2f ToVector2F(this Vector2 vector) => new Vector2f(vector.x, vector.y);
 
-        public static Vector3f ToVector3f(this Vector3 vector) => new Vector3f(vector.x, vector.y, vector.z);
+        public static Vector3f ToVector3F(this Vector3 vector) => new Vector3f(vector.x, vector.y, vector.z);
 
-        public static Plane3f ToPlane3f(this Plane plane) => new Plane3f(plane.normal.ToVector3f(), plane.distance);
+        public static Plane3f ToPlane3F(this Plane plane) => new Plane3f(plane.normal.ToVector3F(), plane.distance);
 
-        public static Plane3f[] ToPlane3f(this Plane[] planesUnity)
+        public static Plane3f[] ToPlane3F(this Plane[] planesUnity)
         {
-            var union = new UnionPlane();
-            union.From = planesUnity;
+            var union = new UnionPlane
+            {
+                From = planesUnity,
+            };
             var res = union.To;
-            Assert.AreEqual(planesUnity.Length, res.Length, $"{nameof(ToPlane3f)} conversion failed!");
+            Assert.AreEqual(planesUnity.Length, res.Length, $"{nameof(ToPlane3F)} conversion failed!");
             return res;
         }
 
@@ -34,8 +36,10 @@ namespace Votyra.Core.Utils
 
         public static Vector3[] ToVector3(this Vector3f[] vector)
         {
-            var union = new UnionVector3();
-            union.From = vector;
+            var union = new UnionVector3
+            {
+                From = vector,
+            };
             var res = union.To;
             Assert.AreEqual(vector.Length, res.Length, $"{nameof(ToVector3)} conversion failed!");
             return res;
@@ -43,8 +47,10 @@ namespace Votyra.Core.Utils
 
         public static Vector2[] ToVector2(this Vector2f[] vector)
         {
-            var union = new UnionVector2();
-            union.From = vector;
+            var union = new UnionVector2
+            {
+                From = vector,
+            };
             var res = union.To;
             Assert.AreEqual(vector.Length, res.Length, $"{nameof(ToVector2)}  conversion failed!");
             return res;
@@ -54,28 +60,29 @@ namespace Votyra.Core.Utils
 
         public static List<Vector3> ToVector3List(this List<Vector3f> vector) => vector.ConvertListOfMatchingStructs(ToVector3);
 
-        public static Matrix4x4f ToMatrix4x4f(this Matrix4x4 mat) => new Matrix4x4f(mat.m00, mat.m01, mat.m02, mat.m03, mat.m10, mat.m11, mat.m12, mat.m13, mat.m20, mat.m21, mat.m22, mat.m23, mat.m30, mat.m31, mat.m32, mat.m33);
+        public static Matrix4X4F ToMatrix4X4F(this Matrix4x4 mat) => new Matrix4X4F(mat.m00, mat.m01, mat.m02, mat.m03, mat.m10, mat.m11, mat.m12, mat.m13, mat.m20, mat.m21, mat.m22, mat.m23, mat.m30, mat.m31, mat.m32, mat.m33);
 
-        public static Matrix4x4 ToMatrix4x4(this Matrix4x4f mat)
+        public static Matrix4x4 ToMatrix4X4(this Matrix4X4F mat)
         {
-            var mat2 = new Matrix4x4();
-
-            mat2.m00 = mat.m00;
-            mat2.m10 = mat.m10;
-            mat2.m20 = mat.m20;
-            mat2.m30 = mat.m30;
-            mat2.m01 = mat.m01;
-            mat2.m11 = mat.m11;
-            mat2.m21 = mat.m21;
-            mat2.m31 = mat.m31;
-            mat2.m02 = mat.m02;
-            mat2.m12 = mat.m12;
-            mat2.m22 = mat.m22;
-            mat2.m32 = mat.m32;
-            mat2.m03 = mat.m03;
-            mat2.m13 = mat.m13;
-            mat2.m23 = mat.m23;
-            mat2.m33 = mat.m33;
+            var mat2 = new Matrix4x4
+            {
+                m00 = mat.M00,
+                m10 = mat.M10,
+                m20 = mat.M20,
+                m30 = mat.M30,
+                m01 = mat.M01,
+                m11 = mat.M11,
+                m21 = mat.M21,
+                m31 = mat.M31,
+                m02 = mat.M02,
+                m12 = mat.M12,
+                m22 = mat.M22,
+                m32 = mat.M32,
+                m03 = mat.M03,
+                m13 = mat.M13,
+                m23 = mat.M23,
+                m33 = mat.M33,
+            };
             return mat2;
         }
 
@@ -125,7 +132,6 @@ namespace Votyra.Core.Utils
             public readonly Plane3f[] To;
         }
 
-        //
         //        [StructLayout(LayoutKind.Explicit)]
         //        private struct UnionVector3
         //        {

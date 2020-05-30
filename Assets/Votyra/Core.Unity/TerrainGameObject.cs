@@ -7,11 +7,11 @@ namespace Votyra.Core.Unity
 {
     public class TerrainGameObject : ITerrainGameObject
     {
-        private readonly Func<GameObject> _factory;
+        private readonly Func<GameObject> factory;
 
         public TerrainGameObject(Func<GameObject> factory)
         {
-            this._factory = factory;
+            this.factory = factory;
         }
 
         public bool IsInitialized => this.GameObject != null;
@@ -23,7 +23,7 @@ namespace Votyra.Core.Unity
                 throw new InvalidOperationException();
             }
 
-            this.GameObject = this._factory();
+            this.GameObject = this.factory();
             this.MeshFilter = this.GameObject.GetComponent<MeshFilter>();
             this.MeshCollider = this.GameObject.GetComponent<MeshCollider>();
             this.BoxCollider = this.GameObject.GetComponent<BoxCollider>();

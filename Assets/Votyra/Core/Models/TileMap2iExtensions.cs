@@ -5,49 +5,49 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
-    public static class TileMap2iExtensions
+    public static class TileMap2IExtensions
     {
-        public static TileMap2i CreateExpandedTileMap2i(this IEnumerable<SampledData2i> templates, float scaleFactor, IThreadSafeLogger logger) => templates.ScaleTemplates(scaleFactor)
+        public static TileMap2I CreateExpandedTileMap2I(this IEnumerable<SampledData2I> templates, float scaleFactor, IThreadSafeLogger logger) => templates.ScaleTemplates(scaleFactor)
             .CreateVariantsOfUmbra()
             .ExpandRotations()
-            .CreateTileMap2i(logger);
+            .CreateTileMap2I(logger);
 
-        public static TileMap2i CreateTileMap2i(this IEnumerable<SampledData2i> templates, IThreadSafeLogger logger) => new TileMap2i(templates, logger);
+        public static TileMap2I CreateTileMap2I(this IEnumerable<SampledData2I> templates, IThreadSafeLogger logger) => new TileMap2I(templates, logger);
 
-        public static IEnumerable<SampledData2i> CreateVariantsOfUmbra(this IEnumerable<SampledData2i> templates)
+        public static IEnumerable<SampledData2I> CreateVariantsOfUmbra(this IEnumerable<SampledData2I> templates)
         {
             return templates.SelectMany(t => CreateVariantsOfUmbra(t))
                 .Distinct()
                 .ToArray();
         }
 
-        public static IEnumerable<SampledData2i> CreateVariantsOfUmbra(this SampledData2i tile)
+        public static IEnumerable<SampledData2I> CreateVariantsOfUmbra(this SampledData2I tile)
         {
-            var stepCount_x0y0 = tile.x0y0.Abs();
-            var stepCount_x0y1 = tile.x0y1.Abs();
-            var stepCount_x1y0 = tile.x1y0.Abs();
-            var stepCount_x1y1 = tile.x1y1.Abs();
-            var sign_x0y0 = tile.x0y0.Sign();
-            var sign_x0y1 = tile.x0y1.Sign();
-            var sign_x1y0 = tile.x1y0.Sign();
-            var sign_x1y1 = tile.x1y1.Sign();
+            var stepCountX0Y0 = tile.X0Y0.Abs();
+            var stepCountX0Y1 = tile.X0Y1.Abs();
+            var stepCountX1Y0 = tile.X1Y0.Abs();
+            var stepCountX1Y1 = tile.X1Y1.Abs();
+            var signX0Y0 = tile.X0Y0.Sign();
+            var signX0Y1 = tile.X0Y1.Sign();
+            var signX1Y0 = tile.X1Y0.Sign();
+            var signX1Y1 = tile.X1Y1.Sign();
 
-            for (var x0y0 = 0; x0y0 <= stepCount_x0y0; x0y0++)
+            for (var x0Y0 = 0; x0Y0 <= stepCountX0Y0; x0Y0++)
             {
-                for (var x0y1 = 0; x0y1 <= stepCount_x0y1; x0y1++)
+                for (var x0Y1 = 0; x0Y1 <= stepCountX0Y1; x0Y1++)
                 {
-                    for (var x1y0 = 0; x1y0 <= stepCount_x1y0; x1y0++)
+                    for (var x1Y0 = 0; x1Y0 <= stepCountX1Y0; x1Y0++)
                     {
-                        for (var x1y1 = 0; x1y1 <= stepCount_x1y1; x1y1++)
+                        for (var x1Y1 = 0; x1Y1 <= stepCountX1Y1; x1Y1++)
                         {
-                            yield return new SampledData2i(x0y0 * sign_x0y0, x0y1 * sign_x0y1, x1y0 * sign_x1y0, x1y1 * sign_x1y1);
+                            yield return new SampledData2I(x0Y0 * signX0Y0, x0Y1 * signX0Y1, x1Y0 * signX1Y0, x1Y1 * signX1Y1);
                         }
                     }
                 }
             }
         }
 
-        public static IEnumerable<SampledData2i> ExpandRotations(this IEnumerable<SampledData2i> templates)
+        public static IEnumerable<SampledData2I> ExpandRotations(this IEnumerable<SampledData2I> templates)
         {
             return templates.SelectMany(template =>
                 {
@@ -63,13 +63,13 @@ namespace Votyra.Core.Models
                 .ToArray();
         }
 
-        public static Area1i RangeUnion(this IEnumerable<SampledData2i> templates)
+        public static Area1i RangeUnion(this IEnumerable<SampledData2I> templates)
         {
             return templates.Select(o => o.Range)
                 .Aggregate((Area1i?)null, (a, b) => a?.UnionWith(b) ?? b) ?? Area1i.Zero;
         }
 
-        public static IEnumerable<SampledData2i> ScaleTemplates(this IEnumerable<SampledData2i> templates, float scale)
+        public static IEnumerable<SampledData2I> ScaleTemplates(this IEnumerable<SampledData2I> templates, float scale)
         {
             for (var i = 1; i <= scale; i += 1)
             {

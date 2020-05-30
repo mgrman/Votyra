@@ -12,18 +12,18 @@ namespace Votyra.Core.Utils
 
         private class CoroutineRunner : MonoBehaviour
         {
-            private static CoroutineRunner _instance;
+            private static CoroutineRunner instance;
 
             public static CoroutineRunner Instance
             {
                 get
                 {
-                    if (_instance == null)
+                    if (instance == null)
                     {
-                        _instance = new GameObject(nameof(CoroutineRunner)).AddComponent<CoroutineRunner>();
+                        instance = new GameObject(nameof(CoroutineRunner)).AddComponent<CoroutineRunner>();
                     }
 
-                    return _instance;
+                    return instance;
                 }
             }
         }

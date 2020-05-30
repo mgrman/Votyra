@@ -5,85 +5,82 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class EditableMatrixImage2f : IImage2fProvider, IEditableImage2f
+    public class EditableMatrixImage2F : IImage2FProvider, IEditableImage2F
     {
-        private readonly IImageConstraint2i[] _constraints;
-        private readonly float[,] _editableMatrix;
+        private readonly IImageConstraint2I[] constraints;
+        private readonly float[,] editableMatrix;
+        private readonly List<MatrixImage2F> readonlyMatrices = new List<MatrixImage2F>();
+        private Area1f editableRangeZ;
+        private Range2i? invalidatedArea;
+        private MatrixImage2F preparedImage;
 
-        private readonly IImage2fPostProcessor _image2fPostProcessor;
-
-        private readonly List<MatrixImage2f> _readonlyMatrices = new List<MatrixImage2f>();
-        private Area1f _editableRangeZ;
-        private Range2i? _invalidatedArea;
-        private MatrixImage2f _preparedImage;
-
-        public EditableMatrixImage2f(IImageConfig imageConfig, List<IImageConstraint2i> constraints, float defaultValue = 0f)
+        public EditableMatrixImage2F(IImageConfig imageConfig, List<IImageConstraint2I> constraints, float defaultValue = 0f)
         {
-            this._constraints = constraints.SelectMany(o => o.Priorities.Select(p => new
-                {
-                    p,
-                    o,
-                }))
+            this.constraints = constraints.SelectMany(o => o.Priorities.Select(p => new
+            {
+                p,
+                o,
+            }))
                 .OrderBy(o => o.p)
                 .Select(o => o.o)
                 .ToArray();
-            foreach (var constraint in this._constraints)
+            foreach (var constraint in this.constraints)
             {
                 constraint.Initialize(this);
             }
 
-            this._editableMatrix = new float[imageConfig.ImageSize.X, imageConfig.ImageSize.Y];
+            this.editableMatrix = new float[imageConfig.ImageSize.X, imageConfig.ImageSize.Y];
             if (defaultValue != 0f)
             {
                 for (var ix = 0; ix < imageConfig.ImageSize.X; ix++)
                 {
                     for (var iy = 0; iy < imageConfig.ImageSize.Y; iy++)
                     {
-                        this._editableMatrix[ix, iy] = defaultValue;
+                        this.editableMatrix[ix, iy] = defaultValue;
                     }
                 }
             }
 
-            this._editableRangeZ = Area1f.FromMinAndMax(defaultValue, defaultValue);
+            this.editableRangeZ = Area1f.FromMinAndMax(defaultValue, defaultValue);
         }
 
-        private MatrixImage2f PreparedImage
+        private MatrixImage2F PreparedImage
         {
-            get => this._preparedImage;
+            get => this.preparedImage;
             set
             {
-                this._preparedImage?.FinishUsing();
-                this._preparedImage = value;
-                this._preparedImage?.StartUsing();
+                this.preparedImage?.FinishUsing();
+                this.preparedImage = value;
+                this.preparedImage?.StartUsing();
             }
         }
 
-        public IEditableImageAccessor2f RequestAccess(Range2i areaRequest) => new MatrixImageAccessor(this, areaRequest);
+        public IEditableImageAccessor2F RequestAccess(Range2i areaRequest) => new MatrixImageAccessor(this, areaRequest);
 
-        public IImage2f CreateImage()
+        public IImage2F CreateImage()
         {
-            if ((this._invalidatedArea == Range2i.Zero) && (this.PreparedImage.InvalidatedArea == Range2i.Zero))
+            if ((this.invalidatedArea == Range2i.Zero) && (this.PreparedImage.InvalidatedArea == Range2i.Zero))
             {
             }
-            else if (this._invalidatedArea.HasValue || (this.PreparedImage == null))
+            else if (this.invalidatedArea.HasValue || (this.PreparedImage == null))
             {
-                this._invalidatedArea = this._invalidatedArea ?? this._editableMatrix.Range();
+                this.invalidatedArea = this.invalidatedArea ?? this.editableMatrix.Range();
 
                 this.PreparedImage = this.GetNotUsedImage();
-                this.PreparedImage.UpdateImage(this._editableMatrix, this._editableRangeZ);
-                this.PreparedImage.UpdateInvalidatedArea(this._invalidatedArea.Value);
-                this._invalidatedArea = Range2i.Zero;
+                this.PreparedImage.UpdateImage(this.editableMatrix, this.editableRangeZ);
+                this.PreparedImage.UpdateInvalidatedArea(this.invalidatedArea.Value);
+                this.invalidatedArea = Range2i.Zero;
             }
 
             return this.PreparedImage;
         }
 
-        private MatrixImage2f GetNotUsedImage()
+        private MatrixImage2F GetNotUsedImage()
         {
-            MatrixImage2f image = null;
-            for (var i = 0; i < this._readonlyMatrices.Count; i++)
+            MatrixImage2F image = null;
+            for (var i = 0; i < this.readonlyMatrices.Count; i++)
             {
-                var o = this._readonlyMatrices[i];
+                var o = this.readonlyMatrices[i];
                 if (!o.IsBeingUsed)
                 {
                     image = o;
@@ -93,8 +90,8 @@ namespace Votyra.Core.Images
 
             if (image == null)
             {
-                image = new MatrixImage2f(this._editableMatrix.Size());
-                this._readonlyMatrices.Add(image);
+                image = new MatrixImage2F(this.editableMatrix.Size());
+                this.readonlyMatrices.Add(image);
             }
 
             return image;
@@ -102,64 +99,64 @@ namespace Votyra.Core.Images
 
         private void FixImage(Range2i invalidatedImageArea, Direction direction)
         {
-            if (this._invalidatedArea != null)
+            if (this.invalidatedArea != null)
             {
-                invalidatedImageArea = this._invalidatedArea.Value.CombineWith(invalidatedImageArea);
+                invalidatedImageArea = this.invalidatedArea.Value.CombineWith(invalidatedImageArea);
             }
 
-            this._invalidatedArea = invalidatedImageArea;
+            this.invalidatedArea = invalidatedImageArea;
 
-            for (var i = 0; i < this._constraints.Length; i++)
+            for (var i = 0; i < this.constraints.Length; i++)
             {
-                var newInvalidatedImageArea = this._constraints[i]
-                    .FixImage(this, this._editableMatrix, invalidatedImageArea, direction);
+                var newInvalidatedImageArea = this.constraints[i]
+                    .FixImage(this, this.editableMatrix, invalidatedImageArea, direction);
                 invalidatedImageArea = invalidatedImageArea.CombineWith(newInvalidatedImageArea);
-                this._invalidatedArea = invalidatedImageArea;
+                this.invalidatedArea = invalidatedImageArea;
             }
         }
 
-        private class MatrixImageAccessor : IEditableImageAccessor2f
+        private class MatrixImageAccessor : IEditableImageAccessor2F
         {
-            private readonly EditableMatrixImage2f _editableImage;
-            private readonly float[,] _editableMatrix;
-            private bool _anyChange;
-            private float _changeCounter;
-            private Area1f _editableRangeZ;
+            private readonly EditableMatrixImage2F editableImage;
+            private readonly float[,] editableMatrix;
+            private bool anyChange;
+            private float changeCounter;
+            private Area1f editableRangeZ;
 
-            public MatrixImageAccessor(EditableMatrixImage2f editableImage, Range2i area)
+            public MatrixImageAccessor(EditableMatrixImage2F editableImage, Range2i area)
             {
-                this._editableMatrix = editableImage._editableMatrix;
-                this._editableImage = editableImage;
-                this.Area = area.IntersectWith(editableImage._editableMatrix.Range());
+                this.editableMatrix = editableImage.editableMatrix;
+                this.editableImage = editableImage;
+                this.Area = area.IntersectWith(editableImage.editableMatrix.Range());
             }
 
             public Range2i Area { get; }
 
             public float this[Vector2i pos]
             {
-                get => this._editableMatrix[pos.X, pos.Y];
+                get => this.editableMatrix[pos.X, pos.Y];
                 set
                 {
-                    var existingValue = this._editableMatrix[pos.X, pos.Y];
+                    var existingValue = this.editableMatrix[pos.X, pos.Y];
                     if (value == existingValue)
                     {
                         return;
                     }
 
-                    this._anyChange = true;
-                    this._changeCounter += value - existingValue;
-                    this._editableMatrix[pos.X, pos.Y] = value;
-                    this._editableRangeZ = this._editableRangeZ.UnionWith(value);
+                    this.anyChange = true;
+                    this.changeCounter += value - existingValue;
+                    this.editableMatrix[pos.X, pos.Y] = value;
+                    this.editableRangeZ = this.editableRangeZ.UnionWith(value);
                 }
             }
 
             public void Dispose()
             {
-                if (this._anyChange)
+                if (this.anyChange)
                 {
-                    this._editableImage._editableRangeZ = this._editableRangeZ;
-                    var direction = this._changeCounter > 0 ? Direction.Up : this._changeCounter < 0 ? Direction.Down : Direction.Unknown;
-                    this._editableImage.FixImage(this.Area, direction);
+                    this.editableImage.editableRangeZ = this.editableRangeZ;
+                    var direction = this.changeCounter > 0 ? Direction.Up : this.changeCounter < 0 ? Direction.Down : Direction.Unknown;
+                    this.editableImage.FixImage(this.Area, direction);
                 }
             }
         }

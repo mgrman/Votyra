@@ -2,7 +2,7 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.Images
 {
-    public class CombineImage2f : IImage2f
+    public class CombineImage2F : IImage2F
     {
         public enum Operations
         {
@@ -12,7 +12,7 @@ namespace Votyra.Core.Images
             Divide,
         }
 
-        public CombineImage2f(IImage2f imageA, IImage2f imageB, Operations operation)
+        public CombineImage2F(IImage2F imageA, IImage2F imageB, Operations operation)
         {
             this.ImageA = imageA;
             this.ImageB = imageB;
@@ -41,9 +41,9 @@ namespace Votyra.Core.Images
             }
         }
 
-        public IImage2f ImageA { get; }
+        public IImage2F ImageA { get; }
 
-        public IImage2f ImageB { get; }
+        public IImage2F ImageB { get; }
 
         public Operations Operation { get; }
 

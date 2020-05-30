@@ -1,11 +1,12 @@
+using Votyra.Core.Images;
 using Votyra.Core.Models;
 using Votyra.Core.Utils;
 
-namespace Votyra.Core.Images
+namespace Votyra.Images.Noise
 {
-    public class NoiseImage3b : IImage3b
+    public class NoiseImage3B : IImage3B
     {
-        public NoiseImage3b(Vector3f offset, Vector3f scale)
+        public NoiseImage3B(Vector3f offset, Vector3f scale)
         {
             this.Offset = offset;
             this.Scale = scale;
@@ -19,11 +20,11 @@ namespace Votyra.Core.Images
         {
             var pointf = (point / this.Scale) + this.Offset;
 
-            var valueXY = MathUtils.PerlinNoise(pointf.X, pointf.Y);
-            var valueYZ = MathUtils.PerlinNoise(pointf.Y, pointf.Z);
-            var valueZX = MathUtils.PerlinNoise(pointf.Z, pointf.X);
+            var valueXy = NoiseUtils.PerlinNoise(pointf.X, pointf.Y);
+            var valueYz = NoiseUtils.PerlinNoise(pointf.Y, pointf.Z);
+            var valueZx = NoiseUtils.PerlinNoise(pointf.Z, pointf.X);
 
-            var value = (valueXY + valueYZ + valueZX) / 3;
+            var value = (valueXy + valueYz + valueZx) / 3;
 
             return value > 0.5f;
         }

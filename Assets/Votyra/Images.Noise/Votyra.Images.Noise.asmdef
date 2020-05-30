@@ -1,0 +1,9 @@
+﻿{
+	"name": "Votyra.Images.Noise",
+	"references": [
+		"Votyra.Core",
+		"Votyra.Core.Unity",
+		"Zenject",
+		"FastNoise"
+	]
+}

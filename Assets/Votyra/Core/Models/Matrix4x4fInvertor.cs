@@ -2,33 +2,33 @@ using System;
 
 namespace Votyra.Core.Models
 {
-    //https://msdn.microsoft.com/en-us/magazine/mt736457.aspx?f=255&MSPPError=-2147217396
-    //http://quaetrix.com/Matrix/code.html
-    internal static class Matrix4x4fInvertor
+    // https://msdn.microsoft.com/en-us/magazine/mt736457.aspx?f=255&MSPPError=-2147217396
+    // http://quaetrix.com/Matrix/code.html
+    internal static class Matrix4X4FInvertor
     {
-        public static Matrix4x4f Invert(this Matrix4x4f mat4x4)
+        public static Matrix4X4F Invert(this Matrix4X4F mat4X4)
         {
             var matArrays = MatrixCreate(4, 4);
-            matArrays[0][0] = mat4x4.m00;
-            matArrays[1][0] = mat4x4.m10;
-            matArrays[2][0] = mat4x4.m20;
-            matArrays[3][0] = mat4x4.m30;
-            matArrays[0][1] = mat4x4.m01;
-            matArrays[1][1] = mat4x4.m11;
-            matArrays[2][1] = mat4x4.m21;
-            matArrays[3][1] = mat4x4.m31;
-            matArrays[0][2] = mat4x4.m02;
-            matArrays[1][2] = mat4x4.m12;
-            matArrays[2][2] = mat4x4.m22;
-            matArrays[3][2] = mat4x4.m32;
-            matArrays[0][3] = mat4x4.m03;
-            matArrays[1][3] = mat4x4.m13;
-            matArrays[2][3] = mat4x4.m23;
-            matArrays[3][3] = mat4x4.m33;
+            matArrays[0][0] = mat4X4.M00;
+            matArrays[1][0] = mat4X4.M10;
+            matArrays[2][0] = mat4X4.M20;
+            matArrays[3][0] = mat4X4.M30;
+            matArrays[0][1] = mat4X4.M01;
+            matArrays[1][1] = mat4X4.M11;
+            matArrays[2][1] = mat4X4.M21;
+            matArrays[3][1] = mat4X4.M31;
+            matArrays[0][2] = mat4X4.M02;
+            matArrays[1][2] = mat4X4.M12;
+            matArrays[2][2] = mat4X4.M22;
+            matArrays[3][2] = mat4X4.M32;
+            matArrays[0][3] = mat4X4.M03;
+            matArrays[1][3] = mat4X4.M13;
+            matArrays[2][3] = mat4X4.M23;
+            matArrays[3][3] = mat4X4.M33;
 
             var matInvertedArrays = MatrixInverse(matArrays);
 
-            return new Matrix4x4f((float)matInvertedArrays[0][0], (float)matInvertedArrays[0][1], (float)matInvertedArrays[0][2], (float)matInvertedArrays[0][3], (float)matInvertedArrays[1][0], (float)matInvertedArrays[1][1], (float)matInvertedArrays[1][2], (float)matInvertedArrays[1][3], (float)matInvertedArrays[2][0], (float)matInvertedArrays[2][1], (float)matInvertedArrays[2][2], (float)matInvertedArrays[2][3], (float)matInvertedArrays[3][0], (float)matInvertedArrays[3][1], (float)matInvertedArrays[3][2], (float)matInvertedArrays[3][3]);
+            return new Matrix4X4F((float)matInvertedArrays[0][0], (float)matInvertedArrays[0][1], (float)matInvertedArrays[0][2], (float)matInvertedArrays[0][3], (float)matInvertedArrays[1][0], (float)matInvertedArrays[1][1], (float)matInvertedArrays[1][2], (float)matInvertedArrays[1][3], (float)matInvertedArrays[2][0], (float)matInvertedArrays[2][1], (float)matInvertedArrays[2][2], (float)matInvertedArrays[2][3], (float)matInvertedArrays[3][0], (float)matInvertedArrays[3][1], (float)matInvertedArrays[3][2], (float)matInvertedArrays[3][3]);
         }
 
         private static double[][] MatrixCreate(int rows, int cols)
@@ -75,7 +75,7 @@ namespace Votyra.Core.Models
                     }
                 }
 
-                var x = Helper(lum, b); //
+                var x = Helper(lum, b);
                 for (var j = 0; j < n; ++j)
                 {
                     result[j][i] = x[j];

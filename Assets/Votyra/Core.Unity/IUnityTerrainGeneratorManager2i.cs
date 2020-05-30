@@ -4,12 +4,12 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core
 {
-    public interface IUnityTerrainGeneratorManager2i
+    public interface IUnityTerrainGeneratorManager2I
     {
-        event Action<Vector2i, ITerrainMesh2f> NewTerrain;
+        event Action<Vector2i, ITerrainMesh2F> NewTerrain;
 
-        event Action<Vector2i, ITerrainMesh2f> ChangedTerrain;
+        event Action<Vector2i, ITerrainMesh2F> ChangedTerrain;
 
-        event Action<Vector2i, ITerrainMesh2f> RemovedTerrain;
+        event Action<Vector2i, ITerrainMesh2F> RemovedTerrain;
     }
 }

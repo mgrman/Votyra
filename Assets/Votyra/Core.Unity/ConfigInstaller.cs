@@ -1,24 +1,32 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Votyra.Core.Unity
 {
     public class ConfigInstaller : MonoInstaller
     {
+        [FormerlySerializedAs("Config")]
         [SerializeField]
-        public ConfigItem[] Config;
+        private ConfigItem[] config;
+
+        public ConfigItem[] Config
+        {
+            get => this.config;
+            set => this.config = value;
+        }
 
         public override void InstallBindings()
         {
             try
             {
-                if (this.Config == null)
+                if (this.config == null)
                 {
                     return;
                 }
 
-                foreach (var configItem in this.Config)
+                foreach (var configItem in this.config)
                 {
                     var type = configItem.Type;
                     try

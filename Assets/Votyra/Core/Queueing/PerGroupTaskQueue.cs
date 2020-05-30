@@ -9,14 +9,14 @@ namespace Votyra.Core.Queueing
 {
     public class PerGroupTaskQueue : IWorkQueue<GroupUpdateData>
     {
-        private readonly Dictionary<Vector2i, GroupUpdateData> _queuedUpdates = new Dictionary<Vector2i, GroupUpdateData>();
-        private readonly TaskFactory _taskFactory;
-        private readonly object _taskLock = new object();
-        private readonly HashSet<Vector2i> _updateTasks = new HashSet<Vector2i>();
+        private readonly Dictionary<Vector2i, GroupUpdateData> queuedUpdates = new Dictionary<Vector2i, GroupUpdateData>();
+        private readonly TaskFactory taskFactory;
+        private readonly object taskLock = new object();
+        private readonly HashSet<Vector2i> updateTasks = new HashSet<Vector2i>();
 
         public PerGroupTaskQueue()
         {
-            this._taskFactory = new TaskFactory();
+            this.taskFactory = new TaskFactory();
         }
 
         public event Action<GroupUpdateData> DoWork;
@@ -26,18 +26,18 @@ namespace Votyra.Core.Queueing
             bool startNewTask;
             bool disposeOldValue;
             GroupUpdateData oldValue;
-            lock (this._taskLock)
+            lock (this.taskLock)
             {
-                disposeOldValue = this._queuedUpdates.TryGetValue(context.Group, out oldValue);
+                disposeOldValue = this.queuedUpdates.TryGetValue(context.Group, out oldValue);
                 if (disposeOldValue && oldValue.ForceUpdate)
                 {
                     context = new GroupUpdateData(context.Group, context.Context, context.Mesh, true);
                 }
 
-                this._queuedUpdates[context.Group] = context;
+                this.queuedUpdates[context.Group] = context;
 
-                startNewTask = !this._updateTasks.Contains(context.Group);
-                this._updateTasks.Add(context.Group);
+                startNewTask = !this.updateTasks.Contains(context.Group);
+                this.updateTasks.Add(context.Group);
             }
 
             if (disposeOldValue)
@@ -47,7 +47,7 @@ namespace Votyra.Core.Queueing
 
             if (startNewTask)
             {
-                this._taskFactory.StartNew(this.TaskUpdate, context.Group);
+                this.taskFactory.StartNew(this.TaskUpdate, context.Group);
             }
         }
 
@@ -65,15 +65,15 @@ namespace Votyra.Core.Queueing
                 while (true)
                 {
                     GroupUpdateData activeContext;
-                    lock (this._taskLock)
+                    lock (this.taskLock)
                     {
-                        if (this._queuedUpdates.TryGetValue(group, out activeContext))
+                        if (this.queuedUpdates.TryGetValue(group, out activeContext))
                         {
-                            this._queuedUpdates.Remove(group);
+                            this.queuedUpdates.Remove(group);
                         }
                         else
                         {
-                            this._updateTasks.Remove(group);
+                            this.updateTasks.Remove(group);
                             return;
                         }
                     }

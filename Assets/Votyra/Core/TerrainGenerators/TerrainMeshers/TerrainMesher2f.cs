@@ -5,24 +5,24 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public class TerrainMesher2f : ITerrainMesher2f
+    public class TerrainMesher2F : ITerrainMesher2F
     {
-        private readonly Vector2i _cellInGroupCount;
+        private readonly Vector2i cellInGroupCount;
 
-        public TerrainMesher2f(ITerrainConfig terrainConfig)
+        public TerrainMesher2F(ITerrainConfig terrainConfig)
         {
-            this._cellInGroupCount = terrainConfig.CellInGroupCount.XY();
+            this.cellInGroupCount = terrainConfig.CellInGroupCount.XY();
         }
 
-        public void GetResultingMesh(ITerrainMesh2f mesh, Vector2i group, IImage2f image)
+        public void GetResultingMesh(ITerrainMesh2F mesh, Vector2i group, IImage2F image)
         {
-            var range = Area3f.FromMinAndSize((group * this._cellInGroupCount).ToVector3f(image.RangeZ.Min), this._cellInGroupCount.ToVector3f(image.RangeZ.Size));
+            var range = Area3f.FromMinAndSize((group * this.cellInGroupCount).ToVector3f(image.RangeZ.Min), this.cellInGroupCount.ToVector3f(image.RangeZ.Size));
             mesh.Reset(range);
 
-            var groupPosition = this._cellInGroupCount * group;
-            for (var ix = 0; ix < this._cellInGroupCount.X; ix++)
+            var groupPosition = this.cellInGroupCount * group;
+            for (var ix = 0; ix < this.cellInGroupCount.X; ix++)
             {
-                for (var iy = 0; iy < this._cellInGroupCount.Y; iy++)
+                for (var iy = 0; iy < this.cellInGroupCount.Y; iy++)
                 {
                     var cellInGroup = new Vector2i(ix, iy);
                     var cell = cellInGroup + groupPosition;

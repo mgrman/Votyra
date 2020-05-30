@@ -5,9 +5,9 @@ namespace Votyra.Core.Models.ObjectPool
 {
     public class ObjectPool<T> : IObjectPool<T>
     {
-        private readonly int _limit;
-        private readonly Func<T> _objectGenerator;
-        private readonly List<T> _objects;
+        private readonly int limit;
+        private readonly Func<T> objectGenerator;
+        private readonly List<T> objects;
 
         public ObjectPool(int limit, Func<T> objectGenerator)
         {
@@ -16,22 +16,22 @@ namespace Votyra.Core.Models.ObjectPool
                 throw new ArgumentNullException("objectGenerator");
             }
 
-            this._objects = new List<T>();
-            this._objectGenerator = objectGenerator;
-            this._limit = limit;
+            this.objects = new List<T>();
+            this.objectGenerator = objectGenerator;
+            this.limit = limit;
         }
 
         public virtual T GetObject()
         {
             T obj;
-            if (this._objects.Count > 0)
+            if (this.objects.Count > 0)
             {
-                obj = this._objects[this._objects.Count - 1];
-                this._objects.RemoveAt(this._objects.Count - 1);
+                obj = this.objects[this.objects.Count - 1];
+                this.objects.RemoveAt(this.objects.Count - 1);
             }
             else
             {
-                obj = this._objectGenerator();
+                obj = this.objectGenerator();
             }
 
             return obj;
@@ -39,9 +39,9 @@ namespace Votyra.Core.Models.ObjectPool
 
         public virtual void ReturnObject(T obj)
         {
-            if (this._objects.Count < this._limit)
+            if (this.objects.Count < this.limit)
             {
-                this._objects.Add(obj);
+                this.objects.Add(obj);
             }
         }
     }

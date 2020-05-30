@@ -3,22 +3,22 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
-    public struct Quaternion4f : IEquatable<Quaternion4f>
+    public struct Quaternion4F : IEquatable<Quaternion4F>
     {
-        public readonly float x;
-        public readonly float y;
-        public readonly float z;
-        public readonly float w;
+        public readonly float X;
+        public readonly float Y;
+        public readonly float Z;
+        public readonly float W;
 
-        public Quaternion4f(float x, float y, float z, float w)
+        public Quaternion4F(float x, float y, float z, float w)
         {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+            this.W = w;
         }
 
-        public static Quaternion4f Euler(float x, float y, float z)
+        public static Quaternion4F Euler(float x, float y, float z)
         {
             x *= MathUtils.Deg2Rad;
             y *= MathUtils.Deg2Rad;
@@ -38,27 +38,27 @@ namespace Votyra.Core.Models
             var qy = (sinYawOver2 * cosPitchOver2 * cosRollOver2) - (cosYawOver2 * sinPitchOver2 * sinRollOver2);
             var qz = (cosYawOver2 * cosPitchOver2 * sinRollOver2) - (sinYawOver2 * sinPitchOver2 * cosRollOver2);
 
-            return new Quaternion4f(qx, qy, qz, qw);
+            return new Quaternion4F(qx, qy, qz, qw);
         }
 
-        public static bool operator ==(Quaternion4f a, Quaternion4f b) => (a.x == b.x) && (a.y == b.y) && (a.z == b.z) && (a.w == b.w);
+        public static bool operator ==(Quaternion4F a, Quaternion4F b) => (a.X == b.X) && (a.Y == b.Y) && (a.Z == b.Z) && (a.W == b.W);
 
-        public static bool operator !=(Quaternion4f a, Quaternion4f b) => (a.x != b.x) || (a.y != b.y) || (a.z != b.z) || (a.w != b.w);
+        public static bool operator !=(Quaternion4F a, Quaternion4F b) => (a.X != b.X) || (a.Y != b.Y) || (a.Z != b.Z) || (a.W != b.W);
 
-        public bool Equals(Quaternion4f other) => this == other;
+        public bool Equals(Quaternion4F other) => this == other;
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Quaternion4f))
+            if (!(obj is Quaternion4F))
             {
                 return false;
             }
 
-            return this.Equals((Quaternion4f)obj);
+            return this.Equals((Quaternion4F)obj);
         }
 
-        public override int GetHashCode() => this.x.GetHashCode() ^ (this.y.GetHashCode() << 2) ^ (this.z.GetHashCode() >> 2) ^ (this.w.GetHashCode() >> 1);
+        public override int GetHashCode() => this.X.GetHashCode() ^ (this.Y.GetHashCode() << 2) ^ (this.Z.GetHashCode() >> 2) ^ (this.W.GetHashCode() >> 1);
 
-        public override string ToString() => string.Format("({0} , {1}, {2}, {3})", this.x, this.y, this.z, this.w);
+        public override string ToString() => string.Format("({0} , {1}, {2}, {3})", this.X, this.Y, this.Z, this.W);
     }
 }

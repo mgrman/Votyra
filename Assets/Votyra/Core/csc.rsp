@@ -3,4 +3,5 @@
 -ruleset:"RoslynAnalyzers\Ruleset.ruleset"
 -a:"RoslynAnalyzers\StyleCop.Analyzers.CodeFixes.dll"
 -a:"RoslynAnalyzers\StyleCop.Analyzers.dll"
+-a:"RoslynAnalyzers\UnityEngineAnalyzer.dll"
 -nowarn:0649+

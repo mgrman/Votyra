@@ -6,14 +6,14 @@ using Votyra.Core.Logging;
 
 namespace Votyra.Core.Models
 {
-    public class TileMap2i
+    public class TileMap2I
     {
-        private readonly IThreadSafeLogger _logger;
-        private readonly IReadOnlyDictionary<SampledData2i, SampledData2i> _tileMap;
+        private readonly IThreadSafeLogger logger;
+        private readonly IReadOnlyDictionary<SampledData2I, SampledData2I> tileMap;
 
-        public TileMap2i(IEnumerable<SampledData2i> templates, IThreadSafeLogger logger)
+        public TileMap2I(IEnumerable<SampledData2I> templates, IThreadSafeLogger logger)
         {
-            this._logger = logger;
+            this.logger = logger;
             // #if VERBOSE
             //             foreach (var template in templates)
             //             {
@@ -23,15 +23,15 @@ namespace Votyra.Core.Models
             this.Templates = templates.ToArray();
             this.ValueRange = this.Templates.RangeUnion();
 
-            this._tileMap = SampledData2i.GenerateAllValuesWithHoles(this.ValueRange)
+            this.tileMap = SampledData2I.GenerateAllValuesWithHoles(this.ValueRange)
                 .ToDictionary(inputValue => inputValue,
                     inputValue =>
                     {
-                        var choosenTemplateTile = default(SampledData2i);
+                        var choosenTemplateTile = default(SampledData2I);
                         float choosenTemplateTileDiff = int.MaxValue;
                         foreach (var tile in this.Templates)
                         {
-                            var value = SampledData2i.Dif(tile, inputValue);
+                            var value = SampledData2I.Dif(tile, inputValue);
                             if (value < choosenTemplateTileDiff)
                             {
                                 choosenTemplateTile = tile;
@@ -43,29 +43,29 @@ namespace Votyra.Core.Models
                     });
 
 #if VERBOSE
-            foreach (var pair in this._tileMap)
+            foreach (var pair in this.tileMap)
             {
-                this._logger.LogMessage($"{this.GetType().Name} {pair.Key} => {pair.Value}");
+                this.logger.LogMessage($"{this.GetType().Name} {pair.Key} => {pair.Value}");
             }
 #endif
         }
 
-        public IEnumerable<SampledData2i> Templates { get; }
+        public IEnumerable<SampledData2I> Templates { get; }
 
         public Area1i ValueRange { get; }
 
-        public SampledData2i GetTile(SampledData2i key)
+        public SampledData2I GetTile(SampledData2I key)
         {
 #if !VERBOSE
             return _tileMap[key];
 #else
-            SampledData2i value;
-            if (this._tileMap.TryGetValue(key, out value))
+            SampledData2I value;
+            if (this.tileMap.TryGetValue(key, out value))
             {
                 return value;
             }
 
-            this._logger.LogMessage($"{this.GetType().Name} missing tile {key}");
+            this.logger.LogMessage($"{this.GetType().Name} missing tile {key}");
             return key;
 #endif
         }

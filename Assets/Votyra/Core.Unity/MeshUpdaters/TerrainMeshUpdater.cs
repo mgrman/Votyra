@@ -71,18 +71,18 @@ namespace Votyra.Core.MeshUpdaters
 
         private static void SetUVs(IMesh triangleMesh, Mesh mesh)
         {
-            if (triangleMesh.UV is Vector2f[] uvArray)
+            if (triangleMesh.Uv is Vector2f[] uvArray)
             {
                 mesh.uv = uvArray.ToVector2();
             }
-            else if (triangleMesh.UV is List<Vector2f> uvList)
+            else if (triangleMesh.Uv is List<Vector2f> uvList)
             {
                 mesh.SetUVs(0, uvList.ToVector2List());
             }
             else
             {
                 mesh.SetUVs(0,
-                    triangleMesh.UV.Select(o => o.ToVector2())
+                    triangleMesh.Uv.Select(o => o.ToVector2())
                         .ToList());
                 StaticLogger.LogWarning("Using unsuported IReadOnlyList type for UV, slow conversion is used");
             }

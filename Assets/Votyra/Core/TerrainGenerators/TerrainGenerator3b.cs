@@ -6,32 +6,32 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators
 {
-    public class TerrainGenerator3b : ITerrainGenerator3b
+    public class TerrainGenerator3B : ITerrainGenerator3B
     {
-        private readonly Vector3i _cellInGroupCount;
-        private readonly ITerrainMesher3b _mesher;
-        private readonly IProfiler _profiler;
+        private readonly Vector3i cellInGroupCount;
+        private readonly ITerrainMesher3B mesher;
+        private readonly IProfiler profiler;
 
-        public TerrainGenerator3b(ITerrainMesher3b mesher, ITerrainConfig terrainConfig, IProfiler profiler)
+        public TerrainGenerator3B(ITerrainMesher3B mesher, ITerrainConfig terrainConfig, IProfiler profiler)
         {
-            this._mesher = mesher;
-            this._profiler = profiler;
-            this._cellInGroupCount = terrainConfig.CellInGroupCount;
+            this.mesher = mesher;
+            this.profiler = profiler;
+            this.cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
-        public void Generate(Vector3i group, IImage3b image, IGeneralMesh pooledTerrainMesh)
+        public void Generate(Vector3i group, IImage3B image, IGeneralMesh pooledTerrainMesh)
         {
-            using (this._profiler.Start("init"))
+            using (this.profiler.Start("init"))
             {
-                this._mesher.Initialize(image);
+                this.mesher.Initialize(image);
             }
 
-            using (this._profiler.Start("Other"))
+            using (this.profiler.Start("Other"))
             {
-                this._mesher.InitializeGroup(group, pooledTerrainMesh);
+                this.mesher.InitializeGroup(group, pooledTerrainMesh);
             }
 
-            var tempQualifier = this._cellInGroupCount.ToRange3i();
+            var tempQualifier = this.cellInGroupCount.ToRange3i();
             var min = tempQualifier.Min;
             for (var ix = 0; ix < tempQualifier.Size.X; ix++)
             {
@@ -40,9 +40,9 @@ namespace Votyra.Core.TerrainGenerators
                     for (var iz = 0; iz < tempQualifier.Size.Z; iz++)
                     {
                         var cellInGroup = new Vector3i(ix, iy, iz) + min;
-                        using (this._profiler.Start("TerrainMesher.AddCell()"))
+                        using (this.profiler.Start("TerrainMesher.AddCell()"))
                         {
-                            this._mesher.AddCell(cellInGroup);
+                            this.mesher.AddCell(cellInGroup);
                         }
                     }
                 }

@@ -6,18 +6,18 @@ namespace Votyra.Core.Queueing
 {
     public class ParalelTaskQueue<T> : IWorkQueue<T> where T : IDisposable
     {
-        private readonly TaskFactory _taskFactory;
+        private readonly TaskFactory taskFactory;
 
         public ParalelTaskQueue()
         {
-            this._taskFactory = new TaskFactory();
+            this.taskFactory = new TaskFactory();
         }
 
         public event Action<T> DoWork;
 
         public void QueueNew(T context)
         {
-            this._taskFactory.StartNew(this.TaskUpdate, context);
+            this.taskFactory.StartNew(this.TaskUpdate, context);
         }
 
         private void TaskUpdate(object arg)

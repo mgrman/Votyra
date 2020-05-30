@@ -8,8 +8,8 @@ namespace Votyra.Core.Pooling
 {
     public class ExpandingTerrainMeshPool : Pool<IGeneralMesh>, IGeneralMeshPool
     {
-        public ExpandingTerrainMeshPool(ITerrainVertexPostProcessor vertexPostProcessor = null, ITerrainUVPostProcessor uvAdjustor = null)
-            : base(CreateMeshFunc(vertexPostProcessor == null ? (Func<Vector3f, Vector3f>)null : vertexPostProcessor.PostProcessVertex, uvAdjustor == null ? (Func<Vector2f, Vector2f>)null : uvAdjustor.ProcessUV))
+        public ExpandingTerrainMeshPool(ITerrainVertexPostProcessor vertexPostProcessor = null, ITerrainUvPostProcessor uvAdjustor = null)
+            : base(CreateMeshFunc(vertexPostProcessor == null ? (Func<Vector3f, Vector3f>)null : vertexPostProcessor.PostProcessVertex, uvAdjustor == null ? (Func<Vector2f, Vector2f>)null : uvAdjustor.ProcessUv))
         {
         }
 

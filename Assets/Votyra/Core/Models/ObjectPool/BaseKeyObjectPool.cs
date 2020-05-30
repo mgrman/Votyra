@@ -5,8 +5,8 @@ namespace Votyra.Core.Models.ObjectPool
 {
     public abstract class BaseKeyObjectPool<T, TKey> : IObjectDictionaryPool<T, TKey> where TKey : struct
     {
-        private readonly int _limit;
-        private readonly Func<TKey, T> _objectGenerator;
+        private readonly int limit;
+        private readonly Func<TKey, T> objectGenerator;
 
         public BaseKeyObjectPool(int limit, Func<TKey, T> objectGenerator)
         {
@@ -15,9 +15,9 @@ namespace Votyra.Core.Models.ObjectPool
                 throw new ArgumentNullException("objectGenerator");
             }
 
-            this._objectGenerator = objectGenerator;
+            this.objectGenerator = objectGenerator;
 
-            this._limit = Math.Max(limit, 1);
+            this.limit = Math.Max(limit, 1);
         }
 
         public virtual T GetObject(TKey key)
@@ -31,7 +31,7 @@ namespace Votyra.Core.Models.ObjectPool
             }
             else
             {
-                obj = this._objectGenerator(key);
+                obj = this.objectGenerator(key);
             }
 
             return obj;
@@ -40,7 +40,7 @@ namespace Votyra.Core.Models.ObjectPool
         public virtual void ReturnObject(T obj, TKey key)
         {
             var objectPool = this.GetPool(key);
-            if (objectPool.Count < this._limit)
+            if (objectPool.Count < this.limit)
             {
                 objectPool.Add(obj);
             }

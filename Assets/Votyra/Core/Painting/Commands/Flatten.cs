@@ -1,21 +1,8 @@
-using Votyra.Core.Images;
-using Votyra.Core.Logging;
-
 namespace Votyra.Core.Painting.Commands
 {
-    public class FlattenFactory : BaseFactory<Flatten>
-    {
-        public FlattenFactory(IEditableImage2f editableImage, IThreadSafeLogger logger)
-            : base(editableImage, logger)
-        {
-        }
-
-        public override string Action => KnownCommands.Flatten;
-    }
-
     public class Flatten : PaintCommand
     {
-        private float? _centerValue;
+        private float? centerValue;
 
         public Flatten()
             : base(0)
@@ -25,15 +12,15 @@ namespace Votyra.Core.Painting.Commands
         protected override void OnInvocationStopping()
         {
             base.OnInvocationStopping();
-            this._centerValue = null;
+            this.centerValue = null;
         }
 
         protected override void PrepareWithClickedValue(float clickedValue)
         {
-            this._centerValue = this._centerValue ?? clickedValue;
+            this.centerValue = this.centerValue ?? clickedValue;
             base.PrepareWithClickedValue(clickedValue);
         }
 
-        protected override float Invoke(float value, int strength) => this._centerValue ?? value;
+        protected override float Invoke(float value, int strength) => this.centerValue ?? value;
     }
 }

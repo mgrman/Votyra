@@ -7,8 +7,8 @@ namespace Votyra.Plannar.Unity
     {
         public override void InstallBindings()
         {
-            this.Container.Rebind<IImageConstraint2i>()
-                .To<SimpleTycoonTileConstraint2i>()
+            this.Container.Rebind<IImageConstraint2I>()
+                .To<SimpleTycoonTileConstraint2I>()
                 .AsSingle();
         }
     }

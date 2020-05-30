@@ -7,91 +7,91 @@ using Zenject;
 
 namespace Votyra.Core
 {
-    public class UnityTerrainGeneratorManager2i : ITickable, IUnityTerrainGeneratorManager2i
+    public class UnityTerrainGeneratorManager2I : ITickable, IUnityTerrainGeneratorManager2I
     {
-        private readonly ConcurrentDictionary<Vector2i, ITerrainMesh2f> _activeTerrains = new ConcurrentDictionary<Vector2i, ITerrainMesh2f>();
-        private readonly ITerrainRepository2i _manager;
-        private readonly Queue<RepositoryChange<Vector2i, ITerrainMesh2f>> _queue = new Queue<RepositoryChange<Vector2i, ITerrainMesh2f>>(10);
-        private readonly object _queueLock = new object();
-        private Action<Vector2i, ITerrainMesh2f> _changedTerrain;
+        private readonly ConcurrentDictionary<Vector2i, ITerrainMesh2F> activeTerrains = new ConcurrentDictionary<Vector2i, ITerrainMesh2F>();
+        private readonly ITerrainRepository2I manager;
+        private readonly Queue<RepositoryChange<Vector2i, ITerrainMesh2F>> queue = new Queue<RepositoryChange<Vector2i, ITerrainMesh2F>>(10);
+        private readonly object queueLock = new object();
+        private Action<Vector2i, ITerrainMesh2F> changedTerrain;
 
-        public UnityTerrainGeneratorManager2i(ITerrainRepository2i manager)
+        public UnityTerrainGeneratorManager2I(ITerrainRepository2I manager)
         {
-            this._manager = manager;
-            this._manager.TerrainChange += this.OnTerrainChange;
+            this.manager = manager;
+            this.manager.TerrainChange += this.OnTerrainChange;
         }
 
-        private event Action<Vector2i, ITerrainMesh2f> _newTerrain;
+        private event Action<Vector2i, ITerrainMesh2F> RawNewTerrain;
 
         public void Tick()
         {
-            while (this._queue.Count > 0)
+            while (this.queue.Count > 0)
             {
-                var valueTuple = this._queue.Dequeue();
+                var valueTuple = this.queue.Dequeue();
                 switch (valueTuple.Action)
                 {
                     case RepositorActionType.New:
-                        this._activeTerrains.TryAdd(valueTuple.Group, valueTuple.Mesh);
-                        this._newTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
+                        this.activeTerrains.TryAdd(valueTuple.Group, valueTuple.Mesh);
+                        this.RawNewTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
                         break;
                     case RepositorActionType.Changed:
-                        this._changedTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
+                        this.changedTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
                         break;
                     case RepositorActionType.Removed:
                         this.RemovedTerrain?.Invoke(valueTuple.Group, valueTuple.Mesh);
-                        this._activeTerrains.TryRemove(valueTuple.Group, out var _);
+                        this.activeTerrains.TryRemove(valueTuple.Group, out var _);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
 
-            this._queue.Clear();
+            this.queue.Clear();
         }
 
-        public event Action<Vector2i, ITerrainMesh2f> NewTerrain
+        public event Action<Vector2i, ITerrainMesh2F> NewTerrain
         {
             add
             {
-                this._newTerrain += value;
-                foreach (var activeGroup in this._activeTerrains)
+                this.RawNewTerrain += value;
+                foreach (var activeGroup in this.activeTerrains)
                 {
                     value?.Invoke(activeGroup.Key, activeGroup.Value);
                 }
             }
-            remove => this._newTerrain -= value;
+            remove => this.RawNewTerrain -= value;
         }
 
-        public event Action<Vector2i, ITerrainMesh2f> ChangedTerrain
+        public event Action<Vector2i, ITerrainMesh2F> ChangedTerrain
         {
             add
             {
-                this._changedTerrain += value;
-                foreach (var activeGroup in this._activeTerrains)
+                this.changedTerrain += value;
+                foreach (var activeGroup in this.activeTerrains)
                 {
                     value?.Invoke(activeGroup.Key, activeGroup.Value);
                 }
             }
-            remove => this._changedTerrain -= value;
+            remove => this.changedTerrain -= value;
         }
 
-        public event Action<Vector2i, ITerrainMesh2f> RemovedTerrain;
+        public event Action<Vector2i, ITerrainMesh2F> RemovedTerrain;
 
-        private void OnTerrainChange(RepositoryChange<Vector2i, ITerrainMesh2f> arg)
+        private void OnTerrainChange(RepositoryChange<Vector2i, ITerrainMesh2F> arg)
         {
-            lock (this._queueLock)
+            lock (this.queueLock)
             {
                 switch (arg.Action)
                 {
                     case RepositorActionType.New:
-                        this._queue.Enqueue(arg);
+                        this.queue.Enqueue(arg);
 
                         break;
                     case RepositorActionType.Changed:
-                        this._queue.Enqueue(arg);
+                        this.queue.Enqueue(arg);
                         break;
                     case RepositorActionType.Removed:
-                        this._queue.Enqueue(arg);
+                        this.queue.Enqueue(arg);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

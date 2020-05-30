@@ -38,17 +38,17 @@ namespace Votyra.Core.Models
             Vector3f p, q, t;
             float det, invDet, u, v;
 
-            //Find vectors for two edges sharing vertex/point p1
+            // Find vectors for two edges sharing vertex/point p1
             e1 = this.B - this.A;
             e2 = this.C - this.A;
 
-            // calculating determinant 
+            // calculating determinant
             p = Vector3fUtils.Cross(ray.Direction, e2);
 
-            //Calculate determinat
+            // Calculate determinat
             det = Vector3fUtils.Dot(e1, p);
 
-            //if determinant is near zero, ray lies in plane of triangle otherwise not
+            // if determinant is near zero, ray lies in plane of triangle otherwise not
             if ((det > -float.Epsilon) && (det < float.Epsilon))
             {
                 return Vector3f.NaN;
@@ -56,25 +56,25 @@ namespace Votyra.Core.Models
 
             invDet = 1.0f / det;
 
-            //calculate distance from p1 to ray origin
+            // calculate distance from p1 to ray origin
             t = ray.Origin - this.A;
 
-            //Calculate u parameter
+            // Calculate u parameter
             u = Vector3fUtils.Dot(t, p) * invDet;
 
-            //Check for ray hit
+            // Check for ray hit
             if ((u < 0) || (u > 1))
             {
                 return Vector3f.NaN;
             }
 
-            //Prepare to test v parameter
+            // Prepare to test v parameter
             q = Vector3fUtils.Cross(t, e1);
 
-            //Calculate v parameter
+            // Calculate v parameter
             v = Vector3fUtils.Dot(ray.Direction, q) * invDet;
 
-            //Check for ray hit
+            // Check for ray hit
             if ((v < 0) || ((u + v) > 1))
             {
                 return Vector3f.NaN;

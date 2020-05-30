@@ -6,69 +6,69 @@ namespace Votyra.Core.TerrainMeshes
 {
     public class ExpandingTerrainMesh : IGeneralMesh
     {
-        private readonly List<int> _indices;
-        private readonly List<Vector3f> _normals;
-        private readonly List<Vector2f> _uv;
-        private readonly Func<Vector2f, Vector2f> _uVAdjustor;
-        private readonly Func<Vector3f, Vector3f> _vertexPostProcessor;
-        private readonly List<Vector3f> _vertices;
-        private float _maxZ;
+        private readonly List<int> indices;
+        private readonly List<Vector3f> normals;
+        private readonly List<Vector2f> uv;
+        private readonly Func<Vector2f, Vector2f> uVAdjustor;
+        private readonly Func<Vector3f, Vector3f> vertexPostProcessor;
+        private readonly List<Vector3f> vertices;
+        private float maxZ;
 
-        private Area2f _meshBoundsXY;
-        private float _minZ;
+        private Area2f meshBoundsXy;
+        private float minZ;
 
         public ExpandingTerrainMesh(Func<Vector3f, Vector3f> vertexPostProcessor, Func<Vector2f, Vector2f> uvAdjustor)
         {
-            this._vertexPostProcessor = vertexPostProcessor;
-            this._uVAdjustor = uvAdjustor;
-            this._vertices = new List<Vector3f>();
-            this._uv = new List<Vector2f>();
-            this._indices = new List<int>();
-            this._normals = new List<Vector3f>();
+            this.vertexPostProcessor = vertexPostProcessor;
+            this.uVAdjustor = uvAdjustor;
+            this.vertices = new List<Vector3f>();
+            this.uv = new List<Vector2f>();
+            this.indices = new List<int>();
+            this.normals = new List<Vector3f>();
         }
 
-        public Area3f MeshBounds => Area3f.FromMinAndMax(this._meshBoundsXY.Min.ToVector3f(this._minZ), this._meshBoundsXY.Max.ToVector3f(this._maxZ));
+        public Area3f MeshBounds => Area3f.FromMinAndMax(this.meshBoundsXy.Min.ToVector3f(this.minZ), this.meshBoundsXy.Max.ToVector3f(this.maxZ));
 
-        public IReadOnlyList<Vector3f> Vertices => this._vertices;
+        public IReadOnlyList<Vector3f> Vertices => this.vertices;
 
-        public IReadOnlyList<Vector3f> Normals => this._normals;
+        public IReadOnlyList<Vector3f> Normals => this.normals;
 
-        public IReadOnlyList<Vector2f> UV => this._uv;
+        public IReadOnlyList<Vector2f> Uv => this.uv;
 
-        public IReadOnlyList<int> Indices => this._indices;
+        public IReadOnlyList<int> Indices => this.indices;
 
-        public uint TriangleCapacity => (uint)this._vertices.Capacity / 3;
+        public uint TriangleCapacity => (uint)this.vertices.Capacity / 3;
 
         public uint TriangleCount => this.VertexCount / 3;
 
-        public uint VertexCount => (uint)this._vertices.Count;
+        public uint VertexCount => (uint)this.vertices.Count;
 
         public void Reset(Area3f area)
         {
-            this._meshBoundsXY = Area2f.FromMinAndMax(area.Min.XY(), area.Max.XY());
-            this._vertices.Clear();
-            this._uv.Clear();
-            this._indices.Clear();
-            this._normals.Clear();
+            this.meshBoundsXy = Area2f.FromMinAndMax(area.Min.XY(), area.Max.XY());
+            this.vertices.Clear();
+            this.uv.Clear();
+            this.indices.Clear();
+            this.normals.Clear();
         }
 
         public void AddTriangle(Vector3f posA, Vector3f posB, Vector3f posC)
         {
-            if (this._vertexPostProcessor != null)
+            if (this.vertexPostProcessor != null)
             {
-                posA = this._vertexPostProcessor(posA);
-                posB = this._vertexPostProcessor(posB);
-                posC = this._vertexPostProcessor(posC);
+                posA = this.vertexPostProcessor(posA);
+                posB = this.vertexPostProcessor(posB);
+                posC = this.vertexPostProcessor(posC);
             }
 
             var uvA = posA.XY();
             var uvB = posB.XY();
             var uvC = posC.XY();
-            if (this._uVAdjustor != null)
+            if (this.uVAdjustor != null)
             {
-                uvA = this._uVAdjustor(posA.XY());
-                uvB = this._uVAdjustor(posB.XY());
-                uvC = this._uVAdjustor(posC.XY());
+                uvA = this.uVAdjustor(posA.XY());
+                uvB = this.uVAdjustor(posB.XY());
+                uvC = this.uVAdjustor(posC.XY());
             }
 
             var side1 = posB - posA;
@@ -76,27 +76,27 @@ namespace Votyra.Core.TerrainMeshes
             var normal = Vector3fUtils.Cross(side1, side2)
                 .Normalized();
 
-            this._minZ = this.TriangleCount == 0 ? posA.Z : Math.Min(this._minZ, posA.Z);
-            this._minZ = Math.Min(this._minZ, posB.Z);
-            this._minZ = Math.Min(this._minZ, posC.Z);
-            this._maxZ = this.TriangleCount == 0 ? posA.Z : Math.Max(this._maxZ, posA.Z);
-            this._maxZ = Math.Max(this._maxZ, posB.Z);
-            this._maxZ = Math.Max(this._maxZ, posC.Z);
+            this.minZ = this.TriangleCount == 0 ? posA.Z : Math.Min(this.minZ, posA.Z);
+            this.minZ = Math.Min(this.minZ, posB.Z);
+            this.minZ = Math.Min(this.minZ, posC.Z);
+            this.maxZ = this.TriangleCount == 0 ? posA.Z : Math.Max(this.maxZ, posA.Z);
+            this.maxZ = Math.Max(this.maxZ, posB.Z);
+            this.maxZ = Math.Max(this.maxZ, posC.Z);
 
-            this._indices.Add((int)this.VertexCount);
-            this._vertices.Add(posA);
-            this._uv.Add(uvA);
-            this._normals.Add(normal);
+            this.indices.Add((int)this.VertexCount);
+            this.vertices.Add(posA);
+            this.uv.Add(uvA);
+            this.normals.Add(normal);
 
-            this._indices.Add((int)this.VertexCount);
-            this._vertices.Add(posB);
-            this._uv.Add(uvB);
-            this._normals.Add(normal);
+            this.indices.Add((int)this.VertexCount);
+            this.vertices.Add(posB);
+            this.uv.Add(uvB);
+            this.normals.Add(normal);
 
-            this._indices.Add((int)this.VertexCount);
-            this._vertices.Add(posC);
-            this._uv.Add(uvC);
-            this._normals.Add(normal);
+            this.indices.Add((int)this.VertexCount);
+            this.vertices.Add(posC);
+            this.uv.Add(uvC);
+            this.normals.Add(normal);
         }
 
         public void FinalizeMesh()
@@ -105,11 +105,11 @@ namespace Votyra.Core.TerrainMeshes
 
         public IEnumerable<Triangle3f> GetTriangles(Vector2i? limitToCellInGroup)
         {
-            for (var i = 0; i < this._vertices.Count; i += 3)
+            for (var i = 0; i < this.vertices.Count; i += 3)
             {
-                var a = this._vertices[i];
-                var b = this._vertices[i + 1];
-                var c = this._vertices[i + 2];
+                var a = this.vertices[i];
+                var b = this.vertices[i + 1];
+                var c = this.vertices[i + 2];
                 yield return new Triangle3f(a, b, c);
             }
         }

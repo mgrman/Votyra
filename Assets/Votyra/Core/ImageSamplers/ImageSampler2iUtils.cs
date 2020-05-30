@@ -3,30 +3,30 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.ImageSamplers
 {
-    public static class ImageSampler2iUtils
+    public static class ImageSampler2IUtils
     {
         public static readonly Vector2i OffsetX0Y1 = new Vector2i(0, 1);
         public static readonly Vector2i OffsetX1Y0 = new Vector2i(1, 0);
         public static readonly Vector2i OffsetX1Y1 = new Vector2i(1, 1);
 
-        public static SampledData2f SampleCell(this float[,] image, Vector2i cell)
+        public static SampledData2F SampleCell(this float[,] image, Vector2i cell)
         {
-            var x0y0 = image.TryGet(cell, 0f);
-            var x0y1 = image.TryGet(new Vector2i(cell.X, cell.Y + 1), 0f);
-            var x1y0 = image.TryGet(new Vector2i(cell.X + 1, cell.Y), 0f);
-            var x1y1 = image.TryGet(new Vector2i(cell.X + 1, cell.Y + 1), 0f);
+            var x0Y0 = image.TryGet(cell, 0f);
+            var x0Y1 = image.TryGet(new Vector2i(cell.X, cell.Y + 1), 0f);
+            var x1Y0 = image.TryGet(new Vector2i(cell.X + 1, cell.Y), 0f);
+            var x1Y1 = image.TryGet(new Vector2i(cell.X + 1, cell.Y + 1), 0f);
 
-            return new SampledData2f(x0y0, x0y1, x1y0, x1y1);
+            return new SampledData2F(x0Y0, x0Y1, x1Y0, x1Y1);
         }
 
-        public static SampledData2f SampleCell(this IImage2f image, Vector2i cell)
+        public static SampledData2F SampleCell(this IImage2F image, Vector2i cell)
         {
-            var x0y0 = image.Sample(cell);
-            var x0y1 = image.Sample(new Vector2i(cell.X, cell.Y + 1));
-            var x1y0 = image.Sample(new Vector2i(cell.X + 1, cell.Y));
-            var x1y1 = image.Sample(new Vector2i(cell.X + 1, cell.Y + 1));
+            var x0Y0 = image.Sample(cell);
+            var x0Y1 = image.Sample(new Vector2i(cell.X, cell.Y + 1));
+            var x1Y0 = image.Sample(new Vector2i(cell.X + 1, cell.Y));
+            var x1Y1 = image.Sample(new Vector2i(cell.X + 1, cell.Y + 1));
 
-            return new SampledData2f(x0y0, x0y1, x1y0, x1y1);
+            return new SampledData2F(x0Y0, x0Y1, x1Y0, x1Y1);
         }
     }
 }
