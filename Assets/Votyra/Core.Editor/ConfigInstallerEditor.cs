@@ -137,7 +137,9 @@ namespace Votyra.Core.Editor
                         container.Inject(tempInstaller, new object[0]);
                         tempInstaller.InstallBindings();
                     }
-                    catch { }
+                    catch
+                    {
+                    }
                     finally
                     {
                         DestroyImmediate(tempInstaller);
@@ -234,7 +236,7 @@ namespace Votyra.Core.Editor
                 var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
                 var newVector3iValue = EditorGUILayout.Vector3Field(string.Empty,
                         oldVector3iValue.ToVector3f()
-                        .ToVector3(),
+                            .ToVector3(),
                         GUILayout.MaxWidth(200))
                     .ToVector3F()
                     .RoundToVector3i();
@@ -256,7 +258,7 @@ namespace Votyra.Core.Editor
                 var oldVector2iValue = oldValue as Vector2i? ?? Vector2i.Zero;
                 var newVector2iValue = EditorGUILayout.Vector2Field(string.Empty,
                         oldVector2iValue.ToVector2f()
-                        .ToVector2(),
+                            .ToVector2(),
                         GUILayout.MaxWidth(200))
                     .ToVector2f()
                     .RoundToVector2i();
@@ -340,13 +342,13 @@ namespace Votyra.Core.Editor
             else
             {
                 var change = false;
-                var props = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+                var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.SetProperty);
 
                 foreach (var prop in props)
                 {
-                    EditorGUILayout.LabelField($"{prop.Name}[{prop.FieldType.Name}]", GUILayout.MinWidth(150));
+                    EditorGUILayout.LabelField($"{prop.Name}[{prop.PropertyType.Name}]", GUILayout.MinWidth(150));
                     var oldFieldValue = prop.GetValue(oldValue);
-                    var propChange = this.GetNewValue(prop.FieldType, oldFieldValue, out var newFieldValue);
+                    var propChange = this.GetNewValue(prop.PropertyType, oldFieldValue, out var newFieldValue);
                     prop.SetValue(oldValue, newFieldValue);
                     change = change || propChange;
                 }
