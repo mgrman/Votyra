@@ -198,8 +198,7 @@ namespace Votyra.Plannar.Unity
 
         private class ScaleAdjustor
         {
-            public ScaleAdjustor(IInterpolationConfig interpolationConfig, [Inject(Id = "root")]
-                GameObject root)
+            public ScaleAdjustor(IInterpolationConfig interpolationConfig, [Inject(Id = "root")]GameObject root)
             {
                 var scale = 1f / interpolationConfig.ImageSubdivision;
 

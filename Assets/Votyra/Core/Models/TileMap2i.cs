@@ -25,24 +25,22 @@ namespace Votyra.Core.Models
             this.ValueRange = this.Templates.RangeUnion();
 
             this.tileMap = SampledData2i.GenerateAllValuesWithHoles(this.ValueRange)
-                .ToDictionary(
-                    inputValue => inputValue,
-                    inputValue =>
+                .ToDictionary(inputValue => inputValue, inputValue =>
+                {
+                    var choosenTemplateTile = default(SampledData2i);
+                    float choosenTemplateTileDiff = int.MaxValue;
+                    foreach (var tile in this.Templates)
                     {
-                        var choosenTemplateTile = default(SampledData2i);
-                        float choosenTemplateTileDiff = int.MaxValue;
-                        foreach (var tile in this.Templates)
+                        var value = SampledData2i.Dif(tile, inputValue);
+                        if (value < choosenTemplateTileDiff)
                         {
-                            var value = SampledData2i.Dif(tile, inputValue);
-                            if (value < choosenTemplateTileDiff)
-                            {
-                                choosenTemplateTile = tile;
-                                choosenTemplateTileDiff = value;
-                            }
+                            choosenTemplateTile = tile;
+                            choosenTemplateTileDiff = value;
                         }
+                    }
 
-                        return choosenTemplateTile;
-                    });
+                    return choosenTemplateTile;
+                });
 
 #if VERBOSE
             foreach (var pair in this.tileMap)

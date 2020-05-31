@@ -35,22 +35,21 @@ namespace Votyra.Core.Models
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            return this.observable.Subscribe(Observer.Create<T>(
-                o =>
+            return this.observable.Subscribe(Observer.Create<T>(OnNext, observer.OnError, observer.OnCompleted));
+
+            void OnNext(T o)
+            {
+                try
                 {
-                    try
-                    {
-                        this.logger.LogMessage(o);
-                        observer.OnNext(o);
-                    }
-                    catch (Exception ex)
-                    {
-                        this.logger.LogException(ex);
-                        this.OnError(ex);
-                    }
-                },
-                observer.OnError,
-                observer.OnCompleted));
+                    this.logger.LogMessage(o);
+                    observer.OnNext(o);
+                }
+                catch (Exception ex)
+                {
+                    this.logger.LogException(ex);
+                    this.OnError(ex);
+                }
+            }
         }
     }
 }

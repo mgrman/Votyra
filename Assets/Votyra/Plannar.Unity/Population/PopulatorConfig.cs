@@ -9,8 +9,7 @@ namespace Votyra.Plannar.Unity
 
     public class PopulatorConfig : IPopulatorConfig
     {
-        public PopulatorConfig([ConfigInject("populationConfigItems")]
-            PopulatorConfigItem[] configItems)
+        public PopulatorConfig([ConfigInject("populationConfigItems")]PopulatorConfigItem[] configItems)
         {
             this.ConfigItems = configItems;
         }

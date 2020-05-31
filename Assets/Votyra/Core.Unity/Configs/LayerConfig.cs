@@ -2,8 +2,7 @@
 {
     public class LayerConfig : ILayerConfig
     {
-        public LayerConfig([ConfigInject("layer")]
-            LayerId layer)
+        public LayerConfig([ConfigInject("layer")]LayerId layer)
         {
             this.Layer = layer;
         }

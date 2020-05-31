@@ -140,10 +140,10 @@ namespace Votyra.Core.Raycasting
 
         private Area2f MeshGroupArea(Vector2i group)
         {
-            var min = this.MeshCellArea(@group * this.cellInGroupCount)
+            var min = this.MeshCellArea(group * this.cellInGroupCount)
                 .Min;
 
-            var max = this.MeshCellArea(((@group + Vector2i.One) * this.cellInGroupCount) - Vector2i.One)
+            var max = this.MeshCellArea(((group + Vector2i.One) * this.cellInGroupCount) - Vector2i.One)
                 .Max;
 
             return Area2f.FromMinAndMax(min, max);

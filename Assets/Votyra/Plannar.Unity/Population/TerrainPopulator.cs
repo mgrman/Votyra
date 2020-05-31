@@ -21,8 +21,7 @@ namespace Votyra.Plannar.Unity
         private PopulatorConfigItem populatorConfig;
         private GameObject root;
 
-        public void Initialize(IUnityTerrainGeneratorManager2i manager, ITerrainConfig config, PopulatorConfigItem populatorConfig, int index, [Inject(Id = "root")]
-            GameObject root)
+        public void Initialize(IUnityTerrainGeneratorManager2i manager, ITerrainConfig config, PopulatorConfigItem populatorConfig, int index, [Inject(Id = "root")]GameObject root)
         {
             this.root = root;
             this.cellInGroupCount = config.CellInGroupCount.XY();
