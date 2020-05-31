@@ -131,20 +131,28 @@ namespace Votyra.Core.Models
             var match = Regex.Match(cube, CubeRegex);
             var valX0Y0Z0 = int.Parse(match.Groups[7]
                 .Value) > 0;
+
             var valX0Y0Z1 = int.Parse(match.Groups[3]
                 .Value) > 0;
+
             var valX0Y1Z0 = int.Parse(match.Groups[5]
                 .Value) > 0;
+
             var valX0Y1Z1 = int.Parse(match.Groups[1]
                 .Value) > 0;
+
             var valX1Y0Z0 = int.Parse(match.Groups[8]
                 .Value) > 0;
+
             var valX1Y0Z1 = int.Parse(match.Groups[4]
                 .Value) > 0;
+
             var valX1Y1Z0 = int.Parse(match.Groups[6]
                 .Value) > 0;
+
             var valX1Y1Z1 = int.Parse(match.Groups[2]
                 .Value) > 0;
+
             return new SampledData3b(valX0Y0Z0, valX0Y0Z1, valX0Y1Z0, valX0Y1Z1, valX1Y0Z0, valX1Y0Z1, valX1Y1Z0, valX1Y1Z1);
         }
 

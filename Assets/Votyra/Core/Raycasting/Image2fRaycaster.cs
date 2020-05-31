@@ -27,6 +27,7 @@ namespace Votyra.Core.Raycasting
 
             this.startXy = cameraRay.XY()
                 .Origin;
+
             this.directionXyMag = cameraRay.Direction.XY()
                 .Magnitude();
 

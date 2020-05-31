@@ -20,6 +20,7 @@ namespace Zenject
             {
                 GUI.Label(rect, new GUIContent("Autopopulated Mono Installers", "Autopopulated Mono Installers from this GameObject."));
             };
+
             this.installersList.drawElementCallback += (rect, index, active, focused) =>
             {
                 rect.width -= 40;

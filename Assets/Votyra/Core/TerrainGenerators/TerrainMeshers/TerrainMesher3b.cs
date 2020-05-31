@@ -257,6 +257,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     |/    |/
                     1-----1
                     ");
+
             var triangles = template.GetAllRotationSubsets(data)
                 .Select(m =>
                 {

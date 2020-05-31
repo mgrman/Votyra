@@ -35,7 +35,8 @@ namespace Votyra.Core.Models
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            return this.observable.Subscribe(Observer.Create<T>(o =>
+            return this.observable.Subscribe(Observer.Create<T>(
+                o =>
                 {
                     try
                     {

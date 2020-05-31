@@ -37,6 +37,7 @@ namespace Votyra.Core.Utils
             float deltaX = to.X - from.X;
             float deltaY = to.Y - from.Y;
             var deltaErr = Math.Abs(deltaY / deltaX); // Assume deltaX != 0 (line is not vertical),
+
             // note that this division needs to be done in a way that preserves the fractional part
             var error = 0.0f;
             var y = from.Y;

@@ -13,9 +13,9 @@ namespace Votyra.Plannar.Editor
         {
             var initialValues = new Dictionary<Vector2i, float>
             {
-                {new Vector2i(1, 1), 1},
-                {new Vector2i(0, 0), 0},
-                {new Vector2i(7, 7), 7},
+                { new Vector2i(1, 1), 1 },
+                { new Vector2i(0, 0), 0 },
+                { new Vector2i(7, 7), 7 },
             };
 
             var queue = new PrioritySetQueue<Vector2i, float>(initialValues.Keys, EqualityComparer<Vector2i>.Default, o => initialValues[o], Comparer<float>.Create((a, b) => a.CompareTo(b)));
@@ -34,9 +34,9 @@ namespace Votyra.Plannar.Editor
         {
             var initialValues = new Dictionary<Vector2i, float>
             {
-                {new Vector2i(1, 1), 1},
-                {new Vector2i(0, 0), 0},
-                {new Vector2i(7, 7), 7},
+                { new Vector2i(1, 1), 1 },
+                { new Vector2i(0, 0), 0 },
+                { new Vector2i(7, 7), 7 },
             };
 
             var queue = new PrioritySetQueue<Vector2i, float>(initialValues.Keys, EqualityComparer<Vector2i>.Default, o => initialValues[o], Comparer<float>.Create((a, b) => a.CompareTo(b)));
@@ -59,9 +59,9 @@ namespace Votyra.Plannar.Editor
         {
             var initialValues = new Dictionary<Vector2i, float>
             {
-                {new Vector2i(1, 1), 1},
-                {new Vector2i(0, 0), 0},
-                {new Vector2i(7, 7), 7},
+                { new Vector2i(1, 1), 1 },
+                { new Vector2i(0, 0), 0 },
+                { new Vector2i(7, 7), 7 },
             };
 
             var queue = new PrioritySetQueue<Vector2i, float>(initialValues.Keys, EqualityComparer<Vector2i>.Default, o => initialValues[o], Comparer<float>.Create((a, b) => -a.CompareTo(b)));
@@ -80,9 +80,9 @@ namespace Votyra.Plannar.Editor
         {
             var initialValues = new Dictionary<Vector2i, float>
             {
-                {new Vector2i(1, 1), 1},
-                {new Vector2i(0, 0), 0},
-                {new Vector2i(7, 7), 7},
+                { new Vector2i(1, 1), 1 },
+                { new Vector2i(0, 0), 0 },
+                { new Vector2i(7, 7), 7 },
             };
 
             var queue = new PrioritySetQueue<Vector2i, float>(initialValues.Keys, EqualityComparer<Vector2i>.Default, o => initialValues[o], Comparer<float>.Create((a, b) => -a.CompareTo(b)));

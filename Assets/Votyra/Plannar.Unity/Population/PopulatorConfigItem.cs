@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Votyra.Core.Models;
 
@@ -7,7 +6,6 @@ namespace Votyra.Plannar.Unity
     public class PopulatorConfigItem
     {
         public uint CountPerGroup { get; set; }
-    
 
         public AnimationCurve HeightCurve { get; set; }
 

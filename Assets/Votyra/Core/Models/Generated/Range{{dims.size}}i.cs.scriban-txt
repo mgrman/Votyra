@@ -33,7 +33,7 @@ namespace Votyra.Core.Models
 
         public static readonly {{type}} All = new {{type}}(MinValue, MaxValue);
 
-        public static readonly {{type}} Zero = new {{type}}();
+        public static readonly {{type}} Zero = new {{type}}({{vectorIntType}}.Zero,{{vectorIntType}}.Zero);
 
         public readonly {{vectorIntRealType}} Min;
 

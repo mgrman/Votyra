@@ -30,7 +30,8 @@ namespace Votyra.Core
         public static RepositoryChange<TKey, TValue> Removed(TKey group, TValue mesh) => new RepositoryChange<TKey, TValue>(RepositorActionType.Removed, group, mesh);
     }
 
-    public class TerrainRepository<TKey, TValue> : ITerrainRepository<TKey, TValue> where TKey : struct
+    public class TerrainRepository<TKey, TValue> : ITerrainRepository<TKey, TValue>
+        where TKey : struct
     {
         private readonly Dictionary<TKey, TValue> activeGroups = new Dictionary<TKey, TValue>();
         private readonly object activeGroupsLock = new object();

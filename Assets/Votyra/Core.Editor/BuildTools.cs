@@ -80,6 +80,7 @@ namespace Votyra.Core.Editor
                 UseShellExecute = false,
                 CreateNoWindow = true,
             };
+
             var process = new Process();
             process.StartInfo = processStartInfo;
             process.OutputDataReceived += OutputHandler;
@@ -130,6 +131,7 @@ namespace Votyra.Core.Editor
                     FileName = RootFolder,
                 },
             };
+
             proc.Start();
         }
 
@@ -160,6 +162,7 @@ namespace Votyra.Core.Editor
             }
 
             var dirs = dir.GetDirectories();
+
             // If the destination directory doesn't exist, create it.
             if (!Directory.Exists(destDirName))
             {

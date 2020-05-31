@@ -207,6 +207,7 @@ namespace Votyra.Core.Unity.Painting
 
             var cameraPosition = this.root.transform.InverseTransformPoint(ray.origin)
                 .ToVector3F();
+
             var cameraDirection = this.root.transform.InverseTransformDirection(ray.direction)
                 .ToVector3F();
 

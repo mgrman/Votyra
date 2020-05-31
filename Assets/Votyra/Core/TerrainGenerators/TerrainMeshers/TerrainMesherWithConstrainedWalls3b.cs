@@ -97,7 +97,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             this.pooledMesh.Reset(Area3f.FromMinAndSize((group * this.cellInGroupCount).ToVector3f(), this.cellInGroupCount.ToVector3f()));
         }
 
-        private static Tuple<SampledData3b, IReadOnlyCollection<Triangle3f>> ChooseTrianglesForCell(SampledData3b data)
+        private static (SampledData3b, IReadOnlyCollection<Triangle3f>) ChooseTrianglesForCell(SampledData3b data)
         {
             var posX0Y0Z0 = new Vector3f(0, 0, 0);
             var posX0Y0Z1 = new Vector3f(0, 0, 1);
@@ -121,7 +121,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             Matrix4X4F matrix;
             if ((data.Data == 0) || (data.Data == byte.MaxValue))
             {
-                return Tuple.Create(data, Array.Empty<Triangle3f>() as IReadOnlyCollection<Triangle3f>);
+                return (data, Array.Empty<Triangle3f>());
             }
 
             if (SampledData3b.ParseCube(@"
@@ -137,10 +137,12 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return Tuple.Create(data,
-                    TerrainMeshUtilities.GetQuadTriangles(matrix.MultiplyPoint(posX0Y0Z0), matrix.MultiplyPoint(posX0Y1Z0), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX1Y1Z0), false)
-                        .ChangeOrderIfTrue(isInverted)
-                        .ToArray() as IReadOnlyCollection<Triangle3f>);
+                var templateTriangles = TerrainMeshUtilities.GetQuadTriangles(matrix.MultiplyPoint(posX0Y0Z0), matrix.MultiplyPoint(posX0Y1Z0), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX1Y1Z0), false);
+
+                var templateVariants = templateTriangles.ChangeOrderIfTrue(isInverted)
+                    .ToArray();
+
+                return (data, templateVariants);
             }
 
             if (SampledData3b.ParseCube(@"
@@ -155,10 +157,13 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
-                return Tuple.Create(data,
-                    TerrainMeshUtilities.GetQuadTriangles(matrix.MultiplyPoint(posX0Y0Z1), matrix.MultiplyPoint(posX0Y1Z1), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX1Y1Z0), false)
-                        .ChangeOrderIfTrue(isInverted)
-                        .ToArray() as IReadOnlyCollection<Triangle3f>);
+
+                var templateTriangles = TerrainMeshUtilities.GetQuadTriangles(matrix.MultiplyPoint(posX0Y0Z1), matrix.MultiplyPoint(posX0Y1Z1), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX1Y1Z0), false);
+
+                var templateVariants = templateTriangles.ChangeOrderIfTrue(isInverted)
+                    .ToArray();
+
+                return (data, templateVariants);
             }
 
             if (SampledData3b.ParseCube(@"
@@ -173,13 +178,17 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
             {
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
-                return Tuple.Create(data,
-                    new[]
-                        {
-                            new Triangle3f(matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z0), matrix.MultiplyPoint(posX0Y1Z1)),
-                            new Triangle3f(matrix.MultiplyPoint(posX1Y0Z1), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z1)),
-                        }.ChangeOrderIfTrue(isInverted)
-                        .ToArray() as IReadOnlyCollection<Triangle3f>);
+
+                var templateTriangles = new[]
+                {
+                    new Triangle3f(matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z0), matrix.MultiplyPoint(posX0Y1Z1)),
+                    new Triangle3f(matrix.MultiplyPoint(posX1Y0Z1), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z1)),
+                };
+
+                var templateVariants = templateTriangles.ChangeOrderIfTrue(isInverted)
+                    .ToArray();
+
+                return (data, templateVariants);
             }
 
             if (SampledData3b.ParseCube(@"
@@ -195,13 +204,16 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return Tuple.Create(data,
-                    new[]
-                        {
-                            new Triangle3f(matrix.MultiplyPoint(posX0Y0Z1), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX1Y1Z1)),
-                            new Triangle3f(matrix.MultiplyPoint(posX0Y0Z1), matrix.MultiplyPoint(posX1Y1Z1), matrix.MultiplyPoint(posX0Y1Z0)),
-                        }.ChangeOrderIfTrue(isInverted)
-                        .ToArray() as IReadOnlyCollection<Triangle3f>);
+                var templateTriangles = new[]
+                {
+                    new Triangle3f(matrix.MultiplyPoint(posX0Y0Z1), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX1Y1Z1)),
+                    new Triangle3f(matrix.MultiplyPoint(posX0Y0Z1), matrix.MultiplyPoint(posX1Y1Z1), matrix.MultiplyPoint(posX0Y1Z0)),
+                };
+
+                var templateVariants = templateTriangles.ChangeOrderIfTrue(isInverted)
+                    .ToArray();
+
+                return (data, templateVariants);
             }
 
             if (SampledData3b.ParseCube(@"
@@ -217,12 +229,12 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return Tuple.Create(rotatedTemplate,
-                    new[]
-                        {
-                            new Triangle3f(matrix.MultiplyPoint(posX0Y1Z1), matrix.MultiplyPoint(posX1Y0Z1), matrix.MultiplyPoint(posX1Y1Z0)),
-                        }.ChangeOrderIfTrue(isInverted)
-                        .ToArray() as IReadOnlyCollection<Triangle3f>);
+                var templateTriangle = new Triangle3f(matrix.MultiplyPoint(posX0Y1Z1), matrix.MultiplyPoint(posX1Y0Z1), matrix.MultiplyPoint(posX1Y1Z0));
+                var templateVariants = templateTriangle.AsEnumerable()
+                    .ChangeOrderIfTrue(isInverted)
+                    .ToArray();
+
+                return (rotatedTemplate, templateVariants);
             }
 
             if (SampledData3b.ParseCube(@"
@@ -238,13 +250,16 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return Tuple.Create(rotatedTemplate,
-                    new[]
-                        {
-                            new Triangle3f(matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z0), matrix.MultiplyPoint(posX0Y0Z1)),
-                            new Triangle3f(matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX1Y1Z0), matrix.MultiplyPoint(posX0Y1Z0)),
-                        }.ChangeOrderIfTrue(isInverted)
-                        .ToArray() as IReadOnlyCollection<Triangle3f>);
+                var templateTriangles = new[]
+                {
+                    new Triangle3f(matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z0), matrix.MultiplyPoint(posX0Y0Z1)),
+                    new Triangle3f(matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX1Y1Z0), matrix.MultiplyPoint(posX0Y1Z0)),
+                };
+
+                var templateVariants = templateTriangles.ChangeOrderIfTrue(isInverted)
+                    .ToArray();
+
+                return (rotatedTemplate, templateVariants);
             }
 
             if (SampledData3b.ParseCube(@"
@@ -260,10 +275,12 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return Tuple.Create(rotatedTemplate,
-                    new Triangle3f(matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z0), matrix.MultiplyPoint(posX0Y0Z1)).AsEnumerable()
-                        .ChangeOrderIfTrue(isInverted)
-                        .ToArray() as IReadOnlyCollection<Triangle3f>);
+                var templateTriangle = new Triangle3f(matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z0), matrix.MultiplyPoint(posX0Y0Z1));
+                var templateVariants = templateTriangle.AsEnumerable()
+                    .ChangeOrderIfTrue(isInverted)
+                    .ToArray();
+
+                return (rotatedTemplate, templateVariants);
             }
 
             if (SampledData3b.ParseCube(@"
@@ -279,13 +296,15 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                 matrix = matrix.Inverse;
                 var isInverted = matrix.Determinant < 0;
 
-                return Tuple.Create(rotatedTemplate,
-                    new Triangle3f(matrix.MultiplyPoint(posX0Y0Z0), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z0)).AsEnumerable()
-                        .ChangeOrderIfTrue(isInverted)
-                        .ToArray() as IReadOnlyCollection<Triangle3f>);
+                var templateTriangle = new Triangle3f(matrix.MultiplyPoint(posX0Y0Z0), matrix.MultiplyPoint(posX1Y0Z0), matrix.MultiplyPoint(posX0Y1Z0));
+                var templateVariants = templateTriangle.AsEnumerable()
+                    .ChangeOrderIfTrue(isInverted)
+                    .ToArray();
+
+                return (rotatedTemplate, templateVariants);
             }
 
-            return Tuple.Create(new SampledData3b(false, false, false, false, false, false, false, false), Array.Empty<Triangle3f>() as IReadOnlyCollection<Triangle3f>);
+            return (data, Array.Empty<Triangle3f>());
         }
 
         private static IReadOnlyCollection<Triangle3f> ChooseXWallTriangles(SampledData3b data, SampledData3b dataXMinus)

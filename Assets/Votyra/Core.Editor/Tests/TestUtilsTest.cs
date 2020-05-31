@@ -11,7 +11,7 @@ namespace Votyra.Core
         {
             var cts = new TaskCompletionSource<bool>();
 
-            var _ = Task.Run(async () =>
+            var unused = Task.Run(async () =>
             {
                 await Task.Delay(500);
                 cts.SetResult(true);

@@ -1,6 +1,5 @@
 using Votyra.Core.Images;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
 
 namespace Votyra.Images.Noise
 {

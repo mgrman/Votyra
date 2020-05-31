@@ -54,6 +54,7 @@ namespace Votyra.Core.Profiling
             this.stopwatch.Stop();
             UnityProfilerAggregator.Add(this.owner, this.name, (double)this.stopwatch.ElapsedTicks / TimeSpan.TicksPerMillisecond);
             this.stopwatch.Reset();
+
             // UnityEngine.Debug.Log(_namePrefix + _stopwatch.ElapsedMilliseconds);
         }
     }

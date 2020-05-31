@@ -10,9 +10,9 @@ namespace Votyra.Core.Raycasting
     {
         private readonly Vector2i cellInGroupCount;
         private readonly ITerrainRepository2i manager;
-        private readonly ITerrainVertexPostProcessor terrainVertexPostProcessor;
         private readonly float maxDistance = 500; // TODO get from camera
         private readonly int maxIterations;
+        private readonly ITerrainVertexPostProcessor terrainVertexPostProcessor;
 
         public BaseGroupRaycaster(ITerrainConfig terrainConfig, ITerrainVertexPostProcessor terrainVertexPostProcessor = null, IRaycasterAggregator raycasterAggregator = null)
         {
@@ -138,10 +138,16 @@ namespace Votyra.Core.Raycasting
 
         private Area2f MeshCellArea(Vector2i cell) => Area2f.FromMinAndMax(this.ProcessVertex(new Vector2f(cell.X, cell.Y)), this.ProcessVertex(new Vector2f(cell.X + 1, cell.Y + 1)));
 
-        private Area2f MeshGroupArea(Vector2i group) => Area2f.FromMinAndMax(this.MeshCellArea(group * this.cellInGroupCount)
-                .Min,
-            this.MeshCellArea(((@group + Vector2i.One) * this.cellInGroupCount) - Vector2i.One)
-                .Max);
+        private Area2f MeshGroupArea(Vector2i group)
+        {
+            var min = this.MeshCellArea(@group * this.cellInGroupCount)
+                .Min;
+
+            var max = this.MeshCellArea(((@group + Vector2i.One) * this.cellInGroupCount) - Vector2i.One)
+                .Max;
+
+            return Area2f.FromMinAndMax(min, max);
+        }
 
         private Vector2f ProcessVertex(Vector2f point)
         {

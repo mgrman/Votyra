@@ -17,7 +17,8 @@ namespace Votyra.Core.Utils
 
         public static bool IsInRange<T>(this T[,] data, int i, int dimension) => (i >= 0) && (i <= data.GetUpperBound(dimension));
 
-        public static T[] CreateNonNull<T>(T item1, T item2) where T : class
+        public static T[] CreateNonNull<T>(T item1, T item2)
+            where T : class
         {
             if ((item1 != default(T)) && (item2 != default(T)))
             {

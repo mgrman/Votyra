@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace Votyra.Core.Models.ObjectPool
 {
-    public abstract class BaseKeyObjectPool<T, TKey> : IObjectDictionaryPool<T, TKey> where TKey : struct
+    public abstract class BaseKeyObjectPool<T, TKey> : IObjectDictionaryPool<T, TKey>
+        where TKey : struct
     {
         private readonly int limit;
         private readonly Func<TKey, T> objectGenerator;

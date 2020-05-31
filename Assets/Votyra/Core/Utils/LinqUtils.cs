@@ -6,17 +6,20 @@ namespace Votyra.Core.Utils
 {
     public static class LinqUtils
     {
-        public static T MaxByOrDefault<T, TR>(this IEnumerable<T> items, Func<T, TR> func) where TR : IComparable<TR>
+        public static T MaxByOrDefault<T, TR>(this IEnumerable<T> items, Func<T, TR> func)
+            where TR : IComparable<TR>
         {
             return items.ExtremeByOrDefault(func, (currentValue, previousBestValue) => currentValue.CompareTo(previousBestValue) > 0);
         }
 
-        public static T MinByOrDefault<T, TR>(this IEnumerable<T> items, Func<T, TR> func) where TR : IComparable<TR>
+        public static T MinByOrDefault<T, TR>(this IEnumerable<T> items, Func<T, TR> func)
+            where TR : IComparable<TR>
         {
             return items.ExtremeByOrDefault(func, (currentValue, previousBestValue) => currentValue.CompareTo(previousBestValue) < 0);
         }
 
-        public static T ExtremeByOrDefault<T, TR>(this IEnumerable<T> items, Func<T, TR> func, Func<TR, TR, bool> compareFunc) where TR : IComparable<TR>
+        public static T ExtremeByOrDefault<T, TR>(this IEnumerable<T> items, Func<T, TR> func, Func<TR, TR, bool> compareFunc)
+            where TR : IComparable<TR>
         {
             var bestItem = default(T);
             var bestItemsValue = default(TR);
@@ -52,6 +55,7 @@ namespace Votyra.Core.Utils
         private static IEnumerable<T> YieldBatchElements<T>(IEnumerator<T> source, int batchSize)
         {
             yield return source.Current;
+
             for (var i = 0; (i < batchSize) && source.MoveNext(); i++)
             {
                 yield return source.Current;

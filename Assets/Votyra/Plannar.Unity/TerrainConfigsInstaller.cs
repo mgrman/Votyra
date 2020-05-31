@@ -10,8 +10,10 @@ namespace Votyra.Plannar.Unity
         {
             this.Container.BindInterfacesAndSelfTo<TerrainConfig>()
                 .AsSingle();
+
             this.Container.BindInterfacesAndSelfTo<InterpolationConfig>()
                 .AsSingle();
+
             this.Container.BindInterfacesAndSelfTo<ConstraintConfig>()
                 .AsSingle();
         }

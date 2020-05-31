@@ -2,7 +2,8 @@ using System;
 
 namespace Votyra.Core.Models.ObjectPool
 {
-    public class ConcurentObjectDictionaryPool<T, TKey> : ObjectDictionaryPool<T, TKey> where TKey : struct
+    public class ConcurentObjectDictionaryPool<T, TKey> : ObjectDictionaryPool<T, TKey>
+        where TKey : struct
     {
         private readonly object accessLock = new object();
 

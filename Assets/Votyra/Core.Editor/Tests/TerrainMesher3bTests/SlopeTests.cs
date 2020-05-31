@@ -16,9 +16,10 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             |/    |/
             1-----1
             ";
+
             var triangles = Evaluate(cube);
 
-            AssertContainsQuad(triangles, cube, x1y0z0, x1y1z0, x0y0z1, x0y1z1);
+            AssertContainsQuad(triangles, cube, Offset_x1y0z0, Offset_x1y1z0, Offset_x0y0z1, Offset_x0y1z1);
         }
 
         [Test]
@@ -32,9 +33,10 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             |/    |/
             1-----1
             ";
+
             var triangles = Evaluate(cube);
 
-            AssertContainsQuad(triangles, cube, x0y0z0, x0y1z0, x1y0z1, x1y1z1);
+            AssertContainsQuad(triangles, cube, Offset_x0y0z0, Offset_x0y1z0, Offset_x1y0z1, Offset_x1y1z1);
         }
     }
 }

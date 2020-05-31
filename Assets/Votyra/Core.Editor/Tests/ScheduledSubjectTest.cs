@@ -27,6 +27,7 @@ namespace Votyra.Core
                     subjectB.OnNext(null);
                 }
             });
+
             subjectB.Subscribe(valueB =>
             {
                 if (valueB != null)
@@ -38,6 +39,7 @@ namespace Votyra.Core
                     subjectC.OnNext(null);
                 }
             });
+
             subjectC.Subscribe(valueC =>
             {
                 if (valueC != null)
@@ -47,12 +49,10 @@ namespace Votyra.Core
             });
 
             var handlerCalls = new List<Tuple<string, string, string>>();
-            subjectA.CombineLatest(subjectB,
-                    subjectC,
-                    (a, b, c) =>
-                    {
-                        return Tuple.Create(a, b, c);
-                    })
+            subjectA.CombineLatest(subjectB, subjectC, (a, b, c) =>
+                {
+                    return Tuple.Create(a, b, c);
+                })
                 .Subscribe(call => handlerCalls.Add(call));
 
             subjectA.OnNext("A");
@@ -67,6 +67,7 @@ namespace Votyra.Core
                 Tuple.Create<string, string, string>(null, null, "C_B_A"),
                 Tuple.Create<string, string, string>(null, null, null),
             };
+
             TestUtils.AssertListEquality(expectedResult, handlerCalls);
         }
 

@@ -16,6 +16,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             |/    |/
             0-----0
             ";
+
             var triangles = Evaluate(cube);
 
             Assert.IsEmpty(triangles);
@@ -32,6 +33,7 @@ namespace Votyra.Cubical.Tests.Editor.TerrainMesher3bTests
             |/    |/
             0-----0
             ";
+
             var triangles = Evaluate(cube);
 
             Assert.IsEmpty(triangles);

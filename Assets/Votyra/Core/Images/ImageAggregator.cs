@@ -170,12 +170,12 @@ namespace Votyra.Core.Images
 
         private class MatrixImageAccessor : IEditableImageAccessor2f
         {
-            public readonly IEditableImageAccessor2f LayerAccesors;
-
             public MatrixImageAccessor(IEditableImageAccessor2f layerAccesors)
             {
                 this.LayerAccesors = layerAccesors;
             }
+
+            public IEditableImageAccessor2f LayerAccesors { get; }
 
             public Range2i Area => this.LayerAccesors.Area;
 

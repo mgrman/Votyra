@@ -7,10 +7,38 @@
     <Rule Id="IDE0001" Action="None" />
     <Rule Id="CS0649" Action="None" />
   </Rules>
+
+  <Rules AnalyzerId="UnityEngineAnalyzer" RuleNamespace="Linty.Analyzers">
+
+    <!-- Cache results -->
+    <Rule Id="UEA0005" Action="None" />
+
+    <!-- Foreach is fine now -->
+    <Rule Id="UEA0007" Action="None" />
+
+    <!-- Not Sealed is not required yet -->
+    <Rule Id="UEA0008" Action="None" />
+  </Rules>
+
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+
+    <!-- Temporary -->
+    <Rule Id="SA1201" Action="None" />
+    <Rule Id="SA1202" Action="None" />
+    <Rule Id="SA1214" Action="None" />
+    <Rule Id="SA1204" Action="None" />
+
+    <!-- Allow underscores in field names -->
+    <Rule Id="SA1310" Action="None" />
+
+    <!-- Allow more comments -->
+    <Rule Id="SA1108" Action="None" />
+    <Rule Id="SA1512" Action="None" />
+    <Rule Id="SA1005" Action="None" />
+
     <!-- Disable using inside namespaces -->
     <Rule Id="SA1200" Action="None" />
-	
+
     <!-- Disable Documentation Rules -->
     <Rule Id="SA1600" Action="None" />
     <Rule Id="SA1601" Action="None" />

@@ -50,6 +50,7 @@ namespace Votyra.Core.GroupSelectors
                     var group = new Vector2i(ix, iy);
                     var groupBoundsMin = (group * this.cellInGroupCount).ToVector2f()
                         .ToVector3f(minZ);
+
                     var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
                     var isVisible = planes.TestPlanesAABB(groupBounds);
 

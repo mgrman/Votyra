@@ -19,7 +19,7 @@ namespace Votyra.Core.Models
     {{func dimAccess}}{{if dimSize!=1}}{{$0}}.{{$1}}{{else}}{{$0}}{{end}}{{end}}
     public partial struct {{type}} : IEquatable<{{type}}>
     {
-        public static readonly {{type}} Zero = new {{type}}();
+        public static readonly {{type}} Zero = new {{type}}({{vectorFloatType}}.Zero,{{vectorFloatType}}.Zero);
         public static readonly {{type}} All = new {{type}}({{vectorFloatType}}Utils.FromSame(float.MinValue / 2), {{vectorFloatType}}Utils.FromSame(float.MaxValue / 2));
 
         public readonly {{vectorFloatRealType}} Max;

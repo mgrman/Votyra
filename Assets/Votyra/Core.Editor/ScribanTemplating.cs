@@ -93,6 +93,7 @@ namespace Votyra.Core.Editor
                                     .Select(o => $"X{o}")
                                     .ToArray(),
                         };
+
                         var expandedFileName = fileNameTemplate.Render(data);
 
                         var resultPath = Path.Combine(directoyPath, expandedFileName);

@@ -27,7 +27,7 @@ namespace Votyra.Core.Images.Constraints
 
         protected override void Constrain()
         {
-            switch (this.direction)
+            switch (this.Direction)
             {
                 case Direction.Up:
                     this.comparer = InvertedComparer;
@@ -43,10 +43,10 @@ namespace Votyra.Core.Images.Constraints
             base.Constrain();
         }
 
-        private float GetMaxValue(Vector2i cell) => this.editableMatrix.SampleCell(cell)
+        private float GetMaxValue(Vector2i cell) => this.EditableMatrix.SampleCell(cell)
             .Max;
 
-        private float GetMinValue(Vector2i cell) => this.editableMatrix.SampleCell(cell)
+        private float GetMinValue(Vector2i cell) => this.EditableMatrix.SampleCell(cell)
             .Min;
 
         protected override void ConstrainCell(Vector2i seedCell)
@@ -62,10 +62,12 @@ namespace Votyra.Core.Images.Constraints
                 // #endif
                 var cell = this.queue.GetFirst()
                     .Value;
-                this.invalidatedCellArea = this.invalidatedCellArea.CombineWith(cell);
 
-                var sample = this.editableMatrix.SampleCell(cell)
+                this.InvalidatedCellArea = this.InvalidatedCellArea.CombineWith(cell);
+
+                var sample = this.EditableMatrix.SampleCell(cell)
                     .ToSampledData2i();
+
                 var processedSample = this.Process(sample);
 
                 var cellX0Y0 = cell;
@@ -74,19 +76,19 @@ namespace Votyra.Core.Images.Constraints
                 var cellX1Y1 = new Vector2i(cell.X + 1, cell.Y + 1);
 
                 var change = 0f;
-                if (this.editableMatrix.ContainsIndex(cellX0Y0) && this.editableMatrix.ContainsIndex(cellX1Y1))
+                if (this.EditableMatrix.ContainsIndex(cellX0Y0) && this.EditableMatrix.ContainsIndex(cellX1Y1))
                 {
-                    change += Math.Abs(this.editableMatrix.Get(cellX0Y0) - processedSample.X0Y0);
-                    this.editableMatrix.Set(cellX0Y0, processedSample.X0Y0);
+                    change += Math.Abs(this.EditableMatrix.Get(cellX0Y0) - processedSample.X0Y0);
+                    this.EditableMatrix.Set(cellX0Y0, processedSample.X0Y0);
 
-                    change += Math.Abs(this.editableMatrix.Get(cellX0Y1) - processedSample.X0Y1);
-                    this.editableMatrix.Set(cellX0Y1, processedSample.X0Y1);
+                    change += Math.Abs(this.EditableMatrix.Get(cellX0Y1) - processedSample.X0Y1);
+                    this.EditableMatrix.Set(cellX0Y1, processedSample.X0Y1);
 
-                    change += Math.Abs(this.editableMatrix.Get(cellX1Y0) - processedSample.X1Y0);
-                    this.editableMatrix.Set(cellX1Y0, processedSample.X1Y0);
+                    change += Math.Abs(this.EditableMatrix.Get(cellX1Y0) - processedSample.X1Y0);
+                    this.EditableMatrix.Set(cellX1Y0, processedSample.X1Y0);
 
-                    change += Math.Abs(this.editableMatrix.Get(cellX1Y1) - processedSample.X1Y1);
-                    this.editableMatrix.Set(cellX1Y1, processedSample.X1Y1);
+                    change += Math.Abs(this.EditableMatrix.Get(cellX1Y1) - processedSample.X1Y1);
+                    this.EditableMatrix.Set(cellX1Y1, processedSample.X1Y1);
                 }
 
                 if (change > 0f)
@@ -105,7 +107,7 @@ namespace Votyra.Core.Images.Constraints
                             var iy = cell.Y + offsetY;
                             var newCellToCheck = new Vector2i(ix, iy);
                             var newCellToCheckValue = this.getValue(cell);
-                            if (this.editableMatrix.ContainsIndex(newCellToCheck))
+                            if (this.EditableMatrix.ContainsIndex(newCellToCheck))
                             {
                                 this.queue.Add(newCellToCheck, newCellToCheckValue);
                             }

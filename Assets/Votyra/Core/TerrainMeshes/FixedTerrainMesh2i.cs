@@ -177,6 +177,7 @@ namespace Votyra.Core.TerrainMeshes
                     // TODO: edge case of edge fliping logic
                     // TODO: make for customizable triangle flipping logic
                     this.AddEmptyTriangle(triangleIndex);
+
                     // AddTriangle(triangleIndex, x1y1.Value, x0y1.Value, x0y0.Value);
                     triangleIndex++;
                     this.AddEmptyTriangle(triangleIndex);

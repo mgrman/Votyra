@@ -108,6 +108,7 @@ namespace Votyra.Plannar
 
             var cameraPosition = this.root.transform.InverseTransformPoint(camera.transform.position)
                 .ToVector3F();
+
             var cameraDirection = this.root.transform.InverseTransformDirection(camera.transform.forward)
                 .ToVector3F();
 
@@ -122,9 +123,7 @@ namespace Votyra.Plannar
         private event Action<ArcResource<IFrameData2i>> RawFrameData;
 
         [Inject]
-        public FrameData2iProvider([InjectOptional]
-            IImage2fPostProcessor image2fPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root")]
-            GameObject root, IFrameData2iPool pool)
+        public FrameData2iProvider([InjectOptional]IImage2fPostProcessor image2fPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root")]GameObject root, IFrameData2iPool pool)
         {
             this.image2fPostProcessor = image2fPostProcessor;
             this.imageProvider = imageProvider;

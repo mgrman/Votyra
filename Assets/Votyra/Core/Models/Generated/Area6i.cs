@@ -9,7 +9,7 @@ namespace Votyra.Core.Models
     {
         public static readonly Area6i All = new Area6i(Vector6iUtils.FromSame(int.MinValue / 2), Vector6iUtils.FromSame((int.MaxValue / 2) - 1));
 
-        public static readonly Area6i Zero = new Area6i();
+        public static readonly Area6i Zero = new Area6i(Vector6i.Zero, Vector6i.Zero);
 
         public readonly Vector6i Min;
 

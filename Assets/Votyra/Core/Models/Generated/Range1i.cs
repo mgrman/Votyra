@@ -12,7 +12,7 @@ namespace Votyra.Core.Models
 
         public static readonly Range1i All = new Range1i(MinValue, MaxValue);
 
-        public static readonly Range1i Zero = new Range1i();
+        public static readonly Range1i Zero = new Range1i(Vector1i.Zero, Vector1i.Zero);
 
         public readonly int Min;
 

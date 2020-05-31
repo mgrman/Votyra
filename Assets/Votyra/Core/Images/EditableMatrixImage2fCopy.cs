@@ -13,13 +13,14 @@ namespace Votyra.Core.Images
         public EditableMatrixImage2fCopy(IImageConfig imageConfig, List<IImageConstraint2i> constraints)
         {
             this.constraints = constraints.SelectMany(o => o.Priorities.Select(p => new
-            {
-                p,
-                o,
-            }))
+                {
+                    p,
+                    o,
+                }))
                 .OrderBy(o => o.p)
                 .Select(o => o.o)
                 .ToArray();
+
             foreach (var constraint in this.constraints)
             {
                 constraint.Initialize(this);
@@ -36,6 +37,7 @@ namespace Votyra.Core.Images
             {
                 var newInvalidatedImageArea = this.constraints[i]
                     .FixImage(this, this.editableMatrix, invalidatedImageArea, direction);
+
                 invalidatedImageArea = invalidatedImageArea.CombineWith(newInvalidatedImageArea);
             }
         }

@@ -4,7 +4,8 @@ using Votyra.Core.Logging;
 
 namespace Votyra.Core.Queueing
 {
-    public class ParalelTaskQueue<T> : IWorkQueue<T> where T : IDisposable
+    public class ParalelTaskQueue<T> : IWorkQueue<T>
+        where T : IDisposable
     {
         private readonly TaskFactory taskFactory;
 

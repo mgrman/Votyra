@@ -5,7 +5,8 @@ using Votyra.Core.Utils;
 
 namespace Votyra.Core.Queueing
 {
-    public class LastValueTaskQueue<T> : IWorkQueue<T> where T : IDisposable
+    public class LastValueTaskQueue<T> : IWorkQueue<T>
+        where T : IDisposable
     {
         private readonly TaskFactory taskFactory;
         private readonly object taskLock = new object();

@@ -6,7 +6,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
     public class RotationTests
     {
         [Test]
-        public void x0y0z0()
+        public void TestCase_x0y0z0()
         {
             var initialCubeString = @"
               0-----0
@@ -16,6 +16,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             1-----1
             ";
+
             var expectedCubeString = @"
               0-----0
              /|    /|
@@ -24,6 +25,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             1-----1
             ";
+
             var initialCube = SampledData3b.ParseCube(initialCubeString);
             var expectedCube = SampledData3b.ParseCube(expectedCubeString);
 
@@ -33,7 +35,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
         }
 
         [Test]
-        public void xy0z1()
+        public void TestCase_xy0z1()
         {
             var initialCubeString = @"
               0-----0
@@ -43,6 +45,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             1-----1
             ";
+
             var expectedCubeString = @"
               1-----0
              /|    /|
@@ -51,6 +54,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             1-----0
             ";
+
             var initialCube = SampledData3b.ParseCube(initialCubeString);
             var expectedCube = SampledData3b.ParseCube(expectedCubeString);
 
@@ -60,7 +64,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
         }
 
         [Test]
-        public void xy0z2()
+        public void TestCase_xy0z2()
         {
             var initialCubeString = @"
               0-----0
@@ -70,6 +74,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             1-----1
             ";
+
             var expectedCubeString = @"
               0-----1
              /|    /|
@@ -78,6 +83,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----0
             ";
+
             var initialCube = SampledData3b.ParseCube(initialCubeString);
             var expectedCube = SampledData3b.ParseCube(expectedCubeString);
 
@@ -87,7 +93,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
         }
 
         [Test]
-        public void xy0z3()
+        public void TestCase_xy0z3()
         {
             var initialCubeString = @"
               0-----0
@@ -97,6 +103,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             1-----1
             ";
+
             var expectedCubeString = @"
               0-----0
              /|    /|
@@ -105,6 +112,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             0-----1
             ";
+
             var initialCube = SampledData3b.ParseCube(initialCubeString);
             var expectedCube = SampledData3b.ParseCube(expectedCubeString);
 
@@ -114,7 +122,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
         }
 
         [Test]
-        public void xy0z0Inv()
+        public void TestCase_xy0z0Inv()
         {
             var initialCubeString = @"
               0-----0
@@ -124,6 +132,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             1-----1
             ";
+
             var expectedCubeString = @"
               0-----0
              /|    /|
@@ -132,6 +141,7 @@ namespace Votyra.Cubical.Tests.Editor.SampledData3bTests
             |/    |/
             1-----0
             ";
+
             var initialCube = SampledData3b.ParseCube(initialCubeString);
             var expectedCube = SampledData3b.ParseCube(expectedCubeString);
 

@@ -32,7 +32,8 @@ namespace Votyra.Core.Utils
 
         public static UniTask RunOnMainThreadUniAsync(Action action)
         {
-            return UniTask.Run(async () =>
+            return UniTask.Run(
+                async () =>
                 {
                     await UniTask.SwitchToMainThread();
                     action();

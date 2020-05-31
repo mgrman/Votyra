@@ -84,6 +84,7 @@ namespace Votyra.Core
         {
             var syncContextName = unitySyncContext?.GetType()
                 .FullName ?? "<null>";
+
             if (syncContextName != "UnityEngine.UnitySynchronizationContext")
             {
                 throw new AssertionException($"AsyncTerrainGeneration task cannot be tested with {syncContextName} as SynchronizationContext! UnitySynchronizationContext is required!");
@@ -94,6 +95,7 @@ namespace Votyra.Core
         {
             var execMethod = syncContext.GetType()
                 .GetMethod("Exec", BindingFlags.Instance | BindingFlags.NonPublic);
+
             if (execMethod == null)
             {
                 throw new AssertionException("AsyncTerrainGeneration task cannot be tested without Exec() method on UnitySynchronizationContext!");

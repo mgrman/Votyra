@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace Votyra.Core.Models.ObjectPool
 {
-    public class ObjectListPool<T, TKey> : BaseKeyObjectPool<T, TKey> where TKey : struct
+    public class ObjectListPool<T, TKey> : BaseKeyObjectPool<T, TKey>
+        where TKey : struct
     {
         private readonly Func<TKey, TKey, bool> comparer;
         private readonly List<Container> containers = new List<Container>();

@@ -14,6 +14,7 @@ namespace Votyra.Core.Utils
             {
                 var z = points[i]
                     .z;
+
                 minZ = Mathf.Min(minZ, z);
                 maxZ = Mathf.Max(maxZ, z);
             }

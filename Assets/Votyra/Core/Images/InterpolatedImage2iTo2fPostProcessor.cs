@@ -30,6 +30,7 @@ namespace Votyra.Core.Images
                     {
                         return new NnImage2fWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
+
                 case IntepolationAlgorithm.Linear:
                     if (image is IImageInvalidatableImage2)
                     {
@@ -39,6 +40,7 @@ namespace Votyra.Core.Images
                     {
                         return new LinearImage2fWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
+
                 case IntepolationAlgorithm.Cubic:
                     if (image is IImageInvalidatableImage2)
                     {
@@ -48,6 +50,7 @@ namespace Votyra.Core.Images
                     {
                         return new CubicImage2fWrapper(image, this.interpolationConfig.ImageSubdivision);
                     }
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -56,10 +59,10 @@ namespace Votyra.Core.Images
         private class CubicImage2fWrapper : IImage2f, IInitializableImage
         {
             private readonly IImage2f image;
-
-            private readonly int subdivision;
             private readonly Vector2i interpolationCell = new Vector2i(int.MinValue, int.MinValue);
             private readonly float[,] interpolationMatrix = new float[4, 4];
+
+            private readonly int subdivision;
 
             public CubicImage2fWrapper(IImage2f image, int subdivision)
             {

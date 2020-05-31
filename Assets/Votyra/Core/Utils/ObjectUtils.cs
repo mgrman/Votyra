@@ -4,7 +4,8 @@ namespace Votyra.Core.Utils
 {
     public static class ObjectUtils
     {
-        public static void UpdateType<T, TR>(ref TR property) where T : TR, new()
+        public static void UpdateType<T, TR>(ref TR property)
+            where T : TR, new()
         {
             if (!(property is T))
             {

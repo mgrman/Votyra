@@ -3,7 +3,8 @@ using Votyra.Core.Logging;
 
 namespace Votyra.Core.Painting.Commands
 {
-    public abstract class BaseFactory<T> : IPaintCommandFactory where T : IInitializablePaintCommand, new()
+    public abstract class BaseFactory<T> : IPaintCommandFactory
+        where T : IInitializablePaintCommand, new()
     {
         private readonly IEditableImage2f editableImage;
         private readonly IThreadSafeLogger logger;

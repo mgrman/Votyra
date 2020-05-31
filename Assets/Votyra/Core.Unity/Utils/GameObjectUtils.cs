@@ -6,7 +6,8 @@ namespace Votyra.Core.Utils
     {
         public static GameObject NullIfDestroyed(this GameObject gameObject) => gameObject == null ? null : gameObject;
 
-        public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
+        public static T GetOrAddComponent<T>(this GameObject gameObject)
+            where T : Component
         {
             var component = gameObject.GetComponent<T>();
             if (component == null)
@@ -17,7 +18,8 @@ namespace Votyra.Core.Utils
             return component;
         }
 
-        public static void AddComponentIfMissing<T>(this GameObject gameObject) where T : Component
+        public static void AddComponentIfMissing<T>(this GameObject gameObject)
+            where T : Component
         {
             var component = gameObject.GetComponent<T>();
             if (component == null)
@@ -50,6 +52,7 @@ namespace Votyra.Core.Utils
 
             var mesh = gameObject.GetComponent<MeshFilter>()
                 .sharedMesh;
+
             mesh.Destroy();
             gameObject.Destroy();
         }

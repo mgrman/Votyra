@@ -37,6 +37,7 @@ namespace Votyra.Core.Images
                 {
                     imageConfig.InitialData as Collider,
                 };
+
                 FillInitialState(editableImage, colliderArray, imageConfig.InitialDataScale.Z, root);
             }
 
@@ -76,6 +77,7 @@ namespace Votyra.Core.Images
                         var pos = new Vector2i(ix, iy) + min;
                         var value = texture.GetPixelBilinear((float)pos.X / matrixSizeX, (float)pos.Y / matrixSizeY)
                             .grayscale * scale;
+
                         var height = value;
                         imageAccessor[pos] = height;
                     }

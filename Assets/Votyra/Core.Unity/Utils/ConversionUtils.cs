@@ -23,6 +23,7 @@ namespace Votyra.Core.Utils
             {
                 From = planesUnity,
             };
+
             var res = union.To;
             Assert.AreEqual(planesUnity.Length, res.Length, $"{nameof(ToPlane3F)} conversion failed!");
             return res;
@@ -40,6 +41,7 @@ namespace Votyra.Core.Utils
             {
                 From = vector,
             };
+
             var res = union.To;
             Assert.AreEqual(vector.Length, res.Length, $"{nameof(ToVector3)} conversion failed!");
             return res;
@@ -51,6 +53,7 @@ namespace Votyra.Core.Utils
             {
                 From = vector,
             };
+
             var res = union.To;
             Assert.AreEqual(vector.Length, res.Length, $"{nameof(ToVector2)}  conversion failed!");
             return res;
@@ -83,6 +86,7 @@ namespace Votyra.Core.Utils
                 m23 = mat.M23,
                 m33 = mat.M33,
             };
+
             return mat2;
         }
 
@@ -97,6 +101,7 @@ namespace Votyra.Core.Utils
             var targetItems = convert(sourceItemsValue);
 
             targetItemsSet(target, targetItems);
+
             // targetItemsSet.SetValue(target, targetItems, BindingFlags.SetField, new ArrayKeepBinder<TSource, TResult>(), null);
             targetSizeSet(target, source.Count);
             return target;

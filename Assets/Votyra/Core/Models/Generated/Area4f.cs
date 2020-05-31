@@ -5,7 +5,7 @@ namespace Votyra.Core.Models
 {
     public struct Area4f : IEquatable<Area4f>
     {
-        public static readonly Area4f Zero = new Area4f();
+        public static readonly Area4f Zero = new Area4f(Vector4f.Zero, Vector4f.Zero);
         public static readonly Area4f All = new Area4f(Vector4fUtils.FromSame(float.MinValue / 2), Vector4fUtils.FromSame(float.MaxValue / 2));
 
         public readonly Vector4f Max;

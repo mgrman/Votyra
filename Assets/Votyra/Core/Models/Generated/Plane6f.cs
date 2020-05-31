@@ -23,6 +23,7 @@ namespace Votyra.Core.Models
         {
             var boundsCenter = bounds.Center; // center of bounds
             var boundsExtent = bounds.Extents; // half diagonal
+
             // do intersection test for each active frame
 
             // while active frames

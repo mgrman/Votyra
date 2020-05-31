@@ -12,8 +12,6 @@ namespace Votyra.Core
     [Serializable]
     public class ConfigItem : IEquatable<ConfigItem>
     {
-        private JsonSerializerSettings settings;
-
         [FormerlySerializedAs("Id")]
         [SerializeField]
         private string id;
@@ -22,6 +20,8 @@ namespace Votyra.Core
         [SerializeField]
         private string jsonValue;
 
+        private JsonSerializerSettings settings;
+
         [FormerlySerializedAs("TypeAssemblyQualifiedName")]
         [SerializeField]
         private string typeAssemblyQualifiedName;
@@ -29,14 +29,6 @@ namespace Votyra.Core
         [FormerlySerializedAs("UnityValues")]
         [SerializeField]
         private List<UnityEngineObject> unityValues;
-
-        public string Id => id;
-
-        public string JsonValue => jsonValue;
-
-        public string TypeAssemblyQualifiedName => typeAssemblyQualifiedName;
-
-        public List<UnityEngineObject> UnityValues => unityValues;
 
         public ConfigItem()
         {
@@ -52,6 +44,14 @@ namespace Votyra.Core
 
             this.jsonValue = JsonConvert.SerializeObject(value, this.settings);
         }
+
+        public string Id => this.id;
+
+        public string JsonValue => this.jsonValue;
+
+        public string TypeAssemblyQualifiedName => this.typeAssemblyQualifiedName;
+
+        public List<UnityEngineObject> UnityValues => this.unityValues;
 
         public Type Type
         {

@@ -4,12 +4,7 @@ namespace Votyra.Core.Images
 {
     public class TerrainConfig : ITerrainConfig
     {
-        public TerrainConfig([ConfigInject("cellInGroupCount")]
-            Vector3i cellInGroupCount, [ConfigInject("drawBounds")]
-            bool drawBounds, [ConfigInject("asyncTerrainGeneration")]
-            bool asyncTerrainGeneration, [ConfigInject("asyncInput")]
-            bool asyncInput, [ConfigInject("colliderType")]
-            ColliderType colliderType)
+        public TerrainConfig([ConfigInject("cellInGroupCount")]Vector3i cellInGroupCount, [ConfigInject("drawBounds")]bool drawBounds, [ConfigInject("asyncTerrainGeneration")]bool asyncTerrainGeneration, [ConfigInject("asyncInput")]bool asyncInput, [ConfigInject("colliderType")]ColliderType colliderType)
         {
             this.CellInGroupCount = cellInGroupCount;
             this.DrawBounds = drawBounds;

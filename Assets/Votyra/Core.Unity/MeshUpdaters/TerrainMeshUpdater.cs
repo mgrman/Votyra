@@ -81,9 +81,11 @@ namespace Votyra.Core.MeshUpdaters
             }
             else
             {
-                mesh.SetUVs(0,
-                    triangleMesh.Uv.Select(o => o.ToVector2())
-                        .ToList());
+                var uvs = triangleMesh.Uv.Select(o => o.ToVector2())
+                    .ToList();
+
+                mesh.SetUVs(0, uvs);
+
                 StaticLogger.LogWarning("Using unsuported IReadOnlyList type for UV, slow conversion is used");
             }
         }
@@ -102,6 +104,7 @@ namespace Votyra.Core.MeshUpdaters
             {
                 mesh.SetVertices(triangleMesh.Vertices.Select(o => o.ToVector3())
                     .ToList());
+
                 StaticLogger.LogWarning("Using unsuported IReadOnlyList type for Vertices, slow conversion is used");
             }
         }
@@ -120,6 +123,7 @@ namespace Votyra.Core.MeshUpdaters
             {
                 mesh.SetNormals(triangleMesh.Normals.Select(o => o.ToVector3())
                     .ToList());
+
                 StaticLogger.LogWarning("Using unsuported IReadOnlyList type for Normals, slow conversion is used");
             }
         }

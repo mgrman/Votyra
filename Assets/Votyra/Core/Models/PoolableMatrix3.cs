@@ -6,12 +6,12 @@ namespace Votyra.Core.Models
     {
         private static readonly ConcurentObjectDictionaryPool<PoolableMatrix3<T>, Vector3i> Pool = new ConcurentObjectDictionaryPool<PoolableMatrix3<T>, Vector3i>(5, matrixSize => new PoolableMatrix3<T>(matrixSize));
 
-        public readonly T[,,] RawMatrix;
-
         private PoolableMatrix3(Vector3i matrixSize)
         {
             this.RawMatrix = new T[matrixSize.X, matrixSize.Y, matrixSize.Z];
         }
+
+        public T[,,] RawMatrix { get; }
 
         private Vector3i Size => this.RawMatrix.Size();
 

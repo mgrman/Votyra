@@ -36,6 +36,7 @@ namespace Votyra.Plannar.Unity
                     var config = c.Container.Resolve<IInterpolationConfig>();
                     return config.ImageSubdivision > 1;
                 });
+
             this.Container.Bind<ScaleAdjustor>()
                 .ToSelf()
                 .AsSingle()
@@ -86,6 +87,7 @@ namespace Votyra.Plannar.Unity
 
             this.Container.BindInterfacesAndSelfTo<TerrainGameObjectPool>()
                 .AsSingle();
+
             this.Container.BindInterfacesAndSelfTo<TerrainUnityMeshManager>()
                 .AsSingle()
                 .NonLazy();

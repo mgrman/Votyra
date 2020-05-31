@@ -14,6 +14,7 @@ namespace Votyra.Core.Models
         public TileMap2i(IEnumerable<SampledData2i> templates, IThreadSafeLogger logger)
         {
             this.logger = logger;
+
             // #if VERBOSE
             //             foreach (var template in templates)
             //             {
@@ -24,7 +25,8 @@ namespace Votyra.Core.Models
             this.ValueRange = this.Templates.RangeUnion();
 
             this.tileMap = SampledData2i.GenerateAllValuesWithHoles(this.ValueRange)
-                .ToDictionary(inputValue => inputValue,
+                .ToDictionary(
+                    inputValue => inputValue,
                     inputValue =>
                     {
                         var choosenTemplateTile = default(SampledData2i);

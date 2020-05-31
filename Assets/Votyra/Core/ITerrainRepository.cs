@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace Votyra.Core
 {
-    public interface ITerrainRepository<TKey, TValue> where TKey : struct
+    public interface ITerrainRepository<TKey, TValue>
+        where TKey : struct
     {
         event Action<RepositoryChange<TKey, TValue>> TerrainChange;
 

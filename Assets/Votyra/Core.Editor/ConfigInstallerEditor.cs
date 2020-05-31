@@ -37,8 +37,8 @@ namespace Votyra.Core.Editor
                 var ctors = configType.GetConstructors();
 
                 var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null)).SelectMany(o => o.GetParameters()
-                  .Select(p => new ConfigItem(p.GetCustomAttribute<ConfigInjectAttribute>()?.Id as string, p.ParameterType, null))
-                  .Where(a => a.Id != null));
+                    .Select(p => CreateConfigItem(p))
+                    .Where(a => a.Id != null));
 
                 if (!configItems.Any())
                 {
@@ -106,6 +106,13 @@ namespace Votyra.Core.Editor
             {
                 EditorUtility.SetDirty(controller);
             }
+        }
+
+        private static ConfigItem CreateConfigItem(ParameterInfo p)
+        {
+            var idAttr = p.GetCustomAttribute<ConfigInjectAttribute>();
+            var id = idAttr?.Id?.ToString();
+            return new ConfigItem(id, p.ParameterType, null);
         }
 
         private static IEnumerable<Type> GetConfigTypes(GameObject algorithmPrefab)
@@ -222,10 +229,11 @@ namespace Votyra.Core.Editor
 
             if (type.IsEnum)
             {
-                var oldEnumValue = (oldValue != null) && Enum.IsDefined(type, oldValue) ?
-                    oldValue as Enum :
-                    Enum.GetValues(type)
-                    .GetValue(0) as Enum;
+                var oldEnumValue = (oldValue != null) && Enum.IsDefined(type, oldValue)
+                    ? oldValue as Enum
+                    : Enum.GetValues(type)
+                        .GetValue(0) as Enum;
+
                 var newEnumValue = EditorGUILayout.EnumPopup(oldEnumValue, GUILayout.MaxWidth(200));
                 newValue = newEnumValue;
                 return !newEnumValue.Equals(oldEnumValue);
@@ -234,12 +242,13 @@ namespace Votyra.Core.Editor
             if (typeof(Vector3i).IsAssignableFrom(type))
             {
                 var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
-                var newVector3iValue = EditorGUILayout.Vector3Field(string.Empty,
-                        oldVector3iValue.ToVector3f()
-                            .ToVector3(),
-                        GUILayout.MaxWidth(200))
+                var oldVector3Value = oldVector3iValue.ToVector3f()
+                    .ToVector3();
+
+                var newVector3iValue = EditorGUILayout.Vector3Field(string.Empty, oldVector3Value, GUILayout.MaxWidth(200))
                     .ToVector3F()
                     .RoundToVector3i();
+
                 newValue = newVector3iValue;
                 return newVector3iValue != oldVector3iValue;
             }
@@ -249,6 +258,7 @@ namespace Votyra.Core.Editor
                 var oldVector3fValue = oldValue as Vector3f? ?? Vector3f.Zero;
                 var newVector3fValue = EditorGUILayout.Vector3Field(string.Empty, oldVector3fValue.ToVector3(), GUILayout.MaxWidth(200))
                     .ToVector3F();
+
                 newValue = newVector3fValue;
                 return newVector3fValue != oldVector3fValue;
             }
@@ -256,12 +266,13 @@ namespace Votyra.Core.Editor
             if (typeof(Vector2i).IsAssignableFrom(type))
             {
                 var oldVector2iValue = oldValue as Vector2i? ?? Vector2i.Zero;
-                var newVector2iValue = EditorGUILayout.Vector2Field(string.Empty,
-                        oldVector2iValue.ToVector2f()
-                            .ToVector2(),
-                        GUILayout.MaxWidth(200))
+                var oldVector2Value = oldVector2iValue.ToVector2f()
+                    .ToVector2();
+
+                var newVector2iValue = EditorGUILayout.Vector2Field(string.Empty, oldVector2Value, GUILayout.MaxWidth(200))
                     .ToVector2f()
                     .RoundToVector2i();
+
                 newValue = newVector2iValue;
                 return newVector2iValue != oldVector2iValue;
             }
@@ -271,6 +282,7 @@ namespace Votyra.Core.Editor
                 var oldVector2fValue = oldValue as Vector2f? ?? Vector2f.Zero;
                 var newVector2fValue = EditorGUILayout.Vector2Field(string.Empty, oldVector2fValue.ToVector2(), GUILayout.MaxWidth(200))
                     .ToVector2f();
+
                 newValue = newVector2fValue;
                 return newVector2fValue != oldVector2fValue;
             }
@@ -332,11 +344,13 @@ namespace Votyra.Core.Editor
                 var method = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray), BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
                 method = method.MakeGenericMethod(elementType);
 
-                newValue = method.Invoke(null,
-                    new[]
-                    {
-                        newList,
-                    });
+                var parameters = new[]
+                {
+                    newList,
+                };
+
+                newValue = method.Invoke(null, parameters);
+
                 return change;
             }
             else

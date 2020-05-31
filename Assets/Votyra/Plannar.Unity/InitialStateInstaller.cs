@@ -10,6 +10,7 @@ namespace Votyra.Plannar.Unity
             this.Container.BindInterfacesAndSelfTo<InitialStateSetter2f>()
                 .AsSingle()
                 .NonLazy();
+
             this.Container.BindInterfacesAndSelfTo<InitialImageConfig>()
                 .AsSingle();
         }

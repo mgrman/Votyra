@@ -11,11 +11,6 @@ namespace Votyra.Core.Images.Constraints
         private static int? tileMapScaleFactor;
         private readonly IThreadSafeLogger logger;
         private readonly int scaleFactor;
-        protected Range2i invalidatedCellArea { get; set; }
-
-        protected Direction direction { get; private set; }
-
-        protected float[,] editableMatrix { get; private set; }
 
         public TycoonTileConstraint2i(IConstraintConfig constraintConfig, IThreadSafeLogger logger)
         {
@@ -43,28 +38,35 @@ namespace Votyra.Core.Images.Constraints
                     // slopeDiagonal
                     new SampledData2i(0, -1, -1, 0),
                 }.CreateExpandedTileMap2i(this.scaleFactor, this.logger);
+
                 tileMapScaleFactor = this.scaleFactor;
             }
         }
+
+        protected Range2i InvalidatedCellArea { get; set; }
+
+        protected Direction Direction { get; private set; }
+
+        protected float[,] EditableMatrix { get; private set; }
 
         public IEnumerable<int> Priorities => new[]
         {
             0,
         };
 
-        public Range2i FixImage(IEditableImage2f _, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
+        public Range2i FixImage(IEditableImage2f image, float[,] editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
-            this.invalidatedCellArea = invalidatedImageArea.ExtendBothDirections(3);
+            this.InvalidatedCellArea = invalidatedImageArea.ExtendBothDirections(3);
             if ((direction != Direction.Up) && (direction != Direction.Down))
             {
                 direction = Direction.Down;
             }
 
-            this.direction = direction;
-            this.editableMatrix = editableMatrix;
+            this.Direction = direction;
+            this.EditableMatrix = editableMatrix;
             this.Constrain();
-            this.invalidatedCellArea = this.invalidatedCellArea.ExtendBothDirections(2);
-            return this.invalidatedCellArea;
+            this.InvalidatedCellArea = this.InvalidatedCellArea.ExtendBothDirections(2);
+            return this.InvalidatedCellArea;
         }
 
         void IImageConstraint2i.Initialize(IEditableImage2f image)
@@ -73,8 +75,8 @@ namespace Votyra.Core.Images.Constraints
 
         protected virtual void Constrain()
         {
-            var min = this.invalidatedCellArea.Min;
-            var max = this.invalidatedCellArea.Max;
+            var min = this.InvalidatedCellArea.Min;
+            var max = this.InvalidatedCellArea.Max;
             for (var ix = min.X; ix < max.X; ix++)
             {
                 for (var iy = min.Y; iy <= max.Y; iy++)
@@ -88,27 +90,28 @@ namespace Votyra.Core.Images.Constraints
         {
             var cellX0Y0 = cell;
             var cellX1Y1 = new Vector2i(cell.X + 1, cell.Y + 1);
-            if (!this.editableMatrix.ContainsIndex(cellX0Y0) || !this.editableMatrix.ContainsIndex(cellX1Y1))
+            if (!this.EditableMatrix.ContainsIndex(cellX0Y0) || !this.EditableMatrix.ContainsIndex(cellX1Y1))
             {
                 return;
             }
 
-            var sample = this.editableMatrix.SampleCell(cell)
+            var sample = this.EditableMatrix.SampleCell(cell)
                 .ToSampledData2i();
+
             var processedSample = this.Process(sample);
 
             var cellX0Y1 = new Vector2i(cell.X, cell.Y + 1);
             var cellX1Y0 = new Vector2i(cell.X + 1, cell.Y);
 
-            this.editableMatrix.Set(cellX0Y0, processedSample.X0Y0);
-            this.editableMatrix.Set(cellX0Y1, processedSample.X0Y1);
-            this.editableMatrix.Set(cellX1Y0, processedSample.X1Y0);
-            this.editableMatrix.Set(cellX1Y1, processedSample.X1Y1);
+            this.EditableMatrix.Set(cellX0Y0, processedSample.X0Y0);
+            this.EditableMatrix.Set(cellX0Y1, processedSample.X0Y1);
+            this.EditableMatrix.Set(cellX1Y0, processedSample.X1Y0);
+            this.EditableMatrix.Set(cellX1Y1, processedSample.X1Y1);
         }
 
         protected SampledData2i Process(SampledData2i sampleData)
         {
-            switch (this.direction)
+            switch (this.Direction)
             {
                 case Direction.Up:
                     return this.ProcessUp(sampleData);

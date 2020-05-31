@@ -12,11 +12,13 @@ namespace Votyra.Core.Models
 
         public static readonly Range6i All = new Range6i(MinValue, MaxValue);
 
-        public static readonly Range6i Zero = new Range6i();
+        public static readonly Range6i Zero = new Range6i(Vector6i.Zero, Vector6i.Zero);
 
         public readonly Vector6i Min;
 
         public readonly Vector6i Max;
+
+        public bool IsEmpty => this.Size == Vector6i.Zero;
 
         private Range6i(Vector6i min, Vector6i max)
         {
@@ -33,7 +35,16 @@ namespace Votyra.Core.Models
             }
         }
 
-        public bool IsEmpty => this.Size == Vector6i.Zero;
+        public Range6i ExtendBothDirections(int distance)
+        {
+            if (this.IsEmpty)
+            {
+                return this;
+            }
+
+            return FromMinAndMax(this.Min - distance, this.Max + distance);
+        }
+
         public Vector6i Size => this.Max - this.Min;
 
         public static Range6i FromMinAndSize(Vector6i min, Vector6i size)
@@ -58,20 +69,6 @@ namespace Votyra.Core.Models
             return new Range6i((center - extents) + 1, center + extents);
         }
 
-        public static bool operator ==(Range6i a, Range6i b) => (a.Min == b.Min) && (a.Max == b.Max);
-
-        public static bool operator !=(Range6i a, Range6i b) => (a.Min != b.Min) || (a.Max != b.Max);
-
-        public Range6i ExtendBothDirections(int distance)
-        {
-            if (this.IsEmpty)
-            {
-                return this;
-            }
-
-            return FromMinAndMax(this.Min - distance, this.Max + distance);
-        }
-
         public Area6i? ToArea6i()
         {
             if (this.Size == Vector6i.Zero)
@@ -91,6 +88,10 @@ namespace Votyra.Core.Models
 
             return Area6f.FromMinAndMax(this.Min.ToVector6f(), (this.Max - Vector6i.One).ToVector6f());
         }
+
+        public static bool operator ==(Range6i a, Range6i b) => (a.Min == b.Min) && (a.Max == b.Max);
+
+        public static bool operator !=(Range6i a, Range6i b) => (a.Min != b.Min) || (a.Max != b.Max);
 
         public bool Contains(Vector6i point) => (point >= this.Min) && (point < this.Max);
 
