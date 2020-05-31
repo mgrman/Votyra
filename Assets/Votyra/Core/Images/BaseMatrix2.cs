@@ -5,15 +5,17 @@ namespace Votyra.Core.Images
     public class BaseMatrix2<T> : IInitializableImage, IImageInvalidatableImage2
         where T : struct
     {
+        private readonly T defaultValue;
         private readonly T[,] image;
         private readonly Range2i imageRange;
 
         private int usingCounter;
 
-        protected BaseMatrix2(Vector2i size)
+        protected BaseMatrix2(Vector2i size, T defaultValue)
         {
             this.image = new T[size.X, size.Y];
             this.imageRange = Range2i.FromMinAndSize(Vector2i.Zero, size);
+            this.defaultValue = defaultValue;
         }
 
         public bool IsBeingUsed => this.usingCounter > 0;
@@ -30,7 +32,7 @@ namespace Votyra.Core.Images
             this.usingCounter--;
         }
 
-        public T Sample(Vector2i point) => this.imageRange.Contains(point) ? this.image[point.X, point.Y] : default;
+        public T Sample(Vector2i point) => this.imageRange.Contains(point) ? this.image[point.X, point.Y] : this.defaultValue;
 
         public PoolableMatrix2<T> SampleArea(Range2i area)
         {

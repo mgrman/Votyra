@@ -29,6 +29,8 @@ namespace Votyra.Core.Models
 
         public float DiagonalLength => this.Size.Magnitude();
 
+        public bool AnyNan => this.Max.AnyNan() || this.Min.AnyNan();
+
         public static Area1f FromMinAndMax(float min, float max) => new Area1f(min, max);
 
         public static Area1f FromMinAndSize(float min, float size) => new Area1f(min, min + size);

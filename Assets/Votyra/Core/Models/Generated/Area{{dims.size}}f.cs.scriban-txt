@@ -59,6 +59,8 @@ namespace Votyra.Core.Models
         public {{vectorFloatRealType}} Extents => Size / 2;
 
         public float DiagonalLength => Size.Magnitude();
+        
+        public bool AnyNan => {{vectorFloatType}}Utils.AnyNan(Max) || {{vectorFloatType}}Utils.AnyNan(Min);
 
         public static {{type}} FromMinAndMax({{vectorFloatRealType}} min, {{vectorFloatRealType}} max) => new {{type}}(min, max);
 

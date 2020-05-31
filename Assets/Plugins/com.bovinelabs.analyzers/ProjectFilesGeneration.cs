@@ -57,6 +57,10 @@ namespace BovineLabs.Analyzers
         {
             XDocument xml = XDocument.Parse(contents);
 
+        SetOrUpdateProperty(xml.Root, xml.Root.Name.Namespace, "NoWarn", existing => "0649");
+        SetOrUpdateProperty(xml.Root, xml.Root.Name.Namespace, "WarningLevel", existing => "4");
+        SetOrUpdateProperty(xml.Root, xml.Root.Name.Namespace, "TreatWarningsAsErrors", existing => "true");
+        
             var asmDefPath = xml.Descendants()
                 .Where(o => o.Name.LocalName == "None" && (o.Attribute("Include")?.Value.EndsWith(".asmdef") ?? false))
                 .Select(o => o.Attribute("Include").Value)

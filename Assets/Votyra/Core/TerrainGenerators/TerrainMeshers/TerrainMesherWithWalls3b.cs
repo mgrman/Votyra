@@ -55,7 +55,6 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         private readonly IImageSampler3 imageSampler;
         private Vector3i groupPosition;
-        private Vector3i groupSize;
         private IGeneralMesh pooledMesh;
 
         public TerrainMesherWithWalls3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)

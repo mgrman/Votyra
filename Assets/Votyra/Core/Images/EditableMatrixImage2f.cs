@@ -7,6 +7,7 @@ namespace Votyra.Core.Images
 {
     public class EditableMatrixImage2f : IImage2fProvider, IEditableImage2f
     {
+        private readonly float defaultValue;
         private readonly IImageConstraint2i[] constraints;
         private readonly float[,] editableMatrix;
         private readonly List<MatrixImage2f> readonlyMatrices = new List<MatrixImage2f>();
@@ -43,6 +44,7 @@ namespace Votyra.Core.Images
             }
 
             this.editableRangeZ = Area1f.FromMinAndMax(defaultValue, defaultValue);
+            this.defaultValue = defaultValue;
         }
 
         private MatrixImage2f PreparedImage
@@ -91,7 +93,7 @@ namespace Votyra.Core.Images
 
             if (image == null)
             {
-                image = new MatrixImage2f(this.editableMatrix.Size());
+                image = new MatrixImage2f(this.editableMatrix.Size(), this.defaultValue);
                 this.readonlyMatrices.Add(image);
             }
 

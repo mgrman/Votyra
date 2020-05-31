@@ -3,8 +3,11 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Votyra.Core.Utils;
 
+#pragma warning disable SA1402
+
 namespace Votyra.Core.Models
 {
+
     {{dimSize = dims.size}}
     {{vectorIntType = "Vector" +dimSize +"i"}}
     {{vectorIntRealType=vectorIntType}}

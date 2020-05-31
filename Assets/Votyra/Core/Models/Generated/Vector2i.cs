@@ -2,6 +2,8 @@ using System;
 using Newtonsoft.Json;
 using Votyra.Core.Utils;
 
+#pragma warning disable SA1402
+
 namespace Votyra.Core.Models
 {
     public struct Vector2i : IEquatable<Vector2i>

@@ -22,6 +22,26 @@ namespace Votyra.Core.GroupSelectors
                 return;
             }
 
+            if (options.RangeZ.AnyNan)
+            {
+                for (var ix = this.previousArea.Min.X; ix < this.previousArea.Max.X; ix++)
+                {
+                    for (var iy = this.previousArea.Min.Y; iy < this.previousArea.Max.Y; iy++)
+                    {
+                        var group = new Vector2i(ix, iy);
+
+                        if (wasVisible(group))
+                        {
+                            onGroupNotVisibleAnyMore.Invoke(group);
+                        }
+                    }
+                }
+
+                this.previousArea = Range2i.Zero;
+
+                return;
+            }
+
             var planes = options.CameraPlanes;
             var frustumCorners = options.CameraFrustumCorners;
             var cameraPosition = options.CameraRay.Origin;
