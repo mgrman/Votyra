@@ -10,6 +10,9 @@
 
   <Rules AnalyzerId="UnityEngineAnalyzer" RuleNamespace="Linty.Analyzers">
 
+    <!-- Throws exception -->
+    <Rule Id="AD0001" Action="None" />
+
     <!-- Cache results -->
     <Rule Id="UEA0005" Action="None" />
 
@@ -40,6 +43,7 @@
     <Rule Id="SA1200" Action="None" />
 
     <!-- Disable Documentation Rules -->
+    <Rule Id="SA0001" Action="None" />
     <Rule Id="SA1600" Action="None" />
     <Rule Id="SA1601" Action="None" />
     <Rule Id="SA1602" Action="None" />

@@ -76,7 +76,7 @@ namespace BovineLabs.Analyzers
             var cscLines = (File.Exists(cscPath) ? File.ReadLines(cscPath) : Enumerable.Empty<string>())
                 .Where(o => !o.StartsWith("-a:") && o.StartsWith("-ruleset:") && o.StartsWith("-warnaserror") && o.StartsWith("-nowarn"))
                 .Concat(GetRoslynAnalyzersCscLines())
-                //.Concat (new [] { "-warnaserror+" })
+                .Concat (new [] { "-warnaserror+" })
                 .Concat (new [] { "-nowarn:0649+" })
                 .ToArray();
             File.WriteAllLines(cscPath, cscLines);

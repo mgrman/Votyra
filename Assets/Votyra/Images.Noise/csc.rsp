@@ -4,4 +4,5 @@
 -a:"RoslynAnalyzers\StyleCop.Analyzers.CodeFixes.dll"
 -a:"RoslynAnalyzers\StyleCop.Analyzers.dll"
 -a:"RoslynAnalyzers\UnityEngineAnalyzer.dll"
+-warnaserror+
 -nowarn:0649+
