@@ -63,7 +63,7 @@ namespace Votyra.Core.Painting.Commands
         {
             this.OnNewInvocationData();
 
-            this.logger.LogMessage($"invoke on {cell}");
+            this.logger.LogInfo($"invoke on {cell}");
 
             var requestedArea = Range2i.FromMinAndMax(cell - this.maxDistance, cell + this.maxDistance + 1);
             using (var image = this.editableImage.RequestAccess(requestedArea))

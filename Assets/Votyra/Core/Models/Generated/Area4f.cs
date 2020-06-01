@@ -35,8 +35,10 @@ namespace Votyra.Core.Models
         [JsonIgnore]
         public Vector4f Extents => this.Size / 2;
 
+        [JsonIgnore]
         public float DiagonalLength => this.Size.Magnitude();
 
+        [JsonIgnore]
         public bool AnyNan => this.Max.AnyNan() || this.Min.AnyNan();
 
         public static Area4f FromMinAndMax(Vector4f min, Vector4f max) => new Area4f(min, max);

@@ -45,7 +45,7 @@ namespace Votyra.Core.Models
 #if VERBOSE
             foreach (var pair in this.tileMap)
             {
-                this.logger.LogMessage($"{this.GetType().Name} {pair.Key} => {pair.Value}");
+                this.logger.LogInfo($"{this.GetType().Name} {pair.Key} => {pair.Value}");
             }
 #endif
         }
@@ -65,7 +65,7 @@ namespace Votyra.Core.Models
                 return value;
             }
 
-            this.logger.LogMessage($"{this.GetType().Name} missing tile {key}");
+            this.logger.LogInfo($"{this.GetType().Name} missing tile {key}");
             return key;
 #endif
         }

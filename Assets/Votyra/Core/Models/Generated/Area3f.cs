@@ -33,8 +33,10 @@ namespace Votyra.Core.Models
         [JsonIgnore]
         public Vector3f Extents => this.Size / 2;
 
+        [JsonIgnore]
         public float DiagonalLength => this.Size.Magnitude();
 
+        [JsonIgnore]
         public bool AnyNan => this.Max.AnyNan() || this.Min.AnyNan();
 
         public static Area3f FromMinAndMax(Vector3f min, Vector3f max) => new Area3f(min, max);

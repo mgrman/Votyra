@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngineObject = UnityEngine.Object;
 
 namespace Votyra.Core.Logging
 {
@@ -8,34 +7,67 @@ namespace Votyra.Core.Logging
     public class UnityLogger : IThreadSafeLogger
     {
         private readonly string name;
-        private readonly UnityEngineObject owner;
+        private readonly UnityEngine.Object owner;
+        private readonly Func<LogLevel> getLogLevel;
 
-        public UnityLogger(string name, UnityEngineObject owner)
+        public UnityLogger(string name, UnityEngine.Object owner, ILogConfig logConfig)
+            : this(name, owner, () => logConfig.LogLevel)
+        {
+        }
+
+        public UnityLogger(string name, UnityEngine.Object owner, Func<LogLevel> getLogLevel)
         {
             this.name = name;
             this.owner = owner;
+            this.getLogLevel = getLogLevel;
         }
 
-        public void LogMessage(object message)
+        public void LogDebug(object message)
         {
-            Debug.Log(this.Format(message), this.owner);
+            this.LogMessage(LogLevel.Debug, message);
+        }
+
+        public void LogInfo(object message)
+        {
+            this.LogMessage(LogLevel.Info, message);
         }
 
         public void LogError(object message)
         {
-            Debug.LogError(this.Format(message), this.owner);
-        }
-
-        public void LogException(Exception exception)
-        {
-            Debug.LogException(exception, this.owner);
+            this.LogMessage(LogLevel.Error, message);
         }
 
         public void LogWarning(object message)
         {
-            Debug.LogWarning(this.Format(message), this.owner);
+            this.LogMessage(LogLevel.Warnings, message);
         }
 
-        private string Format(object message) => $"{message}\n{this.name}";
+        private void LogMessage(LogLevel messageLogLevel, object message)
+        {
+            var logLevelLimit = this.getLogLevel();
+            if (logLevelLimit < messageLogLevel)
+            {
+                return;
+            }
+
+            switch (messageLogLevel)
+            {
+                case LogLevel.None:
+                    break;
+                case LogLevel.Error:
+                    Debug.LogError(this.Format(messageLogLevel, message), this.owner);
+                    break;
+                case LogLevel.Warnings:
+                    Debug.LogWarning(this.Format(messageLogLevel, message), this.owner);
+                    break;
+                case LogLevel.Info:
+                case LogLevel.Debug:
+                default:
+                    Debug.Log(this.Format(messageLogLevel, message), this.owner);
+                    break;
+            }
+        }
+
+        private string Format(LogLevel logLevel, object message) => $"[{logLevel}] {message}\n{this.name}";
     }
 }

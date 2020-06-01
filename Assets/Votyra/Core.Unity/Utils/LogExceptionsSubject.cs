@@ -41,12 +41,12 @@ namespace Votyra.Core.Models
             {
                 try
                 {
-                    this.logger.LogMessage(o);
+                    this.logger.LogInfo(o);
                     observer.OnNext(o);
                 }
                 catch (Exception ex)
                 {
-                    this.logger.LogException(ex);
+                    this.logger.LogError(ex);
                     this.OnError(ex);
                 }
             }

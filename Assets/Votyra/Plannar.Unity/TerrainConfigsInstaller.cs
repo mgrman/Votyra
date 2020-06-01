@@ -16,6 +16,9 @@ namespace Votyra.Plannar.Unity
 
             this.Container.BindInterfacesAndSelfTo<ConstraintConfig>()
                 .AsSingle();
+
+            this.Container.BindInterfacesAndSelfTo<LogConfig>()
+                .AsSingle();
         }
     }
 }
