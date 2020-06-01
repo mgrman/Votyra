@@ -59,8 +59,16 @@ namespace Votyra.Core.Editor
 
                     var oldValue = oldConfigItem?.Value;
                     var configItemChange = this.GetNewValue(configItem.Type, oldValue, out var newValue);
-                    isChanged = isChanged || configItemChange;
-                    newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
+                    if (configItemChange)
+                    {
+                        isChanged = true;
+                        newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
+                    }
+                    else
+                    {
+                        newConfigValues.Add(configItem);
+                    }
+
                     EditorGUILayout.EndHorizontal();
                 }
             }
@@ -89,8 +97,15 @@ namespace Votyra.Core.Editor
                     var configItemChange = this.GetNewValue(configItem.Type, oldValue, out var newValue);
                     if (!delete)
                     {
-                        newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
-                        isChanged = isChanged || configItemChange;
+                        if (configItemChange)
+                        {
+                            isChanged = true;
+                            newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
+                        }
+                        else
+                        {
+                            newConfigValues.Add(configItem);
+                        }
                     }
                     else
                     {
@@ -101,9 +116,9 @@ namespace Votyra.Core.Editor
                 }
             }
 
-            controller.Config = newConfigValues.ToArray();
             if (isChanged)
             {
+                controller.Config = newConfigValues.ToArray();
                 EditorUtility.SetDirty(controller);
             }
         }
@@ -323,8 +338,15 @@ namespace Votyra.Core.Editor
                         if (!GUILayout.Button("Remove"))
                         {
                             var itemChange = this.GetNewValue(elementType, item, out var newItemValue);
-                            change = change || itemChange;
-                            newList.Add(newItemValue);
+                            if (itemChange)
+                            {
+                                change = true;
+                                newList.Add(newItemValue);
+                            }
+                            else
+                            {
+                                newList.Add(item);
+                            }
                         }
                         else
                         {
@@ -358,16 +380,23 @@ namespace Votyra.Core.Editor
                 var change = false;
                 var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.SetProperty);
 
+                newValue = Activator.CreateInstance(type);
                 foreach (var prop in props)
                 {
                     EditorGUILayout.LabelField($"{prop.Name}[{prop.PropertyType.Name}]", GUILayout.MinWidth(150));
                     var oldFieldValue = prop.GetValue(oldValue);
                     var propChange = this.GetNewValue(prop.PropertyType, oldFieldValue, out var newFieldValue);
-                    prop.SetValue(oldValue, newFieldValue);
-                    change = change || propChange;
+                    if (propChange)
+                    {
+                        change = true;
+                        prop.SetValue(newValue, newFieldValue);
+                    }
+                    else
+                    {
+                        prop.SetValue(newValue, oldFieldValue);
+                    }
                 }
 
-                newValue = oldValue;
                 return change;
             }
         }
