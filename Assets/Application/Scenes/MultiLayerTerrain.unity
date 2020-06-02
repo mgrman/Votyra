@@ -939,6 +939,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5346802365665421878, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
         type: 3}
+      propertyPath: config.Array.size
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5346802365665421878, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
+        type: 3}
       propertyPath: Config.Array.data[11].Id
       value: flipTriangles
       objectReference: {fileID: 0}
@@ -951,6 +956,37 @@ PrefabInstance:
         type: 3}
       propertyPath: Config.Array.data[11].TypeAssemblyQualifiedName
       value: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+      objectReference: {fileID: 0}
+    - target: {fileID: 5346802365665421878, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
+        type: 3}
+      propertyPath: config.Array.data[10].id
+      value: logLevel
+      objectReference: {fileID: 0}
+    - target: {fileID: 5346802365665421878, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
+        type: 3}
+      propertyPath: config.Array.data[10].jsonValue
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5346802365665421878, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
+        type: 3}
+      propertyPath: config.Array.data[10].typeAssemblyQualifiedName
+      value: Votyra.Core.LogLevel, Votyra.Core, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      objectReference: {fileID: 0}
+    - target: {fileID: 5346802365665421878, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
+        type: 3}
+      propertyPath: config.Array.data[11].id
+      value: scaleFactor
+      objectReference: {fileID: 0}
+    - target: {fileID: 5346802365665421878, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
+        type: 3}
+      propertyPath: config.Array.data[11].jsonValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5346802365665421878, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
+        type: 3}
+      propertyPath: config.Array.data[11].typeAssemblyQualifiedName
+      value: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
       objectReference: {fileID: 0}
     - target: {fileID: 5346802365665421879, guid: a07812a4ae6829f4bbb8fe9f5c6173bd,
         type: 3}

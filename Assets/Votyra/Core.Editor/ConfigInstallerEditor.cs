@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Votyra.Core.Logging;
 using Votyra.Core.Models;
 using Votyra.Core.Unity;
 using Votyra.Core.Utils;
@@ -38,7 +39,7 @@ namespace Votyra.Core.Editor
 
                 var configItems = (ctors.Length == 1 ? ctors : ctors.Where(o => o.GetCustomAttribute<ConfigInjectAttribute>() != null)).SelectMany(o => o.GetParameters()
                     .Select(p => CreateConfigItem(p))
-                    .Where(a => a.Id != null));
+                    .Where(a => a.id != null));
 
                 if (!configItems.Any())
                 {
@@ -49,8 +50,8 @@ namespace Votyra.Core.Editor
                 foreach (var configItem in configItems)
                 {
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));
-                    var oldConfigItem = oldConfigValues?.FirstOrDefault(o => (o.Id == configItem.Id) && (o.Type == configItem.Type));
+                    EditorGUILayout.LabelField($"{configItem.id}[{configItem.parameterType.Name}]", GUILayout.MinWidth(150));
+                    var oldConfigItem = oldConfigValues?.FirstOrDefault(o => (o.Id == configItem.id) && (o.Type == configItem.parameterType));
 
                     if (oldConfigItem != null)
                     {
@@ -58,15 +59,43 @@ namespace Votyra.Core.Editor
                     }
 
                     var oldValue = oldConfigItem?.Value;
-                    var configItemChange = this.GetNewValue(configItem.Type, oldValue, out var newValue);
+                    var configItemChange = this.GetNewValue(configItem.parameterType, oldValue, out var newValue);
                     if (configItemChange)
                     {
                         isChanged = true;
-                        newConfigValues.Add(new ConfigItem(configItem.Id, configItem.Type, newValue));
+                        newConfigValues.Add(new ConfigItem(configItem.id, configItem.parameterType, newValue));
+                    }
+                    else if (oldConfigItem != null)
+                    {
+                        newConfigValues.Add(oldConfigItem);
                     }
                     else
                     {
-                        newConfigValues.Add(configItem);
+                        try
+                        {
+                            object defaultValue = null;
+                            if (configItem.parameterType.IsEnum)
+                            {
+                                defaultValue = Enum.GetValues(configItem.parameterType)
+                                    .GetValue(0);
+                            }
+                            else
+                            {
+                                var defaultCtor = configItem.parameterType.GetConstructor(Type.EmptyTypes);
+                                if (defaultCtor != null)
+                                {
+                                    defaultValue = defaultCtor.Invoke(null);
+                                }
+                            }
+
+                            newConfigValues.Add(new ConfigItem(configItem.id, configItem.parameterType, defaultValue));
+                        }
+                        catch (Exception ex)
+                        {
+                            StaticLogger.LogException(ex);
+                        }
+
+                        isChanged = true;
                     }
 
                     EditorGUILayout.EndHorizontal();
@@ -123,11 +152,11 @@ namespace Votyra.Core.Editor
             }
         }
 
-        private static ConfigItem CreateConfigItem(ParameterInfo p)
+        private static (string id, Type parameterType) CreateConfigItem(ParameterInfo p)
         {
             var idAttr = p.GetCustomAttribute<ConfigInjectAttribute>();
             var id = idAttr?.Id?.ToString();
-            return new ConfigItem(id, p.ParameterType, null);
+            return (id, p.ParameterType);
         }
 
         private static IEnumerable<Type> GetConfigTypes(GameObject algorithmPrefab)
