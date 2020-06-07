@@ -8,8 +8,8 @@ namespace Votyra.Core.Images
 {
     public class ImageAggregator : ILayerEditableImageProvider, IImageConstraint2i
     {
-        private readonly Dictionary<LayerId, EditableMatrixImage2f> idToSum = new Dictionary<LayerId, EditableMatrixImage2f>();
-        private readonly Dictionary<LayerId, EditableMatrixImage2fCopy> idToThickness = new Dictionary<LayerId, EditableMatrixImage2fCopy>();
+        private readonly Dictionary<LayerId, InvalidatableEditableMatrixImage2f> idToSum = new Dictionary<LayerId, InvalidatableEditableMatrixImage2f>();
+        private readonly Dictionary<LayerId, EditableMatrixImage2f> idToThickness = new Dictionary<LayerId, EditableMatrixImage2f>();
         private readonly IImageConfig imageConfig;
 
         private readonly List<LayerId> layerOrder = new List<LayerId>();
@@ -144,11 +144,11 @@ namespace Votyra.Core.Images
 
         public void Initialize(LayerId layer, List<IImageConstraint2i> constraints)
         {
-            var thicknessImage = new EditableMatrixImage2fCopy(this.imageConfig, constraints);
+            var thicknessImage = new EditableMatrixImage2f(this.imageConfig, constraints);
             this.thicknessToId[thicknessImage] = layer;
             this.idToThickness[layer] = thicknessImage;
 
-            var sumImage = new EditableMatrixImage2f(this.imageConfig, new List<IImageConstraint2i>(), this.layerOrder.Count == 0 ? 0f : float.NaN);
+            var sumImage = new InvalidatableEditableMatrixImage2f(this.imageConfig, new List<IImageConstraint2i>(), this.layerOrder.Count == 0 ? 0f : float.NaN);
             this.idToSum[layer] = sumImage;
 
             this.layerOrder.Add(layer);
