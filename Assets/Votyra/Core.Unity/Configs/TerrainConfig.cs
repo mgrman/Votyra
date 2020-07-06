@@ -9,8 +9,8 @@ namespace Votyra.Core.Images
             this.CellInGroupCount = cellInGroupCount;
             this.DrawBounds = drawBounds;
 #if UNITY_WEBGL && !UNITY_EDITOR
-            AsyncTerrainGeneration = false;
-            AsyncTerrainGeneration = false;
+            this.AsyncTerrainGeneration = false;
+            this.AsyncInput = false;
 #else
             this.AsyncTerrainGeneration = asyncTerrainGeneration;
             this.AsyncInput = asyncInput;

@@ -169,11 +169,11 @@ namespace Votyra.Core.Utils
             {
 #if ENABLE_IL2CPP
                 var itemsField = typeof(List<T>).GetField("_items", BindingFlags.Instance | BindingFlags.NonPublic);
-                ItemsGet = o => (T[]) itemsField.GetValue(o);
+                ItemsGet = o => (T[])itemsField.GetValue(o);
                 ItemsSet = (o, value) => itemsField.SetValue(o, value);
 
                 var sizeField = typeof(List<T>).GetField("_size", BindingFlags.Instance | BindingFlags.NonPublic);
-                SizeGet = o => (int) itemsField.GetValue(o);
+                SizeGet = o => (int)itemsField.GetValue(o);
                 SizeSet = (o, value) => itemsField.SetValue(o, value);
 
 #else
