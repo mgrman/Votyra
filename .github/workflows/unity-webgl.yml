@@ -1,8 +1,8 @@
-name: Actions 😎
+name: Build WebGL
 
 on:
   pull_request: {}
-  push: { branches: [main] }
+  push: { branches: [master] }
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
