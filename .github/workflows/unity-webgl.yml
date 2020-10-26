@@ -32,7 +32,7 @@ jobs:
         with:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
-          versioning: none 
+          versioning: None 
       - uses: actions/upload-artifact@v1
         with:
           name: Build
