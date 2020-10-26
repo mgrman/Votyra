@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace Application.Scripts
+namespace TestApp.Scripts
 {
     public class TestMesh : MonoBehaviour
     {
