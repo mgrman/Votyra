@@ -24,3 +24,4 @@ jobs:
           file-name: UnitySetup64.exe
       - name: Install Unity
         run: UnitySetup64.exe /S /D=C:\Development\Unity
+        shell: cmd
