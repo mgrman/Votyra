@@ -10,6 +10,17 @@ jobs:
 
     steps:
 #     - uses: actions/checkout@v2
+
       - name: Display the path
         run: echo ${env:PATH}
         shell: pwsh
+        
+      - name: Download File To Workspace
+        # You may pin to the exact commit or the version.
+        # uses: carlosperate/download-file-action@e85e0aa6262f13571d17a4a39687b26981c583dc
+        uses: carlosperate/download-file-action@v1.0.3
+        with:
+          file-url: https://download.unity3d.com/download_unity/518737b1de84/Windows64EditorInstaller/UnitySetup64.exe
+          file-name: UnitySetup64.exe
+      - name: Install Unity
+        run: UnitySetup64.exe /S /D=C:\Development\Unity
