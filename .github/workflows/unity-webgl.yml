@@ -1,10 +1,10 @@
 name: Build using Unity-Builder
 
-on: 
-  workflow_dispatch:
 # on:
-#   pull_request: {}
-#   push: { branches: [master] }
+#  workflow_dispatch:
+on:
+  pull_request: {}
+  push: { branches: [master] }
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -22,7 +22,7 @@ jobs:
 #           - StandaloneOSX # Build a macOS standalone (Intel 64-bit).  NOT WORKING DUE TO IL2CPP NOT BEING INCLUEDED IN DOCKER IMAGES
 #           - StandaloneWindows64 # Build a Windows 64-bit standalone.  NOT WORKING DUE TO IL2CPP NOT BEING INCLUEDED IN DOCKER IMAGES
 #           - StandaloneLinux64 # Build a Linux 64-bit standalone. NOT WORKING DUE TO IL2CPP NOT BEING INCLUEDED IN DOCKER IMAGES
-#         - iOS # Build an iOS player. NOT USED    
+#           - iOS # Build an iOS player. NOT USED
 #           - Android # Build an Android player.  NOT WORKING DUE TO https://github.com/webbertakken/unity-builder/issues/167
 #           - WSAPlayer # UWP NOT SUPPORTED
           - WebGL # WebGL.
