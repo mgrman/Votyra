@@ -1,10 +1,10 @@
 name: Build using Unity-Builder
 
-on: 
-  workflow_dispatch:
-# on:
-#   pull_request: {}
-#   push: { branches: [master] }
+# on: 
+#   workflow_dispatch:
+on:
+  pull_request: {}
+  push: { branches: [master] }
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -20,12 +20,21 @@ jobs:
           - 2019.4.11f1
         targetPlatform:
 #           - StandaloneOSX # Build a macOS standalone (Intel 64-bit).  NOT WORKING DUE TO IL2CPP NOT BEING INCLUEDED IN DOCKER IMAGES
-#           - StandaloneWindows64 # Build a Windows 64-bit standalone.  NOT WORKING DUE TO IL2CPP NOT BEING INCLUEDED IN DOCKER IMAGES
-#           - StandaloneLinux64 # Build a Linux 64-bit standalone. NOT WORKING DUE TO IL2CPP NOT BEING INCLUEDED IN DOCKER IMAGES
-#         - iOS # Build an iOS player. NOT USED    
-#           - Android # Build an Android player.  NOT WORKING DUE TO https://github.com/webbertakken/unity-builder/issues/167
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.  NOT WORKING DUE TO IL2CPP NOT BEING INCLUEDED IN DOCKER IMAGES
+          - StandaloneLinux64 # Build a Linux 64-bit standalone. NOT WORKING DUE TO IL2CPP NOT BEING INCLUEDED IN DOCKER IMAGES
+          - iOS # Build an iOS player. NOT USED    
+          - Android # Build an Android player.  NOT WORKING DUE TO https://github.com/webbertakken/unity-builder/issues/167
 #           - WSAPlayer # UWP NOT SUPPORTED
           - WebGL # WebGL.
+        customImage:
+          - unityci/editor:2019.4.11f1-android-0.4.0
+          - unityci/editor:2019.4.11f1-ios-0.4
+          - unityci/editor:2019.4.11f1-webgl-0.4
+          - unityci/editor:2019.4.11f1-linux-il2cpp-0.4
+          - unityci/editor:ubuntu-2019.4.11f1-android-0.4.0
+          - unityci/editor:ubuntu-2019.4.11f1-ios-0.4
+          - unityci/editor:ubuntu-2019.4.11f1-webgl-0.4
+          - unityci/editor:ubuntu-2019.4.11f1-linux-il2cpp-0.4
     steps:
       - uses: actions/checkout@v2
         with:
@@ -34,6 +43,7 @@ jobs:
         with:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
+          customImage: ${{ matrix.customImage }}
       - uses: actions/upload-artifact@v1
         with:
           name: Build
