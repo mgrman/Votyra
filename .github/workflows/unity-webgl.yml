@@ -23,14 +23,14 @@ jobs:
 #           - StandaloneWindows64 # Build a Windows 64-bit standalone.  NOT WORKING DUE TO IL2CPP NOT BEING INCLUEDED IN DOCKER IMAGES
 #           - StandaloneLinux64 # Build a Linux 64-bit standalone. NOT WORKING DUE TO IL2CPP NOT BEING INCLUEDED IN DOCKER IMAGES
 #           - iOS # Build an iOS player. NOT USED
-          - Android # Build an Android player.  NOT WORKING DUE TO https://github.com/webbertakken/unity-builder/issues/167
+#           - Android # Build an Android player.  NOT WORKING DUE TO https://github.com/webbertakken/unity-builder/issues/167
 #           - WSAPlayer # UWP NOT SUPPORTED
           - WebGL # WebGL.
     steps:
       - uses: actions/checkout@v2
         with:
           lfs: true
-      - uses: webbertakken/unity-builder@v2.0-alpha-2
+      - uses: webbertakken/unity-builder@v1.4
         with:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
