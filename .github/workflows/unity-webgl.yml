@@ -25,7 +25,7 @@ jobs:
 #           - iOS # Build an iOS player. NOT USED
            - Android # Build an Android player.  NOT WORKING DUE TO https://github.com/webbertakken/unity-builder/issues/167
 #           - WSAPlayer # UWP NOT SUPPORTED
-          - WebGL # WebGL.
+           - WebGL # WebGL
     steps:
       - uses: actions/checkout@v2
         with:
