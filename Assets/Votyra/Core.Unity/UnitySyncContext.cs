@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity
 {
     public class UnitySyncContext : MonoBehaviour
     {

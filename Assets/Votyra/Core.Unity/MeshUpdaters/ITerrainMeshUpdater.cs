@@ -1,7 +1,7 @@
 using UnityEngine;
 using Votyra.Core.TerrainMeshes;
 
-namespace Votyra.Core.MeshUpdaters
+namespace Votyra.Core.Unity.MeshUpdaters
 {
     public interface ITerrainMeshUpdater
     {

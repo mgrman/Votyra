@@ -2,10 +2,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
+using Votyra.Core.Painting;
+using Votyra.Core.Unity.Utils;
 using Zenject;
 
-namespace Votyra.Core.Painting
+namespace Votyra.Core.Unity.Painting
 {
     public class PaintingSelectionManager : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {

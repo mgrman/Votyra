@@ -3,13 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using UniRx.Async;
 using UnityEngine;
-using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
-using Votyra.Core.Utils;
+using Votyra.Core.Unity.MeshUpdaters;
+using Votyra.Core.Unity.Utils;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity.TerraingGroupGenerator
 {
     public class AsyncTerrainGroupGeneratorManager2i : TerrainGroupGeneratorManager2i
     {

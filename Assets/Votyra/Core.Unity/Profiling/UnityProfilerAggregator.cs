@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Object = UnityEngine.Object;
 
-namespace Votyra.Core.Profiling
+namespace Votyra.Core.Unity.Profiling
 {
     public static class UnityProfilerAggregator
     {

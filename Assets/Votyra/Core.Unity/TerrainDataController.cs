@@ -4,6 +4,8 @@ using System.Linq;
 using UniRx;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Votyra.Core.Unity.Config;
+using Votyra.Core.Unity.Utils;
 using Votyra.Core.Utils;
 using Zenject;
 
@@ -112,11 +114,16 @@ namespace Votyra.Core.Unity
             else
                 activeAlgorithm = availableAlgorithms.Skip(ActiveTerrainAlgorithm)
                     .FirstOrDefault();
-            if (_terrainManagerModel.ActiveAlgorithm != activeAlgorithm)
+            if (!ReferenceEquals(_terrainManagerModel.ActiveAlgorithm, activeAlgorithm))
+            {
                 _terrainManagerModel.ActiveAlgorithm = activeAlgorithm;
+            }
 
-            if (!(_terrainManagerModel.Config ?? Enumerable.Empty<ConfigItem>()).SequenceEqual(Config ?? Enumerable.Empty<ConfigItem>()))
-                _terrainManagerModel.Config = Config.ToArray();
+            if (!(_terrainManagerModel.Config ?? Enumerable.Empty<ConfigItem>()).SequenceEqual(Config ??
+                Enumerable.Empty<ConfigItem>()))
+            {
+                _terrainManagerModel.Config = Config?.ToArray();
+            }
         }
     }
 }

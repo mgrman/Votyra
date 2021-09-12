@@ -3,7 +3,7 @@ using NUnit.Framework;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.Models;
 
-namespace Votyra.Plannar.Editor
+namespace Votyra.Core.Editor.Tests
 {
     [TestFixture]
     public class PrioritySetQueueTest

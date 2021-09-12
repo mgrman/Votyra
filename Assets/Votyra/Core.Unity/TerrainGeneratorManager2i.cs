@@ -4,10 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Votyra.Core.GroupSelectors;
 using Votyra.Core.Models;
+using Votyra.Core.Unity.TerraingGroupGenerator;
 using Votyra.Core.Utils;
 using Zenject;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity
 {
     public class TerrainGeneratorManager2i : IDisposable, ITickable
     {

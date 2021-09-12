@@ -1,4 +1,4 @@
-﻿namespace Votyra.Core.Images
+﻿namespace Votyra.Core.Unity.Config
 {
     public class InterpolationConfig : IInterpolationConfig
     {

@@ -1,11 +1,11 @@
 using System;
 using System.Diagnostics;
-using System.Threading;
 using UniRx;
 using UnityEngine.Profiling;
+using Votyra.Core.Profiling;
 using Object = UnityEngine.Object;
 
-namespace Votyra.Core.Profiling
+namespace Votyra.Core.Unity.Profiling
 {
     public class UnityProfiler : IProfiler
     {

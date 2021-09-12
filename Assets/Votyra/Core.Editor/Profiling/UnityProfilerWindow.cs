@@ -1,5 +1,6 @@
 using UnityEditor;
 using Votyra.Core.Profiling;
+using Votyra.Core.Unity.Profiling;
 
 namespace Votyra.Core.Editor.Profiling
 {

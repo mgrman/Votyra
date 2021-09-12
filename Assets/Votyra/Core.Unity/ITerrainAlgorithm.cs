@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity
 {
     public interface ITerrainAlgorithm
     {

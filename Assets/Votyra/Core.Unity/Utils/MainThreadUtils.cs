@@ -1,10 +1,9 @@
 using System;
-using System.Collections;
 using System.Threading.Tasks;
 using UniRx;
 using UniRx.Async;
 
-namespace Votyra.Core.Utils
+namespace Votyra.Core.Unity.Utils
 {
     public static class MainThreadUtils
     {

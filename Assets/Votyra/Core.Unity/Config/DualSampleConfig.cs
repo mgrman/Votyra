@@ -1,4 +1,4 @@
-namespace Votyra.Core
+namespace Votyra.Core.Unity.Config
 {
     public class DualSampleConfig : IDualSampleConfig
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity.TerraingGroupGenerator
 {
     public interface ITerrainGroupGeneratorManager2i : IDisposable
     {

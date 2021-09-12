@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Votyra.Core.Utils
+namespace Votyra.Core.Unity.Utils
 {
     public static class BoundsUtils
     {

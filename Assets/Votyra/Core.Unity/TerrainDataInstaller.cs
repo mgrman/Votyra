@@ -2,6 +2,8 @@ using UniRx;
 using UnityEngine;
 using Votyra.Core.Logging;
 using Votyra.Core.Profiling;
+using Votyra.Core.Unity.Logging;
+using Votyra.Core.Unity.Profiling;
 using Zenject;
 
 namespace Votyra.Core.Unity

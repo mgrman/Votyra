@@ -5,7 +5,7 @@ using Votyra.Core.Pooling;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Zenject;
 
-namespace Votyra.Core.TerrainMeshes
+namespace Votyra.Core.Unity.TerrainMeshes
 {
     public class FixedTerrainMeshFactory : ITerrainMeshFactory
     {

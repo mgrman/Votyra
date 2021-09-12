@@ -1,13 +1,13 @@
 using System;
 using System.Threading;
 using UnityEngine;
-using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Votyra.Core.TerrainMeshes;
+using Votyra.Core.Unity.MeshUpdaters;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity.TerraingGroupGenerator
 {
     public abstract class TerrainGroupGeneratorManager2i : ITerrainGroupGeneratorManager2i
     {

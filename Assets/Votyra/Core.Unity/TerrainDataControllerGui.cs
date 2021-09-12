@@ -4,11 +4,10 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using Votyra.Core.Models;
-using Votyra.Core.Unity;
-using Votyra.Core.Utils;
+using Votyra.Core.Unity.Config;
 using Zenject;
 
-namespace Votyra.Core.Editor
+namespace Votyra.Core.Unity
 {
     public class TerrainDataControllerGui : MonoBehaviour
     {

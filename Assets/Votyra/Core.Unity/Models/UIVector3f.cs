@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
+using Votyra.Core.Models;
 
-namespace Votyra.Core.Models
+namespace Votyra.Core.Unity.Models
 {
     [Serializable]
     public struct UIVector3f

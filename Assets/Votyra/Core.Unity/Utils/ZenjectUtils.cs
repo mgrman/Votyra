@@ -1,7 +1,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace Votyra.Core.Utils
+namespace Votyra.Core.Unity.Utils
 {
     public static class ZenjectUtils
     {

@@ -1,8 +1,9 @@
 using System;
 using UnityEngine;
+using Votyra.Core.Logging;
 using Object = UnityEngine.Object;
 
-namespace Votyra.Core.Logging
+namespace Votyra.Core.Unity.Logging
 {
     public class UnityLogger : IThreadSafeLogger
     {

@@ -1,9 +1,7 @@
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
 
-namespace Votyra.Core.Utils
+namespace Votyra.Core.Unity.Utils
 {
     public static class ConversionUtils
     {

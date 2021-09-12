@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using Votyra.Core.TerrainMeshes;
-using Votyra.Core.Utils;
+using Votyra.Core.Unity.TerrainMeshes;
+using Votyra.Core.Unity.Utils;
 
-namespace Votyra.Core.MeshUpdaters
+namespace Votyra.Core.Unity.MeshUpdaters
 {
     public class TerrainMeshUpdater : ITerrainMeshUpdater
     {

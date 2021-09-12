@@ -1,14 +1,12 @@
 using System;
 using System.Threading;
 using UnityEngine;
-using Votyra.Core.ImageSamplers;
-using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
-using Votyra.Core.TerrainMeshes;
-using Zenject;
+using Votyra.Core.Unity.MeshUpdaters;
+using Votyra.Core.Unity.TerrainMeshes;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity.TerraingGroupGenerator
 {
     public class SyncTerrainGroupGeneratorManagerFactory2i : ITerrainGroupGeneratorManagerFactory2i, IDisposable
     {

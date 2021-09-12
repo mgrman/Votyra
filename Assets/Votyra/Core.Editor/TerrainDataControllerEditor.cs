@@ -8,6 +8,8 @@ using UnityEditorInternal;
 using UnityEngine;
 using Votyra.Core.Models;
 using Votyra.Core.Unity;
+using Votyra.Core.Unity.Config;
+using Votyra.Core.Unity.Utils;
 using Votyra.Core.Utils;
 using Zenject;
 using Object = UnityEngine.Object;

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity.Config
 {
     public interface IMaterialConfig : IConfig
     {

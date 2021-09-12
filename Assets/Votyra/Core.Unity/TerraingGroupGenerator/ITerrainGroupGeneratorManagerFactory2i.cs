@@ -1,6 +1,6 @@
 using Votyra.Core.Models;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity.TerraingGroupGenerator
 {
     public interface ITerrainGroupGeneratorManagerFactory2i
     {

@@ -2,16 +2,17 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Votyra.Core.Unity.Config;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity
 {
     public class TerrainManagerModel : ITerrainManagerModel
     {
         private IReadOnlyCollection<ConfigItem> _config;
         
-        private TerrainAlgorithm _activeAlgorithm;
+        private ITerrainAlgorithm _activeAlgorithm;
         
-        private IEnumerable<TerrainAlgorithm> _availableAlgorithms;
+        private IEnumerable<ITerrainAlgorithm> _availableAlgorithms;
 
         public TerrainManagerModel()
         {
@@ -20,7 +21,7 @@ namespace Votyra.Core
             Config = null;
         }
 
-        public IEnumerable<TerrainAlgorithm> AvailableAlgorithms
+        public IEnumerable<ITerrainAlgorithm> AvailableAlgorithms
         {
             get => _availableAlgorithms;
             set
@@ -32,7 +33,7 @@ namespace Votyra.Core
             }
         }
 
-        public TerrainAlgorithm ActiveAlgorithm
+        public ITerrainAlgorithm ActiveAlgorithm
         {
             get => _activeAlgorithm;
             set

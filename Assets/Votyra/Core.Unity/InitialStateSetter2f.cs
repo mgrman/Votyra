@@ -1,11 +1,11 @@
-using System;
 using System.Linq;
 using UnityEngine;
+using Votyra.Core.Images;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
+using Votyra.Core.Unity.Utils;
 using Zenject;
 
-namespace Votyra.Core.Images
+namespace Votyra.Core.Unity
 {
     public class InitialStateSetter2f
     {

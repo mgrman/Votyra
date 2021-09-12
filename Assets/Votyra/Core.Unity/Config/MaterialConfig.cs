@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Votyra.Core.Images
+namespace Votyra.Core.Unity.Config
 {
     public class MaterialConfig : IMaterialConfig
     {

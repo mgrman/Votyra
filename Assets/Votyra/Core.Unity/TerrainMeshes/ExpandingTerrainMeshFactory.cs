@@ -1,14 +1,11 @@
 using System;
-using System.Threading;
-using UnityEngine;
 using Votyra.Core.ImageSamplers;
-using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.Pooling;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
 using Zenject;
 
-namespace Votyra.Core.TerrainMeshes
+namespace Votyra.Core.Unity.TerrainMeshes
 {
     public class ExpandingTerrainMeshFactory : ITerrainMeshFactory
     {

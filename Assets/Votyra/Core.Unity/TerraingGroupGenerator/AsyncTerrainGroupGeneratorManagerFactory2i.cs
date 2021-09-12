@@ -2,13 +2,13 @@ using System;
 using System.Threading;
 using UnityEngine;
 using Votyra.Core.ImageSamplers;
-using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
-using Votyra.Core.TerrainMeshes;
+using Votyra.Core.Unity.MeshUpdaters;
+using Votyra.Core.Unity.TerrainMeshes;
 using Zenject;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity.TerraingGroupGenerator
 {
     public class AsyncTerrainGroupGeneratorManagerFactory2i : ITerrainGroupGeneratorManagerFactory2i, IDisposable
     {

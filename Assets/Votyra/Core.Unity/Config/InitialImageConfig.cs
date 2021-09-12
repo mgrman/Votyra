@@ -2,7 +2,7 @@
 using Votyra.Core.Models;
 using Zenject;
 
-namespace Votyra.Core.Images
+namespace Votyra.Core.Unity.Config
 {
     public class InitialImageConfig : IInitialImageConfig
     {

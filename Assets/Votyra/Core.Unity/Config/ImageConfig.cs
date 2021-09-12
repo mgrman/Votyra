@@ -1,6 +1,6 @@
 ﻿using Votyra.Core.Models;
 
-namespace Votyra.Core.Images
+namespace Votyra.Core.Unity.Config
 {
     public class ImageConfig : IImageConfig
     {

@@ -1,6 +1,6 @@
 using Votyra.Core.Pooling;
 
-namespace Votyra.Core.TerrainMeshes
+namespace Votyra.Core.Unity.TerrainMeshes
 {
     public interface ITerrainMeshFactory
     {

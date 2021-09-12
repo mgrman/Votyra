@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Votyra.Core.Models;
-using Votyra.Core.Utils;
+using Votyra.Core.TerrainMeshes;
+using Votyra.Core.Unity.Utils;
 
-namespace Votyra.Core.TerrainMeshes
+namespace Votyra.Core.Unity.TerrainMeshes
 {
     public class ExpandingUnityTerrainMesh : ITerrainMesh
     {

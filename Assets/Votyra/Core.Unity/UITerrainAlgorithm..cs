@@ -1,8 +1,7 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity
 {
     [Serializable]
     public class UITerrainAlgorithm

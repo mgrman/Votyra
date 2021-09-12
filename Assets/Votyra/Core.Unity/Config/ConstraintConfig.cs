@@ -1,7 +1,7 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using Votyra.Core.Images.Constraints;
 
-namespace Votyra.Core.Images.Constraints
+namespace Votyra.Core.Unity.Config
 {
     public class ConstraintConfig : IConstraintConfig
     {

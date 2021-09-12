@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Votyra.Core
+namespace Votyra.Core.Unity.Config
 {
     [Serializable]
     public class ConfigItem : IEquatable<ConfigItem>
