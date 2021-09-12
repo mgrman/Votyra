@@ -27,7 +27,6 @@ namespace Votyra.Core.Models
             // do intersection test for each active frame
 
             // while active frames
-            var planesCount = 0;
             for (var i = 0; i < planes.Count; i++)
             {
                 var p = planes[i];
@@ -37,9 +36,9 @@ namespace Votyra.Core.Models
                 var radius = Vector3f.Dot(boundsExtent, n);
 
                 if (distance + radius < 0)
+                {
                     return false;
-
-                planesCount++;
+                }
             }
 
             return true;
