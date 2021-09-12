@@ -7,7 +7,7 @@ namespace Votyra.Core.Painting.Commands
 {
     public class Flatten : PaintCommand
     {
-        private const float smoothSpeedRelative = 0.2f;
+        private const float SmoothSpeedRelative = 0.2f;
         private float? _centerValue;
 
         protected override void OnInvocationStopping()
@@ -22,7 +22,7 @@ namespace Votyra.Core.Painting.Commands
             base.PrepareWithClickedValue(clickedValue);
         }
 
-        protected override float Invoke(float value, int strength) => (MathUtils.Lerp(_centerValue ?? 0f, value, smoothSpeedRelative) - value) * Math.Sign(strength) + value;
+        protected override float Invoke(float value, int strength) => (MathUtils.Lerp(_centerValue ?? 0f, value, SmoothSpeedRelative) - value) * Math.Sign(strength) + value;
 
         public Flatten(IEditableImage2f editableImage, IThreadSafeLogger logger)
             : base(editableImage, logger)

@@ -6,7 +6,7 @@ using Votyra.Core.Pooling;
 using Votyra.Core.Utils;
 using Zenject;
 
-namespace Votyra.Plannar
+namespace Votyra.Plannar.Unity
 {
     //TODO: move to floats
     public class FrameData2iProvider : IFrameDataProvider2i

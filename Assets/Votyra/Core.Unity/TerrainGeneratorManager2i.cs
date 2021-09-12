@@ -205,18 +205,18 @@ namespace Votyra.Core
         public override void Dispose()
         {
             base.Dispose();
-            _unityData.DestroyWithMeshes();
+            UnityData.DestroyWithMeshes();
         }
 
 
         protected override void UpdateGroup()
         {
-            if (_token.IsCancellationRequested)
+            if (Token.IsCancellationRequested)
                 return;
 
             if (ContextToProcess != null)
             {
-                UpdateGroup(ContextToProcess, _token);
+                UpdateGroup(ContextToProcess, Token);
                 ContextToProcess = null;
             }
         }
@@ -226,9 +226,9 @@ namespace Votyra.Core
             if (context == null)
                 return;
             UpdateTerrainMesh(context);
-            if (_token.IsCancellationRequested)
+            if (Token.IsCancellationRequested)
                 return;
-            UpdateUnityMesh(_pooledMesh.Mesh);
+            UpdateUnityMesh(PooledMesh.Mesh);
         }
     }
 
@@ -243,7 +243,7 @@ namespace Votyra.Core
 
         protected override void UpdateGroup()
         {
-            if (_token.IsCancellationRequested)
+            if (Token.IsCancellationRequested)
                 return;
 
             if (!_activeTask.IsCompleted || ContextToProcess == null)
@@ -255,7 +255,7 @@ namespace Votyra.Core
             {
                 try
                 {
-                    await UpdateGroupAsync(context, _token);
+                    await UpdateGroupAsync(context, Token);
                 }
                 finally
                 {
@@ -273,12 +273,12 @@ namespace Votyra.Core
             if (context == null)
                 return;
             UpdateTerrainMesh(context);
-            if (_token.IsCancellationRequested)
+            if (Token.IsCancellationRequested)
                 return;
             await UniTask.SwitchToMainThread();
-            if (_token.IsCancellationRequested)
+            if (Token.IsCancellationRequested)
                 return;
-            UpdateUnityMesh(_pooledMesh.Mesh);
+            UpdateUnityMesh(PooledMesh.Mesh);
         }
 
 
@@ -287,37 +287,37 @@ namespace Votyra.Core
             base.Dispose();
             MainThreadUtils.RunOnMainThreadAsync(() =>
             {
-                _unityData.DestroyWithMeshes();
+                UnityData.DestroyWithMeshes();
             });
         }
     }
 
     public abstract class TerrainGroupGeneratorManager2i : ITerrainGroupGeneratorManager2i
     {
-        protected readonly CancellationTokenSource _cts;
-        protected readonly Action<IFrameData2i, Vector2i, ITerrainMesh> _generateUnityMesh;
-        protected readonly Vector2i _group;
-        protected readonly IPooledTerrainMesh _pooledMesh;
-        protected readonly Range2i _range;
-        protected readonly CancellationToken _token;
-        protected readonly Func<GameObject> _unityDataFactory;
+        protected readonly CancellationTokenSource Cts;
+        protected readonly Action<IFrameData2i, Vector2i, ITerrainMesh> GenerateUnityMesh;
+        protected readonly Vector2i Group;
+        protected readonly IPooledTerrainMesh PooledMesh;
+        protected readonly Range2i Range;
+        protected readonly CancellationToken Token;
+        protected readonly Func<GameObject> UnityDataFactory;
 
         private IFrameData2i _contextToProcess;
 
-        protected GameObject _unityData;
+        protected GameObject UnityData;
 
         private bool _updatedOnce;
 
         public TerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory, Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, Action<IFrameData2i, Vector2i, ITerrainMesh> generateUnityMesh)
         {
-            _unityDataFactory = unityDataFactory;
-            _group = group;
-            _range = Range2i.FromMinAndSize(group * cellInGroupCount, cellInGroupCount);
-            _cts = CancellationTokenSource.CreateLinkedTokenSource(token);
-            _token = _cts.Token;
+            UnityDataFactory = unityDataFactory;
+            Group = group;
+            Range = Range2i.FromMinAndSize(group * cellInGroupCount, cellInGroupCount);
+            Cts = CancellationTokenSource.CreateLinkedTokenSource(token);
+            Token = Cts.Token;
 
-            _pooledMesh = pooledMesh;
-            _generateUnityMesh = generateUnityMesh;
+            PooledMesh = pooledMesh;
+            GenerateUnityMesh = generateUnityMesh;
         }
 
         protected IFrameData2i ContextToProcess
@@ -333,10 +333,10 @@ namespace Votyra.Core
 
         public void Update(IFrameData2i context)
         {
-            if (_token.IsCancellationRequested)
+            if (Token.IsCancellationRequested)
                 return;
 
-            if (_updatedOnce && !context.InvalidatedArea.Overlaps(_range))
+            if (_updatedOnce && !context.InvalidatedArea.Overlaps(Range))
                 return;
             _updatedOnce = true;
 
@@ -348,8 +348,8 @@ namespace Votyra.Core
         public virtual void Dispose()
         {
             ContextToProcess = null;
-            _cts.Cancel();
-            _pooledMesh.Dispose();
+            Cts.Cancel();
+            PooledMesh.Dispose();
         }
 
         protected IFrameData2i GetFrameDataWithOwnership()
@@ -364,17 +364,17 @@ namespace Votyra.Core
 
         protected void UpdateTerrainMesh(IFrameData2i context)
         {
-            _pooledMesh.Mesh.Reset(Area3f.FromMinAndSize((_group * context.CellInGroupCount).ToVector3f(context.RangeZ.Min), context.CellInGroupCount.ToVector3f(context.RangeZ.Size)));
-            _generateUnityMesh(context, _group, _pooledMesh.Mesh);
-            _pooledMesh.Mesh.FinalizeMesh();
+            PooledMesh.Mesh.Reset(Area3f.FromMinAndSize((Group * context.CellInGroupCount).ToVector3f(context.RangeZ.Min), context.CellInGroupCount.ToVector3f(context.RangeZ.Size)));
+            GenerateUnityMesh(context, Group, PooledMesh.Mesh);
+            PooledMesh.Mesh.FinalizeMesh();
         }
 
         protected void UpdateUnityMesh(ITerrainMesh unityMesh)
         {
-            if (_unityData == null)
-                _unityData = _unityDataFactory();
+            if (UnityData == null)
+                UnityData = UnityDataFactory();
 
-            unityMesh.SetUnityMesh(_unityData);
+            unityMesh.SetUnityMesh(UnityData);
         }
     }
 }

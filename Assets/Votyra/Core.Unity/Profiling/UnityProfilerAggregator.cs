@@ -6,12 +6,12 @@ namespace Votyra.Core.Profiling
 {
     public static class UnityProfilerAggregator
     {
-        private static readonly object _lock = new object();
+        private static readonly object Lock = new object();
         private static Dictionary<System.Tuple<Object, string>, double> Values { get; } = new Dictionary<System.Tuple<Object, string>, double>();
 
         public static void Add(Object owner, string name, double ms)
         {
-            lock (_lock)
+            lock (Lock)
             {
                 Values[Tuple.Create(owner, name)] = ms;
             }
@@ -20,7 +20,7 @@ namespace Votyra.Core.Profiling
         public static IReadOnlyDictionary<System.Tuple<Object, string>, double> ValuesClone()
         {
             Dictionary<Tuple<Object, string>, double> clone;
-            lock (_lock)
+            lock (Lock)
             {
                 clone = new Dictionary<Tuple<Object, string>, double>(Values);
             }

@@ -5,7 +5,7 @@ namespace Votyra.Core.Models
 {
     public struct Area3f : IEquatable<Area3f>
     {
-        public static readonly Area3f zero = new Area3f();
+        public static readonly Area3f Zero = new Area3f();
 
         public readonly Vector3f Min;
 
@@ -67,7 +67,7 @@ namespace Votyra.Core.Models
         public Area3f IntersectWith(Area3f that)
         {
             if (Size == Vector3f.Zero || that.Size == Vector3f.Zero)
-                return zero;
+                return Zero;
 
             var min = Vector3f.Max(Min, that.Min);
             var max = Vector3f.Max(Vector3f.Min(Max, that.Max), min);

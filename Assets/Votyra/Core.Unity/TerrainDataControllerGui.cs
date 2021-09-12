@@ -79,7 +79,7 @@ namespace Votyra.Core.Editor
 
             _cachedConfigs = new Dictionary<GameObject, IEnumerable<ConfigItem>>();
 
-            foreach (var algorithm in _controller._availableTerrainAlgorithms)
+            foreach (var algorithm in _controller.AvailableTerrainAlgorithms)
             {
                 var configTypes = GetConfigTypes(algorithm);
                 List<ConfigItem> items = new List<ConfigItem>();
@@ -102,27 +102,27 @@ namespace Votyra.Core.Editor
         {
             bool anyChange = false;
             GUILayout.Label("Terrain algorithms:");
-            for (var index = 0; index < _controller._availableTerrainAlgorithms.Length; index++)
+            for (var index = 0; index < _controller.AvailableTerrainAlgorithms.Length; index++)
             {
-                var terrainAlgorithm = _controller._availableTerrainAlgorithms[index];
-                var isSelected = index == _controller._activeTerrainAlgorithm;
+                var terrainAlgorithm = _controller.AvailableTerrainAlgorithms[index];
+                var isSelected = index == _controller.ActiveTerrainAlgorithm;
                 isSelected = GUILayout.Toggle(isSelected, terrainAlgorithm.name);
                 if (isSelected)
                 {
-                    anyChange = anyChange || _controller._activeTerrainAlgorithm != index;
-                    _controller._activeTerrainAlgorithm = index;
+                    anyChange = anyChange || _controller.ActiveTerrainAlgorithm != index;
+                    _controller.ActiveTerrainAlgorithm = index;
                 }
             }
 
 
 
-            if (_controller._activeTerrainAlgorithm < 0 || _controller._activeTerrainAlgorithm >= _controller._availableTerrainAlgorithms.Length)
+            if (_controller.ActiveTerrainAlgorithm < 0 || _controller.ActiveTerrainAlgorithm >= _controller.AvailableTerrainAlgorithms.Length)
             {
-                _controller._activeTerrainAlgorithm = 0;
+                _controller.ActiveTerrainAlgorithm = 0;
                 anyChange = true;
             }
 
-            var activeAlgorith = _controller._availableTerrainAlgorithms[_controller._activeTerrainAlgorithm];
+            var activeAlgorith = _controller.AvailableTerrainAlgorithms[_controller.ActiveTerrainAlgorithm];
             if (activeAlgorith != null)
             {
                 var newConfigValues = new System.Lazy<List<ConfigItem>>(() => _controller.Config.ToList());
@@ -242,21 +242,21 @@ namespace Votyra.Core.Editor
             }
             else if (typeof(Vector3i).IsAssignableFrom(type))
             {
-                var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;
+                var oldVector3IValue = oldValue as Vector3i? ?? Vector3i.Zero;
 
-                var x = Int32.TryParse(GUILayout.TextField(oldVector3iValue.X.ToString()), out int xVal) ? xVal : 0;
-                var y = Int32.TryParse(GUILayout.TextField(oldVector3iValue.Y.ToString()), out int yVal) ? yVal : 0;
-                var z = Int32.TryParse(GUILayout.TextField(oldVector3iValue.Z.ToString()), out int zVal) ? zVal : 0;
+                var x = Int32.TryParse(GUILayout.TextField(oldVector3IValue.X.ToString()), out int xVal) ? xVal : 0;
+                var y = Int32.TryParse(GUILayout.TextField(oldVector3IValue.Y.ToString()), out int yVal) ? yVal : 0;
+                var z = Int32.TryParse(GUILayout.TextField(oldVector3IValue.Z.ToString()), out int zVal) ? zVal : 0;
 
                 newValue = new Vector3i(x, y, z);
             }
             else if (typeof(Vector3f).IsAssignableFrom(type))
             {
-                var oldVector3fValue = oldValue as Vector3f? ?? Vector3f.Zero;
+                var oldVector3FValue = oldValue as Vector3f? ?? Vector3f.Zero;
 
-                var x = float.TryParse(GUILayout.TextField(oldVector3fValue.X.ToString()), out float xVal) ? xVal : 0;
-                var y = float.TryParse(GUILayout.TextField(oldVector3fValue.Y.ToString()), out float yVal) ? yVal : 0;
-                var z = float.TryParse(GUILayout.TextField(oldVector3fValue.Z.ToString()), out float zVal) ? zVal : 0;
+                var x = float.TryParse(GUILayout.TextField(oldVector3FValue.X.ToString()), out float xVal) ? xVal : 0;
+                var y = float.TryParse(GUILayout.TextField(oldVector3FValue.Y.ToString()), out float yVal) ? yVal : 0;
+                var z = float.TryParse(GUILayout.TextField(oldVector3FValue.Z.ToString()), out float zVal) ? zVal : 0;
 
                 newValue = new Vector3f(x, y, z);
             }

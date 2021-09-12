@@ -6,20 +6,20 @@ namespace Votyra.Core.Utils
 {
     public static class LinqUtils
     {
-        public static T MaxByOrDefault<T, R>(this IEnumerable<T> items, Func<T, R> func) where R : IComparable<R>
+        public static T MaxByOrDefault<T, TR>(this IEnumerable<T> items, Func<T, TR> func) where TR : IComparable<TR>
         {
             return items.ExtremeByOrDefault(func, (currentValue, previousBestValue) => currentValue.CompareTo(previousBestValue) > 0);
         }
 
-        public static T MinByOrDefault<T, R>(this IEnumerable<T> items, Func<T, R> func) where R : IComparable<R>
+        public static T MinByOrDefault<T, TR>(this IEnumerable<T> items, Func<T, TR> func) where TR : IComparable<TR>
         {
             return items.ExtremeByOrDefault(func, (currentValue, previousBestValue) => currentValue.CompareTo(previousBestValue) < 0);
         }
 
-        public static T ExtremeByOrDefault<T, R>(this IEnumerable<T> items, Func<T, R> func, Func<R, R, bool> compareFunc) where R : IComparable<R>
+        public static T ExtremeByOrDefault<T, TR>(this IEnumerable<T> items, Func<T, TR> func, Func<TR, TR, bool> compareFunc) where TR : IComparable<TR>
         {
             var bestItem = default(T);
-            var bestItemsValue = default(R);
+            var bestItemsValue = default(TR);
             var isFirst = true;
 
             foreach (var item in items)

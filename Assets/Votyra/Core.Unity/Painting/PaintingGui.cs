@@ -10,14 +10,14 @@ namespace Votyra.Core.Unity.Painting
     public class PaintingGui : MonoBehaviour
     {
         [Inject]
-        protected IPaintingModel _paintingModel;
+        protected IPaintingModel PaintingModel;
 
         protected void OnGUI()
         {
             GUILayout.BeginArea(new Rect((Screen.width ) - 200, 0, 200, Screen.height));
 
-            IPaintCommand newSelection = _paintingModel.SelectedPaintCommand;
-            foreach (var cmd in _paintingModel.PaintCommands)
+            IPaintCommand newSelection = PaintingModel.SelectedPaintCommand;
+            foreach (var cmd in PaintingModel.PaintCommands)
             {
                 var label = cmd.GetTypeDisplayName();
                 var wasSelected = newSelection == cmd;
@@ -31,11 +31,11 @@ namespace Votyra.Core.Unity.Painting
                     newSelection = cmd;
                 }
             }
-            _paintingModel.SelectedPaintCommand = newSelection;
+            PaintingModel.SelectedPaintCommand = newSelection;
 
             GUILayout.Label("Modifiers:",GUILayout.Width(200));
-            _paintingModel.IsExtendedModifierActive = GUILayout.Toggle(_paintingModel.IsExtendedModifierActive, "Extend cmd", GUILayout.Width(200));
-            _paintingModel.IsInvertModifierActive = GUILayout.Toggle(_paintingModel.IsInvertModifierActive, "Invert cmd", GUILayout.Width(200));
+            PaintingModel.IsExtendedModifierActive = GUILayout.Toggle(PaintingModel.IsExtendedModifierActive, "Extend cmd", GUILayout.Width(200));
+            PaintingModel.IsInvertModifierActive = GUILayout.Toggle(PaintingModel.IsInvertModifierActive, "Invert cmd", GUILayout.Width(200));
 
             GUILayout.EndArea();
         }

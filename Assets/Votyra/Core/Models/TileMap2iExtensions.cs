@@ -24,24 +24,24 @@ namespace Votyra.Core.Models
 
         public static IEnumerable<SampledData2i> CreateVariantsOfUmbra(this SampledData2i tile)
         {
-            var stepCount_x0y0 = tile.x0y0.Abs();
-            var stepCount_x0y1 = tile.x0y1.Abs();
-            var stepCount_x1y0 = tile.x1y0.Abs();
-            var stepCount_x1y1 = tile.x1y1.Abs();
-            var sign_x0y0 = tile.x0y0.Sign();
-            var sign_x0y1 = tile.x0y1.Sign();
-            var sign_x1y0 = tile.x1y0.Sign();
-            var sign_x1y1 = tile.x1y1.Sign();
+            var stepCountX0Y0 = tile.X0Y0.Abs();
+            var stepCountX0Y1 = tile.X0Y1.Abs();
+            var stepCountX1Y0 = tile.X1Y0.Abs();
+            var stepCountX1Y1 = tile.X1Y1.Abs();
+            var signX0Y0 = tile.X0Y0.Sign();
+            var signX0Y1 = tile.X0Y1.Sign();
+            var signX1Y0 = tile.X1Y0.Sign();
+            var signX1Y1 = tile.X1Y1.Sign();
 
-            for (var x0y0 = 0; x0y0 <= stepCount_x0y0; x0y0++)
+            for (var x0Y0 = 0; x0Y0 <= stepCountX0Y0; x0Y0++)
             {
-                for (var x0y1 = 0; x0y1 <= stepCount_x0y1; x0y1++)
+                for (var x0Y1 = 0; x0Y1 <= stepCountX0Y1; x0Y1++)
                 {
-                    for (var x1y0 = 0; x1y0 <= stepCount_x1y0; x1y0++)
+                    for (var x1Y0 = 0; x1Y0 <= stepCountX1Y0; x1Y0++)
                     {
-                        for (var x1y1 = 0; x1y1 <= stepCount_x1y1; x1y1++)
+                        for (var x1Y1 = 0; x1Y1 <= stepCountX1Y1; x1Y1++)
                         {
-                            yield return new SampledData2i(x0y0 * sign_x0y0, x0y1 * sign_x0y1, x1y0 * sign_x1y0, x1y1 * sign_x1y1);
+                            yield return new SampledData2i(x0Y0 * signX0Y0, x0Y1 * signX0Y1, x1Y0 * signX1Y0, x1Y1 * signX1Y1);
                         }
                     }
                 }

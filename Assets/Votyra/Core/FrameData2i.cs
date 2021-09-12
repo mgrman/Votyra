@@ -9,11 +9,11 @@ namespace Votyra.Core
     {
         private int _activeCounter;
 
-        public FrameData2i(Vector3f cameraPosition, Plane3f[] cameraPlanes_pooled, Vector3f[] cameraFrustumCorners_pooled, Matrix4x4f cameraLocalToWorldMatrix, Matrix4x4f parentContainerWorldToLocalMatrix, IImage2f image, Range2i invalidatedArea, Vector2i cellInGroupCount, int meshSubdivision)
+        public FrameData2i(Vector3f cameraPosition, Plane3f[] cameraPlanesPooled, Vector3f[] cameraFrustumCornersPooled, Matrix4x4f cameraLocalToWorldMatrix, Matrix4x4f parentContainerWorldToLocalMatrix, IImage2f image, Range2i invalidatedArea, Vector2i cellInGroupCount, int meshSubdivision)
         {
             CameraPosition = cameraPosition;
-            CameraPlanes = cameraPlanes_pooled;
-            CameraFrustumCorners = cameraFrustumCorners_pooled;
+            CameraPlanes = cameraPlanesPooled;
+            CameraFrustumCorners = cameraFrustumCornersPooled;
             CameraLocalToWorldMatrix = cameraLocalToWorldMatrix;
             ParentContainerWorldToLocalMatrix = parentContainerWorldToLocalMatrix;
             Image = image;

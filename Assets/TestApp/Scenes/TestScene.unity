@@ -289,8 +289,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 411b2da090ebf0f4b81c1510a2b4eed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activeTerrainAlgorithm: 0
-  _availableTerrainAlgorithms:
+  ActiveTerrainAlgorithm: 0
+  AvailableTerrainAlgorithms:
   - {fileID: 1101794731832008, guid: f4f93c13563af724e9805d1070d56d88, type: 3}
   - {fileID: 1101794731832008, guid: a3fa91a0e395d7643bf043b4c7bfd4fd, type: 3}
   - {fileID: 1486076317952450, guid: 0841d94987abc0b4a8ba679f64d5e225, type: 3}

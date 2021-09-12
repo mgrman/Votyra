@@ -28,38 +28,38 @@ namespace Votyra.Core.TerrainMeshes
 
         public static void AddQuad(this ITerrainMesh mesh, Vector2f position, SampledData2f data)
         {
-            var x0y0 = new Vector2f(position.X, position.Y).ToVector3f(data.x0y0);
-            var x0y1 = new Vector2f(position.X, position.Y + 1).ToVector3f(data.x0y1);
-            var x1y0 = new Vector2f(position.X + 1, position.Y).ToVector3f(data.x1y0);
-            var x1y1 = new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.x1y1);
+            var x0Y0 = new Vector2f(position.X, position.Y).ToVector3f(data.X0Y0);
+            var x0Y1 = new Vector2f(position.X, position.Y + 1).ToVector3f(data.X0Y1);
+            var x1Y0 = new Vector2f(position.X + 1, position.Y).ToVector3f(data.X1Y0);
+            var x1Y1 = new Vector2f(position.X + 1, position.Y + 1).ToVector3f(data.X1Y1);
 
-            mesh.AddQuad(x0y0, x0y1, x1y0, x1y1);
+            mesh.AddQuad(x0Y0, x0Y1, x1Y0, x1Y1);
         }
 
-        public static void AddQuad(this ITerrainMesh mesh, Vector3f? x0y0, Vector3f? x0y1, Vector3f? x1y0, Vector3f? x1y1)
+        public static void AddQuad(this ITerrainMesh mesh, Vector3f? x0Y0, Vector3f? x0Y1, Vector3f? x1Y0, Vector3f? x1Y1)
         {
-            var holeCount = (x0y0.HasValue ? 0 : 1) + (x0y1.HasValue ? 0 : 1) + (x1y0.HasValue ? 0 : 1) + (x1y1.HasValue ? 0 : 1);
+            var holeCount = (x0Y0.HasValue ? 0 : 1) + (x0Y1.HasValue ? 0 : 1) + (x1Y0.HasValue ? 0 : 1) + (x1Y1.HasValue ? 0 : 1);
 
             if (holeCount == 1)
             {
-                if (!x0y0.HasValue)
+                if (!x0Y0.HasValue)
                 {
-                    mesh.AddTriangle(x1y0.Value, x1y1.Value, x0y1.Value);
+                    mesh.AddTriangle(x1Y0.Value, x1Y1.Value, x0Y1.Value);
                     mesh.AddEmptyTriangle();
                 }
-                else if (!x0y1.HasValue)
+                else if (!x0Y1.HasValue)
                 {
-                    mesh.AddTriangle(x0y0.Value, x1y0.Value, x1y1.Value);
+                    mesh.AddTriangle(x0Y0.Value, x1Y0.Value, x1Y1.Value);
                     mesh.AddEmptyTriangle();
                 }
-                else if (!x1y0.HasValue)
+                else if (!x1Y0.HasValue)
                 {
-                    mesh.AddTriangle(x1y1.Value, x0y1.Value, x0y0.Value);
+                    mesh.AddTriangle(x1Y1.Value, x0Y1.Value, x0Y0.Value);
                     mesh.AddEmptyTriangle();
                 }
-                else if (!x1y1.HasValue)
+                else if (!x1Y1.HasValue)
                 {
-                    mesh.AddTriangle(x0y0.Value, x1y0.Value, x0y1.Value);
+                    mesh.AddTriangle(x0Y0.Value, x1Y0.Value, x0Y1.Value);
                     mesh.AddEmptyTriangle();
                 }
                 else
@@ -70,8 +70,8 @@ namespace Votyra.Core.TerrainMeshes
             }
             else if (holeCount == 0)
             {
-                mesh.AddTriangle(x0y0.Value, x1y0.Value, x0y1.Value);
-                mesh.AddTriangle(x1y0.Value, x1y1.Value, x0y1.Value);
+                mesh.AddTriangle(x0Y0.Value, x1Y0.Value, x0Y1.Value);
+                mesh.AddTriangle(x1Y0.Value, x1Y1.Value, x0Y1.Value);
             }
             else
             {

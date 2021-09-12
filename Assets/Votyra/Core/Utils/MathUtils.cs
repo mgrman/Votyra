@@ -7,9 +7,7 @@ namespace Votyra.Core.Utils
         public const float Deg2Rad = 0.01745329f;
 
         public const float Rad2Deg = 57.29578f;
-
-        private static readonly FastNoise _noise = new FastNoise();
-
+        
         public static int? Abs(this int? val) => val.HasValue ? Math.Abs(val.Value) : val;
 
         public static int Abs(this int val) => Math.Abs(val);
@@ -79,10 +77,6 @@ namespace Votyra.Core.Utils
         public static int Min(this int a, int? b) => Math.Min(a, b ?? a);
 
         public static int Min(this int? a, int b) => Math.Min(a ?? b, b);
-
-        public static float PerlinNoise(float x, float y) => _noise.GetPerlin(x, y);
-
-        public static float PerlinNoise(float x, float y, float z) => _noise.GetPerlin(x, y, z);
 
         public static int RoundToInt(this float f)
         {

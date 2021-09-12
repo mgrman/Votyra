@@ -5,17 +5,17 @@ namespace Votyra.Core.Models
 {
     public struct Quaternion4f : IEquatable<Quaternion4f>
     {
-        public readonly float x;
-        public readonly float y;
-        public readonly float z;
-        public readonly float w;
+        public readonly float X;
+        public readonly float Y;
+        public readonly float Z;
+        public readonly float W;
 
         public Quaternion4f(float x, float y, float z, float w)
         {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+            this.W = w;
         }
 
         public static Quaternion4f Euler(float x, float y, float z)
@@ -41,9 +41,9 @@ namespace Votyra.Core.Models
             return new Quaternion4f(qx, qy, qz, qw);
         }
 
-        public static bool operator ==(Quaternion4f a, Quaternion4f b) => a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
+        public static bool operator ==(Quaternion4f a, Quaternion4f b) => a.X == b.X && a.Y == b.Y && a.Z == b.Z && a.W == b.W;
 
-        public static bool operator !=(Quaternion4f a, Quaternion4f b) => a.x != b.x || a.y != b.y || a.z != b.z || a.w != b.w;
+        public static bool operator !=(Quaternion4f a, Quaternion4f b) => a.X != b.X || a.Y != b.Y || a.Z != b.Z || a.W != b.W;
 
         public bool Equals(Quaternion4f other) => this == other;
 
@@ -55,8 +55,8 @@ namespace Votyra.Core.Models
             return Equals((Quaternion4f) obj);
         }
 
-        public override int GetHashCode() => x.GetHashCode() ^ (y.GetHashCode() << 2) ^ (z.GetHashCode() >> 2) ^ (w.GetHashCode() >> 1);
+        public override int GetHashCode() => X.GetHashCode() ^ (Y.GetHashCode() << 2) ^ (Z.GetHashCode() >> 2) ^ (W.GetHashCode() >> 1);
 
-        public override string ToString() => string.Format("({0} , {1}, {2}, {3})", x, y, z, w);
+        public override string ToString() => string.Format("({0} , {1}, {2}, {3})", X, Y, Z, W);
     }
 }

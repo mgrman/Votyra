@@ -6,17 +6,15 @@ namespace Votyra.Core.Images.Constraints
 {
     public class TycoonTileConstraint2i : IImageConstraint2i
     {
-        private readonly IThreadSafeLogger _logger;
         private static TileMap2i _tileMap;
         private static int? _tileMapScaleFactor;
         private readonly int _scaleFactor;
-        protected Direction _direction;
-        protected Matrix2<float> _editableMatrix;
-        protected Range2i _invalidatedCellArea;
+        protected Direction Direction;
+        protected Matrix2<float> EditableMatrix;
+        protected Range2i InvalidatedCellArea;
 
         public TycoonTileConstraint2i(IConstraintConfig constraintConfig,IThreadSafeLogger logger)
         {
-            _logger = logger;
             _scaleFactor = constraintConfig.SimpleSampleScaleFactor;
             if (_scaleFactor != _tileMapScaleFactor)
             {
@@ -39,27 +37,27 @@ namespace Votyra.Core.Images.Constraints
 
                     //slopeDiagonal
                     new SampledData2i(0, -1, -1, 0)
-                }.CreateExpandedTileMap2i(_scaleFactor, _logger);
+                }.CreateExpandedTileMap2i(_scaleFactor, logger);
                 _tileMapScaleFactor = _scaleFactor;
             }
         }
 
         public Range2i FixImage(Matrix2<float> editableMatrix, Range2i invalidatedImageArea, Direction direction)
         {
-            _invalidatedCellArea = invalidatedImageArea;
+            InvalidatedCellArea = invalidatedImageArea;
             if (direction != Direction.Up && direction != Direction.Down)
                 direction = Direction.Down;
 
-            _direction = direction;
-            _editableMatrix = editableMatrix;
+            Direction = direction;
+            EditableMatrix = editableMatrix;
             Constrain();
-            return _invalidatedCellArea;
+            return InvalidatedCellArea;
         }
 
         protected virtual void Constrain()
         {
-            var min = _invalidatedCellArea.Min;
-            var max = _invalidatedCellArea.Max;
+            var min = InvalidatedCellArea.Min;
+            var max = InvalidatedCellArea.Max;
             for (var ix = min.X; ix < max.X; ix++)
             {
                 for (var iy = min.Y; iy <= max.Y; iy++)
@@ -71,27 +69,27 @@ namespace Votyra.Core.Images.Constraints
 
         protected virtual void ConstrainCell(Vector2i cell)
         {
-            var cell_x0y0 = cell;
-            var cell_x1y1 = new Vector2i(cell.X+1, cell.Y+1);
-            if (!_editableMatrix.ContainsIndex(cell_x0y0) || !_editableMatrix.ContainsIndex(cell_x1y1))
+            var cellX0Y0 = cell;
+            var cellX1Y1 = new Vector2i(cell.X+1, cell.Y+1);
+            if (!EditableMatrix.ContainsIndex(cellX0Y0) || !EditableMatrix.ContainsIndex(cellX1Y1))
                 return;
 
-            var sample = _editableMatrix.SampleCell(cell)
-                .ToSampledData2i();
+            var sample = EditableMatrix.SampleCell(cell)
+                .ToSampledData2I();
             var processedSample = Process(sample);
 
-            var cell_x0y1 = new Vector2i(cell.X,cell.Y+1);
-            var cell_x1y0 = new Vector2i(cell.X+1, cell.Y);
+            var cellX0Y1 = new Vector2i(cell.X,cell.Y+1);
+            var cellX1Y0 = new Vector2i(cell.X+1, cell.Y);
 
-            _editableMatrix[cell_x0y0] = processedSample.x0y0;
-            _editableMatrix[cell_x0y1] = processedSample.x0y1;
-            _editableMatrix[cell_x1y0] = processedSample.x1y0;
-            _editableMatrix[cell_x1y1] = processedSample.x1y1;
+            EditableMatrix[cellX0Y0] = processedSample.X0Y0;
+            EditableMatrix[cellX0Y1] = processedSample.X0Y1;
+            EditableMatrix[cellX1Y0] = processedSample.X1Y0;
+            EditableMatrix[cellX1Y1] = processedSample.X1Y1;
         }
 
         protected SampledData2i Process(SampledData2i sampleData)
         {
-            switch (_direction)
+            switch (Direction)
             {
                 case Direction.Up:
                     return ProcessUp(sampleData);

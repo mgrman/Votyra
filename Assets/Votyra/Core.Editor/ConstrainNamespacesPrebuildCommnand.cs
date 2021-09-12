@@ -8,7 +8,9 @@ using UnityEngine;
 public class ConstrainNamespacesPrebuildCommnand : IPreprocessBuildWithReport
 {
     private const string UnityEngineNamespace = "UnityEngine";
+    
     private const string UnityEngineNamespaceUsage1 = "using " + UnityEngineNamespace;
+    
     private const string UnityEngineNamespaceUsage2 = UnityEngineNamespace + ".";
 
     static ConstrainNamespacesPrebuildCommnand()

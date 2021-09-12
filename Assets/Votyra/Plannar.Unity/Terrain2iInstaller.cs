@@ -4,7 +4,6 @@ using Votyra.Core;
 using Votyra.Core.Behaviours;
 using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
-using Votyra.Core.ImageSamplers;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
 using Votyra.Core.Unity.Painting;

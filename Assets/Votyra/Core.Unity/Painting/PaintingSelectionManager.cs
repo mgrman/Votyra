@@ -16,10 +16,10 @@ namespace Votyra.Core.Painting
         private PointerEventData _activePointerData;
 
         [Inject]
-        protected IPaintingModel _paintingModel;
+        protected IPaintingModel PaintingModel;
 
         [InjectOptional]
-        protected ITerrainUVPostProcessor _uvToImage;
+        protected ITerrainUVPostProcessor UVToImage;
 
         public void OnPointerDown(PointerEventData eventData)
         {
@@ -42,26 +42,26 @@ namespace Votyra.Core.Painting
         {
             if (Input.GetButtonDown("ExtendedModifier"))
             {
-                _paintingModel.IsExtendedModifierActive = true;
+                PaintingModel.IsExtendedModifierActive = true;
             }
 
             if (Input.GetButtonUp("ExtendedModifier"))
             {
-                _paintingModel.IsExtendedModifierActive = false;
+                PaintingModel.IsExtendedModifierActive = false;
             }
 
             if (Input.GetButtonDown("InverseModifier"))
             {
-                _paintingModel.IsInvertModifierActive = true;
+                PaintingModel.IsInvertModifierActive = true;
             }
             if (Input.GetButtonUp("InverseModifier"))
             {
-                _paintingModel.IsInvertModifierActive = false;
+                PaintingModel.IsInvertModifierActive = false;
             }
 
             
             var invocationData = GetInvocationDataFromPointer(_activePointerData);
-            var command = _paintingModel.SelectedPaintCommand;
+            var command = PaintingModel.SelectedPaintCommand;
 
             if (command != null && invocationData != null)
             {
@@ -90,7 +90,7 @@ namespace Votyra.Core.Painting
                 return null;
 
             var textureCoordinates = hitInfo.textureCoord.ToVector2f();
-            return (_uvToImage?.ReverseUV(textureCoordinates) ?? textureCoordinates).RoundToVector2i();
+            return (UVToImage?.ReverseUV(textureCoordinates) ?? textureCoordinates).RoundToVector2i();
         }
 
         private PaintInvocationData? GetInvocationDataFromPointer(PointerEventData eventData)
@@ -104,9 +104,9 @@ namespace Votyra.Core.Painting
             return new PaintInvocationData(strength, imagePosition.Value);
         }
 
-        private  int GetMultiplier()=> _paintingModel.IsInvertModifierActive ? -1 : 1;
+        private  int GetMultiplier()=> PaintingModel.IsInvertModifierActive ? -1 : 1;
 
-        private  int GetDistance()=>_paintingModel.IsExtendedModifierActive ? MaxDistBig : MaxDistSmall;
+        private  int GetDistance()=>PaintingModel.IsExtendedModifierActive ? MaxDistBig : MaxDistSmall;
         
     }
 }

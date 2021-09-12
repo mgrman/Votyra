@@ -35,7 +35,7 @@ namespace Votyra.Core.Models
             return Vector3f.Dot(observer - center, normal);
         }
 
-        public bool IsCCW(Vector3f observer)
+        public bool IsCcw(Vector3f observer)
         {
             var dot = DotWithObserver(observer);
             if (dot == 0f)
@@ -43,9 +43,9 @@ namespace Votyra.Core.Models
             return dot >= 0;
         }
 
-        public Triangle3f EnsureCCW(Vector3f observer)
+        public Triangle3f EnsureCcw(Vector3f observer)
         {
-            if (IsCCW(observer))
+            if (IsCcw(observer))
                 return this;
             return GetReversedOrder();
         }

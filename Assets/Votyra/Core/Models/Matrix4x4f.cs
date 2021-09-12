@@ -7,78 +7,78 @@ namespace Votyra.Core.Models
     /// </summary>
     public struct Matrix4x4f
     {
-        public static readonly Matrix4x4f zero = new Matrix4x4f(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        public static readonly Matrix4x4f Zero = new Matrix4x4f(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
-        public static readonly Matrix4x4f identity = new Matrix4x4f(1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f);
+        public static readonly Matrix4x4f Identity = new Matrix4x4f(1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f, 0.0f, 0.0f, 0.0f, 0.0f, 1f);
 
-        public readonly float m00;
-        public readonly float m10;
-        public readonly float m20;
-        public readonly float m30;
-        public readonly float m01;
-        public readonly float m11;
-        public readonly float m21;
-        public readonly float m31;
-        public readonly float m02;
-        public readonly float m12;
-        public readonly float m22;
-        public readonly float m32;
-        public readonly float m03;
-        public readonly float m13;
-        public readonly float m23;
-        public readonly float m33;
+        public readonly float M00;
+        public readonly float M10;
+        public readonly float M20;
+        public readonly float M30;
+        public readonly float M01;
+        public readonly float M11;
+        public readonly float M21;
+        public readonly float M31;
+        public readonly float M02;
+        public readonly float M12;
+        public readonly float M22;
+        public readonly float M32;
+        public readonly float M03;
+        public readonly float M13;
+        public readonly float M23;
+        public readonly float M33;
 
         public Matrix4x4f(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33)
         {
-            this.m00 = m00;
-            this.m10 = m10;
-            this.m20 = m20;
-            this.m30 = m30;
-            this.m01 = m01;
-            this.m11 = m11;
-            this.m21 = m21;
-            this.m31 = m31;
-            this.m02 = m02;
-            this.m12 = m12;
-            this.m22 = m22;
-            this.m32 = m32;
-            this.m03 = m03;
-            this.m13 = m13;
-            this.m23 = m23;
-            this.m33 = m33;
+            this.M00 = m00;
+            this.M10 = m10;
+            this.M20 = m20;
+            this.M30 = m30;
+            this.M01 = m01;
+            this.M11 = m11;
+            this.M21 = m21;
+            this.M31 = m31;
+            this.M02 = m02;
+            this.M12 = m12;
+            this.M22 = m22;
+            this.M32 = m32;
+            this.M03 = m03;
+            this.M13 = m13;
+            this.M23 = m23;
+            this.M33 = m33;
         }
 
-        public float Determinant => m03 * m12 * m21 * m30 - m02 * m13 * m21 * m30 - m03 * m11 * m22 * m30 + m01 * m13 * m22 * m30 + m02 * m11 * m23 * m30 - m01 * m12 * m23 * m30 - m03 * m12 * m20 * m31 + m02 * m13 * m20 * m31 + m03 * m10 * m22 * m31 - m00 * m13 * m22 * m31 - m02 * m10 * m23 * m31 + m00 * m12 * m23 * m31 + m03 * m11 * m20 * m32 - m01 * m13 * m20 * m32 - m03 * m10 * m21 * m32 + m00 * m13 * m21 * m32 + m01 * m10 * m23 * m32 - m00 * m11 * m23 * m32 - m02 * m11 * m20 * m33 + m01 * m12 * m20 * m33 + m02 * m10 * m21 * m33 - m00 * m12 * m21 * m33 - m01 * m10 * m22 * m33 + m00 * m11 * m22 * m33;
+        public float Determinant => M03 * M12 * M21 * M30 - M02 * M13 * M21 * M30 - M03 * M11 * M22 * M30 + M01 * M13 * M22 * M30 + M02 * M11 * M23 * M30 - M01 * M12 * M23 * M30 - M03 * M12 * M20 * M31 + M02 * M13 * M20 * M31 + M03 * M10 * M22 * M31 - M00 * M13 * M22 * M31 - M02 * M10 * M23 * M31 + M00 * M12 * M23 * M31 + M03 * M11 * M20 * M32 - M01 * M13 * M20 * M32 - M03 * M10 * M21 * M32 + M00 * M13 * M21 * M32 + M01 * M10 * M23 * M32 - M00 * M11 * M23 * M32 - M02 * M11 * M20 * M33 + M01 * M12 * M20 * M33 + M02 * M10 * M21 * M33 - M00 * M12 * M21 * M33 - M01 * M10 * M22 * M33 + M00 * M11 * M22 * M33;
 
         public Matrix4x4f Inverse => this.Invert();
 
         public static Matrix4x4f operator *(Matrix4x4f lhs, Matrix4x4f rhs)
         {
-            var m00 = lhs.m00 * rhs.m00 + lhs.m01 * rhs.m10 + lhs.m02 * rhs.m20 + lhs.m03 * rhs.m30;
-            var m01 = lhs.m00 * rhs.m01 + lhs.m01 * rhs.m11 + lhs.m02 * rhs.m21 + lhs.m03 * rhs.m31;
-            var m02 = lhs.m00 * rhs.m02 + lhs.m01 * rhs.m12 + lhs.m02 * rhs.m22 + lhs.m03 * rhs.m32;
-            var m03 = lhs.m00 * rhs.m03 + lhs.m01 * rhs.m13 + lhs.m02 * rhs.m23 + lhs.m03 * rhs.m33;
-            var m10 = lhs.m10 * rhs.m00 + lhs.m11 * rhs.m10 + lhs.m12 * rhs.m20 + lhs.m13 * rhs.m30;
-            var m11 = lhs.m10 * rhs.m01 + lhs.m11 * rhs.m11 + lhs.m12 * rhs.m21 + lhs.m13 * rhs.m31;
-            var m12 = lhs.m10 * rhs.m02 + lhs.m11 * rhs.m12 + lhs.m12 * rhs.m22 + lhs.m13 * rhs.m32;
-            var m13 = lhs.m10 * rhs.m03 + lhs.m11 * rhs.m13 + lhs.m12 * rhs.m23 + lhs.m13 * rhs.m33;
-            var m20 = lhs.m20 * rhs.m00 + lhs.m21 * rhs.m10 + lhs.m22 * rhs.m20 + lhs.m23 * rhs.m30;
-            var m21 = lhs.m20 * rhs.m01 + lhs.m21 * rhs.m11 + lhs.m22 * rhs.m21 + lhs.m23 * rhs.m31;
-            var m22 = lhs.m20 * rhs.m02 + lhs.m21 * rhs.m12 + lhs.m22 * rhs.m22 + lhs.m23 * rhs.m32;
-            var m23 = lhs.m20 * rhs.m03 + lhs.m21 * rhs.m13 + lhs.m22 * rhs.m23 + lhs.m23 * rhs.m33;
-            var m30 = lhs.m30 * rhs.m00 + lhs.m31 * rhs.m10 + lhs.m32 * rhs.m20 + lhs.m33 * rhs.m30;
-            var m31 = lhs.m30 * rhs.m01 + lhs.m31 * rhs.m11 + lhs.m32 * rhs.m21 + lhs.m33 * rhs.m31;
-            var m32 = lhs.m30 * rhs.m02 + lhs.m31 * rhs.m12 + lhs.m32 * rhs.m22 + lhs.m33 * rhs.m32;
-            var m33 = lhs.m30 * rhs.m03 + lhs.m31 * rhs.m13 + lhs.m32 * rhs.m23 + lhs.m33 * rhs.m33;
+            var m00 = lhs.M00 * rhs.M00 + lhs.M01 * rhs.M10 + lhs.M02 * rhs.M20 + lhs.M03 * rhs.M30;
+            var m01 = lhs.M00 * rhs.M01 + lhs.M01 * rhs.M11 + lhs.M02 * rhs.M21 + lhs.M03 * rhs.M31;
+            var m02 = lhs.M00 * rhs.M02 + lhs.M01 * rhs.M12 + lhs.M02 * rhs.M22 + lhs.M03 * rhs.M32;
+            var m03 = lhs.M00 * rhs.M03 + lhs.M01 * rhs.M13 + lhs.M02 * rhs.M23 + lhs.M03 * rhs.M33;
+            var m10 = lhs.M10 * rhs.M00 + lhs.M11 * rhs.M10 + lhs.M12 * rhs.M20 + lhs.M13 * rhs.M30;
+            var m11 = lhs.M10 * rhs.M01 + lhs.M11 * rhs.M11 + lhs.M12 * rhs.M21 + lhs.M13 * rhs.M31;
+            var m12 = lhs.M10 * rhs.M02 + lhs.M11 * rhs.M12 + lhs.M12 * rhs.M22 + lhs.M13 * rhs.M32;
+            var m13 = lhs.M10 * rhs.M03 + lhs.M11 * rhs.M13 + lhs.M12 * rhs.M23 + lhs.M13 * rhs.M33;
+            var m20 = lhs.M20 * rhs.M00 + lhs.M21 * rhs.M10 + lhs.M22 * rhs.M20 + lhs.M23 * rhs.M30;
+            var m21 = lhs.M20 * rhs.M01 + lhs.M21 * rhs.M11 + lhs.M22 * rhs.M21 + lhs.M23 * rhs.M31;
+            var m22 = lhs.M20 * rhs.M02 + lhs.M21 * rhs.M12 + lhs.M22 * rhs.M22 + lhs.M23 * rhs.M32;
+            var m23 = lhs.M20 * rhs.M03 + lhs.M21 * rhs.M13 + lhs.M22 * rhs.M23 + lhs.M23 * rhs.M33;
+            var m30 = lhs.M30 * rhs.M00 + lhs.M31 * rhs.M10 + lhs.M32 * rhs.M20 + lhs.M33 * rhs.M30;
+            var m31 = lhs.M30 * rhs.M01 + lhs.M31 * rhs.M11 + lhs.M32 * rhs.M21 + lhs.M33 * rhs.M31;
+            var m32 = lhs.M30 * rhs.M02 + lhs.M31 * rhs.M12 + lhs.M32 * rhs.M22 + lhs.M33 * rhs.M32;
+            var m33 = lhs.M30 * rhs.M03 + lhs.M31 * rhs.M13 + lhs.M32 * rhs.M23 + lhs.M33 * rhs.M33;
             return new Matrix4x4f(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
         }
 
         public static Vector4f operator *(Matrix4x4f lhs, Vector4f v)
         {
-            var x = (float) (lhs.m00 * (double) v.X + lhs.m01 * (double) v.Y + lhs.m02 * (double) v.Z + lhs.m03 * (double) v.W);
-            var y = (float) (lhs.m10 * (double) v.X + lhs.m11 * (double) v.Y + lhs.m12 * (double) v.Z + lhs.m13 * (double) v.W);
-            var z = (float) (lhs.m20 * (double) v.X + lhs.m21 * (double) v.Y + lhs.m22 * (double) v.Z + lhs.m23 * (double) v.W);
-            var w = (float) (lhs.m30 * (double) v.X + lhs.m31 * (double) v.Y + lhs.m32 * (double) v.Z + lhs.m33 * (double) v.W);
+            var x = (float) (lhs.M00 * (double) v.X + lhs.M01 * (double) v.Y + lhs.M02 * (double) v.Z + lhs.M03 * (double) v.W);
+            var y = (float) (lhs.M10 * (double) v.X + lhs.M11 * (double) v.Y + lhs.M12 * (double) v.Z + lhs.M13 * (double) v.W);
+            var z = (float) (lhs.M20 * (double) v.X + lhs.M21 * (double) v.Y + lhs.M22 * (double) v.Z + lhs.M23 * (double) v.W);
+            var w = (float) (lhs.M30 * (double) v.X + lhs.M31 * (double) v.Y + lhs.M32 * (double) v.Z + lhs.M33 * (double) v.W);
             return new Vector4f(x, y, z, w);
         }
 
@@ -88,18 +88,18 @@ namespace Votyra.Core.Models
 
         public static Matrix4x4f Rotate(Quaternion4f q)
         {
-            var num = q.x * 2f;
-            var num2 = q.y * 2f;
-            var num3 = q.z * 2f;
-            var num4 = q.x * num;
-            var num5 = q.y * num2;
-            var num6 = q.z * num3;
-            var num7 = q.x * num2;
-            var num8 = q.x * num3;
-            var num9 = q.y * num3;
-            var num10 = q.w * num;
-            var num11 = q.w * num2;
-            var num12 = q.w * num3;
+            var num = q.X * 2f;
+            var num2 = q.Y * 2f;
+            var num3 = q.Z * 2f;
+            var num4 = q.X * num;
+            var num5 = q.Y * num2;
+            var num6 = q.Z * num3;
+            var num7 = q.X * num2;
+            var num8 = q.X * num3;
+            var num9 = q.Y * num3;
+            var num10 = q.W * num;
+            var num11 = q.W * num2;
+            var num12 = q.W * num3;
             var m00 = 1f - (num5 + num6);
             var m10 = num7 + num12;
             var m20 = num8 - num11;
@@ -128,16 +128,16 @@ namespace Votyra.Core.Models
             switch (i)
             {
                 case 0:
-                    return new Vector4f(m00, m10, m20, m30);
+                    return new Vector4f(M00, M10, M20, M30);
 
                 case 1:
-                    return new Vector4f(m01, m11, m21, m31);
+                    return new Vector4f(M01, M11, M21, M31);
 
                 case 2:
-                    return new Vector4f(m02, m12, m22, m32);
+                    return new Vector4f(M02, M12, M22, M32);
 
                 case 3:
-                    return new Vector4f(m03, m13, m23, m33);
+                    return new Vector4f(M03, M13, M23, M33);
 
                 default:
                     throw new InvalidOperationException($"Unsuported column '{i}'! Column must be between 0-3.");
@@ -146,29 +146,29 @@ namespace Votyra.Core.Models
 
         public Vector3f MultiplyPoint(Vector3f v)
         {
-            var x = (float) (m00 * (double) v.X + m01 * (double) v.Y + m02 * (double) v.Z) + m03;
-            var y = (float) (m10 * (double) v.X + m11 * (double) v.Y + m12 * (double) v.Z) + m13;
-            var z = (float) (m20 * (double) v.X + m21 * (double) v.Y + m22 * (double) v.Z) + m23;
-            var num = 1f / ((float) (m30 * (double) v.X + m31 * (double) v.Y + m32 * (double) v.Z) + m33);
+            var x = (float) (M00 * (double) v.X + M01 * (double) v.Y + M02 * (double) v.Z) + M03;
+            var y = (float) (M10 * (double) v.X + M11 * (double) v.Y + M12 * (double) v.Z) + M13;
+            var z = (float) (M20 * (double) v.X + M21 * (double) v.Y + M22 * (double) v.Z) + M23;
+            var num = 1f / ((float) (M30 * (double) v.X + M31 * (double) v.Y + M32 * (double) v.Z) + M33);
             x *= num;
             y *= num;
             z *= num;
             return new Vector3f(x, y, z);
         }
 
-        public Vector3f MultiplyPoint3x4(Vector3f v)
+        public Vector3f MultiplyPoint3X4(Vector3f v)
         {
-            var x = (float) (m00 * (double) v.X + m01 * (double) v.Y + m02 * (double) v.Z) + m03;
-            var y = (float) (m10 * (double) v.X + m11 * (double) v.Y + m12 * (double) v.Z) + m13;
-            var z = (float) (m20 * (double) v.X + m21 * (double) v.Y + m22 * (double) v.Z) + m23;
+            var x = (float) (M00 * (double) v.X + M01 * (double) v.Y + M02 * (double) v.Z) + M03;
+            var y = (float) (M10 * (double) v.X + M11 * (double) v.Y + M12 * (double) v.Z) + M13;
+            var z = (float) (M20 * (double) v.X + M21 * (double) v.Y + M22 * (double) v.Z) + M23;
             return new Vector3f(x, y, z);
         }
 
         public Vector3f MultiplyVector(Vector3f v)
         {
-            var x = (float) (m00 * (double) v.X + m01 * (double) v.Y + m02 * (double) v.Z);
-            var y = (float) (m10 * (double) v.X + m11 * (double) v.Y + m12 * (double) v.Z);
-            var z = (float) (m20 * (double) v.X + m21 * (double) v.Y + m22 * (double) v.Z);
+            var x = (float) (M00 * (double) v.X + M01 * (double) v.Y + M02 * (double) v.Z);
+            var y = (float) (M10 * (double) v.X + M11 * (double) v.Y + M12 * (double) v.Z);
+            var z = (float) (M20 * (double) v.X + M21 * (double) v.Y + M22 * (double) v.Z);
             return new Vector3f(x, y, z);
         }
 
@@ -187,6 +187,6 @@ namespace Votyra.Core.Models
             return this == that;
         }
 
-        public override string ToString() => string.Format("{0:F5}\t{1:F5}\t{2:F5}\t{3:F5}\n{4:F5}\t{5:F5}\t{6:F5}\t{7:F5}\n{8:F5}\t{9:F5}\t{10:F5}\t{11:F5}\n{12:F5}\t{13:F5}\t{14:F5}\t{15:F5}\n", m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
+        public override string ToString() => string.Format("{0:F5}\t{1:F5}\t{2:F5}\t{3:F5}\n{4:F5}\t{5:F5}\t{6:F5}\t{7:F5}\n{8:F5}\t{9:F5}\t{10:F5}\t{11:F5}\n{12:F5}\t{13:F5}\t{14:F5}\t{15:F5}\n", M00, M01, M02, M03, M10, M11, M12, M13, M20, M21, M22, M23, M30, M31, M32, M33);
     }
 }

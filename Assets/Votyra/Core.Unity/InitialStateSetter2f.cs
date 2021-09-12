@@ -63,7 +63,7 @@ namespace Votyra.Core.Images
         {
             var bounds = colliders.Select(o => o.bounds)
                 .Select(o => Area3f.FromMinAndSize(o.min.ToVector3f(), o.size.ToVector3f()))
-                .DefaultIfEmpty(Area3f.zero)
+                .DefaultIfEmpty(Area3f.Zero)
                 .Aggregate((a, b) => a.Encapsulate(b));
 
             using (var imageAccessor = editableImage.RequestAccess(Range2i.All))

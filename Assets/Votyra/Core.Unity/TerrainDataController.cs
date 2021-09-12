@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Votyra.Core.Utils;
 using Zenject;
 
@@ -11,13 +12,13 @@ namespace Votyra.Core.Unity
     public class TerrainDataController : MonoBehaviour
     {
         [SerializeField]
-        public int _activeTerrainAlgorithm;
+        public int ActiveTerrainAlgorithm;
 
         [NonSerialized]
         private GameObject _activeTerrainRoot;
 
         [SerializeField]
-        public GameObject[] _availableTerrainAlgorithms;
+        public GameObject[] AvailableTerrainAlgorithms;
 
         private ITerrainManagerModel _terrainManagerModel;
 
@@ -91,61 +92,21 @@ namespace Votyra.Core.Unity
         private void UpdateModel()
         {
             if (_terrainManagerModel == null)
+            {
                 return;
-            // if (_keepImageChanges && _activeTerrainRoot != null)
-            // {
-            //     Debug.Log("Has old values");
-            //     var goContext = _activeTerrainRoot.GetComponentInChildren<GameObjectContext>();
-            //     var oldImageConfig = goContext.Container.Resolve<IImageConfig>();
-            //     var oldImage2i = goContext.Container.TryResolve<IImage2iProvider>();
-            //     var oldImage3b = goContext.Container.TryResolve<IImage3bProvider>();
-            //     if (oldImage2i != null && oldImage3b != null)
-            //     {
-            //         Debug.LogWarning("Previous algorithm worked in 2d and 3d mode. Using 2D data to keep.");
-            //     }
+            }
 
-            //     if (oldImage2i != null)
-            //     {
-            //         var image = oldImage2i.CreateImage();
-            //         var matrix = new Matrix2<Height>(oldImageConfig.ImageSize.XY);
-            //         matrix.Size
-            //             .ToRange2i()
-            //             .ForeachPointExlusive(i =>
-            //             {
-            //                 matrix[i] = image.Sample(i);
-            //             });
-
-            //         _initialDataFromPrevious = matrix;
-            //     }
-            //     else if (oldImage3b != null)
-            //     {
-            //         var image = oldImage3b.CreateImage();
-            //         var matrix = new Matrix3<bool>(oldImageConfig.ImageSize);
-            //         matrix.Size
-            //             .ToRange3i()
-            //             .ForeachPointExlusive(i =>
-            //             {
-            //                 matrix[i] = image.Sample(i);
-            //             });
-            //         _initialDataFromPrevious = matrix;
-            //     }
-            // }
-            // else
-            // {
-            //     _initialDataFromPrevious = null;
-            // }
-
-            var availableAlgorithms = _availableTerrainAlgorithms.EmptyIfNull()
+            var availableAlgorithms = AvailableTerrainAlgorithms.EmptyIfNull()
                 .Select(o => new TerrainAlgorithm(o.name, o))
                 .ToArray();
             if (!_terrainManagerModel.AvailableAlgorithms.SequenceEqual(availableAlgorithms))
                 _terrainManagerModel.AvailableAlgorithms = availableAlgorithms;
 
             TerrainAlgorithm activeAlgorithm;
-            if (_activeTerrainAlgorithm < 0 || _activeTerrainAlgorithm >= availableAlgorithms.Length)
+            if (ActiveTerrainAlgorithm < 0 || ActiveTerrainAlgorithm >= availableAlgorithms.Length)
                 activeAlgorithm = null;
             else
-                activeAlgorithm = availableAlgorithms.Skip(_activeTerrainAlgorithm)
+                activeAlgorithm = availableAlgorithms.Skip(ActiveTerrainAlgorithm)
                     .FirstOrDefault();
             if (_terrainManagerModel.ActiveAlgorithm != activeAlgorithm)
                 _terrainManagerModel.ActiveAlgorithm = activeAlgorithm;

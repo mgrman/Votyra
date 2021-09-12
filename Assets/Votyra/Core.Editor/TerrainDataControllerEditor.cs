@@ -77,7 +77,7 @@ namespace Votyra.Core.Editor
         public override void OnInspectorGUI()
         {
             var controller = target as TerrainDataController;
-            var list = new ReorderableList(serializedObject, serializedObject.FindProperty(nameof(TerrainDataController._availableTerrainAlgorithms)), true, true, true, true);
+            var list = new ReorderableList(serializedObject, serializedObject.FindProperty(nameof(TerrainDataController.AvailableTerrainAlgorithms)), true, true, true, true);
             list.drawHeaderCallback = rect =>
             {
                 EditorGUI.LabelField(rect, "Terrain algorithms");
@@ -86,11 +86,11 @@ namespace Votyra.Core.Editor
             {
                 var element = list.serializedProperty.GetArrayElementAtIndex(index);
                 rect.y += 2;
-                var isSelected = index == controller._activeTerrainAlgorithm;
+                var isSelected = index == controller.ActiveTerrainAlgorithm;
 
                 isSelected = EditorGUI.Toggle(new Rect(rect.x, rect.y, 20, EditorGUIUtility.singleLineHeight), GUIContent.none, isSelected, EditorStyles.radioButton);
                 if (isSelected)
-                    controller._activeTerrainAlgorithm = index;
+                    controller.ActiveTerrainAlgorithm = index;
 
                 EditorGUI.PropertyField(new Rect(rect.x + 20, rect.y, rect.width - 20, EditorGUIUtility.singleLineHeight), element, GUIContent.none);
             };
@@ -102,10 +102,10 @@ namespace Votyra.Core.Editor
             var oldConfigValues = controller.Config.ToList();
             var newConfigValues = new List<ConfigItem>();
 
-            if (controller._activeTerrainAlgorithm < 0 || controller._activeTerrainAlgorithm >= controller._availableTerrainAlgorithms.Length)
-                controller._activeTerrainAlgorithm = 0;
+            if (controller.ActiveTerrainAlgorithm < 0 || controller.ActiveTerrainAlgorithm >= controller.AvailableTerrainAlgorithms.Length)
+                controller.ActiveTerrainAlgorithm = 0;
 
-            var activeAlgorith = controller._availableTerrainAlgorithms[controller._activeTerrainAlgorithm];
+            var activeAlgorith = controller.AvailableTerrainAlgorithms[controller.ActiveTerrainAlgorithm];
             if (activeAlgorith != null)
             {
                 var configTypes = GetConfigTypes(activeAlgorith);
