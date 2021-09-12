@@ -20,7 +20,7 @@ namespace Votyra.Core.GroupSelectors
                 .XY;
 
             var localCameraBounds = Area2f.FromMinAndSize(cameraPositionLocal, new Vector2f());
-            for (var i = 0; i < frustumCorners.Count; i++)
+            for (var i = 0; i < frustumCorners.Length; i++)
             {
                 var frustumCorner = frustumCorners[i];
                 var vector = parentContainerWorldToLocalMatrix.MultiplyPoint(cameraLocalToWorldMatrix.MultiplyVector(frustumCorner))

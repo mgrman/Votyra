@@ -40,9 +40,10 @@ namespace Votyra.Plannar
 
             var localToProjection = camera.projectionMatrix * camera.worldToCameraMatrix * _root.transform.localToWorldMatrix;
             var planesUnity = PooledArrayContainer<Plane>.CreateDirty(6);
-            GeometryUtility.CalculateFrustumPlanes(localToProjection, planesUnity.Array);
-            var planes = planesUnity.ToPlane3f();
-            planesUnity.Dispose();
+            var planes = PooledArrayContainer<Plane3f>.CreateDirty(planesUnity.Length);
+            GeometryUtility.CalculateFrustumPlanes(localToProjection, planesUnity);
+            planesUnity.ToPlane3f(planes);
+            PooledArrayContainer<Plane>.Return(planesUnity);
 
             foreach (var plane in planes)
             {
@@ -55,7 +56,10 @@ namespace Votyra.Plannar
 
             var localToWorldMatrix = camera.transform.localToWorldMatrix;
             if (computedOnce && localToWorldMatrix == _previousCameraMatrix && (image as IImageInvalidatableImage2)?.InvalidatedArea == Range2i.Zero)
+            {
+                PooledArrayContainer<Plane3f>.Return(planes);
                 return null;
+            }
 
             _previousCameraMatrix = localToWorldMatrix;
 
@@ -64,9 +68,10 @@ namespace Votyra.Plannar
             image = _image2fPostProcessor?.PostProcess(image) ?? image;
 
             var frustumCornersUnity = PooledArrayContainer<Vector3>.CreateDirty(4);
-            camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);
-            var frustumCorners = frustumCornersUnity.ToVector3f();
-            frustumCornersUnity.Dispose();
+            var frustumCorners = PooledArrayContainer<Vector3f>.CreateDirty(planesUnity.Length);
+            camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity);
+            frustumCornersUnity.ToVector3f(frustumCorners);
+            PooledArrayContainer<Vector3>.Return(frustumCornersUnity);
 
             var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
             invalidatedArea = invalidatedArea.ExtendBothDirections(meshTopologyDistance);

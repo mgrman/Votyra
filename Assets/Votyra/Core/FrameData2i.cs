@@ -9,11 +9,11 @@ namespace Votyra.Core
     {
         private int _activeCounter;
 
-        public FrameData2i(Vector3f cameraPosition, IReadOnlyPooledList<Plane3f> cameraPlanes, IReadOnlyPooledList<Vector3f> cameraFrustumCorners, Matrix4x4f cameraLocalToWorldMatrix, Matrix4x4f parentContainerWorldToLocalMatrix, IImage2f image, Range2i invalidatedArea, Vector2i cellInGroupCount, int meshSubdivision)
+        public FrameData2i(Vector3f cameraPosition, Plane3f[] cameraPlanes_pooled, Vector3f[] cameraFrustumCorners_pooled, Matrix4x4f cameraLocalToWorldMatrix, Matrix4x4f parentContainerWorldToLocalMatrix, IImage2f image, Range2i invalidatedArea, Vector2i cellInGroupCount, int meshSubdivision)
         {
             CameraPosition = cameraPosition;
-            CameraPlanes = cameraPlanes;
-            CameraFrustumCorners = cameraFrustumCorners;
+            CameraPlanes = cameraPlanes_pooled;
+            CameraFrustumCorners = cameraFrustumCorners_pooled;
             CameraLocalToWorldMatrix = cameraLocalToWorldMatrix;
             ParentContainerWorldToLocalMatrix = parentContainerWorldToLocalMatrix;
             Image = image;
@@ -28,9 +28,13 @@ namespace Votyra.Core
         }
 
         public Vector3f CameraPosition { get; }
-        public IReadOnlyPooledList<Plane3f> CameraPlanes { get; }
-        public IReadOnlyPooledList<Vector3f> CameraFrustumCorners { get; }
+        
+        public Plane3f[] CameraPlanes { get; }
+        
+        public Vector3f[] CameraFrustumCorners { get; }
+        
         public Matrix4x4f CameraLocalToWorldMatrix { get; }
+        
         public Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
 
         public void Activate()
@@ -53,6 +57,8 @@ namespace Votyra.Core
 
         private void Dispose()
         {
+            PooledArrayContainer<Plane3f>.Return(CameraPlanes);
+            PooledArrayContainer<Vector3f>.Return(CameraFrustumCorners);
             CameraPlanes.TryDispose();
             CameraFrustumCorners.TryDispose();
             (Image as IInitializableImage)?.FinishUsing();

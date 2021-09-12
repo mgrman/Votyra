@@ -134,8 +134,14 @@ namespace Votyra.Core
         private ITerrainGroupGeneratorManager2i CreateGroupManager( Vector2i newGroup)
         {
             if (_terrainConfig.Async)
-                return new AsyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup, _onDestroyCts.Token, CreatePooledTerrainMesh(), GetMeshStrategy());
-            return new SyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup, _onDestroyCts.Token, CreatePooledTerrainMesh(), GetMeshStrategy());
+            {
+                return new AsyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup,
+                    _onDestroyCts.Token, CreatePooledTerrainMesh(), GetMeshStrategy());
+            }
+            else
+            {
+                return new SyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup, _onDestroyCts.Token, CreatePooledTerrainMesh(), GetMeshStrategy());
+            }
         }
 
         private IPooledTerrainMesh CreatePooledTerrainMesh()

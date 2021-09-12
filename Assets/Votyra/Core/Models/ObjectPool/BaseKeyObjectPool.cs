@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.Profiling;
 
 namespace Votyra.Core.Models.ObjectPool
 {
@@ -23,12 +24,16 @@ namespace Votyra.Core.Models.ObjectPool
             T obj;
             if (objectPool.Count > 0)
             {
+                Profiler.BeginSample("removing from pool");
                 obj = objectPool[objectPool.Count - 1];
                 objectPool.RemoveAt(objectPool.Count - 1);
+                Profiler.EndSample();
             }
             else
             {
+                Profiler.BeginSample("creating new");
                 obj = _objectGenerator(key);
+                Profiler.EndSample();
             }
 
             return obj;

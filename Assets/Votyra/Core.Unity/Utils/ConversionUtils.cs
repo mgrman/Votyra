@@ -11,38 +11,28 @@ namespace Votyra.Core.Utils
 
         public static Vector3f ToVector3f(this Vector3 vector) => new Vector3f(vector.x, vector.y, vector.z);
 
-        public static PooledArrayContainer<Vector3f> ToVector3f(this PooledArrayContainer<Vector3> planesUnity)
+        public static void ToVector3f(this Vector3[] planesUnity, Vector3f[] votyraArray)
         {
-            var unityArray = planesUnity.Array;
-
-            var container = PooledArrayContainer<Vector3f>.CreateDirty(unityArray.Length);
-            var votyraArray = container.Array;
-
-            for (var i = 0; i < unityArray.Length; i++)
+            for (var i = 0; i < planesUnity.Length; i++)
             {
-                votyraArray[i] = unityArray[i]
+                votyraArray[i] = planesUnity[i]
                     .ToVector3f();
             }
 
-            return container;
         }
 
         public static Plane3f ToPlane3f(this Plane plane) => new Plane3f(plane.normal.ToVector3f(), plane.distance);
 
-        public static PooledArrayContainer<Plane3f> ToPlane3f(this PooledArrayContainer<Plane> planesUnity)
+        public static void ToPlane3f(this Plane[] planesUnity,Plane3f[] votyraArray )
         {
-            var unityArray = planesUnity.Array;
+            var unityArray = planesUnity;
 
-            var container = PooledArrayContainer<Plane3f>.CreateDirty(unityArray.Length);
-            var votyraArray = container.Array;
 
             for (var i = 0; i < unityArray.Length; i++)
             {
                 votyraArray[i] = unityArray[i]
                     .ToPlane3f();
             }
-
-            return container;
         }
 
         public static Vector2 ToVector2(this Vector2f vector) => new Vector2(vector.X, vector.Y);
