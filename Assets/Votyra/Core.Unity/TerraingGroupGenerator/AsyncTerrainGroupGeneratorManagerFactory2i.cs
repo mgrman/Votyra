@@ -18,7 +18,7 @@ namespace Votyra.Core
             _terrainMesher = terrainMesher;
             _terrainMeshUpdater = terrainMeshUpdater;
             _gameObjectFactory = gameObjectFactory;
-            _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+            _cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
         private readonly ITerrainMeshFactory _terrainMeshFactory;

@@ -1,25 +1,38 @@
 using System;
+using Newtonsoft.Json;
 using Votyra.Core.Utils;
 
 namespace Votyra.Core.Models
 {
     public struct Vector2i : IEquatable<Vector2i>
     {
+        [JsonIgnore]
         public static readonly Vector2i Zero = new Vector2i();
+        
+        [JsonIgnore]
         public static readonly Vector2i One = new Vector2i(1, 1);
+        
         public readonly int X;
+        
         public readonly int Y;
 
+        [JsonConstructor]
         public Vector2i(int x, int y)
         {
             X = x;
             Y = y;
         }
 
+        [JsonIgnore]
         public bool AnyNegative => X < 0 || Y < 0;
+        
+        [JsonIgnore]
         public bool AnyZero => X == 0 || Y == 0;
+        
+        [JsonIgnore]
         public bool AnyZeroOrNegative => X <= 0 || Y <= 0;
 
+        [JsonIgnore]
         public int AreaSum => X * Y;
 
         public static Vector2i FromSame(int value) => new Vector2i(value, value);

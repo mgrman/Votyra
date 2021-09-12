@@ -9,9 +9,7 @@ namespace Votyra.Core.Painting
 {
     public class PaintingModel : IPaintingModel, IDisposable
     {
-        private readonly IThreadSafeLogger _logger;
         private IPaintCommand _selectedPaintCommand;
-
 
         public IReadOnlyList<IPaintCommand> PaintCommands { get; }
 
@@ -21,9 +19,8 @@ namespace Votyra.Core.Painting
         
         public bool IsInvertModifierActive { get; set; }
         
-        public PaintingModel(List<IPaintCommand> commands, IThreadSafeLogger logger)
+        public PaintingModel(List<IPaintCommand> commands)
         {
-            _logger = logger;
             PaintCommands = commands;
         }
 

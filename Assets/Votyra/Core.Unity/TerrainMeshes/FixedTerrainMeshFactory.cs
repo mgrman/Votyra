@@ -14,7 +14,7 @@ namespace Votyra.Core.TerrainMeshes
             _interpolationConfig = interpolationConfig;
             _vertexPostProcessor = vertexPostProcessor;
             _uvPostProcessor = uvPostProcessor;
-            _cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+            _cellInGroupCount = terrainConfig.CellInGroupCount;
         }
 
         private readonly IInterpolationConfig _interpolationConfig;

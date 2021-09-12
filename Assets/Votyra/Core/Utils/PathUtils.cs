@@ -5,8 +5,6 @@ namespace Votyra.Core.Utils
 {
     public static class PathUtils
     {
-
-        
         public static void InvokeOnPath(Vector2i? from, Vector2i to,  Action<Vector2i> action)
         {
             if (from == null)

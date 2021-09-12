@@ -14,39 +14,35 @@ namespace Votyra.Core
         private readonly Dictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups =
             new Dictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
 
-        private readonly Vector2i _cellInGroupCount;
-
         private readonly IFrameDataProvider2i _frameDataProvider;
-
-        private readonly HashSet<Vector2i> _groupsToRecompute = new HashSet<Vector2i>();
-
-        private readonly IInterpolationConfig _interpolationConfig;
-
-        private readonly int _meshTopologyDistance;
 
         private readonly CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
         private readonly IStateModel _stateModel;
 
-        private readonly ITerrainConfig _terrainConfig;
-
         private readonly TaskFactory _taskFactory = new TaskFactory();
         
         private readonly ITerrainGroupGeneratorManagerFactory2i _groupFactory;
+        
+        private readonly IGroupsByCameraVisibilitySelector2i _groupsByCameraVisibilitySelector;
+
+        private readonly Func<IFrameData2i, Task> _updateFunc; 
 
         private bool _computedOnce;
 
         private Task _waitForTask = Task.CompletedTask;
 
-        public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IStateModel stateModel, IFrameDataProvider2i frameDataProvider, IInterpolationConfig interpolationConfig,ITerrainGroupGeneratorManagerFactory2i groupFactory)
+        public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IStateModel stateModel, IFrameDataProvider2i frameDataProvider, IInterpolationConfig interpolationConfig,ITerrainGroupGeneratorManagerFactory2i groupFactory, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector)
         {
-            _terrainConfig = terrainConfig;
-            _cellInGroupCount = _terrainConfig.CellInGroupCount.XY;
             _stateModel = stateModel;
             _frameDataProvider = frameDataProvider;
-            _interpolationConfig = interpolationConfig;
-            _meshTopologyDistance = _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
             _groupFactory = groupFactory;
+            _groupsByCameraVisibilitySelector = groupsByCameraVisibilitySelector;
+            _groupsByCameraVisibilitySelector.OnAdd += OnAddedGroup;
+            _groupsByCameraVisibilitySelector.OnRemove += OnRemovedGroup;
+            _updateFunc = terrainConfig.Async
+                ? (Func<IFrameData2i, Task>)UpdateTerrainInBackground
+                : (Func<IFrameData2i, Task>)UpdateTerrainInForegroud;
         }
 
         public void Dispose()
@@ -59,14 +55,12 @@ namespace Votyra.Core
             if (_onDestroyCts.IsCancellationRequested || !_stateModel.IsEnabled || !_waitForTask.IsCompleted)
                 return;
 
-            var context = _frameDataProvider.GetCurrentFrameData(_meshTopologyDistance, _computedOnce);
+            var context = _frameDataProvider.GetCurrentFrameData(_computedOnce);
 
             if (context != null)
             {
                 context?.Activate();
-                _waitForTask = _terrainConfig.Async
-                    ? UpdateTerrainInBackground(context)
-                    : UpdateTerrainInForegroud(context);
+                _waitForTask = _updateFunc(context);
                 _computedOnce = true;
             }
         }
@@ -104,10 +98,7 @@ namespace Votyra.Core
 
         private void HandleVisibilityUpdates(IFrameData2i context)
         {
-            context.UpdateGroupsVisibility(_cellInGroupCount,
-                _groupsToRecompute,
-                OnAddedGroup,
-                OnRemovedGroup);
+            _groupsByCameraVisibilitySelector.UpdateGroupsVisibility(context);
         }
 
         private void OnRemovedGroup(Vector2i removedGroup)

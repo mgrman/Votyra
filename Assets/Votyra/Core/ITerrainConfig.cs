@@ -4,8 +4,7 @@ namespace Votyra.Core
 {
     public interface ITerrainConfig : IConfig
     {
-        Vector3i CellInGroupCount { get; }
-        bool DrawBounds { get; }
+        Vector2i CellInGroupCount { get; }
         bool Async { get; }
     }
 }

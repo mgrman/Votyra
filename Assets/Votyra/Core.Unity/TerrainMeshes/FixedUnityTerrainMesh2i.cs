@@ -13,10 +13,15 @@ namespace Votyra.Core.TerrainMeshes
         public Bounds MeshBounds { get; private set; }
 
         public Func<Vector3f, Vector3f> VertexPostProcessor { get; private set; }
+        
         public Func<Vector2f, Vector2f> UVAdjustor { get; private set; }
+        
         public Vector3[] Vertices { get; private set; }
+        
         public Vector3[] Normals { get; private set; }
+        
         public Vector2[] UV { get; private set; }
+        
         public int[] Indices { get; private set; }
 
         public int TriangleCount => _counter / 3;

@@ -20,7 +20,7 @@ namespace Votyra.Core.Images
         public EditableMatrixImage2f(IImageConfig imageConfig, IImageConstraint2i constraint = null)
         {
             _constraint = constraint;
-            _editableMatrix = new Matrix2<float>(imageConfig.ImageSize.XY);
+            _editableMatrix = new Matrix2<float>(imageConfig.ImageSize);
             _editableRangeZ = new Area1f(_editableMatrix[0, 0], _editableMatrix[0, 0]);
         }
 

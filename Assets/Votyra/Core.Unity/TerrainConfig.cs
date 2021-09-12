@@ -4,10 +4,9 @@ namespace Votyra.Core.Images
 {
     public class TerrainConfig : ITerrainConfig
     {
-        public TerrainConfig([ConfigInject("cellInGroupCount")] Vector3i cellInGroupCount, [ConfigInject("drawBounds")] bool drawBounds, [ConfigInject("async")] bool async)
+        public TerrainConfig([ConfigInject("cellInGroupCount")] Vector2i cellInGroupCount, [ConfigInject("async")] bool async)
         {
             CellInGroupCount = cellInGroupCount;
-            DrawBounds = drawBounds;
 #if UNITY_WEBGL && !UNITY_EDITOR
             Async = false;
 #else
@@ -15,9 +14,7 @@ namespace Votyra.Core.Images
 #endif
         }
 
-        public Vector3i CellInGroupCount { get; }
-        
-        public bool DrawBounds { get; }
+        public Vector2i CellInGroupCount { get; }
         
         public bool Async { get; }
 
@@ -31,14 +28,14 @@ namespace Votyra.Core.Images
                 return false;
             var that = obj as TerrainConfig;
 
-            return CellInGroupCount == that.CellInGroupCount && DrawBounds == that.DrawBounds && Async == that.Async;
+            return CellInGroupCount == that.CellInGroupCount  && Async == that.Async;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return CellInGroupCount.GetHashCode() * 3 + DrawBounds.GetHashCode() * 7 + Async.GetHashCode() * 13;
+                return CellInGroupCount.GetHashCode() * 3 + Async.GetHashCode() * 13;
             }
         }
     }

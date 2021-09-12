@@ -4,12 +4,12 @@ namespace Votyra.Core.Images
 {
     public class ImageConfig : IImageConfig
     {
-        public ImageConfig([ConfigInject("imageSize")] Vector3i imageSize)
+        public ImageConfig([ConfigInject("imageSize")] Vector2i imageSize)
         {
             ImageSize = imageSize;
         }
 
-        public Vector3i ImageSize { get; }
+        public Vector2i ImageSize { get; }
 
         public static bool operator ==(ImageConfig a, ImageConfig b) => a?.Equals(b) ?? b?.Equals(a) ?? true;
 

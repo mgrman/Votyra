@@ -201,6 +201,14 @@ namespace Votyra.Core.Editor
                         .GetValue(0) as Enum;
                 newValue = EditorGUILayout.EnumPopup(oldEnumValue, GUILayout.MaxWidth(200));
             }
+            else if (typeof(Vector2i).IsAssignableFrom(type))
+            {
+                var oldVector2iValue = oldValue as Vector2i? ?? Vector2i.Zero;
+                var newVector2Value = EditorGUILayout.Vector2Field("", oldVector2iValue.ToVector2f()
+                    .ToVector2(), GUILayout.MaxWidth(200));
+                newValue = newVector2Value.ToVector2f()
+                    .RoundToVector2i();
+            }
             else if (typeof(Vector3i).IsAssignableFrom(type))
             {
                 var oldVector3iValue = oldValue as Vector3i? ?? Vector3i.Zero;

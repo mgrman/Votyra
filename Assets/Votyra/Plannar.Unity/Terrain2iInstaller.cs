@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using Votyra.Core;
-using Votyra.Core.Behaviours;
+using Votyra.Core.GroupSelectors;
 using Votyra.Core.Images;
 using Votyra.Core.Images.Constraints;
 using Votyra.Core.MeshUpdaters;
@@ -19,10 +19,11 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager2i(null, null, null, null, null);
+            new TerrainGeneratorManager2i(null, null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
-            throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
+            throw new InvalidOperationException(
+                "This method is used for AOT code generation only. Do not call it at runtime.");
         }
 
         public override void InstallBindings()
@@ -46,6 +47,8 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .When(context => context.Container.Resolve<IInterpolationConfig>().IsBicubic);
             Container.BindInterfacesAndSelfTo<TerrainMeshUpdater>()
+                .AsSingle();
+            Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector2i>()
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<ExpandingTerrainMeshFactory>()
                 .AsSingle()
@@ -113,8 +116,6 @@ namespace Votyra.Plannar.Unity
         {
             var go = new GameObject();
             go.transform.SetParent(root.transform, false);
-            if (terrainConfig.DrawBounds)
-                go.AddComponent<DrawBounds>();
             var meshRenderer = go.GetOrAddComponent<MeshRenderer>();
             meshRenderer.materials = ArrayUtils.CreateNonNull(materialConfig.Material, materialConfig.MaterialWalls);
 

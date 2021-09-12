@@ -13,7 +13,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public BicubicTerrainMesher2f(ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig)
         {
-            cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+            cellInGroupCount = terrainConfig.CellInGroupCount;
             subdivision = interpolationConfig.MeshSubdivision;
         }
 

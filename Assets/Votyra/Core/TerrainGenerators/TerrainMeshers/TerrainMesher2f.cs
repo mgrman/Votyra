@@ -12,7 +12,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 
         public TerrainMesher2f(ITerrainConfig terrainConfig)
         {
-            cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+            cellInGroupCount = terrainConfig.CellInGroupCount;
         }
         
         public void UpdateMesh(ITerrainMesh mesh, Vector2i group, IImage2f image)

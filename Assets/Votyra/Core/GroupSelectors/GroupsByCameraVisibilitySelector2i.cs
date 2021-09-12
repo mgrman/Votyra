@@ -4,9 +4,21 @@ using Votyra.Core.Models;
 
 namespace Votyra.Core.GroupSelectors
 {
-    public static class GroupsByCameraVisibilitySelector2i
+    public class GroupsByCameraVisibilitySelector2i : IGroupsByCameraVisibilitySelector2i
     {
-        public static void UpdateGroupsVisibility(this IFrameData2i options, Vector2i cellInGroupCount, HashSet<Vector2i> groupsToRecompute, Action<Vector2i> onAdd, Action<Vector2i> onRemove)
+        private Vector2i _cellInGroupCount;
+
+        private readonly HashSet<Vector2i> _groupsToRecompute = new HashSet<Vector2i>();
+
+        public GroupsByCameraVisibilitySelector2i(ITerrainConfig terrainConfig)
+        {
+            _cellInGroupCount = terrainConfig.CellInGroupCount;
+        }
+
+        public event Action<Vector2i> OnAdd;
+        public event Action<Vector2i> OnRemove;
+        
+        public void UpdateGroupsVisibility(IFrameData2i options )
         {
             if (options == null)
                 return;
@@ -28,21 +40,23 @@ namespace Votyra.Core.GroupSelectors
                 localCameraBounds = localCameraBounds.Encapsulate(cameraPositionLocal + vector);
             }
 
-            var cameraBoundsGroups = (localCameraBounds / cellInGroupCount.ToVector2f()).RoundToContain();
+            var cameraBoundsGroups = (localCameraBounds / _cellInGroupCount.ToVector2f()).RoundToContain();
 
             var minZ = options.RangeZ.Min;
-            var boundsSize = new Vector2f(cellInGroupCount.X, cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
+            var boundsSize = new Vector2f(_cellInGroupCount.X, _cellInGroupCount.Y).ToVector3f(options.RangeZ.Size);
 
-            groupsToRecompute.RemoveWhere(group =>
+            _groupsToRecompute.RemoveWhere(group =>
             {
-                var groupBoundsMin = (group * cellInGroupCount).ToVector2f()
+                var groupBoundsMin = (group * _cellInGroupCount).ToVector2f()
                     .ToVector3f(minZ);
                 var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
                 var isInside = planes.TestPlanesAABB(groupBounds);
                 if (isInside)
+                {
                     return false;
+                }
 
-                onRemove.Invoke(group);
+                OnRemove?.Invoke(group);
                 return true;
             });
 
@@ -51,15 +65,19 @@ namespace Votyra.Core.GroupSelectors
                 for (int iy = cameraBoundsGroups.Min.Y; iy < cameraBoundsGroups.Max.Y; iy++)
                 {
                     var group = new Vector2i(ix, iy);
-                    var groupBoundsMin = (group * cellInGroupCount).ToVector2f()
+                    var groupBoundsMin = (group * _cellInGroupCount).ToVector2f()
                         .ToVector3f(minZ);
                     var groupBounds = Area3f.FromMinAndSize(groupBoundsMin, boundsSize);
                     var isInside = planes.TestPlanesAABB(groupBounds);
                     if (!isInside)
+                    {
                         continue;
+                    }
 
-                    if (groupsToRecompute.Add(group))
-                        onAdd.Invoke(group);
+                    if (_groupsToRecompute.Add(group))
+                    {
+                        OnAdd?.Invoke(group);
+                    }
                 }
             }
         }

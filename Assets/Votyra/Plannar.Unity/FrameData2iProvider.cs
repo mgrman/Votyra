@@ -8,32 +8,28 @@ using Zenject;
 
 namespace Votyra.Plannar.Unity
 {
-    //TODO: move to floats
     public class FrameData2iProvider : IFrameDataProvider2i
     {
         private readonly IImage2fPostProcessor _image2fPostProcessor;
         
         private readonly IImage2fProvider _imageProvider;
         
-        private readonly IInterpolationConfig _interpolationConfig;
-        
         private readonly GameObject _root;
-        
-        private readonly ITerrainConfig _terrainConfig;
 
         private Matrix4x4 _previousCameraMatrix;
+        
+        private readonly int _meshTopologyDistance;
 
         [Inject]
-        public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root")] GameObject root)
+        public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, IInterpolationConfig interpolationConfig, [Inject(Id = "root")] GameObject root)
         {
             _image2fPostProcessor = image2FPostProcessor;
             _imageProvider = imageProvider;
-            _terrainConfig = terrainConfig;
-            _interpolationConfig = interpolationConfig;
             _root = root;
+            _meshTopologyDistance = interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
         }
 
-        public IFrameData2i GetCurrentFrameData(int meshTopologyDistance, bool computedOnce)
+        public IFrameData2i GetCurrentFrameData(bool computedOnce)
         {
             var camera = CameraUtils.MainCamera;
             var image = _imageProvider.CreateImage();
@@ -74,7 +70,7 @@ namespace Votyra.Plannar.Unity
             PooledArrayContainer<Vector3>.Return(frustumCornersUnity);
 
             var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
-            invalidatedArea = invalidatedArea.ExtendBothDirections(meshTopologyDistance);
+            invalidatedArea = invalidatedArea.ExtendBothDirections(_meshTopologyDistance);
 
             return new FrameData2i(camera.transform.position.ToVector3f(), planes, frustumCorners, localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), image, invalidatedArea);
         }
