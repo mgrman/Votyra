@@ -45,20 +45,6 @@ namespace Votyra.Plannar.Unity
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<EditableMatrixMask2e>()
                 .AsSingle();
-            Container.BindInterfacesAndSelfTo<InterpolatedImage2iTo2fPostProcessor>()
-                .AsSingle();
-
-            Container.BindInterfacesAndSelfTo<InterpolatedUVPostProcessorStep>()
-                .AsSingle()
-                .When(c =>
-                {
-                    var config = c.Container.Resolve<IInterpolationConfig>();
-                    return config.ImageSubdivision>1;
-                });
-            Container.Bind<ScaleAdjustor>()
-                .ToSelf()
-                .AsSingle()
-                .NonLazy();
 
             var meshRoot = new GameObject("MeshRoot");
             meshRoot.transform.SetParent(transform, false);
@@ -129,16 +115,6 @@ namespace Votyra.Plannar.Unity
             mesh.MarkDynamic();
 
             return go;
-        }
-
-        private class ScaleAdjustor
-        {
-            public ScaleAdjustor(IInterpolationConfig interpolationConfig, [Inject(Id = "root")] GameObject root)
-            {
-                var scale = 1f / interpolationConfig.ImageSubdivision;
-
-                root.transform.localScale = new Vector3(root.transform.localScale.x * scale, root.transform.localScale.y * scale, root.transform.localScale.z);
-            }
         }
     }
 }

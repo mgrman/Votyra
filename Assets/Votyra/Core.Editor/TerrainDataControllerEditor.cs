@@ -144,6 +144,10 @@ namespace Votyra.Core.Editor
                 EditorGUILayout.LabelField("Unused", EditorStyles.boldLabel);
                 foreach (var configItem in oldConfigValues.ToArray())
                 {
+                    if (configItem.Type == null)
+                    {
+                        continue;
+                    }
                     EditorGUILayout.BeginHorizontal();
                     var delete = GUILayout.Button("✘", GUILayout.Width(20));
                     EditorGUILayout.LabelField($"{configItem.Id}[{configItem.Type.Name}]", GUILayout.MinWidth(150));

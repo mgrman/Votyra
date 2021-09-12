@@ -2,20 +2,18 @@
 {
     public class InterpolationConfig : IInterpolationConfig
     {
-        public InterpolationConfig([ConfigInject("activeAlgorithm")] IntepolationAlgorithm activeAlgorithm, [ConfigInject("dynamicMeshes")] bool dynamicMeshes, [ConfigInject("imageSubdivision")] int imageSubdivision, [ConfigInject("meshSubdivision")] int meshSubdivision)
+        public InterpolationConfig([ConfigInject("isBicubic")] bool isBicubic, [ConfigInject("dynamicMeshes")] bool dynamicMeshes)
         {
-            ActiveAlgorithm = activeAlgorithm;
+            IsBicubic = isBicubic;
             DynamicMeshes = dynamicMeshes;
-            ImageSubdivision = imageSubdivision;
-            MeshSubdivision = meshSubdivision;
         }
 
-        public int ImageSubdivision { get; }
-        public int MeshSubdivision { get; }
+        public int MeshSubdivision => IsBicubic ? 4 : 1;
         public bool DynamicMeshes { get; }
-        public IntepolationAlgorithm ActiveAlgorithm { get; }
+        public bool IsBicubic { get; }
 
-        protected bool Equals(InterpolationConfig other) => ImageSubdivision == other.ImageSubdivision && MeshSubdivision == other.MeshSubdivision && DynamicMeshes == other.DynamicMeshes && ActiveAlgorithm == other.ActiveAlgorithm;
+        protected bool Equals(InterpolationConfig other) =>
+            MeshSubdivision == other.MeshSubdivision && DynamicMeshes == other.DynamicMeshes;
 
         public override bool Equals(object obj)
         {
@@ -32,10 +30,9 @@
         {
             unchecked
             {
-                var hashCode = ImageSubdivision;
-                hashCode = (hashCode * 397) ^ MeshSubdivision;
+                var hashCode = MeshSubdivision;
                 hashCode = (hashCode * 397) ^ DynamicMeshes.GetHashCode();
-                hashCode = (hashCode * 397) ^ (int) ActiveAlgorithm;
+                hashCode = (hashCode * 397) ^ (IsBicubic?1:0);
                 return hashCode;
             }
         }

@@ -157,13 +157,14 @@ namespace Votyra.Core
 
         private Action<IFrameData2i, Vector2i, ITerrainMesh> GetMeshStrategy()
         {
-            if (_interpolationConfig.MeshSubdivision > 1 && _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic)
+            if ( _interpolationConfig.IsBicubic)
+            {
                 return GenerateBicubicMesh;
-            if (_interpolationConfig.ImageSubdivision > 1 && _interpolationConfig.MeshSubdivision == 1)
-                return GenerateMeshByAreas;
-            if (_interpolationConfig.MeshSubdivision == 1)
+            }
+            else
+            {
                 return GenerateSimpleMesh;
-            return null;
+            }
         }
 
         private static void GenerateBicubicMesh(IFrameData2i context, Vector2i group, ITerrainMesh mesh)
@@ -173,15 +174,6 @@ namespace Votyra.Core
             var cellInGroupCount = context.CellInGroupCount;
 
             BicubicTerrainMesher2f.GetResultingMesh(mesh, group, cellInGroupCount, image, mask, context.MeshSubdivision);
-        }
-
-        private static void GenerateMeshByAreas(IFrameData2i context, Vector2i group, ITerrainMesh mesh)
-        {
-            var image = context.Image;
-            var mask = context.Mask;
-            var cellInGroupCount = context.CellInGroupCount;
-
-            DynamicTerrainMesher2f.GetResultingMesh(mesh, group, cellInGroupCount, image, mask);
         }
 
         private static void GenerateSimpleMesh(IFrameData2i context, Vector2i group, ITerrainMesh mesh)
