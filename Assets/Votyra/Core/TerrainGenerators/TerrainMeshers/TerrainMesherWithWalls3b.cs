@@ -13,6 +13,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
     public class TerrainMesherWithWalls3b : ITerrainMesher3b
     {
         public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
+        
         private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
 
         private static readonly SampledData3b[] NormalizedSamples = SampledData3b.AllValues.Select(o => ChooseTrianglesForCell(o)
@@ -56,9 +57,11 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         private readonly Vector3i _cellInGroupCount;
 
         private readonly IImageSampler3 _imageSampler;
+        
         protected Vector3i groupPosition;
-        protected Vector3i groupSize;
+        
         protected ITerrainMesh mesh;
+        
         protected IPooledTerrainMesh pooledMesh;
 
         public TerrainMesherWithWalls3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)

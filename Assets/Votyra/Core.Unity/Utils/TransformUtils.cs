@@ -17,19 +17,5 @@ namespace Votyra.Core.Utils
 
             return result;
         }
-
-        public static Bounds InverseTransformBounds(this Transform self, Bounds bounds)
-        {
-            var center = self.InverseTransformPoint(bounds.center);
-            var points = bounds.GetCorners();
-
-            var result = new Bounds(center, Vector3.zero);
-            foreach (var point in points)
-            {
-                result.Encapsulate(self.InverseTransformPoint(point));
-            }
-
-            return result;
-        }
     }
 }

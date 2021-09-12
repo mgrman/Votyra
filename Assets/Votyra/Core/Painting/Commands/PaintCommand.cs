@@ -10,15 +10,14 @@ namespace Votyra.Core.Painting.Commands
     public abstract class PaintCommand : IPaintCommand
     {
         private readonly IEditableImage2f _editableImage;
-
-
+        
         private IEditableMask2e _editableMask;
 
         private IThreadSafeLogger _logger;
 
         private Vector2i? _lastInvocation;
+        
         private int _maxStrength;
-
 
         protected PaintCommand(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
         {
@@ -52,7 +51,6 @@ namespace Votyra.Core.Painting.Commands
         {
             _logger.LogMessage($"invoke on {cell}");
             var absStrength = Math.Abs(maxStrength);
-            var absExtents = absStrength - 1;
 
             var requestedArea = Range2i.FromMinAndMax(cell - (absStrength - 1), cell + (absStrength - 1) + 1);
             using (var image = _editableImage.RequestAccess(requestedArea))

@@ -13,6 +13,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
     public class TerrainMesher3b : ITerrainMesher3b
     {
         public static readonly Vector3f CenterZeroCell = new Vector3f(0.5f, 0.5f, 0.5f);
+        
         private static readonly List<SampledData3b> DataWithoutTriangles = new List<SampledData3b>();
 
         private static readonly IReadOnlyDictionary<SampledData3b, IReadOnlyCollection<Triangle3f>> DataToTriangles = SampledData3b.AllValues.ToDictionary(o => o, o => ChooseTrianglesForCell(o), SampledData3b.NormallessComparer);
@@ -20,9 +21,11 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
         private readonly Vector3i _cellInGroupCount;
 
         private readonly IImageSampler3 _imageSampler;
+        
         protected Vector3i groupPosition;
-        protected Vector3i groupSize;
+        
         protected ITerrainMesh mesh;
+        
         protected IPooledTerrainMesh pooledMesh;
 
         public TerrainMesher3b(ITerrainConfig terrainConfig, IImageSampler3 imageSampler)

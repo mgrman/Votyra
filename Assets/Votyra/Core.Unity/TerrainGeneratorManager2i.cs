@@ -18,40 +18,43 @@ using Zenject;
 
 namespace Votyra.Core
 {
-    //TODO: move to floats
     public class TerrainGeneratorManager2i : IDisposable, ITickable
     {
         private readonly Dictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new Dictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
+        
         private readonly Vector2i _cellInGroupCount;
+        
         private readonly IFrameDataProvider2i _frameDataProvider;
+        
         private readonly Func<GameObject> _gameObjectFactory;
 
         private readonly HashSet<Vector2i> _groupsToRecompute = new HashSet<Vector2i>();
+        
         private readonly IInterpolationConfig _interpolationConfig;
-        private readonly IThreadSafeLogger _logger;
 
         private readonly int _meshTopologyDistance;
 
         private readonly CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
-        private readonly IProfiler _profiler;
+        
         private readonly IStateModel _stateModel;
+        
         private readonly ITerrainConfig _terrainConfig;
+        
         private readonly ITerrainUVPostProcessor _uvPostProcessor;
 
         private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
+        
         private bool _computedOnce;
 
         private Task _waitForTask = Task.CompletedTask;
 
 
-        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IStateModel stateModel, IProfiler profiler, IFrameDataProvider2i frameDataProvider, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, IInterpolationConfig interpolationConfig)
+        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, ITerrainConfig terrainConfig, IStateModel stateModel, IFrameDataProvider2i frameDataProvider, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, IInterpolationConfig interpolationConfig)
         {
             _gameObjectFactory = gameObjectFactory;
-            _logger = logger;
             _terrainConfig = terrainConfig;
             _cellInGroupCount = _terrainConfig.CellInGroupCount.XY;
             _stateModel = stateModel;
-            _profiler = profiler;
             _frameDataProvider = frameDataProvider;
             _vertexPostProcessor = vertexPostProcessor;
             _uvPostProcessor = uvPostProcessor;

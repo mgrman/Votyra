@@ -10,7 +10,9 @@ namespace Votyra.Core
     public class TerrainManagerModel : ITerrainManagerModel
     {
         private IReadOnlyCollection<ConfigItem> _config;
+        
         private TerrainAlgorithm _activeAlgorithm;
+        
         private IEnumerable<TerrainAlgorithm> _availableAlgorithms;
 
         public TerrainManagerModel()

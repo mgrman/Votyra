@@ -46,10 +46,6 @@ namespace Votyra.Core.Images.Constraints
 
             while (queue.Count > 0)
             {
-// #if UNITY_EDITOR
-//                 if (!EditorApplication.isPlayingOrWillChangePlaymode)
-//                     return;
-// #endif
                 var cell = queue.GetFirst()
                     .Value;
                 _invalidatedCellArea = _invalidatedCellArea.CombineWith(cell);

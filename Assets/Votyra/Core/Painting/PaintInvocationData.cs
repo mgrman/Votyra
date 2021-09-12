@@ -12,6 +12,7 @@ namespace Votyra.Core.Painting
         }
 
         public readonly int Strength;
+        
         public readonly Vector2i ImagePosition;
     }
 }

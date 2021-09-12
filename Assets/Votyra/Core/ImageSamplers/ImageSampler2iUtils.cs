@@ -5,10 +5,6 @@ namespace Votyra.Core.ImageSamplers
 {
     public static class ImageSampler2iUtils
     {
-        public static readonly Vector2i OffsetX0Y1 = new Vector2i(0, 1);
-        public static readonly Vector2i OffsetX1Y0 = new Vector2i(1, 0);
-        public static readonly Vector2i OffsetX1Y1 = new Vector2i(1, 1);
-
         public static SampledData2f SampleCell(this Matrix2<float> image, Vector2i cell)
         {
             var x0y0 = image.TryGet(cell, 0f);

@@ -6,8 +6,10 @@ namespace Votyra.Core
 {
     public class UnitySyncContext : MonoBehaviour
     {
-        public static System.Threading.Thread UnityThread { get; private set; }
+        public static Thread UnityThread { get; private set; }
+        
         public static SynchronizationContext UnitySynchronizationContext { get; private set; }
+        
         public static TaskScheduler UnityTaskScheduler { get; private set; }
 
         protected virtual void Awake()

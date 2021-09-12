@@ -11,6 +11,7 @@ namespace Votyra.Core.Images
         }
 
         public Material Material { get; }
+        
         public Material MaterialWalls { get; }
 
         public static bool operator ==(MaterialConfig a, MaterialConfig b) => a?.Equals(b) ?? b?.Equals(a) ?? true;

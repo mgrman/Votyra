@@ -18,6 +18,7 @@ namespace Votyra.Core.Painting
         public IPaintCommand SelectedPaintCommand { get; set; }
 
         public bool IsExtendedModifierActive { get; set; }
+        
         public bool IsInvertModifierActive { get; set; }
         
         public PaintingModel(List<IPaintCommand> commands, IThreadSafeLogger logger)

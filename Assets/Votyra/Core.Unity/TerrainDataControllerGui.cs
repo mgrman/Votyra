@@ -12,6 +12,10 @@ namespace Votyra.Core.Editor
 {
     public class TerrainDataControllerGui : MonoBehaviour
     {
+        private Dictionary<GameObject, IEnumerable<ConfigItem>> _cachedConfigs;
+        
+        private TerrainDataController _controller;
+        
         public static IEnumerable<Type> GetConfigTypes(GameObject algorithPrefab)
         {
             var installers = algorithPrefab.GetComponentInChildren<GameObjectContext>()
@@ -68,11 +72,6 @@ namespace Votyra.Core.Editor
             container.FinalizeBinding -= handler;
             return types;
         }
-
-
-        private Dictionary<GameObject, IEnumerable<ConfigItem>> _cachedConfigs;
-        private TerrainDataController _controller;
-
 
         private void Awake()
         {
@@ -263,16 +262,6 @@ namespace Votyra.Core.Editor
             }
             else
             {
-                // var oldValueJson = JsonConvert.SerializeObject(oldValue);
-                // var newJsonValue = GUILayout.TextArea(oldValueJson, GUILayout.MaxWidth(200));
-                // try
-                // {
-                //     newValue = JsonConvert.DeserializeObject(newJsonValue, type);
-                // }
-                // catch
-                // {
-                //     newValue = null;
-                // }
                 newValue = oldValue;
             }
 

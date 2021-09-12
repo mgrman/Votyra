@@ -1,4 +1,3 @@
-
 namespace Votyra.Core.Images.Constraints
 {
     public interface IConstraintConfig

@@ -17,8 +17,11 @@ namespace Votyra.Core.Images
         }
 
         public Vector3i CellInGroupCount { get; }
+        
         public bool FlipTriangles { get; }
+        
         public bool DrawBounds { get; }
+        
         public bool Async { get; }
 
         public static bool operator ==(TerrainConfig a, TerrainConfig b) => a?.Equals(b) ?? b?.Equals(a) ?? true;

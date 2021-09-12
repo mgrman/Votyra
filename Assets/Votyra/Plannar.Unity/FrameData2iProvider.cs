@@ -12,10 +12,15 @@ namespace Votyra.Plannar
     public class FrameData2iProvider : IFrameDataProvider2i
     {
         private readonly IImage2fPostProcessor _image2fPostProcessor;
+        
         private readonly IImage2fProvider _imageProvider;
+        
         private readonly IInterpolationConfig _interpolationConfig;
+        
         private readonly IMask2eProvider _maskProvider;
+        
         private readonly GameObject _root;
+        
         private readonly ITerrainConfig _terrainConfig;
 
         private Matrix4x4 _previousCameraMatrix;

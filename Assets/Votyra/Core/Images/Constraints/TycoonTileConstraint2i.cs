@@ -1,4 +1,3 @@
-using System;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;

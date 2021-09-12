@@ -21,16 +21,23 @@ namespace Votyra.Core
     public class TerrainGeneratorManager3b : IDisposable
     {
         protected readonly IFrameDataProvider3b _frameDataProvider;
+        
         protected readonly Func<GameObject> _gameObjectFactory;
+        
         protected readonly IGroupSelector3b _groupsSelector;
+        
         protected readonly IThreadSafeLogger _logger;
 
         private readonly SetDictionary<Vector3i, GameObject> _meshFilters = new SetDictionary<Vector3i, GameObject>();
+        
         private readonly CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
 
         protected readonly IProfiler _profiler;
+        
         protected readonly IStateModel _stateModel;
+        
         protected readonly ITerrainConfig _terrainConfig;
+        
         protected readonly ITerrainGenerator3b _terrainGenerator;
 
         public TerrainGeneratorManager3b(Func<GameObject> gameObjectFactory, IThreadSafeLogger logger, ITerrainConfig terrainConfig, IGroupSelector3b groupsSelector, ITerrainGenerator3b terrainGenerator, IStateModel stateModel, IProfiler profiler, IFrameDataProvider3b frameDataProvider)

@@ -4,8 +4,6 @@ namespace Votyra.Core.Utils
 {
     public static class GameObjectUtils
     {
-        public static GameObject NullIfDestroyed(this GameObject gameObject) => gameObject == null ? null : gameObject;
-
         public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
         {
             var component = gameObject.GetComponent<T>();
@@ -19,11 +17,6 @@ namespace Votyra.Core.Utils
             var component = gameObject.GetComponent<T>();
             if (component == null)
                 gameObject.AddComponent<T>();
-        }
-
-        public static void DestroyAllChildren(this GameObject gameObject)
-        {
-            gameObject.transform.DestroyAllChildren();
         }
 
         public static void DestroyAllChildren(this Transform transform)

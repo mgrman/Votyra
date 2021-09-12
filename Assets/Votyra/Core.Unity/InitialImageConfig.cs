@@ -16,7 +16,9 @@ namespace Votyra.Core.Images
         }
 
         public object InitialData { get; }
+        
         public Vector3f InitialDataScale { get; }
+        
         public bool ZeroFromInitialStateIsNull { get; }
 
         public static bool operator ==(InitialImageConfig a, InitialImageConfig b) => a?.Equals(b) ?? b?.Equals(a) ?? true;

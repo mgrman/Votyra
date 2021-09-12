@@ -1,4 +1,3 @@
-using Votyra.Core;
 using Votyra.Core.Logging;
 using Votyra.Core.Models;
 

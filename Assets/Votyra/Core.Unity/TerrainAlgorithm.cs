@@ -11,6 +11,7 @@ namespace Votyra.Core
         }
 
         public string Name { get; }
+        
         public GameObject Prefab { get; }
 
         public static bool operator ==(TerrainAlgorithm a, TerrainAlgorithm b) => a?.Equals(b) ?? b?.Equals(a) ?? true;

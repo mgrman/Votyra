@@ -8,6 +8,7 @@ namespace Votyra.Core.Pooling
     public class PooledArrayContainer<T> : IReadOnlyPooledList<T>
     {
         private static readonly bool IsDisposable = typeof(IDisposable).IsAssignableFrom(typeof(T));
+        
         private static readonly ConcurentObjectDictionaryPool<PooledArrayContainer<T>, int> Pool = new ConcurentObjectDictionaryPool<PooledArrayContainer<T>, int>(5, count => new PooledArrayContainer<T>(count));
 
         private PooledArrayContainer(int count)
@@ -16,6 +17,7 @@ namespace Votyra.Core.Pooling
         }
 
         public T[] Array { get; }
+        
         public int Count => ((IReadOnlyList<T>) Array).Count;
 
         public T this[int index] => ((IReadOnlyList<T>) Array)[index];

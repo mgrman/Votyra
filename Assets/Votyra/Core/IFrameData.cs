@@ -10,9 +10,7 @@ namespace Votyra.Core
         IReadOnlyPooledList<Vector3f> CameraFrustumCorners { get; }
         Matrix4x4f CameraLocalToWorldMatrix { get; }
         Matrix4x4f ParentContainerWorldToLocalMatrix { get; }
-
         void Activate();
-
         void Deactivate();
     }
 }

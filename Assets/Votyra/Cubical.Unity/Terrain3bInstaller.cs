@@ -33,7 +33,7 @@ namespace Votyra.Cubical.Unity
 
             Container.BindInterfacesAndSelfTo<TerrainGenerator3b>()
                 .AsSingle();
-            Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector3B>()
+            Container.BindInterfacesAndSelfTo<GroupsByCameraVisibilitySelector3b>()
                 .AsSingle();
             Container.BindInterfacesAndSelfTo<InitialStateSetter3b>()
                 .AsSingle()
