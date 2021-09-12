@@ -4,10 +4,9 @@ namespace Votyra.Core.Images
 {
     public class TerrainConfig : ITerrainConfig
     {
-        public TerrainConfig([ConfigInject("cellInGroupCount")] Vector3i cellInGroupCount, [ConfigInject("flipTriangles")] bool flipTriangles, [ConfigInject("drawBounds")] bool drawBounds, [ConfigInject("async")] bool async)
+        public TerrainConfig([ConfigInject("cellInGroupCount")] Vector3i cellInGroupCount, [ConfigInject("drawBounds")] bool drawBounds, [ConfigInject("async")] bool async)
         {
             CellInGroupCount = cellInGroupCount;
-            FlipTriangles = flipTriangles;
             DrawBounds = drawBounds;
 #if UNITY_WEBGL && !UNITY_EDITOR
             Async = false;
@@ -17,8 +16,6 @@ namespace Votyra.Core.Images
         }
 
         public Vector3i CellInGroupCount { get; }
-        
-        public bool FlipTriangles { get; }
         
         public bool DrawBounds { get; }
         
@@ -34,14 +31,14 @@ namespace Votyra.Core.Images
                 return false;
             var that = obj as TerrainConfig;
 
-            return CellInGroupCount == that.CellInGroupCount && FlipTriangles == that.FlipTriangles && DrawBounds == that.DrawBounds && Async == that.Async;
+            return CellInGroupCount == that.CellInGroupCount && DrawBounds == that.DrawBounds && Async == that.Async;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return CellInGroupCount.GetHashCode() + FlipTriangles.GetHashCode() * 3 + DrawBounds.GetHashCode() * 7 + Async.GetHashCode() * 13;
+                return CellInGroupCount.GetHashCode() * 3 + DrawBounds.GetHashCode() * 7 + Async.GetHashCode() * 13;
             }
         }
     }

@@ -59,7 +59,7 @@ namespace Votyra.Core
             _vertexPostProcessor = vertexPostProcessor;
             _uvPostProcessor = uvPostProcessor;
             _interpolationConfig = interpolationConfig;
-            _meshTopologyDistance = _interpolationConfig.ActiveAlgorithm == IntepolationAlgorithm.Cubic && _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
+            _meshTopologyDistance = _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
         }
 
         public void Dispose()
