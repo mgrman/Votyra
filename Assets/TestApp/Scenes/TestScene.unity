@@ -342,7 +342,7 @@ MonoBehaviour:
     UnityValue: {fileID: 0}
   - Id: simpleSampleScaleFactor
     JsonValue: 1
-    TypeAssemblyQualifiedName: Votyra.Core.Images.Constraints.ScaleFactor, Votyra.Core.Unity,
+    TypeAssemblyQualifiedName: Votyra.Core.Unity.Config.ScaleFactor, Votyra.Core.Unity,
       Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 0}
   - Id: wallSquishFactor
