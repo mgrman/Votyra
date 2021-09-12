@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using UniRx.Async;
 using UnityEngine;
 using Votyra.Core.GroupSelectors;
+using Votyra.Core.Images;
 using Votyra.Core.ImageSamplers;
 using Votyra.Core.Logging;
 using Votyra.Core.MeshUpdaters;
@@ -20,36 +21,46 @@ namespace Votyra.Core
 {
     public class TerrainGeneratorManager2i : IDisposable, ITickable
     {
-        private readonly Dictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups = new Dictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
-        
+        private readonly Dictionary<Vector2i, ITerrainGroupGeneratorManager2i> _activeGroups =
+            new Dictionary<Vector2i, ITerrainGroupGeneratorManager2i>();
+
         private readonly Vector2i _cellInGroupCount;
-        
+
         private readonly IFrameDataProvider2i _frameDataProvider;
-        
+
         private readonly Func<GameObject> _gameObjectFactory;
 
         private readonly HashSet<Vector2i> _groupsToRecompute = new HashSet<Vector2i>();
-        
+
         private readonly IInterpolationConfig _interpolationConfig;
 
         private readonly int _meshTopologyDistance;
 
         private readonly CancellationTokenSource _onDestroyCts = new CancellationTokenSource();
-        
+
         private readonly IStateModel _stateModel;
-        
+
         private readonly ITerrainConfig _terrainConfig;
-        
+
         private readonly ITerrainUVPostProcessor _uvPostProcessor;
 
         private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
-        
+
+        private readonly TaskFactory _taskFactory = new TaskFactory();
+
+        private readonly ITerrainMesher _terrainMesher;
+        private readonly ITerrainMeshUpdater _terrainMeshUpdater;
+
         private bool _computedOnce;
 
         private Task _waitForTask = Task.CompletedTask;
 
 
-        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, ITerrainConfig terrainConfig, IStateModel stateModel, IFrameDataProvider2i frameDataProvider, [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor, [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, IInterpolationConfig interpolationConfig)
+        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, ITerrainConfig terrainConfig,
+            IStateModel stateModel, IFrameDataProvider2i frameDataProvider,
+            [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor,
+            [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, IInterpolationConfig interpolationConfig,
+            ITerrainMesher terrainMesher,ITerrainMeshUpdater terrainMeshUpdater)
         {
             _gameObjectFactory = gameObjectFactory;
             _terrainConfig = terrainConfig;
@@ -60,6 +71,8 @@ namespace Votyra.Core
             _uvPostProcessor = uvPostProcessor;
             _interpolationConfig = interpolationConfig;
             _meshTopologyDistance = _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
+            _terrainMesher = terrainMesher;
+            _terrainMeshUpdater = terrainMeshUpdater;
         }
 
         public void Dispose()
@@ -77,7 +90,9 @@ namespace Votyra.Core
             if (context != null)
             {
                 context?.Activate();
-                _waitForTask = _terrainConfig.Async ? UpdateTerrainInBackground(context) : UpdateTerrainInForegroud(context);
+                _waitForTask = _terrainConfig.Async
+                    ? UpdateTerrainInBackground(context)
+                    : UpdateTerrainInForegroud(context);
                 _computedOnce = true;
             }
         }
@@ -88,17 +103,16 @@ namespace Votyra.Core
             return Task.CompletedTask;
         }
 
-        private TaskFactory _taskFactory = new TaskFactory();
         private Task UpdateTerrainInBackground(IFrameData2i context)
         {
-           return _taskFactory.StartNew(UpdateTerrain, context);
+            return _taskFactory.StartNew(UpdateTerrain, context);
         }
 
         private void UpdateTerrain(object context)
         {
             UpdateTerrain(context as IFrameData2i);
         }
-        
+
         private void UpdateTerrain(IFrameData2i context)
         {
 
@@ -120,27 +134,32 @@ namespace Votyra.Core
         {
             context.UpdateGroupsVisibility(_cellInGroupCount,
                 _groupsToRecompute,
-                newGroup =>
-                {
-                    _activeGroups.Add(newGroup, CreateGroupManager( newGroup));
-                },
-                removedGroup =>
-                {
-                    _activeGroups.TryRemoveAndReturnValue(removedGroup)
-                        ?.Dispose();
-                });
+                OnAddedGroup,
+                OnRemovedGroup);
         }
 
-        private ITerrainGroupGeneratorManager2i CreateGroupManager( Vector2i newGroup)
+        private void OnRemovedGroup(Vector2i removedGroup)
+        {
+            _activeGroups.TryRemoveAndReturnValue(removedGroup)
+                ?.Dispose();
+        }
+
+        private void OnAddedGroup(Vector2i newGroup)
+        {
+            _activeGroups.Add(newGroup, CreateGroupManager(newGroup));
+        }
+
+        private ITerrainGroupGeneratorManager2i CreateGroupManager(Vector2i newGroup)
         {
             if (_terrainConfig.Async)
             {
                 return new AsyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup,
-                    _onDestroyCts.Token, CreatePooledTerrainMesh(), GetMeshStrategy());
+                    _onDestroyCts.Token, CreatePooledTerrainMesh(), _terrainMesher, _terrainMeshUpdater);
             }
             else
             {
-                return new SyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup, _onDestroyCts.Token, CreatePooledTerrainMesh(), GetMeshStrategy());
+                return new SyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup,
+                    _onDestroyCts.Token, CreatePooledTerrainMesh(), _terrainMesher, _terrainMeshUpdater);
             }
         }
 
@@ -153,40 +172,16 @@ namespace Votyra.Core
             }
             else
             {
-                var triangleCount = _cellInGroupCount.AreaSum * 2 * _interpolationConfig.MeshSubdivision * _interpolationConfig.MeshSubdivision;
-                pooledMesh = PooledTerrainMeshWithFixedCapacityContainer<FixedUnityTerrainMesh2i>.CreateDirty(triangleCount);
+                var triangleCount = _cellInGroupCount.AreaSum * 2 * _interpolationConfig.MeshSubdivision *
+                                    _interpolationConfig.MeshSubdivision;
+                pooledMesh =
+                    PooledTerrainMeshWithFixedCapacityContainer<FixedUnityTerrainMesh2i>.CreateDirty(triangleCount);
             }
 
-            pooledMesh.Mesh.Initialize(_vertexPostProcessor == null ? (Func<Vector3f, Vector3f>) null : _vertexPostProcessor.PostProcessVertex, _uvPostProcessor == null ? (Func<Vector2f, Vector2f>) null : _uvPostProcessor.ProcessUV);
+            pooledMesh.Mesh.Initialize(
+                _vertexPostProcessor == null ? (Func<Vector3f, Vector3f>) null : _vertexPostProcessor.PostProcessVertex,
+                _uvPostProcessor == null ? (Func<Vector2f, Vector2f>) null : _uvPostProcessor.ProcessUV);
             return pooledMesh;
-        }
-
-        private Action<IFrameData2i, Vector2i, ITerrainMesh> GetMeshStrategy()
-        {
-            if ( _interpolationConfig.IsBicubic)
-            {
-                return GenerateBicubicMesh;
-            }
-            else
-            {
-                return GenerateSimpleMesh;
-            }
-        }
-
-        private static void GenerateBicubicMesh(IFrameData2i context, Vector2i group, ITerrainMesh mesh)
-        {
-            var image = context.Image;
-            var cellInGroupCount = context.CellInGroupCount;
-
-            BicubicTerrainMesher2f.GetResultingMesh(mesh, group, cellInGroupCount, image, context.MeshSubdivision);
-        }
-
-        private static void GenerateSimpleMesh(IFrameData2i context, Vector2i group, ITerrainMesh mesh)
-        {
-            var image = context.Image;
-            var cellInGroupCount = context.CellInGroupCount;
-
-            TerrainMesher2f.GetResultingMesh(mesh, group, cellInGroupCount, image);
         }
     }
 
@@ -197,15 +192,18 @@ namespace Votyra.Core
 
     public class SyncTerrainGroupGeneratorManager2i : TerrainGroupGeneratorManager2i
     {
-        public SyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory, Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, Action<IFrameData2i, Vector2i, ITerrainMesh> generateUnityMesh)
-            : base(cellInGroupCount, unityDataFactory, group, token, pooledMesh, generateUnityMesh)
+        public SyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory,
+            Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, ITerrainMesher terrainMesher,
+            ITerrainMeshUpdater meshUpdater)
+            : base(cellInGroupCount, unityDataFactory, group, token, pooledMesh, terrainMesher, meshUpdater)
         {
         }
 
         public override void Dispose()
         {
             base.Dispose();
-            UnityData.DestroyWithMeshes();
+            MeshUpdater.DestroyMesh(UnityData);
+            UnityData.Destroy();
         }
 
 
@@ -236,8 +234,10 @@ namespace Votyra.Core
     {
         private Task _activeTask = Task.CompletedTask;
 
-        public AsyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory, Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, Action<IFrameData2i, Vector2i, ITerrainMesh> generateUnityMesh)
-            : base(cellInGroupCount, unityDataFactory, group, token, pooledMesh, generateUnityMesh)
+        public AsyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory,
+            Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, ITerrainMesher terrainMesher,
+            ITerrainMeshUpdater meshUpdater)
+            : base(cellInGroupCount, unityDataFactory, group, token, pooledMesh, terrainMesher, meshUpdater)
         {
         }
 
@@ -287,7 +287,8 @@ namespace Votyra.Core
             base.Dispose();
             MainThreadUtils.RunOnMainThreadAsync(() =>
             {
-                UnityData.DestroyWithMeshes();
+                MeshUpdater.DestroyMesh(UnityData);
+                UnityData.Destroy();
             });
         }
     }
@@ -295,11 +296,12 @@ namespace Votyra.Core
     public abstract class TerrainGroupGeneratorManager2i : ITerrainGroupGeneratorManager2i
     {
         protected readonly CancellationTokenSource Cts;
-        protected readonly Action<IFrameData2i, Vector2i, ITerrainMesh> GenerateUnityMesh;
+        protected readonly ITerrainMesher TerrainMesher;
         protected readonly Vector2i Group;
         protected readonly IPooledTerrainMesh PooledMesh;
         protected readonly Range2i Range;
         protected readonly CancellationToken Token;
+        private readonly Vector2i _cellInGroupCount;
         protected readonly Func<GameObject> UnityDataFactory;
 
         private IFrameData2i _contextToProcess;
@@ -307,9 +309,13 @@ namespace Votyra.Core
         protected GameObject UnityData;
 
         private bool _updatedOnce;
+        protected ITerrainMeshUpdater MeshUpdater;
 
-        public TerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory, Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, Action<IFrameData2i, Vector2i, ITerrainMesh> generateUnityMesh)
+        public TerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory,
+            Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, ITerrainMesher terrainMesher,
+            ITerrainMeshUpdater meshUpdater)
         {
+            _cellInGroupCount = cellInGroupCount;
             UnityDataFactory = unityDataFactory;
             Group = group;
             Range = Range2i.FromMinAndSize(group * cellInGroupCount, cellInGroupCount);
@@ -317,7 +323,8 @@ namespace Votyra.Core
             Token = Cts.Token;
 
             PooledMesh = pooledMesh;
-            GenerateUnityMesh = generateUnityMesh;
+            TerrainMesher = terrainMesher;
+            MeshUpdater = meshUpdater;
         }
 
         protected IFrameData2i ContextToProcess
@@ -364,8 +371,9 @@ namespace Votyra.Core
 
         protected void UpdateTerrainMesh(IFrameData2i context)
         {
-            PooledMesh.Mesh.Reset(Area3f.FromMinAndSize((Group * context.CellInGroupCount).ToVector3f(context.RangeZ.Min), context.CellInGroupCount.ToVector3f(context.RangeZ.Size)));
-            GenerateUnityMesh(context, Group, PooledMesh.Mesh);
+            PooledMesh.Mesh.Reset(Area3f.FromMinAndSize((Group * _cellInGroupCount).ToVector3f(context.RangeZ.Min),
+                _cellInGroupCount.ToVector3f(context.RangeZ.Size)));
+            TerrainMesher.UpdateMesh(PooledMesh.Mesh, Group, context.Image);
             PooledMesh.Mesh.FinalizeMesh();
         }
 
@@ -374,7 +382,7 @@ namespace Votyra.Core
             if (UnityData == null)
                 UnityData = UnityDataFactory();
 
-            unityMesh.SetUnityMesh(UnityData);
+            MeshUpdater.SetUnityMesh(unityMesh, UnityData);
         }
     }
 }

@@ -5,13 +5,22 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public static class BicubicTerrainMesher2f
+    public class BicubicTerrainMesher2f : ITerrainMesher
     {
+        private readonly int subdivision;
+        private readonly Vector2i cellInGroupCount;
         private const float MaskLimit = 0f;
 
-        public static void GetResultingMesh(ITerrainMesh mesh, Vector2i group, Vector2i cellInGroupCount, IImage2f image, int subdivision)
+        public BicubicTerrainMesher2f(ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig)
         {
-            var poolableValuesToFill = PoolableMatrix<Vector3f>.CreateDirty(new Vector2i(subdivision + 1, subdivision + 1));
+            cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+            subdivision = interpolationConfig.MeshSubdivision;
+        }
+
+        public void UpdateMesh(ITerrainMesh mesh, Vector2i group, IImage2f image)
+        {
+            var poolableValuesToFill =
+                PoolableMatrix<Vector3f>.CreateDirty(new Vector2i(subdivision + 1, subdivision + 1));
             var valuesToFill = poolableValuesToFill.RawMatrix;
             var poolableMaskToFill = PoolableMatrix<float>.CreateDirty(new Vector2i(subdivision + 1, subdivision + 1));
             var maskToFill = poolableMaskToFill.RawMatrix;
@@ -56,10 +65,14 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                         {
                             var pos = new Vector2f(step * ix, step * iy);
 
-                            var valueCol0 = Intepolate(valuesInterMatX0Y0, valuesInterMatX1Y0, valuesInterMatX2Y0, valuesInterMatX3Y0, pos.X);
-                            var valueCol1 = Intepolate(valuesInterMatX0Y1, valuesInterMatX1Y1, valuesInterMatX2Y1, valuesInterMatX3Y1, pos.X);
-                            var valueCol2 = Intepolate(valuesInterMatX0Y2, valuesInterMatX1Y2, valuesInterMatX2Y2, valuesInterMatX3Y2, pos.X);
-                            var valueCol3 = Intepolate(valuesInterMatX0Y3, valuesInterMatX1Y3, valuesInterMatX2Y3, valuesInterMatX3Y3, pos.X);
+                            var valueCol0 = Intepolate(valuesInterMatX0Y0, valuesInterMatX1Y0, valuesInterMatX2Y0,
+                                valuesInterMatX3Y0, pos.X);
+                            var valueCol1 = Intepolate(valuesInterMatX0Y1, valuesInterMatX1Y1, valuesInterMatX2Y1,
+                                valuesInterMatX3Y1, pos.X);
+                            var valueCol2 = Intepolate(valuesInterMatX0Y2, valuesInterMatX1Y2, valuesInterMatX2Y2,
+                                valuesInterMatX3Y2, pos.X);
+                            var valueCol3 = Intepolate(valuesInterMatX0Y3, valuesInterMatX1Y3, valuesInterMatX2Y3,
+                                valuesInterMatX3Y3, pos.X);
                             var value = Intepolate(valueCol0, valueCol1, valueCol2, valueCol3, pos.Y);
                             valuesToFill[ix, iy] = (pos + cell).ToVector3f(value);
 
@@ -74,7 +87,9 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                                 var x05Y00Mask = maskToFill[ix - 1 + 1, iy - 1 + 0] >= MaskLimit;
                                 var x05Y05Mask = maskToFill[ix - 1 + 1, iy - 1 + 1] >= MaskLimit;
 
-                                mesh.AddQuad(x00Y00Mask ? x00Y00 : (Vector3f?) null, x00Y05Mask ? x00Y05 : (Vector3f?) null, x05Y00Mask ? x05Y00 : (Vector3f?) null, x05Y05Mask ? x05Y05 : (Vector3f?) null);
+                                mesh.AddQuad(x00Y00Mask ? x00Y00 : (Vector3f?) null,
+                                    x00Y05Mask ? x00Y05 : (Vector3f?) null, x05Y00Mask ? x05Y00 : (Vector3f?) null,
+                                    x05Y05Mask ? x05Y05 : (Vector3f?) null);
                             }
                         }
                     }

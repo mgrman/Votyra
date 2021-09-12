@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using Votyra.Core.TerrainMeshes;
+using Votyra.Core.Utils;
 
 namespace Votyra.Core.MeshUpdaters
 {
-    public static class TerrainMeshUpdater
+    public class TerrainMeshUpdater : ITerrainMeshUpdater
     {
-        public static void SetUnityMesh(this ITerrainMesh triangleMesh, GameObject unityData)
+        public void SetUnityMesh(ITerrainMesh triangleMesh, GameObject unityData)
         {
             var meshFilter = unityData.GetComponent<MeshFilter>();
             SetUnityMesh(triangleMesh, meshFilter.sharedMesh);
@@ -15,7 +16,14 @@ namespace Votyra.Core.MeshUpdaters
             meshCollider.sharedMesh = meshFilter.sharedMesh;
         }
 
-        private static void SetUnityMesh(ITerrainMesh triangleMesh, Mesh mesh)
+        public void DestroyMesh(GameObject unityData)
+        {
+            var meshFilter = unityData.GetComponent<MeshFilter>();
+            var mesh = meshFilter.sharedMesh;
+            mesh.Destroy();
+        }
+
+        private void SetUnityMesh(ITerrainMesh triangleMesh, Mesh mesh)
         {
             SetMeshFormat(mesh, triangleMesh.VertexCount);
 

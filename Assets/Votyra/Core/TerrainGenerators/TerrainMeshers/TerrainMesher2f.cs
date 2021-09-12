@@ -6,9 +6,16 @@ using Votyra.Core.TerrainMeshes;
 
 namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
-    public static class TerrainMesher2f
+    public class TerrainMesher2f:ITerrainMesher
     {
-        public static void GetResultingMesh(ITerrainMesh mesh, Vector2i group, Vector2i cellInGroupCount, IImage2f image)
+        private readonly Vector2i cellInGroupCount;
+
+        public TerrainMesher2f(ITerrainConfig terrainConfig)
+        {
+            cellInGroupCount = terrainConfig.CellInGroupCount.XY;
+        }
+        
+        public void UpdateMesh(ITerrainMesh mesh, Vector2i group, IImage2f image)
         {
             var groupPosition = cellInGroupCount * group;
             for (var ix = 0; ix < cellInGroupCount.X; ix++)

@@ -19,26 +19,6 @@ namespace Votyra.Core.Utils
                 gameObject.AddComponent<T>();
         }
 
-        public static void DestroyAllChildren(this Transform transform)
-        {
-            var childCount = transform.childCount;
-            for (var i = childCount - 1; i >= 0; i--)
-            {
-                var child = transform.GetChild(i);
-                child.gameObject.Destroy();
-            }
-        }
-
-        public static void DestroyWithMeshes(this GameObject gameObject)
-        {
-            if (gameObject == null)
-                return;
-            var mesh = gameObject.GetComponent<MeshFilter>()
-                .sharedMesh;
-            mesh.Destroy();
-            gameObject.Destroy();
-        }
-
         public static void Destroy(this GameObject gameObject)
         {
             if (gameObject == null)

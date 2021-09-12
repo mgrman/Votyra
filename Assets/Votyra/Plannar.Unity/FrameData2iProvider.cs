@@ -76,7 +76,7 @@ namespace Votyra.Plannar.Unity
             var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
             invalidatedArea = invalidatedArea.ExtendBothDirections(meshTopologyDistance);
 
-            return new FrameData2i(camera.transform.position.ToVector3f(), planes, frustumCorners, localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), image, invalidatedArea, _terrainConfig.CellInGroupCount.XY, _interpolationConfig.MeshSubdivision);
+            return new FrameData2i(camera.transform.position.ToVector3f(), planes, frustumCorners, localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), image, invalidatedArea);
         }
     }
 }
