@@ -46,7 +46,9 @@ namespace Votyra.Core.Painting.Commands
         
         protected void Invoke(Vector2i cell, int maxStrength)
         {
+#if VERBOSE
             _logger.LogMessage($"invoke on {cell}");
+#endif
             var absStrength = Math.Abs(maxStrength);
 
             var requestedArea = Range2i.FromMinAndMax(cell - (absStrength - 1), cell + (absStrength - 1) + 1);
