@@ -10,8 +10,6 @@ namespace Votyra.Core.Painting.Commands
     public abstract class PaintCommand : IPaintCommand
     {
         private readonly IEditableImage2f _editableImage;
-        
-        private IEditableMask2e _editableMask;
 
         private IThreadSafeLogger _logger;
 
@@ -19,10 +17,9 @@ namespace Votyra.Core.Painting.Commands
         
         private int _maxStrength;
 
-        protected PaintCommand(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
+        protected PaintCommand(IEditableImage2f editableImage, IThreadSafeLogger logger)
         {
             _editableImage = editableImage;
-            _editableMask = editableMask;
             _logger = logger;
         }
 
@@ -55,27 +52,23 @@ namespace Votyra.Core.Painting.Commands
             var requestedArea = Range2i.FromMinAndMax(cell - (absStrength - 1), cell + (absStrength - 1) + 1);
             using (var image = _editableImage.RequestAccess(requestedArea))
             {
-                using (var mask = _editableMask?.RequestAccess(requestedArea))
+                var givenArea = image.Area;
+                if (!givenArea.Contains(cell))
+                    return;
+
+                PrepareWithClickedValue(image[cell]);
+                var min = givenArea.Min;
+                var max = givenArea.Max;
+                for (var ix = min.X; ix < max.X; ix++)
                 {
-                    var givenArea = image.Area.IntersectWith(mask.Area);
-                    if (!givenArea.Contains(cell))
-                        return;
-
-                    PrepareWithClickedValue(image[cell]);
-                    var min = givenArea.Min;
-                    var max = givenArea.Max;
-                    for (var ix = min.X; ix < max.X; ix++)
+                    for (var iy = min.Y; iy <= max.Y; iy++)
                     {
-                        for (var iy = min.Y; iy <= max.Y; iy++)
-                        {
-                            var index=new Vector2i(ix, iy);
-                            var ox = index.X - cell.X;
-                            var oy = index.Y - cell.Y;
+                        var index=new Vector2i(ix, iy);
+                        var ox = index.X - cell.X;
+                        var oy = index.Y - cell.Y;
 
-                            var cellStrength = (absStrength - Math.Max(Math.Abs(ox), Math.Abs(oy))) * Math.Sign(maxStrength);
-                            image[index] = Invoke(image[index], cellStrength);
-                            mask[index] = Invoke(mask[index], cellStrength);
-                        }
+                        var cellStrength = (absStrength - Math.Max(Math.Abs(ox), Math.Abs(oy))) * Math.Sign(maxStrength);
+                        image[index] = Invoke(image[index], cellStrength);
                     }
                 }
             }
@@ -94,7 +87,5 @@ namespace Votyra.Core.Painting.Commands
         }
 
         protected virtual float Invoke(float value, int localStrength) => value;
-
-        protected virtual MaskValues Invoke(MaskValues value, int localStrength) => value;
     }
 }

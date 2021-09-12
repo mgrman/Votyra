@@ -17,8 +17,6 @@ namespace Votyra.Plannar
         
         private readonly IInterpolationConfig _interpolationConfig;
         
-        private readonly IMask2eProvider _maskProvider;
-        
         private readonly GameObject _root;
         
         private readonly ITerrainConfig _terrainConfig;
@@ -26,13 +24,12 @@ namespace Votyra.Plannar
         private Matrix4x4 _previousCameraMatrix;
 
         [Inject]
-        public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [InjectOptional] IMask2eProvider maskProvider, [Inject(Id = "root")] GameObject root)
+        public FrameData2iProvider([InjectOptional] IImage2fPostProcessor image2FPostProcessor, IImage2fProvider imageProvider, ITerrainConfig terrainConfig, IInterpolationConfig interpolationConfig, [Inject(Id = "root")] GameObject root)
         {
             _image2fPostProcessor = image2FPostProcessor;
             _imageProvider = imageProvider;
             _terrainConfig = terrainConfig;
             _interpolationConfig = interpolationConfig;
-            _maskProvider = maskProvider;
             _root = root;
         }
 
@@ -66,19 +63,15 @@ namespace Votyra.Plannar
 
             image = _image2fPostProcessor?.PostProcess(image) ?? image;
 
-            var mask = _maskProvider?.CreateMask();
-
-
-
             var frustumCornersUnity = PooledArrayContainer<Vector3>.CreateDirty(4);
             camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), camera.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCornersUnity.Array);
             var frustumCorners = frustumCornersUnity.ToVector3f();
             frustumCornersUnity.Dispose();
 
-            var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea)?.UnionWith((mask as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
+            var invalidatedArea = ((image as IImageInvalidatableImage2)?.InvalidatedArea) ?? Range2i.All;
             invalidatedArea = invalidatedArea.ExtendBothDirections(meshTopologyDistance);
 
-            return new FrameData2i(camera.transform.position.ToVector3f(), planes, frustumCorners, localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), image, mask, invalidatedArea, _terrainConfig.CellInGroupCount.XY, _interpolationConfig.MeshSubdivision);
+            return new FrameData2i(camera.transform.position.ToVector3f(), planes, frustumCorners, localToWorldMatrix.ToMatrix4x4f(), container.transform.worldToLocalMatrix.ToMatrix4x4f(), image, invalidatedArea, _terrainConfig.CellInGroupCount.XY, _interpolationConfig.MeshSubdivision);
         }
     }
 }

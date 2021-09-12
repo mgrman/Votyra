@@ -310,20 +310,10 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3f, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 0}
-  - Id: zeroFromInitialStateIsNull
-    JsonValue: false
-    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    UnityValue: {fileID: 0}
   - Id: cellInGroupCount
     JsonValue: '{"X":5,"Y":5,"Z":5}'
     TypeAssemblyQualifiedName: Votyra.Core.Models.Vector3i, Votyra.Core, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-    UnityValue: {fileID: 0}
-  - Id: flipTriangles
-    JsonValue: false
-    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
   - Id: drawBounds
     JsonValue: false
@@ -345,30 +335,20 @@ MonoBehaviour:
     TypeAssemblyQualifiedName: UnityEngine.Material, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 2100000, guid: 9896bb371a0ad194686acf4047099a57, type: 2}
-  - Id: activeAlgorithm
-    JsonValue: 2
-    TypeAssemblyQualifiedName: Votyra.Core.IntepolationAlgorithm, Votyra.Core, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+  - Id: isBicubic
+    JsonValue: false
+    TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+      PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
   - Id: dynamicMeshes
     JsonValue: false
     TypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     UnityValue: {fileID: 0}
-  - Id: imageSubdivision
+  - Id: simpleSampleScaleFactor
     JsonValue: 1
-    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    UnityValue: {fileID: 0}
-  - Id: meshSubdivision
-    JsonValue: 4
-    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
-    UnityValue: {fileID: 0}
-  - Id: scaleFactor
-    JsonValue: 1
-    TypeAssemblyQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
+    TypeAssemblyQualifiedName: Votyra.Core.Images.Constraints.ScaleFactor, Votyra.Core.Unity,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
     UnityValue: {fileID: 0}
   - Id: wallSquishFactor
     JsonValue: 0.8

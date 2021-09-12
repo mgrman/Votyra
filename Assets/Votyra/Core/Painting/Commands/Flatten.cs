@@ -24,8 +24,8 @@ namespace Votyra.Core.Painting.Commands
 
         protected override float Invoke(float value, int strength) => (MathUtils.Lerp(_centerValue ?? 0f, value, smoothSpeedRelative) - value) * Math.Sign(strength) + value;
 
-        public Flatten(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
-            : base(editableImage, editableMask, logger)
+        public Flatten(IEditableImage2f editableImage, IThreadSafeLogger logger)
+            : base(editableImage, logger)
         {
         }
     }

@@ -7,19 +7,15 @@ namespace Votyra.Core.Images
     public class InitialImageConfig : IInitialImageConfig
     {
         [Inject]
-        public InitialImageConfig([ConfigInject("initialData")] Texture2D initialData, [ConfigInject("initialDataScale")] Vector3f initialDataScale, [ConfigInject("zeroFromInitialStateIsNull")]
-            bool zeroFromInitialStateIsNull)
+        public InitialImageConfig([ConfigInject("initialData")] Texture2D initialData, [ConfigInject("initialDataScale")] Vector3f initialDataScale)
         {
             InitialData = initialData;
             InitialDataScale = initialDataScale;
-            ZeroFromInitialStateIsNull = zeroFromInitialStateIsNull;
         }
 
         public object InitialData { get; }
         
         public Vector3f InitialDataScale { get; }
-        
-        public bool ZeroFromInitialStateIsNull { get; }
 
         public static bool operator ==(InitialImageConfig a, InitialImageConfig b) => a?.Equals(b) ?? b?.Equals(a) ?? true;
 

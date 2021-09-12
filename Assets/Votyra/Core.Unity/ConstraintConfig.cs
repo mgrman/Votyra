@@ -1,12 +1,21 @@
-﻿namespace Votyra.Core.Images.Constraints
+﻿using System;
+using UnityEngine;
+
+namespace Votyra.Core.Images.Constraints
 {
     public class ConstraintConfig : IConstraintConfig
     {
-        public ConstraintConfig([ConfigInject("scaleFactor")] int scaleFactor)
+        public ConstraintConfig([ConfigInject("simpleSampleScaleFactor")] ScaleFactor scaleFactor)
         {
-            ScaleFactor = scaleFactor;
+            SimpleSampleScaleFactor = Mathf.Clamp((int)scaleFactor,1,2);
         }
 
-        public int ScaleFactor { get; }
+        public int SimpleSampleScaleFactor { get; }
+    }
+
+    public enum ScaleFactor
+    {
+        One=1,
+        Two=2
     }
 }

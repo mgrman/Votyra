@@ -14,13 +14,16 @@ namespace Votyra.Core.Pooling
         private PooledArrayContainer(int count)
         {
             Array = new T[count];
+            ArrayEnumerable = Array;
         }
 
         public T[] Array { get; }
-        
-        public int Count => ((IReadOnlyList<T>) Array).Count;
 
-        public T this[int index] => ((IReadOnlyList<T>) Array)[index];
+        private IEnumerable<T> ArrayEnumerable;
+        
+        public int Count =>  Array.Length;
+
+        public T this[int index] =>  Array[index];
 
         public void Dispose()
         {
@@ -33,9 +36,9 @@ namespace Votyra.Core.Pooling
             Pool.ReturnObject(this, Array.Length);
         }
 
-        public IEnumerator<T> GetEnumerator() => ((IReadOnlyList<T>) Array).GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => ArrayEnumerable.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => ((IReadOnlyList<T>) Array).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => Array.GetEnumerator();
 
         public static PooledArrayContainer<T> CreateDirty(int count)
         {

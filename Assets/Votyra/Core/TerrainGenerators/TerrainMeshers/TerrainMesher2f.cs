@@ -8,7 +8,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
 {
     public static class TerrainMesher2f
     {
-        public static void GetResultingMesh(ITerrainMesh mesh, Vector2i group, Vector2i cellInGroupCount, IImage2f image, IMask2e mask)
+        public static void GetResultingMesh(ITerrainMesh mesh, Vector2i group, Vector2i cellInGroupCount, IImage2f image)
         {
             var groupPosition = cellInGroupCount * group;
             for (var ix = 0; ix < cellInGroupCount.X; ix++)
@@ -18,8 +18,7 @@ namespace Votyra.Core.TerrainGenerators.TerrainMeshers
                     var cellInGroup=new Vector2i(ix, iy);
                     var cell = cellInGroup + groupPosition;
                     var data = image.SampleCell(cell);
-                    var maskData = mask.SampleCell(cell);
-                    mesh.AddQuad(cell.ToVector2f(), data, maskData);
+                    mesh.AddQuad(cell.ToVector2f(), data);
                 }
             }
         }

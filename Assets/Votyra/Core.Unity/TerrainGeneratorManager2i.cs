@@ -170,19 +170,17 @@ namespace Votyra.Core
         private static void GenerateBicubicMesh(IFrameData2i context, Vector2i group, ITerrainMesh mesh)
         {
             var image = context.Image;
-            var mask = context.Mask;
             var cellInGroupCount = context.CellInGroupCount;
 
-            BicubicTerrainMesher2f.GetResultingMesh(mesh, group, cellInGroupCount, image, mask, context.MeshSubdivision);
+            BicubicTerrainMesher2f.GetResultingMesh(mesh, group, cellInGroupCount, image, context.MeshSubdivision);
         }
 
         private static void GenerateSimpleMesh(IFrameData2i context, Vector2i group, ITerrainMesh mesh)
         {
             var image = context.Image;
-            var mask = context.Mask;
             var cellInGroupCount = context.CellInGroupCount;
 
-            TerrainMesher2f.GetResultingMesh(mesh, group, cellInGroupCount, image, mask);
+            TerrainMesher2f.GetResultingMesh(mesh, group, cellInGroupCount, image);
         }
     }
 

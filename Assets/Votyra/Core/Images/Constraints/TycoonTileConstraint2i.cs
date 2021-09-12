@@ -17,7 +17,7 @@ namespace Votyra.Core.Images.Constraints
         public TycoonTileConstraint2i(IConstraintConfig constraintConfig,IThreadSafeLogger logger)
         {
             _logger = logger;
-            _scaleFactor = constraintConfig.ScaleFactor;
+            _scaleFactor = constraintConfig.SimpleSampleScaleFactor;
             if (_scaleFactor != _tileMapScaleFactor)
             {
                 _tileMap = new[]

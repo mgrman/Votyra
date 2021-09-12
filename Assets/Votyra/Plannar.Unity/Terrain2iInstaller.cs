@@ -43,8 +43,6 @@ namespace Votyra.Plannar.Unity
                 .NonLazy();
             Container.BindInterfacesAndSelfTo<EditableMatrixImage2f>()
                 .AsSingle();
-            Container.BindInterfacesAndSelfTo<EditableMatrixMask2e>()
-                .AsSingle();
 
             var meshRoot = new GameObject("MeshRoot");
             meshRoot.transform.SetParent(transform, false);
@@ -63,9 +61,6 @@ namespace Votyra.Plannar.Unity
                 .AsSingle()
                 .NonLazy();
             Container.BindInterfacesAndSelfTo<IncreaseOrDecrease>()
-                .AsSingle()
-                .NonLazy();
-            Container.BindInterfacesAndSelfTo<MakeOrRemoveHole>()
                 .AsSingle()
                 .NonLazy();
             Container.BindInterfacesAndSelfTo<PaintingGui>()

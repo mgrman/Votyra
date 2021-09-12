@@ -135,9 +135,5 @@ namespace Votyra.Core.Models
     public static class SampledData2fExtensions
     {
         public static SampledData2i ToSampledData2i(this SampledData2f data) => new SampledData2i((int) data.x0y0, (int) data.x0y1, (int) data.x1y0, (int) data.x1y1);
-
-        public static SampledData2f ToSampledData2f(this SampledMask2e data) => new SampledData2f(MaskToHeight(data.x0y0), MaskToHeight(data.x0y1), MaskToHeight(data.x1y0), MaskToHeight(data.x1y1));
-
-        private static float MaskToHeight(this MaskValues data) => data.IsHole() ? -1 : 1;
     }
 }

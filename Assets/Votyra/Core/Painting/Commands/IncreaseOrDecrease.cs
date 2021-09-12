@@ -7,8 +7,8 @@ namespace Votyra.Core.Painting.Commands
     {
         protected override float Invoke(float value, int strength) => value + strength;
 
-        public IncreaseOrDecrease(IEditableImage2f editableImage, IEditableMask2e editableMask, IThreadSafeLogger logger)
-            : base(editableImage, editableMask, logger)
+        public IncreaseOrDecrease(IEditableImage2f editableImage, IThreadSafeLogger logger)
+            : base(editableImage, logger)
         {
         }
     }

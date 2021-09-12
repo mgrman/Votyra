@@ -24,17 +24,5 @@ namespace Votyra.Core.ImageSamplers
 
             return new SampledData2f(x0y0, x0y1, x1y0, x1y1);
         }
-
-        public static SampledMask2e SampleCell(this IMask2e mask, Vector2i cell)
-        {
-            if (mask == null)
-                return new SampledMask2e(MaskValues.Terrain, MaskValues.Terrain, MaskValues.Terrain, MaskValues.Terrain);
-            var x0y0 = mask.Sample(cell);
-            var x0y1 = mask.Sample(new Vector2i(cell.X,cell.Y+1));
-            var x1y0 = mask.Sample(new Vector2i(cell.X+1, cell.Y));
-            var x1y1 = mask.Sample(new Vector2i(cell.X+1, cell.Y+1));
-
-            return new SampledMask2e(x0y0, x0y1, x1y0, x1y1);
-        }
     }
 }

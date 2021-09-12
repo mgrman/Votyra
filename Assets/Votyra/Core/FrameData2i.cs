@@ -9,7 +9,7 @@ namespace Votyra.Core
     {
         private int _activeCounter;
 
-        public FrameData2i(Vector3f cameraPosition, IReadOnlyPooledList<Plane3f> cameraPlanes, IReadOnlyPooledList<Vector3f> cameraFrustumCorners, Matrix4x4f cameraLocalToWorldMatrix, Matrix4x4f parentContainerWorldToLocalMatrix, IImage2f image, IMask2e mask, Range2i invalidatedArea, Vector2i cellInGroupCount, int meshSubdivision)
+        public FrameData2i(Vector3f cameraPosition, IReadOnlyPooledList<Plane3f> cameraPlanes, IReadOnlyPooledList<Vector3f> cameraFrustumCorners, Matrix4x4f cameraLocalToWorldMatrix, Matrix4x4f parentContainerWorldToLocalMatrix, IImage2f image, Range2i invalidatedArea, Vector2i cellInGroupCount, int meshSubdivision)
         {
             CameraPosition = cameraPosition;
             CameraPlanes = cameraPlanes;
@@ -17,7 +17,6 @@ namespace Votyra.Core
             CameraLocalToWorldMatrix = cameraLocalToWorldMatrix;
             ParentContainerWorldToLocalMatrix = parentContainerWorldToLocalMatrix;
             Image = image;
-            Mask = mask;
 
             RangeZ = image?.RangeZ ?? Area1f.Zero;
 
@@ -51,7 +50,6 @@ namespace Votyra.Core
         public Vector2i CellInGroupCount { get; }
         public int MeshSubdivision { get; }
         public IImage2f Image { get; }
-        public IMask2e Mask { get; }
 
         private void Dispose()
         {
