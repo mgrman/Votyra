@@ -2,18 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using UniRx.Async;
-using UnityEngine;
 using Votyra.Core.GroupSelectors;
-using Votyra.Core.Images;
-using Votyra.Core.ImageSamplers;
-using Votyra.Core.Logging;
-using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Models;
-using Votyra.Core.Pooling;
-using Votyra.Core.Profiling;
-using Votyra.Core.TerrainGenerators.TerrainMeshers;
-using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Utils;
 using Zenject;
 
@@ -28,8 +18,6 @@ namespace Votyra.Core
 
         private readonly IFrameDataProvider2i _frameDataProvider;
 
-        private readonly Func<GameObject> _gameObjectFactory;
-
         private readonly HashSet<Vector2i> _groupsToRecompute = new HashSet<Vector2i>();
 
         private readonly IInterpolationConfig _interpolationConfig;
@@ -42,37 +30,23 @@ namespace Votyra.Core
 
         private readonly ITerrainConfig _terrainConfig;
 
-        private readonly ITerrainUVPostProcessor _uvPostProcessor;
-
-        private readonly ITerrainVertexPostProcessor _vertexPostProcessor;
-
         private readonly TaskFactory _taskFactory = new TaskFactory();
-
-        private readonly ITerrainMesher _terrainMesher;
-        private readonly ITerrainMeshUpdater _terrainMeshUpdater;
+        
+        private readonly ITerrainGroupGeneratorManagerFactory2i _groupFactory;
 
         private bool _computedOnce;
 
         private Task _waitForTask = Task.CompletedTask;
 
-
-        public TerrainGeneratorManager2i(Func<GameObject> gameObjectFactory, ITerrainConfig terrainConfig,
-            IStateModel stateModel, IFrameDataProvider2i frameDataProvider,
-            [InjectOptional] ITerrainVertexPostProcessor vertexPostProcessor,
-            [InjectOptional] ITerrainUVPostProcessor uvPostProcessor, IInterpolationConfig interpolationConfig,
-            ITerrainMesher terrainMesher,ITerrainMeshUpdater terrainMeshUpdater)
+        public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IStateModel stateModel, IFrameDataProvider2i frameDataProvider, IInterpolationConfig interpolationConfig,ITerrainGroupGeneratorManagerFactory2i groupFactory)
         {
-            _gameObjectFactory = gameObjectFactory;
             _terrainConfig = terrainConfig;
             _cellInGroupCount = _terrainConfig.CellInGroupCount.XY;
             _stateModel = stateModel;
             _frameDataProvider = frameDataProvider;
-            _vertexPostProcessor = vertexPostProcessor;
-            _uvPostProcessor = uvPostProcessor;
             _interpolationConfig = interpolationConfig;
             _meshTopologyDistance = _interpolationConfig.MeshSubdivision != 1 ? 2 : 1;
-            _terrainMesher = terrainMesher;
-            _terrainMeshUpdater = terrainMeshUpdater;
+            _groupFactory = groupFactory;
         }
 
         public void Dispose()
@@ -115,10 +89,8 @@ namespace Votyra.Core
 
         private void UpdateTerrain(IFrameData2i context)
         {
-
             HandleVisibilityUpdates(context);
             UpdateGroupManagers(context);
-
             context?.Deactivate();
         }
 
@@ -146,243 +118,7 @@ namespace Votyra.Core
 
         private void OnAddedGroup(Vector2i newGroup)
         {
-            _activeGroups.Add(newGroup, CreateGroupManager(newGroup));
-        }
-
-        private ITerrainGroupGeneratorManager2i CreateGroupManager(Vector2i newGroup)
-        {
-            if (_terrainConfig.Async)
-            {
-                return new AsyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup,
-                    _onDestroyCts.Token, CreatePooledTerrainMesh(), _terrainMesher, _terrainMeshUpdater);
-            }
-            else
-            {
-                return new SyncTerrainGroupGeneratorManager2i(_cellInGroupCount, _gameObjectFactory, newGroup,
-                    _onDestroyCts.Token, CreatePooledTerrainMesh(), _terrainMesher, _terrainMeshUpdater);
-            }
-        }
-
-        private IPooledTerrainMesh CreatePooledTerrainMesh()
-        {
-            IPooledTerrainMesh pooledMesh;
-            if (_interpolationConfig.DynamicMeshes)
-            {
-                pooledMesh = PooledTerrainMeshContainer<ExpandingUnityTerrainMesh>.CreateDirty();
-            }
-            else
-            {
-                var triangleCount = _cellInGroupCount.AreaSum * 2 * _interpolationConfig.MeshSubdivision *
-                                    _interpolationConfig.MeshSubdivision;
-                pooledMesh =
-                    PooledTerrainMeshWithFixedCapacityContainer<FixedUnityTerrainMesh2i>.CreateDirty(triangleCount);
-            }
-
-            pooledMesh.Mesh.Initialize(
-                _vertexPostProcessor == null ? (Func<Vector3f, Vector3f>) null : _vertexPostProcessor.PostProcessVertex,
-                _uvPostProcessor == null ? (Func<Vector2f, Vector2f>) null : _uvPostProcessor.ProcessUV);
-            return pooledMesh;
-        }
-    }
-
-    public interface ITerrainGroupGeneratorManager2i : IDisposable
-    {
-        void Update(IFrameData2i context);
-    }
-
-    public class SyncTerrainGroupGeneratorManager2i : TerrainGroupGeneratorManager2i
-    {
-        public SyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory,
-            Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, ITerrainMesher terrainMesher,
-            ITerrainMeshUpdater meshUpdater)
-            : base(cellInGroupCount, unityDataFactory, group, token, pooledMesh, terrainMesher, meshUpdater)
-        {
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            MeshUpdater.DestroyMesh(UnityData);
-            UnityData.Destroy();
-        }
-
-
-        protected override void UpdateGroup()
-        {
-            if (Token.IsCancellationRequested)
-                return;
-
-            if (ContextToProcess != null)
-            {
-                UpdateGroup(ContextToProcess, Token);
-                ContextToProcess = null;
-            }
-        }
-
-        private void UpdateGroup(IFrameData2i context, CancellationToken token)
-        {
-            if (context == null)
-                return;
-            UpdateTerrainMesh(context);
-            if (Token.IsCancellationRequested)
-                return;
-            UpdateUnityMesh(PooledMesh.Mesh);
-        }
-    }
-
-    public class AsyncTerrainGroupGeneratorManager2i : TerrainGroupGeneratorManager2i
-    {
-        private Task _activeTask = Task.CompletedTask;
-
-        public AsyncTerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory,
-            Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, ITerrainMesher terrainMesher,
-            ITerrainMeshUpdater meshUpdater)
-            : base(cellInGroupCount, unityDataFactory, group, token, pooledMesh, terrainMesher, meshUpdater)
-        {
-        }
-
-        protected override void UpdateGroup()
-        {
-            if (Token.IsCancellationRequested)
-                return;
-
-            if (!_activeTask.IsCompleted || ContextToProcess == null)
-                return;
-
-            var context = GetFrameDataWithOwnership();
-
-            _activeTask = Task.Run(async () =>
-            {
-                try
-                {
-                    await UpdateGroupAsync(context, Token);
-                }
-                finally
-                {
-                    context?.Deactivate();
-                }
-            });
-            _activeTask.ConfigureAwait(false);
-
-            _activeTask.ContinueWith(t => UpdateGroup());
-        }
-
-
-        private async Task UpdateGroupAsync(IFrameData2i context, CancellationToken token)
-        {
-            if (context == null)
-                return;
-            UpdateTerrainMesh(context);
-            if (Token.IsCancellationRequested)
-                return;
-            await UniTask.SwitchToMainThread();
-            if (Token.IsCancellationRequested)
-                return;
-            UpdateUnityMesh(PooledMesh.Mesh);
-        }
-
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            MainThreadUtils.RunOnMainThreadAsync(() =>
-            {
-                MeshUpdater.DestroyMesh(UnityData);
-                UnityData.Destroy();
-            });
-        }
-    }
-
-    public abstract class TerrainGroupGeneratorManager2i : ITerrainGroupGeneratorManager2i
-    {
-        protected readonly CancellationTokenSource Cts;
-        protected readonly ITerrainMesher TerrainMesher;
-        protected readonly Vector2i Group;
-        protected readonly IPooledTerrainMesh PooledMesh;
-        protected readonly Range2i Range;
-        protected readonly CancellationToken Token;
-        private readonly Vector2i _cellInGroupCount;
-        protected readonly Func<GameObject> UnityDataFactory;
-
-        private IFrameData2i _contextToProcess;
-
-        protected GameObject UnityData;
-
-        private bool _updatedOnce;
-        protected ITerrainMeshUpdater MeshUpdater;
-
-        public TerrainGroupGeneratorManager2i(Vector2i cellInGroupCount, Func<GameObject> unityDataFactory,
-            Vector2i group, CancellationToken token, IPooledTerrainMesh pooledMesh, ITerrainMesher terrainMesher,
-            ITerrainMeshUpdater meshUpdater)
-        {
-            _cellInGroupCount = cellInGroupCount;
-            UnityDataFactory = unityDataFactory;
-            Group = group;
-            Range = Range2i.FromMinAndSize(group * cellInGroupCount, cellInGroupCount);
-            Cts = CancellationTokenSource.CreateLinkedTokenSource(token);
-            Token = Cts.Token;
-
-            PooledMesh = pooledMesh;
-            TerrainMesher = terrainMesher;
-            MeshUpdater = meshUpdater;
-        }
-
-        protected IFrameData2i ContextToProcess
-        {
-            get => _contextToProcess;
-            set
-            {
-                _contextToProcess?.Deactivate();
-                _contextToProcess = value;
-                _contextToProcess?.Activate();
-            }
-        }
-
-        public void Update(IFrameData2i context)
-        {
-            if (Token.IsCancellationRequested)
-                return;
-
-            if (_updatedOnce && !context.InvalidatedArea.Overlaps(Range))
-                return;
-            _updatedOnce = true;
-
-            ContextToProcess = context;
-
-            UpdateGroup();
-        }
-
-        public virtual void Dispose()
-        {
-            ContextToProcess = null;
-            Cts.Cancel();
-            PooledMesh.Dispose();
-        }
-
-        protected IFrameData2i GetFrameDataWithOwnership()
-        {
-            var contextToProcess = _contextToProcess;
-            _contextToProcess = null;
-            return contextToProcess;
-        }
-
-        protected abstract void UpdateGroup();
-
-
-        protected void UpdateTerrainMesh(IFrameData2i context)
-        {
-            PooledMesh.Mesh.Reset(Area3f.FromMinAndSize((Group * _cellInGroupCount).ToVector3f(context.RangeZ.Min),
-                _cellInGroupCount.ToVector3f(context.RangeZ.Size)));
-            TerrainMesher.UpdateMesh(PooledMesh.Mesh, Group, context.Image);
-            PooledMesh.Mesh.FinalizeMesh();
-        }
-
-        protected void UpdateUnityMesh(ITerrainMesh unityMesh)
-        {
-            if (UnityData == null)
-                UnityData = UnityDataFactory();
-
-            MeshUpdater.SetUnityMesh(unityMesh, UnityData);
+            _activeGroups.Add(newGroup, _groupFactory.CreateGroupManager(newGroup));
         }
     }
 }

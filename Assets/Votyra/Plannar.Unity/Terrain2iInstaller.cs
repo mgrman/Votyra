@@ -8,6 +8,7 @@ using Votyra.Core.MeshUpdaters;
 using Votyra.Core.Painting;
 using Votyra.Core.Painting.Commands;
 using Votyra.Core.TerrainGenerators.TerrainMeshers;
+using Votyra.Core.TerrainMeshes;
 using Votyra.Core.Unity.Painting;
 using Votyra.Core.Utils;
 using Zenject;
@@ -18,7 +19,7 @@ namespace Votyra.Plannar.Unity
     {
         public void UsedOnlyForAOTCodeGeneration()
         {
-            new TerrainGeneratorManager2i(null, null, null, null, null, null, null, null,null);
+            new TerrainGeneratorManager2i(null, null, null, null, null);
 
             // Include an exception so we can be sure to know if this method is ever called.
             throw new InvalidOperationException("This method is used for AOT code generation only. Do not call it at runtime.");
@@ -46,6 +47,19 @@ namespace Votyra.Plannar.Unity
                 .When(context => context.Container.Resolve<IInterpolationConfig>().IsBicubic);
             Container.BindInterfacesAndSelfTo<TerrainMeshUpdater>()
                 .AsSingle();
+            Container.BindInterfacesAndSelfTo<ExpandingTerrainMeshFactory>()
+                .AsSingle()
+                .When(context => context.Container.Resolve<IInterpolationConfig>().DynamicMeshes);
+            Container.BindInterfacesAndSelfTo<FixedTerrainMeshFactory>()
+                .AsSingle()
+                .When(context => !context.Container.Resolve<IInterpolationConfig>().DynamicMeshes);
+
+            Container.BindInterfacesAndSelfTo<AsyncTerrainGroupGeneratorManagerFactory2i>()
+                .AsSingle()
+                .When(context => context.Container.Resolve<ITerrainConfig>().Async);
+            Container.BindInterfacesAndSelfTo<SyncTerrainGroupGeneratorManagerFactory2i>()
+                .AsSingle()
+                .When(context => !context.Container.Resolve<ITerrainConfig>().Async);
 
             Container.BindInterfacesAndSelfTo<InitialStateSetter2f>()
                 .AsSingle()

@@ -56,9 +56,12 @@ namespace Votyra.Core.Unity
                 }
 
                 if (_terrainManagerModel.ActiveAlgorithm == null || _terrainManagerModel.ActiveAlgorithm.Prefab == null)
+                {
                     return;
+                }
 
                 if (_terrainManagerModel.Config != null)
+                {
                     foreach (var configItem in _terrainManagerModel.Config)
                     {
                         var type = configItem.Type;
@@ -69,6 +72,7 @@ namespace Votyra.Core.Unity
                             .WithId(configItem.Id)
                             .FromInstance(value);
                     }
+                }
 
                 var instance = container.InstantiatePrefab(_terrainManagerModel.ActiveAlgorithm.Prefab, _context.transform);
                 _activeTerrainRoot = instance;
