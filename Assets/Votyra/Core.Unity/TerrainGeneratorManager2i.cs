@@ -33,7 +33,7 @@ namespace Votyra.Core.Unity
 
         private Task _waitForTask = Task.CompletedTask;
 
-        public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IStateModel stateModel, IFrameDataProvider2i frameDataProvider, IInterpolationConfig interpolationConfig,ITerrainGroupGeneratorManagerFactory2i groupFactory, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector)
+        public TerrainGeneratorManager2i(ITerrainConfig terrainConfig, IStateModel stateModel, IFrameDataProvider2i frameDataProvider,ITerrainGroupGeneratorManagerFactory2i groupFactory, IGroupsByCameraVisibilitySelector2i groupsByCameraVisibilitySelector)
         {
             _stateModel = stateModel;
             _frameDataProvider = frameDataProvider;

@@ -31,13 +31,9 @@ namespace Votyra.Core.Unity
                 .FromMethod(context =>
                 {
                     //ObjectInstance can be null during constructor injection, but UnityEngine.Object do not support that. So they should be always set.
-                    return CreateProfiler(context.ObjectInstance as Object);
+                    return new UnityProfiler(context.ObjectInstance as Object);
                 })
                 .AsTransient();
         }
-
-        private static IThreadSafeLogger CreateLogger(string name, Object owner) => new UnityLogger(name, owner);
-
-        private IProfiler CreateProfiler(Object owner) => new UnityProfiler(owner);
     }
 }
